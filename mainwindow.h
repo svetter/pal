@@ -17,5 +17,6 @@ public:
 	
 private:
 	Ui::MainWindow *ui;
+	void handleNewAscentClicked();
 };
 #endif // MAINWINDOW_H
