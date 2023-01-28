@@ -9,20 +9,20 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    addascent.cpp \
-    main.cpp \
-    mainwindow.cpp
+	src/dialogs/addascent.cpp \
+	src/main/main.cpp \
+	src/main/mainwindow.cpp
 
 HEADERS += \
-    addascent.h \
-    mainwindow.h
+	src/dialogs/addascent.h \
+	src/main/mainwindow.h
 
 FORMS += \
-    addascent.ui \
-    mainwindow.ui
+	src/ui/addascent.ui \
+	src/ui/mainwindow.ui
 
 TRANSLATIONS += \
-    PAL_en_US.ts
+    src/translation/PAL_en_US.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
@@ -30,3 +30,6 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+	src/translation/PAL_en_US.ts
