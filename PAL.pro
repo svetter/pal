@@ -12,18 +12,27 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 
 SOURCES += \
-	src/dialogs/addascent.cpp \
+	src/dialogs/new_range.cpp \
+	src/dialogs/new_ascent.cpp \
+	src/dialogs/new_peak.cpp \
+	src/dialogs/new_trip.cpp \
 	src/main/main.cpp \
-	src/main/mainwindow.cpp
+	src/main/main_window.cpp
 
 HEADERS += \
 	src/db/initdb.h \
-	src/dialogs/addascent.h \
-	src/main/mainwindow.h
+	src/dialogs/new_ascent.h \
+	src/dialogs/new_peak.h \
+	src/dialogs/new_range.h \
+	src/dialogs/new_trip.h \
+	src/main/main_window.h
 
 FORMS += \
-	src/ui/addascent.ui \
-	src/ui/mainwindow.ui
+	src/ui/main_window.ui \
+	src/ui/new_ascent.ui \
+	src/ui/new_peak.ui \
+	src/ui/new_range.ui \
+	src/ui/new_trip.ui
 
 
 

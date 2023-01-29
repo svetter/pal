@@ -42,16 +42,34 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>10</number>
+    </property>
+    <property name="topMargin">
+     <number>10</number>
+    </property>
+    <property name="rightMargin">
+     <number>10</number>
+    </property>
+    <property name="bottomMargin">
+     <number>10</number>
+    </property>
+    <property name="spacing">
+     <number>10</number>
+    </property>
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="mainLayout">
       <property name="spacing">
        <number>10</number>
       </property>
       <property name="sizeConstraint">
        <enum>QLayout::SetMinimumSize</enum>
       </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_toolbar">
+       <layout class="QHBoxLayout" name="topBarLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -59,7 +77,7 @@
          <enum>QLayout::SetFixedSize</enum>
         </property>
         <item>
-         <widget class="QToolButton" name="toolButton_addAscent">
+         <widget class="QToolButton" name="newAscentButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -73,7 +91,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Add ascent...</string>
+           <string>New ascent...</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -93,7 +111,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton_addPeak">
+         <widget class="QToolButton" name="newPeakButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -107,12 +125,12 @@
            </size>
           </property>
           <property name="text">
-           <string>Add peak...</string>
+           <string>New peak...</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton_addClimber">
+         <widget class="QPushButton" name="newTripButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -126,26 +144,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Add climber...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="toolButton_addTrip">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Add trip...</string>
+           <string>New trip...</string>
           </property>
          </widget>
         </item>
@@ -166,7 +165,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_loggedAscents">
+         <widget class="QLabel" name="loggedAscentsLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -175,8 +174,8 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
-            <height>30</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
           <property name="text">
@@ -188,7 +187,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLCDNumber" name="lcdNumber_numAscents">
+         <widget class="QLCDNumber" name="numAscentsLcdNumber">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -218,7 +217,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QTabWidget" name="tabWidget_mainArea">
+       <widget class="QTabWidget" name="mainAreaTabs">
         <property name="locale">
          <locale language="English" country="Europe"/>
         </property>
@@ -229,17 +228,17 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideNone</enum>
         </property>
-        <widget class="QWidget" name="tab_ascents">
+        <widget class="QWidget" name="ascentsTab">
          <attribute name="title">
           <string>Ascents</string>
          </attribute>
         </widget>
-        <widget class="QWidget" name="tab_peaks">
+        <widget class="QWidget" name="peaksTab">
          <property name="accessibleName">
           <string/>
          </property>
@@ -247,14 +246,19 @@
           <string>Peaks</string>
          </attribute>
         </widget>
-        <widget class="QWidget" name="tab_climbers">
+        <widget class="QWidget" name="tab">
          <attribute name="title">
-          <string>Climbers</string>
+          <string>Mountain ranges</string>
          </attribute>
         </widget>
-        <widget class="QWidget" name="tab_trips">
+        <widget class="QWidget" name="tripsTab">
          <attribute name="title">
           <string>Trips</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="climbersTab">
+         <attribute name="title">
+          <string>Climbers</string>
          </attribute>
         </widget>
        </widget>
@@ -276,20 +280,20 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action_newDatabase"/>
-    <addaction name="action_openDatabase"/>
-    <addaction name="action_openRecentDatabase"/>
-    <addaction name="action_saveDatabase"/>
-    <addaction name="action_saveDatabaseAs"/>
-    <addaction name="action_closeDatabase"/>
+    <addaction name="newDatabaseAction"/>
+    <addaction name="openDatabaseAction"/>
+    <addaction name="openRecentDatabaseAction"/>
+    <addaction name="saveDatabaseAction"/>
+    <addaction name="saveDatabaseAsAction"/>
+    <addaction name="closeDatabaseAction"/>
     <addaction name="separator"/>
-    <addaction name="action_settings"/>
+    <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="action_about"/>
+    <addaction name="aboutAction"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -300,10 +304,11 @@
     <property name="title">
      <string>New</string>
     </property>
-    <addaction name="action_newAscent"/>
-    <addaction name="action_newPeak"/>
-    <addaction name="action_newClimber"/>
-    <addaction name="action_newTrip"/>
+    <addaction name="newAscentAction"/>
+    <addaction name="newPeakAction"/>
+    <addaction name="newRangeAction"/>
+    <addaction name="newTripAction"/>
+    <addaction name="newClimberAction"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNew"/>
@@ -315,76 +320,83 @@
     <locale language="English" country="Europe"/>
    </property>
   </widget>
-  <action name="action_newDatabase">
+  <action name="newDatabaseAction">
    <property name="text">
     <string>New database...</string>
    </property>
   </action>
-  <action name="action_openDatabase">
+  <action name="openDatabaseAction">
    <property name="text">
     <string>Open database...</string>
    </property>
   </action>
-  <action name="action_saveDatabase">
+  <action name="saveDatabaseAction">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save database</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
-  <action name="action_closeDatabase">
+  <action name="closeDatabaseAction">
    <property name="text">
     <string>Close database</string>
    </property>
   </action>
-  <action name="action_about">
+  <action name="aboutAction">
    <property name="text">
     <string>About...</string>
    </property>
   </action>
-  <action name="action_openRecentDatabase">
+  <action name="openRecentDatabaseAction">
    <property name="text">
     <string>Open recent database</string>
    </property>
   </action>
-  <action name="action_settings">
+  <action name="settingsAction">
    <property name="text">
     <string>Settings...</string>
    </property>
   </action>
-  <action name="action_newAscent">
+  <action name="newAscentAction">
    <property name="text">
     <string>New ascent...</string>
    </property>
   </action>
-  <action name="action_newPeak">
+  <action name="newPeakAction">
    <property name="text">
     <string>New peak...</string>
    </property>
   </action>
-  <action name="action_newClimber">
+  <action name="newRangeAction">
    <property name="text">
-    <string>New climber...</string>
+    <string>New mountain range...</string>
    </property>
   </action>
-  <action name="action_newTrip">
+  <action name="newTripAction">
    <property name="text">
     <string>New trip...</string>
    </property>
   </action>
-  <action name="action_saveDatabaseAs">
+  <action name="saveDatabaseAsAction">
    <property name="icon">
-    <iconset theme="document-save-as"/>
+    <iconset theme="document-save-as">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save database as...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string notr="true">Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="newClimberAction">
+   <property name="text">
+    <string>New climber...</string>
    </property>
   </action>
  </widget>

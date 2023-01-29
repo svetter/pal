@@ -1,13 +1,13 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include <QMainWindow>
-
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+
 
 class MainWindow : public QMainWindow
 {
@@ -19,9 +19,12 @@ public:
 	
 private:
 	Ui::MainWindow *ui;
-	void handleNewAscentClicked();
+	void handle_newAscent();
+	void handle_newPeak();
+	void handle_newRange();
+	void handle_newTrip();
 };
 
 
 
-#endif // MAINWINDOW_H
+#endif // MAIN_WINDOW_H
