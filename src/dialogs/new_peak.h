@@ -8,11 +8,19 @@
 class NewPeakDialog : public QDialog, public Ui_NewPeakDialog
 {
 	Q_OBJECT
+	
 public:
-	NewPeakDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
-	void on_newRangeButton_clicked();
+	NewPeakDialog(QWidget *parent = nullptr);
+	~NewPeakDialog();
+	
+private:
+	Ui::NewPeakDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_newRange();
+	void handle_close();
 };
 
 

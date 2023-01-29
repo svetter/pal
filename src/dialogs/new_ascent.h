@@ -8,13 +8,22 @@
 class NewAscentDialog : public QDialog, public Ui_NewAscentDialog
 {
 	Q_OBJECT
+	
 public:
-	NewAscentDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
-	void on_timeNotSpecifiedCheckbox_stateChanged(int arg1);
-	void on_newPeakButton_clicked();
-	void on_newTripButton_clicked();
+	NewAscentDialog(QWidget *parent = nullptr);
+	~NewAscentDialog();
+	
+private:
+	Ui::NewAscentDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_newPeak();
+	void handle_timeSpecifiedChanged();
+	void handle_newTrip();
+	void handle_photosPathBrowse();
+	void handle_close();
 };
 
 

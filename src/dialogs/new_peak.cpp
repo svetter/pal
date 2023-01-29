@@ -1,21 +1,57 @@
 #include "new_peak.h"
 #include "src/dialogs/new_range.h"
 
+#include <QMessageBox>
+#include <iostream>
 
 
-NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
+
+NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewPeakDialog)
 {
-	setupUi(this);
+	ui->setupUi(this);
+	
+	connect(ui->newRangeButton,	&QPushButton::clicked,	this,	&NewPeakDialog::handle_newRange);
+	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewPeakDialog::handle_close);
 }
 
-void NewPeakDialog::on_cancelButton_clicked()
+NewPeakDialog::~NewPeakDialog()
 {
-    close();
+	delete ui;
 }
 
-void NewPeakDialog::on_newRangeButton_clicked()
+
+
+bool NewPeakDialog::anyChanges()
+{
+	if (!ui->nameTextbox->text().isEmpty())	return true;
+	if (ui->rangeCombo->currentIndex() > 0)	return true;
+	return false;
+}
+
+
+
+void NewPeakDialog::handle_newRange()
 {
 	NewRangeDialog dialog(this);
     dialog.exec();
 }
 
+void NewPeakDialog::reject()
+{
+    handle_close();
+}
+
+void NewPeakDialog::handle_close()
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+    if (anyChanges()) {
+		QString title = tr("Discard unsaved new peak");
+		QString question = tr("Are you sure?");
+		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+		auto selected = QMessageBox::Cancel;
+        resBtn = QMessageBox::question(this, title, question, options, selected);
+    }
+    if (resBtn == QMessageBox::Yes) {
+        QDialog::reject();
+    }
+}
