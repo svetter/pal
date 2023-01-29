@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -19,4 +21,7 @@ private:
 	Ui::MainWindow *ui;
 	void handleNewAscentClicked();
 };
+
+
+
 #endif // MAINWINDOW_H
