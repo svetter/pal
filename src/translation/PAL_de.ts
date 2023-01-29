@@ -92,11 +92,6 @@
         <translation>Datenbank speichern</translation>
     </message>
     <message>
-        <location filename="src/ui/mainwindow.ui" line="336"/>
-        <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/ui/mainwindow.ui" line="341"/>
         <source>Close database</source>
         <translation>Datenbank schließen</translation>
@@ -140,11 +135,6 @@
         <location filename="src/ui/mainwindow.ui" line="384"/>
         <source>Save database as...</source>
         <translation>Datenbank speichern unter...</translation>
-    </message>
-    <message>
-        <location filename="src/ui/mainwindow.ui" line="387"/>
-        <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
