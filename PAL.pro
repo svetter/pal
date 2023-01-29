@@ -41,6 +41,11 @@ TRANSLATIONS += \
 	
 DISTFILES +=
 	src/translation/PAL_de.ts
+	
+
+
+RC_ICONS += \
+	resources/logo_multisize.ico
 
 
 
