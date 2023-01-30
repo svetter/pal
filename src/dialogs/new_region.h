@@ -8,10 +8,20 @@
 class NewRegionDialog : public QDialog, public Ui_NewRegionDialog
 {
 	Q_OBJECT
+	
 public:
 	NewRegionDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
+	~NewRegionDialog();
+	
+private:
+	Ui::NewRegionDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_newRange();	
+	void handle_newCountry();
+	void handle_close();
 };
 
 

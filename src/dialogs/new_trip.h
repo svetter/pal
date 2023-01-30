@@ -8,10 +8,18 @@
 class NewTripDialog : public QDialog, public Ui_NewTripDialog
 {
 	Q_OBJECT
+	
 public:
 	NewTripDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
+	~NewTripDialog();
+	
+private:
+	Ui::NewTripDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_close();
 };
 
 

@@ -8,10 +8,18 @@
 class NewCountryDialog : public QDialog, public Ui_NewCountryDialog
 {
 	Q_OBJECT
+	
 public:
 	NewCountryDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
+	~NewCountryDialog();
+	
+private:
+	Ui::NewCountryDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_close();
 };
 
 

@@ -8,10 +8,18 @@
 class NewRangeDialog : public QDialog, public Ui_NewRangeDialog
 {
 	Q_OBJECT
+	
 public:
 	NewRangeDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
+	~NewRangeDialog();
+	
+private:
+	Ui::NewRangeDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_close();
 };
 
 

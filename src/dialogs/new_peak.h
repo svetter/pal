@@ -19,7 +19,7 @@ private:
 	
 	bool anyChanges();
 	
-	void handle_newRange();
+	void handle_newRegion();
 	void handle_close();
 };
 

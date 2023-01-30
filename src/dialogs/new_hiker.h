@@ -8,10 +8,18 @@
 class NewHikerDialog : public QDialog, public Ui_NewHikerDialog
 {
 	Q_OBJECT
+	
 public:
 	NewHikerDialog(QWidget *parent = 0);
-private slots:
-	void on_cancelButton_clicked();
+	~NewHikerDialog();
+	
+private:
+	Ui::NewHikerDialog *ui;
+	void reject();
+	
+	bool anyChanges();
+	
+	void handle_close();
 };
 
 
