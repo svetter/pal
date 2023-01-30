@@ -16,6 +16,7 @@ SOURCES += \
 	src/dialogs/new_range.cpp \
 	src/dialogs/new_ascent.cpp \
 	src/dialogs/new_peak.cpp \
+	src/dialogs/new_region.cpp \
 	src/dialogs/new_trip.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp
@@ -26,6 +27,7 @@ HEADERS += \
 	src/dialogs/new_country.h \
 	src/dialogs/new_peak.h \
 	src/dialogs/new_range.h \
+	src/dialogs/new_region.h \
 	src/dialogs/new_trip.h \
 	src/main/main_window.h
 
@@ -35,6 +37,7 @@ FORMS += \
 	src/ui/new_country.ui \
 	src/ui/new_peak.ui \
 	src/ui/new_range.ui \
+	src/ui/new_region.ui \
 	src/ui/new_trip.ui
 
 

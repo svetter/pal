@@ -22,6 +22,7 @@ private:
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();
+	void handle_newRegion();
 	void handle_newRange();
 	void handle_newCountry();
 };

@@ -308,6 +308,7 @@
     <addaction name="newPeakAction"/>
     <addaction name="newTripAction"/>
     <addaction name="newClimberAction"/>
+    <addaction name="newRegionAction"/>
     <addaction name="newRangeAction"/>
     <addaction name="newCountryAction"/>
    </widget>
@@ -403,6 +404,11 @@
   <action name="newCountryAction">
    <property name="text">
     <string>New country...</string>
+   </property>
+  </action>
+  <action name="newRegionAction">
+   <property name="text">
+    <string>New region...</string>
    </property>
   </action>
  </widget>
