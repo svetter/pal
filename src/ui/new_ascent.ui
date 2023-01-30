@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>700</height>
+    <width>450</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -65,7 +65,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>150</width>
            <height>0</height>
           </size>
          </property>
@@ -85,12 +85,6 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="dateLabel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="text">
         <string>Date</string>
        </property>
@@ -98,6 +92,9 @@
      </item>
      <item row="1" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QDateEdit" name="dateEdit">
          <property name="sizePolicy">
@@ -134,14 +131,14 @@
          </property>
          <property name="maximumTime">
           <time>
-           <hour>1</hour>
+           <hour>2</hour>
            <minute>59</minute>
            <second>59</second>
           </time>
          </property>
          <property name="minimumTime">
           <time>
-           <hour>1</hour>
+           <hour>2</hour>
            <minute>0</minute>
            <second>0</second>
           </time>
@@ -155,7 +152,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="dateSpacer1">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -171,7 +168,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="dayIndexSpinner">
          <property name="maximumSize">
           <size>
            <width>40</width>
@@ -194,7 +191,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_5">
+        <spacer name="dateSpacer2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -217,6 +214,9 @@
      </item>
      <item row="2" column="1">
       <layout class="QHBoxLayout" name="timeLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QTimeEdit" name="timeWidget">
          <property name="enabled">
@@ -284,16 +284,19 @@
       </layout>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="kindLabel">
        <property name="text">
         <string>Kind of hike</string>
        </property>
       </widget>
      </item>
      <item row="3" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="kindLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="kindCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -302,7 +305,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>150</width>
            <height>0</height>
           </size>
          </property>
@@ -312,7 +315,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_2">
+        <spacer name="kindSpacer1">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -328,14 +331,14 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="traverseCheckbox">
          <property name="text">
           <string>Traverse</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_3">
+        <spacer name="kindSpacer2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -350,16 +353,19 @@
       </layout>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="difficultyLabel">
        <property name="text">
         <string>Difficulty</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="difficultyLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
-        <widget class="QComboBox" name="comboBox_2">
+        <widget class="QComboBox" name="difficultySystemCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -368,27 +374,33 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>150</width>
            <height>0</height>
           </size>
          </property>
          <property name="placeholderText">
-          <string>None</string>
+          <string>Select system</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QComboBox" name="difficultyGradeCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeHint" stdset="0">
+         <property name="minimumSize">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>150</width>
+           <height>0</height>
           </size>
          </property>
-        </spacer>
+         <property name="placeholderText">
+          <string>Select grade</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -414,7 +426,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
+           <width>150</width>
            <height>0</height>
           </size>
          </property>
@@ -460,7 +472,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>150</width>
            <height>76</height>
           </size>
          </property>
@@ -547,19 +559,19 @@
       </layout>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="photosLabel">
        <property name="text">
         <string>Photos</string>
        </property>
       </widget>
      </item>
      <item row="7" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="photosSelectionLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QListWidget" name="listWidget">
+        <widget class="QListWidget" name="photosListWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -568,7 +580,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>200</width>
            <height>94</height>
           </size>
          </property>
@@ -646,9 +658,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="photosToolLayout">
          <item>
-          <widget class="QToolButton" name="toolButton_2">
+          <widget class="QToolButton" name="addPhotoButton">
            <property name="minimumSize">
             <size>
              <width>25</width>
@@ -661,7 +673,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton">
+          <widget class="QToolButton" name="removePhotoButton">
            <property name="minimumSize">
             <size>
              <width>25</width>
@@ -687,7 +699,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="descriptionEditor"/>
+    <widget class="QPlainTextEdit" name="descriptionEditor">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="Line" name="bottomLine">
@@ -711,7 +730,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>30</height>
         </size>
        </property>
@@ -730,7 +749,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>30</height>
         </size>
        </property>
