@@ -9,8 +9,8 @@
 NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewPeakDialog)
 {
 	ui->setupUi(this);
+	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->newRangeButton,	&QPushButton::clicked,	this,	&NewPeakDialog::handle_newRange);
 	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewPeakDialog::handle_close);
 }
 
@@ -24,7 +24,7 @@ NewPeakDialog::~NewPeakDialog()
 bool NewPeakDialog::anyChanges()
 {
 	if (!ui->nameTextbox->text().isEmpty())	return true;
-	if (ui->rangeCombo->currentIndex() > 0)	return true;
+	// TODO
 	return false;
 }
 
