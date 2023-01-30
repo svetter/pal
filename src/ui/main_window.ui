@@ -228,7 +228,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>4</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideNone</enum>
@@ -256,9 +256,9 @@
           <string>Trips</string>
          </attribute>
         </widget>
-        <widget class="QWidget" name="climbersTab">
+        <widget class="QWidget" name="hikersTab">
          <attribute name="title">
-          <string>Climbers</string>
+          <string>Hikers</string>
          </attribute>
         </widget>
        </widget>
@@ -307,7 +307,7 @@
     <addaction name="newAscentAction"/>
     <addaction name="newPeakAction"/>
     <addaction name="newTripAction"/>
-    <addaction name="newClimberAction"/>
+    <addaction name="newHikerAction"/>
     <addaction name="newRegionAction"/>
     <addaction name="newRangeAction"/>
     <addaction name="newCountryAction"/>
@@ -396,9 +396,9 @@
     <string notr="true">Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="newClimberAction">
+  <action name="newHikerAction">
    <property name="text">
-    <string>New climber...</string>
+    <string>New hiker...</string>
    </property>
   </action>
   <action name="newCountryAction">

@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "src/dialogs/new_ascent.h"
 #include "src/dialogs/new_country.h"
+#include "src/dialogs/new_hiker.h"
 #include "src/dialogs/new_peak.h"
 #include "src/dialogs/new_range.h"
 #include "src/dialogs/new_region.h"
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
 	connect(ui->newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
 	connect(ui->newTripAction,		&QAction::triggered,	this,	&MainWindow::handle_newTrip);
+	connect(ui->newHikerAction,		&QAction::triggered,	this,	&MainWindow::handle_newHiker);
 	connect(ui->newRegionAction,	&QAction::triggered,	this,	&MainWindow::handle_newRegion);
 	connect(ui->newRangeAction,		&QAction::triggered,	this,	&MainWindow::handle_newRange);
 	connect(ui->newCountryAction,	&QAction::triggered,	this,	&MainWindow::handle_newCountry);
@@ -49,6 +51,12 @@ void MainWindow::handle_newPeak()
 void MainWindow::handle_newTrip()
 {
 	NewTripDialog dialog(this);
+    dialog.exec();
+}
+
+void MainWindow::handle_newHiker()
+{
+	NewHikerDialog dialog(this);
     dialog.exec();
 }
 

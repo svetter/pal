@@ -29,7 +29,7 @@ bool NewAscentDialog::anyChanges()
 {
 	if (ui->peakCombo->currentIndex() > 0)				return true;
 	if (ui->tripCombo->currentIndex() > 0)				return true;
-	// TODO climber
+	// TODO hiker
 	if (!ui->descriptionEditor->document()->isEmpty())	return true;
 	// TODO photos
 	return false;
