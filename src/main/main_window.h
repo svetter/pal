@@ -21,8 +21,9 @@ private:
 	Ui::MainWindow *ui;
 	void handle_newAscent();
 	void handle_newPeak();
-	void handle_newRange();
 	void handle_newTrip();
+	void handle_newRange();
+	void handle_newCountry();
 };
 
 

@@ -306,9 +306,10 @@
     </property>
     <addaction name="newAscentAction"/>
     <addaction name="newPeakAction"/>
-    <addaction name="newRangeAction"/>
     <addaction name="newTripAction"/>
     <addaction name="newClimberAction"/>
+    <addaction name="newRangeAction"/>
+    <addaction name="newCountryAction"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNew"/>
@@ -397,6 +398,11 @@
   <action name="newClimberAction">
    <property name="text">
     <string>New climber...</string>
+   </property>
+  </action>
+  <action name="newCountryAction">
+   <property name="text">
+    <string>New country...</string>
    </property>
   </action>
  </widget>

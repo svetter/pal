@@ -12,6 +12,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 
 SOURCES += \
+	src/dialogs/new_country.cpp \
 	src/dialogs/new_range.cpp \
 	src/dialogs/new_ascent.cpp \
 	src/dialogs/new_peak.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 HEADERS += \
 	src/db/initdb.h \
 	src/dialogs/new_ascent.h \
+	src/dialogs/new_country.h \
 	src/dialogs/new_peak.h \
 	src/dialogs/new_range.h \
 	src/dialogs/new_trip.h \
@@ -30,6 +32,7 @@ HEADERS += \
 FORMS += \
 	src/ui/main_window.ui \
 	src/ui/new_ascent.ui \
+	src/ui/new_country.ui \
 	src/ui/new_peak.ui \
 	src/ui/new_range.ui \
 	src/ui/new_trip.ui
