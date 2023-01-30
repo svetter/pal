@@ -7,14 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>199</height>
+    <height>300</height>
    </rect>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>16777215</width>
-    <height>199</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>New trip</string>
@@ -52,6 +46,18 @@
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="nameTextbox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="placeholderText">
         <string>Required</string>
        </property>
@@ -69,7 +75,10 @@
        <item>
         <widget class="QCheckBox" name="datesUnspecifiedCheckbox">
          <property name="text">
-          <string>Unspecified</string>
+          <string>Specify date</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -140,6 +149,29 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="descriptionLabel">
+     <property name="text">
+      <string>Description</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="descriptionEditor">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>50</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="Line" name="bottomLine">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -161,7 +193,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>30</height>
         </size>
        </property>
@@ -180,7 +212,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>0</width>
+         <width>100</width>
          <height>30</height>
         </size>
        </property>
