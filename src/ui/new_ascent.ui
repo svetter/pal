@@ -129,20 +129,6 @@
            <day>1</day>
           </date>
          </property>
-         <property name="maximumTime">
-          <time>
-           <hour>3</hour>
-           <minute>59</minute>
-           <second>59</second>
-          </time>
-         </property>
-         <property name="minimumTime">
-          <time>
-           <hour>3</hour>
-           <minute>0</minute>
-           <second>0</second>
-          </time>
-         </property>
          <property name="calendarPopup">
           <bool>true</bool>
          </property>
