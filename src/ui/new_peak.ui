@@ -107,7 +107,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="newregionButton">
+        <widget class="QPushButton" name="newRegionButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -129,7 +129,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="heightVolcanoLayout">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -162,7 +162,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="heightVolcanoSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -178,7 +178,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="volcanoCheckbox">
          <property name="text">
           <string>Volcano</string>
          </property>
@@ -187,7 +187,7 @@
       </layout>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="googleMapsTextbox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -206,14 +206,14 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="googleEarthLabel">
        <property name="text">
         <string>Google Earth</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QLineEdit" name="lineEdit_2">
+      <widget class="QLineEdit" name="googleEarthTextbox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -232,21 +232,21 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="wikipediaLabel">
        <property name="text">
         <string>Wikipedia</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="googleMapsLabel">
        <property name="text">
         <string>Google Maps</string>
        </property>
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="lineEdit_3">
+      <widget class="QLineEdit" name="wikipediaTextbox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
