@@ -46,10 +46,10 @@ FORMS += \
 
 
 TRANSLATIONS += \
-	src/translation/PAL_de.ts
+	translation/PAL_de.ts
 	
 DISTFILES +=
-	src/translation/PAL_de.ts
+	translation/PAL_de.ts
 	
 
 
