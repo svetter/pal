@@ -8,7 +8,8 @@ NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewTr
 {
 	ui->setupUi(this);
 	
-	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewTripDialog::handle_close);
+	connect(ui->datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
+	connect(ui->cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_close);
 }
 
 NewTripDialog::~NewTripDialog()
@@ -26,6 +27,13 @@ bool NewTripDialog::anyChanges()
 }
 
 
+
+void NewTripDialog::handle_datesSpecifiedChanged()
+{
+	bool enabled = !ui->datesUnspecifiedCheckbox->isChecked();
+	ui->startDateWidget->setEnabled(enabled);
+	ui->endDateWidget->setEnabled(enabled);
+}
 
 void NewTripDialog::handle_close()
 {

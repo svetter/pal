@@ -83,20 +83,29 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="dateLabel">
-       <property name="text">
-        <string>Date</string>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="dateSelectionLayout">
        <property name="spacing">
-        <number>5</number>
+        <number>10</number>
        </property>
        <item>
-        <widget class="QDateEdit" name="dateEdit">
+        <widget class="QCheckBox" name="dateCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDateEdit" name="dateWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -119,7 +128,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>2</day>
+           <day>3</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -154,27 +163,34 @@
         </spacer>
        </item>
        <item>
-        <widget class="QSpinBox" name="dayIndexSpinner">
-         <property name="maximumSize">
-          <size>
-           <width>40</width>
-           <height>16777215</height>
-          </size>
+        <layout class="QHBoxLayout" name="peakIndexLayout">
+         <property name="spacing">
+          <number>5</number>
          </property>
-         <property name="suffix">
-          <string notr="true">.</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>peak on that day</string>
-         </property>
-        </widget>
+         <item>
+          <widget class="QSpinBox" name="peakIndexSpinner">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="suffix">
+            <string notr="true">.</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="peakIndexLabel">
+           <property name="text">
+            <string>peak on that day</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="dateSpacer2">
@@ -203,6 +219,19 @@
        <property name="spacing">
         <number>10</number>
        </property>
+       <item>
+        <widget class="QCheckBox" name="timeCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QTimeEdit" name="timeWidget">
          <property name="enabled">
@@ -247,7 +276,7 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -256,16 +285,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="timeNotSpecifiedCheckbox">
-         <property name="text">
-          <string>Unspecified</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
        </item>
       </layout>
      </item>
@@ -387,7 +406,7 @@
           </size>
          </property>
          <property name="placeholderText">
-          <string>Select grade</string>
+          <string>None</string>
          </property>
         </widget>
        </item>
@@ -686,7 +705,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="titleTextbox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -701,6 +720,13 @@
        </property>
        <property name="placeholderText">
         <string>Optional</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="dateLabel">
+       <property name="text">
+        <string>Date</string>
        </property>
       </widget>
      </item>

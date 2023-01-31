@@ -12,10 +12,12 @@ NewAscentDialog::NewAscentDialog(QWidget *parent): QDialog(parent), ui(new Ui::N
 {
 	ui->setupUi(this);
 	
-	connect(ui->newPeakButton,				&QPushButton::clicked,		this,	&NewAscentDialog::handle_newPeak);
-	connect(ui->timeNotSpecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewAscentDialog::handle_timeSpecifiedChanged);
-	connect(ui->newTripButton,				&QPushButton::clicked,		this,	&NewAscentDialog::handle_newTrip);
-	connect(ui->cancelButton,				&QPushButton::clicked,		this,	&NewAscentDialog::handle_close);
+	connect(ui->newPeakButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newPeak);
+	connect(ui->dateCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_dateSpecifiedChanged);
+	connect(ui->timeCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_timeSpecifiedChanged);
+	connect(ui->difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&NewAscentDialog::handle_difficultySystemChanged);
+	connect(ui->newTripButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newTrip);
+	connect(ui->cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_close);
 }
 
 NewAscentDialog::~NewAscentDialog()
@@ -46,10 +48,27 @@ void NewAscentDialog::handle_newPeak()
 	dialog.exec();
 }
 
+void NewAscentDialog::handle_dateSpecifiedChanged()
+{
+	bool enabled = ui->dateCheckbox->isChecked();
+	ui->dateWidget->setEnabled(enabled);
+}
+
 void NewAscentDialog::handle_timeSpecifiedChanged()
 {
-	bool enabled = !ui->timeNotSpecifiedCheckbox->isChecked();
+	bool enabled = ui->timeCheckbox->isChecked();
 	ui->timeWidget->setEnabled(enabled);
+}
+
+void NewAscentDialog::handle_difficultySystemChanged()
+{
+	bool systemSelected = ui->difficultySystemCombo->currentIndex() > 0;
+	ui->difficultyGradeCombo->setEnabled(systemSelected);
+	if (systemSelected) {
+		ui->difficultyGradeCombo->setPlaceholderText(tr("Select grade"));
+	} else {
+		ui->difficultyGradeCombo->setPlaceholderText(tr("None"));
+	}
 }
 
 void NewAscentDialog::handle_newTrip()

@@ -19,6 +19,7 @@ private:
 	
 	bool anyChanges();
 	
+	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
 	void handle_close();
 };

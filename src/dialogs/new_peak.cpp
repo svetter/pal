@@ -10,8 +10,9 @@ NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewPe
 	ui->setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->newRegionButton,	&QPushButton::clicked,	this,	&NewPeakDialog::handle_newRegion);
-	connect(ui->cancelButton,		&QPushButton::clicked,	this,	&NewPeakDialog::handle_close);	
+	connect(ui->heightCheckbox,		&QCheckBox::stateChanged,	this,	&NewPeakDialog::handle_heightSpecifiedChanged);
+	connect(ui->newRegionButton,	&QPushButton::clicked,		this,	&NewPeakDialog::handle_newRegion);
+	connect(ui->cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_close);	
 }
 
 NewPeakDialog::~NewPeakDialog()
@@ -33,6 +34,12 @@ bool NewPeakDialog::anyChanges()
 }
 
 
+
+void NewPeakDialog::handle_heightSpecifiedChanged()
+{
+	bool enabled = ui->heightCheckbox->isChecked();
+	ui->heightSpinner->setEnabled(enabled);
+}
 
 void NewPeakDialog::handle_newRegion()
 {
