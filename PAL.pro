@@ -24,6 +24,7 @@ SOURCES += \
 	src/main/main_window.cpp
 
 HEADERS += \
+	src/data/hiker.h \
 	src/db/db_interface.h \
 	src/db/db_model.h \
 	src/dialogs/new_ascent.h \
