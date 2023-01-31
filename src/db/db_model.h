@@ -21,34 +21,38 @@ class Column {
 	QString		uiName;
 	ColumnType	type;
 	bool		primaryKey;
-	Column		*foreignKey;
+	Column		* foreignKey;
 	bool		nullable;
-	NormalTable	&inTable;
+	Table		* inTable;
 	
 public:
-	Column(QString name, QString uiName, ColumnType type, bool nullable, bool primaryKey, Column *foreignKey, Table &inTable);
-	~Column();
+	Column(QString name, QString uiName, ColumnType type, bool nullable, bool primaryKey, Column * foreignKey, Table * inTable);
 	
-	friend class Table;
+	friend class NormalTable;
+	friend class AssociativeTable;
 };
 
 
 class Table {
 	QString	name;
 	QString	uiName;
+	
+protected:
+	Table(QString name,  QString uiName);
 };
 
 
 class NormalTable: Table {
-	QList<Column>	columns;
+	Column			primaryKeyColumn;
+	QList<Column>	nonPrimaryColumns;
 	
 public:
 	NormalTable(QString name, QString uiName);
-	~NormalTable();
 	
-	bool addColumn(QString name, QString uiName, ColumnType type, bool nullable = true, Column *foreignKey = nullptr);
+	void addColumn(QString name, QString uiName, ColumnType type, bool nullable = true, Column * foreignKey = nullptr);
 	
-	Column* getPrimaryKeyColumn() const;
+	const Column * getPrimaryKeyColumn() const;
+	const Column * getColumnByName(QString name) const;
 };
 
 
@@ -57,10 +61,10 @@ class AssociativeTable: Table {
 	Column	column2;
 	
 public:
-	AssociativeTable(QString name, QString uiName, Column *foreignKeyColumn1, Column *foreignKeyColumn2);
-	~AssociativeTable();
+	AssociativeTable(QString name, QString uiName, Column *foreignKeyColumn1, Column * foreignKeyColumn2);
 	
-	QPair<Column*, Column*> getPrimaryKeyColumns() const;
+	const Column * getColumn1() const;	
+	const Column * getColumn2() const;
 };
 
 

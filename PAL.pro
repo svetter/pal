@@ -12,6 +12,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 
 SOURCES += \
+	src/db/db_model.cpp \
 	src/dialogs/new_country.cpp \
 	src/dialogs/new_hiker.cpp \
 	src/dialogs/new_range.cpp \
