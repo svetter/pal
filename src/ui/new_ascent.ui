@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>600</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -43,14 +43,14 @@
      <property name="verticalSpacing">
       <number>10</number>
      </property>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="peakLabel">
        <property name="text">
         <string>Peak</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <layout class="QHBoxLayout" name="peakSelectionLayout">
        <property name="spacing">
         <number>10</number>
@@ -83,14 +83,14 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="dateLabel">
        <property name="text">
         <string>Date</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
         <number>5</number>
@@ -119,7 +119,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>1</day>
+           <day>2</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -191,14 +191,14 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="timeLabel">
        <property name="text">
         <string>Local time</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <layout class="QHBoxLayout" name="timeLayout">
        <property name="spacing">
         <number>10</number>
@@ -269,14 +269,14 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="kindLabel">
        <property name="text">
         <string>Kind of hike</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <layout class="QHBoxLayout" name="kindLayout">
        <property name="spacing">
         <number>10</number>
@@ -338,14 +338,14 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="difficultyLabel">
        <property name="text">
         <string>Difficulty</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="5" column="1">
       <layout class="QHBoxLayout" name="difficultyLayout">
        <property name="spacing">
         <number>10</number>
@@ -393,14 +393,14 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="tripLabel">
        <property name="text">
         <string>During trip</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1">
       <layout class="QHBoxLayout" name="tripSelectionLayout">
        <property name="spacing">
         <number>10</number>
@@ -439,14 +439,14 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="climbersLabel">
        <property name="text">
         <string>Participants</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="7" column="1">
       <layout class="QHBoxLayout" name="climbersLayout">
        <property name="spacing">
         <number>10</number>
@@ -533,7 +533,7 @@
         </layout>
        </item>
        <item>
-        <spacer name="horizontalSpacer_6">
+        <spacer name="climbersSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -547,14 +547,14 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="photosLabel">
        <property name="text">
         <string>Photos</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="8" column="1">
       <layout class="QHBoxLayout" name="photosSelectionLayout">
        <property name="spacing">
         <number>10</number>
@@ -677,6 +677,32 @@
         </layout>
        </item>
       </layout>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="titleLabel">
+       <property name="text">
+        <string>Ascent title</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Optional</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
