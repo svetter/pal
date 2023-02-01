@@ -2,13 +2,14 @@
 #define DB_INTERFACE_H
 
 #include "db_model.h"
+#include "src/data/ascent.h"
+#include "src/data/peak.h"
+#include "src/data/trip.h"
+#include "src/data/hiker.h"
+#include "src/data/region.h"
+#include "src/data/range.h"
+#include "src/data/country.h"
 
-
-
-struct WhatIfResult {
-	QList<Table*>	affectedTables;
-	int				numAffectedRows;
-};
 
 
 class RowContents;
@@ -37,7 +38,6 @@ public:
 	Region*		getRegion(int regionID);
 	Range*		getRange(int rangeID);
 	Country*	getCountry(int countryID);
-	Photo*		getPhoto(int photoID);
 	
 	bool addRow(Table * table, RowContents row);
 	

@@ -24,9 +24,16 @@ SOURCES += \
 	src/main/main_window.cpp
 
 HEADERS += \
+	src/data/ascent.h \
+	src/data/country.h \
 	src/data/hiker.h \
+	src/data/peak.h \
+	src/data/range.h \
+	src/data/region.h \
+	src/data/trip.h \
 	src/db/db_interface.h \
 	src/db/db_model.h \
+	src/db/tables/db_tables.h \
 	src/dialogs/new_ascent.h \
 	src/dialogs/new_country.h \
 	src/dialogs/new_hiker.h \

@@ -1,4 +1,15 @@
-#include "db_model.h"
+#ifndef DB_TABLES_H
+#define DB_TABLES_H
+
+#include "src/db/db_model.h"
+#include "src/data/ascent.h"
+#include "src/data/peak.h"
+#include "src/data/trip.h"
+#include "src/data/hiker.h"
+#include "src/data/region.h"
+#include "src/data/range.h"
+#include "src/data/country.h"
+#include "src/db/db_model.h"
 
 #include <QString>
 
@@ -6,43 +17,39 @@
 
 class AscentTable : NormalTable {
 public:
-	Column<QString>				titleColumn;
-	Column<Peak*>				peakColumn;
-	Column<Date>				dateColumn;
-	Column<int>					peakOnDayColumn;
-	Column<Time>				timeColumn;
-	Column<HikeKind>			kindColumn;
-	Column<bool>				traverseColumn;
-	Column<DifficultySystem>	difficultySystemColumn;
-	Column<DifficultyGrade>		difficultyGradeColumn;
-	Column<Trip*>				tripColumn;
-	Column<QString>				notesColumn;
+	Column titleColumn;
+	Column peakColumn;
+	Column dateColumn;
+	Column peakOnDayColumn;
+	Column timeColumn;
+	Column kindColumn;
+	Column traverseColumn;
+	Column difficultySystemColumn;
+	Column difficultyGradeColumn;
+	Column tripColumn;
+	Column notesColumn;
 	
 	AscentTable();
 	
 	void addRow(Ascent* ascent);
-	WhatIfResult whatIf_removeRow(int ascentID);
-	void removeRow(int ascentID);
-	WhatIfResult whatIf_changeCell(int ascentID, Column* column);
-	template<class T> void changeCell(int ascentID, Column<T>* column, T newValue);
-}
+};
 
 
 class PeakTable : NormalTable {
 public:
-	Column<QString>	nameColumn;
-	Column<int>		heightColumn;
-	Column<bool>	volcanoColumn;
-	Column<Region*>	regionColumn;
-	Column<QString>	mapsLinkColumn;
-	Column<QString>	earthLinkColumn;
-	Column<QString>	wikiLinkColumn;
+	Column nameColumn;
+	Column heightColumn;
+	Column volcanoColumn;
+	Column regionColumn;
+	Column mapsLinkColumn;
+	Column earthLinkColumn;
+	Column wikiLinkColumn;
 	
 	PeakTable();
 	
 	void addRow(Peak* peak);
-	WhatIfResult whatIf_removeRow(int ascentID);
-	void removeRow(int ascentID);
-	WhatIfResult whatIf_changeCell(int ascentID, Column* column);
-	template<class T> void changeCell(int ascentID, Column<T>* column, T newValue);
-}
+};
+
+
+
+#endif // DB_TABLES_H

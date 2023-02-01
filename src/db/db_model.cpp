@@ -4,7 +4,7 @@
 
 
 
-Column::Column(QString name, QString uiName, ColumnType type, bool nullable, bool primaryKey, Column * foreignKey, Table * inTable) :
+Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column * foreignKey, Table * inTable) :
 		name(name),
 		uiName(uiName),
 		type(type),
@@ -25,12 +25,12 @@ Table::Table(QString name, QString uiName) :
 
 NormalTable::NormalTable(QString name, QString uiName) :
 		Table(name, uiName),
-		primaryKeyColumn(Column(name + "ID", "ID for table " + uiName, ColumnType::integer, false, true, nullptr, this)),
+		primaryKeyColumn(Column(name + "ID", "ID for table " + uiName, DataType::integer, false, true, nullptr, this)),
 		nonPrimaryColumns(QList<Column>())
 {}
 
 
-void NormalTable::addColumn(QString name, QString uiName, ColumnType type, bool nullable, Column * foreignKey)
+void NormalTable::addColumn(QString name, QString uiName, DataType type, bool nullable, Column * foreignKey)
 {
 	nonPrimaryColumns.append(Column(name, uiName, type, nullable, false, foreignKey, this));
 }
@@ -54,11 +54,11 @@ const Column * NormalTable::getColumnByName(QString name) const
 
 AssociativeTable::AssociativeTable(QString name, QString uiName, Column * foreignKeyColumn1, Column * foreignKeyColumn2) :
 		Table(name, uiName),
-		column1(Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, ColumnType::integer, false, true, foreignKeyColumn1, this)),
-		column2(Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, ColumnType::integer, false, true, foreignKeyColumn2, this))
+		column1(Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::integer, false, true, foreignKeyColumn1, this)),
+		column2(Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::integer, false, true, foreignKeyColumn2, this))
 {
-	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == ColumnType::integer);
-	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == ColumnType::integer);
+	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::integer);
+	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::integer);
 }
 
 const Column * AssociativeTable::getColumn1() const
