@@ -20,7 +20,9 @@ private:
 	
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
-	void handle_close();
+	
+	void handle_ok();
+	void handle_cancel();
 };
 
 

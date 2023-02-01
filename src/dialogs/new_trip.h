@@ -19,7 +19,9 @@ private:
 	bool anyChanges();
 	
 	void handle_datesSpecifiedChanged();
-	void handle_close();
+	
+	void handle_ok();
+	void handle_cancel();
 };
 
 

@@ -10,8 +10,8 @@ NewHikerDialog::NewHikerDialog(QWidget *parent): QDialog(parent)
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(okButton,		&QPushButton::clicked,		this,	&QDialog::accept);
-	connect(cancelButton,	&QPushButton::clicked,		this,	&NewHikerDialog::handle_close);
+	connect(okButton,		&QPushButton::clicked,		this,	&NewHikerDialog::handle_ok);
+	connect(cancelButton,	&QPushButton::clicked,		this,	&NewHikerDialog::handle_cancel);
 }
 
 
@@ -24,7 +24,19 @@ bool NewHikerDialog::anyChanges()
 
 
 
-void NewHikerDialog::handle_close()
+void NewHikerDialog::handle_ok()
+{
+	if (!nameTextbox->text().isEmpty()) {
+		accept();
+	} else {
+		QString title = tr("Can't save new hiker");
+		QString question = tr("The hiker needs a name.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, question, ok, ok);
+	}
+}
+
+void NewHikerDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -42,7 +54,7 @@ void NewHikerDialog::handle_close()
 
 void NewHikerDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -51,8 +63,9 @@ Hiker* openNewHikerDialogAndStore(QWidget *parent)
 {
 	NewHikerDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString name = dialog.nameTextbox->text();
-		return new Hiker(name);
+		Hiker* hiker = new Hiker();
+		hiker->name = dialog.nameTextbox->text();
+		return hiker;
 	}
 	return nullptr;
 }

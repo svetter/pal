@@ -10,8 +10,8 @@ NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent)
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
 	
-	connect(okButton,					&QPushButton::clicked,		this,	&QDialog::accept);
-	connect(cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_close);
+	connect(okButton,					&QPushButton::clicked,		this,	&NewTripDialog::handle_ok);
+	connect(cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_cancel);
 }
 
 
@@ -32,7 +32,21 @@ void NewTripDialog::handle_datesSpecifiedChanged()
 	endDateWidget->setEnabled(enabled);
 }
 
-void NewTripDialog::handle_close()
+
+
+void NewTripDialog::handle_ok()
+{
+	if (!nameTextbox->text().isEmpty()) {
+		accept();
+	} else {
+		QString title = tr("Can't save new trip");
+		QString question = tr("The trip needs a name.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, question, ok, ok);
+	}
+}
+
+void NewTripDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -50,7 +64,7 @@ void NewTripDialog::handle_close()
 
 void NewTripDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -59,9 +73,10 @@ Trip* openNewTripDialogAndStore(QWidget *parent)
 {
 	NewTripDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString name = dialog.nameTextbox->text();
+		Trip* trip = new Trip();
+		trip->name = dialog.nameTextbox->text();
 		// TODO
-		//return new Trip(...);
+		return trip;
 	}
 	return nullptr;
 }

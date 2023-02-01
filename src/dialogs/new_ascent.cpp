@@ -19,8 +19,8 @@ NewAscentDialog::NewAscentDialog(QWidget *parent): QDialog(parent)
 	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&NewAscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newTrip);
 	
-	connect(okButton,				&QPushButton::clicked,				this,	&QDialog::accept);
-	connect(cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_close);
+	connect(okButton,				&QPushButton::clicked,				this,	&NewAscentDialog::handle_ok);
+	connect(cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_cancel);
 }
 
 
@@ -81,7 +81,14 @@ void NewAscentDialog::handle_photosPathBrowse()
 	QString path = QFileDialog::getExistingDirectory(this, caption);
 }
 
-void NewAscentDialog::handle_close()
+
+
+void NewAscentDialog::handle_ok()
+{
+	accept();
+}
+
+void NewAscentDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -99,7 +106,7 @@ void NewAscentDialog::handle_close()
 
 void NewAscentDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -108,9 +115,10 @@ Ascent* openNewAscentDialogAndStore(QWidget *parent)
 {
 	NewAscentDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString title = parseLineedit(dialog.titleTextbox);
+		Ascent* ascent = new Ascent();
+		ascent->title = parseLineedit(dialog.titleTextbox);
 		// TODO
-		//return new Ascent(...);
+		return ascent;
 	}
 	return nullptr;
 }

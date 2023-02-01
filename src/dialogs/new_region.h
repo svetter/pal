@@ -20,7 +20,9 @@ private:
 	
 	void handle_newRange();	
 	void handle_newCountry();
-	void handle_close();
+	
+	void handle_ok();
+	void handle_cancel();
 };
 
 

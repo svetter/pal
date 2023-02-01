@@ -24,7 +24,9 @@ private:
 	void handle_difficultySystemChanged();
 	void handle_newTrip();
 	void handle_photosPathBrowse();
-	void handle_close();
+	
+	void handle_ok();
+	void handle_cancel();
 };
 
 

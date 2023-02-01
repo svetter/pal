@@ -13,8 +13,8 @@ NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
 	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&NewPeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,	&QPushButton::clicked,		this,	&NewPeakDialog::handle_newRegion);
 	
-	connect(okButton,			&QPushButton::clicked,		this,	&QDialog::accept);
-	connect(cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_close);	
+	connect(okButton,			&QPushButton::clicked,		this,	&NewPeakDialog::handle_ok);
+	connect(cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_cancel);	
 }
 
 
@@ -32,6 +32,18 @@ bool NewPeakDialog::anyChanges()
 
 
 
+void NewPeakDialog::handle_ok()
+{
+	if (!nameTextbox->text().isEmpty()) {
+		accept();
+	} else {
+		QString title = tr("Can't save new peak");
+		QString question = tr("The peak needs a name.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, question, ok, ok);
+	}
+}
+
 void NewPeakDialog::handle_heightSpecifiedChanged()
 {
 	bool enabled = heightCheckbox->isChecked();
@@ -44,7 +56,7 @@ void NewPeakDialog::handle_newRegion()
 	dialog.exec();
 }
 
-void NewPeakDialog::handle_close()
+void NewPeakDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -62,7 +74,7 @@ void NewPeakDialog::handle_close()
 
 void NewPeakDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -71,9 +83,10 @@ Peak* openNewPeakDialogAndStore(QWidget *parent)
 {
 	NewPeakDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString name = dialog.nameTextbox->text();
+		Peak* peak = new Peak();
+		peak->name = dialog.nameTextbox->text();
 		// TODO
-		//return new Peak(...);
+		return peak;
 	}
 	return nullptr;
 }

@@ -9,8 +9,8 @@ NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent)
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(okButton,		&QPushButton::clicked,	this,	&QDialog::accept);
-	connect(cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_close);
+	connect(okButton,		&QPushButton::clicked,	this,	&NewRangeDialog::handle_ok);
+	connect(cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_cancel);
 }
 
 
@@ -24,7 +24,19 @@ bool NewRangeDialog::anyChanges()
 
 
 
-void NewRangeDialog::handle_close()
+void NewRangeDialog::handle_ok()
+{
+	if (!nameTextbox->text().isEmpty()) {
+		accept();
+	} else {
+		QString title = tr("Can't save new mountain range");
+		QString question = tr("The mountain range needs a name.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, question, ok, ok);
+	}
+}
+
+void NewRangeDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -42,7 +54,7 @@ void NewRangeDialog::handle_close()
 
 void NewRangeDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -51,9 +63,10 @@ Range* openNewRangeDialogAndStore(QWidget *parent)
 {
 	NewRangeDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString name = dialog.nameTextbox->text();
+		Range* range = new Range();
+		range->name = dialog.nameTextbox->text();
 		// TODO
-		//return new Range(...);
+		return range;
 	}
 	return nullptr;
 }

@@ -14,8 +14,8 @@ NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent)
 	connect(newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);
 	connect(newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);
 	
-	connect(okButton,			&QPushButton::clicked,	this,	&QDialog::accept);
-	connect(cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_close);
+	connect(okButton,			&QPushButton::clicked,	this,	&NewRegionDialog::handle_ok);
+	connect(cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_cancel);
 }
 
 
@@ -42,7 +42,21 @@ void NewRegionDialog::handle_newCountry()
 	dialog.exec();
 }
 
-void NewRegionDialog::handle_close()
+
+
+void NewRegionDialog::handle_ok()
+{
+	if (!nameTextbox->text().isEmpty()) {
+		accept();
+	} else {
+		QString title = tr("Can't save new region");
+		QString question = tr("The region needs a name.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, question, ok, ok);
+	}
+}
+
+void NewRegionDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (anyChanges()) {
@@ -60,7 +74,7 @@ void NewRegionDialog::handle_close()
 
 void NewRegionDialog::reject()
 {
-	handle_close();
+	handle_cancel();
 }
 
 
@@ -69,9 +83,10 @@ Region* openNewRegionDialogAndStore(QWidget *parent)
 {
 	NewRegionDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString name = dialog.nameTextbox->text();
+		Region* region = new Region();
+		region->name = dialog.nameTextbox->text();
 		// TODO
-		//return new Region(...);
+		return region;
 	}
 	return nullptr;
 }
