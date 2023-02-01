@@ -5,11 +5,12 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTranslator>
 #include <iostream>
 
 
 
-NewAscentDialog::NewAscentDialog(QWidget *parent): QDialog(parent)
+NewAscentDialog::NewAscentDialog(QWidget *parent): NewOrEditDialog(parent, tr("ascent"))
 {
 	setupUi(this);
 	
@@ -25,8 +26,9 @@ NewAscentDialog::NewAscentDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewAscentDialog::anyChanges()
+bool NewAscentDialog::changesMade()
 {
+	if (!titleLabel->text().isEmpty())				return true;
 	if (peakCombo->currentIndex() > 0)				return true;
 	if (tripCombo->currentIndex() > 0)				return true;
 	if (difficultySystemCombo->currentIndex() > 0)	return true;
@@ -86,27 +88,6 @@ void NewAscentDialog::handle_photosPathBrowse()
 void NewAscentDialog::handle_ok()
 {
 	accept();
-}
-
-void NewAscentDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new ascent");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewAscentDialog::reject()
-{
-	handle_cancel();
 }
 
 

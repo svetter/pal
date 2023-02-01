@@ -1,27 +1,25 @@
 #ifndef NEW_TRIP_H
 #define NEW_TRIP_H
 
+#include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/trip.h"
 #include "ui_new_trip.h"
 
 
 
-class NewTripDialog : public QDialog, public Ui_NewTripDialog
+class NewTripDialog : public NewOrEditDialog, public Ui_NewTripDialog
 {
 	Q_OBJECT
 	
 public:
-	NewTripDialog(QWidget *parent = 0);
+	NewTripDialog(QWidget* parent);
 	
 private:
-	void reject();
-	
-	bool anyChanges();
+	virtual bool changesMade();
 	
 	void handle_datesSpecifiedChanged();
 	
 	void handle_ok();
-	void handle_cancel();
 };
 
 

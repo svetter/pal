@@ -6,7 +6,7 @@
 
 
 
-NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent)
+NewRegionDialog::NewRegionDialog(QWidget *parent): NewOrEditDialog(parent, tr("region"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -20,7 +20,7 @@ NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewRegionDialog::anyChanges()
+bool NewRegionDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())		return true;
 	if (rangeCombo->currentIndex() > 0)		return true;
@@ -54,27 +54,6 @@ void NewRegionDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewRegionDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new region");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewRegionDialog::reject()
-{
-	handle_cancel();
 }
 
 

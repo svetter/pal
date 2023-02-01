@@ -5,7 +5,7 @@
 
 
 
-NewHikerDialog::NewHikerDialog(QWidget *parent): QDialog(parent)
+NewHikerDialog::NewHikerDialog(QWidget *parent): NewOrEditDialog(parent, tr("hiker"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -16,7 +16,7 @@ NewHikerDialog::NewHikerDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewHikerDialog::anyChanges()
+bool NewHikerDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())	return true;
 	return false;
@@ -34,27 +34,6 @@ void NewHikerDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewHikerDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new hiker");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewHikerDialog::reject()
-{
-	handle_cancel();
 }
 
 

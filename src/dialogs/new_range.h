@@ -1,25 +1,23 @@
 #ifndef NEW_RANGE_H
 #define NEW_RANGE_H
 
+#include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/range.h"
 #include "ui_new_range.h"
 
 
 
-class NewRangeDialog : public QDialog, public Ui_NewRangeDialog
+class NewRangeDialog : public NewOrEditDialog, public Ui_NewRangeDialog
 {
 	Q_OBJECT
 	
 public:
-	NewRangeDialog(QWidget *parent = 0);
+	NewRangeDialog(QWidget* parent);
 	
 private:
-	void reject();
-	
-	bool anyChanges();
+	virtual bool changesMade();
 	
 	void handle_ok();
-	void handle_cancel();
 };
 
 

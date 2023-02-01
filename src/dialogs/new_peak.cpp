@@ -5,7 +5,7 @@
 
 
 
-NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
+NewPeakDialog::NewPeakDialog(QWidget *parent): NewOrEditDialog(parent, tr("peak"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -19,7 +19,7 @@ NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewPeakDialog::anyChanges()
+bool NewPeakDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())			return true;
 	if (regionCombo->currentIndex() > 0)		return true;
@@ -28,6 +28,20 @@ bool NewPeakDialog::anyChanges()
 	if (!googleEarthTextbox->text().isEmpty())	return true;
 	if (!wikipediaTextbox->text().isEmpty())	return true;
 	return false;
+}
+
+
+
+void NewPeakDialog::handle_heightSpecifiedChanged()
+{
+	bool enabled = heightCheckbox->isChecked();
+	heightSpinner->setEnabled(enabled);
+}
+
+void NewPeakDialog::handle_newRegion()
+{
+	NewRegionDialog dialog(this);
+	dialog.exec();
 }
 
 
@@ -42,39 +56,6 @@ void NewPeakDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewPeakDialog::handle_heightSpecifiedChanged()
-{
-	bool enabled = heightCheckbox->isChecked();
-	heightSpinner->setEnabled(enabled);
-}
-
-void NewPeakDialog::handle_newRegion()
-{
-	NewRegionDialog dialog(this);
-	dialog.exec();
-}
-
-void NewPeakDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new peak");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewPeakDialog::reject()
-{
-	handle_cancel();
 }
 
 

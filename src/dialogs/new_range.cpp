@@ -4,7 +4,7 @@
 
 
 
-NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent)
+NewRangeDialog::NewRangeDialog(QWidget *parent): NewOrEditDialog(parent, tr("range"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -15,7 +15,7 @@ NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewRangeDialog::anyChanges()
+bool NewRangeDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())		return true;
 	if (continentCombo->currentIndex() > 0)	return true;
@@ -34,27 +34,6 @@ void NewRangeDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewRangeDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new range");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewRangeDialog::reject()
-{
-	handle_cancel();
 }
 
 

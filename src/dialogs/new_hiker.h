@@ -1,25 +1,23 @@
 #ifndef NEW_HIKER_H
 #define NEW_HIKER_H
 
+#include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/hiker.h"
 #include "ui_new_hiker.h"
 
 
 
-class NewHikerDialog : public QDialog, public Ui_NewHikerDialog
+class NewHikerDialog : public NewOrEditDialog, public Ui_NewHikerDialog
 {
 	Q_OBJECT
 	
 public:
-	NewHikerDialog(QWidget *parent = 0);
+	NewHikerDialog(QWidget* parent);
 	
 private:
-	void reject();
-	
-	bool anyChanges();
+	virtual bool changesMade();
 	
 	void handle_ok();
-	void handle_cancel();
 };
 
 

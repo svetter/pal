@@ -15,6 +15,7 @@ SOURCES += \
 	src/db/db_model.cpp \
 	src/dialogs/new_country.cpp \
 	src/dialogs/new_hiker.cpp \
+	src/dialogs/new_or_edit_dialog.cpp \
 	src/dialogs/new_range.cpp \
 	src/dialogs/new_ascent.cpp \
 	src/dialogs/new_peak.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
 	src/dialogs/new_ascent.h \
 	src/dialogs/new_country.h \
 	src/dialogs/new_hiker.h \
+	src/dialogs/new_or_edit_dialog.h \
 	src/dialogs/new_peak.h \
 	src/dialogs/new_range.h \
 	src/dialogs/new_region.h \

@@ -4,7 +4,7 @@
 
 
 
-NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent)
+NewTripDialog::NewTripDialog(QWidget *parent): NewOrEditDialog(parent, tr("trip"))
 {
 	setupUi(this);
 	
@@ -16,7 +16,7 @@ NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewTripDialog::anyChanges()
+bool NewTripDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())				return true;
 	if (!descriptionEditor->document()->isEmpty())	return true;
@@ -44,27 +44,6 @@ void NewTripDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewTripDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new trip");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewTripDialog::reject()
-{
-	handle_cancel();
 }
 
 

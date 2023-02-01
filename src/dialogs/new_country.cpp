@@ -4,7 +4,7 @@
 
 
 
-NewCountryDialog::NewCountryDialog(QWidget *parent): QDialog(parent)
+NewCountryDialog::NewCountryDialog(QWidget *parent): NewOrEditDialog(parent, tr("country"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -15,7 +15,7 @@ NewCountryDialog::NewCountryDialog(QWidget *parent): QDialog(parent)
 
 
 
-bool NewCountryDialog::anyChanges()
+bool NewCountryDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())	return true;
 	return false;
@@ -33,27 +33,6 @@ void NewCountryDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, question, ok, ok);
 	}
-}
-
-void NewCountryDialog::handle_cancel()
-{
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
-	if (anyChanges()) {
-		QString title = tr("Discard unsaved new country");
-		QString question = tr("Are you sure?");
-		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
-	}
-	if (resBtn == QMessageBox::Yes) {
-		QDialog::reject();
-	}
-}
-
-
-void NewCountryDialog::reject()
-{
-	handle_cancel();
 }
 
 
