@@ -11,8 +11,10 @@ NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent)
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);	
-	connect(newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);	
+	connect(newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);
+	connect(newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);
+	
+	connect(okButton,			&QPushButton::clicked,	this,	&QDialog::accept);
 	connect(cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_close);
 }
 

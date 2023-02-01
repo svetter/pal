@@ -38,20 +38,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::handle_newAscent()
 {
-	NewAscentDialog dialog(this);
-	dialog.exec();
+	openNewAscentDialogAndStore(this);
 }
 
 void MainWindow::handle_newPeak()
 {
-	NewPeakDialog dialog(this);
-	dialog.exec();
+	openNewPeakDialogAndStore(this);
 }
 
 void MainWindow::handle_newTrip()
 {
-	NewTripDialog dialog(this);
-	dialog.exec();
+	openNewTripDialogAndStore(this);
 }
 
 void MainWindow::handle_newHiker()
@@ -61,18 +58,15 @@ void MainWindow::handle_newHiker()
 
 void MainWindow::handle_newRegion()
 {
-	NewRegionDialog dialog(this);
-	dialog.exec();
+	openNewRegionDialogAndStore(this);
 }
 
 void MainWindow::handle_newRange()
 {
-	NewRangeDialog dialog(this);
-	dialog.exec();
+	openNewRangeDialogAndStore(this);
 }
 
 void MainWindow::handle_newCountry()
 {
-	NewCountryDialog dialog(this);
-	dialog.exec();
+	openNewCountryDialogAndStore(this);
 }

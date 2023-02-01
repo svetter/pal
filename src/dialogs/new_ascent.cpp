@@ -18,6 +18,8 @@ NewAscentDialog::NewAscentDialog(QWidget *parent): QDialog(parent)
 	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_timeSpecifiedChanged);
 	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&NewAscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newTrip);
+	
+	connect(okButton,				&QPushButton::clicked,				this,	&QDialog::accept);
 	connect(cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_close);
 }
 

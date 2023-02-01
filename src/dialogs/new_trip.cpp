@@ -9,6 +9,8 @@ NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent)
 	setupUi(this);
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
+	
+	connect(okButton,					&QPushButton::clicked,		this,	&QDialog::accept);
 	connect(cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_close);
 }
 

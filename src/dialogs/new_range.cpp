@@ -9,6 +9,7 @@ NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent)
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	connect(okButton,		&QPushButton::clicked,	this,	&QDialog::accept);
 	connect(cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_close);
 }
 

@@ -12,6 +12,8 @@ NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
 	
 	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&NewPeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,	&QPushButton::clicked,		this,	&NewPeakDialog::handle_newRegion);
+	
+	connect(okButton,			&QPushButton::clicked,		this,	&QDialog::accept);
 	connect(cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_close);	
 }
 
