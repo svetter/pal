@@ -4,24 +4,19 @@
 
 
 
-NewCountryDialog::NewCountryDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewCountryDialog)
+NewCountryDialog::NewCountryDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewCountryDialog::reject);
-}
-
-NewCountryDialog::~NewCountryDialog()
-{
-	delete ui;
+	connect(cancelButton,	&QPushButton::clicked,	this,	&NewCountryDialog::reject);
 }
 
 
 
 bool NewCountryDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())	return true;
+	if (!nameTextbox->text().isEmpty())	return true;
 	return false;
 }
 
@@ -43,8 +38,21 @@ void NewCountryDialog::handle_close()
 }
 
 
-
 void NewCountryDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Country* openNewCountryDialog(QWidget *parent)
+{
+	// TODO
+	return nullptr;
+}
+
+bool openEditCountryDialog(QWidget *parent, Country* country)
+{
+	// TODO
+	return false;
 }

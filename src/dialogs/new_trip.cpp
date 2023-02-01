@@ -4,25 +4,20 @@
 
 
 
-NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewTripDialog)
+NewTripDialog::NewTripDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	
-	connect(ui->datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
-	connect(ui->cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_close);
-}
-
-NewTripDialog::~NewTripDialog()
-{
-	delete ui;
+	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
+	connect(cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_close);
 }
 
 
 
 bool NewTripDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())				return true;
-	if (!ui->descriptionEditor->document()->isEmpty())	return true;
+	if (!nameTextbox->text().isEmpty())				return true;
+	if (!descriptionEditor->document()->isEmpty())	return true;
 	return false;
 }
 
@@ -30,9 +25,9 @@ bool NewTripDialog::anyChanges()
 
 void NewTripDialog::handle_datesSpecifiedChanged()
 {
-	bool enabled = !ui->datesUnspecifiedCheckbox->isChecked();
-	ui->startDateWidget->setEnabled(enabled);
-	ui->endDateWidget->setEnabled(enabled);
+	bool enabled = !datesUnspecifiedCheckbox->isChecked();
+	startDateWidget->setEnabled(enabled);
+	endDateWidget->setEnabled(enabled);
 }
 
 void NewTripDialog::handle_close()
@@ -51,8 +46,26 @@ void NewTripDialog::handle_close()
 }
 
 
-
 void NewTripDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Trip* openNewTripDialogAndStore(QWidget *parent)
+{
+	NewTripDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		// TODO
+		//return new Trip(...);
+	}
+	return nullptr;
+}
+
+bool openEditTripDialog(QWidget *parent, Trip* trip)
+{
+	// TODO
+	return false;
 }

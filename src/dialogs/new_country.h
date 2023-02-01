@@ -12,10 +12,8 @@ class NewCountryDialog : public QDialog, public Ui_NewCountryDialog
 	
 public:
 	NewCountryDialog(QWidget *parent = 0);
-	~NewCountryDialog();
 	
 private:
-	Ui::NewCountryDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -25,8 +23,8 @@ private:
 
 
 
-Country* openNewCountryDialog();
-bool openEditCountryDialog(Country* country);
+Country* openNewCountryDialog(QWidget *parent);
+bool openEditCountryDialog(QWidget *parent, Country* country);
 
 
 

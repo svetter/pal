@@ -10,6 +10,8 @@ class Hiker
 public:
 	int		hikerID;
 	QString	name;
+	
+	Hiker(QString name);
 };
 
 

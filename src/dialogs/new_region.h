@@ -12,10 +12,8 @@ class NewRegionDialog : public QDialog, public Ui_NewRegionDialog
 	
 public:
 	NewRegionDialog(QWidget *parent = 0);
-	~NewRegionDialog();
 	
 private:
-	Ui::NewRegionDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -27,8 +25,8 @@ private:
 
 
 
-Region* openNewRegionDialog();
-bool openEditRegionDialog(Region* region);
+Region* openNewRegionDialog(QWidget *parent);
+bool openEditRegionDialog(QWidget *parent, Region* region);
 
 
 

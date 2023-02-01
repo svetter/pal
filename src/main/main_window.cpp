@@ -8,6 +8,8 @@
 #include "src/dialogs/new_trip.h"
 #include "ui_main_window.h"
 
+#include <iostream>
+
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -37,43 +39,40 @@ MainWindow::~MainWindow()
 void MainWindow::handle_newAscent()
 {
 	NewAscentDialog dialog(this);
-    dialog.exec();
-	//if (dialog.exec() == QDialog::Accepted)
-	//	m_store->setCookie(dialog.cookie());
+	dialog.exec();
 }
 
 void MainWindow::handle_newPeak()
 {
 	NewPeakDialog dialog(this);
-    dialog.exec();
+	dialog.exec();
 }
 
 void MainWindow::handle_newTrip()
 {
 	NewTripDialog dialog(this);
-    dialog.exec();
+	dialog.exec();
 }
 
 void MainWindow::handle_newHiker()
 {
-	NewHikerDialog dialog(this);
-    dialog.exec();
+	openNewHikerDialog(this);
 }
 
 void MainWindow::handle_newRegion()
 {
 	NewRegionDialog dialog(this);
-    dialog.exec();
+	dialog.exec();
 }
 
 void MainWindow::handle_newRange()
 {
 	NewRangeDialog dialog(this);
-    dialog.exec();
+	dialog.exec();
 }
 
 void MainWindow::handle_newCountry()
 {
 	NewCountryDialog dialog(this);
-    dialog.exec();
+	dialog.exec();
 }

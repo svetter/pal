@@ -1,27 +1,24 @@
 #include "new_hiker.h"
 
+#include <iostream>
 #include <QMessageBox>
 
 
 
-NewHikerDialog::NewHikerDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewHikerDialog)
+NewHikerDialog::NewHikerDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewHikerDialog::handle_close);
-}
-
-NewHikerDialog::~NewHikerDialog()
-{
-	delete ui;
+	connect(okButton,		&QPushButton::clicked,		this,	&QDialog::accept);
+	connect(cancelButton,	&QPushButton::clicked,		this,	&NewHikerDialog::handle_close);
 }
 
 
 
 bool NewHikerDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())	return true;
+	if (!nameTextbox->text().isEmpty())	return true;
 	return false;
 }
 
@@ -43,8 +40,25 @@ void NewHikerDialog::handle_close()
 }
 
 
-
 void NewHikerDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Hiker* openNewHikerDialog(QWidget *parent)
+{
+	NewHikerDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		return new Hiker(name);
+	}
+	return nullptr;
+}
+
+bool openEditHikerDialog(QWidget *parent, Hiker* hiker)
+{
+	// TODO
+	return false;
 }

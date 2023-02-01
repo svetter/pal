@@ -12,10 +12,8 @@ class NewAscentDialog : public QDialog, public Ui_NewAscentDialog
 	
 public:
 	NewAscentDialog(QWidget *parent = nullptr);
-	~NewAscentDialog();
 	
 private:
-	Ui::NewAscentDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -31,8 +29,8 @@ private:
 
 
 
-Ascent* openNewAscentDialog();
-bool openEditAscentDialog(Ascent* ascent);
+Ascent* openNewAscentDialog(QWidget *parent);
+bool openEditAscentDialog(QWidget *parent, Ascent* ascent);
 
 
 

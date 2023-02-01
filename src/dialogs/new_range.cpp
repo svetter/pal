@@ -4,25 +4,20 @@
 
 
 
-NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewRangeDialog)
+NewRangeDialog::NewRangeDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_close);
-}
-
-NewRangeDialog::~NewRangeDialog()
-{
-	delete ui;
+	connect(cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_close);
 }
 
 
 
 bool NewRangeDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())		return true;
-	if (ui->continentCombo->currentIndex() > 0)	return true;
+	if (!nameTextbox->text().isEmpty())		return true;
+	if (continentCombo->currentIndex() > 0)	return true;
 	return false;
 }
 
@@ -44,8 +39,25 @@ void NewRangeDialog::handle_close()
 }
 
 
-
 void NewRangeDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Range* openNewRangeDialog(QWidget *parent)
+{
+	NewRangeDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		//return new Range(...);
+	}
+	return nullptr;
+}
+
+bool openEditRangeDialog(QWidget *parent, Range* range)
+{
+	// TODO
+	return false;
 }

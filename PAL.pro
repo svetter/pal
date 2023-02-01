@@ -41,6 +41,7 @@ HEADERS += \
 	src/dialogs/new_range.h \
 	src/dialogs/new_region.h \
 	src/dialogs/new_trip.h \
+	src/dialogs/ui_parser.h \
 	src/main/main_window.h
 
 FORMS += \

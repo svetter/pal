@@ -12,10 +12,8 @@ class NewRangeDialog : public QDialog, public Ui_NewRangeDialog
 	
 public:
 	NewRangeDialog(QWidget *parent = 0);
-	~NewRangeDialog();
 	
 private:
-	Ui::NewRangeDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -25,8 +23,8 @@ private:
 
 
 
-Range* openNewRangeDialog();
-bool openEditRangeDialog(Range* range);
+Range* openNewRangeDialog(QWidget *parent);
+bool openEditRangeDialog(QWidget *parent, Range* range);
 
 
 

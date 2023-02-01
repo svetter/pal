@@ -6,28 +6,23 @@
 
 
 
-NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewRegionDialog)
+NewRegionDialog::NewRegionDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);	
-	connect(ui->newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);	
-	connect(ui->cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_close);
-}
-
-NewRegionDialog::~NewRegionDialog()
-{
-	delete ui;
+	connect(newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);	
+	connect(newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);	
+	connect(cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_close);
 }
 
 
 
 bool NewRegionDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())		return true;
-	if (ui->rangeCombo->currentIndex() > 0)		return true;
-	if (ui->countryCombo->currentIndex() > 0)	return true;
+	if (!nameTextbox->text().isEmpty())		return true;
+	if (rangeCombo->currentIndex() > 0)		return true;
+	if (countryCombo->currentIndex() > 0)	return true;
 	return false;
 }
 
@@ -61,8 +56,25 @@ void NewRegionDialog::handle_close()
 }
 
 
-
 void NewRegionDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Region* openNewRegionDialog(QWidget *parent)
+{
+	NewRegionDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		//return new Region(...);
+	}
+	return nullptr;
+}
+
+bool openEditRegionDialog(QWidget *parent, Region* region)
+{
+	// TODO
+	return false;
 }

@@ -12,10 +12,8 @@ class NewHikerDialog : public QDialog, public Ui_NewHikerDialog
 	
 public:
 	NewHikerDialog(QWidget *parent = 0);
-	~NewHikerDialog();
 	
 private:
-	Ui::NewHikerDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -25,8 +23,8 @@ private:
 
 
 
-Hiker* openNewHikerDialog();
-bool openEditHikerDialog(Hiker* hiker);
+Hiker* openNewHikerDialog(QWidget *parent);
+bool openEditHikerDialog(QWidget *parent, Hiker* hiker);
 
 
 

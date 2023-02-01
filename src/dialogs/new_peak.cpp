@@ -5,31 +5,26 @@
 
 
 
-NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent), ui(new Ui::NewPeakDialog)
+NewPeakDialog::NewPeakDialog(QWidget *parent): QDialog(parent)
 {
-	ui->setupUi(this);
+	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(ui->heightCheckbox,		&QCheckBox::stateChanged,	this,	&NewPeakDialog::handle_heightSpecifiedChanged);
-	connect(ui->newRegionButton,	&QPushButton::clicked,		this,	&NewPeakDialog::handle_newRegion);
-	connect(ui->cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_close);	
-}
-
-NewPeakDialog::~NewPeakDialog()
-{
-	delete ui;
+	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&NewPeakDialog::handle_heightSpecifiedChanged);
+	connect(newRegionButton,	&QPushButton::clicked,		this,	&NewPeakDialog::handle_newRegion);
+	connect(cancelButton,		&QPushButton::clicked,		this,	&NewPeakDialog::handle_close);	
 }
 
 
 
 bool NewPeakDialog::anyChanges()
 {
-	if (!ui->nameTextbox->text().isEmpty())			return true;
-	if (ui->regionCombo->currentIndex() > 0)		return true;
-	if (ui->volcanoCheckbox->isChecked())			return true;
-	if (!ui->googleMapsTextbox->text().isEmpty())	return true;
-	if (!ui->googleEarthTextbox->text().isEmpty())	return true;
-	if (!ui->wikipediaTextbox->text().isEmpty())	return true;
+	if (!nameTextbox->text().isEmpty())			return true;
+	if (regionCombo->currentIndex() > 0)		return true;
+	if (volcanoCheckbox->isChecked())			return true;
+	if (!googleMapsTextbox->text().isEmpty())	return true;
+	if (!googleEarthTextbox->text().isEmpty())	return true;
+	if (!wikipediaTextbox->text().isEmpty())	return true;
 	return false;
 }
 
@@ -37,8 +32,8 @@ bool NewPeakDialog::anyChanges()
 
 void NewPeakDialog::handle_heightSpecifiedChanged()
 {
-	bool enabled = ui->heightCheckbox->isChecked();
-	ui->heightSpinner->setEnabled(enabled);
+	bool enabled = heightCheckbox->isChecked();
+	heightSpinner->setEnabled(enabled);
 }
 
 void NewPeakDialog::handle_newRegion()
@@ -63,8 +58,25 @@ void NewPeakDialog::handle_close()
 }
 
 
-
 void NewPeakDialog::reject()
 {
 	handle_close();
+}
+
+
+
+Peak* openNewPeakDialog(QWidget *parent)
+{
+	NewPeakDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		//return new Peak(...);
+	}
+	return nullptr;
+}
+
+bool openEditPeakDialog(QWidget *parent, Peak* peak)
+{
+	// TODO
+	return false;
 }

@@ -12,10 +12,8 @@ class NewTripDialog : public QDialog, public Ui_NewTripDialog
 	
 public:
 	NewTripDialog(QWidget *parent = 0);
-	~NewTripDialog();
 	
 private:
-	Ui::NewTripDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -26,8 +24,8 @@ private:
 
 
 
-Trip* openNewTripDialog();
-bool openEditTripDialog(Trip* trip);
+Trip* openNewTripDialog(QWidget *parent);
+bool openEditTripDialog(QWidget *parent, Trip* trip);
 
 
 

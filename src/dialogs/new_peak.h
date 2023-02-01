@@ -12,10 +12,8 @@ class NewPeakDialog : public QDialog, public Ui_NewPeakDialog
 	
 public:
 	NewPeakDialog(QWidget *parent = nullptr);
-	~NewPeakDialog();
 	
 private:
-	Ui::NewPeakDialog *ui;
 	void reject();
 	
 	bool anyChanges();
@@ -27,8 +25,8 @@ private:
 
 
 
-Peak* openNewPeakDialog();
-bool openEditPeakDialog(Peak* peak);
+Peak* openNewPeakDialog(QWidget *parent);
+bool openEditPeakDialog(QWidget *parent, Peak* peak);
 
 
 
