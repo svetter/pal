@@ -8,8 +8,8 @@
 class Hiker
 {
 public:
-	int hikerID;
-	QString name;
+	int		hikerID;
+	QString	name;
 };
 
 
