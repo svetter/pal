@@ -228,7 +228,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideNone</enum>
@@ -237,6 +237,87 @@
          <attribute name="title">
           <string>Ascents</string>
          </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="ascentsTable">
+            <column>
+             <property name="text">
+              <string>AscentID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Title</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>PeakID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Date</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>nth on day</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Time</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Kind of hike</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Traverse</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Difficulty system</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Difficulty grade</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>TripID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Notes</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="peaksTab">
          <property name="accessibleName">
@@ -245,21 +326,277 @@
          <attribute name="title">
           <string>Peaks</string>
          </attribute>
-        </widget>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Mountain ranges</string>
-         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="peaksTable">
+            <column>
+             <property name="text">
+              <string>PeakID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Height</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Volcano</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>RegionID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Maps Link</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Earth Link</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Wiki Link</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="tripsTab">
          <attribute name="title">
           <string>Trips</string>
          </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="tripsTable">
+            <column>
+             <property name="text">
+              <string>TripID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Start date</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>End date</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Notes</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="hikersTab">
          <attribute name="title">
           <string>Hikers</string>
          </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="hikersTable">
+            <column>
+             <property name="text">
+              <string>HikerID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="regionsTab">
+         <attribute name="title">
+          <string>Regions</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="regionsTable">
+            <column>
+             <property name="text">
+              <string>RegionID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>RangeID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>CountryID</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="rangesTab">
+         <attribute name="title">
+          <string>Mountain ranges</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="rangesTable">
+            <column>
+             <property name="text">
+              <string>RangeID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Continent</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="countriesTab">
+         <attribute name="title">
+          <string>Countries</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="countriesTable">
+            <column>
+             <property name="text">
+              <string>CountryID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
@@ -285,7 +622,6 @@
     <addaction name="openRecentDatabaseAction"/>
     <addaction name="saveDatabaseAction"/>
     <addaction name="saveDatabaseAsAction"/>
-    <addaction name="closeDatabaseAction"/>
     <addaction name="separator"/>
     <addaction name="settingsAction"/>
    </widget>
@@ -294,11 +630,6 @@
      <string>Help</string>
     </property>
     <addaction name="aboutAction"/>
-   </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
    </widget>
    <widget class="QMenu" name="menuNew">
     <property name="title">
@@ -314,7 +645,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuNew"/>
-   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -367,6 +697,9 @@
   <action name="newAscentAction">
    <property name="text">
     <string>New ascent...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+N</string>
    </property>
   </action>
   <action name="newPeakAction">
