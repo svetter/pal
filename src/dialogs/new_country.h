@@ -1,6 +1,7 @@
 #ifndef NEW_COUNTRY_H
 #define NEW_COUNTRY_H
 
+#include "src/data/country.h"
 #include "ui_new_country.h"
 
 
@@ -24,8 +25,8 @@ private:
 
 
 
-public Country* openNewCountryDialog();
-public bool openEditCountryDialog(Country* country);
+Country* openNewCountryDialog();
+bool openEditCountryDialog(Country* country);
 
 
 

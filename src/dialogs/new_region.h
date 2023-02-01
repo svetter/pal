@@ -1,6 +1,7 @@
 #ifndef NEW_REGION_H
 #define NEW_REGION_H
 
+#include "src/data/region.h"
 #include "ui_new_region.h"
 
 
@@ -26,8 +27,8 @@ private:
 
 
 
-public Region* openNewRegionDialog();
-public bool openEditRegionDialog(Region* region);
+Region* openNewRegionDialog();
+bool openEditRegionDialog(Region* region);
 
 
 

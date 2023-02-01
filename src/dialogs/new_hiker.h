@@ -1,6 +1,7 @@
 #ifndef NEW_HIKER_H
 #define NEW_HIKER_H
 
+#include "src/data/hiker.h"
 #include "ui_new_hiker.h"
 
 
@@ -24,8 +25,8 @@ private:
 
 
 
-public Hiker* openNewHikerDialog();
-public bool openEditHikerDialog(Hiker* hiker);
+Hiker* openNewHikerDialog();
+bool openEditHikerDialog(Hiker* hiker);
 
 
 

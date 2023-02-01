@@ -1,6 +1,7 @@
 #ifndef NEW_ASCENT_H
 #define NEW_ASCENT_H
 
+#include "src/data/ascent.h"
 #include "ui_new_ascent.h"
 
 
@@ -30,8 +31,8 @@ private:
 
 
 
-public Ascent* openNewAscentDialog();
-public bool openEditAscentDialog(Ascent* ascent);
+Ascent* openNewAscentDialog();
+bool openEditAscentDialog(Ascent* ascent);
 
 
 

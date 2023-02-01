@@ -1,6 +1,7 @@
 #ifndef NEW_TRIP_H
 #define NEW_TRIP_H
 
+#include "src/data/trip.h"
 #include "ui_new_trip.h"
 
 
@@ -25,8 +26,8 @@ private:
 
 
 
-public Trip* openNewTripDialog();
-public bool openEditTripDialog(Trip* trip);
+Trip* openNewTripDialog();
+bool openEditTripDialog(Trip* trip);
 
 
 

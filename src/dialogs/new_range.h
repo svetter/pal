@@ -1,6 +1,7 @@
 #ifndef NEW_RANGE_H
 #define NEW_RANGE_H
 
+#include "src/data/range.h"
 #include "ui_new_range.h"
 
 
@@ -24,8 +25,8 @@ private:
 
 
 
-public Range* openNewRangeDialog();
-public bool openEditRangeDialog(Range* range);
+Range* openNewRangeDialog();
+bool openEditRangeDialog(Range* range);
 
 
 

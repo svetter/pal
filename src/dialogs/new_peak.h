@@ -1,6 +1,7 @@
 #ifndef NEW_PEAK_H
 #define NEW_PEAK_H
 
+#include "src/data/peak.h"
 #include "ui_new_peak.h"
 
 
@@ -26,8 +27,8 @@ private:
 
 
 
-public Peak* openNewPeakDialog();
-public bool openEditPeakDialog(Peak* peak);
+Peak* openNewPeakDialog();
+bool openEditPeakDialog(Peak* peak);
 
 
 
