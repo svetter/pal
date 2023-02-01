@@ -30,6 +30,15 @@ public:
 	Database();		// Create tables and populate them with columns
 	~Database();
 	
+	Ascent*		getAscent(int ascentID);
+	Peak*		getPeak(int peakID);
+	Trip*		getTrip(int tripID);
+	Hiker*		getHiker(int hikerID);
+	Region*		getRegion(int regionID);
+	Range*		getRange(int rangeID);
+	Country*	getCountry(int countryID);
+	Photo*		getPhoto(int photoID);
+	
 	bool addRow(Table * table, RowContents row);
 	
 	WhatIfResult whatIf_removeRow(NormalTable * table, int primaryKey) const;

@@ -16,6 +16,7 @@ class NormalTable;
 class AssociativeTable;
 
 
+template <class T>
 class Column {
 	QString		name;
 	QString		uiName;
