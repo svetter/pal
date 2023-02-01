@@ -26,4 +26,9 @@ private:
 
 
 
+public Region* openNewRegionDialog();
+public bool openEditRegionDialog(Region* region);
+
+
+
 #endif // NEW_REGION_H

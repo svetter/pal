@@ -30,4 +30,9 @@ private:
 
 
 
+public Ascent* openNewAscentDialog();
+public bool openEditAscentDialog(Ascent* ascent);
+
+
+
 #endif // NEW_ASCENT_H

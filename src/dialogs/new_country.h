@@ -24,4 +24,9 @@ private:
 
 
 
+public Country* openNewCountryDialog();
+public bool openEditCountryDialog(Country* country);
+
+
+
 #endif // NEW_COUNTRY_H

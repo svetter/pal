@@ -25,4 +25,9 @@ private:
 
 
 
+public Trip* openNewTripDialog();
+public bool openEditTripDialog(Trip* trip);
+
+
+
 #endif // NEW_TRIP_H

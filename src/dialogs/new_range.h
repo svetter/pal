@@ -24,4 +24,9 @@ private:
 
 
 
+public Range* openNewRangeDialog();
+public bool openEditRangeDialog(Range* range);
+
+
+
 #endif // NEW_RANGE_H

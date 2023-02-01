@@ -24,4 +24,9 @@ private:
 
 
 
+public Hiker* openNewHikerDialog();
+public bool openEditHikerDialog(Hiker* hiker);
+
+
+
 #endif // NEW_HIKER_H

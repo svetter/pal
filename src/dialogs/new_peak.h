@@ -26,4 +26,9 @@ private:
 
 
 
+public Peak* openNewPeakDialog();
+public bool openEditPeakDialog(Peak* peak);
+
+
+
 #endif // NEW_PEAK_H
