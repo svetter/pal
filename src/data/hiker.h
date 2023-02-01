@@ -8,6 +8,7 @@
 class Hiker
 {
 public:
+	int hikerID;
 	QString name;
 };
 
