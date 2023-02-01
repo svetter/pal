@@ -10,9 +10,9 @@
 class Region
 {
 public:
-	int			regionID;
-	QString*	name;
-	Country*	country;
+	int		regionID;
+	QString	name;
+	int		countryID;
 };
 
 

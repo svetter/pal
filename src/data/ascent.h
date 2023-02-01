@@ -1,10 +1,6 @@
 #ifndef ASCENT_H
 #define ASCENT_H
 
-#include "src/data/peak.h"
-#include "src/data/trip.h"
-#include "src/data/hiker.h"
-
 #include <QString>
 #include <QList>
 #include <QDate>
@@ -15,19 +11,19 @@ class Ascent
 {
 public:
 	int				ascentID;
-	QString*		title;
-	Peak*			peak;
-	QDate*			date;
+	QString			title;
+	int				peakID;
+	QDate			date;
 	int				perDayIndex;
-	QTime*			time;
+	QTime			time;
 	int				hikeKind;
 	bool			traverse;
-	int*			difficultySystem;
-	int*			difficultyGrade;
-	Trip*			trip;
-	QList<Hiker*>	hikers;
+	int				difficultySystem;
+	int				difficultyGrade;
+	int				tripID;
+	QList<int>		hikerIDs;
 	QList<QString>	photos;
-	QString*		notes;
+	QString			notes;
 	
 	static QString hikeKindNames[];
 	static QString difficultySystemNames[];

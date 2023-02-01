@@ -10,14 +10,14 @@
 class Peak
 {
 public:
-	int			peakID;
-	QString		name;
-	int*		height;
-	bool		volcano;
-	Region*		region;
-	QString*	mapsLink;
-	QString*	earthLink;
-	QString*	wikiLink;
+	int		peakID;
+	QString	name;
+	int		height;
+	bool	volcano;
+	int		regionID;
+	QString	mapsLink;
+	QString	earthLink;
+	QString	wikiLink;
 };
 
 

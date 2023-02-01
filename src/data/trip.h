@@ -9,11 +9,11 @@
 class Trip
 {
 public:
-	int			tripID;
-	QString		name;
-	QDate*		startDate;
-	QDate*		endDate;
-	QString*	notes;
+	int		tripID;
+	QString	name;
+	QDate	startDate;
+	QDate	endDate;
+	QString	notes;
 };
 
 
