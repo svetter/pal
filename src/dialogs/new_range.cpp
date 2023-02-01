@@ -46,11 +46,12 @@ void NewRangeDialog::reject()
 
 
 
-Range* openNewRangeDialog(QWidget *parent)
+Range* openNewRangeDialogAndStore(QWidget *parent)
 {
 	NewRangeDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		QString name = dialog.nameTextbox->text();
+		// TODO
 		//return new Range(...);
 	}
 	return nullptr;

@@ -23,7 +23,7 @@ private:
 
 
 
-Hiker* openNewHikerDialog(QWidget *parent);
+Hiker* openNewHikerDialogAndStore(QWidget *parent);
 bool openEditHikerDialog(QWidget *parent, Hiker* hiker);
 
 

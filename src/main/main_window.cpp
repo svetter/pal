@@ -56,7 +56,7 @@ void MainWindow::handle_newTrip()
 
 void MainWindow::handle_newHiker()
 {
-	openNewHikerDialog(this);
+	openNewHikerDialogAndStore(this);
 }
 
 void MainWindow::handle_newRegion()

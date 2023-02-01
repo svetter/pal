@@ -1,7 +1,7 @@
 #include "new_ascent.h"
 #include "src/dialogs/new_peak.h"
 #include "src/dialogs/new_trip.h"
-#include "src/dialogs/ui_parser.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -102,13 +102,13 @@ void NewAscentDialog::reject()
 
 
 
-Ascent* openNewAscentDialog(QWidget *parent)
+Ascent* openNewAscentDialogAndStore(QWidget *parent)
 {
 	NewAscentDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		QString title = parseLineedit(dialog.titleTextbox);
-		
-		return new Ascent(...);
+		// TODO
+		//return new Ascent(...);
 	}
 	return nullptr;
 }

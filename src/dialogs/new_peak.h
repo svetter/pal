@@ -25,7 +25,7 @@ private:
 
 
 
-Peak* openNewPeakDialog(QWidget *parent);
+Peak* openNewPeakDialogAndStore(QWidget *parent);
 bool openEditPeakDialog(QWidget *parent, Peak* peak);
 
 

@@ -23,7 +23,7 @@ private:
 
 
 
-Range* openNewRangeDialog(QWidget *parent);
+Range* openNewRangeDialogAndStore(QWidget *parent);
 bool openEditRangeDialog(QWidget *parent, Range* range);
 
 

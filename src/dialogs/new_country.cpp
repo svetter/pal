@@ -45,9 +45,14 @@ void NewCountryDialog::reject()
 
 
 
-Country* openNewCountryDialog(QWidget *parent)
+Country* openNewCountryDialogAndStore(QWidget *parent)
 {
-	// TODO
+	NewCountryDialog dialog(parent);
+	if (dialog.exec() == QDialog::Accepted) {
+		QString name = dialog.nameTextbox->text();
+		// TODO
+		//return new Country(...);
+	}
 	return nullptr;
 }
 

@@ -63,11 +63,12 @@ void NewRegionDialog::reject()
 
 
 
-Region* openNewRegionDialog(QWidget *parent)
+Region* openNewRegionDialogAndStore(QWidget *parent)
 {
 	NewRegionDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		QString name = dialog.nameTextbox->text();
+		// TODO
 		//return new Region(...);
 	}
 	return nullptr;

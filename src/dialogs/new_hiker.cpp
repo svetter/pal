@@ -47,7 +47,7 @@ void NewHikerDialog::reject()
 
 
 
-Hiker* openNewHikerDialog(QWidget *parent)
+Hiker* openNewHikerDialogAndStore(QWidget *parent)
 {
 	NewHikerDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {

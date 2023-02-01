@@ -24,7 +24,7 @@ private:
 
 
 
-Trip* openNewTripDialog(QWidget *parent);
+Trip* openNewTripDialogAndStore(QWidget *parent);
 bool openEditTripDialog(QWidget *parent, Trip* trip);
 
 

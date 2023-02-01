@@ -65,11 +65,12 @@ void NewPeakDialog::reject()
 
 
 
-Peak* openNewPeakDialog(QWidget *parent)
+Peak* openNewPeakDialogAndStore(QWidget *parent)
 {
 	NewPeakDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		QString name = dialog.nameTextbox->text();
+		// TODO
 		//return new Peak(...);
 	}
 	return nullptr;

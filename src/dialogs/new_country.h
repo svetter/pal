@@ -23,7 +23,7 @@ private:
 
 
 
-Country* openNewCountryDialog(QWidget *parent);
+Country* openNewCountryDialogAndStore(QWidget *parent);
 bool openEditCountryDialog(QWidget *parent, Country* country);
 
 
