@@ -25,8 +25,8 @@ private:
 
 
 
-Region* openNewRegionDialogAndStore(QWidget *parent);
-bool openEditRegionDialog(QWidget *parent, Region* region);
+Region* openNewRegionDialogAndStore(QWidget* parent);
+bool openEditRegionDialog(QWidget* parent, Region* region);
 
 
 

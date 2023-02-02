@@ -4,7 +4,7 @@
 
 
 
-NewCountryDialog::NewCountryDialog(QWidget *parent): NewOrEditDialog(parent, tr("country"))
+NewCountryDialog::NewCountryDialog(QWidget* parent): NewOrEditDialog(parent, tr("country"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -29,15 +29,15 @@ void NewCountryDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new country");
-		QString question = tr("The country needs a name.");
+		QString message = tr("The country needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Country* openNewCountryDialogAndStore(QWidget *parent)
+Country* openNewCountryDialogAndStore(QWidget* parent)
 {
 	NewCountryDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -49,7 +49,7 @@ Country* openNewCountryDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditCountryDialog(QWidget *parent, Country* country)
+bool openEditCountryDialog(QWidget* parent, Country* country)
 {
 	// TODO
 	return false;

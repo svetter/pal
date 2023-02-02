@@ -5,7 +5,7 @@
 
 
 
-NewPeakDialog::NewPeakDialog(QWidget *parent): NewOrEditDialog(parent, tr("peak"))
+NewPeakDialog::NewPeakDialog(QWidget* parent): NewOrEditDialog(parent, tr("peak"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -40,8 +40,8 @@ void NewPeakDialog::handle_heightSpecifiedChanged()
 
 void NewPeakDialog::handle_newRegion()
 {
-	NewRegionDialog dialog(this);
-	dialog.exec();
+	openNewRegionDialogAndStore(this);
+	// TODO
 }
 
 
@@ -52,15 +52,15 @@ void NewPeakDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new peak");
-		QString question = tr("The peak needs a name.");
+		QString message = tr("The peak needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Peak* openNewPeakDialogAndStore(QWidget *parent)
+Peak* openNewPeakDialogAndStore(QWidget* parent)
 {
 	NewPeakDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -72,7 +72,7 @@ Peak* openNewPeakDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditPeakDialog(QWidget *parent, Peak* peak)
+bool openEditPeakDialog(QWidget* parent, Peak* peak)
 {
 	// TODO
 	return false;

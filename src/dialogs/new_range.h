@@ -22,8 +22,8 @@ private:
 
 
 
-Range* openNewRangeDialogAndStore(QWidget *parent);
-bool openEditRangeDialog(QWidget *parent, Range* range);
+Range* openNewRangeDialogAndStore(QWidget* parent);
+bool openEditRangeDialog(QWidget* parent, Range* range);
 
 
 

@@ -1,11 +1,10 @@
 #include "new_hiker.h"
 
-#include <iostream>
 #include <QMessageBox>
 
 
 
-NewHikerDialog::NewHikerDialog(QWidget *parent): NewOrEditDialog(parent, tr("hiker"))
+NewHikerDialog::NewHikerDialog(QWidget* parent): NewOrEditDialog(parent, tr("hiker"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -30,15 +29,15 @@ void NewHikerDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new hiker");
-		QString question = tr("The hiker needs a name.");
+		QString message = tr("The hiker needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget *parent)
+Hiker* openNewHikerDialogAndStore(QWidget* parent)
 {
 	NewHikerDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -49,7 +48,7 @@ Hiker* openNewHikerDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditHikerDialog(QWidget *parent, Hiker* hiker)
+bool openEditHikerDialog(QWidget* parent, Hiker* hiker)
 {
 	// TODO
 	return false;

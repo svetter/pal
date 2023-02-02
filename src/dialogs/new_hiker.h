@@ -22,8 +22,8 @@ private:
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget *parent);
-bool openEditHikerDialog(QWidget *parent, Hiker* hiker);
+Hiker* openNewHikerDialogAndStore(QWidget* parent);
+bool openEditHikerDialog(QWidget* parent, Hiker* hiker);
 
 
 

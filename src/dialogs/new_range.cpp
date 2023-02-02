@@ -4,7 +4,7 @@
 
 
 
-NewRangeDialog::NewRangeDialog(QWidget *parent): NewOrEditDialog(parent, tr("range"))
+NewRangeDialog::NewRangeDialog(QWidget* parent): NewOrEditDialog(parent, tr("range"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -30,15 +30,15 @@ void NewRangeDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new mountain range");
-		QString question = tr("The mountain range needs a name.");
+		QString message = tr("The mountain range needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Range* openNewRangeDialogAndStore(QWidget *parent)
+Range* openNewRangeDialogAndStore(QWidget* parent)
 {
 	NewRangeDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -50,7 +50,7 @@ Range* openNewRangeDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditRangeDialog(QWidget *parent, Range* range)
+bool openEditRangeDialog(QWidget* parent, Range* range)
 {
 	// TODO
 	return false;

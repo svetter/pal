@@ -28,8 +28,8 @@ private:
 
 
 
-Ascent* openNewAscentDialogAndStore(QWidget *parent);
-bool openEditAscentDialog(QWidget *parent, Ascent* ascent);
+Ascent* openNewAscentDialogAndStore(QWidget* parent);
+bool openEditAscentDialog(QWidget* parent, Ascent* ascent);
 
 
 

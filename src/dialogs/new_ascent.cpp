@@ -10,7 +10,7 @@
 
 
 
-NewAscentDialog::NewAscentDialog(QWidget *parent): NewOrEditDialog(parent, tr("ascent"))
+NewAscentDialog::NewAscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("ascent"))
 {
 	setupUi(this);
 	
@@ -44,8 +44,8 @@ bool NewAscentDialog::changesMade()
 
 void NewAscentDialog::handle_newPeak()
 {
-	NewPeakDialog dialog(this);
-	dialog.exec();
+	openNewPeakDialogAndStore(this);
+	// TODO
 }
 
 void NewAscentDialog::handle_dateSpecifiedChanged()
@@ -73,8 +73,8 @@ void NewAscentDialog::handle_difficultySystemChanged()
 
 void NewAscentDialog::handle_newTrip()
 {
-	NewTripDialog dialog(this);
-	dialog.exec();
+	openNewTripDialogAndStore(this);
+	// TODO
 }
 
 void NewAscentDialog::handle_photosPathBrowse()
@@ -92,7 +92,7 @@ void NewAscentDialog::handle_ok()
 
 
 
-Ascent* openNewAscentDialogAndStore(QWidget *parent)
+Ascent* openNewAscentDialogAndStore(QWidget* parent)
 {
 	NewAscentDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -104,7 +104,7 @@ Ascent* openNewAscentDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditAscentDialog(QWidget *parent, Ascent* ascent)
+bool openEditAscentDialog(QWidget* parent, Ascent* ascent)
 {
 	// TODO
 	return false;

@@ -22,8 +22,8 @@ private:
 
 
 
-Country* openNewCountryDialogAndStore(QWidget *parent);
-bool openEditCountryDialog(QWidget *parent, Country* country);
+Country* openNewCountryDialogAndStore(QWidget* parent);
+bool openEditCountryDialog(QWidget* parent, Country* country);
 
 
 

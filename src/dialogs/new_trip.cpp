@@ -4,7 +4,7 @@
 
 
 
-NewTripDialog::NewTripDialog(QWidget *parent): NewOrEditDialog(parent, tr("trip"))
+NewTripDialog::NewTripDialog(QWidget* parent): NewOrEditDialog(parent, tr("trip"))
 {
 	setupUi(this);
 	
@@ -40,15 +40,15 @@ void NewTripDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new trip");
-		QString question = tr("The trip needs a name.");
+		QString message = tr("The trip needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Trip* openNewTripDialogAndStore(QWidget *parent)
+Trip* openNewTripDialogAndStore(QWidget* parent)
 {
 	NewTripDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -60,7 +60,7 @@ Trip* openNewTripDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditTripDialog(QWidget *parent, Trip* trip)
+bool openEditTripDialog(QWidget* parent, Trip* trip)
 {
 	// TODO
 	return false;

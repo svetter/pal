@@ -6,7 +6,7 @@
 
 
 
-NewRegionDialog::NewRegionDialog(QWidget *parent): NewOrEditDialog(parent, tr("region"))
+NewRegionDialog::NewRegionDialog(QWidget* parent): NewOrEditDialog(parent, tr("region"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -32,14 +32,14 @@ bool NewRegionDialog::changesMade()
 
 void NewRegionDialog::handle_newRange()
 {
-	NewRangeDialog dialog(this);
-	dialog.exec();
+	openNewRangeDialogAndStore(this);
+	// TODO
 }
 
 void NewRegionDialog::handle_newCountry()
 {
-	NewCountryDialog dialog(this);
-	dialog.exec();
+	openNewCountryDialogAndStore(this);
+	// TODO
 }
 
 
@@ -50,15 +50,15 @@ void NewRegionDialog::handle_ok()
 		accept();
 	} else {
 		QString title = tr("Can't save new region");
-		QString question = tr("The region needs a name.");
+		QString message = tr("The region needs a name.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 
 
 
-Region* openNewRegionDialogAndStore(QWidget *parent)
+Region* openNewRegionDialogAndStore(QWidget* parent)
 {
 	NewRegionDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
@@ -70,7 +70,7 @@ Region* openNewRegionDialogAndStore(QWidget *parent)
 	return nullptr;
 }
 
-bool openEditRegionDialog(QWidget *parent, Region* region)
+bool openEditRegionDialog(QWidget* parent, Region* region)
 {
 	// TODO
 	return false;
