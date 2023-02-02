@@ -128,7 +128,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>5</day>
+           <day>6</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -501,34 +501,34 @@
          </property>
          <item>
           <property name="text">
-           <string>Me</string>
+           <string notr="true">Me</string>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Climber 2</string>
+           <string notr="true">Climber 2</string>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Climber 3</string>
+           <string notr="true">Climber 3</string>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Climber 4</string>
+           <string notr="true">Climber 4</string>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string/>
           </property>
          </item>
         </widget>
