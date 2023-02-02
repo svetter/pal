@@ -14,7 +14,13 @@ public:
 	QString	name;
 	int		continent;
 	
-	static QString continentNames[];	// = {QObject::tr("North America"), QObject::tr("South America"), QObject::tr("Europe"), QObject::tr("Africa"), QObject::tr("Asia"), QObject::tr("Australia"), QObject::tr("Antarctica")};
+	static QString continentNames[];
+	
+	bool equalTo(Ascent* other) {
+		if (name != other->name)			return false;
+		if (continent != other->continent)	return false;
+		return true;
+	}
 };
 
 

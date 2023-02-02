@@ -10,6 +10,11 @@ class Hiker
 public:
 	int		hikerID;
 	QString	name;
+	
+	bool equalTo(Ascent* other) {
+		if (name != other->name)	return false;
+		return true;
+	}
 };
 
 

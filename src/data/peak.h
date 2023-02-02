@@ -18,6 +18,17 @@ public:
 	QString	mapsLink;
 	QString	earthLink;
 	QString	wikiLink;
+	
+	bool equalTo(Ascent* other) {
+		if (name != other->name)			return false;
+		if (height != other->height)		return false;
+		if (volcano != other->volcano)		return false;
+		if (regionID != other->regionID)	return false;
+		if (mapsLink != other->mapsLink)	return false;
+		if (earthLink != other->earthLink)	return false;
+		if (wikiLink != other->wikiLink)	return false;
+		return true;
+	}
 };
 
 

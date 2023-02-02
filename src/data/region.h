@@ -13,6 +13,12 @@ public:
 	int		regionID;
 	QString	name;
 	int		countryID;
+	
+	bool equalTo(Ascent* other) {
+		if (name != other->name)			return false;
+		if (countryID != other->countryID)	return false;
+		return true;
+	}
 };
 
 

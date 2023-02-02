@@ -10,6 +10,11 @@ class Country
 public:
 	int		countryID;
 	QString	name;
+	
+	bool equalTo(Country* other) {
+		if (name != other->name)			return false;
+		return true;
+	}
 };
 
 
