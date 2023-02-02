@@ -4,14 +4,29 @@
 
 
 
-TripDialog::TripDialog(QWidget* parent): NewOrEditDialog(parent, tr("trip"))
+TripDialog::TripDialog(QWidget* parent, Trip* init) :
+		NewOrEditDialog(parent, tr("trip"), init != nullptr),
+		init(init)
 {
 	setupUi(this);
+	
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
 	
 	connect(okButton,					&QPushButton::clicked,		this,	&TripDialog::handle_ok);
 	connect(cancelButton,				&QPushButton::clicked,		this,	&TripDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void TripDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -62,6 +77,8 @@ Trip* openNewTripDialogAndStore(QWidget* parent)
 
 bool openEditTripDialog(QWidget* parent, Trip* trip)
 {
+	TripDialog dialog(parent, trip);
+	dialog.exec();
 	// TODO
 	return false;
 }

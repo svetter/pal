@@ -11,10 +11,14 @@ class TripDialog : public NewOrEditDialog, public Ui_TripDialog
 {
 	Q_OBJECT
 	
+	Trip* init;
+	
 public:
-	TripDialog(QWidget* parent);
+	TripDialog(QWidget* parent, Trip* init = nullptr);
 	
 private:
+	void insertInitData();
+	
 	virtual bool changesMade();
 	
 	void handle_datesSpecifiedChanged();

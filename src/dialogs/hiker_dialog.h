@@ -11,10 +11,14 @@ class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
 {
 	Q_OBJECT
 	
+	Hiker* init;
+	
 public:
-	HikerDialog(QWidget* parent);
+	HikerDialog(QWidget* parent, Hiker* init = nullptr);
 	
 private:
+	void insertInitData();
+	
 	virtual bool changesMade();
 	
 	void handle_ok();

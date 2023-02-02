@@ -10,7 +10,7 @@ AddHikerDialog::AddHikerDialog(QWidget* parent): QDialog(parent)
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(okButton,		&QPushButton::clicked,	this,	&AddHikerDialog::handle_newHiker);
+	connect(newHikerButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_newHiker);
 	
 	connect(okButton,		&QPushButton::clicked,	this,	&AddHikerDialog::handle_ok);
 	connect(cancelButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_cancel);

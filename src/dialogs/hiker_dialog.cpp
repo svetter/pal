@@ -4,13 +4,28 @@
 
 
 
-HikerDialog::HikerDialog(QWidget* parent): NewOrEditDialog(parent, tr("hiker"))
+HikerDialog::HikerDialog(QWidget* parent, Hiker* init) :
+		NewOrEditDialog(parent, tr("hiker"), init != nullptr),
+		init(init)
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	
 	connect(okButton,		&QPushButton::clicked,		this,	&HikerDialog::handle_ok);
 	connect(cancelButton,	&QPushButton::clicked,		this,	&HikerDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void HikerDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -50,6 +65,8 @@ Hiker* openNewHikerDialogAndStore(QWidget* parent)
 
 bool openEditHikerDialog(QWidget* parent, Hiker* hiker)
 {
+	HikerDialog dialog(parent, hiker);
+	dialog.exec();
 	// TODO
 	return false;
 }

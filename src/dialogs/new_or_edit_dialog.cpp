@@ -1,5 +1,6 @@
 #include "new_or_edit_dialog.h"
 
+#include "qpushbutton.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTranslator>
@@ -7,10 +8,20 @@
 
 
 
-NewOrEditDialog::NewOrEditDialog(QWidget* parent, QString itemNameLowercase):
+NewOrEditDialog::NewOrEditDialog(QWidget* parent, QString itemNameLowercase, bool edit):
 		QDialog(parent),
+		edit(edit),
 		itemNameLowercase(itemNameLowercase)
 {}
+
+
+
+void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
+{
+	if (!edit) return;
+	setWindowTitle(tr(("Edit " + itemNameLowercase).toLatin1()));
+	okButton->setText(tr("Save changes"));
+}
 
 
 
@@ -26,7 +37,12 @@ void NewOrEditDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
 	if (changesMade()) {
-		QString title = tr("Discard unsaved new ") + itemNameLowercase;
+		QString title;
+		if (edit) {
+			title = tr("Discard changes");
+		} else {
+			title = tr("Discard new data");
+		}
 		QString question = tr("Are you sure?");
 		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 		auto selected = QMessageBox::Cancel;

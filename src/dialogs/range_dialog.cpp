@@ -4,13 +4,28 @@
 
 
 
-RangeDialog::RangeDialog(QWidget* parent): NewOrEditDialog(parent, tr("range"))
+RangeDialog::RangeDialog(QWidget* parent, Range* init) :
+		NewOrEditDialog(parent, tr("range"), init != nullptr),
+		init(init)
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	
 	connect(okButton,		&QPushButton::clicked,	this,	&RangeDialog::handle_ok);
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void RangeDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -52,6 +67,8 @@ Range* openNewRangeDialogAndStore(QWidget* parent)
 
 bool openEditRangeDialog(QWidget* parent, Range* range)
 {
+	RangeDialog dialog(parent, range);
+	dialog.exec();
 	// TODO
 	return false;
 }

@@ -11,10 +11,14 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 {
 	Q_OBJECT
 	
+	Peak* init;
+	
 public:
-	PeakDialog(QWidget* parent);
+	PeakDialog(QWidget* parent, Peak* init = nullptr);
 	
 private:
+	void insertInitData();
+	
 	virtual bool changesMade();
 	
 	void handle_heightSpecifiedChanged();

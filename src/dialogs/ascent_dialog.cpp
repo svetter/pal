@@ -12,9 +12,12 @@
 
 
 
-AscentDialog::AscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("ascent"))
+AscentDialog::AscentDialog(QWidget* parent, Ascent* init) :
+		NewOrEditDialog(parent, tr("ascent"),init != nullptr),
+		init(init)
 {
 	setupUi(this);
+	
 	
 	connect(newPeakButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newPeak);
 	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
@@ -25,6 +28,18 @@ AscentDialog::AscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("ascent"
 	
 	connect(okButton,				&QPushButton::clicked,				this,	&AscentDialog::handle_ok);
 	connect(cancelButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void AscentDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -115,6 +130,8 @@ Ascent* openNewAscentDialogAndStore(QWidget* parent)
 
 bool openEditAscentDialog(QWidget* parent, Ascent* ascent)
 {
+	AscentDialog dialog(parent, ascent);
+	dialog.exec();
 	// TODO
 	return false;
 }

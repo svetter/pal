@@ -11,10 +11,14 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 {
 	Q_OBJECT
 	
+	Ascent* init;
+	
 public:
-	AscentDialog(QWidget* parent);
+	AscentDialog(QWidget* parent, Ascent* init = nullptr);
 	
 private:
+	void insertInitData();
+	
 	virtual bool changesMade();
 	
 	void handle_newPeak();

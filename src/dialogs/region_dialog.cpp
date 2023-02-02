@@ -7,16 +7,31 @@
 
 
 
-RegionDialog::RegionDialog(QWidget* parent): NewOrEditDialog(parent, tr("region"))
+RegionDialog::RegionDialog(QWidget* parent, Region* init) :
+		NewOrEditDialog(parent, tr("region"), init != nullptr),
+		init(init)
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
+	
 	
 	connect(newRangeButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_newRange);
 	connect(newCountryButton,	&QPushButton::clicked,	this,	&RegionDialog::handle_newCountry);
 	
 	connect(okButton,			&QPushButton::clicked,	this,	&RegionDialog::handle_ok);
 	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void RegionDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -39,6 +54,8 @@ void RegionDialog::handle_newRange()
 
 void RegionDialog::handle_newCountry()
 {
+	Country c = Country();
+	c.name = "Uzbekistan";
 	openNewCountryDialogAndStore(this);
 	// TODO
 }
@@ -73,6 +90,8 @@ Region* openNewRegionDialogAndStore(QWidget* parent)
 
 bool openEditRegionDialog(QWidget* parent, Region* region)
 {
+	RegionDialog dialog(parent, region);
+	dialog.exec();
 	// TODO
 	return false;
 }

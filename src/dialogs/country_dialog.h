@@ -11,10 +11,14 @@ class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 {
 	Q_OBJECT
 	
+	Country* init;
+	
 public:
-	CountryDialog(QWidget* parent);
+	CountryDialog(QWidget* parent, Country* init = nullptr);
 	
 private:
+	void insertInitData();
+	
 	virtual bool changesMade();
 	
 	void handle_ok();

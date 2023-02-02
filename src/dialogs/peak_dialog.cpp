@@ -6,16 +6,31 @@
 
 
 
-PeakDialog::PeakDialog(QWidget* parent): NewOrEditDialog(parent, tr("peak"))
+PeakDialog::PeakDialog(QWidget* parent, Peak* init) :
+		NewOrEditDialog(parent, tr("peak"), init != nullptr),
+		init(init)
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
+	
 	
 	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,	&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
 	
 	connect(okButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
-	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);	
+	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
+	
+	
+	changeStringsForEdit(okButton);
+	insertInitData();
+}
+
+
+
+void PeakDialog::insertInitData()
+{
+	if (!init) return;
+	// TODO
 }
 
 
@@ -75,6 +90,8 @@ Peak* openNewPeakDialogAndStore(QWidget* parent)
 
 bool openEditPeakDialog(QWidget* parent, Peak* peak)
 {
+	PeakDialog dialog(parent, peak);
+	dialog.exec();
 	// TODO
 	return false;
 }

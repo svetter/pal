@@ -9,14 +9,20 @@ class NewOrEditDialog : public QDialog
 {
 	Q_OBJECT
 	
-protected:
-	NewOrEditDialog(QWidget* parent, QString itemNameLowercase);
+	QString s;
 	
-	void reject();
+protected:
+	bool edit;
+	
+	NewOrEditDialog(QWidget* parent, QString itemNameLowercase, bool edit);
+	
+	void changeStringsForEdit(QPushButton* okButton);
 	
 	virtual bool changesMade();
 	
 	void handle_cancel();
+	
+	void reject();
 	
 public:
 	QString itemNameLowercase;
