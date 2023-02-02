@@ -19,6 +19,7 @@ NewAscentDialog::NewAscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("a
 	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_timeSpecifiedChanged);
 	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&NewAscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newTrip);
+	connect(addHikerButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_addHiker);
 	
 	connect(okButton,				&QPushButton::clicked,				this,	&NewAscentDialog::handle_ok);
 	connect(cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_cancel);
@@ -74,6 +75,12 @@ void NewAscentDialog::handle_difficultySystemChanged()
 void NewAscentDialog::handle_newTrip()
 {
 	openNewTripDialogAndStore(this);
+	// TODO
+}
+
+void NewAscentDialog::handle_addHiker()
+{
+	openAddHikerDialog(this);
 	// TODO
 }
 

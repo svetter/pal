@@ -22,7 +22,9 @@ private:
 	void handle_timeSpecifiedChanged();
 	void handle_difficultySystemChanged();
 	void handle_newTrip();
+	void handle_addHiker();
 	void handle_photosPathBrowse();
+	
 	void handle_ok();
 };
 
