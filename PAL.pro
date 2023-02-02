@@ -13,6 +13,7 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 SOURCES += \
 	src/db/db_model.cpp \
+	src/dialogs/add_hiker.cpp \
 	src/dialogs/new_country.cpp \
 	src/dialogs/new_hiker.cpp \
 	src/dialogs/new_or_edit_dialog.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
 	src/db/db_interface.h \
 	src/db/db_model.h \
 	src/db/tables/db_tables.h \
+	src/dialogs/add_hiker.h \
 	src/dialogs/new_ascent.h \
 	src/dialogs/new_country.h \
 	src/dialogs/new_hiker.h \
@@ -48,6 +50,7 @@ HEADERS += \
 
 FORMS += \
 	src/ui/main_window.ui \
+	src/ui/add_hiker.ui \
 	src/ui/new_ascent.ui \
 	src/ui/new_country.ui \
 	src/ui/new_hiker.ui \
