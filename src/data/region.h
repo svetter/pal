@@ -14,7 +14,7 @@ public:
 	QString	name;
 	int		countryID;
 	
-	bool equalTo(Ascent* other) {
+	bool equalTo(Region* other) {
 		if (name != other->name)			return false;
 		if (countryID != other->countryID)	return false;
 		return true;

@@ -16,7 +16,7 @@ public:
 	
 	static QString continentNames[];
 	
-	bool equalTo(Ascent* other) {
+	bool equalTo(Range* other) {
 		if (name != other->name)			return false;
 		if (continent != other->continent)	return false;
 		return true;

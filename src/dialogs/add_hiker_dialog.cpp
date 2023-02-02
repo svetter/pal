@@ -1,4 +1,5 @@
 #include "add_hiker_dialog.h"
+#include "src/dialogs/hiker_dialog.h"
 
 #include <QMessageBox>
 
@@ -40,7 +41,7 @@ void AddHikerDialog::handle_ok()
 		QString title = tr("Can't add hiker");
 		QString message = tr("You have to select a hiker.");
 		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, question, ok, ok);
+		QMessageBox::information(this, title, message, ok, ok);
 	}
 }
 

@@ -15,7 +15,7 @@ public:
 	QDate	endDate;
 	QString	notes;
 	
-	bool equalTo(Ascent* other) {
+	bool equalTo(Trip* other) {
 		if (name != other->name)			return false;
 		if (startDate != other->startDate)	return false;
 		if (endDate != other->endDate)		return false;

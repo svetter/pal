@@ -1,8 +1,6 @@
 #ifndef PEAK_H
 #define PEAK_H
 
-#include "src/data/region.h"
-
 #include <QString>
 
 
@@ -19,7 +17,7 @@ public:
 	QString	earthLink;
 	QString	wikiLink;
 	
-	bool equalTo(Ascent* other) {
+	bool equalTo(Peak* other) {
 		if (name != other->name)			return false;
 		if (height != other->height)		return false;
 		if (volcano != other->volcano)		return false;

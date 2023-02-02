@@ -1,5 +1,6 @@
 #include "ascent_dialog.h"
 
+#include "src/dialogs/add_hiker_dialog.h"
 #include "src/dialogs/peak_dialog.h"
 #include "src/dialogs/trip_dialog.h"
 #include "src/dialogs/parse_helper.h"

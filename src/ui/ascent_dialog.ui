@@ -128,7 +128,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>3</day>
+           <day>4</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -459,19 +459,19 @@
       </layout>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="climbersLabel">
+      <widget class="QLabel" name="hikersLabel">
        <property name="text">
         <string>Participants</string>
        </property>
       </widget>
      </item>
      <item row="7" column="1">
-      <layout class="QHBoxLayout" name="climbersLayout">
+      <layout class="QHBoxLayout" name="hikersLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QListWidget" name="climberListWidget">
+        <widget class="QListWidget" name="hikersListWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -522,9 +522,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="climberButtonLayout">
+        <layout class="QVBoxLayout" name="hikerButtonLayout">
          <item>
-          <widget class="QToolButton" name="addClimberButton">
+          <widget class="QToolButton" name="addHikerButton">
            <property name="minimumSize">
             <size>
              <width>25</width>
@@ -537,7 +537,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="removeClimberButton">
+          <widget class="QToolButton" name="removeHikerButton">
            <property name="minimumSize">
             <size>
              <width>25</width>
@@ -552,7 +552,7 @@
         </layout>
        </item>
        <item>
-        <spacer name="climbersSpacer">
+        <spacer name="hikersSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

@@ -26,8 +26,8 @@ public:
 	QString			notes;
 	
 	static QString hikeKindNames[];
-	static QString difficultySystemNames[];
-	static QString difficultyGradeNames[][];
+	static QString* difficultySystemNames;
+	static QString** difficultyGradeNames;
 	
 	bool equalTo(Ascent* other) {
 		if (title != other->title)							return false;
