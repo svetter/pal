@@ -1,18 +1,18 @@
-#ifndef NEW_RANGE_H
-#define NEW_RANGE_H
+#ifndef RANGE_DIALOG_H
+#define RANGE_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/range.h"
-#include "ui_new_range.h"
+#include "ui_range_dialog.h"
 
 
 
-class NewRangeDialog : public NewOrEditDialog, public Ui_NewRangeDialog
+class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
 {
 	Q_OBJECT
 	
 public:
-	NewRangeDialog(QWidget* parent);
+	RangeDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -27,4 +27,4 @@ bool openEditRangeDialog(QWidget* parent, Range* range);
 
 
 
-#endif // NEW_RANGE_H
+#endif // RANGE_DIALOG_H

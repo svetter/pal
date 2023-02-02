@@ -1,21 +1,21 @@
-#include "new_country.h"
+#include "country_dialog.h"
 
 #include <QMessageBox>
 
 
 
-NewCountryDialog::NewCountryDialog(QWidget* parent): NewOrEditDialog(parent, tr("country"))
+CountryDialog::CountryDialog(QWidget* parent): NewOrEditDialog(parent, tr("country"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(okButton,		&QPushButton::clicked,	this,	&NewCountryDialog::handle_ok);
-	connect(cancelButton,	&QPushButton::clicked,	this,	&NewCountryDialog::handle_cancel);
+	connect(okButton,		&QPushButton::clicked,	this,	&CountryDialog::handle_ok);
+	connect(cancelButton,	&QPushButton::clicked,	this,	&CountryDialog::handle_cancel);
 }
 
 
 
-bool NewCountryDialog::changesMade()
+bool CountryDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())	return true;
 	return false;
@@ -23,7 +23,7 @@ bool NewCountryDialog::changesMade()
 
 
 
-void NewCountryDialog::handle_ok()
+void CountryDialog::handle_ok()
 {
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
@@ -39,7 +39,7 @@ void NewCountryDialog::handle_ok()
 
 Country* openNewCountryDialogAndStore(QWidget* parent)
 {
-	NewCountryDialog dialog(parent);
+	CountryDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		Country* country = new Country();
 		country->name = dialog.nameTextbox->text();

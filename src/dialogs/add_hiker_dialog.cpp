@@ -1,4 +1,4 @@
-#include "add_hiker.h"
+#include "add_hiker_dialog.h"
 
 #include <QMessageBox>
 

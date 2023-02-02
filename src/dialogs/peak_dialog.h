@@ -1,18 +1,18 @@
-#ifndef NEW_PEAK_H
-#define NEW_PEAK_H
+#ifndef PEAK_DIALOG_H
+#define PEAK_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/peak.h"
-#include "ui_new_peak.h"
+#include "ui_peak_dialog.h"
 
 
 
-class NewPeakDialog : public NewOrEditDialog, public Ui_NewPeakDialog
+class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 {
 	Q_OBJECT
 	
 public:
-	NewPeakDialog(QWidget* parent);
+	PeakDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -30,4 +30,4 @@ bool openEditPeakDialog(QWidget* parent, Peak* peak);
 
 
 
-#endif // NEW_PEAK_H
+#endif // PEAK_DIALOG_H

@@ -1,18 +1,18 @@
-#ifndef NEW_REGION_H
-#define NEW_REGION_H
+#ifndef REGION_DIALOG_H
+#define REGION_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/region.h"
-#include "ui_new_region.h"
+#include "ui_region_dialog.h"
 
 
 
-class NewRegionDialog : public NewOrEditDialog, public Ui_NewRegionDialog
+class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 {
 	Q_OBJECT
 	
 public:
-	NewRegionDialog(QWidget* parent);
+	RegionDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -30,4 +30,4 @@ bool openEditRegionDialog(QWidget* parent, Region* region);
 
 
 
-#endif // NEW_REGION_H
+#endif // REGION_DIALOG_H

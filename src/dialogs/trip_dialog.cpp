@@ -1,22 +1,22 @@
-#include "new_trip.h"
+#include "trip_dialog.h"
 
 #include <QMessageBox>
 
 
 
-NewTripDialog::NewTripDialog(QWidget* parent): NewOrEditDialog(parent, tr("trip"))
+TripDialog::TripDialog(QWidget* parent): NewOrEditDialog(parent, tr("trip"))
 {
 	setupUi(this);
 	
-	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&NewTripDialog::handle_datesSpecifiedChanged);
+	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
 	
-	connect(okButton,					&QPushButton::clicked,		this,	&NewTripDialog::handle_ok);
-	connect(cancelButton,				&QPushButton::clicked,		this,	&NewTripDialog::handle_cancel);
+	connect(okButton,					&QPushButton::clicked,		this,	&TripDialog::handle_ok);
+	connect(cancelButton,				&QPushButton::clicked,		this,	&TripDialog::handle_cancel);
 }
 
 
 
-bool NewTripDialog::changesMade()
+bool TripDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())				return true;
 	if (!descriptionEditor->document()->isEmpty())	return true;
@@ -25,7 +25,7 @@ bool NewTripDialog::changesMade()
 
 
 
-void NewTripDialog::handle_datesSpecifiedChanged()
+void TripDialog::handle_datesSpecifiedChanged()
 {
 	bool enabled = !datesUnspecifiedCheckbox->isChecked();
 	startDateWidget->setEnabled(enabled);
@@ -34,7 +34,7 @@ void NewTripDialog::handle_datesSpecifiedChanged()
 
 
 
-void NewTripDialog::handle_ok()
+void TripDialog::handle_ok()
 {
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
@@ -50,7 +50,7 @@ void NewTripDialog::handle_ok()
 
 Trip* openNewTripDialogAndStore(QWidget* parent)
 {
-	NewTripDialog dialog(parent);
+	TripDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		Trip* trip = new Trip();
 		trip->name = dialog.nameTextbox->text();

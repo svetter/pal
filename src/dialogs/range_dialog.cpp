@@ -1,21 +1,21 @@
-#include "new_range.h"
+#include "range_dialog.h"
 
 #include <QMessageBox>
 
 
 
-NewRangeDialog::NewRangeDialog(QWidget* parent): NewOrEditDialog(parent, tr("range"))
+RangeDialog::RangeDialog(QWidget* parent): NewOrEditDialog(parent, tr("range"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(okButton,		&QPushButton::clicked,	this,	&NewRangeDialog::handle_ok);
-	connect(cancelButton,	&QPushButton::clicked,	this,	&NewRangeDialog::handle_cancel);
+	connect(okButton,		&QPushButton::clicked,	this,	&RangeDialog::handle_ok);
+	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
 }
 
 
 
-bool NewRangeDialog::changesMade()
+bool RangeDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())		return true;
 	if (continentCombo->currentIndex() > 0)	return true;
@@ -24,7 +24,7 @@ bool NewRangeDialog::changesMade()
 
 
 
-void NewRangeDialog::handle_ok()
+void RangeDialog::handle_ok()
 {
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
@@ -40,7 +40,7 @@ void NewRangeDialog::handle_ok()
 
 Range* openNewRangeDialogAndStore(QWidget* parent)
 {
-	NewRangeDialog dialog(parent);
+	RangeDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		Range* range = new Range();
 		range->name = dialog.nameTextbox->text();

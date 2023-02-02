@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewRegionDialog</class>
- <widget class="QDialog" name="NewRegionDialog">
+ <class>RangeDialog</class>
+ <widget class="QDialog" name="RangeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>375</width>
-    <height>172</height>
+    <width>300</width>
+    <height>135</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,14 +16,8 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>16777215</width>
-    <height>172</height>
-   </size>
-  </property>
   <property name="windowTitle">
-   <string>New region</string>
+   <string>New mountain range</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -76,90 +70,30 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="rangeLabel">
+      <widget class="QLabel" name="continentLabel">
        <property name="text">
-        <string>Mountain range</string>
+        <string>Continent</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="rangeSelectionLayout">
-       <property name="spacing">
-        <number>10</number>
+      <widget class="QComboBox" name="continentCombo">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <item>
-        <widget class="QComboBox" name="rangeCombo">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="placeholderText">
-          <string>Required</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="newRangeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>New range...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="countryLabel">
-       <property name="text">
-        <string>Country</string>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Select</string>
        </property>
       </widget>
-     </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="countrySelectionLayout">
-       <property name="spacing">
-        <number>10</number>
-       </property>
-       <item>
-        <widget class="QComboBox" name="countryCombo">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="placeholderText">
-          <string>Required</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="newCountryButton">
-         <property name="text">
-          <string>New country...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </item>
     </layout>
    </item>
@@ -190,7 +124,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Add region</string>
+        <string>Add mountain range</string>
        </property>
       </widget>
      </item>

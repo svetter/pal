@@ -1,11 +1,11 @@
 #include "main_window.h"
-#include "src/dialogs/new_ascent.h"
-#include "src/dialogs/new_country.h"
-#include "src/dialogs/new_hiker.h"
-#include "src/dialogs/new_peak.h"
-#include "src/dialogs/new_range.h"
-#include "src/dialogs/new_region.h"
-#include "src/dialogs/new_trip.h"
+#include "src/dialogs/ascent_dialog.h"
+#include "src/dialogs/country_dialog.h"
+#include "src/dialogs/hiker_dialog.h"
+#include "src/dialogs/peak_dialog.h"
+#include "src/dialogs/range_dialog.h"
+#include "src/dialogs/region_dialog.h"
+#include "src/dialogs/trip_dialog.h"
 #include "ui_main_window.h"
 
 #include <iostream>

@@ -1,6 +1,7 @@
-#include "new_ascent.h"
-#include "src/dialogs/new_peak.h"
-#include "src/dialogs/new_trip.h"
+#include "ascent_dialog.h"
+
+#include "src/dialogs/peak_dialog.h"
+#include "src/dialogs/trip_dialog.h"
 #include "src/dialogs/parse_helper.h"
 
 #include <QFileDialog>
@@ -10,24 +11,24 @@
 
 
 
-NewAscentDialog::NewAscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("ascent"))
+AscentDialog::AscentDialog(QWidget* parent): NewOrEditDialog(parent, tr("ascent"))
 {
 	setupUi(this);
 	
-	connect(newPeakButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newPeak);
-	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_dateSpecifiedChanged);
-	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&NewAscentDialog::handle_timeSpecifiedChanged);
-	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&NewAscentDialog::handle_difficultySystemChanged);
-	connect(newTripButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_newTrip);
-	connect(addHikerButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_addHiker);
+	connect(newPeakButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newPeak);
+	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
+	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&AscentDialog::handle_difficultySystemChanged);
+	connect(newTripButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newTrip);
+	connect(addHikerButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_addHiker);
 	
-	connect(okButton,				&QPushButton::clicked,				this,	&NewAscentDialog::handle_ok);
-	connect(cancelButton,			&QPushButton::clicked,				this,	&NewAscentDialog::handle_cancel);
+	connect(okButton,				&QPushButton::clicked,				this,	&AscentDialog::handle_ok);
+	connect(cancelButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_cancel);
 }
 
 
 
-bool NewAscentDialog::changesMade()
+bool AscentDialog::changesMade()
 {
 	if (!titleLabel->text().isEmpty())				return true;
 	if (peakCombo->currentIndex() > 0)				return true;
@@ -43,25 +44,25 @@ bool NewAscentDialog::changesMade()
 
 
 
-void NewAscentDialog::handle_newPeak()
+void AscentDialog::handle_newPeak()
 {
 	openNewPeakDialogAndStore(this);
 	// TODO
 }
 
-void NewAscentDialog::handle_dateSpecifiedChanged()
+void AscentDialog::handle_dateSpecifiedChanged()
 {
 	bool enabled = dateCheckbox->isChecked();
 	dateWidget->setEnabled(enabled);
 }
 
-void NewAscentDialog::handle_timeSpecifiedChanged()
+void AscentDialog::handle_timeSpecifiedChanged()
 {
 	bool enabled = timeCheckbox->isChecked();
 	timeWidget->setEnabled(enabled);
 }
 
-void NewAscentDialog::handle_difficultySystemChanged()
+void AscentDialog::handle_difficultySystemChanged()
 {
 	bool systemSelected = difficultySystemCombo->currentIndex() > 0;
 	difficultyGradeCombo->setEnabled(systemSelected);
@@ -72,19 +73,19 @@ void NewAscentDialog::handle_difficultySystemChanged()
 	}
 }
 
-void NewAscentDialog::handle_newTrip()
+void AscentDialog::handle_newTrip()
 {
 	openNewTripDialogAndStore(this);
 	// TODO
 }
 
-void NewAscentDialog::handle_addHiker()
+void AscentDialog::handle_addHiker()
 {
 	openAddHikerDialog(this);
 	// TODO
 }
 
-void NewAscentDialog::handle_photosPathBrowse()
+void AscentDialog::handle_photosPathBrowse()
 {
 	QString caption = tr("Select folder with photos of ascent");
 	QString path = QFileDialog::getExistingDirectory(this, caption);
@@ -92,7 +93,7 @@ void NewAscentDialog::handle_photosPathBrowse()
 
 
 
-void NewAscentDialog::handle_ok()
+void AscentDialog::handle_ok()
 {
 	accept();
 }
@@ -101,7 +102,7 @@ void NewAscentDialog::handle_ok()
 
 Ascent* openNewAscentDialogAndStore(QWidget* parent)
 {
-	NewAscentDialog dialog(parent);
+	AscentDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* ascent = new Ascent();
 		ascent->title = parseLineedit(dialog.titleTextbox);

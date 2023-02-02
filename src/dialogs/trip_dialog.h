@@ -1,18 +1,18 @@
-#ifndef NEW_TRIP_H
-#define NEW_TRIP_H
+#ifndef TRIP_DIALOG_H
+#define TRIP_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/trip.h"
-#include "ui_new_trip.h"
+#include "ui_trip_dialog.h"
 
 
 
-class NewTripDialog : public NewOrEditDialog, public Ui_NewTripDialog
+class TripDialog : public NewOrEditDialog, public Ui_TripDialog
 {
 	Q_OBJECT
 	
 public:
-	NewTripDialog(QWidget* parent);
+	TripDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -29,4 +29,4 @@ bool openEditTripDialog(QWidget* parent, Trip* trip);
 
 
 
-#endif // NEW_TRIP_H
+#endif // TRIP_DIALOG_H

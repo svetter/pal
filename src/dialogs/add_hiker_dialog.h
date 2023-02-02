@@ -1,11 +1,11 @@
-#ifndef ADD_HIKER_H
-#define ADD_HIKER_H
+#ifndef HIKER_DIALOG_H
+#define HIKER_DIALOG_H
 
-#include "ui_new_hiker.h"
+#include "ui_add_hiker_dialog.h"
 
 
 
-class NewHikerDialog : public QWidget, public Ui_AddHikerDialog
+class AddHikerDialog : public QWidget, public Ui_AddHikerDialog
 {
 	Q_OBJECT
 	
@@ -25,4 +25,4 @@ int openAddHikerDialog(QWidget* parent);
 
 
 
-#endif // ADD_HIKER_H
+#endif // HIKER_DIALOG_H

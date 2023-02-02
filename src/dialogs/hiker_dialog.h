@@ -1,18 +1,18 @@
-#ifndef NEW_HIKER_H
-#define NEW_HIKER_H
+#ifndef HIKER_DIALOG_H
+#define HIKER_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/hiker.h"
-#include "ui_new_hiker.h"
+#include "ui_hiker_dialog.h"
 
 
 
-class NewHikerDialog : public NewOrEditDialog, public Ui_NewHikerDialog
+class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
 {
 	Q_OBJECT
 	
 public:
-	NewHikerDialog(QWidget* parent);
+	HikerDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -27,4 +27,4 @@ bool openEditHikerDialog(QWidget* parent, Hiker* hiker);
 
 
 
-#endif // NEW_HIKER_H
+#endif // HIKER_DIALOG_H

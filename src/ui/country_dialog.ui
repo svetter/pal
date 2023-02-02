@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewRangeDialog</class>
- <widget class="QDialog" name="NewRangeDialog">
+ <class>CountryDialog</class>
+ <widget class="QDialog" name="CountryDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>135</height>
+    <height>101</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>New mountain range</string>
+   <string>New country</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -69,32 +69,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="continentLabel">
-       <property name="text">
-        <string>Continent</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="continentCombo">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>150</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="placeholderText">
-        <string>Select</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -124,7 +98,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Add mountain range</string>
+        <string>Add country</string>
        </property>
       </widget>
      </item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewPeakDialog</class>
- <widget class="QDialog" name="NewPeakDialog">
+ <class>PeakDialog</class>
+ <widget class="QDialog" name="PeakDialog">
   <property name="geometry">
    <rect>
     <x>0</x>

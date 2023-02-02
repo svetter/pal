@@ -1,18 +1,18 @@
-#ifndef NEW_ASCENT_H
-#define NEW_ASCENT_H
+#ifndef ASCENT_DIALOG_H
+#define ASCENT_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/ascent.h"
-#include "ui_new_ascent.h"
+#include "ui_ascent_dialog.h"
 
 
 
-class NewAscentDialog : public NewOrEditDialog, public Ui_NewAscentDialog
+class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 {
 	Q_OBJECT
 	
 public:
-	NewAscentDialog(QWidget* parent);
+	AscentDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -35,4 +35,4 @@ bool openEditAscentDialog(QWidget* parent, Ascent* ascent);
 
 
 
-#endif // NEW_ASCENT_H
+#endif // ASCENT_DIALOG_H

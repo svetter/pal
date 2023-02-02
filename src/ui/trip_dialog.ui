@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewTripDialog</class>
- <widget class="QDialog" name="NewTripDialog">
+ <class>TripDialog</class>
+ <widget class="QDialog" name="TripDialog">
   <property name="geometry">
    <rect>
     <x>0</x>

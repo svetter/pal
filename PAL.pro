@@ -13,15 +13,15 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 
 SOURCES += \
 	src/db/db_model.cpp \
-	src/dialogs/add_hiker.cpp \
-	src/dialogs/new_country.cpp \
-	src/dialogs/new_hiker.cpp \
+	src/dialogs/add_hiker_dialog.cpp \
+	src/dialogs/country_dialog.cpp \
+	src/dialogs/hiker_dialog.cpp \
 	src/dialogs/new_or_edit_dialog.cpp \
-	src/dialogs/new_range.cpp \
-	src/dialogs/new_ascent.cpp \
-	src/dialogs/new_peak.cpp \
-	src/dialogs/new_region.cpp \
-	src/dialogs/new_trip.cpp \
+	src/dialogs/range_dialog.cpp \
+	src/dialogs/ascent_dialog.cpp \
+	src/dialogs/peak_dialog.cpp \
+	src/dialogs/region_dialog.cpp \
+	src/dialogs/trip_dialog.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp
 
@@ -36,28 +36,28 @@ HEADERS += \
 	src/db/db_interface.h \
 	src/db/db_model.h \
 	src/db/tables/db_tables.h \
-	src/dialogs/add_hiker.h \
-	src/dialogs/new_ascent.h \
-	src/dialogs/new_country.h \
-	src/dialogs/new_hiker.h \
+	src/dialogs/add_hiker_dialog.h \
+	src/dialogs/ascent_dialog.h \
+	src/dialogs/country_dialog.h \
+	src/dialogs/hiker_dialog.h \
 	src/dialogs/new_or_edit_dialog.h \
-	src/dialogs/new_peak.h \
-	src/dialogs/new_range.h \
-	src/dialogs/new_region.h \
-	src/dialogs/new_trip.h \
+	src/dialogs/peak_dialog.h \
+	src/dialogs/range_dialog.h \
+	src/dialogs/region_dialog.h \
+	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
 	src/main/main_window.h
 
 FORMS += \
 	src/ui/main_window.ui \
-	src/ui/add_hiker.ui \
-	src/ui/new_ascent.ui \
-	src/ui/new_country.ui \
-	src/ui/new_hiker.ui \
-	src/ui/new_peak.ui \
-	src/ui/new_range.ui \
-	src/ui/new_region.ui \
-	src/ui/new_trip.ui
+	src/ui/add_hiker_dialog.ui \
+	src/ui/ascent_dialog.ui \
+	src/ui/country_dialog.ui \
+	src/ui/hiker_dialog.ui \
+	src/ui/peak_dialog.ui \
+	src/ui/range_dialog.ui \
+	src/ui/region_dialog.ui \
+	src/ui/trip_dialog.ui
 
 
 

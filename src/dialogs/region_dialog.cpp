@@ -1,26 +1,27 @@
-#include "new_region.h"
-#include "src/dialogs/new_range.h"
-#include "src/dialogs/new_country.h"
+#include "region_dialog.h"
+
+#include "src/dialogs/range_dialog.h"
+#include "src/dialogs/country_dialog.h"
 
 #include <QMessageBox>
 
 
 
-NewRegionDialog::NewRegionDialog(QWidget* parent): NewOrEditDialog(parent, tr("region"))
+RegionDialog::RegionDialog(QWidget* parent): NewOrEditDialog(parent, tr("region"))
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
-	connect(newRangeButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_newRange);
-	connect(newCountryButton,	&QPushButton::clicked,	this,	&NewRegionDialog::handle_newCountry);
+	connect(newRangeButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_newRange);
+	connect(newCountryButton,	&QPushButton::clicked,	this,	&RegionDialog::handle_newCountry);
 	
-	connect(okButton,			&QPushButton::clicked,	this,	&NewRegionDialog::handle_ok);
-	connect(cancelButton,		&QPushButton::clicked,	this,	&NewRegionDialog::handle_cancel);
+	connect(okButton,			&QPushButton::clicked,	this,	&RegionDialog::handle_ok);
+	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
 }
 
 
 
-bool NewRegionDialog::changesMade()
+bool RegionDialog::changesMade()
 {
 	if (!nameTextbox->text().isEmpty())		return true;
 	if (rangeCombo->currentIndex() > 0)		return true;
@@ -30,13 +31,13 @@ bool NewRegionDialog::changesMade()
 
 
 
-void NewRegionDialog::handle_newRange()
+void RegionDialog::handle_newRange()
 {
 	openNewRangeDialogAndStore(this);
 	// TODO
 }
 
-void NewRegionDialog::handle_newCountry()
+void RegionDialog::handle_newCountry()
 {
 	openNewCountryDialogAndStore(this);
 	// TODO
@@ -44,7 +45,7 @@ void NewRegionDialog::handle_newCountry()
 
 
 
-void NewRegionDialog::handle_ok()
+void RegionDialog::handle_ok()
 {
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
@@ -60,7 +61,7 @@ void NewRegionDialog::handle_ok()
 
 Region* openNewRegionDialogAndStore(QWidget* parent)
 {
-	NewRegionDialog dialog(parent);
+	RegionDialog dialog(parent);
 	if (dialog.exec() == QDialog::Accepted) {
 		Region* region = new Region();
 		region->name = dialog.nameTextbox->text();

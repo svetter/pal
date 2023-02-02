@@ -1,18 +1,18 @@
-#ifndef NEW_COUNTRY_H
-#define NEW_COUNTRY_H
+#ifndef COUNTRY_DIALOG_H
+#define COUNTRY_DIALOG_H
 
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/country.h"
-#include "ui_new_country.h"
+#include "ui_country_dialog.h"
 
 
 
-class NewCountryDialog : public NewOrEditDialog, public Ui_NewCountryDialog
+class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 {
 	Q_OBJECT
 	
 public:
-	NewCountryDialog(QWidget* parent);
+	CountryDialog(QWidget* parent);
 	
 private:
 	virtual bool changesMade();
@@ -27,4 +27,4 @@ bool openEditCountryDialog(QWidget* parent, Country* country);
 
 
 
-#endif // NEW_COUNTRY_H
+#endif // COUNTRY_DIALOG_H

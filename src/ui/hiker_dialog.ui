@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewCountryDialog</class>
- <widget class="QDialog" name="NewCountryDialog">
+ <class>HikerDialog</class>
+ <widget class="QDialog" name="HikerDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>New country</string>
+   <string>New hiker</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -98,7 +98,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Add country</string>
+        <string>Add hiker</string>
        </property>
       </widget>
      </item>
