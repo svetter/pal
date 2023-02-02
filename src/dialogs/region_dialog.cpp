@@ -8,7 +8,7 @@
 
 
 RegionDialog::RegionDialog(QWidget* parent, Region* init) :
-		NewOrEditDialog(parent, tr("region"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -67,7 +67,7 @@ void RegionDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title = tr("Can't save new region");
+		QString title = tr("Can't save region");
 		QString message = tr("The region needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);

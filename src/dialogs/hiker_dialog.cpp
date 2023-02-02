@@ -5,7 +5,7 @@
 
 
 HikerDialog::HikerDialog(QWidget* parent, Hiker* init) :
-		NewOrEditDialog(parent, tr("hiker"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -43,7 +43,7 @@ void HikerDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title = tr("Can't save new hiker");
+		QString title = tr("Can't save hiker");
 		QString message = tr("The hiker needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);

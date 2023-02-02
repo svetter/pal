@@ -5,7 +5,7 @@
 
 
 CountryDialog::CountryDialog(QWidget* parent, Country* init) :
-		NewOrEditDialog(parent, tr("country"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -43,12 +43,7 @@ void CountryDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title;
-		if (edit) {
-			title = tr("Can't save country");
-		} else {
-			title = tr("Can't save new country");
-		}
+		QString title = tr("Can't save country");
 		QString message = tr("The country needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);

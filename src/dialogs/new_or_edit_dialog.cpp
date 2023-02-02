@@ -8,10 +8,9 @@
 
 
 
-NewOrEditDialog::NewOrEditDialog(QWidget* parent, QString itemNameLowercase, bool edit):
+NewOrEditDialog::NewOrEditDialog(QWidget* parent, bool edit):
 		QDialog(parent),
-		edit(edit),
-		itemNameLowercase(itemNameLowercase)
+		edit(edit)
 {}
 
 

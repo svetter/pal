@@ -7,7 +7,7 @@
 
 
 PeakDialog::PeakDialog(QWidget* parent, Peak* init) :
-		NewOrEditDialog(parent, tr("peak"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -67,7 +67,7 @@ void PeakDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title = tr("Can't save new peak");
+		QString title = tr("Can't save peak");
 		QString message = tr("The peak needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);

@@ -13,7 +13,7 @@
 
 
 AscentDialog::AscentDialog(QWidget* parent, Ascent* init) :
-		NewOrEditDialog(parent, tr("ascent"),init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);

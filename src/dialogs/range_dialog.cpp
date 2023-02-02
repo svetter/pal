@@ -5,7 +5,7 @@
 
 
 RangeDialog::RangeDialog(QWidget* parent, Range* init) :
-		NewOrEditDialog(parent, tr("range"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -44,7 +44,7 @@ void RangeDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title = tr("Can't save new mountain range");
+		QString title = tr("Can't save mountain range");
 		QString message = tr("The mountain range needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);

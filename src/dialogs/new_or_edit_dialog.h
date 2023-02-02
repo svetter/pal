@@ -14,7 +14,7 @@ class NewOrEditDialog : public QDialog
 protected:
 	bool edit;
 	
-	NewOrEditDialog(QWidget* parent, QString itemNameLowercase, bool edit);
+	NewOrEditDialog(QWidget* parent, bool edit);
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	

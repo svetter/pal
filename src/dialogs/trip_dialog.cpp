@@ -5,7 +5,7 @@
 
 
 TripDialog::TripDialog(QWidget* parent, Trip* init) :
-		NewOrEditDialog(parent, tr("trip"), init != nullptr),
+		NewOrEditDialog(parent, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -54,7 +54,7 @@ void TripDialog::handle_ok()
 	if (!nameTextbox->text().isEmpty()) {
 		accept();
 	} else {
-		QString title = tr("Can't save new trip");
+		QString title = tr("Can't save trip");
 		QString message = tr("The trip needs a name.");
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
