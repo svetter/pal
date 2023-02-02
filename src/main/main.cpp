@@ -1,11 +1,8 @@
 #include "main_window.h"
 
-#include <iostream>
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
-
-using namespace std;
 
 
 
@@ -23,16 +20,16 @@ int main(int argc, char *argv[])
 	const QStringList uiLanguages = QLocale::system().uiLanguages();
 	if (uiLanguages.contains(defaultLanguage)) {
 		useTranslator = false;
-		cout << "No need for translation, system lists default language " << defaultLanguage.toStdString() << endl;
+		qDebug() << "No need for translation, system lists default language " << defaultLanguage;
 	}
 	useTranslator |= forceTranslation;
 	
 	for (const QString &locale : uiLanguages) {
 		const QString baseName = "PAL_" + QLocale(locale).name();
 		if (translator.load(baseName, ":/i18n/")) {
-			cout << "Found translation for " << locale.toStdString() << endl;
+			qDebug() << "Found translation for " + locale;
 			if (translator.isEmpty()) {
-				cout << "Translator empty!" << endl;
+				qDebug() << "Translator empty!";
 			}
 			if (useTranslator) {
 				application.installTranslator(&translator);
@@ -40,7 +37,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		else {
-			cout << "Found NO translation for system language " << locale.toStdString() << endl;
+			qDebug() << "Found NO translation for system language " << locale;
 		}
 	}
 	
