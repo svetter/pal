@@ -62,7 +62,7 @@ public:
 	Column wikiLinkColumn;
 	
 	PeaksTable(Column* regionIDColumn) :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Peaks"), QString("peak"), QObject::tr("Peaks")),
 			//				name					uiName								type		nullable	primaryKey	foreignKey		inTable
 			nameColumn		(QString("name"),		QObject::tr("Name"),				varchar,	false,		false,		nullptr,		this),
 			heightColumn	(QString("height"),		QObject::tr("Height"),				integer,	true,		false,		nullptr,		this),
@@ -86,7 +86,7 @@ public:
 	Column notesColumn;
 	
 	TripsTable() :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Trips"), QString("trip"), QObject::tr("Trips")),
 			//				name					uiName						type		nullable	primaryKey	foreignKey	inTable
 			nameColumn		(QString("name"),		QObject::tr("Name"),		varchar,	true,		false,		nullptr,	this),
 			startDateColumn	(QString("startDate"),	QObject::tr("Start date"),	date,		true,		false,		nullptr,	this),
@@ -104,7 +104,7 @@ public:
 	Column nameColumn;
 	
 	HikersTable() :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Hikers"), QString("hiker"), QObject::tr("Hikers")),
 			//			name				uiName					type		nullable	primaryKey	foreignKey	inTable
 			nameColumn	(QString("name"),	QObject::tr("Name"),	varchar,	false,		false,		nullptr,	this)
 	{}
@@ -121,7 +121,7 @@ public:
 	Column countryIDColumn;
 	
 	RegionsTable(Column* rangeIDColumn, Column* countryIDColumn) :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Regions"), QString("region"), QObject::tr("Regions")),
 			//				name					uiName					type		nullable	primaryKey	foreignKey			inTable
 			nameColumn		(QString("name"),		QObject::tr("Name"),	varchar,	false,		false,		nullptr,			this),
 			rangeIDColumn	(QString("rangeID"),	QString(),				integer,	true,		false,		rangeIDColumn,		this),
@@ -139,7 +139,7 @@ public:
 	Column continentColumn;
 	
 	RangesTable() :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Ranges"), QString("range"), QObject::tr("Mountain ranges")),
 			//				name					uiName						type		nullable	primaryKey	foreignKey	inTable
 			nameColumn		(QString("name"),		QObject::tr("Name"),		varchar,	false,		false,		nullptr,	this),
 			continentColumn	(QString("continent"),	QObject::tr("Continent"),	integer,	true,		false,		nullptr,	this)
@@ -155,7 +155,7 @@ public:
 	Column nameColumn;
 	
 	CountriesTable() :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Countries"), QString("country"), QObject::tr("Countries")),
 			//			name				uiName					type		nullable	primaryKey	foreignKey	inTable
 			nameColumn	(QString("name"),	QObject::tr("Name"),	varchar,	false,		false,		nullptr,	this)
 	{}
@@ -172,7 +172,7 @@ public:
 	Column filepathColumn;
 	
 	PhotosTable(Column* ascentIDColumn) :
-			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
+			NormalTable(QString("Photos"), QString("photo"), QString()),
 			//				name					uiName						type		nullable	primaryKey	foreignKey		inTable
 			ascentIDColumn	(QString("ascentID"),	QString(),					integer,	true,		false,		ascentIDColumn,	this),
 			indexColumn		(QString("photoIndex"),	QObject::tr("Index"),		integer,	true,		false,		nullptr,		this),
