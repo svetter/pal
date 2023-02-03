@@ -36,6 +36,7 @@ HEADERS += \
 	src/db/db_interface.h \
 	src/db/db_model.h \
 	src/db/tables/db_tables.h \
+	src/db/test_db.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
