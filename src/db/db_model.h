@@ -46,10 +46,16 @@ class Table {
 	QString	name;
 	QString	uiName;
 	
-protected:
-	Table(QString name,  QString uiName);
+protected:	
+	bool associative;
+	
+	Table(QString name, QString uiName, bool isAssociative);
 	
 public:
+	QString getName();
+	QString getUIName();
+	bool isAssociative();
+	
 	WhatIfResult whatIf_removeRow(int primaryKey);
 	void removeRow(int primaryKey);
 	WhatIfResult whatIf_changeCell(int primaryKey, Column* column);
@@ -57,29 +63,31 @@ public:
 };
 
 
-class NormalTable: Table {
-	Column			primaryKeyColumn;
-	QList<Column>	nonPrimaryColumns;
+class NormalTable : protected Table {
+	Column*			primaryKeyColumn;
+	QList<Column*>	nonPrimaryColumns;
 	
 public:
-	NormalTable(QString name, QString uiName);
+	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName);
+	~NormalTable();
 	
-	void addColumn(QString name, QString uiName, DataType type, bool nullable = true, Column* foreignKey = nullptr);
+	void addColumn(Column* column);
 	
-	const Column* getPrimaryKeyColumn() const;
-	const Column* getColumnByName(QString name) const;
+	Column* getPrimaryKeyColumn();
+	Column* getColumnByName(QString name);
 };
 
 
-class AssociativeTable: Table {
-	Column	column1;
-	Column	column2;
+class AssociativeTable : protected Table {
+	Column*	column1;
+	Column*	column2;
 	
 public:
 	AssociativeTable(QString name, QString uiName, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
+	~AssociativeTable();
 	
-	const Column* getColumn1() const;	
-	const Column* getColumn2() const;
+	Column* getColumn1();	
+	Column* getColumn2();
 };
 
 

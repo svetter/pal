@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "src/db/db_interface.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -20,14 +21,14 @@ int main(int argc, char *argv[])
 	const QStringList uiLanguages = QLocale::system().uiLanguages();
 	if (uiLanguages.contains(defaultLanguage)) {
 		useTranslator = false;
-		qDebug() << "No need for translation, system lists default language " << defaultLanguage;
+		qDebug() << "No need for translation, system lists default language" << defaultLanguage;
 	}
 	useTranslator |= forceTranslation;
 	
 	for (const QString &locale : uiLanguages) {
 		const QString baseName = "PAL_" + QLocale(locale).name();
 		if (translator.load(baseName, ":/i18n/")) {
-			qDebug() << "Found translation for " + locale;
+			qDebug() << "Found translation for" << locale;
 			if (translator.isEmpty()) {
 				qDebug() << "Translator empty!";
 			}
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	
+	Database db = Database();
 	
 	MainWindow w;
 	w.show();
