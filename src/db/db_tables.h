@@ -30,20 +30,20 @@ public:
 	Column* tripIDColumn;
 	Column* notesColumn;
 	
-	AscentsTable(Column* peakIDColumn, Column* tripIDColumn) :
+	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn) :
 			NormalTable(QString("Ascents"), QString("ascent"), QObject::tr("Ascents")),
-			//									name							uiName							type		nullable	primaryKey	foreignKey		inTable
-			titleColumn				(new Column(QString("title"),				QObject::tr("Title"),			varchar,	true,		false,		nullptr,		this)),
-			peakIDColumn			(new Column(QString("peakID"),				QString(),						integer,	true,		false,		peakIDColumn,	this)),
-			dateColumn				(new Column(QString("date"),				QObject::tr("Date"),			date,		true,		false,		nullptr,		this)),
-			peakOnDayColumn			(new Column(QString("peakOnDay"),			QObject::tr("Peak of the day"),	integer,	false,		false,		nullptr,		this)),
-			timeColumn				(new Column(QString("time"),				QObject::tr("Time"),			time_,		true,		false,		nullptr,		this)),
-			hikeKindColumn			(new Column(QString("hikeKind"),			QObject::tr("Kind of hike"),	integer,	false,		false,		nullptr,		this)),
-			traverseColumn			(new Column(QString("traverse"),			QObject::tr("Traverse"),		bit,		false,		false,		nullptr,		this)),
-			difficultySystemColumn	(new Column(QString("difficultySystem"),	QObject::tr("Diff. system"),	integer,	true,		false,		nullptr,		this)),
-			difficultyGradeColumn	(new Column(QString("difficultyGrade"),		QObject::tr("Diff. grade"),		integer,	true,		false,		nullptr,		this)),
-			tripIDColumn			(new Column(QString("tripID"),				QString(),						integer,	true,		false,		tripIDColumn,	this)),
-			notesColumn				(new Column(QString("notes"),				QObject::tr("Notes"),			varchar,	true,		false,		nullptr,		this))
+			//									name							uiName							type		nullable	primaryKey	foreignKey				inTable
+			titleColumn				(new Column(QString("title"),				QObject::tr("Title"),			varchar,	true,		false,		nullptr,				this)),
+			peakIDColumn			(new Column(QString("peakID"),				QString(),						integer,	true,		false,		foreignPeakIDColumn,	this)),
+			dateColumn				(new Column(QString("date"),				QObject::tr("Date"),			date,		true,		false,		nullptr,				this)),
+			peakOnDayColumn			(new Column(QString("peakOnDay"),			QObject::tr("Peak of the day"),	integer,	false,		false,		nullptr,				this)),
+			timeColumn				(new Column(QString("time"),				QObject::tr("Time"),			time_,		true,		false,		nullptr,				this)),
+			hikeKindColumn			(new Column(QString("hikeKind"),			QObject::tr("Kind of hike"),	integer,	false,		false,		nullptr,				this)),
+			traverseColumn			(new Column(QString("traverse"),			QObject::tr("Traverse"),		bit,		false,		false,		nullptr,				this)),
+			difficultySystemColumn	(new Column(QString("difficultySystem"),	QObject::tr("Diff. system"),	integer,	true,		false,		nullptr,				this)),
+			difficultyGradeColumn	(new Column(QString("difficultyGrade"),		QObject::tr("Diff. grade"),		integer,	true,		false,		nullptr,				this)),
+			tripIDColumn			(new Column(QString("tripID"),				QString(),						integer,	true,		false,		foreignTripIDColumn,	this)),
+			notesColumn				(new Column(QString("notes"),				QObject::tr("Notes"),			varchar,	true,		false,		nullptr,				this))
 	{
 		addColumn(titleColumn);
 		addColumn(peakIDColumn);
@@ -73,16 +73,16 @@ public:
 	Column* earthLinkColumn;
 	Column* wikiLinkColumn;
 	
-	PeaksTable(Column* regionIDColumn) :
+	PeaksTable(Column* foreignRegionIDColumn) :
 			NormalTable(QString("Peaks"), QString("peak"), QObject::tr("Peaks")),
-			//							name					uiName								type		nullable	primaryKey	foreignKey		inTable
-			nameColumn		(new Column(QString("name"),		QObject::tr("Name"),				varchar,	false,		false,		nullptr,		this)),
-			heightColumn	(new Column(QString("height"),		QObject::tr("Height"),				integer,	true,		false,		nullptr,		this)),
-			volcanoColumn	(new Column(QString("volcano"),		QObject::tr("Volcano"),				bit,		false,		false,		nullptr,		this)),
-			regionIDColumn	(new Column(QString("regionID"),	QString(),							integer,	true,		false,		regionIDColumn,	this)),
-			mapsLinkColumn	(new Column(QString("mapsLink"),	QObject::tr("Google Maps link"),	varchar,	true,		false,		nullptr,		this)),
-			earthLinkColumn	(new Column(QString("earthLink"),	QObject::tr("Google Earth link"),	varchar,	true,		false,		nullptr,		this)),
-			wikiLinkColumn	(new Column(QString("wikiLink"),	QObject::tr("Wikipedia link"),		varchar,	true,		false,		nullptr,		this))
+			//							name					uiName								type		nullable	primaryKey	foreignKey				inTable
+			nameColumn		(new Column(QString("name"),		QObject::tr("Name"),				varchar,	false,		false,		nullptr,				this)),
+			heightColumn	(new Column(QString("height"),		QObject::tr("Height"),				integer,	true,		false,		nullptr,				this)),
+			volcanoColumn	(new Column(QString("volcano"),		QObject::tr("Volcano"),				bit,		false,		false,		nullptr,				this)),
+			regionIDColumn	(new Column(QString("regionID"),	QString(),							integer,	true,		false,		foreignRegionIDColumn,	this)),
+			mapsLinkColumn	(new Column(QString("mapsLink"),	QObject::tr("Google Maps link"),	varchar,	true,		false,		nullptr,				this)),
+			earthLinkColumn	(new Column(QString("earthLink"),	QObject::tr("Google Earth link"),	varchar,	true,		false,		nullptr,				this)),
+			wikiLinkColumn	(new Column(QString("wikiLink"),	QObject::tr("Wikipedia link"),		varchar,	true,		false,		nullptr,				this))
 	{
 		addColumn(nameColumn);
 		addColumn(heightColumn);
@@ -147,12 +147,12 @@ public:
 	Column* rangeIDColumn;
 	Column* countryIDColumn;
 	
-	RegionsTable(Column* rangeIDColumn, Column* countryIDColumn) :
+	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
 			NormalTable(QString("Regions"), QString("region"), QObject::tr("Regions")),
-			//							name					uiName					type		nullable	primaryKey	foreignKey			inTable
-			nameColumn		(new Column(QString("name"),		QObject::tr("Name"),	varchar,	false,		false,		nullptr,			this)),
-			rangeIDColumn	(new Column(QString("rangeID"),		QString(),				integer,	true,		false,		rangeIDColumn,		this)),
-			countryIDColumn	(new Column(QString("countryID"),	QString(),				integer,	true,		false,		countryIDColumn,	this))
+			//							name					uiName					type		nullable	primaryKey	foreignKey				inTable
+			nameColumn		(new Column(QString("name"),		QObject::tr("Name"),	varchar,	false,		false,		nullptr,				this)),
+			rangeIDColumn	(new Column(QString("rangeID"),		QString(),				integer,	true,		false,		foreignRangeIDColumn,	this)),
+			countryIDColumn	(new Column(QString("countryID"),	QString(),				integer,	true,		false,		foreignCountryIDColumn,	this))
 	{
 		addColumn(nameColumn);
 		addColumn(rangeIDColumn);
@@ -207,12 +207,12 @@ public:
 	Column* indexColumn;
 	Column* filepathColumn;
 	
-	PhotosTable(Column* ascentIDColumn) :
+	PhotosTable(Column* foreignAscentIDColumn) :
 			NormalTable(QString("Photos"), QString("photo"), QString()),
-			//				name					uiName						type		nullable	primaryKey	foreignKey		inTable
-			ascentIDColumn	(new Column(QString("ascentID"),	QString(),					integer,	true,		false,		ascentIDColumn,	this)),
-			indexColumn		(new Column(QString("photoIndex"),	QObject::tr("Index"),		integer,	true,		false,		nullptr,		this)),
-			filepathColumn	(new Column(QString("filepath"),	QObject::tr("File path"),	varchar,	true,		false,		nullptr,		this))
+			//							name					uiName						type		nullable	primaryKey	foreignKey				inTable
+			ascentIDColumn	(new Column(QString("ascentID"),	QString(),					integer,	true,		false,		foreignAscentIDColumn,	this)),
+			indexColumn		(new Column(QString("photoIndex"),	QObject::tr("Index"),		integer,	true,		false,		nullptr,				this)),
+			filepathColumn	(new Column(QString("filepath"),	QObject::tr("File path"),	varchar,	true,		false,		nullptr,				this))
 	{
 		addColumn(ascentIDColumn);
 		addColumn(indexColumn);
@@ -226,8 +226,8 @@ public:
 
 class ParticipatedTable : public AssociativeTable {
 public:
-	ParticipatedTable(Column* ascentIDColumn, Column* hikerIDColumn) :
-			AssociativeTable(QString("Participated"), QString(), ascentIDColumn, hikerIDColumn)
+	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
+			AssociativeTable(QString("Participated"), QString(), foreignAscentIDColumn, foreignHikerIDColumn)
 	{}
 	
 	void addRows(Ascent* ascent);
