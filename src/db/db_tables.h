@@ -227,11 +227,7 @@ public:
 class ParticipatedTable : public AssociativeTable {
 public:
 	ParticipatedTable(Column* ascentIDColumn, Column* hikerIDColumn) :
-			AssociativeTable(QString("Participated"), QString(),
-				//			name					uiName		type		nullable	primaryKey	foreignKey		inTable
-				new Column	(QString("ascentID"),	QString(),	integer,	false,		true,		ascentIDColumn,	this),
-				new Column	(QString("hikerID"),	QString(),	integer,	false,		true,		hikerIDColumn,	this)
-			)
+			AssociativeTable(QString("Participated"), QString(), ascentIDColumn, hikerIDColumn)
 	{}
 	
 	void addRows(Ascent* ascent);

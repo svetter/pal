@@ -26,9 +26,7 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
 		name(name),
 		uiName(uiName),
 		associative(isAssociative)
-{
-	qDebug() << "Table " << name << "created";
-}
+{}
 
 
 QString Table::getName()
