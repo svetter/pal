@@ -8,11 +8,12 @@
 #include "src/dialogs/trip_dialog.h"
 #include "ui_main_window.h"
 
-#include <iostream>
 
 
-
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow() :
+		QMainWindow(nullptr),
+		ui(new Ui::MainWindow),
+		db(Database(this))
 {
 	ui->setupUi(this);
 	
@@ -27,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->newAscentButton,	&QPushButton::clicked,	this,	&MainWindow::handle_newAscent);
 	connect(ui->newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
 	connect(ui->newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
+	
+	
+	ui->numAscentsLcdNumber->setProperty("value", QVariant(db.getNumberOfEntries(db.ascentsTable)));
 }
 
 MainWindow::~MainWindow()

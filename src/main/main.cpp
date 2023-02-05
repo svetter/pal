@@ -42,9 +42,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	Database db = Database();
+	MainWindow mainWindow = MainWindow();
 	
-	MainWindow w;
-	w.show();
+	mainWindow.show();
 	return application.exec();
 }

@@ -1,10 +1,17 @@
 #include "db_interface.h"
 
 #include "src/db/db_tables.h"
+#include "src/db/test_db.h"
+
+#include <QMessageBox>
+#include <QSqlError>
+#include <QSqlQuery>
 
 
 
-Database::Database() {
+Database::Database(QMainWindow* parent) :
+		parent(parent)
+{
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();
 	rangesTable			= new RangesTable();
@@ -14,6 +21,11 @@ Database::Database() {
 	ascentsTable		= new AscentsTable(peaksTable->getPrimaryKeyColumn(), tripsTable->getPrimaryKeyColumn());
 	photosTable			= new PhotosTable(ascentsTable->getPrimaryKeyColumn());
 	participatedTable	= new ParticipatedTable(ascentsTable->getPrimaryKeyColumn(), hikersTable->getPrimaryKeyColumn());
+	
+	QSqlError initError = initDB();
+	if (initError.type() != QSqlError::NoError) {
+		displayError(initError);
+	}
 }
 
 Database::~Database() {
@@ -60,6 +72,33 @@ Country* Database::getCountry(int countryID) {
 
 
 
+int Database::getNumberOfEntries(NormalTable* table)
+{
+	QString queryString = QString(
+			"SELECT COUNT(" + table->getPrimaryKeyColumn()->getName() + ")" +
+			"\nFROM " + table->getName()
+	);
+	QSqlQuery query = QSqlQuery();
+	query.setForwardOnly(true);
+	if (!query.exec(queryString))
+		displayError(query.lastError(), queryString);
+	if (!query.next()) {
+		displayError("Couldn't read record from SQL query \"" + queryString + "\"", queryString);
+	}
+	QVariant variantValue = query.value(0);
+	if (!variantValue.isValid())
+		displayError("Received invalid QVariant from query", queryString);
+	if (query.next())
+		displayError("More than one record returned for query", queryString);
+	bool intConversionOk;
+	int intValue = variantValue.toInt(&intConversionOk);
+	if (!intConversionOk)
+		displayError("Conversion to int failed for result from query", queryString);
+	return intValue;
+}
+
+
+
 bool Database::addRow(Table* table, QList<QVariant>& row) {
 	
 }
@@ -88,4 +127,27 @@ WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const {
 
 bool Database::changeCell(Column* column, int primaryKey, QVariant& cell) {	// NormalTables only
 	
+}
+
+
+
+void Database::displayError(QString error)
+{
+	QMessageBox::critical(parent, "Database error", error);
+	exit(1);
+}
+
+void Database::displayError(QString error, QString& queryString)
+{
+	return displayError(error + "\n\nQuery:\n" + queryString);
+}
+
+void Database::displayError(QSqlError error, QString& queryString)
+{
+	return displayError(error.text(), queryString);
+}
+
+void Database::displayError(QSqlError error)
+{
+	return displayError(error.text());
 }

@@ -1,6 +1,8 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include "src/db/db_interface.h"
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -14,11 +16,15 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 	
 public:
-	MainWindow(QWidget *parent = nullptr);
+	MainWindow();
 	~MainWindow();
 	
 private:
-	Ui::MainWindow *ui;
+	Ui::MainWindow* ui;
+	Database db;
+	
+	void showError(const QSqlError &err);
+	
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();

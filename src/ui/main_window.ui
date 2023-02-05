@@ -206,11 +206,8 @@
           <property name="digitCount">
            <number>4</number>
           </property>
-          <property name="segmentStyle">
-           <enum>QLCDNumber::Filled</enum>
-          </property>
           <property name="value" stdset="0">
-           <double>285.000000000000000</double>
+           <double>-1.000000000000000</double>
           </property>
          </widget>
         </item>

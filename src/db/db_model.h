@@ -37,9 +37,12 @@ class Column {
 public:
 	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, Table* inTable);
 	
+	QString getName();
+	
 	friend class NormalTable;
 	friend class AssociativeTable;
 };
+
 
 
 class Table {
@@ -63,7 +66,8 @@ public:
 };
 
 
-class NormalTable : protected Table {
+
+class NormalTable : public Table {
 	Column*			primaryKeyColumn;
 	QList<Column*>	nonPrimaryColumns;
 	
@@ -74,11 +78,14 @@ public:
 	void addColumn(Column* column);
 	
 	Column* getPrimaryKeyColumn();
+	QString getColumnListString();
 	Column* getColumnByName(QString name);
+	int getColumnIndex(Column* column);
 };
 
 
-class AssociativeTable : protected Table {
+
+class AssociativeTable : public Table {
 	Column*	column1;
 	Column*	column2;
 	
