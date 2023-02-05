@@ -21,6 +21,12 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 }
 
 
+QString Column::getName()
+{
+	return name;
+}
+
+
 
 Table::Table(QString name, QString uiName, bool isAssociative) :
 		name(name),
@@ -71,13 +77,32 @@ Column* NormalTable::getPrimaryKeyColumn()
 	return primaryKeyColumn;
 }
 
+QString NormalTable::getColumnListString()
+{
+	QString result = "";
+	result = result + primaryKeyColumn->name;
+	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
+		result = result + ", " + (*iter)->name;
+	}
+	return result;
+}
+
 Column* NormalTable::getColumnByName(QString name)
 {
-	QList<Column*>::iterator iter = nonPrimaryColumns.begin();
-	while (iter != nonPrimaryColumns.end()) {
+	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
 		if ((*iter)->name == name) return *iter;
 	}
 	return nullptr;
+}
+
+int NormalTable::getColumnIndex(Column* column)
+{
+	int i = 0;
+	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
+		if (*iter == column) return i;
+		i++;
+	}
+	return -1;
 }
 
 
