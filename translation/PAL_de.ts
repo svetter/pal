@@ -29,12 +29,12 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="41"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="43"/>
         <source>Can&apos;t add hiker</source>
         <translation>Fehlende Daten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="42"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="44"/>
         <source>You have to select a hiker.</source>
         <translation>Name muss angegeben werden.</translation>
     </message>
@@ -62,17 +62,17 @@
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="633"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="715"/>
         <source>Ascent title</source>
         <translation>Titel der Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="652"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="734"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="659"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="741"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
@@ -89,7 +89,7 @@
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="294"/>
         <source>Kind of hike</source>
-        <translation>Art der Besteigung</translation>
+        <translation>Art der Wanderung</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="341"/>
@@ -139,22 +139,22 @@
         <translation>Dabei</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="552"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="584"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="668"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="750"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="709"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="791"/>
         <source>Add ascent</source>
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="728"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="810"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -247,266 +247,130 @@
         <translation>Eingetragene Besteigungen:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="238"/>
+        <location filename="../src/ui/main_window.ui" line="235"/>
         <source>Ascents</source>
         <translation>Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="260"/>
-        <source>AscentID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="265"/>
-        <source>Title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="270"/>
-        <location filename="../src/ui/main_window.ui" line="349"/>
-        <source>PeakID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="275"/>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="280"/>
-        <source>nth on day</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="285"/>
-        <source>Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="290"/>
-        <source>Kind of hike</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="295"/>
-        <source>Traverse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="300"/>
-        <source>Difficulty system</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="305"/>
-        <source>Difficulty grade</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="310"/>
-        <location filename="../src/ui/main_window.ui" line="415"/>
-        <source>TripID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="315"/>
-        <location filename="../src/ui/main_window.ui" line="435"/>
-        <source>Notes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="327"/>
+        <location filename="../src/ui/main_window.ui" line="263"/>
         <source>Peaks</source>
-        <translation type="unfinished"></translation>
+        <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="354"/>
-        <location filename="../src/ui/main_window.ui" line="420"/>
-        <location filename="../src/ui/main_window.ui" line="471"/>
-        <location filename="../src/ui/main_window.ui" line="507"/>
-        <location filename="../src/ui/main_window.ui" line="553"/>
-        <location filename="../src/ui/main_window.ui" line="594"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="359"/>
-        <source>Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="364"/>
-        <source>Volcano</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="369"/>
-        <location filename="../src/ui/main_window.ui" line="502"/>
-        <source>RegionID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="374"/>
-        <source>Maps Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="379"/>
-        <source>Earth Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="384"/>
-        <source>Wiki Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="393"/>
+        <location filename="../src/ui/main_window.ui" line="288"/>
         <source>Trips</source>
-        <translation type="unfinished"></translation>
+        <translation>Reisen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="425"/>
-        <source>Start date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="430"/>
-        <source>End date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="466"/>
-        <source>HikerID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="480"/>
+        <location filename="../src/ui/main_window.ui" line="338"/>
         <source>Regions</source>
-        <translation type="unfinished"></translation>
+        <translation>Regionen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="512"/>
-        <location filename="../src/ui/main_window.ui" line="548"/>
-        <source>RangeID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="517"/>
-        <location filename="../src/ui/main_window.ui" line="589"/>
-        <source>CountryID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="526"/>
+        <location filename="../src/ui/main_window.ui" line="363"/>
         <source>Mountain ranges</source>
-        <translation type="unfinished"></translation>
+        <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="444"/>
+        <location filename="../src/ui/main_window.ui" line="313"/>
         <source>Hikers</source>
-        <translation type="unfinished"></translation>
+        <translation>Wanderer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="558"/>
-        <source>Continent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.ui" line="567"/>
+        <location filename="../src/ui/main_window.ui" line="388"/>
         <source>Countries</source>
-        <translation type="unfinished"></translation>
+        <translation>Länder</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="618"/>
+        <location filename="../src/ui/main_window.ui" line="428"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="630"/>
+        <location filename="../src/ui/main_window.ui" line="440"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="636"/>
+        <location filename="../src/ui/main_window.ui" line="446"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="657"/>
+        <location filename="../src/ui/main_window.ui" line="467"/>
         <source>New database...</source>
         <translation>Neue Datenbank...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="662"/>
+        <location filename="../src/ui/main_window.ui" line="472"/>
         <source>Open database...</source>
         <translation>Datenbank öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="671"/>
+        <location filename="../src/ui/main_window.ui" line="481"/>
         <source>Save database</source>
         <translation>Datenbank speichern</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="679"/>
+        <location filename="../src/ui/main_window.ui" line="489"/>
         <source>Close database</source>
         <translation>Datenbank schließen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="684"/>
+        <location filename="../src/ui/main_window.ui" line="494"/>
         <source>About...</source>
         <translation>Über PAL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="689"/>
+        <location filename="../src/ui/main_window.ui" line="499"/>
         <source>Open recent database</source>
         <translation>Zuletzt geöffnete Datenbanken</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="694"/>
+        <location filename="../src/ui/main_window.ui" line="504"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="734"/>
+        <location filename="../src/ui/main_window.ui" line="544"/>
         <source>New hiker...</source>
         <translation>Neuer Wanderer...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="739"/>
+        <location filename="../src/ui/main_window.ui" line="549"/>
         <source>New country...</source>
         <translation>Neues Land...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="744"/>
+        <location filename="../src/ui/main_window.ui" line="554"/>
         <source>New region...</source>
         <translation>Neue Region...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="94"/>
-        <location filename="../src/ui/main_window.ui" line="699"/>
+        <location filename="../src/ui/main_window.ui" line="509"/>
         <source>New ascent...</source>
         <translation>Neue Besteigung...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="128"/>
-        <location filename="../src/ui/main_window.ui" line="707"/>
+        <location filename="../src/ui/main_window.ui" line="517"/>
         <source>New peak...</source>
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="712"/>
+        <location filename="../src/ui/main_window.ui" line="522"/>
         <source>New mountain range...</source>
         <translation>Neues Gebirge...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="147"/>
-        <location filename="../src/ui/main_window.ui" line="717"/>
+        <location filename="../src/ui/main_window.ui" line="527"/>
         <source>New trip...</source>
         <translation>Neue Reise...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="726"/>
+        <location filename="../src/ui/main_window.ui" line="536"/>
         <source>Save database as...</source>
         <translation>Datenbank speichern unter...</translation>
     </message>
@@ -514,22 +378,22 @@
 <context>
     <name>NewOrEditDialog</name>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="22"/>
+        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="23"/>
         <source>Save changes</source>
         <translation>Änderungen speichern</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="41"/>
+        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="42"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="43"/>
+        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="44"/>
         <source>Discard new data</source>
         <translation>Eingetragene Daten verwerfen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="45"/>
+        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="46"/>
         <source>Are you sure?</source>
         <translation>Fortfahren?</translation>
     </message>
@@ -617,6 +481,150 @@
         <location filename="../src/dialogs/peak_dialog.cpp" line="71"/>
         <source>The peak needs a name.</source>
         <translation>Name muss angegeben werden.</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/db/db_tables.h" line="34"/>
+        <source>Ascents</source>
+        <translation>Besteigungen</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="36"/>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="38"/>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="39"/>
+        <source>Peak of the day</source>
+        <translation>Gipfel des Tages</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="40"/>
+        <source>Time</source>
+        <translation>Zeit</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="41"/>
+        <source>Kind of hike</source>
+        <translation>Art der Wanderung</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="42"/>
+        <source>Traverse</source>
+        <translation>Überschreitung</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="43"/>
+        <source>Diff. system</source>
+        <translation>Schw.-System</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="44"/>
+        <source>Diff. grade</source>
+        <translation>Schw.-Stufe</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="46"/>
+        <location filename="../src/db/db_tables.h" line="114"/>
+        <source>Notes</source>
+        <translation>Tourenbeschreibung</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="77"/>
+        <source>Peaks</source>
+        <translation>Gipfel</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="79"/>
+        <location filename="../src/db/db_tables.h" line="111"/>
+        <location filename="../src/db/db_tables.h" line="134"/>
+        <location filename="../src/db/db_tables.h" line="153"/>
+        <location filename="../src/db/db_tables.h" line="175"/>
+        <location filename="../src/db/db_tables.h" line="194"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="80"/>
+        <source>Height</source>
+        <translation>Höhe</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="81"/>
+        <source>Volcano</source>
+        <translation>Vulkan</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="83"/>
+        <source>Google Maps link</source>
+        <translation>Google-Maps-Link</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="84"/>
+        <source>Google Earth link</source>
+        <translation>Google-Earth-Link</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="85"/>
+        <source>Wikipedia link</source>
+        <translation>Wikipedia-Link</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="109"/>
+        <source>Trips</source>
+        <translation>Reisen</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="112"/>
+        <source>Start date</source>
+        <translation>Anfangsdatum</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="113"/>
+        <source>End date</source>
+        <translation>Enddatum</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="132"/>
+        <source>Hikers</source>
+        <translation>Wanderer</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="151"/>
+        <source>Regions</source>
+        <translation>Regionen</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="173"/>
+        <source>Mountain ranges</source>
+        <translation>Gebirge</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="176"/>
+        <source>Continent</source>
+        <translation>Kontinent</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="192"/>
+        <source>Countries</source>
+        <translation>Länder</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="214"/>
+        <source>Index</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_tables.h" line="215"/>
+        <source>File path</source>
+        <translation>Dateipfad</translation>
     </message>
 </context>
 <context>
@@ -717,12 +725,12 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="70"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="68"/>
         <source>Can&apos;t save region</source>
         <translation>Fehlende Daten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="71"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="69"/>
         <source>The region needs a name.</source>
         <translation>Name muss angegeben werden.</translation>
     </message>
