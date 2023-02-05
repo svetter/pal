@@ -4,8 +4,8 @@
 
 
 
-TripDialog::TripDialog(QWidget* parent, Trip* init) :
-		NewOrEditDialog(parent, init != nullptr),
+TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -63,21 +63,24 @@ void TripDialog::handle_ok()
 
 
 
-Trip* openNewTripDialogAndStore(QWidget* parent)
+Trip* openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
-	TripDialog dialog(parent);
+	TripDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Trip* trip = new Trip();
-		trip->name = dialog.nameTextbox->text();
+		QString	name		= dialog.nameTextbox->text();
+		QDate	startDate	= QDate();	// TODO
+		QDate	endDate		= QDate();	// TODO
+		QString	notes		= "";	// TODO
+		Trip* trip = new Trip(-1, name, startDate, endDate, notes);
 		// TODO
 		return trip;
 	}
 	return nullptr;
 }
 
-bool openEditTripDialog(QWidget* parent, Trip* trip)
+bool openEditTripDialog(QWidget* parent, Database* db, Trip* trip)
 {
-	TripDialog dialog(parent, trip);
+	TripDialog dialog(parent, db, trip);
 	dialog.exec();
 	// TODO
 	return false;

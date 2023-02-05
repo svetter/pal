@@ -4,8 +4,8 @@
 
 
 
-HikerDialog::HikerDialog(QWidget* parent, Hiker* init) :
-		NewOrEditDialog(parent, init != nullptr),
+HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -52,20 +52,22 @@ void HikerDialog::handle_ok()
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget* parent)
+Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
-	HikerDialog dialog(parent);
+	HikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Hiker* hiker = new Hiker();
-		hiker->name = dialog.nameTextbox->text();
+		QString	name	= dialog.nameTextbox->text();
+		Hiker* hiker = new Hiker(-1, name);
+		QList<QVariant> values = {QVariant(name)};
+		db->addRow(db->hikersTable, values);
 		return hiker;
 	}
 	return nullptr;
 }
 
-bool openEditHikerDialog(QWidget* parent, Hiker* hiker)
+bool openEditHikerDialog(QWidget* parent, Database* db, Hiker* hiker)
 {
-	HikerDialog dialog(parent, hiker);
+	HikerDialog dialog(parent, db, hiker);
 	dialog.exec();
 	// TODO
 	return false;

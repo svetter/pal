@@ -14,7 +14,7 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 	Peak* init;
 	
 public:
-	PeakDialog(QWidget* parent, Peak* init = nullptr);
+	PeakDialog(QWidget* parent, Database* db, Peak* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -29,8 +29,8 @@ private:
 
 
 
-Peak* openNewPeakDialogAndStore(QWidget* parent);
-bool openEditPeakDialog(QWidget* parent, Peak* peak);
+Peak* openNewPeakDialogAndStore(QWidget* parent, Database* db);
+bool openEditPeakDialog(QWidget* parent, Database* db, Peak* peak);
 
 
 

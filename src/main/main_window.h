@@ -25,6 +25,8 @@ private:
 	
 	void showError(const QSqlError &err);
 	
+	void updateHikersView();
+	
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();

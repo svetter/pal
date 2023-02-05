@@ -1,6 +1,7 @@
 #ifndef ADD_HIKER_DIALOG_H
 #define ADD_HIKER_DIALOG_H
 
+#include "src/db/db_interface.h"
 #include "ui_add_hiker_dialog.h"
 
 
@@ -9,8 +10,10 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 {
 	Q_OBJECT
 	
+	Database* db;
+	
 public:
-	AddHikerDialog(QWidget* parent);
+	AddHikerDialog(QWidget* parent, Database* db);
 	
 private:
 	bool changesMade();	
@@ -23,7 +26,7 @@ private:
 
 
 
-int openAddHikerDialog(QWidget* parent);
+int openAddHikerDialog(QWidget* parent, Database* db);
 
 
 

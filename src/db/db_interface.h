@@ -12,6 +12,7 @@
 #include "src/db/db_tables.h"
 
 #include <QMainWindow>
+#include <QSqlQuery>
 #include <QSqlError>
 
 
@@ -33,6 +34,8 @@ public:
 	Database(QMainWindow* parent);
 	~Database();
 	
+	QList<Hiker*>*	getAllHikers();
+	
 	Ascent*		getAscent(int ascentID);
 	Peak*		getPeak(int peakID);
 	Trip*		getTrip(int tripID);
@@ -43,7 +46,8 @@ public:
 	
 	int getNumberOfEntries(NormalTable* table);
 	
-	bool addRow(Table* table, QList<QVariant>& row);
+	int addRow(NormalTable* table, QList<QVariant>& row);
+//	bool addRow(AssociativeTable* table, QList<QVariant>& row);
 	
 	WhatIfResult whatIf_removeRow(NormalTable* table, int primaryKey) const;
 	WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
@@ -54,6 +58,11 @@ public:
 	bool changeCell(Column* column, int primaryKey, QVariant& cell);		// NormalTables only
 	
 private:
+	int getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
+	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
+	
+	QString repeat(QString string, int times);
+	
 	void displayError(QString error);
 	void displayError(QString error, QString& queryString);
 	void displayError(QSqlError error);

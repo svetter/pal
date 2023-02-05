@@ -79,6 +79,8 @@ public:
 	
 	Column* getPrimaryKeyColumn();
 	QString getColumnListString();
+	QString getNonPrimaryKeyColumnListString();
+	int getNumberOfNonPrimaryKeyColumns();
 	Column* getColumnByName(QString name);
 	int getColumnIndex(Column* column);
 };

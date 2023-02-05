@@ -14,7 +14,7 @@ class TripDialog : public NewOrEditDialog, public Ui_TripDialog
 	Trip* init;
 	
 public:
-	TripDialog(QWidget* parent, Trip* init = nullptr);
+	TripDialog(QWidget* parent, Database* db, Trip* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -28,8 +28,8 @@ private:
 
 
 
-Trip* openNewTripDialogAndStore(QWidget* parent);
-bool openEditTripDialog(QWidget* parent, Trip* trip);
+Trip* openNewTripDialogAndStore(QWidget* parent, Database* db);
+bool openEditTripDialog(QWidget* parent, Database* db, Trip* trip);
 
 
 

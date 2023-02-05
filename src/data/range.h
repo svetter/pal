@@ -16,11 +16,9 @@ public:
 	
 	static QString continentNames[];
 	
-	bool equalTo(Range* other) {
-		if (name != other->name)			return false;
-		if (continent != other->continent)	return false;
-		return true;
-	}
+	Range(int rangeID, QString& name, int continent);
+	
+	bool equalTo(Range* other);
 };
 
 

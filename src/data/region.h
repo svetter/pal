@@ -14,11 +14,9 @@ public:
 	QString	name;
 	int		countryID;
 	
-	bool equalTo(Region* other) {
-		if (name != other->name)			return false;
-		if (countryID != other->countryID)	return false;
-		return true;
-	}
+	Region(int regionID, QString& name, int countryID);
+	
+	bool equalTo(Region* other);
 };
 
 

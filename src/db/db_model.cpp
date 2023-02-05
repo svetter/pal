@@ -79,12 +79,24 @@ Column* NormalTable::getPrimaryKeyColumn()
 
 QString NormalTable::getColumnListString()
 {
+	assert(!nonPrimaryColumns.empty());
+	return primaryKeyColumn->name + ", " + getNonPrimaryKeyColumnListString();
+}
+
+QString NormalTable::getNonPrimaryKeyColumnListString()
+{
 	QString result = "";
-	result = result + primaryKeyColumn->name;
+	bool first = true;
 	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
-		result = result + ", " + (*iter)->name;
+		result = result + (first ? "" : ", ") + (*iter)->name;
+		first = false;
 	}
 	return result;
+}
+
+int NormalTable::getNumberOfNonPrimaryKeyColumns()
+{
+	return nonPrimaryColumns.size();
 }
 
 Column* NormalTable::getColumnByName(QString name)
@@ -97,8 +109,11 @@ Column* NormalTable::getColumnByName(QString name)
 
 int NormalTable::getColumnIndex(Column* column)
 {
-	int i = 0;
-	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
+	if (column == getPrimaryKeyColumn()) {
+		return 0;
+	}
+	int i = 1;
+	for (auto iter = nonPrimaryColumns.constBegin(); iter != nonPrimaryColumns.constEnd(); iter++) {
 		if (*iter == column) return i;
 		i++;
 	}

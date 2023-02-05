@@ -5,7 +5,9 @@
 
 
 
-AddHikerDialog::AddHikerDialog(QWidget* parent): QDialog(parent)
+AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
+		QDialog(parent),
+		db(db)
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -28,7 +30,7 @@ bool AddHikerDialog::changesMade()
 
 void AddHikerDialog::handle_newHiker()
 {
-	openNewHikerDialogAndStore(this);
+	openNewHikerDialogAndStore(this, db);
 	// TODO
 }
 
@@ -52,9 +54,9 @@ void AddHikerDialog::handle_cancel()
 
 
 
-int openAddHikerDialog(QWidget* parent)
+int openAddHikerDialog(QWidget* parent, Database* db)
 {
-	AddHikerDialog dialog(parent);
+	AddHikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
 		// TODO
 		return -1;

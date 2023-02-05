@@ -11,10 +11,9 @@ public:
 	int		hikerID;
 	QString	name;
 	
-	bool equalTo(Hiker* other) {
-		if (name != other->name)	return false;
-		return true;
-	}
+	Hiker(int hikerID, QString& name);
+	
+	bool equalTo(Hiker* other);
 };
 
 

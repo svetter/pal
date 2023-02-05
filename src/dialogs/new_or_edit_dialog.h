@@ -1,7 +1,9 @@
 #ifndef NEW_OR_EDIT_DIALOG_H
 #define NEW_OR_EDIT_DIALOG_H
 
-#include "qdialog.h"
+#include "src/db/db_interface.h"
+
+#include <QDialog>
 
 
 
@@ -9,12 +11,12 @@ class NewOrEditDialog : public QDialog
 {
 	Q_OBJECT
 	
-	QString s;
-	
 protected:
+	Database* db;
+	
 	bool edit;
 	
-	NewOrEditDialog(QWidget* parent, bool edit);
+	NewOrEditDialog(QWidget* parent, Database* db, bool edit);
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	

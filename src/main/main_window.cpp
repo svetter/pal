@@ -8,6 +8,9 @@
 #include "src/dialogs/trip_dialog.h"
 #include "ui_main_window.h"
 
+#include <QList>
+#include <QStandardItemModel>
+
 
 
 MainWindow::MainWindow() :
@@ -31,6 +34,7 @@ MainWindow::MainWindow() :
 	
 	
 	ui->numAscentsLcdNumber->setProperty("value", QVariant(db.getNumberOfEntries(db.ascentsTable)));
+	updateHikersView();
 }
 
 MainWindow::~MainWindow()
@@ -40,37 +44,55 @@ MainWindow::~MainWindow()
 
 
 
+void MainWindow::updateHikersView()
+{
+	QList<Hiker*>* hikers = db.getAllHikers();
+	
+	QStandardItemModel* model = new QStandardItemModel();	
+	ui->hikersTableView->setModel(model);
+	
+	int row = 0;
+	for(auto iter = hikers->begin(); iter != hikers->end(); iter++) {
+		model->setItem(row, 0, new QStandardItem(QString::number((*iter)->hikerID)));
+		model->setItem(row, 1, new QStandardItem((*iter)->name));
+		++row;
+	}
+}
+
+
+
 void MainWindow::handle_newAscent()
 {
-	openNewAscentDialogAndStore(this);
+	openNewAscentDialogAndStore(this, &db);
 }
 
 void MainWindow::handle_newPeak()
 {
-	openNewPeakDialogAndStore(this);
+	openNewPeakDialogAndStore(this, &db);
 }
 
 void MainWindow::handle_newTrip()
 {
-	openNewTripDialogAndStore(this);
+	openNewTripDialogAndStore(this, &db);
 }
 
 void MainWindow::handle_newHiker()
 {
-	openNewHikerDialogAndStore(this);
+	openNewHikerDialogAndStore(this, &db);
+	updateHikersView();
 }
 
 void MainWindow::handle_newRegion()
 {
-	openNewRegionDialogAndStore(this);
+	openNewRegionDialogAndStore(this, &db);
 }
 
 void MainWindow::handle_newRange()
 {
-	openNewRangeDialogAndStore(this);
+	openNewRangeDialogAndStore(this, &db);
 }
 
 void MainWindow::handle_newCountry()
 {
-	openNewCountryDialogAndStore(this);
+	openNewCountryDialogAndStore(this, &db);
 }

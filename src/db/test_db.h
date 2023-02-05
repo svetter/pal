@@ -16,14 +16,14 @@ const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, as
 const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
 
 const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-const auto INSERT_PEAK			= "INSERT INTO Peaks(name, height, volcano, regionID, mapsLink, earthLink, wikiLink) values(?, ?, ?, ?, ?, ?, ?)";
-const auto INSERT_TRIP			= "INSERT INTO Trips(name, startDate, endDate, notes) values(?, ?, ?, ?)";
-const auto INSERT_HIKER			= "INSERT INTO Hikers(name) values(?)";
-const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) values(?, ?, ?)";
-const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) values(?, ?)";
-const auto INSERT_COUNTRY		= "INSERT INTO Countries(name) values(?)";
-const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, index, filepath) values(?, ?, ?)";
-const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) values(?, ?)";
+const auto INSERT_PEAK			= "INSERT INTO Peaks(name, height, volcano, regionID, mapsLink, earthLink, wikiLink) VALUES(?, ?, ?, ?, ?, ?, ?)";
+const auto INSERT_TRIP			= "INSERT INTO Trips(name, startDate, endDate, notes) VALUES(?, ?, ?, ?)";
+const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
+const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) VALUES(?, ?, ?)";
+const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) VALUES(?, ?)";
+const auto INSERT_COUNTRY		= "INSERT INTO Countries(name) VALUES(?)";
+const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, index, filepath) VALUES(?, ?, ?)";
+const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VALUES(?, ?)";
 
 
 

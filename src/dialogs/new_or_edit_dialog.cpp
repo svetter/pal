@@ -8,8 +8,9 @@
 
 
 
-NewOrEditDialog::NewOrEditDialog(QWidget* parent, bool edit):
+NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, bool edit):
 		QDialog(parent),
+		db(db),
 		edit(edit)
 {}
 

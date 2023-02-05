@@ -14,7 +14,7 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 	Ascent* init;
 	
 public:
-	AscentDialog(QWidget* parent, Ascent* init = nullptr);
+	AscentDialog(QWidget* parent, Database* db, Ascent* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -34,8 +34,8 @@ private:
 
 
 
-Ascent* openNewAscentDialogAndStore(QWidget* parent);
-bool openEditAscentDialog(QWidget* parent, Ascent* ascent);
+Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db);
+bool openEditAscentDialog(QWidget* parent, Database* db, Ascent* ascent);
 
 
 

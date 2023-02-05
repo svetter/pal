@@ -4,8 +4,8 @@
 
 
 
-RangeDialog::RangeDialog(QWidget* parent, Range* init) :
-		NewOrEditDialog(parent, init != nullptr),
+RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -53,21 +53,22 @@ void RangeDialog::handle_ok()
 
 
 
-Range* openNewRangeDialogAndStore(QWidget* parent)
+Range* openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
-	RangeDialog dialog(parent);
+	RangeDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Range* range = new Range();
-		range->name = dialog.nameTextbox->text();
+		QString	name		= dialog.nameTextbox->text();
+		int		continent	= -1;	// TODO
+		Range* range = new Range(-1, name, continent);
 		// TODO
 		return range;
 	}
 	return nullptr;
 }
 
-bool openEditRangeDialog(QWidget* parent, Range* range)
+bool openEditRangeDialog(QWidget* parent, Database* db, Range* range)
 {
-	RangeDialog dialog(parent, range);
+	RangeDialog dialog(parent, db, range);
 	dialog.exec();
 	// TODO
 	return false;

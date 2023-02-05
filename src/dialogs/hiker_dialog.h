@@ -1,6 +1,7 @@
 #ifndef HIKER_DIALOG_H
 #define HIKER_DIALOG_H
 
+#include "src/db/db_interface.h"
 #include "src/dialogs/new_or_edit_dialog.h"
 #include "src/data/hiker.h"
 #include "ui_hiker_dialog.h"
@@ -14,7 +15,7 @@ class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
 	Hiker* init;
 	
 public:
-	HikerDialog(QWidget* parent, Hiker* init = nullptr);
+	HikerDialog(QWidget* parent, Database* db, Hiker* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -26,8 +27,8 @@ private:
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget* parent);
-bool openEditHikerDialog(QWidget* parent, Hiker* hiker);
+Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db);
+bool openEditHikerDialog(QWidget* parent, Database* db, Hiker* hiker);
 
 
 

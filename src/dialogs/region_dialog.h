@@ -14,7 +14,7 @@ class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 	Region* init;
 	
 public:
-	RegionDialog(QWidget* parent, Region* init = nullptr);
+	RegionDialog(QWidget* parent, Database* db, Region* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -29,8 +29,8 @@ private:
 
 
 
-Region* openNewRegionDialogAndStore(QWidget* parent);
-bool openEditRegionDialog(QWidget* parent, Region* region);
+Region* openNewRegionDialogAndStore(QWidget* parent, Database* db);
+bool openEditRegionDialog(QWidget* parent, Database* db, Region* region);
 
 
 

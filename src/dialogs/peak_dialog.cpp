@@ -6,8 +6,8 @@
 
 
 
-PeakDialog::PeakDialog(QWidget* parent, Peak* init) :
-		NewOrEditDialog(parent, init != nullptr),
+PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -56,7 +56,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
 
 void PeakDialog::handle_newRegion()
 {
-	openNewRegionDialogAndStore(this);
+	openNewRegionDialogAndStore(this, db);
 	// TODO
 }
 
@@ -76,21 +76,27 @@ void PeakDialog::handle_ok()
 
 
 
-Peak* openNewPeakDialogAndStore(QWidget* parent)
+Peak* openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
-	PeakDialog dialog(parent);
+	PeakDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Peak* peak = new Peak();
-		peak->name = dialog.nameTextbox->text();
+		QString	name		= dialog.nameTextbox->text();
+		int		height		= -1;	// TODO
+		bool	volcano		= false;	// TODO
+		int		regionID	= -1;	// TODO
+		QString	mapsLink	= "";	// TODO
+		QString	earthLink	= "";	// TODO
+		QString	wikiLink	= "";	// TODO
+		Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 		// TODO
 		return peak;
 	}
 	return nullptr;
 }
 
-bool openEditPeakDialog(QWidget* parent, Peak* peak)
+bool openEditPeakDialog(QWidget* parent, Database* db, Peak* peak)
 {
-	PeakDialog dialog(parent, peak);
+	PeakDialog dialog(parent, db, peak);
 	dialog.exec();
 	// TODO
 	return false;

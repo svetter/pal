@@ -4,8 +4,8 @@
 
 
 
-CountryDialog::CountryDialog(QWidget* parent, Country* init) :
-		NewOrEditDialog(parent, init != nullptr),
+CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -52,21 +52,21 @@ void CountryDialog::handle_ok()
 
 
 
-Country* openNewCountryDialogAndStore(QWidget* parent)
+Country* openNewCountryDialogAndStore(QWidget* parent, Database* db)
 {
-	CountryDialog dialog(parent);
+	CountryDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Country* country = new Country();
-		country->name = dialog.nameTextbox->text();
+		QString	name = dialog.nameTextbox->text();
+		Country* country = new Country(-1, name);
 		// TODO
 		return country;
 	}
 	return nullptr;
 }
 
-bool openEditCountryDialog(QWidget* parent, Country* country)
+bool openEditCountryDialog(QWidget* parent, Database* db, Country* country)
 {
-	CountryDialog dialog(parent, country);
+	CountryDialog dialog(parent, db, country);
 	dialog.exec();
 	// TODO
 	return false;

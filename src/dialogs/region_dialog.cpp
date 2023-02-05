@@ -7,8 +7,8 @@
 
 
 
-RegionDialog::RegionDialog(QWidget* parent, Region* init) :
-		NewOrEditDialog(parent, init != nullptr),
+RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -48,15 +48,13 @@ bool RegionDialog::changesMade()
 
 void RegionDialog::handle_newRange()
 {
-	openNewRangeDialogAndStore(this);
+	openNewRangeDialogAndStore(this, db);
 	// TODO
 }
 
 void RegionDialog::handle_newCountry()
 {
-	Country c = Country();
-	c.name = "Uzbekistan";
-	openNewCountryDialogAndStore(this);
+	openNewCountryDialogAndStore(this, db);
 	// TODO
 }
 
@@ -76,21 +74,22 @@ void RegionDialog::handle_ok()
 
 
 
-Region* openNewRegionDialogAndStore(QWidget* parent)
+Region* openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
-	RegionDialog dialog(parent);
+	RegionDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Region* region = new Region();
-		region->name = dialog.nameTextbox->text();
+		QString	name	= dialog.nameTextbox->text();
+		int		rangeID	= -1;	// TODO
+		Region* region = new Region(-1, name, rangeID);
 		// TODO
 		return region;
 	}
 	return nullptr;
 }
 
-bool openEditRegionDialog(QWidget* parent, Region* region)
+bool openEditRegionDialog(QWidget* parent, Database* db, Region* region)
 {
-	RegionDialog dialog(parent, region);
+	RegionDialog dialog(parent, db, region);
 	dialog.exec();
 	// TODO
 	return false;

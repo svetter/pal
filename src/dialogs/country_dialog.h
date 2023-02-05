@@ -14,7 +14,7 @@ class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 	Country* init;
 	
 public:
-	CountryDialog(QWidget* parent, Country* init = nullptr);
+	CountryDialog(QWidget* parent, Database* db, Country* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -26,8 +26,8 @@ private:
 
 
 
-Country* openNewCountryDialogAndStore(QWidget* parent);
-bool openEditCountryDialog(QWidget* parent, Country* country);
+Country* openNewCountryDialogAndStore(QWidget* parent, Database* db);
+bool openEditCountryDialog(QWidget* parent, Database* db, Country* country);
 
 
 

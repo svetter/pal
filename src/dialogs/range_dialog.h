@@ -14,7 +14,7 @@ class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
 	Range* init;
 	
 public:
-	RangeDialog(QWidget* parent, Range* init = nullptr);
+	RangeDialog(QWidget* parent, Database* db, Range* init = nullptr);
 	
 private:
 	void insertInitData();
@@ -26,8 +26,8 @@ private:
 
 
 
-Range* openNewRangeDialogAndStore(QWidget* parent);
-bool openEditRangeDialog(QWidget* parent, Range* range);
+Range* openNewRangeDialogAndStore(QWidget* parent, Database* db);
+bool openEditRangeDialog(QWidget* parent, Database* db, Range* range);
 
 
 

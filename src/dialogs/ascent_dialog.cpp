@@ -12,8 +12,8 @@
 
 
 
-AscentDialog::AscentDialog(QWidget* parent, Ascent* init) :
-		NewOrEditDialog(parent, init != nullptr),
+AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
+		NewOrEditDialog(parent, db, init != nullptr),
 		init(init)
 {
 	setupUi(this);
@@ -62,7 +62,7 @@ bool AscentDialog::changesMade()
 
 void AscentDialog::handle_newPeak()
 {
-	openNewPeakDialogAndStore(this);
+	openNewPeakDialogAndStore(this, db);
 	// TODO
 }
 
@@ -91,13 +91,13 @@ void AscentDialog::handle_difficultySystemChanged()
 
 void AscentDialog::handle_newTrip()
 {
-	openNewTripDialogAndStore(this);
+	openNewTripDialogAndStore(this, db);
 	// TODO
 }
 
 void AscentDialog::handle_addHiker()
 {
-	openAddHikerDialog(this);
+	openAddHikerDialog(this, db);
 	// TODO
 }
 
@@ -116,21 +116,33 @@ void AscentDialog::handle_ok()
 
 
 
-Ascent* openNewAscentDialogAndStore(QWidget* parent)
+Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
-	AscentDialog dialog(parent);
+	AscentDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		Ascent* ascent = new Ascent();
-		ascent->title = parseLineedit(dialog.titleTextbox);
+		QString			title				= parseLineedit(dialog.titleTextbox);
+		int				peakID				= -1;	// TODO
+		QDate			date				= QDate();	// TODO
+		int				perDayIndex			= -1;	// TODO
+		QTime			time				= QTime();	// TODO
+		int				hikeKind			= -1;	// TODO
+		bool			traverse			= -1;	// TODO
+		int				difficultySystem	= -1;	// TODO
+		int				difficultyGrade		= -1;	// TODO
+		int				tripID				= -1;	// TODO
+		QList<int>		hikerIDs			= QList<int>();	// TODO
+		QList<QString>	photos				= QList<QString>();	// TODO
+		QString			notes				= "";	// TODO
+		Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, notes);
 		// TODO
 		return ascent;
 	}
 	return nullptr;
 }
 
-bool openEditAscentDialog(QWidget* parent, Ascent* ascent)
+bool openEditAscentDialog(QWidget* parent, Database* db, Ascent* ascent)
 {
-	AscentDialog dialog(parent, ascent);
+	AscentDialog dialog(parent, db, ascent);
 	dialog.exec();
 	// TODO
 	return false;

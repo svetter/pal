@@ -251,68 +251,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="ascentsTable">
-            <column>
-             <property name="text">
-              <string>AscentID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Title</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>PeakID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Date</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>nth on day</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Time</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Kind of hike</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Traverse</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Difficulty system</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Difficulty grade</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>TripID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Notes</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="ascentsTableView"/>
           </item>
          </layout>
         </widget>
@@ -340,48 +279,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="peaksTable">
-            <column>
-             <property name="text">
-              <string>PeakID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Height</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Volcano</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>RegionID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Maps Link</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Earth Link</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Wiki Link</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="peaksTableView"/>
           </item>
          </layout>
         </widget>
@@ -406,33 +304,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="tripsTable">
-            <column>
-             <property name="text">
-              <string>TripID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Start date</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>End date</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Notes</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="tripsTableView"/>
           </item>
          </layout>
         </widget>
@@ -457,18 +329,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="hikersTable">
-            <column>
-             <property name="text">
-              <string>HikerID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="hikersTableView"/>
           </item>
          </layout>
         </widget>
@@ -493,28 +354,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="regionsTable">
-            <column>
-             <property name="text">
-              <string>RegionID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>RangeID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>CountryID</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="regionsTableView"/>
           </item>
          </layout>
         </widget>
@@ -539,23 +379,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="rangesTable">
-            <column>
-             <property name="text">
-              <string>RangeID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Continent</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="rangesTableView"/>
           </item>
          </layout>
         </widget>
@@ -580,18 +404,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTableWidget" name="countriesTable">
-            <column>
-             <property name="text">
-              <string>CountryID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Name</string>
-             </property>
-            </column>
-           </widget>
+           <widget class="QTableView" name="countriesTableView"/>
           </item>
          </layout>
         </widget>
