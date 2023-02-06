@@ -1,6 +1,5 @@
 #include "db_interface.h"
 
-#include "src/db/db_tables.h"
 #include "src/db/test_db.h"
 
 #include <QMessageBox>

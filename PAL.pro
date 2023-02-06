@@ -21,6 +21,15 @@ SOURCES += \
 	src/data/trip.cpp \
 	src/db/db_interface.cpp \
 	src/db/db_model.cpp \
+	src/db/tables/ascents_table.cpp \
+	src/db/tables/countries_table.cpp \
+	src/db/tables/hikers_table.cpp \
+	src/db/tables/participated_table.cpp \
+	src/db/tables/peaks_table.cpp \
+	src/db/tables/photos_table.cpp \
+	src/db/tables/ranges_table.cpp \
+	src/db/tables/regionss_table.cpp \
+	src/db/tables/trips_table.cpp \
 	src/dialogs/add_hiker_dialog.cpp \
 	src/dialogs/country_dialog.cpp \
 	src/dialogs/hiker_dialog.cpp \
@@ -43,8 +52,16 @@ HEADERS += \
 	src/data/trip.h \
 	src/db/db_interface.h \
 	src/db/db_model.h \
-	src/db/db_tables.h \
 	src/db/test_db.h \
+	src/db/tables/ascents_table.h \
+	src/db/tables/countries_table.h \
+	src/db/tables/hikers_table.h \
+	src/db/tables/participated_table.h \
+	src/db/tables/peaks_table.h \
+	src/db/tables/photos_table.h \
+	src/db/tables/ranges_table.h \
+	src/db/tables/regionss_table.h \
+	src/db/tables/trips_table.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
