@@ -2,6 +2,7 @@
 #define PHOTOS_TABLE_H
 
 #include "src/db/db_model.h"
+#include "src/data/ascent.h"
 
 #include <QString>
 #include <QTranslator>

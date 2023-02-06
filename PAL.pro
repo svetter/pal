@@ -28,7 +28,7 @@ SOURCES += \
 	src/db/tables/peaks_table.cpp \
 	src/db/tables/photos_table.cpp \
 	src/db/tables/ranges_table.cpp \
-	src/db/tables/regionss_table.cpp \
+	src/db/tables/regions_table.cpp \
 	src/db/tables/trips_table.cpp \
 	src/dialogs/add_hiker_dialog.cpp \
 	src/dialogs/country_dialog.cpp \

@@ -1,4 +1,4 @@
-#include "hiker_table.h"
+#include "hikers_table.h"
 
 #include <QString>
 #include <QTranslator>

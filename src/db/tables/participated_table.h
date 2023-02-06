@@ -10,9 +10,7 @@
 
 class ParticipatedTable : public AssociativeTable {
 public:
-	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
-			AssociativeTable(QString("Participated"), QString(), foreignAscentIDColumn, foreignHikerIDColumn)
-	{}
+	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn);
 	
 	void addRows(Ascent* ascent);
 };
