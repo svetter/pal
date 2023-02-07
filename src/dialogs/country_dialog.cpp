@@ -28,13 +28,6 @@ CountryDialog::~CountryDialog()
 
 
 
-void CountryDialog::insertInitData()
-{
-	if (!init) return;
-	nameLineEdit->setText(init->name);
-}
-
-
 Country* CountryDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
@@ -43,10 +36,23 @@ Country* CountryDialog::extractData()
 }
 
 
+void CountryDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	nameLineEdit->setText(init->name);
+}
+
+
 bool CountryDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())	return true;
-	return false;
+	Country* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

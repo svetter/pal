@@ -29,13 +29,6 @@ TripDialog::~TripDialog()
 
 
 
-void TripDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Trip* TripDialog::extractData()
 {
 	QString	name		= parseLineEdit			(nameLineEdit);
@@ -47,11 +40,23 @@ Trip* TripDialog::extractData()
 }
 
 
+void TripDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool TripDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())			return true;
-	if (!descriptionEditor->document()->isEmpty())	return true;
-	return false;
+	Trip* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

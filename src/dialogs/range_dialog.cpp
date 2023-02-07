@@ -28,13 +28,6 @@ RangeDialog::~RangeDialog()
 
 
 
-void RangeDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Range* RangeDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
@@ -44,11 +37,23 @@ Range* RangeDialog::extractData()
 }
 
 
+void RangeDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool RangeDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())	return true;
-	if (continentCombo->currentIndex() > 0)	return true;
-	return false;
+	Range* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

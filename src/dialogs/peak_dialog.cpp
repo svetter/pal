@@ -33,13 +33,6 @@ PeakDialog::~PeakDialog()
 
 
 
-void PeakDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Peak* PeakDialog::extractData()
 {
 	QString	name		= parseLineEdit	(nameLineEdit);
@@ -54,15 +47,23 @@ Peak* PeakDialog::extractData()
 }
 
 
+void PeakDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool PeakDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())		return true;
-	if (regionCombo->currentIndex() > 0)		return true;
-	if (volcanoCheckbox->isChecked())			return true;
-	if (!googleMapsLineEdit->text().isEmpty())	return true;
-	if (!googleEarthLineEdit->text().isEmpty())	return true;
-	if (!wikipediaLineEdit->text().isEmpty())	return true;
-	return false;
+	Peak* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

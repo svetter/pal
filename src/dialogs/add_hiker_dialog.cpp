@@ -30,8 +30,7 @@ int AddHikerDialog::extractHikerID()
 
 bool AddHikerDialog::changesMade()
 {
-	if (hikerCombo->currentIndex() > 0)	return true;
-	return false;
+	return extractHikerID() > 0;
 }
 
 

@@ -34,13 +34,6 @@ RegionDialog::~RegionDialog()
 
 
 
-void RegionDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Region* RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit	(nameLineEdit);
@@ -50,12 +43,23 @@ Region* RegionDialog::extractData()
 }
 
 
+void RegionDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool RegionDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())	return true;
-	if (rangeCombo->currentIndex() > 0)		return true;
-	if (countryCombo->currentIndex() > 0)	return true;
-	return false;
+	Region* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

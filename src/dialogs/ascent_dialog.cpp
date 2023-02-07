@@ -41,13 +41,6 @@ AscentDialog::~AscentDialog()
 
 
 
-void AscentDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Ascent* AscentDialog::extractData()
 {
 	QString			title				= parseLineEdit			(titleLineEdit);
@@ -68,18 +61,23 @@ Ascent* AscentDialog::extractData()
 }
 
 
+void AscentDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool AscentDialog::changesMade()
 {
-	if (!titleLabel->text().isEmpty())				return true;
-	if (peakCombo->currentIndex() > 0)				return true;
-	if (tripCombo->currentIndex() > 0)				return true;
-	if (difficultySystemCombo->currentIndex() > 0)	return true;
-	if (difficultyGradeCombo->currentIndex() > 0)	return true;
-	if (tripCombo->currentIndex() > 0)				return true;
-	// TODO hikers
-	// TODO photos
-	if (!descriptionEditor->document()->isEmpty())	return true;
-	return false;
+	Ascent* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 

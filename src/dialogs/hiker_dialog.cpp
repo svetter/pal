@@ -28,13 +28,6 @@ HikerDialog::~HikerDialog()
 
 
 
-void HikerDialog::insertInitData()
-{
-	if (!init) return;
-	// TODO
-}
-
-
 Hiker* HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
@@ -43,10 +36,23 @@ Hiker* HikerDialog::extractData()
 }
 
 
+void HikerDialog::insertInitData()
+{
+	if (!edit) {
+		init = extractData();
+		return;
+	}
+	
+	// TODO
+}
+
+
 bool HikerDialog::changesMade()
 {
-	if (!nameLineEdit->text().isEmpty())	return true;
-	return false;
+	Hiker* currentState = extractData();
+	bool equal = extractData()->equalTo(init);
+	delete currentState;
+	return !equal;
 }
 
 
