@@ -2,7 +2,7 @@
 
 
 
-Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& notes) :
+Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& description) :
 		ascentID(ascentID),
 		title(title),
 		peakID(peakID),
@@ -16,7 +16,7 @@ Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDay
 		tripID(tripID),
 		hikerIDs(hikerIDs),
 		photos(photos),
-		notes(notes)
+		description(description)
 {}
 
 
@@ -35,6 +35,6 @@ bool Ascent::equalTo(Ascent* other)
 	if (tripID				!= other->tripID)			return false;
 	if (hikerIDs			!= other->hikerIDs)			return false;
 	if (photos				!= other->photos)			return false;
-	if (notes				!= other->notes)			return false;
+	if (description			!= other->description)		return false;
 	return true;
 }

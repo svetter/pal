@@ -1,5 +1,6 @@
 #include "region_dialog.h"
 
+#include "src/dialogs/parse_helper.h"
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/country_dialog.h"
 
@@ -38,7 +39,7 @@ void RegionDialog::insertInitData()
 
 bool RegionDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())		return true;
+	if (!nameLineEdit->text().isEmpty())	return true;
 	if (rangeCombo->currentIndex() > 0)		return true;
 	if (countryCombo->currentIndex() > 0)	return true;
 	return false;
@@ -62,7 +63,7 @@ void RegionDialog::handle_newCountry()
 
 void RegionDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save region");
@@ -78,7 +79,7 @@ Region* openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
 	RegionDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name	= dialog.nameTextbox->text();
+		QString	name	= dialog.nameLineEdit->text();
 		int		rangeID	= -1;	// TODO
 		Region* region = new Region(-1, name, rangeID);
 		// TODO

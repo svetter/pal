@@ -1,5 +1,6 @@
 #include "peak_dialog.h"
 
+#include "src/dialogs/parse_helper.h"
 #include "src/dialogs/region_dialog.h"
 
 #include <QMessageBox>
@@ -37,12 +38,12 @@ void PeakDialog::insertInitData()
 
 bool PeakDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())			return true;
+	if (!nameLineEdit->text().isEmpty())		return true;
 	if (regionCombo->currentIndex() > 0)		return true;
 	if (volcanoCheckbox->isChecked())			return true;
-	if (!googleMapsTextbox->text().isEmpty())	return true;
-	if (!googleEarthTextbox->text().isEmpty())	return true;
-	if (!wikipediaTextbox->text().isEmpty())	return true;
+	if (!googleMapsLineEdit->text().isEmpty())	return true;
+	if (!googleEarthLineEdit->text().isEmpty())	return true;
+	if (!wikipediaLineEdit->text().isEmpty())	return true;
 	return false;
 }
 
@@ -64,7 +65,7 @@ void PeakDialog::handle_newRegion()
 
 void PeakDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save peak");
@@ -80,7 +81,7 @@ Peak* openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
 	PeakDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameTextbox->text();
+		QString	name		= dialog.nameLineEdit->text();
 		int		height		= -1;	// TODO
 		bool	volcano		= false;	// TODO
 		int		regionID	= -1;	// TODO

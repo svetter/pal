@@ -13,9 +13,9 @@ public:
 	QString	name;
 	QDate	startDate;
 	QDate	endDate;
-	QString	notes;
+	QString	description;
 	
-	Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString& notes);
+	Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString& description);
 	
 	bool equalTo(Trip* other);
 };

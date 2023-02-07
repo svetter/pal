@@ -34,6 +34,7 @@ SOURCES += \
 	src/dialogs/country_dialog.cpp \
 	src/dialogs/hiker_dialog.cpp \
 	src/dialogs/new_or_edit_dialog.cpp \
+	src/dialogs/parse_helper.cpp \
 	src/dialogs/range_dialog.cpp \
 	src/dialogs/ascent_dialog.cpp \
 	src/dialogs/peak_dialog.cpp \

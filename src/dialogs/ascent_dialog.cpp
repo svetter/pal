@@ -120,7 +120,7 @@ Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
 	AscentDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString			title				= parseLineedit(dialog.titleTextbox);
+		QString			title				= parseLineEdit(dialog.titleLineEdit);
 		int				peakID				= -1;	// TODO
 		QDate			date				= QDate();	// TODO
 		int				perDayIndex			= -1;	// TODO

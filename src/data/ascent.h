@@ -23,13 +23,13 @@ public:
 	int				tripID;
 	QList<int>		hikerIDs;
 	QList<QString>	photos;
-	QString			notes;
+	QString			description;
 	
 	static QString hikeKindNames[];
 	static QString* difficultySystemNames;
 	static QString** difficultyGradeNames;
 	
-	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& notes);
+	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& description);
 	
 	bool equalTo(Ascent* other);
 };

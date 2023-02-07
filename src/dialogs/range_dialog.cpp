@@ -1,4 +1,5 @@
 #include "range_dialog.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 
@@ -32,7 +33,7 @@ void RangeDialog::insertInitData()
 
 bool RangeDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())		return true;
+	if (!nameLineEdit->text().isEmpty())	return true;
 	if (continentCombo->currentIndex() > 0)	return true;
 	return false;
 }
@@ -41,7 +42,7 @@ bool RangeDialog::changesMade()
 
 void RangeDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save mountain range");
@@ -57,7 +58,7 @@ Range* openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
 	RangeDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameTextbox->text();
+		QString	name		= dialog.nameLineEdit->text();
 		int		continent	= -1;	// TODO
 		Range* range = new Range(-1, name, continent);
 		// TODO

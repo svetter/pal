@@ -1,4 +1,5 @@
 #include "hiker_dialog.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 
@@ -32,7 +33,7 @@ void HikerDialog::insertInitData()
 
 bool HikerDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())	return true;
+	if (!nameLineEdit->text().isEmpty())	return true;
 	return false;
 }
 
@@ -40,7 +41,7 @@ bool HikerDialog::changesMade()
 
 void HikerDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save hiker");
@@ -56,7 +57,7 @@ Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
 	HikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name	= dialog.nameTextbox->text();
+		QString	name	= dialog.nameLineEdit->text();
 		Hiker* hiker = new Hiker(-1, name);
 		QList<QVariant> values = {QVariant(name)};
 		db->addRow(db->hikersTable, values);

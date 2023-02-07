@@ -1,4 +1,5 @@
 #include "country_dialog.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 
@@ -25,14 +26,14 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
 void CountryDialog::insertInitData()
 {
 	if (!init) return;
-	nameTextbox->setText(init->name);
+	nameLineEdit->setText(init->name);
 }
 
 
 
 bool CountryDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())	return true;
+	if (!nameLineEdit->text().isEmpty())	return true;
 	return false;
 }
 
@@ -40,7 +41,7 @@ bool CountryDialog::changesMade()
 
 void CountryDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save country");
@@ -56,7 +57,7 @@ Country* openNewCountryDialogAndStore(QWidget* parent, Database* db)
 {
 	CountryDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name = dialog.nameTextbox->text();
+		QString	name = dialog.nameLineEdit->text();
 		Country* country = new Country(-1, name);
 		// TODO
 		return country;

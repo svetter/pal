@@ -128,7 +128,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>6</day>
+           <day>1</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -289,19 +289,19 @@
       </layout>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="kindLabel">
+      <widget class="QLabel" name="hikeKindLabel">
        <property name="text">
         <string>Kind of hike</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1">
-      <layout class="QHBoxLayout" name="kindLayout">
+      <layout class="QHBoxLayout" name="hikeKindLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QComboBox" name="kindCombo">
+        <widget class="QComboBox" name="hikeKindCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -320,7 +320,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="kindSpacer1">
+        <spacer name="hikeKindSpacer1">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -343,7 +343,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="kindSpacer2">
+        <spacer name="hikeKindSpacer2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -717,7 +717,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="titleTextbox">
+      <widget class="QLineEdit" name="titleLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
          <horstretch>0</horstretch>

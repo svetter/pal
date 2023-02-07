@@ -1,4 +1,5 @@
 #include "trip_dialog.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 
@@ -33,7 +34,7 @@ void TripDialog::insertInitData()
 
 bool TripDialog::changesMade()
 {
-	if (!nameTextbox->text().isEmpty())				return true;
+	if (!nameLineEdit->text().isEmpty())			return true;
 	if (!descriptionEditor->document()->isEmpty())	return true;
 	return false;
 }
@@ -51,7 +52,7 @@ void TripDialog::handle_datesSpecifiedChanged()
 
 void TripDialog::handle_ok()
 {
-	if (!nameTextbox->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty()) {
 		accept();
 	} else {
 		QString title = tr("Can't save trip");
@@ -67,7 +68,7 @@ Trip* openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
 	TripDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameTextbox->text();
+		QString	name		= dialog.nameLineEdit->text();
 		QDate	startDate	= QDate();	// TODO
 		QDate	endDate		= QDate();	// TODO
 		QString	notes		= "";	// TODO
