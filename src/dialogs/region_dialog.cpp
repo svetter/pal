@@ -50,7 +50,8 @@ void RegionDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	nameLineEdit->setText(init->name);
+	// TODO countryCombo
 }
 
 

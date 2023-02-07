@@ -43,7 +43,7 @@ void HikerDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	nameLineEdit->setText(init->name);
 }
 
 

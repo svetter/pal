@@ -54,7 +54,13 @@ void PeakDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	nameLineEdit->setText(init->name);
+	heightSpinner->setValue(init->height);
+	volcanoCheckbox->setChecked(init->volcano);
+	// TODO regionCombo
+	googleMapsLineEdit->setText(init->mapsLink);
+	googleEarthLineEdit->setText(init->earthLink);
+	wikipediaLineEdit->setText(init->wikiLink);
 }
 
 

@@ -47,7 +47,10 @@ void TripDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	nameLineEdit->setText(init->name);
+	startDateWidget->setDate(init->startDate);
+	endDateWidget->setDate(init->endDate);
+	descriptionEditor->setDocument(new QTextDocument(init->description));
 }
 
 

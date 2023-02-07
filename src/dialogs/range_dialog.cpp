@@ -44,7 +44,8 @@ void RangeDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	nameLineEdit->setText(init->name);
+	continentCombo->setCurrentIndex(init->continent);
 }
 
 

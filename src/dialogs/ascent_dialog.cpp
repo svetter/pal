@@ -68,7 +68,19 @@ void AscentDialog::insertInitData()
 		return;
 	}
 	
-	// TODO
+	titleLineEdit->setText(init->title);
+	// TODO peakCombo
+	dateWidget->setDate(init->date);
+	peakIndexSpinner->setValue(init->perDayIndex);
+	timeWidget->setTime(init->time);
+	hikeKindCombo->setCurrentIndex(init->hikeKind);
+	traverseCheckbox->setChecked(init->traverse);
+	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
+	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
+	// TODO tripCombo
+	// TODO hikersListWidget
+	// TODO photosListWidget
+	descriptionEditor->setDocument(new QTextDocument(init->description));
 }
 
 
