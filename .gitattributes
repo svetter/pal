@@ -1,0 +1,5 @@
+*.h linguist-language=C++
+*.cpp linguist-language=C++
+*.pro linguist-language=QMake
+*.ui linguist-language=XML
+*.ts linguist-language=XML
