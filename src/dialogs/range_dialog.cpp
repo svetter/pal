@@ -21,6 +21,11 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
 	insertInitData();
 }
 
+RangeDialog::~RangeDialog()
+{
+	delete init;
+}
+
 
 
 void RangeDialog::insertInitData()
@@ -29,6 +34,14 @@ void RangeDialog::insertInitData()
 	// TODO
 }
 
+
+Range* RangeDialog::extractData()
+{
+	QString	name		= parseLineEdit		(nameLineEdit);
+	int		continent	= parseEnumCombo	(continentCombo);
+	Range* range = new Range(-1, name, continent);
+	return range;
+}
 
 
 bool RangeDialog::changesMade()

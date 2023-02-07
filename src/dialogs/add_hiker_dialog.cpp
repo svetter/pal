@@ -21,6 +21,13 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 
 
 
+int AddHikerDialog::extractHikerID()
+{
+	int	hikerID = parseIDCombo(hikerCombo);
+	return hikerID;
+}
+
+
 bool AddHikerDialog::changesMade()
 {
 	if (hikerCombo->currentIndex() > 0)	return true;

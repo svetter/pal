@@ -15,10 +15,12 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 	
 public:
 	AscentDialog(QWidget* parent, Database* db, Ascent* init = nullptr);
+	~AscentDialog();
+	
+	Ascent* extractData();
 	
 private:
 	void insertInitData();
-	
 	virtual bool changesMade();
 	
 	void handle_newPeak();

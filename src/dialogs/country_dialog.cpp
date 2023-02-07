@@ -21,6 +21,11 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
 	insertInitData();
 }
 
+CountryDialog::~CountryDialog()
+{
+	delete init;
+}
+
 
 
 void CountryDialog::insertInitData()
@@ -29,6 +34,13 @@ void CountryDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 }
 
+
+Country* CountryDialog::extractData()
+{
+	QString	name	= parseLineEdit	(nameLineEdit);
+	Country* country = new Country(-1, name);
+	return country;
+}
 
 
 bool CountryDialog::changesMade()

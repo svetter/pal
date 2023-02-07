@@ -22,6 +22,11 @@ TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
 	insertInitData();
 }
 
+TripDialog::~TripDialog()
+{
+	delete init;
+}
+
 
 
 void TripDialog::insertInitData()
@@ -30,6 +35,16 @@ void TripDialog::insertInitData()
 	// TODO
 }
 
+
+Trip* TripDialog::extractData()
+{
+	QString	name		= parseLineEdit			(nameLineEdit);
+	QDate	startDate	= parseDateWidget		(startDateWidget);
+	QDate	endDate		= parseDateWidget		(endDateWidget);
+	QString	description	= parsePlainTextEdit	(descriptionEditor);
+	Trip* trip = new Trip(-1, name, startDate, endDate, description);
+	return trip;
+}
 
 
 bool TripDialog::changesMade()

@@ -15,10 +15,12 @@ class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 	
 public:
 	RegionDialog(QWidget* parent, Database* db, Region* init = nullptr);
+	~RegionDialog();
+	
+	Region* extractData();
 	
 private:
 	void insertInitData();
-	
 	virtual bool changesMade();
 	
 	void handle_newRange();	

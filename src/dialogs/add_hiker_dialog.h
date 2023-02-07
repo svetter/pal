@@ -15,8 +15,10 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 public:
 	AddHikerDialog(QWidget* parent, Database* db);
 	
+	int extractHikerID();
+	
 private:
-	bool changesMade();	
+	bool changesMade();
 	
 	void handle_newHiker();
 	

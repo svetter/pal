@@ -15,10 +15,12 @@ class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 	
 public:
 	CountryDialog(QWidget* parent, Database* db, Country* init = nullptr);
+	~CountryDialog();
+	
+	Country* extractData();
 	
 private:
 	void insertInitData();
-	
 	virtual bool changesMade();
 	
 	void handle_ok();

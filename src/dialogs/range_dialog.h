@@ -15,10 +15,12 @@ class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
 	
 public:
 	RangeDialog(QWidget* parent, Database* db, Range* init = nullptr);
+	~RangeDialog();
+	
+	Range* extractData();
 	
 private:
 	void insertInitData();
-	
 	virtual bool changesMade();
 	
 	void handle_ok();

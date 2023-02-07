@@ -21,6 +21,11 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
 	insertInitData();
 }
 
+HikerDialog::~HikerDialog()
+{
+	delete init;
+}
+
 
 
 void HikerDialog::insertInitData()
@@ -29,6 +34,13 @@ void HikerDialog::insertInitData()
 	// TODO
 }
 
+
+Hiker* HikerDialog::extractData()
+{
+	QString	name	= parseLineEdit	(nameLineEdit);
+	Hiker* hiker = new Hiker(-1, name);
+	return hiker;
+}
 
 
 bool HikerDialog::changesMade()

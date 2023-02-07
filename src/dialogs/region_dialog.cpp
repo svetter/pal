@@ -27,6 +27,11 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
 	insertInitData();
 }
 
+RegionDialog::~RegionDialog()
+{
+	delete init;
+}
+
 
 
 void RegionDialog::insertInitData()
@@ -35,6 +40,14 @@ void RegionDialog::insertInitData()
 	// TODO
 }
 
+
+Region* RegionDialog::extractData()
+{
+	QString	name		= parseLineEdit	(nameLineEdit);
+	int		countryID	= parseIDCombo	(countryCombo);
+	Region* region = new Region(-1, name, countryID);
+	return region;
+}
 
 
 bool RegionDialog::changesMade()
