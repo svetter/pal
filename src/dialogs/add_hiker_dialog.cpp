@@ -47,8 +47,10 @@ bool AddHikerDialog::changesMade()
 
 void AddHikerDialog::handle_newHiker()
 {
-	openNewHikerDialogAndStore(this, db);
-	// TODO
+	Hiker* newHiker = openNewHikerDialogAndStore(this, db);
+	int hikerID = newHiker->hikerID;
+	QString& name = newHiker->name;
+	// TODO add to hikerCombo
 }
 
 

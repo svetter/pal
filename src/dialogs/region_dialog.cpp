@@ -76,14 +76,18 @@ bool RegionDialog::changesMade()
 
 void RegionDialog::handle_newRange()
 {
-	openNewRangeDialogAndStore(this, db);
-	// TODO
+	Range* newRange = openNewRangeDialogAndStore(this, db);
+	int rangeID = newRange->rangeID;
+	QString& name = newRange->name;
+	// TODO add to rangeCombo
 }
 
 void RegionDialog::handle_newCountry()
 {
-	openNewCountryDialogAndStore(this, db);
-	// TODO
+	Country* newCountry = openNewCountryDialogAndStore(this, db);
+	int countryID = newCountry->countryID;
+	QString& name = newCountry->name;
+	// TODO add to countryCombo
 }
 
 

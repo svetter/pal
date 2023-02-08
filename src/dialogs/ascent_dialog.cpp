@@ -117,8 +117,10 @@ bool AscentDialog::changesMade()
 
 void AscentDialog::handle_newPeak()
 {
-	openNewPeakDialogAndStore(this, db);
-	// TODO
+	Peak* newPeak = openNewPeakDialogAndStore(this, db);
+	int peakID = newPeak->peakID;
+	QString& name = newPeak->name;
+	// TODO add to peakCombo
 }
 
 void AscentDialog::handle_dateSpecifiedChanged()
@@ -149,8 +151,10 @@ void AscentDialog::handle_difficultySystemChanged()
 
 void AscentDialog::handle_newTrip()
 {
-	openNewTripDialogAndStore(this, db);
-	// TODO
+	Trip* newTrip = openNewTripDialogAndStore(this, db);
+	int tripID = newTrip->tripID;
+	QString& name = newTrip->name;
+	// TODO add to tripCombo
 }
 
 void AscentDialog::handle_addHiker()
@@ -162,7 +166,8 @@ void AscentDialog::handle_addHiker()
 void AscentDialog::handle_photosPathBrowse()
 {
 	QString caption = tr("Select folder with photos of ascent");
-	QString path = QFileDialog::getExistingDirectory(this, caption);
+	QString path = QFileDialog::getExistingDirectory(this, caption);	// TODO file not dir
+	// TODO
 }
 
 
