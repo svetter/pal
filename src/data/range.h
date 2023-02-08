@@ -1,8 +1,7 @@
 #ifndef RANGE_H
 #define RANGE_H
 
-#include <QString>
-#include <QMap>
+#include <QStringList>
 #include <QTranslator>
 
 
@@ -14,7 +13,7 @@ public:
 	QString	name;
 	int		continent;
 	
-	static QString continentNames[];
+	static const QStringList continentNames;
 	
 	Range(int rangeID, QString& name, int continent);
 	
