@@ -41,18 +41,19 @@ AscentDialog::~AscentDialog()
 	delete init;
 }
 
-
-
 void AscentDialog::populateComboBoxes()
 {
 	// TODO peakCombo
 	
-	hikeKind->insertItems(1, Ascent::hikeKindNames);
+	hikeKindCombo->insertItems(1, Ascent::hikeKindNames);
 	
 	QStringList difficultySystemNames = QStringList();
-	for (auto iter = difficultyNames.constBegin(); iter != difficultyNames.constEnd(); iter++) {
-		difficultySystemNames.append(iter->first);
-	}
+	std::transform(
+			Ascent::difficultyNames.constBegin(),
+			Ascent::difficultyNames.constEnd(),
+			std::back_inserter(difficultySystemNames),
+			[](QPair<QString, QStringList> qPair){ return qPair.first; }
+	);
 	difficultySystemCombo->insertItems(1, difficultySystemNames);
 	
 	handle_difficultySystemChanged();

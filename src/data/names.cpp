@@ -5,7 +5,7 @@
 
 
 
-const QStringList Peak::continentNames = {
+const QStringList Range::continentNames = {
 	QObject::tr("North America"),
 	QObject::tr("South America"),
 	QObject::tr("Europe"),
@@ -28,11 +28,10 @@ const QStringList Ascent::hikeKindNames = {
 
 // https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
 const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
-	QPair(
+	qMakePair<QString, QStringList>(
 		QObject::tr("SAC hiking scale"),
+		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Wandern/2020_Berg_Alpinwanderskala_EN.pdf
 		{
-			// SAC hiking scale
-			// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Wandern/2020_Berg_Alpinwanderskala_EN.pdf
 			QObject::tr("T1 (Hiking)"),
 			QObject::tr("T2 (Mountain hiking)"),
 			QObject::tr("T3 (Difficult mountain hiking)"),
@@ -41,10 +40,9 @@ const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
 			QObject::tr("T6 (Very difficult alpine hiking)")
 		}
 	),
-	QPair(
+	qMakePair<QString, QStringList>(
 		QObject::tr("SAC mountaneering scale"),
 		{
-			// SAC mountaineering scale
 			QObject::tr("F (Easy)"),
 			QObject::tr("PD (Moderate)"),
 			QObject::tr("AD (Somewhat difficult)"),
@@ -52,13 +50,12 @@ const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
 			QObject::tr("TD (Very difficult)"),
 			QObject::tr("ED (Extremely difficult)"),
 			QObject::tr("ABO (Abominably difficult)")
-		},
+		}
 	),
-	QPair(
+	qMakePair<QString, QStringList>(
 		QObject::tr("SAC ski tours scale"),
+		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Skitour/2020_Skitourenskala_EN.pdf
 		{
-			// SAC ski tours scale
-			// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Skitour/2020_Skitourenskala_EN.pdf
 			QObject::tr("L (Easy)"),
 			QObject::tr("WS (Moderate)"),
 			QObject::tr("ZS (Somewhat difficult)"),
@@ -66,26 +63,24 @@ const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
 			QObject::tr("SS (Very difficult)"),
 			QObject::tr("AS (Exceptionally difficult)"),
 			QObject::tr("EX (Extremely dificult)")
-		},
+		}
 	),
-	QPair(
+	qMakePair<QString, QStringList>(
 		QObject::tr("SAC snowshoe tours scale"),
+		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Schneeschuhtour/2020_Schneeschuhtourenskala_EN.pdf
 		{
-			// SAC snowshoe tours scale
-			// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Schneeschuhtour/2020_Schneeschuhtourenskala_EN.pdf
 			QObject::tr("WT1 (Easy snowshoe hike)"),
 			QObject::tr("WT2 (Moderate snowshoe hike)"),
 			QObject::tr("WT3 (Difficult snowshoe hike)"),
 			QObject::tr("WT4 (Snowshoe tour)"),
 			QObject::tr("WT5 (Alpine snowshoe tour)"),
 			QObject::tr("WT6 (Difficult alpine snowshoe tour)")
-		},
+		}
 	),
-	QPair(
+	qMakePair<QString, QStringList>(
 		QObject::tr("UIAA climbing scale"),
+		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Klettern/SAC-Kletterskala-UIAA-v0.1.pdf
 		{
-			// UIAA climbing scale
-			// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Klettern/SAC-Kletterskala-UIAA-v0.1.pdf
 			QObject::tr("I (Easy)"),
 			QObject::tr("II (Moderate)"),
 			QObject::tr("III (Somewhat difficult)"),

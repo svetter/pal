@@ -95,6 +95,6 @@ Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker)
 		// TODO update database
 	}
 	
-	delete hiker;
+	delete originalHiker;
 	return editedHiker;
 }

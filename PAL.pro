@@ -15,6 +15,7 @@ SOURCES += \
 	src/data/ascent.cpp \
 	src/data/country.cpp \
 	src/data/hiker.cpp \
+	src/data/names.cpp \
 	src/data/peak.cpp \
 	src/data/range.cpp \
 	src/data/region.cpp \

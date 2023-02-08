@@ -75,7 +75,7 @@ public:
 	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName);
 	~NormalTable();
 	
-	int addColumn(Column* column);
+	void addColumn(Column* column);
 	
 	Column* getPrimaryKeyColumn();
 	QString getColumnListString();

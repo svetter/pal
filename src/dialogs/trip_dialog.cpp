@@ -101,7 +101,7 @@ Trip* openNewTripDialogAndStore(QWidget* parent, Database* db)
 	return newTrip;
 }
 
-Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* trip)
+Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* originalTrip)
 {
 	Trip* editedTrip = nullptr;
 	
