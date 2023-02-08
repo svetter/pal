@@ -50,7 +50,7 @@ void HikerDialog::insertInitData()
 bool HikerDialog::changesMade()
 {
 	Hiker* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

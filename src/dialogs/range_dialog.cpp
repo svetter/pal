@@ -52,7 +52,7 @@ void RangeDialog::insertInitData()
 bool RangeDialog::changesMade()
 {
 	Range* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

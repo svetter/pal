@@ -50,7 +50,7 @@ void CountryDialog::insertInitData()
 bool CountryDialog::changesMade()
 {
 	Country* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

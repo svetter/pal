@@ -87,7 +87,7 @@ void AscentDialog::insertInitData()
 bool AscentDialog::changesMade()
 {
 	Ascent* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

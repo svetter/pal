@@ -57,7 +57,7 @@ void TripDialog::insertInitData()
 bool TripDialog::changesMade()
 {
 	Trip* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

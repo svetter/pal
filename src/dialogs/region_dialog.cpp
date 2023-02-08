@@ -58,7 +58,7 @@ void RegionDialog::insertInitData()
 bool RegionDialog::changesMade()
 {
 	Region* currentState = extractData();
-	bool equal = extractData()->equalTo(init);
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }
