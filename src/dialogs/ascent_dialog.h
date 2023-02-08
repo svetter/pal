@@ -38,7 +38,7 @@ private:
 
 
 Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db);
-bool openEditAscentDialog(QWidget* parent, Database* db, Ascent* ascent);
+bool openEditAscentDialog(QWidget* parent, Database* db, Ascent* originalAscent);
 
 
 

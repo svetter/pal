@@ -113,26 +113,28 @@ void PeakDialog::handle_ok()
 
 Peak* openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
+	Peak* newPeak = nullptr;
+	
 	PeakDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameLineEdit->text();
-		int		height		= -1;	// TODO
-		bool	volcano		= false;	// TODO
-		int		regionID	= -1;	// TODO
-		QString	mapsLink	= "";	// TODO
-		QString	earthLink	= "";	// TODO
-		QString	wikiLink	= "";	// TODO
-		Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
-		// TODO
-		return peak;
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		newPeak = dialog.extractData();
+		int peakID = db->peaksTable->addRow(newPeak);
+		newPeak->peakID = peakID;
 	}
-	return nullptr;
+	
+	return newPeak;
 }
 
-bool openEditPeakDialog(QWidget* parent, Database* db, Peak* peak)
+Peak* openEditPeakDialog(QWidget* parent, Database* db, Peak* originalPeak)
 {
-	PeakDialog dialog(parent, db, peak);
-	dialog.exec();
-	// TODO
-	return false;
+	Peak* editedPeak = nullptr;
+	
+	PeakDialog dialog(parent, db, originalPeak);
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		editedPeak = dialog.extractData();
+		// TODO update database
+	}
+	
+	delete originalPeak;
+	return editedPeak;
 }

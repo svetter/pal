@@ -104,21 +104,28 @@ void RegionDialog::handle_ok()
 
 Region* openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
+	Region* newRegion = nullptr;
+	
 	RegionDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		QString	name	= dialog.nameLineEdit->text();
-		int		rangeID	= -1;	// TODO
-		Region* region = new Region(-1, name, rangeID);
-		// TODO
-		return region;
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		newRegion = dialog.extractData();
+		int regionID = db->regionsTable->addRow(newRegion);
+		newRegion->regionID = regionID;
 	}
-	return nullptr;
+	
+	return newRegion;
 }
 
-bool openEditRegionDialog(QWidget* parent, Database* db, Region* region)
+Region* openEditRegionDialog(QWidget* parent, Database* db, Region* originalRegion)
 {
-	RegionDialog dialog(parent, db, region);
-	dialog.exec();
-	// TODO
-	return false;
+	Region* editedRegion = nullptr;
+	
+	RegionDialog dialog(parent, db, originalRegion);
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		editedRegion = dialog.extractData();
+		// TODO update database
+	}
+	
+	delete originalRegion;
+	return editedRegion;
 }

@@ -84,21 +84,28 @@ void RangeDialog::handle_ok()
 
 Range* openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
+	Range* newRange = nullptr;
+	
 	RangeDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameLineEdit->text();
-		int		continent	= -1;	// TODO
-		Range* range = new Range(-1, name, continent);
-		// TODO
-		return range;
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		newRange = dialog.extractData();
+		int rangeID = db->rangesTable->addRow(newRange);
+		newRange->rangeID = rangeID;
 	}
-	return nullptr;
+	
+	return newRange;
 }
 
-bool openEditRangeDialog(QWidget* parent, Database* db, Range* range)
+Range* openEditRangeDialog(QWidget* parent, Database* db, Range* originalRange)
 {
-	RangeDialog dialog(parent, db, range);
-	dialog.exec();
-	// TODO
-	return false;
+	Range* editedRange = nullptr;
+	
+	RangeDialog dialog(parent, db, originalRange);
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		editedRange = dialog.extractData();
+		// TODO update database
+	}
+	
+	delete originalRange;
+	return editedRange;
 }

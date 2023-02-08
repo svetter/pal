@@ -33,7 +33,7 @@ private:
 
 
 Region* openNewRegionDialogAndStore(QWidget* parent, Database* db);
-bool openEditRegionDialog(QWidget* parent, Database* db, Region* region);
+Region* openEditRegionDialog(QWidget* parent, Database* db, Region* originalRegion);
 
 
 

@@ -89,23 +89,28 @@ void TripDialog::handle_ok()
 
 Trip* openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
+	Trip* newTrip = nullptr;
+	
 	TripDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		QString	name		= dialog.nameLineEdit->text();
-		QDate	startDate	= QDate();	// TODO
-		QDate	endDate		= QDate();	// TODO
-		QString	notes		= "";	// TODO
-		Trip* trip = new Trip(-1, name, startDate, endDate, notes);
-		// TODO
-		return trip;
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		newTrip = dialog.extractData();
+		int tripID = db->tripsTable->addRow(newTrip);
+		newTrip->tripID = tripID;
 	}
-	return nullptr;
+	
+	return newTrip;
 }
 
-bool openEditTripDialog(QWidget* parent, Database* db, Trip* trip)
+Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* trip)
 {
-	TripDialog dialog(parent, db, trip);
-	dialog.exec();
-	// TODO
-	return false;
+	Trip* editedTrip = nullptr;
+	
+	TripDialog dialog(parent, db, originalTrip);
+	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+		editedTrip = dialog.extractData();
+		// TODO update database
+	}
+	
+	delete originalTrip;
+	return editedTrip;
 }

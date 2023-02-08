@@ -30,7 +30,7 @@ private:
 
 
 Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db);
-bool openEditHikerDialog(QWidget* parent, Database* db, Hiker* hiker);
+Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker);
 
 
 
