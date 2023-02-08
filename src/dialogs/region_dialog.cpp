@@ -43,15 +43,6 @@ void RegionDialog::populateComboBoxes()
 
 
 
-Region* RegionDialog::extractData()
-{
-	QString	name		= parseLineEdit	(nameLineEdit);
-	int		countryID	= parseIDCombo	(countryCombo);
-	Region* region = new Region(-1, name, countryID);
-	return region;
-}
-
-
 void RegionDialog::insertInitData()
 {
 	if (!edit) {
@@ -61,6 +52,15 @@ void RegionDialog::insertInitData()
 	
 	nameLineEdit->setText(init->name);
 	// TODO countryCombo
+}
+
+
+Region* RegionDialog::extractData()
+{
+	QString	name		= parseLineEdit	(nameLineEdit);
+	int		countryID	= parseIDCombo	(countryCombo);
+	Region* region = new Region(-1, name, countryID);
+	return region;
 }
 
 

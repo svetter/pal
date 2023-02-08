@@ -18,12 +18,11 @@ public:
 	~RegionDialog();
 	
 	Region* extractData();
+	virtual bool changesMade();
 	
 private:
 	void populateComboBoxes();
-	
 	void insertInitData();
-	virtual bool changesMade();
 	
 	void handle_newRange();	
 	void handle_newCountry();

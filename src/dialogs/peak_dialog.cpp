@@ -42,20 +42,6 @@ void PeakDialog::populateComboBoxes()
 
 
 
-Peak* PeakDialog::extractData()
-{
-	QString	name		= parseLineEdit	(nameLineEdit);
-	int		height		= parseSpinner	(heightSpinner);
-	bool	volcano		= parseCheckbox	(volcanoCheckbox);
-	int		regionID	= parseIDCombo	(regionCombo);
-	QString	mapsLink	= parseLineEdit	(googleMapsLineEdit);
-	QString	earthLink	= parseLineEdit	(googleEarthLineEdit);
-	QString	wikiLink	= parseLineEdit	(wikipediaLineEdit);
-	Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
-	return peak;
-}
-
-
 void PeakDialog::insertInitData()
 {
 	if (!edit) {
@@ -70,6 +56,20 @@ void PeakDialog::insertInitData()
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);
+}
+
+
+Peak* PeakDialog::extractData()
+{
+	QString	name		= parseLineEdit	(nameLineEdit);
+	int		height		= parseSpinner	(heightSpinner);
+	bool	volcano		= parseCheckbox	(volcanoCheckbox);
+	int		regionID	= parseIDCombo	(regionCombo);
+	QString	mapsLink	= parseLineEdit	(googleMapsLineEdit);
+	QString	earthLink	= parseLineEdit	(googleEarthLineEdit);
+	QString	wikiLink	= parseLineEdit	(wikipediaLineEdit);
+	Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
+	return peak;
 }
 
 

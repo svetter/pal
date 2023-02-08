@@ -29,17 +29,6 @@ TripDialog::~TripDialog()
 
 
 
-Trip* TripDialog::extractData()
-{
-	QString	name		= parseLineEdit			(nameLineEdit);
-	QDate	startDate	= parseDateWidget		(startDateWidget);
-	QDate	endDate		= parseDateWidget		(endDateWidget);
-	QString	description	= parsePlainTextEdit	(descriptionEditor);
-	Trip* trip = new Trip(-1, name, startDate, endDate, description);
-	return trip;
-}
-
-
 void TripDialog::insertInitData()
 {
 	if (!edit) {
@@ -51,6 +40,17 @@ void TripDialog::insertInitData()
 	startDateWidget->setDate(init->startDate);
 	endDateWidget->setDate(init->endDate);
 	descriptionEditor->setDocument(new QTextDocument(init->description));
+}
+
+
+Trip* TripDialog::extractData()
+{
+	QString	name		= parseLineEdit			(nameLineEdit);
+	QDate	startDate	= parseDateWidget		(startDateWidget);
+	QDate	endDate		= parseDateWidget		(endDateWidget);
+	QString	description	= parsePlainTextEdit	(descriptionEditor);
+	Trip* trip = new Trip(-1, name, startDate, endDate, description);
+	return trip;
 }
 
 

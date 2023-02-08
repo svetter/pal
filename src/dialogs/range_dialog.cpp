@@ -37,15 +37,6 @@ void RangeDialog::populateComboBoxes()
 
 
 
-Range* RangeDialog::extractData()
-{
-	QString	name		= parseLineEdit		(nameLineEdit);
-	int		continent	= parseEnumCombo	(continentCombo);
-	Range* range = new Range(-1, name, continent);
-	return range;
-}
-
-
 void RangeDialog::insertInitData()
 {
 	if (!edit) {
@@ -55,6 +46,15 @@ void RangeDialog::insertInitData()
 	
 	nameLineEdit->setText(init->name);
 	continentCombo->setCurrentIndex(init->continent);
+}
+
+
+Range* RangeDialog::extractData()
+{
+	QString	name		= parseLineEdit		(nameLineEdit);
+	int		continent	= parseEnumCombo	(continentCombo);
+	Range* range = new Range(-1, name, continent);
+	return range;
 }
 
 

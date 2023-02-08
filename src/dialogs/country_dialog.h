@@ -18,10 +18,10 @@ public:
 	~CountryDialog();
 	
 	Country* extractData();
+	virtual bool changesMade();
 	
 private:
 	void insertInitData();
-	virtual bool changesMade();
 	
 	void handle_ok();
 };

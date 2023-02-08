@@ -62,26 +62,6 @@ void AscentDialog::populateComboBoxes()
 
 
 
-Ascent* AscentDialog::extractData()
-{
-	QString			title				= parseLineEdit			(titleLineEdit);
-	int				peakID				= parseIDCombo			(peakCombo);
-	QDate			date				= parseDateWidget		(dateWidget);
-	int				perDayIndex			= parseSpinner			(peakIndexSpinner);
-	QTime			time				= parseTimeWidget		(timeWidget);
-	int				hikeKind			= parseEnumCombo		(hikeKindCombo);
-	bool			traverse			= parseCheckbox			(traverseCheckbox);
-	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo);
-	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo);
-	int				tripID				= parseIDCombo			(tripCombo);
-	QList<int>		hikerIDs			= parseHikerList		(hikersListWidget);
-	QList<QString>	photos				= parsePhotosList		(photosListWidget);
-	QString			description			= parsePlainTextEdit	(descriptionEditor);
-	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
-	return ascent;
-}
-
-
 void AscentDialog::insertInitData()
 {
 	if (!edit) {
@@ -102,6 +82,26 @@ void AscentDialog::insertInitData()
 	// TODO hikersListWidget
 	// TODO photosListWidget
 	descriptionEditor->setDocument(new QTextDocument(init->description));
+}
+
+
+Ascent* AscentDialog::extractData()
+{
+	QString			title				= parseLineEdit			(titleLineEdit);
+	int				peakID				= parseIDCombo			(peakCombo);
+	QDate			date				= parseDateWidget		(dateWidget);
+	int				perDayIndex			= parseSpinner			(peakIndexSpinner);
+	QTime			time				= parseTimeWidget		(timeWidget);
+	int				hikeKind			= parseEnumCombo		(hikeKindCombo);
+	bool			traverse			= parseCheckbox			(traverseCheckbox);
+	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo);
+	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo);
+	int				tripID				= parseIDCombo			(tripCombo);
+	QList<int>		hikerIDs			= parseHikerList		(hikersListWidget);
+	QList<QString>	photos				= parsePhotosList		(photosListWidget);
+	QString			description			= parsePlainTextEdit	(descriptionEditor);
+	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return ascent;
 }
 
 
@@ -178,20 +178,7 @@ Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
 	AscentDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		QString			title				= parseLineEdit(dialog.titleLineEdit);
-		int				peakID				= -1;	// TODO
-		QDate			date				= QDate();	// TODO
-		int				perDayIndex			= -1;	// TODO
-		QTime			time				= QTime();	// TODO
-		int				hikeKind			= -1;	// TODO
-		bool			traverse			= -1;	// TODO
-		int				difficultySystem	= -1;	// TODO
-		int				difficultyGrade		= -1;	// TODO
-		int				tripID				= -1;	// TODO
-		QList<int>		hikerIDs			= QList<int>();	// TODO
-		QList<QString>	photos				= QList<QString>();	// TODO
-		QString			notes				= "";	// TODO
-		Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, notes);
+		Ascent* ascent = extractData();
 		// TODO
 		return ascent;
 	}
@@ -201,7 +188,11 @@ Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db)
 bool openEditAscentDialog(QWidget* parent, Database* db, Ascent* ascent)
 {
 	AscentDialog dialog(parent, db, ascent);
-	dialog.exec();
+	f (dialog.exec() == QDialog::Accepted && dialog.anyCh) {
+		Ascent* ascent = extractData();
+		// TODO
+		return ascent;
+	}
 	// TODO
 	return false;
 }

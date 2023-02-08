@@ -18,12 +18,11 @@ public:
 	~PeakDialog();
 	
 	Peak* extractData();
+	virtual bool changesMade();
 	
 private:
 	void populateComboBoxes();
-	
 	void insertInitData();
-	virtual bool changesMade();
 	
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();

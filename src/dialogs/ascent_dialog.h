@@ -18,12 +18,11 @@ public:
 	~AscentDialog();
 	
 	Ascent* extractData();
+	virtual bool changesMade();
 	
 private:
 	void populateComboBoxes();
-	
 	void insertInitData();
-	virtual bool changesMade();
 	
 	void handle_newPeak();
 	void handle_dateSpecifiedChanged();

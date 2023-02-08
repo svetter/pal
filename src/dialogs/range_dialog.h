@@ -18,12 +18,11 @@ public:
 	~RangeDialog();
 	
 	Range* extractData();
+	virtual bool changesMade();
 	
 private:
 	void populateComboBoxes();
-	
 	void insertInitData();
-	virtual bool changesMade();
 	
 	void handle_ok();
 };

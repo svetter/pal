@@ -20,14 +20,14 @@ protected:
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
-	virtual bool changesMade();
-	
 	void handle_cancel();
 	
 	void reject();
 	
 public:
 	QString itemNameLowercase;
+	
+	virtual bool changesMade();
 };
 
 
