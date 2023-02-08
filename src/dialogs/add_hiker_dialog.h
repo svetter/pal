@@ -18,6 +18,8 @@ public:
 	int extractHikerID();
 	
 private:
+	void populateComboBoxes();
+	
 	bool changesMade();
 	
 	void handle_newHiker();

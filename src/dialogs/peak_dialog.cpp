@@ -14,6 +14,8 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	populateComboBoxes();
+	
 	
 	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,	&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
@@ -29,6 +31,13 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
 PeakDialog::~PeakDialog()
 {
 	delete init;
+}
+
+
+
+void PeakDialog::populateComboBoxes()
+{
+	// TODO regionCombo
 }
 
 

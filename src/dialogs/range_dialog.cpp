@@ -12,6 +12,8 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	populateComboBoxes();
+	
 	
 	connect(okButton,		&QPushButton::clicked,	this,	&RangeDialog::handle_ok);
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
@@ -24,6 +26,13 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
 RangeDialog::~RangeDialog()
 {
 	delete init;
+}
+
+
+
+void RangeDialog::populateComboBoxes()
+{
+	continentCombo->insertItems(1, Range::continentNames);
 }
 
 

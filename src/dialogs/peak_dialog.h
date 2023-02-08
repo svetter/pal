@@ -20,6 +20,8 @@ public:
 	Peak* extractData();
 	
 private:
+	void populateComboBoxes();
+	
 	void insertInitData();
 	virtual bool changesMade();
 	

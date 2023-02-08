@@ -20,6 +20,8 @@ public:
 	Ascent* extractData();
 	
 private:
+	void populateComboBoxes();
+	
 	void insertInitData();
 	virtual bool changesMade();
 	

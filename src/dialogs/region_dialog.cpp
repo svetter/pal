@@ -15,6 +15,8 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	populateComboBoxes();
+	
 	
 	connect(newRangeButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_newRange);
 	connect(newCountryButton,	&QPushButton::clicked,	this,	&RegionDialog::handle_newCountry);
@@ -30,6 +32,13 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
 RegionDialog::~RegionDialog()
 {
 	delete init;
+}
+
+
+
+void RegionDialog::populateComboBoxes()
+{
+	// TODO countryCombo
 }
 
 

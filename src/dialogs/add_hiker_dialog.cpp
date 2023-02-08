@@ -13,10 +13,20 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
 	
+	populateComboBoxes();
+	
+	
 	connect(newHikerButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_newHiker);
 	
 	connect(okButton,		&QPushButton::clicked,	this,	&AddHikerDialog::handle_ok);
 	connect(cancelButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_cancel);
+}
+
+
+
+void AddHikerDialog::populateComboBoxes()
+{
+	// TODO hikerCombo
 }
 
 

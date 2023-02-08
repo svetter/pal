@@ -18,6 +18,8 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 {
 	setupUi(this);
 	
+	populateComboBoxes();
+	
 	
 	connect(newPeakButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newPeak);
 	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
@@ -41,6 +43,25 @@ AscentDialog::~AscentDialog()
 
 
 
+void AscentDialog::populateComboBoxes()
+{
+	// TODO peakCombo
+	
+	hikeKind->insertItems(1, Ascent::hikeKindNames);
+	
+	QStringList difficultySystemNames = QStringList();
+	for (auto iter = difficultyNames.constBegin(); iter != difficultyNames.constEnd(); iter++) {
+		difficultySystemNames.append(iter->first);
+	}
+	difficultySystemCombo->insertItems(1, difficultySystemNames);
+	
+	handle_difficultySystemChanged();
+	
+	// TODO tripCombo
+}
+
+
+
 Ascent* AscentDialog::extractData()
 {
 	QString			title				= parseLineEdit			(titleLineEdit);
@@ -48,10 +69,10 @@ Ascent* AscentDialog::extractData()
 	QDate			date				= parseDateWidget		(dateWidget);
 	int				perDayIndex			= parseSpinner			(peakIndexSpinner);
 	QTime			time				= parseTimeWidget		(timeWidget);
-	int				hikeKind			= parseIDCombo			(hikeKindCombo);
+	int				hikeKind			= parseEnumCombo		(hikeKindCombo);
 	bool			traverse			= parseCheckbox			(traverseCheckbox);
-	int				difficultySystem	= parseIDCombo			(difficultySystemCombo);
-	int				difficultyGrade		= parseIDCombo			(difficultyGradeCombo);
+	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo);
+	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo);
 	int				tripID				= parseIDCombo			(tripCombo);
 	QList<int>		hikerIDs			= parseHikerList		(hikersListWidget);
 	QList<QString>	photos				= parsePhotosList		(photosListWidget);
@@ -114,11 +135,14 @@ void AscentDialog::handle_timeSpecifiedChanged()
 
 void AscentDialog::handle_difficultySystemChanged()
 {
-	bool systemSelected = difficultySystemCombo->currentIndex() > 0;
+	int system = difficultySystemCombo->currentIndex();
+	bool systemSelected = system > 0;
 	difficultyGradeCombo->setEnabled(systemSelected);
 	if (systemSelected) {
 		difficultyGradeCombo->setPlaceholderText(tr("Select grade"));
+		difficultyGradeCombo->insertItems(1, Ascent::difficultyNames.at(system).second);
 	} else {
+		difficultyGradeCombo->clear();
 		difficultyGradeCombo->setPlaceholderText(tr("None"));
 	}
 }
