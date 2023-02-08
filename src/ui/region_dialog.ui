@@ -102,7 +102,7 @@
           </size>
          </property>
          <property name="placeholderText">
-          <string>Required</string>
+          <string>Select</string>
          </property>
         </widget>
        </item>
@@ -148,7 +148,7 @@
           </size>
          </property>
          <property name="placeholderText">
-          <string>Required</string>
+          <string>Select</string>
          </property>
         </widget>
        </item>
