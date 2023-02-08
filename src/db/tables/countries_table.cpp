@@ -15,7 +15,7 @@ CountriesTable::CountriesTable() :
 
 
 
-void CountriesTable::addRow(Country* country)
+int CountriesTable::addRow(Country* country)
 {
 	// TODO
 }

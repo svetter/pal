@@ -22,7 +22,7 @@ public:
 	
 	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
 	
-	void addRow(Ascent* ascent);
+	int addRow(Ascent* ascent);
 };
 
 

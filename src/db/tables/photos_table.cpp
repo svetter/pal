@@ -19,7 +19,7 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 
 
 
-void PhotosTable::addRows(Ascent* ascent)
+int PhotosTable::addRows(Ascent* ascent)
 {
 	// TODO
 }

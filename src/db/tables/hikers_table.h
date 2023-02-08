@@ -12,7 +12,7 @@ public:
 	
 	HikersTable();
 	
-	void addRow(Hiker* hiker);
+	int addRow(Hiker* hiker);
 };
 
 

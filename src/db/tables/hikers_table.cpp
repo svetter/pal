@@ -15,7 +15,7 @@ HikersTable::HikersTable() :
 
 
 
-void HikersTable::addRow(Hiker* hiker)
+int HikersTable::addRow(Hiker* hiker)
 {
 	// TODO
 }

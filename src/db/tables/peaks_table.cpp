@@ -27,7 +27,7 @@ PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 
 
 
-void PeaksTable::addRow(Peak* peak)
+int PeaksTable::addRow(Peak* peak)
 {
 	// TODO
 }

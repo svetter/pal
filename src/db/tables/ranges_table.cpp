@@ -17,7 +17,7 @@ RangesTable::RangesTable() :
 
 
 
-void RangesTable::addRow(Range* range)
+int RangesTable::addRow(Range* range)
 {
 	// TODO
 }

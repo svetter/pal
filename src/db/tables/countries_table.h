@@ -12,7 +12,7 @@ public:
 	
 	CountriesTable();
 	
-	void addRow(Country* country);
+	int addRow(Country* country);
 };
 
 

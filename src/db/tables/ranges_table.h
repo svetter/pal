@@ -13,7 +13,7 @@ public:
 	
 	RangesTable();
 	
-	void addRow(Range* range);
+	int addRow(Range* range);
 };
 
 

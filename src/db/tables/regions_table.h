@@ -14,7 +14,7 @@ public:
 	
 	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn);
 	
-	void addRow(Region* region);
+	int addRow(Region* region);
 };
 
 

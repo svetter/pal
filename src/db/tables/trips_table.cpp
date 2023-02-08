@@ -21,7 +21,7 @@ TripsTable::TripsTable() :
 
 
 
-void TripsTable::addRow(Trip* trip)
+int TripsTable::addRow(Trip* trip)
 {
 	// TODO
 }

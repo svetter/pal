@@ -19,7 +19,7 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 
 
 
-void RegionsTable::addRow(Region* region)
+int RegionsTable::addRow(Region* region)
 {
 	// TODO
 }

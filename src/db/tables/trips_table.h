@@ -15,7 +15,7 @@ public:
 	
 	TripsTable();
 	
-	void addRow(Trip* trip);
+	int addRow(Trip* trip);
 };
 
 

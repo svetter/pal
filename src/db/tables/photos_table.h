@@ -17,7 +17,7 @@ public:
 	
 	PhotosTable(Column* foreignAscentIDColumn);
 	
-	void addRows(Ascent* ascent);
+	int addRows(Ascent* ascent);
 };
 
 

@@ -18,7 +18,7 @@ public:
 	
 	PeaksTable(Column* foreignRegionIDColumn);
 	
-	void addRow(Peak* peak);
+	int addRow(Peak* peak);
 };
 
 
