@@ -32,6 +32,10 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 	connect(cancelButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_cancel);
 	
 	
+	QDate initialDate = QDateTime::currentDateTime().date();
+	dateWidget->setDate(initialDate);
+	
+	
 	changeStringsForEdit(okButton);
 	insertInitData();
 }

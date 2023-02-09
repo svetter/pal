@@ -23,7 +23,9 @@ public:
 private:
 	void insertInitData();
 	
-	void handle_datesSpecifiedChanged();
+	void handle_datesSpecifiedChanged();	
+	void handle_startDateChanged();	
+	void handle_endDateChanged();
 	
 	void handle_ok();
 };

@@ -12,10 +12,17 @@ TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
 	setupUi(this);
 	
 	
-	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
+	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);	
+	connect(startDateWidget,			&QDateEdit::dateChanged,	this,	&TripDialog::handle_startDateChanged);	
+	connect(endDateWidget,				&QDateEdit::dateChanged,	this,	&TripDialog::handle_endDateChanged);
 	
 	connect(okButton,					&QPushButton::clicked,		this,	&TripDialog::handle_ok);
 	connect(cancelButton,				&QPushButton::clicked,		this,	&TripDialog::handle_cancel);
+	
+	
+	QDate initialDate = QDateTime::currentDateTime().date();
+	startDateWidget->setDate(initialDate);
+	endDateWidget->setDate(initialDate);
 	
 	
 	changeStringsForEdit(okButton);
@@ -69,6 +76,21 @@ void TripDialog::handle_datesSpecifiedChanged()
 	bool enabled = !datesUnspecifiedCheckbox->isChecked();
 	startDateWidget->setEnabled(enabled);
 	endDateWidget->setEnabled(enabled);
+}
+
+
+void TripDialog::handle_startDateChanged()
+{
+	if (endDateWidget->date() < startDateWidget->date()) {
+		endDateWidget->setDate(startDateWidget->date());
+	}
+}
+
+void TripDialog::handle_endDateChanged()
+{
+	if (startDateWidget->date() > endDateWidget->date()) {
+		startDateWidget->setDate(endDateWidget->date());
+	}
 }
 
 
