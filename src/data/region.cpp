@@ -12,6 +12,7 @@ Region::Region(int regionID, QString& name, int countryID) :
 
 bool Region::equalTo(Region* other)
 {
+	assert(other);
 	if (name		!= other->name)			return false;
 	if (countryID	!= other->countryID)	return false;
 	return true;

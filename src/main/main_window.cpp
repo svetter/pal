@@ -64,35 +64,42 @@ void MainWindow::updateHikersView()
 void MainWindow::handle_newAscent()
 {
 	openNewAscentDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newPeak()
 {
 	openNewPeakDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newTrip()
 {
 	openNewTripDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newHiker()
 {
 	openNewHikerDialogAndStore(this, &db);
 	updateHikersView();
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newRegion()
 {
 	openNewRegionDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newRange()
 {
 	openNewRangeDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }
 
 void MainWindow::handle_newCountry()
 {
 	openNewCountryDialogAndStore(this, &db);
+	// TODO update active view if necessary
 }

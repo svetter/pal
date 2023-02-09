@@ -92,6 +92,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
 void PeakDialog::handle_newRegion()
 {
 	Region* newRegion = openNewRegionDialogAndStore(this, db);
+	if (!newRegion) return;
 	int regionID = newRegion->regionID;
 	QString& name = newRegion->name;
 	// TODO add to regionCombo

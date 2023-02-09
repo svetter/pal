@@ -17,6 +17,7 @@ Peak::Peak(int peakID, QString& name, int height, bool volcano, int regionID, QS
 
 bool Peak::equalTo(Peak* other)
 {
+	assert(other);
 	if (name		!= other->name)			return false;
 	if (height		!= other->height)		return false;
 	if (volcano		!= other->volcano)		return false;

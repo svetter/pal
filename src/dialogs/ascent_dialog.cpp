@@ -119,6 +119,7 @@ bool AscentDialog::changesMade()
 void AscentDialog::handle_newPeak()
 {
 	Peak* newPeak = openNewPeakDialogAndStore(this, db);
+	if (!newPeak) return;
 	int peakID = newPeak->peakID;
 	QString& name = newPeak->name;
 	// TODO add to peakCombo
@@ -141,11 +142,12 @@ void AscentDialog::handle_difficultySystemChanged()
 	int system = difficultySystemCombo->currentIndex();
 	bool systemSelected = system > 0;
 	difficultyGradeCombo->setEnabled(systemSelected);
+	
+	difficultyGradeCombo->clear();
 	if (systemSelected) {
 		difficultyGradeCombo->setPlaceholderText(tr("Select grade"));
 		difficultyGradeCombo->insertItems(1, Ascent::difficultyNames.at(system).second);
 	} else {
-		difficultyGradeCombo->clear();
 		difficultyGradeCombo->setPlaceholderText(tr("None"));
 	}
 }
@@ -153,6 +155,7 @@ void AscentDialog::handle_difficultySystemChanged()
 void AscentDialog::handle_newTrip()
 {
 	Trip* newTrip = openNewTripDialogAndStore(this, db);
+	if (!newTrip) return;
 	int tripID = newTrip->tripID;
 	QString& name = newTrip->name;
 	// TODO add to tripCombo

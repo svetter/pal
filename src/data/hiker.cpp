@@ -11,6 +11,7 @@ Hiker::Hiker(int hikerID, QString& name) :
 
 bool Hiker::equalTo(Hiker* other)
 {
+	assert(other);
 	if (name	!= other->name)	return false;
 	return true;
 }

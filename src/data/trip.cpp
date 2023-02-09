@@ -14,6 +14,7 @@ Trip::Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString&
 
 bool Trip::equalTo(Trip* other)
 {
+	assert(other);
 	if (name		!= other->name)			return false;
 	if (startDate	!= other->startDate)	return false;
 	if (endDate		!= other->endDate)		return false;
