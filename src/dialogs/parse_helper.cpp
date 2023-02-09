@@ -13,7 +13,7 @@ QString parseLineEdit(QLineEdit* lineEdit) {
 
 
 
-QString parsePlainTextEdit (QPlainTextEdit* plainTextEdit)
+QString parsePlainTextEdit(QPlainTextEdit* plainTextEdit)
 {
 	QString raw = plainTextEdit->toPlainText();
 	if (raw.isEmpty()) {
@@ -24,14 +24,14 @@ QString parsePlainTextEdit (QPlainTextEdit* plainTextEdit)
 
 
 
-int parseSpinner (QSpinBox* spinBox)
+int parseSpinner(QSpinBox* spinBox)
 {
 	return spinBox->value();
 }
 
 
 
-int parseIDCombo (QComboBox* combo)
+int parseIDCombo(QComboBox* combo)
 {
 	// TODO
 	return -1;
@@ -39,21 +39,25 @@ int parseIDCombo (QComboBox* combo)
 
 
 
-int parseEnumCombo (QComboBox* combo)
+int parseEnumCombo(QComboBox* combo, bool firstItemIsPlaceholder)
 {
-	return combo->currentIndex();
+	int result = combo->currentIndex();
+	if (result == 0 && firstItemIsPlaceholder) {
+		result = -1;
+	}
+	return result;
 }
 
 
 
-bool parseCheckbox (QCheckBox* checkbox)
+bool parseCheckbox(QCheckBox* checkbox)
 {
 	return checkbox->isChecked();
 }
 
 
 
-QDate parseDateWidget (QDateEdit* dateEdit)
+QDate parseDateWidget(QDateEdit* dateEdit)
 {
 	return dateEdit->date();
 }

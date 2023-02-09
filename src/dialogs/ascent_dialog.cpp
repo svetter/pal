@@ -97,14 +97,18 @@ Ascent* AscentDialog::extractData()
 	QDate			date				= parseDateWidget		(dateWidget);
 	int				perDayIndex			= parseSpinner			(peakIndexSpinner);
 	QTime			time				= parseTimeWidget		(timeWidget);
-	int				hikeKind			= parseEnumCombo		(hikeKindCombo);
+	int				hikeKind			= parseEnumCombo		(hikeKindCombo, false);
 	bool			traverse			= parseCheckbox			(traverseCheckbox);
-	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo);
-	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo);
+	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
+	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
 	int				tripID				= parseIDCombo			(tripCombo);
 	QList<int>		hikerIDs			= parseHikerList		(hikersListWidget);
 	QList<QString>	photos				= parsePhotosList		(photosListWidget);
 	QString			description			= parsePlainTextEdit	(descriptionEditor);
+	if (difficultySystem < 1 || difficultyGrade < 1) {
+		difficultySystem	= -1;
+		difficultyGrade		= -1;
+	}
 	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 	return ascent;
 }

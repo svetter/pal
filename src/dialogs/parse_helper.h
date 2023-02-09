@@ -17,7 +17,7 @@ QString			parseLineEdit		(QLineEdit*			lineEdit);
 QString			parsePlainTextEdit	(QPlainTextEdit*	plainTextEdit);
 int				parseSpinner		(QSpinBox*			spinBox);
 int				parseIDCombo		(QComboBox*			combo);
-int				parseEnumCombo		(QComboBox*			combo);
+int				parseEnumCombo		(QComboBox*			combo, bool firstItemIsPlaceholder);
 bool			parseCheckbox		(QCheckBox*			checkbox);
 QDate			parseDateWidget		(QDateEdit*			dateEdit);
 QTime			parseTimeWidget		(QTimeEdit*			timeEdit);
