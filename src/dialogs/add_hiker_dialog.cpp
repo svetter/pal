@@ -26,7 +26,7 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 
 void AddHikerDialog::populateComboBoxes()
 {
-	// TODO hikerCombo
+	// TODO #96 hikerCombo
 }
 
 
@@ -50,7 +50,7 @@ void AddHikerDialog::handle_newHiker()
 	Hiker* newHiker = openNewHikerDialogAndStore(this, db);
 	int hikerID = newHiker->hikerID;
 	QString& name = newHiker->name;
-	// TODO add to hikerCombo
+	// TODO #96 add to hikerCombo
 }
 
 
@@ -77,8 +77,7 @@ int openAddHikerDialog(QWidget* parent, Database* db)
 {
 	AddHikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		// TODO
-		return -1;
+		return dialog.extractHikerID();
 	}
 	return -1;
 }

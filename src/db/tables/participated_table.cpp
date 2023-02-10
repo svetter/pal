@@ -12,6 +12,6 @@ ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* fore
 
 void ParticipatedTable::addRows(Ascent* ascent)
 {
-	// TODO
+	// TODO #97
 }
 	

@@ -33,7 +33,7 @@ int parseSpinner(QSpinBox* spinBox)
 
 int parseIDCombo(QComboBox* combo)
 {
-	// TODO
+	// TODO #91
 	return -1;
 }
 
@@ -73,7 +73,7 @@ QTime parseTimeWidget (QTimeEdit* timeEdit)
 
 QList<int> parseHikerList (QListWidget* hikersListWidget)
 {
-	// TODO
+	// TODO #91
 	return QList<int>();
 }
 
@@ -81,6 +81,6 @@ QList<int> parseHikerList (QListWidget* hikersListWidget)
 
 QList<QString> parsePhotosList (QListWidget* photosListWidget)
 {
-	// TODO
+	// TODO #91
 	return QList<QString>();
 }

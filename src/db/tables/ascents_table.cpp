@@ -37,5 +37,5 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 
 int AscentsTable::addRow(Ascent* ascent)
 {
-	// TODO
+	// TODO #97
 }

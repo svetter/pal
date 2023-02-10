@@ -38,7 +38,8 @@ RegionDialog::~RegionDialog()
 
 void RegionDialog::populateComboBoxes()
 {
-	// TODO countryCombo
+	// TODO #96 rangeCombo
+	// TODO #96 countryCombo
 }
 
 
@@ -51,7 +52,8 @@ void RegionDialog::insertInitData()
 	}
 	
 	nameLineEdit->setText(init->name);
-	// TODO countryCombo
+	// TODO #96 rangeCombo
+	// TODO #96 countryCombo
 }
 
 
@@ -80,7 +82,7 @@ void RegionDialog::handle_newRange()
 	if (!newRange) return;
 	int rangeID = newRange->rangeID;
 	QString& name = newRange->name;
-	// TODO add to rangeCombo
+	// TODO #96 add to rangeCombo
 }
 
 void RegionDialog::handle_newCountry()
@@ -89,7 +91,7 @@ void RegionDialog::handle_newCountry()
 	if (!newCountry) return;
 	int countryID = newCountry->countryID;
 	QString& name = newCountry->name;
-	// TODO add to countryCombo
+	// TODO #96 add to countryCombo
 }
 
 

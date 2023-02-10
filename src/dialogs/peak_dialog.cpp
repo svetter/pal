@@ -37,7 +37,7 @@ PeakDialog::~PeakDialog()
 
 void PeakDialog::populateComboBoxes()
 {
-	// TODO regionCombo
+	// TODO #96 regionCombo
 }
 
 
@@ -52,7 +52,7 @@ void PeakDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	heightSpinner->setValue(init->height);
 	volcanoCheckbox->setChecked(init->volcano);
-	// TODO regionCombo
+	// TODO #96 regionCombo
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);
@@ -95,7 +95,7 @@ void PeakDialog::handle_newRegion()
 	if (!newRegion) return;
 	int regionID = newRegion->regionID;
 	QString& name = newRegion->name;
-	// TODO add to regionCombo
+	// TODO #96 add to regionCombo
 }
 
 

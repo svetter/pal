@@ -19,5 +19,5 @@ RangesTable::RangesTable() :
 
 int RangesTable::addRow(Range* range)
 {
-	// TODO
+	// TODO #97
 }

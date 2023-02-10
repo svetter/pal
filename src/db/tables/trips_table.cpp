@@ -23,5 +23,5 @@ TripsTable::TripsTable() :
 
 int TripsTable::addRow(Trip* trip)
 {
-	// TODO
+	// TODO #97
 }

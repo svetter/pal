@@ -47,7 +47,7 @@ AscentDialog::~AscentDialog()
 
 void AscentDialog::populateComboBoxes()
 {
-	// TODO peakCombo
+	// TODO #96 peakCombo
 	
 	hikeKindCombo->insertItems(1, Ascent::hikeKindNames);
 	
@@ -62,7 +62,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	// TODO tripCombo
+	// TODO #96 tripCombo
 }
 
 
@@ -75,7 +75,7 @@ void AscentDialog::insertInitData()
 	}
 	
 	titleLineEdit->setText(init->title);
-	// TODO peakCombo
+	// TODO #96 peakCombo
 	dateWidget->setDate(init->date);
 	peakIndexSpinner->setValue(init->perDayIndex);
 	timeWidget->setTime(init->time);
@@ -83,9 +83,9 @@ void AscentDialog::insertInitData()
 	traverseCheckbox->setChecked(init->traverse);
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
-	// TODO tripCombo
-	// TODO hikersListWidget
-	// TODO photosListWidget
+	// TODO #96 tripCombo
+	// TODO #98 hikersListWidget
+	// TODO #98 photosListWidget
 	descriptionEditor->setDocument(new QTextDocument(init->description));
 }
 
@@ -130,7 +130,7 @@ void AscentDialog::handle_newPeak()
 	if (!newPeak) return;
 	int peakID = newPeak->peakID;
 	QString& name = newPeak->name;
-	// TODO add to peakCombo
+	// TODO #96 add to peakCombo
 }
 
 void AscentDialog::handle_dateSpecifiedChanged()
@@ -166,20 +166,20 @@ void AscentDialog::handle_newTrip()
 	if (!newTrip) return;
 	int tripID = newTrip->tripID;
 	QString& name = newTrip->name;
-	// TODO add to tripCombo
+	// TODO #96 add to tripCombo
 }
 
 void AscentDialog::handle_addHiker()
 {
-	openAddHikerDialog(this, db);
-	// TODO
+	int hikerID = openAddHikerDialog(this, db);
+	// TODO #98 add hiker to list
 }
 
 void AscentDialog::handle_photosPathBrowse()
 {
 	QString caption = tr("Select folder with photos of ascent");
 	QString path = QFileDialog::getExistingDirectory(this, caption);	// TODO file not dir
-	// TODO
+	// TODO #98 add photo to list
 }
 
 
