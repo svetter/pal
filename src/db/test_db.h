@@ -198,7 +198,7 @@ QSqlError initDB()
 	addParticipated(q, ascent3_2ID, dorisID);
 	addParticipated(q, ascent3_3ID, aliceID);
 	
-	if (!q.prepare(INSERT_HIKER)) return q.lastError();
+	if (!q.prepare(INSERT_PHOTO)) return q.lastError();
 	addPhoto(q, ascent1_1ID, 0, QString("M:/Photos/1999/Alps/2358.jpg"));
 	addPhoto(q, ascent1_1ID, 1, QString("M:/Photos/1999/Alps/2363.jpg"));
 	addPhoto(q, ascent1_2ID, 0, QString("M:/Photos/1999/Alps/2834.jpg"));
