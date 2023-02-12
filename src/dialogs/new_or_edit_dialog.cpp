@@ -4,7 +4,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTranslator>
-#include <iostream>
 
 
 
@@ -25,14 +24,6 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 
 
 
-bool NewOrEditDialog::changesMade()
-{
-	std::cerr << "bool NewOrEditDialog::changesMade() must be overwritten!" << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-
-
 void NewOrEditDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
@@ -41,7 +32,7 @@ void NewOrEditDialog::handle_cancel()
 		if (edit) {
 			title = tr("Discard changes");
 		} else {
-			title = tr("Discard new data");
+			title = tr("Discard unsaved data");
 		}
 		QString question = tr("Are you sure?");
 		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;

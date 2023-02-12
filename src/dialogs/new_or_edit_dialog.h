@@ -27,7 +27,7 @@ protected:
 public:
 	QString itemNameLowercase;
 	
-	virtual bool changesMade();
+	virtual bool changesMade() = 0;
 };
 
 
