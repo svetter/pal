@@ -1,5 +1,6 @@
 #include "db_interface.h"
 
+#include "src/db/db_error.h"
 #include "src/db/test_db.h"
 
 #include <QMessageBox>
@@ -8,7 +9,7 @@
 
 
 
-Database::Database(QMainWindow* parent) :
+Database::Database(QWidget* parent) :
 		parent(parent)
 {
 	tripsTable			= new TripsTable();
@@ -23,7 +24,7 @@ Database::Database(QMainWindow* parent) :
 	
 	QSqlError initError = initDB();
 	if (initError.type() != QSqlError::NoError) {
-		displayError(initError);
+		displayError(parent, initError);
 	}
 }
 
@@ -79,19 +80,19 @@ Ascent* Database::getAscent(int ascentID) {
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
 	if (!query.exec(queryString))
-		displayError(query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	if (!query.isActive())
-		displayError("query.isActive() returned false", queryString);
+		displayError(parent, "query.isActive() returned false", queryString);
 	if (!query.isSelect())
-		displayError("query.isSelect() returned false", queryString);
+		displayError(parent, "query.isSelect() returned false", queryString);
 	if (!query.next()) {
-		displayError("Couldn't read record from SQL query", queryString);
+		displayError(parent, "Couldn't read record from SQL query", queryString);
 	}
 	QVariant variantValue = query.value(0);
 	if (query.next())
-		displayError("More than one record returned for query", queryString);
+		displayError(parent, "More than one record returned for query", queryString);
 	if (!variantValue.isValid())
-		displayError("Received invalid QVariant from query", queryString);
+		displayError(parent, "Received invalid QVariant from query", queryString);
 }
 
 Peak* Database::getPeak(int peakID) {
@@ -113,14 +114,14 @@ Hiker* Database::getHiker(int hikerID) {
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
 	if (!query.exec(queryString))
-		displayError(query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	if (!query.next()) {
-		displayError("Couldn't read record from SQL query", queryString);
+		displayError(parent, "Couldn't read record from SQL query", queryString);
 	}
 	int readHikerID		= getIntFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->getPrimaryKeyColumn()));
 	QString readName	= getStringFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->nameColumn));
 	if (query.next())
-		displayError("More than one record returned for query", queryString);
+		displayError(parent, "More than one record returned for query", queryString);
 	return new Hiker(readHikerID, readName);
 }
 
@@ -172,12 +173,12 @@ int Database::addRow(NormalTable* table, QList<QVariant>& row) {
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
-		displayError(query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	for (auto iter = row.constBegin(); iter != row.constEnd(); iter++) {
 		query.addBindValue(*iter);
 	}
 	if (!query.exec())
-		displayError(query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	int index = query.lastInsertId().toInt();
 	assert(index > 0);
 	return index;
@@ -216,11 +217,11 @@ int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entry
 	assert(entryInd >= 0);
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
-		displayError("Received invalid QVariant from query", queryString);
+		displayError(parent, "Received invalid QVariant from query", queryString);
 	bool conversionOk;
 	int intValue = variantValue.toInt(&conversionOk);
 	if (!conversionOk)
-		displayError("Conversion to int failed for result from query", queryString);
+		displayError(parent, "Conversion to int failed for result from query", queryString);
 	return intValue;
 }
 
@@ -228,7 +229,7 @@ QString Database::getStringFromRecord(QSqlQuery& query, QString& queryString, in
 {
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
-		displayError("Received invalid QVariant from query", queryString);
+		displayError(parent, "Received invalid QVariant from query", queryString);
 	QString stringValue = variantValue.toString();
 	return stringValue;
 }
@@ -243,27 +244,4 @@ QString Database::repeat(QString string, int times)
 		result = result + ((i == 0) ? string : (", " + string));
 	}
 	return result;
-}
-
-
-
-void Database::displayError(QString error)
-{
-	QMessageBox::critical(parent, "Database error", error);
-	exit(1);
-}
-
-void Database::displayError(QString error, QString& queryString)
-{
-	return displayError(error + "\n\nQuery:\n" + queryString);
-}
-
-void Database::displayError(QSqlError error, QString& queryString)
-{
-	return displayError(error.text(), queryString);
-}
-
-void Database::displayError(QSqlError error)
-{
-	return displayError(error.text());
 }

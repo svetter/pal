@@ -19,14 +19,14 @@
 #include "src/db/tables/regions_table.h"
 #include "src/db/tables/trips_table.h"
 
-#include <QMainWindow>
+#include <QWidget>
 #include <QSqlQuery>
 #include <QSqlError>
 
 
 
 class Database {
-	QMainWindow* parent;
+	QWidget* parent;
 	
 public:
 	AscentsTable*		ascentsTable;
@@ -39,7 +39,7 @@ public:
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
 	
-	Database(QMainWindow* parent);
+	Database(QWidget* parent);
 	~Database();
 	
 	QList<Hiker*>*	getAllHikers();
@@ -70,11 +70,6 @@ private:
 	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
 	
 	QString repeat(QString string, int times);
-	
-	void displayError(QString error);
-	void displayError(QString error, QString& queryString);
-	void displayError(QSqlError error);
-	void displayError(QSqlError error, QString& queryString);
 };
 
 

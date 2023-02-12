@@ -20,6 +20,7 @@ SOURCES += \
 	src/data/range.cpp \
 	src/data/region.cpp \
 	src/data/trip.cpp \
+	src/db/db_error.cpp \
 	src/db/db_interface.cpp \
 	src/db/db_model.cpp \
 	src/db/tables/ascents_table.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
 	src/data/range.h \
 	src/data/region.h \
 	src/data/trip.h \
+	src/db/db_error.h \
 	src/db/db_interface.h \
 	src/db/db_model.h \
 	src/db/test_db.h \
