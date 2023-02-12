@@ -23,8 +23,6 @@ private:
 	Ui::MainWindow* ui;
 	Database db;
 	
-	void updateHikersView();
-	
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();

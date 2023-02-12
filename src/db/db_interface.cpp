@@ -26,6 +26,16 @@ Database::Database(QWidget* parent) :
 	if (initError.type() != QSqlError::NoError) {
 		displayError(parent, initError);
 	}
+	
+	ascentsTable->initBuffer(parent);
+	countriesTable->initBuffer(parent);
+	hikersTable->initBuffer(parent);
+	peaksTable->initBuffer(parent);
+	rangesTable->initBuffer(parent);
+	regionsTable->initBuffer(parent);
+	tripsTable->initBuffer(parent);
+	photosTable->initBuffer(parent);
+	participatedTable->initBuffer(parent);
 }
 
 Database::~Database() {
@@ -38,33 +48,6 @@ Database::~Database() {
 	delete ascentsTable;
 	delete photosTable;
 	delete participatedTable;
-}
-
-
-
-QList<Hiker*>* Database::getAllHikers()
-{
-	QString queryString = QString(
-			"SELECT " + hikersTable->getColumnListString() +
-			"\nFROM " + hikersTable->getName()
-	);
-	QSqlQuery query = QSqlQuery();
-	query.setForwardOnly(true);
-	QList<Hiker*>* list = new QList<Hiker*>();
-	
-	if (!query.exec(queryString))
-		displayError(query.lastError(), queryString);
-	
-	while (query.next()) {
-		int readHikerID		= getIntFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->getPrimaryKeyColumn()));
-		QString readName	= getStringFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->nameColumn));
-		
-		*list += new Hiker(readHikerID, readName);
-	}
-	
-	if (list->empty())
-		displayError("Couldn't read record from SQL query", queryString);
-	return list;
 }
 
 
@@ -139,37 +122,15 @@ Country* Database::getCountry(int countryID) {
 
 
 
-int Database::getNumberOfEntries(NormalTable* table)
-{
-	QString queryString = QString(
-			"SELECT COUNT(" + table->getPrimaryKeyColumn()->getName() + ")" +
-			"\nFROM " + table->getName()
-	);
-	QSqlQuery query = QSqlQuery();
-	query.setForwardOnly(true);
-	if (!query.exec(queryString))
-		displayError(query.lastError(), queryString);
-	if (!query.next()) {
-		displayError("Couldn't read record from SQL query \"" + queryString + "\"", queryString);
-	}
-	QVariant variantValue = query.value(0);
-	if (!variantValue.isValid())
-		displayError("Received invalid QVariant from query", queryString);
-	if (query.next())
-		displayError("More than one record returned for query", queryString);
-	bool intConversionOk;
-	int intValue = variantValue.toInt(&intConversionOk);
-	if (!intConversionOk)
-		displayError("Conversion to int failed for result from query", queryString);
-	return intValue;
-}
-
-
-
 int Database::addRow(NormalTable* table, QList<QVariant>& row) {
+	QString columnListString = getColumnListString(table->getNonPrimaryKeyColumnList());
+	QString questionMarks = "";
+	for (int i = 0; i < table->getNumberOfNonPrimaryKeyColumns(); i++) {
+		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
+	}
 	QString queryString = QString(
-			"INSERT INTO " + table->getName() + "(" + table->getNonPrimaryKeyColumnListString() + ")" +
-			"\nVALUES(" + repeat("?", table->getNumberOfNonPrimaryKeyColumns()) + ")"
+			"INSERT INTO " + table->getName() + "(" + columnListString + ")" +
+			"\nVALUES(" + questionMarks + ")"
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -232,16 +193,4 @@ QString Database::getStringFromRecord(QSqlQuery& query, QString& queryString, in
 		displayError(parent, "Received invalid QVariant from query", queryString);
 	QString stringValue = variantValue.toString();
 	return stringValue;
-}
-
-
-
-QString Database::repeat(QString string, int times)
-{
-	assert(times >= 0);
-	QString result = "";
-	for (int i = 0; i < times; i++) {
-		result = result + ((i == 0) ? string : (", " + string));
-	}
-	return result;
 }

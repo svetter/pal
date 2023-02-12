@@ -42,8 +42,6 @@ public:
 	Database(QWidget* parent);
 	~Database();
 	
-	QList<Hiker*>*	getAllHikers();
-	
 	Ascent*		getAscent(int ascentID);
 	Peak*		getPeak(int peakID);
 	Trip*		getTrip(int tripID);
@@ -51,8 +49,6 @@ public:
 	Region*		getRegion(int regionID);
 	Range*		getRange(int rangeID);
 	Country*	getCountry(int countryID);
-	
-	int getNumberOfEntries(NormalTable* table);
 	
 	int addRow(NormalTable* table, QList<QVariant>& row);
 //	bool addRow(AssociativeTable* table, QList<QVariant>& row);
@@ -68,8 +64,6 @@ public:
 private:
 	int getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
 	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
-	
-	QString repeat(QString string, int times);
 };
 
 

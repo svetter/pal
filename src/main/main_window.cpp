@@ -32,31 +32,16 @@ MainWindow::MainWindow() :
 	connect(ui->newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
 	connect(ui->newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
 	
+	ui->numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
 	
-	ui->numAscentsLcdNumber->setProperty("value", QVariant(db.getNumberOfEntries(db.ascentsTable)));
-	updateHikersView();
+	ui->ascentsTableView->setModel(db.ascentsTable);
+	ui->ascentsTableView->setRootIndex(db.ascentsTable->getNormalRootModelIndex());
+	ui->ascentsTableView->resizeColumnsToContents();
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
-}
-
-
-
-void MainWindow::updateHikersView()
-{
-	QList<Hiker*>* hikers = db.getAllHikers();
-	
-	QStandardItemModel* model = new QStandardItemModel();	
-	ui->hikersTableView->setModel(model);
-	
-	int row = 0;
-	for(auto iter = hikers->begin(); iter != hikers->end(); iter++) {
-		model->setItem(row, 0, new QStandardItem(QString::number((*iter)->hikerID)));
-		model->setItem(row, 1, new QStandardItem((*iter)->name));
-		++row;
-	}
 }
 
 
@@ -82,7 +67,6 @@ void MainWindow::handle_newTrip()
 void MainWindow::handle_newHiker()
 {
 	openNewHikerDialogAndStore(this, &db);
-	updateHikersView();
 	// TODO update active view if necessary
 }
 
