@@ -7,6 +7,8 @@
 
 
 class TripsTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* nameColumn;
 	Column* startDateColumn;

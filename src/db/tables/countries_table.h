@@ -7,6 +7,8 @@
 
 
 class CountriesTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* nameColumn;
 	

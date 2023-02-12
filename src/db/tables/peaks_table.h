@@ -7,6 +7,8 @@
 
 
 class PeaksTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* nameColumn;
 	Column* heightColumn;

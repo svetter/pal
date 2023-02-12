@@ -7,6 +7,8 @@
 
 
 class HikersTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* nameColumn;
 	

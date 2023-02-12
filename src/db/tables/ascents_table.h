@@ -7,6 +7,8 @@
 
 
 class AscentsTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* titleColumn;
 	Column* peakIDColumn;

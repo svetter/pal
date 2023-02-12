@@ -6,9 +6,9 @@
 
 
 HikersTable::HikersTable() :
-		NormalTable(QString("Hikers"), QString("hiker"), QObject::tr("Hikers")),
-		//						name				uiName					type		nullable	primaryKey	foreignKey	inTable
-		nameColumn	(new Column(QString("name"),	QObject::tr("Name"),	varchar,	false,		false,		nullptr,	this))
+		NormalTable(QString("Hikers"), QString("hiker"), tr("Hikers")),
+		//						name				uiName		type		nullable	primaryKey	foreignKey	inTable
+		nameColumn	(new Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
 	addColumn(nameColumn);
 }

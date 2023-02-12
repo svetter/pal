@@ -7,6 +7,8 @@
 
 
 class RangesTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* nameColumn;
 	Column* continentColumn;
