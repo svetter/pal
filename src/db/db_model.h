@@ -94,10 +94,10 @@ class AssociativeTable : public Table {
 	Column*	column2;
 	
 public:
-	AssociativeTable(QString name, QString uiName, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
+	AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
 	~AssociativeTable();
 	
-	Column* getColumn1();	
+	Column* getColumn1();
 	Column* getColumn2();
 };
 

@@ -5,7 +5,7 @@
 
 
 ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
-		AssociativeTable(QString("Participated"), QString(), foreignAscentIDColumn, foreignHikerIDColumn)
+		AssociativeTable(QString("Participated"), foreignAscentIDColumn, foreignHikerIDColumn)
 {}
 
 
