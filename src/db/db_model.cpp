@@ -26,6 +26,41 @@ QString Column::getName()
 	return name;
 }
 
+QString Column::getUIName()
+{
+	return uiName;
+}
+
+DataType Column::getType()
+{
+	return type;
+}
+
+bool Column::isPrimaryKey()
+{
+	return primaryKey;
+}
+
+bool Column::isForeignKey()
+{
+	return foreignKey;
+}
+
+Column* Column::getReferencedForeignColumn()
+{
+	return foreignKey;
+}
+
+bool Column::isNullable()
+{
+	return nullable;
+}
+
+Table* Column::getTable()
+{
+	return inTable;
+}
+
 
 
 Table::Table(QString name, QString uiName, bool isAssociative) :

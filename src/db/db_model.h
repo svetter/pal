@@ -38,6 +38,13 @@ public:
 	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, Table* inTable);
 	
 	QString getName();
+	QString getUIName();
+	DataType getType();
+	bool isPrimaryKey();
+	bool isForeignKey();
+	Column* getReferencedForeignColumn();
+	bool isNullable();
+	Table* getTable();
 	
 	friend class NormalTable;
 	friend class AssociativeTable;
