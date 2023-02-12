@@ -47,7 +47,9 @@ AscentDialog::~AscentDialog()
 
 void AscentDialog::populateComboBoxes()
 {
-	// TODO #96 peakCombo
+	peakCombo->setModel(db->peaksTable);
+	peakCombo->setRootModelIndex(db->peaksTable->getNullableRootModelIndex());
+	peakCombo->setModelColumn(db->peaksTable->nameColumn->getIndex());
 	
 	hikeKindCombo->insertItems(1, Ascent::hikeKindNames);
 	
@@ -62,7 +64,9 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	// TODO #96 tripCombo
+	tripCombo->setModel(db->tripsTable);
+	tripCombo->setRootModelIndex(db->tripsTable->getNullableRootModelIndex());
+	tripCombo->setModelColumn(db->tripsTable->nameColumn->getIndex());
 }
 
 
@@ -75,7 +79,7 @@ void AscentDialog::insertInitData()
 	}
 	
 	titleLineEdit->setText(init->title);
-	// TODO #96 peakCombo
+	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID));
 	dateWidget->setDate(init->date);
 	peakIndexSpinner->setValue(init->perDayIndex);
 	timeWidget->setTime(init->time);
@@ -83,7 +87,7 @@ void AscentDialog::insertInitData()
 	traverseCheckbox->setChecked(init->traverse);
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
-	// TODO #96 tripCombo
+	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
 	// TODO #98 hikersListWidget
 	// TODO #98 photosListWidget
 	descriptionEditor->setDocument(new QTextDocument(init->description));
@@ -126,11 +130,10 @@ bool AscentDialog::changesMade()
 
 void AscentDialog::handle_newPeak()
 {
-	Peak* newPeak = openNewPeakDialogAndStore(this, db);
-	if (!newPeak) return;
-	int peakID = newPeak->peakID;
-	QString& name = newPeak->name;
-	// TODO #96 add to peakCombo
+	int newPeakIndex = openNewPeakDialogAndStore(this, db);
+	if (newPeakIndex >= 0) {
+		peakCombo->setCurrentIndex(newPeakIndex);
+	}
 }
 
 void AscentDialog::handle_dateSpecifiedChanged()
@@ -162,11 +165,9 @@ void AscentDialog::handle_difficultySystemChanged()
 
 void AscentDialog::handle_newTrip()
 {
-	Trip* newTrip = openNewTripDialogAndStore(this, db);
-	if (!newTrip) return;
-	int tripID = newTrip->tripID;
-	QString& name = newTrip->name;
-	// TODO #96 add to tripCombo
+	int newTripIndex = openNewTripDialogAndStore(this, db);
+	if (newTripIndex < 0) return;
+	peakCombo->setCurrentIndex(newTripIndex);
 }
 
 void AscentDialog::handle_addHiker()

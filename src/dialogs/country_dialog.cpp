@@ -71,18 +71,18 @@ void CountryDialog::handle_ok()
 
 
 
-Country* openNewCountryDialogAndStore(QWidget* parent, Database* db)
+int openNewCountryDialogAndStore(QWidget* parent, Database* db)
 {
-	Country* newCountry = nullptr;
+	int newCountryIndex = -1;
 	
 	CountryDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newCountry = dialog.extractData();
-		int countryID = db->countriesTable->addRow(newCountry);
-		newCountry->countryID = countryID;
+		Country* newCountry = dialog.extractData();
+		newCountryIndex = db->countriesTable->addRow(newCountry);
+		delete newCountry;
 	}
 	
-	return newCountry;
+	return newCountryIndex;
 }
 
 Country* openEditCountryDialog(QWidget* parent, Database* db, Country* originalCountry)

@@ -82,18 +82,18 @@ void RangeDialog::handle_ok()
 
 
 
-Range* openNewRangeDialogAndStore(QWidget* parent, Database* db)
+int openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
-	Range* newRange = nullptr;
+	int newRangeIndex = -1;
 	
 	RangeDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newRange = dialog.extractData();
-		int rangeID = db->rangesTable->addRow(newRange);
-		newRange->rangeID = rangeID;
+		Range* newRange = dialog.extractData();
+		newRangeIndex = db->rangesTable->addRow(newRange);
+		delete newRange;
 	}
 	
-	return newRange;
+	return newRangeIndex;
 }
 
 Range* openEditRangeDialog(QWidget* parent, Database* db, Range* originalRange)

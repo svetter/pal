@@ -109,18 +109,18 @@ void TripDialog::handle_ok()
 
 
 
-Trip* openNewTripDialogAndStore(QWidget* parent, Database* db)
+int openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
-	Trip* newTrip = nullptr;
+	int newTripIndex = -1;
 	
 	TripDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newTrip = dialog.extractData();
-		int tripID = db->tripsTable->addRow(newTrip);
-		newTrip->tripID = tripID;
+		Trip* newTrip = dialog.extractData();
+		newTripIndex = db->tripsTable->addRow(newTrip);
+		delete newTrip;
 	}
 	
-	return newTrip;
+	return newTripIndex;
 }
 
 Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* originalTrip)

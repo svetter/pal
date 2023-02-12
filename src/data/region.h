@@ -12,9 +12,10 @@ class Region
 public:
 	int		regionID;
 	QString	name;
+	int		rangeID;
 	int		countryID;
 	
-	Region(int regionID, QString& name, int countryID);
+	Region(int regionID, QString& name, int rangeID, int countryID);
 	
 	bool equalTo(Region* other);
 };

@@ -37,7 +37,9 @@ PeakDialog::~PeakDialog()
 
 void PeakDialog::populateComboBoxes()
 {
-	// TODO #96 regionCombo
+	regionCombo->setModel(db->regionsTable);
+	regionCombo->setRootModelIndex(db->regionsTable->getNullableRootModelIndex());
+	regionCombo->setModelColumn(db->regionsTable->nameColumn->getIndex());
 }
 
 
@@ -52,7 +54,7 @@ void PeakDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	heightSpinner->setValue(init->height);
 	volcanoCheckbox->setChecked(init->volcano);
-	// TODO #96 regionCombo
+	regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID));
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);
@@ -91,11 +93,8 @@ void PeakDialog::handle_heightSpecifiedChanged()
 
 void PeakDialog::handle_newRegion()
 {
-	Region* newRegion = openNewRegionDialogAndStore(this, db);
-	if (!newRegion) return;
-	int regionID = newRegion->regionID;
-	QString& name = newRegion->name;
-	// TODO #96 add to regionCombo
+	int newRegionIndex = openNewRegionDialogAndStore(this, db);
+	regionCombo->setCurrentIndex(newRegionIndex);
 }
 
 
@@ -114,18 +113,18 @@ void PeakDialog::handle_ok()
 
 
 
-Peak* openNewPeakDialogAndStore(QWidget* parent, Database* db)
+int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
-	Peak* newPeak = nullptr;
+	int newPeakIndex = -1;
 	
 	PeakDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newPeak = dialog.extractData();
-		int peakID = db->peaksTable->addRow(newPeak);
-		newPeak->peakID = peakID;
+		Peak* newPeak = dialog.extractData();
+		newPeakIndex = db->peaksTable->addRow(newPeak);
+		delete newPeak;
 	}
 	
-	return newPeak;
+	return newPeakIndex;
 }
 
 Peak* openEditPeakDialog(QWidget* parent, Database* db, Peak* originalPeak)

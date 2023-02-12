@@ -29,7 +29,7 @@ private:
 
 
 
-Range* openNewRangeDialogAndStore(QWidget* parent, Database* db);
+int openNewRangeDialogAndStore(QWidget* parent, Database* db);
 Range* openEditRangeDialog(QWidget* parent, Database* db, Range* originalRange);
 
 

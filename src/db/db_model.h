@@ -115,6 +115,7 @@ public:
 	int getNumberOfNonPrimaryKeyColumns() const;
 	QList<Column*> getNonPrimaryKeyColumnList() const;
 	Column* getColumnByIndex(int index) const;
+	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
 	int getNumberOfEntries(QWidget* parent);
 	

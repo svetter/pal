@@ -15,7 +15,7 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 public:
 	AddHikerDialog(QWidget* parent, Database* db);
 	
-	int extractHikerID();
+	int extractHikerIndex();
 	
 private:
 	void populateComboBoxes();

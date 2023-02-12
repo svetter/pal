@@ -237,6 +237,17 @@ Column* NormalTable::getColumnByIndex(int index) const
 	return nonPrimaryColumns.at(index - 1);
 }
 
+int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
+{
+	int index = 0;
+	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+		if ((*iter)->at(0) == primaryKey) return index;
+		index++;
+	}
+	return -1;
+}
+
+
 int NormalTable::getNumberOfEntries(QWidget* parent)
 {
 	QString queryString = QString(

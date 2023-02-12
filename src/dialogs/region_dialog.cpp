@@ -38,8 +38,13 @@ RegionDialog::~RegionDialog()
 
 void RegionDialog::populateComboBoxes()
 {
-	// TODO #96 rangeCombo
-	// TODO #96 countryCombo
+	rangeCombo->setModel(db->rangesTable);
+	rangeCombo->setRootModelIndex(db->rangesTable->getNullableRootModelIndex());
+	rangeCombo->setModelColumn(db->rangesTable->nameColumn->getIndex());
+	
+	countryCombo->setModel(db->countriesTable);
+	countryCombo->setRootModelIndex(db->countriesTable->getNullableRootModelIndex());
+	countryCombo->setModelColumn(db->countriesTable->nameColumn->getIndex());
 }
 
 
@@ -52,16 +57,17 @@ void RegionDialog::insertInitData()
 	}
 	
 	nameLineEdit->setText(init->name);
-	// TODO #96 rangeCombo
-	// TODO #96 countryCombo
+	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID));
+	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID));
 }
 
 
 Region* RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit	(nameLineEdit);
+	int		rangeID		= parseIDCombo	(rangeCombo);
 	int		countryID	= parseIDCombo	(countryCombo);
-	Region* region = new Region(-1, name, countryID);
+	Region* region = new Region(-1, name, rangeID, countryID);
 	return region;
 }
 
@@ -78,20 +84,14 @@ bool RegionDialog::changesMade()
 
 void RegionDialog::handle_newRange()
 {
-	Range* newRange = openNewRangeDialogAndStore(this, db);
-	if (!newRange) return;
-	int rangeID = newRange->rangeID;
-	QString& name = newRange->name;
-	// TODO #96 add to rangeCombo
+	int newRegionIndex = openNewRangeDialogAndStore(this, db);
+	rangeCombo->setCurrentIndex(newRegionIndex);
 }
 
 void RegionDialog::handle_newCountry()
 {
-	Country* newCountry = openNewCountryDialogAndStore(this, db);
-	if (!newCountry) return;
-	int countryID = newCountry->countryID;
-	QString& name = newCountry->name;
-	// TODO #96 add to countryCombo
+	int newCountryIndex = openNewCountryDialogAndStore(this, db);
+	countryCombo->setCurrentIndex(newCountryIndex);
 }
 
 
@@ -110,18 +110,18 @@ void RegionDialog::handle_ok()
 
 
 
-Region* openNewRegionDialogAndStore(QWidget* parent, Database* db)
+int openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
-	Region* newRegion = nullptr;
+	int newRegionIndex = -1;
 	
 	RegionDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newRegion = dialog.extractData();
-		int regionID = db->regionsTable->addRow(newRegion);
-		newRegion->regionID = regionID;
+		Region* newRegion = dialog.extractData();
+		newRegionIndex = db->regionsTable->addRow(newRegion);
+		delete newRegion;
 	}
 	
-	return newRegion;
+	return newRegionIndex;
 }
 
 Region* openEditRegionDialog(QWidget* parent, Database* db, Region* originalRegion)

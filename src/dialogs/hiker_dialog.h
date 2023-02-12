@@ -29,7 +29,7 @@ private:
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db);
+int openNewHikerDialogAndStore(QWidget* parent, Database* db);
 Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker);
 
 

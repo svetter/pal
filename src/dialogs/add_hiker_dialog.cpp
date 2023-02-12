@@ -26,31 +26,32 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 
 void AddHikerDialog::populateComboBoxes()
 {
-	// TODO #96 hikerCombo
+	hikerCombo->setModel(db->hikersTable);
+	hikerCombo->setRootModelIndex(db->hikersTable->getNullableRootModelIndex());
+	hikerCombo->setModelColumn(db->hikersTable->nameColumn->getIndex());
 }
 
 
 
-int AddHikerDialog::extractHikerID()
+int AddHikerDialog::extractHikerIndex()
 {
-	int	hikerID = parseIDCombo(hikerCombo);
-	return hikerID;
+	return hikerCombo->currentIndex();
 }
 
 
 bool AddHikerDialog::changesMade()
 {
-	return extractHikerID() > 0;
+	return extractHikerIndex() >=0;
 }
 
 
 
 void AddHikerDialog::handle_newHiker()
 {
-	Hiker* newHiker = openNewHikerDialogAndStore(this, db);
-	int hikerID = newHiker->hikerID;
-	QString& name = newHiker->name;
-	// TODO #96 add to hikerCombo
+	int newHikerIndex = openNewHikerDialogAndStore(this, db);
+	if (newHikerIndex >= 0) {
+		hikerCombo->setCurrentIndex(newHikerIndex);
+	}
 }
 
 
@@ -77,7 +78,8 @@ int openAddHikerDialog(QWidget* parent, Database* db)
 {
 	AddHikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		return dialog.extractHikerID();
+		return dialog.extractHikerIndex();
+	} else {
+		return -1;
 	}
-	return -1;
 }

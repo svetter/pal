@@ -71,18 +71,18 @@ void HikerDialog::handle_ok()
 
 
 
-Hiker* openNewHikerDialogAndStore(QWidget* parent, Database* db)
+int openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
-	Hiker* newHiker = nullptr;
+	int newHikerIndex = -1;
 	
 	HikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newHiker = dialog.extractData();
-		int hikerID = db->hikersTable->addRow(newHiker);
-		newHiker->hikerID = hikerID;
+		Hiker* newHiker = dialog.extractData();
+		newHikerIndex = db->hikersTable->addRow(newHiker);
+		delete newHiker;
 	}
 	
-	return newHiker;
+	return newHikerIndex;
 }
 
 Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker)
