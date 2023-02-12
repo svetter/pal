@@ -159,9 +159,31 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		
 		QVariant result = QVariant();
 		switch (column->getType()) {
+		case integer:
+			switch (role) {
+			case Qt::DisplayRole:
+				if (rowIndex == -1) {
+					result = QVariant(noneString);
+				} else {
+					result = bufferValue;
+				}
+				break;
+			case Qt::TextAlignmentRole:
+				result = Qt::AlignRight;
+				break;
+			}
+			break;
 		case bit:
 			if (role == Qt::CheckStateRole) {
 				result = bufferValue.toBool() ? Qt::Checked : Qt::Unchecked;
+			}
+			break;
+		case varchar:
+			if (role != Qt::DisplayRole) break;
+			if (rowIndex == -1) {
+				result = QVariant(noneString);
+			} else {
+				result = bufferValue;
 			}
 			break;
 		case date:
@@ -175,13 +197,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			}
 			break;
 		default:
-			if (role != Qt::DisplayRole) break;
-			if (rowIndex == -1) {
-				result = QVariant(noneString);
-			} else {
-				result = bufferValue;
-			}
-			break;
+			assert(false);
 		}
 		roleData.setData(result);
 	}
