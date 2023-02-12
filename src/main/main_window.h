@@ -23,8 +23,6 @@ private:
 	Ui::MainWindow* ui;
 	Database db;
 	
-	void showError(const QSqlError &err);
-	
 	void updateHikersView();
 	
 	void handle_newAscent();
