@@ -6,7 +6,7 @@
 
 
 TripsTable::TripsTable() :
-		NormalTable(QString("Trips"), QString("trip"), tr("Trips")),
+		NormalTable(QString("Trips"), QString("trip"), tr("Trips"), tr("None")),
 		//							name					uiName				type		nullable	primaryKey	foreignKey	inTable
 		nameColumn		(new Column(QString("name"),		tr("Name"),			varchar,	true,		false,		nullptr,	this)),
 		startDateColumn	(new Column(QString("startDate"),	tr("Start date"),	date,		true,		false,		nullptr,	this)),

@@ -6,7 +6,7 @@
 
 
 RangesTable::RangesTable() :
-		NormalTable(QString("Ranges"), QString("range"), tr("Mountain ranges")),
+		NormalTable(QString("Ranges"), QString("range"), tr("Mountain ranges"), tr("None")),
 		//							name					uiName				type		nullable	primaryKey	foreignKey	inTable
 		nameColumn		(new Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
 		continentColumn	(new Column(QString("continent"),	tr("Continent"),	integer,	true,		false,		nullptr,	this))

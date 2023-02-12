@@ -6,7 +6,7 @@
 
 
 PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
-		NormalTable(QString("Peaks"), QString("peak"), tr("Peaks")),
+		NormalTable(QString("Peaks"), QString("peak"), tr("Peaks"), tr("None")),
 		//							name					uiName						type		nullable	primaryKey	foreignKey				inTable
 		nameColumn		(new Column(QString("name"),		tr("Name"),					varchar,	false,		false,		nullptr,				this)),
 		heightColumn	(new Column(QString("height"),		tr("Height"),				integer,	true,		false,		nullptr,				this)),
