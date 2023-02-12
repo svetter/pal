@@ -22,4 +22,5 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 int PhotosTable::addRow()
 {
 	// TODO #97
+	return -1;
 }

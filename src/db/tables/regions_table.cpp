@@ -22,4 +22,5 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 int RegionsTable::addRow(Region* region)
 {
 	// TODO #97
+	return -1;
 }

@@ -18,4 +18,5 @@ HikersTable::HikersTable() :
 int HikersTable::addRow(Hiker* hiker)
 {
 	// TODO #97
+	return -1;
 }

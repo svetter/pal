@@ -28,7 +28,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 	addColumn(hikeKindColumn);
 	addColumn(traverseColumn);
 	addColumn(difficultySystemColumn);
-	addColumn(difficultyGradeColumn	);
+	addColumn(difficultyGradeColumn);
 	addColumn(tripIDColumn);
 	addColumn(notesColumn);
 }
@@ -38,4 +38,5 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 int AscentsTable::addRow(Ascent* ascent)
 {
 	// TODO #97
+	return -1;
 }
