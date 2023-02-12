@@ -1,7 +1,7 @@
 #ifndef PARTICIPATED_TABLE_H
 #define PARTICIPATED_TABLE_H
 
-#include "src/db/db_model.h"
+#include "src/db/associative_table.h"
 #include "src/data/ascent.h"
 
 #include <QString>

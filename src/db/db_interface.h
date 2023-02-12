@@ -1,7 +1,7 @@
 #ifndef DB_INTERFACE_H
 #define DB_INTERFACE_H
 
-#include "db_model.h"
+#include "associative_table.h"
 #include "src/data/ascent.h"
 #include "src/data/peak.h"
 #include "src/data/trip.h"

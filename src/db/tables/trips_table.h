@@ -1,7 +1,7 @@
 #ifndef TRIPS_TABLE_H
 #define TRIPS_TABLE_H
 
-#include "src/db/db_model.h"
+#include "src/db/normal_table.h"
 #include "src/data/trip.h"
 
 

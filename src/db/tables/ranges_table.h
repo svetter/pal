@@ -1,7 +1,7 @@
 #ifndef RANGES_TABLE_H
 #define RANGES_TABLE_H
 
-#include "src/db/db_model.h"
+#include "src/db/normal_table.h"
 #include "src/data/range.h"
 
 

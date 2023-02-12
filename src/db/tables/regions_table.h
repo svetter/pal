@@ -1,7 +1,7 @@
 #ifndef REGIONS_TABLE_H
 #define REGIONS_TABLE_H
 
-#include "src/db/db_model.h"
+#include "src/db/normal_table.h"
 #include "src/data/region.h"
 
 
