@@ -12,7 +12,7 @@ const auto CREATE_HIKERS		= "CREATE TABLE Hikers(hikerID INTEGER PRIMARY KEY, na
 const auto CREATE_REGIONS		= "CREATE TABLE Regions(regionID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, rangeID INTEGER REFERENCES Ranges(rangeID), countryID INTEGER REFERENCES Countries(countryID))";
 const auto CREATE_RANGES		= "CREATE TABLE Ranges(rangeID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, continent INT)";
 const auto CREATE_COUNTRIES		= "CREATE TABLE Countries(countryID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
-const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), localIndex INTEGER NOT NULL, filepath NVARCHAR NOT NULL)";
+const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), sortIndex INTEGER NOT NULL, filepath NVARCHAR NOT NULL)";
 const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
 
 const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -22,7 +22,7 @@ const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
 const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) VALUES(?, ?, ?)";
 const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) VALUES(?, ?)";
 const auto INSERT_COUNTRY		= "INSERT INTO Countries(name) VALUES(?)";
-const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, index, filepath) VALUES(?, ?, ?)";
+const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, sortIndex, filepath) VALUES(?, ?, ?)";
 const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VALUES(?, ?)";
 
 
