@@ -68,11 +68,13 @@ public:
 
 
 class NormalTable : public Table {
+	QString noneString;
+	
 	Column*			primaryKeyColumn;
 	QList<Column*>	nonPrimaryColumns;
 	
 public:
-	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName);
+	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString);
 	~NormalTable();
 	
 	void addColumn(Column* column);

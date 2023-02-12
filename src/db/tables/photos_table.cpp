@@ -6,7 +6,7 @@
 
 
 PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
-		NormalTable(QString("Photos"), QString("photo"), QString()),
+		NormalTable(QString("Photos"), QString("photo"), QString(), QString()),
 		//							name					uiName				type		nullable	primaryKey	foreignKey				inTable
 		ascentIDColumn	(new Column(QString("ascentID"),	QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
 		indexColumn		(new Column(QString("sortIndex"),	tr("Index"),		integer,	true,		false,		nullptr,				this)),

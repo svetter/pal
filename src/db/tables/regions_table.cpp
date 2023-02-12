@@ -6,7 +6,7 @@
 
 
 RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
-		NormalTable(QString("Regions"), QString("region"), tr("Regions")),
+		NormalTable(QString("Regions"), QString("region"), tr("Regions"), tr("None")),
 		//							name					uiName		type		nullable	primaryKey	foreignKey				inTable
 		nameColumn		(new Column(QString("name"),		tr("Name"),	varchar,	false,		false,		nullptr,				this)),
 		rangeIDColumn	(new Column(QString("rangeID"),		QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),

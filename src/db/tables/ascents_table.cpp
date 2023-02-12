@@ -6,7 +6,7 @@
 
 
 AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn) :
-		NormalTable(QString("Ascents"), QString("ascent"), tr("Ascents")),
+		NormalTable(QString("Ascents"), QString("ascent"), tr("Ascents"), tr("None")),
 		//									name							uiName					type		nullable	primaryKey	foreignKey				inTable
 		titleColumn				(new Column(QString("title"),				tr("Title"),			varchar,	true,		false,		nullptr,				this)),
 		peakIDColumn			(new Column(QString("peakID"),				QString(),				integer,	true,		false,		foreignPeakIDColumn,	this)),
