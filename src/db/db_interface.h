@@ -42,13 +42,13 @@ public:
 	Database(QWidget* parent);
 	~Database();
 	
-	Ascent*		getAscent(int ascentID);
-	Peak*		getPeak(int peakID);
-	Trip*		getTrip(int tripID);
-	Hiker*		getHiker(int hikerID);
-	Region*		getRegion(int regionID);
-	Range*		getRange(int rangeID);
-	Country*	getCountry(int countryID);
+	Ascent*		getAscent(int ascentID) const;
+	Peak*		getPeak(int peakID) const;
+	Trip*		getTrip(int tripID) const;
+	Hiker*		getHiker(int hikerID) const;
+	Region*		getRegion(int regionID) const;
+	Range*		getRange(int rangeID) const;
+	Country*	getCountry(int countryID) const;
 	
 	int addRow(NormalTable* table, QList<QVariant>& row);
 //	bool addRow(AssociativeTable* table, QList<QVariant>& row);
@@ -62,8 +62,8 @@ public:
 	bool changeCell(Column* column, int primaryKey, QVariant& cell);		// NormalTables only
 	
 private:
-	int getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
-	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd);
+	int getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const;
+	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const;
 };
 
 

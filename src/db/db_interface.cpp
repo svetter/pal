@@ -52,7 +52,8 @@ Database::~Database() {
 
 
 
-Ascent* Database::getAscent(int ascentID) {
+Ascent* Database::getAscent(int ascentID) const
+{
 	assert(ascentID > 0);
 	QString queryString = QString(
 			"SELECT " + ascentsTable->getColumnListString() +
@@ -78,15 +79,15 @@ Ascent* Database::getAscent(int ascentID) {
 		displayError(parent, "Received invalid QVariant from query", queryString);
 }
 
-Peak* Database::getPeak(int peakID) {
+Peak* Database::getPeak(int peakID) const {
 	
 }
 
-Trip* Database::getTrip(int tripID) {
+Trip* Database::getTrip(int tripID) const {
 	
 }
 
-Hiker* Database::getHiker(int hikerID) {
+Hiker* Database::getHiker(int hikerID) const {
 	assert(hikerID > 0);
 	QString queryString = QString(
 			"SELECT " + hikersTable->getColumnListString() +
@@ -108,15 +109,15 @@ Hiker* Database::getHiker(int hikerID) {
 	return new Hiker(readHikerID, readName);
 }
 
-Region* Database::getRegion(int regionID) {
+Region* Database::getRegion(int regionID) const {
 	
 }
 
-Range* Database::getRange(int rangeID) {
+Range* Database::getRange(int rangeID) const {
 	
 }
 
-Country* Database::getCountry(int countryID) {
+Country* Database::getCountry(int countryID) const {
 	
 }
 
@@ -173,7 +174,7 @@ bool Database::changeCell(Column* column, int primaryKey, QVariant& cell) {	// N
 
 
 
-int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd)
+int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const
 {
 	assert(entryInd >= 0);
 	QVariant variantValue = query.value(entryInd);
@@ -186,7 +187,7 @@ int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entry
 	return intValue;
 }
 
-QString Database::getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd)
+QString Database::getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const
 {
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
