@@ -70,7 +70,7 @@ HEADERS += \
 	src/db/tables/peaks_table.h \
 	src/db/tables/photos_table.h \
 	src/db/tables/ranges_table.h \
-	src/db/tables/regionss_table.h \
+	src/db/tables/regions_table.h \
 	src/db/tables/trips_table.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
