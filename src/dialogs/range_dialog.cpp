@@ -19,8 +19,12 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 RangeDialog::~RangeDialog()
@@ -39,11 +43,6 @@ void RangeDialog::populateComboBoxes()
 
 void RangeDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 	continentCombo->setCurrentIndex(init->continent);
 }

@@ -24,8 +24,12 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
 	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 PeakDialog::~PeakDialog()
@@ -46,11 +50,6 @@ void PeakDialog::populateComboBoxes()
 
 void PeakDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 	heightSpinner->setValue(init->height);
 	volcanoCheckbox->setChecked(init->volcano);

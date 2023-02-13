@@ -11,7 +11,7 @@ class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
 {
 	Q_OBJECT
 	
-	Range* init;
+	const Range* init;
 	
 public:
 	RangeDialog(QWidget* parent, Database* db, Range* init = nullptr);

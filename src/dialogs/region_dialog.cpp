@@ -25,8 +25,12 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
 	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 RegionDialog::~RegionDialog()
@@ -51,11 +55,6 @@ void RegionDialog::populateComboBoxes()
 
 void RegionDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID));
 	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID));

@@ -17,8 +17,12 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
 	connect(cancelButton,	&QPushButton::clicked,		this,	&HikerDialog::handle_cancel);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 HikerDialog::~HikerDialog()
@@ -30,11 +34,6 @@ HikerDialog::~HikerDialog()
 
 void HikerDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 }
 

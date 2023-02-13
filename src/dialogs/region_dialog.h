@@ -11,7 +11,7 @@ class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 {
 	Q_OBJECT
 	
-	Region* init;
+	const Region* init;
 	
 public:
 	RegionDialog(QWidget* parent, Database* db, Region* init = nullptr);

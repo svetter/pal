@@ -36,8 +36,12 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 	dateWidget->setDate(initialDate);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 AscentDialog::~AscentDialog()
@@ -73,11 +77,6 @@ void AscentDialog::populateComboBoxes()
 
 void AscentDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	titleLineEdit->setText(init->title);
 	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID));
 	dateWidget->setDate(init->date);

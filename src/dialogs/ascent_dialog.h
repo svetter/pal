@@ -11,7 +11,7 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 {
 	Q_OBJECT
 	
-	Ascent* init;
+	const Ascent* init;
 	
 public:
 	AscentDialog(QWidget* parent, Database* db, Ascent* init = nullptr);

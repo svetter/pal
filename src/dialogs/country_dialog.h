@@ -11,7 +11,7 @@ class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 {
 	Q_OBJECT
 	
-	Country* init;
+	const Country* init;
 	
 public:
 	CountryDialog(QWidget* parent, Database* db, Country* init = nullptr);

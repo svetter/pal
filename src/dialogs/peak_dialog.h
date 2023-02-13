@@ -11,7 +11,7 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 {
 	Q_OBJECT
 	
-	Peak* init;
+	const Peak* init;
 	
 public:
 	PeakDialog(QWidget* parent, Database* db, Peak* init = nullptr);

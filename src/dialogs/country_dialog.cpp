@@ -17,8 +17,12 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
 	connect(cancelButton,	&QPushButton::clicked,	this,	&CountryDialog::handle_cancel);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 CountryDialog::~CountryDialog()
@@ -30,11 +34,6 @@ CountryDialog::~CountryDialog()
 
 void CountryDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 }
 

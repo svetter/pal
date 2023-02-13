@@ -12,7 +12,7 @@ class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
 {
 	Q_OBJECT
 	
-	Hiker* init;
+	const Hiker* init;
 	
 public:
 	HikerDialog(QWidget* parent, Database* db, Hiker* init = nullptr);

@@ -11,7 +11,7 @@ class TripDialog : public NewOrEditDialog, public Ui_TripDialog
 {
 	Q_OBJECT
 	
-	Trip* init;
+	const Trip* init;
 	
 public:
 	TripDialog(QWidget* parent, Database* db, Trip* init = nullptr);

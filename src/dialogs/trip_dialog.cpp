@@ -25,8 +25,12 @@ TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
 	endDateWidget->setDate(initialDate);
 	
 	
-	changeStringsForEdit(okButton);
-	insertInitData();
+	if (edit) {	
+		changeStringsForEdit(okButton);
+		insertInitData();
+	} else {
+		this->init = extractData();
+	}
 }
 
 TripDialog::~TripDialog()
@@ -38,11 +42,6 @@ TripDialog::~TripDialog()
 
 void TripDialog::insertInitData()
 {
-	if (!edit) {
-		init = extractData();
-		return;
-	}
-	
 	nameLineEdit->setText(init->name);
 	startDateWidget->setDate(init->startDate);
 	endDateWidget->setDate(init->endDate);
