@@ -1,5 +1,7 @@
 #include "ascent.h"
 
+#include <QCoreApplication>
+
 
 
 Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& description) :
@@ -38,4 +40,11 @@ bool Ascent::equalTo(Ascent* other)
 	if (photos				!= other->photos)			return false;
 	if (description			!= other->description)		return false;
 	return true;
+}
+
+
+
+QString Ascent::tr(const char* string)
+{
+	return QCoreApplication::translate("Ascent", string);
 }

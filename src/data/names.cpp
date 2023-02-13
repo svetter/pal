@@ -1,97 +1,102 @@
 #include "ascent.h"
 #include "range.h"
 
-#include <QTranslator>
-
 
 
 const QStringList Range::continentNames = {
-	QObject::tr("North America"),
-	QObject::tr("South America"),
-	QObject::tr("Europe"),
-	QObject::tr("Africa"),
-	QObject::tr("Asia"),
-	QObject::tr("Australia"),
-	QObject::tr("Antarctica")
+	tr("None"),
+	tr("North America"),
+	tr("South America"),
+	tr("Europe"),
+	tr("Africa"),
+	tr("Asia"),
+	tr("Australia"),
+	tr("Antarctica")
 };
 
 
 
 const QStringList Ascent::hikeKindNames = {
-	QObject::tr("Normal"),
-	QObject::tr("Snow hike"),
-	QObject::tr("Snowshoe"),
-	QObject::tr("Ski tour")
+	tr("Normal"),
+	tr("Snow hike"),
+	tr("Snowshoe"),
+	tr("Ski tour")
 };
 
 
 
 // https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
 const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
+	qMakePair<QString, QStringList>(tr("None"), {}),
 	qMakePair<QString, QStringList>(
-		QObject::tr("SAC hiking scale"),
+		tr("SAC hiking scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Wandern/2020_Berg_Alpinwanderskala_EN.pdf
 		{
-			QObject::tr("T1 (Hiking)"),
-			QObject::tr("T2 (Mountain hiking)"),
-			QObject::tr("T3 (Difficult mountain hiking)"),
-			QObject::tr("T4 (Alpine hiking)"),
-			QObject::tr("T5 (Difficult alpine hiking)"),
-			QObject::tr("T6 (Very difficult alpine hiking)")
+			tr("None"),
+			tr("T1 (Hiking)"),
+			tr("T2 (Mountain hiking)"),
+			tr("T3 (Difficult mountain hiking)"),
+			tr("T4 (Alpine hiking)"),
+			tr("T5 (Difficult alpine hiking)"),
+			tr("T6 (Very difficult alpine hiking)")
 		}
 	),
 	qMakePair<QString, QStringList>(
-		QObject::tr("SAC mountaneering scale"),
+		tr("SAC mountaneering scale"),
 		{
-			QObject::tr("F (Easy)"),
-			QObject::tr("PD (Moderate)"),
-			QObject::tr("AD (Somewhat difficult)"),
-			QObject::tr("D (Difficult)"),
-			QObject::tr("TD (Very difficult)"),
-			QObject::tr("ED (Extremely difficult)"),
-			QObject::tr("ABO (Abominably difficult)")
+			tr("None"),
+			tr("F (Easy)"),
+			tr("PD (Moderate)"),
+			tr("AD (Somewhat difficult)"),
+			tr("D (Difficult)"),
+			tr("TD (Very difficult)"),
+			tr("ED (Extremely difficult)"),
+			tr("ABO (Abominably difficult)")
 		}
 	),
 	qMakePair<QString, QStringList>(
-		QObject::tr("SAC ski tours scale"),
+		tr("SAC ski tours scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Skitour/2020_Skitourenskala_EN.pdf
 		{
-			QObject::tr("L (Easy)"),
-			QObject::tr("WS (Moderate)"),
-			QObject::tr("ZS (Somewhat difficult)"),
-			QObject::tr("S (Difficult)"),
-			QObject::tr("SS (Very difficult)"),
-			QObject::tr("AS (Exceptionally difficult)"),
-			QObject::tr("EX (Extremely dificult)")
+			tr("None"),
+			tr("L (Easy)"),
+			tr("WS (Moderate)"),
+			tr("ZS (Somewhat difficult)"),
+			tr("S (Difficult)"),
+			tr("SS (Very difficult)"),
+			tr("AS (Exceptionally difficult)"),
+			tr("EX (Extremely dificult)")
 		}
 	),
 	qMakePair<QString, QStringList>(
-		QObject::tr("SAC snowshoe tours scale"),
+		tr("SAC snowshoe tours scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Schneeschuhtour/2020_Schneeschuhtourenskala_EN.pdf
 		{
-			QObject::tr("WT1 (Easy snowshoe hike)"),
-			QObject::tr("WT2 (Moderate snowshoe hike)"),
-			QObject::tr("WT3 (Difficult snowshoe hike)"),
-			QObject::tr("WT4 (Snowshoe tour)"),
-			QObject::tr("WT5 (Alpine snowshoe tour)"),
-			QObject::tr("WT6 (Difficult alpine snowshoe tour)")
+			tr("None"),
+			tr("WT1 (Easy snowshoe hike)"),
+			tr("WT2 (Moderate snowshoe hike)"),
+			tr("WT3 (Difficult snowshoe hike)"),
+			tr("WT4 (Snowshoe tour)"),
+			tr("WT5 (Alpine snowshoe tour)"),
+			tr("WT6 (Difficult alpine snowshoe tour)")
 		}
 	),
 	qMakePair<QString, QStringList>(
-		QObject::tr("UIAA climbing scale"),
+		tr("UIAA climbing scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Klettern/SAC-Kletterskala-UIAA-v0.1.pdf
 		{
-			QObject::tr("I (Easy)"),
-			QObject::tr("II (Moderate)"),
-			QObject::tr("III (Somewhat difficult)"),
-			QObject::tr("IV (Difficult)"),
-			QObject::tr("V (Very difficult)"),
-			QObject::tr("VI (Incredibly difficult)"),
-			QObject::tr("VII (Extremely difficult)"),
-			QObject::tr("VIII"),
-			QObject::tr("IX"),
-			QObject::tr("X"),
-			QObject::tr("XI")
+			tr("None"),
+			tr("I (Easy)"),
+			tr("II (Moderate)"),
+			tr("III (Somewhat difficult)"),
+			tr("IV (Difficult)"),
+			tr("V (Very difficult)"),
+			tr("VI (Incredibly difficult)"),
+			tr("VII (Extremely difficult)"),
+			tr("VIII"),
+			tr("IX"),
+			tr("X"),
+			tr("XI")
 		}
 	)
 };
