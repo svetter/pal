@@ -95,7 +95,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	int				difficultySystem	= row->at(ascentsTable->difficultySystemColumn->getIndex()).toInt();
 	int				difficultyGrade		= row->at(ascentsTable->difficultyGradeColumn->getIndex()).toInt();
 	int				tripID				= row->at(ascentsTable->tripIDColumn->getIndex()).toInt();
-	QString			description			= row->at(ascentsTable->notesColumn->getIndex()).toString();
+	QString			description			= row->at(ascentsTable->descriptionColumn->getIndex()).toString();
 	
 	QList<int>		hikerIDs			= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
 	QList<QString>	photos				= photosTable->getPhotosForAscent(ascentID);

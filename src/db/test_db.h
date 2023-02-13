@@ -5,9 +5,9 @@
 
 
 
-const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, hikeKind INT NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER, difficultyGrade INTEGER, tripID INTEGER REFERENCES Trips(tripID), notes NVARCHAR)";
+const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, hikeKind INT NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER, difficultyGrade INTEGER, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
 const auto CREATE_PEAKS			= "CREATE TABLE Peaks(peakID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, height INTEGER, volcano BINARY NOT NULL, regionID INTEGER REFERENCES Regions(regionID), mapsLink NVARCHAR, earthLink NVARCHAR, wikiLink NVARCHAR)";
-const auto CREATE_TRIPS			= "CREATE TABLE Trips(tripID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, startDate DATE, endDate DATE, notes NVARCHAR)";
+const auto CREATE_TRIPS			= "CREATE TABLE Trips(tripID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, startDate DATE, endDate DATE, description NVARCHAR)";
 const auto CREATE_HIKERS		= "CREATE TABLE Hikers(hikerID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
 const auto CREATE_REGIONS		= "CREATE TABLE Regions(regionID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, rangeID INTEGER REFERENCES Ranges(rangeID), countryID INTEGER REFERENCES Countries(countryID))";
 const auto CREATE_RANGES		= "CREATE TABLE Ranges(rangeID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, continent INT)";
@@ -15,9 +15,9 @@ const auto CREATE_COUNTRIES		= "CREATE TABLE Countries(countryID INTEGER PRIMARY
 const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), sortIndex INTEGER NOT NULL, filepath NVARCHAR NOT NULL)";
 const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
 
-const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, notes) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, description) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const auto INSERT_PEAK			= "INSERT INTO Peaks(name, height, volcano, regionID, mapsLink, earthLink, wikiLink) VALUES(?, ?, ?, ?, ?, ?, ?)";
-const auto INSERT_TRIP			= "INSERT INTO Trips(name, startDate, endDate, notes) VALUES(?, ?, ?, ?)";
+const auto INSERT_TRIP			= "INSERT INTO Trips(name, startDate, endDate, description) VALUES(?, ?, ?, ?)";
 const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
 const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) VALUES(?, ?, ?)";
 const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) VALUES(?, ?)";
@@ -27,7 +27,7 @@ const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VA
 
 
 
-int addAscent(QSqlQuery& q, const QString& title, int peakID, const QDate& date, int peakOnDay, const QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, const QString& notes)
+int addAscent(QSqlQuery& q, const QString& title, int peakID, const QDate& date, int peakOnDay, const QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, const QString& description)
 {
 	q.addBindValue(title);
 	q.addBindValue(peakID);
@@ -39,7 +39,7 @@ int addAscent(QSqlQuery& q, const QString& title, int peakID, const QDate& date,
 	q.addBindValue(difficultySystem);
 	q.addBindValue(difficultyGrade);
 	q.addBindValue(tripID);
-	q.addBindValue(notes);
+	q.addBindValue(description);
 	q.exec();
 	return q.lastInsertId().toInt();
 }
@@ -57,12 +57,12 @@ int addPeak(QSqlQuery& q, const QString& name, int height, bool volcano, int reg
 	return q.lastInsertId().toInt();
 }
 
-int addTrip(QSqlQuery& q, const QString& name, const QDate& startDate, const QDate& endDate, const QString& notes)
+int addTrip(QSqlQuery& q, const QString& name, const QDate& startDate, const QDate& endDate, const QString& description)
 {
 	q.addBindValue(name);
 	q.addBindValue(startDate);
 	q.addBindValue(endDate);
-	q.addBindValue(notes);
+	q.addBindValue(description);
 	q.exec();
 	return q.lastInsertId().toInt();
 }
