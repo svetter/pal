@@ -12,7 +12,7 @@ Range::Range(int rangeID, QString& name, int continent) :
 
 
 
-bool Range::equalTo(Range* other)
+bool Range::equalTo(const Range* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

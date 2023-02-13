@@ -32,7 +32,7 @@ public:
 	
 	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& description);
 	
-	bool equalTo(Ascent* other);
+	bool equalTo(const Ascent* const other) const;
 	
 private:
 	static QString tr(const char* string);

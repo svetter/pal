@@ -19,7 +19,7 @@ public:
 	
 	Peak(int peakID, QString& name, int height, bool volcano, int regionID, QString& mapsLink, QString& earthLink, QString& wikiLink);
 	
-	bool equalTo(Peak* other);
+	bool equalTo(const Peak* const other) const;
 };
 
 

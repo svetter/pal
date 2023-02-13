@@ -9,7 +9,7 @@ Country::Country(int countryID, QString& name) :
 
 
 
-bool Country::equalTo(Country* other)
+bool Country::equalTo(const Country* const other) const
 {
 	assert(other);
 	if (name	!= other->name)	return false;

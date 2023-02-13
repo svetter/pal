@@ -11,7 +11,7 @@ Region::Region(int regionID, QString& name, int rangeID, int countryID) :
 
 
 
-bool Region::equalTo(Region* other)
+bool Region::equalTo(const Region* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

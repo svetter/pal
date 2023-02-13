@@ -9,7 +9,7 @@ Hiker::Hiker(int hikerID, QString& name) :
 
 
 
-bool Hiker::equalTo(Hiker* other)
+bool Hiker::equalTo(const Hiker* const other) const
 {
 	assert(other);
 	if (name	!= other->name)	return false;

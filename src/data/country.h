@@ -13,7 +13,7 @@ public:
 	
 	Country(int countryID, QString& name);
 	
-	bool equalTo(Country* other);
+	bool equalTo(const Country* const other) const;
 };
 
 

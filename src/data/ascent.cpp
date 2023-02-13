@@ -23,7 +23,7 @@ Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDay
 
 
 
-bool Ascent::equalTo(Ascent* other)
+bool Ascent::equalTo(const Ascent* const other) const
 {
 	assert(other);
 	if (title				!= other->title)			return false;

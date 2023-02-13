@@ -17,7 +17,7 @@ public:
 	
 	Range(int rangeID, QString& name, int continent);
 	
-	bool equalTo(Range* other);
+	bool equalTo(const Range* const other) const;
 	
 private:
 	static QString tr(const char* string);

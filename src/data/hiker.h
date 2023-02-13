@@ -13,7 +13,7 @@ public:
 	
 	Hiker(int hikerID, QString& name);
 	
-	bool equalTo(Hiker* other);
+	bool equalTo(const Hiker* const other) const;
 };
 
 

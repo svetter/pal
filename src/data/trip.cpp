@@ -12,7 +12,7 @@ Trip::Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString&
 
 
 
-bool Trip::equalTo(Trip* other)
+bool Trip::equalTo(const Trip* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

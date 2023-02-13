@@ -17,7 +17,7 @@ public:
 	
 	Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString& description);
 	
-	bool equalTo(Trip* other);
+	bool equalTo(const Trip* const other) const;
 };
 
 

@@ -17,7 +17,7 @@ public:
 	
 	Region(int regionID, QString& name, int rangeID, int countryID);
 	
-	bool equalTo(Region* other);
+	bool equalTo(const Region* const other) const;
 };
 
 
