@@ -10,6 +10,9 @@
 
 class ParticipatedTable : public AssociativeTable {
 public:
+	Column* ascentIDColumn;
+	Column* hikerIDColumn;
+	
 	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn);
 	
 	void addRows(Ascent* ascent);
