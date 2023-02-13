@@ -17,8 +17,15 @@ RangesTable::RangesTable() :
 
 
 
-int RangesTable::addRow(Range* range)
+int RangesTable::addRow(QWidget* parent, const Range* range)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == nameColumn)		{ data.append(range->name);			continue; }
+		if (*iter == continentColumn)	{ data.append(range->continent);	continue; }
+		assert(false);
+	}
+	int newRangeIndex = NormalTable::addRow(parent, data);
+	return newRangeIndex;
 }

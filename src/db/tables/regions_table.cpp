@@ -19,8 +19,16 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 
 
 
-int RegionsTable::addRow(Region* region)
+int RegionsTable::addRow(QWidget* parent, const Region* region)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == nameColumn)		{ data.append(region->name);		continue; }
+		if (*iter == rangeIDColumn)		{ data.append(region->rangeID);		continue; }
+		if (*iter == countryIDColumn)	{ data.append(region->countryID);	continue; }
+		assert(false);
+	}
+	int newRegionIndex = NormalTable::addRow(parent, data);
+	return newRegionIndex;
 }

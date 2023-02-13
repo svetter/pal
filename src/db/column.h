@@ -51,7 +51,7 @@ public:
 
 
 
-QString getColumnListString(QList<Column*> columns);
+QString getColumnListStringOf(QList<Column*> columns);
 
 
 

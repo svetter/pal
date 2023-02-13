@@ -12,8 +12,26 @@ ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* fore
 
 
 
-void ParticipatedTable::addRows(Ascent* ascent)
+void ParticipatedTable::addRows(QWidget* parent, Ascent* ascent)
 {
-	// TODO #97
+	for (auto iter = ascent->hikerIDs.constBegin(); iter != ascent->hikerIDs.constEnd(); iter++) {
+		addRow(parent, ascent->ascentID, *iter);
+	}
 }
-	
+
+void ParticipatedTable::addRow(QWidget* parent, int ascentID, int hikerID)
+{
+	QList<Column*> columns = getColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }
+		if (*iter == hikerIDColumn)		{ data.append(hikerID);		continue; }
+		assert(false);
+	}
+	AssociativeTable::addRow(parent, data);
+}
+
+void removeRow(QWidget* parent, QPair<int, int>& primaryKey)
+{
+	// TODO
+}

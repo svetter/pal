@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/peak.h"
 
+#include <QWidget>
+
 
 
 class PeaksTable : public NormalTable {
@@ -20,7 +22,7 @@ public:
 	
 	PeaksTable(Column* foreignRegionIDColumn);
 	
-	int addRow(Peak* peak);
+	int addRow(QWidget* parent, const Peak* peak);
 };
 
 

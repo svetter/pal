@@ -5,6 +5,7 @@
 #include "src/data/ascent.h"
 
 #include <QString>
+#include <QWidget>
 #include <QTranslator>
 
 
@@ -19,7 +20,10 @@ public:
 	
 	QList<QString> getPhotosForAscent(int ascentID) const;
 	
-	int addRow();
+	void addRows(QWidget* parent, const Ascent* ascent);
+	
+private:
+	void addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath);
 };
 
 

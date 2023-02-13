@@ -36,8 +36,24 @@ QList<QString> PhotosTable::getPhotosForAscent(int ascentID) const
 
 
 
-int PhotosTable::addRow()
+void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	// TODO #97
-	return -1;
+	int sortIndex = 0;
+	for (auto iter = ascent->photos.constBegin(); iter != ascent->photos.constEnd(); iter++) {
+		addRow(parent, ascent->ascentID, sortIndex, *iter);
+		sortIndex++;
+	}
+}
+
+void PhotosTable::addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath)
+{
+	QList<Column*> columns = getColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }
+		if (*iter == sortIndexColumn)	{ data.append(sortIndex);	continue; }
+		if (*iter == filepathColumn)	{ data.append(filepath);	continue; }
+		assert(false);
+	}
+	NormalTable::addRow(parent, data);
 }

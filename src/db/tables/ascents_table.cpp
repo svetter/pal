@@ -35,8 +35,24 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 
 
 
-int AscentsTable::addRow(Ascent* ascent)
+int AscentsTable::addRow(QWidget* parent, const Ascent* ascent)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == titleColumn)				{ data.append(ascent->title);				continue; }
+		if (*iter == peakIDColumn)				{ data.append(ascent->peakID);				continue; }
+		if (*iter == dateColumn)				{ data.append(ascent->date);				continue; }
+		if (*iter == peakOnDayColumn)			{ data.append(ascent->perDayIndex);			continue; }
+		if (*iter == timeColumn)				{ data.append(ascent->time);				continue; }
+		if (*iter == hikeKindColumn)			{ data.append(ascent->hikeKind);			continue; }
+		if (*iter == traverseColumn)			{ data.append(ascent->traverse);			continue; }
+		if (*iter == difficultySystemColumn)	{ data.append(ascent->difficultySystem);	continue; }
+		if (*iter == difficultyGradeColumn)		{ data.append(ascent->difficultyGrade);		continue; }
+		if (*iter == tripIDColumn)				{ data.append(ascent->tripID);				continue; }
+		if (*iter == descriptionColumn)			{ data.append(ascent->description);			continue; }
+		assert(false);
+	}
+	int newAscentIndex = NormalTable::addRow(parent, data);
+	return newAscentIndex;
 }

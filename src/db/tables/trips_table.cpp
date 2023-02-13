@@ -21,8 +21,17 @@ TripsTable::TripsTable() :
 
 
 
-int TripsTable::addRow(Trip* trip)
+int TripsTable::addRow(QWidget* parent, const Trip* trip)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == nameColumn)		{ data.append(trip->name);			continue; }
+		if (*iter == startDateColumn)	{ data.append(trip->startDate);		continue; }
+		if (*iter == endDateColumn)		{ data.append(trip->endDate);		continue; }
+		if (*iter == descriptionColumn)	{ data.append(trip->description);	continue; }
+		assert(false);
+	}
+	int newTripIndex = NormalTable::addRow(parent, data);
+	return newTripIndex;
 }

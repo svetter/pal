@@ -15,8 +15,14 @@ CountriesTable::CountriesTable() :
 
 
 
-int CountriesTable::addRow(Country* country)
+int CountriesTable::addRow(QWidget* parent, const Country* country)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == nameColumn)	{ data.append(country->name);	continue; }
+		assert(false);
+	}
+	int newCountryIndex = NormalTable::addRow(parent, data);
+	return newCountryIndex;
 }

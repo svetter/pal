@@ -29,13 +29,15 @@ public:
 	Column* getPrimaryKeyColumn() const;
 	int getNumberOfNonPrimaryKeyColumns() const;
 	QList<Column*> getNonPrimaryKeyColumnList() const;
+	QString getNonPrimaryKeyColumnListString() const;
 	Column* getColumnByIndex(int index) const;
 	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
 	int getNumberOfEntries(QWidget* parent);
 	
 	// Modifications
-	int addRow(QList<QVariant>& data);
+	int addRow(QWidget* parent, const QList<QVariant>& data);
+	void removeRow(QWidget* parent, int primaryKey);
 	
 	// QAbstractItemModel implementation
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

@@ -15,8 +15,14 @@ HikersTable::HikersTable() :
 
 
 
-int HikersTable::addRow(Hiker* hiker)
+int HikersTable::addRow(QWidget* parent, const Hiker* hiker)
 {
-	// TODO #97
-	return -1;
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
+		if (*iter == nameColumn)	{ data.append(hiker->name);	continue; }
+		assert(false);
+	}
+	int newHikerIndex = NormalTable::addRow(parent, data);
+	return newHikerIndex;
 }

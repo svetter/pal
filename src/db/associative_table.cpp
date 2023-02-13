@@ -1,5 +1,11 @@
 #include "associative_table.h"
 
+#include "src/db/db_error.h"
+
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QModelIndex>
+
 
 
 AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
@@ -51,4 +57,20 @@ QList<int> AssociativeTable::getMatchingEntries(Column* column, int primaryKey) 
 		}
 	}
 	return filtered;
+}
+
+
+
+void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
+{
+	assert(data.size() == 2);
+	
+	Table::addRow(parent, data, getColumnList());
+}
+
+void removeRow(QWidget* parent, const QList<int>& primaryKeys)
+{
+	assert(primaryKeys.size() == 2);
+
+	// TODO
 }

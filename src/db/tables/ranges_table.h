@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/range.h"
 
+#include <QWidget>
+
 
 
 class RangesTable : public NormalTable {
@@ -15,7 +17,7 @@ public:
 	
 	RangesTable();
 	
-	int addRow(Range* range);
+	int addRow(QWidget* parent, const Range* range);
 };
 
 

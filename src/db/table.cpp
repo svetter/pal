@@ -35,14 +35,14 @@ bool Table::isAssociative()
 
 
 
+QString Table::getColumnListString() const
+{
+	return getColumnListStringOf(getColumnList());
+}
+
 int Table::getColumnIndex(Column* column) const
 {
 	return getColumnList().indexOf(column);
-}
-
-QString Table::getColumnListString() const
-{
-	return ::getColumnListString(getColumnList());
 }
 
 
@@ -104,4 +104,40 @@ QList<QList<QVariant>*>* Table::getAllEntries(QWidget* parent) const
 	if (buffer->empty())
 		displayError(parent, "Couldn't read record from SQL query", queryString);
 	return buffer;
+}
+
+
+
+int Table::addRow(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns)
+{	
+	int numColumns = columns.size();
+	assert(!isAssociative() && numColumns == (getNumberOfColumns() - 1) || isAssociative() && numColumns == getNumberOfColumns());
+	assert(data.size() == numColumns);
+	
+	QString questionMarks = "";
+	for (int i = 0; i < numColumns; i++) {
+		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
+	}
+	QString queryString = QString(
+			"INSERT INTO " + getName() + "(" + getColumnListStringOf(columns) + ")" +
+			"\nVALUES(" + questionMarks + ")"
+	);
+	QSqlQuery query = QSqlQuery();
+	if (!query.prepare(queryString))
+		displayError(parent, query.lastError(), queryString);
+	
+	QList<QVariant>* newBufferRow = new QList<QVariant>();
+	for (auto iter = data.constBegin(); iter != data.constEnd(); iter++) {
+		query.addBindValue(*iter);
+		newBufferRow->append(*iter);
+	}
+	if (!query.exec())
+		displayError(parent, query.lastError(), queryString);
+	int newRowID = query.lastInsertId().toInt();
+	assert(newRowID > 0);
+	
+	newBufferRow->insert(0, newRowID);
+	buffer->append(newBufferRow);
+	
+	return buffer->size() - 1;
 }

@@ -5,7 +5,7 @@
 #include "src/data/ascent.h"
 
 #include <QString>
-
+#include <QWidget>
 
 
 class ParticipatedTable : public AssociativeTable {
@@ -15,7 +15,10 @@ public:
 	
 	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn);
 	
-	void addRows(Ascent* ascent);
+	void addRows(QWidget* parent, Ascent* ascent);
+	
+private:
+	void addRow(QWidget* parent, int ascentID, int hikerID);
 };
 
 

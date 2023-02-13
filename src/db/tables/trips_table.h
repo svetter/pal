@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/trip.h"
 
+#include <QWidget>
+
 
 
 class TripsTable : public NormalTable {
@@ -17,7 +19,7 @@ public:
 	
 	TripsTable();
 	
-	int addRow(Trip* trip);
+	int addRow(QWidget* parent, const Trip* trip);
 };
 
 

@@ -21,6 +21,10 @@ public:
 	QList<Column*> getColumnList() const override;
 	
 	QList<int> getMatchingEntries(Column* column, int primaryKey) const;
+	
+	// Modifications
+	void addRow(QWidget* parent, const QList<QVariant>& data);
+	void removeRow(QWidget* parent, const QList<QVariant>& primaryKeys);
 };
 
 

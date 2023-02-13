@@ -33,13 +33,13 @@ public:
 	// Getters
 	virtual int getNumberOfColumns() const = 0;
 	virtual QList<Column*> getColumnList() const = 0;
-	int getColumnIndex(Column* column) const;
 	QString getColumnListString() const;
+	int getColumnIndex(Column* column) const;
 	QList<QList<QVariant>*>* getAllEntries(QWidget* parent) const;
 	
 	// Modification
+	int addRow(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns);
 	WhatIfResult whatIf_removeRow(int primaryKey);
-	void removeRow(int primaryKey);
 	WhatIfResult whatIf_changeCell(int primaryKey, Column* column);
 	template<typename T> void changeCell(int ascentID, Column* column, T newValue);
 };

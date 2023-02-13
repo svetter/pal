@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/hiker.h"
 
+#include <QWidget>
+
 
 
 class HikersTable : public NormalTable {
@@ -14,7 +16,7 @@ public:
 	
 	HikersTable();
 	
-	int addRow(Hiker* hiker);
+	int addRow(QWidget* parent, const Hiker* hiker);
 };
 
 

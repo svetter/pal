@@ -69,7 +69,7 @@ int Column::getIndex()
 
 
 
-QString getColumnListString(QList<Column*> columns)
+QString getColumnListStringOf(QList<Column*> columns)
 {
 	QString result = "";
 	bool first = true;

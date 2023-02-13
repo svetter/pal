@@ -51,6 +51,11 @@ QList<Column*> NormalTable::getNonPrimaryKeyColumnList() const
 	return QList<Column*>(nonPrimaryColumns);
 }
 
+QString NormalTable::getNonPrimaryKeyColumnListString() const
+{
+	return getColumnListStringOf(getNonPrimaryKeyColumnList());
+}
+
 int NormalTable::getNumberOfColumns() const
 {
 	return nonPrimaryColumns.size() + 1;
@@ -105,9 +110,30 @@ int NormalTable::getNumberOfEntries(QWidget* parent)
 }
 
 
+
+int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
+{
+	assert(data.size() == getNumberOfNonPrimaryKeyColumns());
+	
+	int currentNumRows = buffer->size();
+	beginInsertRows(index(0, 0, QModelIndex()), currentNumRows, currentNumRows);
+	int newRowIndex = Table::addRow(parent, data, getNonPrimaryKeyColumnList());
+	endInsertRows();
+	
+	return newRowIndex;
+}
+
+void NormalTable::removeRow(QWidget* parent, int primaryKey)
+{
+	// TODO
+}
+
+
+
 QModelIndex NormalTable::index(int row, int column, const QModelIndex& parent) const
 {
 	if (!hasIndex(row, column, parent)) {
+		qDebug() << QString("NormalTable::index() called with unrecognized location: row %1, column %2, parent").arg(row, column) << parent;
 		return QModelIndex();
 	}
 	if (!parent.isValid()) {

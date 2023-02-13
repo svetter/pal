@@ -148,13 +148,12 @@ Country* Database::getCountry(int countryID) const {
 
 
 int Database::addRow(NormalTable* table, QList<QVariant>& row) {
-	QString columnListString = getColumnListString(table->getNonPrimaryKeyColumnList());
 	QString questionMarks = "";
 	for (int i = 0; i < table->getNumberOfNonPrimaryKeyColumns(); i++) {
 		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
 	}
 	QString queryString = QString(
-			"INSERT INTO " + table->getName() + "(" + columnListString + ")" +
+			"INSERT INTO " + table->getName() + "(" + table->getNonPrimaryKeyColumnListString() + ")" +
 			"\nVALUES(" + questionMarks + ")"
 	);
 	QSqlQuery query = QSqlQuery();

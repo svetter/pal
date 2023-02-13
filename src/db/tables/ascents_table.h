@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/ascent.h"
 
+#include <QWidget>
+
 
 
 class AscentsTable : public NormalTable {
@@ -24,7 +26,7 @@ public:
 	
 	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
 	
-	int addRow(Ascent* ascent);
+	int addRow(QWidget* parent, const Ascent* ascent);
 };
 
 

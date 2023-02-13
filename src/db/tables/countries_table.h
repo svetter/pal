@@ -4,6 +4,8 @@
 #include "src/db/normal_table.h"
 #include "src/data/country.h"
 
+#include <QWidget>
+
 
 
 class CountriesTable : public NormalTable {
@@ -14,7 +16,7 @@ public:
 	
 	CountriesTable();
 	
-	int addRow(Country* country);
+	int addRow(QWidget* parent, const Country* country);
 };
 
 

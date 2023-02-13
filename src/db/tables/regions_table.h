@@ -14,7 +14,7 @@ public:
 	
 	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn);
 	
-	int addRow(Region* region);
+	int addRow(QWidget* parent, const Region* region);
 };
 
 
