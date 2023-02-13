@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include "src/db/db_interface.h"
+#include "ui_main_window.h"
 
 #include <QMainWindow>
 
@@ -11,7 +12,7 @@ QT_END_NAMESPACE
 
 
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 	

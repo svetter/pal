@@ -15,34 +15,31 @@
 
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
-		ui(new Ui::MainWindow),
 		db(Database(this))
 {
-	ui->setupUi(this);
+	setupUi(this);
 	
-	connect(ui->newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
-	connect(ui->newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
-	connect(ui->newTripAction,		&QAction::triggered,	this,	&MainWindow::handle_newTrip);
-	connect(ui->newHikerAction,		&QAction::triggered,	this,	&MainWindow::handle_newHiker);
-	connect(ui->newRegionAction,	&QAction::triggered,	this,	&MainWindow::handle_newRegion);
-	connect(ui->newRangeAction,		&QAction::triggered,	this,	&MainWindow::handle_newRange);
-	connect(ui->newCountryAction,	&QAction::triggered,	this,	&MainWindow::handle_newCountry);
+	connect(newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
+	connect(newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
+	connect(newTripAction,		&QAction::triggered,	this,	&MainWindow::handle_newTrip);
+	connect(newHikerAction,		&QAction::triggered,	this,	&MainWindow::handle_newHiker);
+	connect(newRegionAction,	&QAction::triggered,	this,	&MainWindow::handle_newRegion);
+	connect(newRangeAction,		&QAction::triggered,	this,	&MainWindow::handle_newRange);
+	connect(newCountryAction,	&QAction::triggered,	this,	&MainWindow::handle_newCountry);
 	
-	connect(ui->newAscentButton,	&QPushButton::clicked,	this,	&MainWindow::handle_newAscent);
-	connect(ui->newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
-	connect(ui->newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
+	connect(newAscentButton,	&QPushButton::clicked,	this,	&MainWindow::handle_newAscent);
+	connect(newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
+	connect(newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
 	
-	ui->numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
+	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
 	
-	ui->ascentsTableView->setModel(db.ascentsTable);
-	ui->ascentsTableView->setRootIndex(db.ascentsTable->getNormalRootModelIndex());
-	ui->ascentsTableView->resizeColumnsToContents();
+	ascentsTableView->setModel(db.ascentsTable);
+	ascentsTableView->setRootIndex(db.ascentsTable->getNormalRootModelIndex());
+	ascentsTableView->resizeColumnsToContents();
 }
 
 MainWindow::~MainWindow()
-{
-	delete ui;
-}
+{}
 
 
 
