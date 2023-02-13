@@ -33,13 +33,26 @@ MainWindow::MainWindow() :
 	
 	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
 	
-	ascentsTableView->setModel(db.ascentsTable);
-	ascentsTableView->setRootIndex(db.ascentsTable->getNormalRootModelIndex());
-	ascentsTableView->resizeColumnsToContents();
+	setupTableView(ascentsTableView,	db.ascentsTable);
+	setupTableView(peaksTableView,		db.peaksTable);
+	setupTableView(tripsTableView,		db.tripsTable);
+	setupTableView(hikersTableView,		db.hikersTable);
+	setupTableView(regionsTableView,	db.regionsTable);
+	setupTableView(rangesTableView,		db.rangesTable);
+	setupTableView(countriesTableView,	db.countriesTable);
 }
 
 MainWindow::~MainWindow()
 {}
+
+
+
+void MainWindow::setupTableView(QTableView* view, NormalTable* table)
+{
+	view->setModel(table);
+	view->setRootIndex(table->getNormalRootModelIndex());
+	view->resizeColumnsToContents();
+}
 
 
 

@@ -5,6 +5,7 @@
 #include "ui_main_window.h"
 
 #include <QMainWindow>
+#include <QTableView>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,8 @@ public:
 private:
 	Ui::MainWindow* ui;
 	Database db;
+	
+	void setupTableView(QTableView* view, NormalTable* table);
 	
 	void handle_newAscent();
 	void handle_newPeak();
