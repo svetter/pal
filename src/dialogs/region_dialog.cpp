@@ -116,7 +116,7 @@ int openNewRegionDialogAndStore(QWidget* parent, Database* db)
 	RegionDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Region* newRegion = dialog.extractData();
-		newRegionIndex = db->regionsTable->addRow(newRegion);
+		newRegionIndex = db->regionsTable->addRow(parent, newRegion);
 		delete newRegion;
 	}
 	

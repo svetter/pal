@@ -13,7 +13,7 @@ public:
 	Column* nameColumn;
 	Column* startDateColumn;
 	Column* endDateColumn;
-	Column* notesColumn;
+	Column* descriptionColumn;
 	
 	TripsTable();
 	

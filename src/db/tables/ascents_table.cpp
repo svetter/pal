@@ -18,7 +18,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 		difficultySystemColumn	(new Column(QString("difficultySystem"),	tr("Diff. system"),		integer,	true,		false,		nullptr,				this)),
 		difficultyGradeColumn	(new Column(QString("difficultyGrade"),		tr("Diff. grade"),		integer,	true,		false,		nullptr,				this)),
 		tripIDColumn			(new Column(QString("tripID"),				QString(),				integer,	true,		false,		foreignTripIDColumn,	this)),
-		notesColumn				(new Column(QString("notes"),				tr("Notes"),			varchar,	true,		false,		nullptr,				this))
+		descriptionColumn		(new Column(QString("description"),			tr("Description"),		varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(titleColumn);
 	addColumn(peakIDColumn);
@@ -30,7 +30,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 	addColumn(difficultySystemColumn);
 	addColumn(difficultyGradeColumn);
 	addColumn(tripIDColumn);
-	addColumn(notesColumn);
+	addColumn(descriptionColumn);
 }
 
 

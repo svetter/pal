@@ -77,7 +77,7 @@ int openNewCountryDialogAndStore(QWidget* parent, Database* db)
 	CountryDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Country* newCountry = dialog.extractData();
-		newCountryIndex = db->countriesTable->addRow(newCountry);
+		newCountryIndex = db->countriesTable->addRow(parent, newCountry);
 		delete newCountry;
 	}
 	

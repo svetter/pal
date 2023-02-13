@@ -20,7 +20,7 @@ public:
 	Column* difficultySystemColumn;
 	Column* difficultyGradeColumn;
 	Column* tripIDColumn;
-	Column* notesColumn;
+	Column* descriptionColumn;
 	
 	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
 	

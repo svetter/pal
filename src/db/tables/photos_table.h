@@ -12,7 +12,7 @@
 class PhotosTable : public NormalTable {
 public:
 	Column* ascentIDColumn;
-	Column* indexColumn;
+	Column* sortIndexColumn;
 	Column* filepathColumn;
 	
 	PhotosTable(Column* foreignAscentIDColumn);
