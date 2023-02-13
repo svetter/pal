@@ -175,8 +175,13 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			}
 			break;
 		case bit:
-			if (role == Qt::CheckStateRole) {
+			switch (role) {
+			case Qt::CheckStateRole:
 				result = bufferValue.toBool() ? Qt::Checked : Qt::Unchecked;
+				break;
+			case Qt::TextAlignmentRole:
+				result = Qt::AlignCenter;
+				break;
 			}
 			break;
 		case varchar:
