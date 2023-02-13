@@ -1,5 +1,4 @@
 #include "main_window.h"
-#include "src/db/db_interface.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -12,6 +11,8 @@ int main(int argc, char *argv[])
 	QApplication application(argc, argv);
 	
 	
+	
+	// Configure translation
 	
 	QString defaultLanguage = "en";
 	bool useTranslator = true;
@@ -41,6 +42,8 @@ int main(int argc, char *argv[])
 			qDebug() << "Found NO translation for system language " << locale;
 		}
 	}
+	
+	
 	
 	MainWindow mainWindow = MainWindow();
 	
