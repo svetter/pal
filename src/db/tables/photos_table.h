@@ -17,6 +17,8 @@ public:
 	
 	PhotosTable(Column* foreignAscentIDColumn);
 	
+	QList<QString> getPhotosForAscent(int ascentID) const;
+	
 	int addRow();
 };
 

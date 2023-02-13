@@ -1,6 +1,7 @@
 #include "photos_table.h"
 
 #include <QString>
+#include <QMap>
 #include <QTranslator>
 
 
@@ -15,6 +16,22 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 	addColumn(ascentIDColumn);
 	addColumn(indexColumn);
 	addColumn(filepathColumn);
+}
+
+
+
+QList<QString> PhotosTable::getPhotosForAscent(int ascentID) const
+{
+	QMap<int, QString> filtered = QMap<int, QString>();
+	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+		if ((*iter)->at(ascentIDColumn->getIndex()) == ascentID) {
+			int photoIndex = (*iter)->at(indexColumn->getIndex()).toInt();
+			QString filepath = (*iter)->at(filepathColumn->getIndex()).toString();
+			filtered.insert(photoIndex, filepath);
+		}
+	}
+	QList<QString> sortedList = filtered.values();
+	return sortedList;
 }
 
 
