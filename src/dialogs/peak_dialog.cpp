@@ -126,16 +126,12 @@ int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 	return newPeakIndex;
 }
 
-Peak* openEditPeakDialog(QWidget* parent, Database* db, Peak* originalPeak)
+void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak)
 {
-	Peak* editedPeak = nullptr;
-	
 	PeakDialog dialog(parent, db, originalPeak);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedPeak = dialog.extractData();
+		Peak* editedPeak = dialog.extractData();
 		// TODO update database
+		delete editedPeak;
 	}
-	
-	delete originalPeak;
-	return editedPeak;
 }

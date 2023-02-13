@@ -123,16 +123,12 @@ int openNewRegionDialogAndStore(QWidget* parent, Database* db)
 	return newRegionIndex;
 }
 
-Region* openEditRegionDialog(QWidget* parent, Database* db, Region* originalRegion)
+void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* originalRegion)
 {
-	Region* editedRegion = nullptr;
-	
 	RegionDialog dialog(parent, db, originalRegion);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedRegion = dialog.extractData();
+		Region* editedRegion = dialog.extractData();
 		// TODO update database
+		delete editedRegion;
 	}
-	
-	delete originalRegion;
-	return editedRegion;
 }

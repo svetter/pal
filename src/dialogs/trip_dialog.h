@@ -33,7 +33,7 @@ private:
 
 
 int openNewTripDialogAndStore(QWidget* parent, Database* db);
-Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* originalTrip);
+void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTrip);
 
 
 

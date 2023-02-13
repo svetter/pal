@@ -191,30 +191,26 @@ void AscentDialog::handle_ok()
 
 
 
-Ascent* openNewAscentDialogAndStore(QWidget* parent, Database* db)
+int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
-	Ascent* newAscent = nullptr;
+	int newAscentIndex = -1;
 	
 	AscentDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		newAscent = dialog.extractData();
-		int ascentID = db->ascentsTable->addRow(newAscent);
-		newAscent->ascentID = ascentID;
+		Ascent* newAscent = dialog.extractData();
+		newAscentIndex = db->ascentsTable->addRow(newAscent);
+		delete newAscent;
 	}
 	
-	return newAscent;
+	return newAscentIndex;
 }
 
-Ascent* openEditAscentDialog(QWidget* parent, Database* db, Ascent* originalAscent)
+void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent)
 {
-	Ascent* editedAscent = nullptr;
-	
 	AscentDialog dialog(parent, db, originalAscent);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedAscent = dialog.extractData();
+		Ascent* editedAscent = dialog.extractData();
 		// TODO update database
+		delete editedAscent;
 	}
-	
-	delete originalAscent;
-	return editedAscent;
 }

@@ -84,16 +84,12 @@ int openNewHikerDialogAndStore(QWidget* parent, Database* db)
 	return newHikerIndex;
 }
 
-Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker)
+void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker)
 {
-	Hiker* editedHiker = nullptr;
-	
 	HikerDialog dialog(parent, db, originalHiker);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedHiker = dialog.extractData();
+		Hiker* editedHiker = dialog.extractData();
 		// TODO update database
+		delete editedHiker;
 	}
-	
-	delete originalHiker;
-	return editedHiker;
 }

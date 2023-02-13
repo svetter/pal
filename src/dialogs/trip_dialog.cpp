@@ -122,16 +122,12 @@ int openNewTripDialogAndStore(QWidget* parent, Database* db)
 	return newTripIndex;
 }
 
-Trip* openEditTripDialog(QWidget* parent, Database* db, Trip* originalTrip)
+void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTrip)
 {
-	Trip* editedTrip = nullptr;
-	
 	TripDialog dialog(parent, db, originalTrip);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedTrip = dialog.extractData();
+		Trip* editedTrip = dialog.extractData();
 		// TODO update database
+		delete editedTrip;
 	}
-	
-	delete originalTrip;
-	return editedTrip;
 }

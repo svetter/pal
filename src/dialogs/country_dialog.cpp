@@ -84,16 +84,12 @@ int openNewCountryDialogAndStore(QWidget* parent, Database* db)
 	return newCountryIndex;
 }
 
-Country* openEditCountryDialog(QWidget* parent, Database* db, Country* originalCountry)
+void openEditCountryDialogAndStore(QWidget* parent, Database* db, Country* originalCountry)
 {
-	Country* editedCountry = nullptr;
-	
 	CountryDialog dialog(parent, db, originalCountry);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedCountry = dialog.extractData();
+		Country* editedCountry = dialog.extractData();
 		// TODO update database
+		delete editedCountry;
 	}
-	
-	delete originalCountry;
-	return editedCountry;
 }

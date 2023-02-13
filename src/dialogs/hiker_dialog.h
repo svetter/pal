@@ -30,7 +30,7 @@ private:
 
 
 int openNewHikerDialogAndStore(QWidget* parent, Database* db);
-Hiker* openEditHikerDialog(QWidget* parent, Database* db, Hiker* originalHiker);
+void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker);
 
 
 

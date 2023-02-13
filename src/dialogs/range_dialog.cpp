@@ -95,16 +95,12 @@ int openNewRangeDialogAndStore(QWidget* parent, Database* db)
 	return newRangeIndex;
 }
 
-Range* openEditRangeDialog(QWidget* parent, Database* db, Range* originalRange)
+void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalRange)
 {
-	Range* editedRange = nullptr;
-	
 	RangeDialog dialog(parent, db, originalRange);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		editedRange = dialog.extractData();
-		// TODO update database
+		Range* editedRange = dialog.extractData();
+		// TODO update database	
+		delete editedRange;
 	}
-	
-	delete originalRange;
-	return editedRange;
 }
