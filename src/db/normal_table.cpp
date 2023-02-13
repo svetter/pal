@@ -133,7 +133,7 @@ void NormalTable::removeRow(QWidget* parent, int primaryKey)
 QModelIndex NormalTable::index(int row, int column, const QModelIndex& parent) const
 {
 	if (!hasIndex(row, column, parent)) {
-		qDebug() << QString("NormalTable::index() called with unrecognized location: row %1, column %2, parent").arg(row, column) << parent;
+		qDebug() << QString("NormalTable::index() called with unrecognized location: row %1, column %2, parent").arg(row).arg(column) << parent;
 		return QModelIndex();
 	}
 	if (!parent.isValid()) {

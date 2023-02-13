@@ -66,45 +66,48 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 
 void MainWindow::handle_newAscent()
 {
-	openNewAscentDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);
 }
 
 void MainWindow::handle_newPeak()
 {
-	openNewPeakDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewPeakDialogAndStore, db.peaksTable, peaksTableView);
 }
 
 void MainWindow::handle_newTrip()
 {
-	openNewTripDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewTripDialogAndStore, db.tripsTable, tripsTableView);
 }
 
 void MainWindow::handle_newHiker()
 {
-	openNewHikerDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewHikerDialogAndStore, db.hikersTable, hikersTableView);
 }
 
 void MainWindow::handle_newRegion()
 {
-	openNewRegionDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewRegionDialogAndStore, db.regionsTable, regionsTableView);
 }
 
 void MainWindow::handle_newRange()
 {
-	openNewRangeDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewRangeDialogAndStore, db.rangesTable, rangesTableView);
 }
+
 
 void MainWindow::handle_newCountry()
 {
-	openNewCountryDialogAndStore(this, &db);
-	// TODO update active view if necessary
+	handle_newItem(&openNewCountryDialogAndStore, db.countriesTable, countriesTableView);
 }
+
+void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view)
+{
+	int newItemIndex = openNewItemDialogAndStoreMethod(this, &db);
+	QModelIndex modelIndex = table->index(newItemIndex, 0, view->currentIndex().parent());
+	view->setCurrentIndex(modelIndex);
+	view->scrollTo(modelIndex);
+}
+
 
 
 void MainWindow::handle_editAscent(const QModelIndex& index)

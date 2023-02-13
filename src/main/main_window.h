@@ -42,6 +42,9 @@ private slots:
 	void handle_editRegion	(const QModelIndex& index);
 	void handle_editRange	(const QModelIndex& index);
 	void handle_editCountry	(const QModelIndex& index);
+	
+private:
+	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
 };
 
 
