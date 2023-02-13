@@ -31,6 +31,14 @@ MainWindow::MainWindow() :
 	connect(newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
 	connect(newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
 	
+	connect(ascentsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(peaksTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(tripsTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(hikersTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(regionsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	
 	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
 	
 	setupTableView(ascentsTableView,	db.ascentsTable);
@@ -96,4 +104,41 @@ void MainWindow::handle_newCountry()
 {
 	openNewCountryDialogAndStore(this, &db);
 	// TODO update active view if necessary
+}
+
+
+void MainWindow::handle_editAscent(const QModelIndex& index)
+{
+	Ascent* selectedAscent = db.getAscentAt(index.row());
+	openEditAscentDialogAndStore(this, &db, selectedAscent);
+}
+
+void MainWindow::handle_editPeak(const QModelIndex& index)
+{
+	//openEditPeakDialogAndStore(this, &db, selectedPeak);
+}
+
+void MainWindow::handle_editTrip(const QModelIndex& index)
+{
+	//openEditTripDialogAndStore(this, &db, selectedTrip);
+}
+
+void MainWindow::handle_editHiker(const QModelIndex& index)
+{
+	//openEditHikerDialogAndStore(this, &db, selectedHiker);
+}
+
+void MainWindow::handle_editRegion(const QModelIndex& index)
+{
+	//openEditRegionDialogAndStore(this, &db, selectedRegion);
+}
+
+void MainWindow::handle_editRange(const QModelIndex& index)
+{
+	//openEditRangeDialogAndStore(this, &db, selectedRange);
+}
+
+void MainWindow::handle_editCountry(const QModelIndex& index)
+{
+	//openEditCountryDialogAndStore(this, &db, selectedCountry);
 }

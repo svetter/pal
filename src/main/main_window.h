@@ -22,11 +22,11 @@ public:
 	~MainWindow();
 	
 private:
-	Ui::MainWindow* ui;
 	Database db;
 	
 	void setupTableView(QTableView* view, NormalTable* table);
 	
+private slots:
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();
@@ -34,6 +34,14 @@ private:
 	void handle_newRegion();
 	void handle_newRange();
 	void handle_newCountry();
+	
+	void handle_editAscent	(const QModelIndex& index);
+	void handle_editPeak	(const QModelIndex& index);
+	void handle_editTrip	(const QModelIndex& index);
+	void handle_editHiker	(const QModelIndex& index);
+	void handle_editRegion	(const QModelIndex& index);
+	void handle_editRange	(const QModelIndex& index);
+	void handle_editCountry	(const QModelIndex& index);
 };
 
 
