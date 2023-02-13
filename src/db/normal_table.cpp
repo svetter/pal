@@ -146,6 +146,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 {
 	for (QModelRoleData& roleData : roleDataSpan) {
 		int role = roleData.role();
+		
 		int rowIndex;
 		if (index.parent().row() == 0) {
 			rowIndex = index.row();
@@ -155,7 +156,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		int columnIndex = index.column();
 		Column* column = getColumnByIndex(columnIndex);
 		
-		QVariant bufferValue = buffer->at(rowIndex)->at(columnIndex);
+		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer->at(rowIndex)->at(columnIndex);
 		
 		QVariant result = QVariant();
 		switch (column->getType()) {
