@@ -50,6 +50,8 @@ public:
 	Range*		getRange(int rangeID) const;
 	Country*	getCountry(int countryID) const;
 	
+	Ascent*		getAscentAt(int rowIndex) const;
+	
 	int addRow(NormalTable* table, QList<QVariant>& row);
 //	bool addRow(AssociativeTable* table, QList<QVariant>& row);
 	

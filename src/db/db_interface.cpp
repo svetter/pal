@@ -54,6 +54,7 @@ Database::~Database() {
 
 Ascent* Database::getAscent(int ascentID) const
 {
+	assert(false);
 	assert(ascentID > 0);
 	QString queryString = QString(
 			"SELECT " + ascentsTable->getColumnListString() +
@@ -77,6 +78,29 @@ Ascent* Database::getAscent(int ascentID) const
 		displayError(parent, "More than one record returned for query", queryString);
 	if (!variantValue.isValid())
 		displayError(parent, "Received invalid QVariant from query", queryString);
+}
+
+Ascent* Database::getAscentAt(int rowIndex) const
+{
+	const QList<QVariant>* row = ascentsTable->getBufferRow(rowIndex);
+	
+	int				ascentID			= row->at(ascentsTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString			title				= row->at(ascentsTable->titleColumn->getIndex()).toString();
+	int				peakID				= row->at(ascentsTable->peakIDColumn->getIndex()).toInt();
+	QDate			date				= row->at(ascentsTable->dateColumn->getIndex()).toDate();
+	int				perDayIndex			= row->at(ascentsTable->peakOnDayColumn->getIndex()).toInt();
+	QTime			time				= row->at(ascentsTable->timeColumn->getIndex()).toTime();
+	int				hikeKind			= row->at(ascentsTable->hikeKindColumn->getIndex()).toInt();
+	bool			traverse			= row->at(ascentsTable->traverseColumn->getIndex()).toBool();
+	int				difficultySystem	= row->at(ascentsTable->difficultySystemColumn->getIndex()).toInt();
+	int				difficultyGrade		= row->at(ascentsTable->difficultyGradeColumn->getIndex()).toInt();
+	int				tripID				= row->at(ascentsTable->tripIDColumn->getIndex()).toInt();
+	QString			description			= row->at(ascentsTable->notesColumn->getIndex()).toString();
+	
+	QList<int>		hikerIDs			= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
+	QList<QString>	photos				= photosTable->getPhotosForAscent(ascentID);
+	
+	return new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
 Peak* Database::getPeak(int peakID) const {
