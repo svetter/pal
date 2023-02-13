@@ -89,7 +89,7 @@ void AscentDialog::insertInitData()
 	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
 	// TODO #98 hikersListWidget
 	// TODO #98 photosListWidget
-	descriptionEditor->setDocument(new QTextDocument(init->description));
+	descriptionEditor->setPlainText(init->description);
 }
 
 

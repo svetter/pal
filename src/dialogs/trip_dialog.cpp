@@ -45,7 +45,7 @@ void TripDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	startDateWidget->setDate(init->startDate);
 	endDateWidget->setDate(init->endDate);
-	descriptionEditor->setDocument(new QTextDocument(init->description));
+	descriptionEditor->setPlainText(init->description);
 }
 
 
