@@ -16,6 +16,8 @@ class NormalTable : public Table, public QAbstractItemModel {
 	QList<Column*>	nonPrimaryColumns;
 	
 public:
+	static const int PrimaryKeyRole;
+	
 	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString);
 	~NormalTable();
 	

@@ -8,6 +8,10 @@
 
 
 
+const int NormalTable::PrimaryKeyRole = -1;
+
+
+
 NormalTable::NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString) :
 		Table(name, uiName, false),
 		noneString(noneString),
@@ -154,11 +158,20 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			rowIndex = index.row() - 1;
 		}
 		int columnIndex = index.column();
+		
+		if (role == PrimaryKeyRole) {
+			if (rowIndex >= 0) {
+				roleData.setData(buffer->at(rowIndex)->at(primaryKeyColumn->getIndex()));
+			} else {
+				roleData.setData(-1);
+			}
+			continue;
+		}
 		Column* column = getColumnByIndex(columnIndex);
 		
 		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer->at(rowIndex)->at(columnIndex);
-		
 		QVariant result = QVariant();
+		
 		switch (column->getType()) {
 		case integer:
 			switch (role) {
@@ -205,6 +218,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		default:
 			assert(false);
 		}
+		
 		roleData.setData(result);
 	}
 }

@@ -1,5 +1,7 @@
 #include "parse_helper.h"
 
+#include "src/db/normal_table.h"
+
 
 
 QString parseLineEdit(QLineEdit* lineEdit) {
@@ -11,8 +13,6 @@ QString parseLineEdit(QLineEdit* lineEdit) {
 	}
 }
 
-
-
 QString parsePlainTextEdit(QPlainTextEdit* plainTextEdit)
 {
 	QString raw = plainTextEdit->toPlainText();
@@ -22,22 +22,15 @@ QString parsePlainTextEdit(QPlainTextEdit* plainTextEdit)
 	return raw;
 }
 
-
-
 int parseSpinner(QSpinBox* spinBox)
 {
 	return spinBox->value();
 }
 
-
-
 int parseIDCombo(QComboBox* combo)
 {
-	// TODO #91
-	return -1;
+	return combo->currentData(NormalTable::PrimaryKeyRole).toInt();
 }
-
-
 
 int parseEnumCombo(QComboBox* combo, bool firstItemIsPlaceholder)
 {
@@ -48,38 +41,28 @@ int parseEnumCombo(QComboBox* combo, bool firstItemIsPlaceholder)
 	return result;
 }
 
-
-
 bool parseCheckbox(QCheckBox* checkbox)
 {
 	return checkbox->isChecked();
 }
-
-
 
 QDate parseDateWidget(QDateEdit* dateEdit)
 {
 	return dateEdit->date();
 }
 
-
-
-QTime parseTimeWidget (QTimeEdit* timeEdit)
+QTime parseTimeWidget(QTimeEdit* timeEdit)
 {
 	return timeEdit->time();
 }
 
-
-
-QList<int> parseHikerList (QListWidget* hikersListWidget)
+QList<int> parseHikerList(QListWidget* hikersListWidget)
 {
 	// TODO #91
 	return QList<int>();
 }
 
-
-
-QList<QString> parsePhotosList (QListWidget* photosListWidget)
+QList<QString> parsePhotosList(QListWidget* photosListWidget)
 {
 	// TODO #91
 	return QList<QString>();
