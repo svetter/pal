@@ -28,6 +28,7 @@ public:
 	void deleteBuffer();
 	void initBuffer(QWidget* parent);
 	void ensureBuffer(QWidget* parent);
+	const QList<QVariant>* getBufferRow(int rowIndex) const;
 	
 	// Getters
 	virtual int getNumberOfColumns() const = 0;

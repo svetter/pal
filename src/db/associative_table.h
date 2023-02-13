@@ -19,6 +19,8 @@ public:
 	
 	int getNumberOfColumns() const override;
 	QList<Column*> getColumnList() const override;
+	
+	QList<int> getMatchingEntries(Column* column, int primaryKey) const;
 };
 
 

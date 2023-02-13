@@ -66,6 +66,12 @@ void Table::ensureBuffer(QWidget* parent)
 	if (!buffer) initBuffer(parent);
 }
 
+const QList<QVariant>* Table::getBufferRow(int rowIndex) const
+{
+	return buffer->at(rowIndex);
+}
+
+
 QList<QList<QVariant>*>* Table::getAllEntries(QWidget* parent) const
 {
 	QString queryString = QString(
