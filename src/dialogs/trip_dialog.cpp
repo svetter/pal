@@ -6,7 +6,7 @@
 
 
 TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit trip")),
 		init(init)
 {
 	setupUi(this);

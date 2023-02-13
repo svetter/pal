@@ -8,7 +8,7 @@
 
 
 PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit peak")),
 		init(init)
 {
 	setupUi(this);

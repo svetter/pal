@@ -12,11 +12,13 @@ class NewOrEditDialog : public QDialog
 	Q_OBJECT
 	
 protected:
+	QString editWindowTitle;
+	
 	Database* db;
 	
 	bool edit;
 	
-	NewOrEditDialog(QWidget* parent, Database* db, bool edit);
+	NewOrEditDialog(QWidget* parent, Database* db, bool edit, QString editWindowTitle);
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
@@ -25,8 +27,6 @@ protected:
 	void reject();
 	
 public:
-	QString itemNameLowercase;
-	
 	virtual bool changesMade() = 0;
 };
 

@@ -6,7 +6,7 @@
 
 
 CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit country")),
 		init(init)
 {
 	setupUi(this);

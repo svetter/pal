@@ -6,7 +6,7 @@
 
 
 HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit hiker")),
 		init(init)
 {
 	setupUi(this);

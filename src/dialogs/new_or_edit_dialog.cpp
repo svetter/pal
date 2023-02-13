@@ -7,8 +7,9 @@
 
 
 
-NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, bool edit):
+NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, bool edit, QString editWindowTitle):
 		QDialog(parent),
+		editWindowTitle(editWindowTitle),
 		db(db),
 		edit(edit)
 {}
@@ -18,7 +19,7 @@ NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, bool edit):
 void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 {
 	if (!edit) return;
-	setWindowTitle(tr(("Edit " + itemNameLowercase).toLatin1()));
+	setWindowTitle(editWindowTitle);
 	okButton->setText(tr("Save changes"));
 }
 

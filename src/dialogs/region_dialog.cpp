@@ -9,7 +9,7 @@
 
 
 RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit region")),
 		init(init)
 {
 	setupUi(this);

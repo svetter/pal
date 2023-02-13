@@ -6,7 +6,7 @@
 
 
 RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
-		NewOrEditDialog(parent, db, init != nullptr),
+		NewOrEditDialog(parent, db, init != nullptr, tr("Edit mountain range")),
 		init(init)
 {
 	setupUi(this);
