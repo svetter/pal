@@ -116,7 +116,7 @@ Hiker* Database::getHiker(int hikerID) const {
 	QString queryString = QString(
 			"SELECT " + hikersTable->getColumnListString() +
 			"\nFROM " + hikersTable->getName() +
-			"\nWHERE " + ascentsTable->getPrimaryKeyColumn()->getName() + "=" + QString::number(hikerID)
+			"\nWHERE " + hikersTable->getPrimaryKeyColumn()->getName() + "=" + QString::number(hikerID)
 	);
 	
 	QSqlQuery query = QSqlQuery();

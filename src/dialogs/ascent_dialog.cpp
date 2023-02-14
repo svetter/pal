@@ -8,7 +8,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTranslator>
-#include <iostream>
 
 
 
@@ -90,14 +89,12 @@ void AscentDialog::insertInitData()
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
-		Hiker* hiker = db->getHiker();
+		Hiker* hiker = db->getHiker(*iter);
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
-		Hiker* hiker = db->getHiker();
-		photosModel.init(init->photos);
-		delete hiker;
+		photosModel.addPhotos(init->photos);
 	}
 	descriptionEditor->setPlainText(init->description);
 }
@@ -237,95 +234,4 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 		// TODO update database
 		delete editedAscent;
 	}
-}
-
-
-
-
-
-HikersOnAscent::HikersOnAscent() :
-		data(QList<QPair<int, QString>>())
-{}
-
-
-void HikersOnAscent::addHiker(Hiker* hiker)
-{
-	int currentNumHikers = data.size();
-	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
-	data.append(qMakePair<int, QString>(hiker->hikerID, hiker->name));
-	endInsertRows();
-}
-
-void HikersOnAscent::removeHiker(const QModelIndex& index)
-{
-	int rowIndex = index.row();
-	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
-	data.removeAt(rowIndex);
-	endRemoveRows();
-}
-
-
-int HikersOnAscent::rowCount(const QModelIndex& parent = QModelIndex()) const
-{
-	return data.size();
-}
-
-int HikersOnAscent::columnCount(const QModelIndex& parent = QModelIndex()) const
-{
-	return 2;
-}
-
-QVariant HikersOnAscent::data(const QModelIndex& index, int role) const
-{
-	if (role != Qt::DisplayRole) return QVariant();
-	switch (index.column()) {
-	case 0:
-		return data.at(index.row()).first;
-	case 1:
-		return data.at(index.row()).second;
-	}
-	assert(false);
-	return QVariant();
-}
-
-
-
-
-
-PhotosOfAscent::PhotosOfAscent() :
-		data(QStringList())
-{}
-
-
-void PhotosOfAscent::addPhotos(const QStringList& photos)
-{
-	beginInsertRows(QModelIndex(), currentNumPhotos, currentNumPhotos + photos.size() - 1);
-	data.append(photos);
-	endInsertRows();
-}
-
-void PhotosOfAscent::removePhoto(const QModelIndex& index)
-{
-	int rowIndex = index.row();
-	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
-	data.removeAt(rowIndex);
-	endRemoveRows();
-}
-
-
-int PhotosOfAscent::rowCount(const QModelIndex& parent = QModelIndex()) const
-{
-	return data.size();
-}
-
-int PhotosOfAscent::columnCount(const QModelIndex& parent = QModelIndex()) const
-{
-	return 1;
-}
-
-QVariant PhotosOfAscent::data(const QModelIndex& index, int role) const
-{
-	assert(index.column() == 0);
-	if (role != Qt::DisplayRole) return QVariant();
-	return data.at(index.row());
 }

@@ -5,16 +5,10 @@
 #include "src/data/ascent.h"
 #include "ui_ascent_dialog.h"
 
-#include <QAbstractTableModel>
-#include <QList>
-#include <QString>
-#include <QStringList>
-#include <QPair>
+#include "list/hiker_list.h"
+#include "list/photo_list.h"
 
-
-
-class HikersOnAscent;
-class PhotosOfAscent;
+#include <QWidget>
 
 
 
@@ -55,36 +49,6 @@ private:
 
 int openNewAscentDialogAndStore(QWidget* parent, Database* db);
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent);
-
-
-
-class HikersOnAscent : public QAbstractTableModel {
-	QList<QPair<int, QString>> data;
-	
-public:
-	HikersOnAscent();
-	
-	void addHiker(Hiker* hiker);
-	void removeHiker(const QModelIndex& index);
-	
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-};
-
-class PhotosOfAscent : public QAbstractTableModel {
-	QStringList data;
-	
-public:
-	PhotosOfAscent();
-	
-	void addPhotos(const QStringList& photo);
-	void removePhoto(const QModelIndex& index);
-	
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
-	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-};
 
 
 
