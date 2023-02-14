@@ -14,7 +14,9 @@
 
 AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 		NewOrEditDialog(parent, db, init != nullptr, tr("Edit ascent")),
-		init(init)
+		init(init),
+		hikersModel(HikersOnAscent()),
+		photosModel(PhotosOfAscent())
 {
 	setupUi(this);
 	
@@ -87,27 +89,35 @@ void AscentDialog::insertInitData()
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
-	// TODO #98 hikersListWidget
-	// TODO #98 photosListWidget
+	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
+		Hiker* hiker = db->getHiker();
+		hikersModel.addHiker(hiker);
+		delete hiker;
+	}
+	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
+		Hiker* hiker = db->getHiker();
+		photosModel.init(init->photos);
+		delete hiker;
+	}
 	descriptionEditor->setPlainText(init->description);
 }
 
 
 Ascent* AscentDialog::extractData()
 {
-	QString			title				= parseLineEdit			(titleLineEdit);
-	int				peakID				= parseIDCombo			(peakCombo);
-	QDate			date				= parseDateWidget		(dateWidget);
-	int				perDayIndex			= parseSpinner			(peakIndexSpinner);
-	QTime			time				= parseTimeWidget		(timeWidget);
-	int				hikeKind			= parseEnumCombo		(hikeKindCombo, false);
-	bool			traverse			= parseCheckbox			(traverseCheckbox);
-	int				difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
-	int				difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
-	int				tripID				= parseIDCombo			(tripCombo);
-	QList<int>		hikerIDs			= parseHikerList		(hikersListWidget);
-	QList<QString>	photos				= parsePhotosList		(photosListWidget);
-	QString			description			= parsePlainTextEdit	(descriptionEditor);
+	QString		title				= parseLineEdit			(titleLineEdit);
+	int			peakID				= parseIDCombo			(peakCombo);
+	QDate		date				= parseDateWidget		(dateWidget);
+	int			perDayIndex			= parseSpinner			(peakIndexSpinner);
+	QTime		time				= parseTimeWidget		(timeWidget);
+	int			hikeKind			= parseEnumCombo		(hikeKindCombo, false);
+	bool		traverse			= parseCheckbox			(traverseCheckbox);
+	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
+	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
+	int			tripID				= parseIDCombo			(tripCombo);
+	QList<int>	hikerIDs			= parseHikerList		(hikersListWidget);
+	QStringList	photos				= parsePhotosList		(photosListWidget);
+	QString		description			= parsePlainTextEdit	(descriptionEditor);
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= -1;
 		difficultyGrade		= -1;
@@ -172,14 +182,28 @@ void AscentDialog::handle_newTrip()
 void AscentDialog::handle_addHiker()
 {
 	int hikerID = openAddHikerDialog(this, db);
-	// TODO #98 add hiker to list
+	Hiker* hiker = db->getHiker(hikerID);
+	hikersModel.addHiker(hiker);
+	delete hiker;
 }
 
-void AscentDialog::handle_photosPathBrowse()
+void AscentDialog::handle_removeHikers()
 {
-	QString caption = tr("Select folder with photos of ascent");
-	QString path = QFileDialog::getExistingDirectory(this, caption);	// TODO file not dir
-	// TODO #98 add photo to list
+	// TODO #98 get list of selected rows and remove them
+}
+
+void AscentDialog::handle_addPhotos()
+{
+	QString caption = tr("Select photos of ascent");
+	QString preSelectedDir = QString();
+	QString filter = tr("Images") + " (*.jpg, *.jpeg, *.png, *.bmp);;" + tr("All") + " (*.*)";
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
+	photosModel.addPhotos(filepaths);
+}
+
+void AscentDialog::handle_removePhotos()
+{
+	// TODO #98 get list of selected rows and remove them
 }
 
 
@@ -213,4 +237,95 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 		// TODO update database
 		delete editedAscent;
 	}
+}
+
+
+
+
+
+HikersOnAscent::HikersOnAscent() :
+		data(QList<QPair<int, QString>>())
+{}
+
+
+void HikersOnAscent::addHiker(Hiker* hiker)
+{
+	int currentNumHikers = data.size();
+	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
+	data.append(qMakePair<int, QString>(hiker->hikerID, hiker->name));
+	endInsertRows();
+}
+
+void HikersOnAscent::removeHiker(const QModelIndex& index)
+{
+	int rowIndex = index.row();
+	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
+	data.removeAt(rowIndex);
+	endRemoveRows();
+}
+
+
+int HikersOnAscent::rowCount(const QModelIndex& parent = QModelIndex()) const
+{
+	return data.size();
+}
+
+int HikersOnAscent::columnCount(const QModelIndex& parent = QModelIndex()) const
+{
+	return 2;
+}
+
+QVariant HikersOnAscent::data(const QModelIndex& index, int role) const
+{
+	if (role != Qt::DisplayRole) return QVariant();
+	switch (index.column()) {
+	case 0:
+		return data.at(index.row()).first;
+	case 1:
+		return data.at(index.row()).second;
+	}
+	assert(false);
+	return QVariant();
+}
+
+
+
+
+
+PhotosOfAscent::PhotosOfAscent() :
+		data(QStringList())
+{}
+
+
+void PhotosOfAscent::addPhotos(const QStringList& photos)
+{
+	beginInsertRows(QModelIndex(), currentNumPhotos, currentNumPhotos + photos.size() - 1);
+	data.append(photos);
+	endInsertRows();
+}
+
+void PhotosOfAscent::removePhoto(const QModelIndex& index)
+{
+	int rowIndex = index.row();
+	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
+	data.removeAt(rowIndex);
+	endRemoveRows();
+}
+
+
+int PhotosOfAscent::rowCount(const QModelIndex& parent = QModelIndex()) const
+{
+	return data.size();
+}
+
+int PhotosOfAscent::columnCount(const QModelIndex& parent = QModelIndex()) const
+{
+	return 1;
+}
+
+QVariant PhotosOfAscent::data(const QModelIndex& index, int role) const
+{
+	assert(index.column() == 0);
+	if (role != Qt::DisplayRole) return QVariant();
+	return data.at(index.row());
 }

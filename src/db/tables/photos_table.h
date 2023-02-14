@@ -18,7 +18,7 @@ public:
 	
 	PhotosTable(Column* foreignAscentIDColumn);
 	
-	QList<QString> getPhotosForAscent(int ascentID) const;
+	QStringList getPhotosForAscent(int ascentID) const;
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
 	

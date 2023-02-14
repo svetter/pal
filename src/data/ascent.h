@@ -24,7 +24,7 @@ public:
 	int				difficultyGrade;
 	int				tripID;
 	QList<int>		hikerIDs;
-	QList<QString>	photos;
+	QStringList		photos;
 	QString			description;
 	
 	static const QStringList hikeKindNames;

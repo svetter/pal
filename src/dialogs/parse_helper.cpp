@@ -62,8 +62,8 @@ QList<int> parseHikerList(QListWidget* hikersListWidget)
 	return QList<int>();
 }
 
-QList<QString> parsePhotosList(QListWidget* photosListWidget)
+QStringList parsePhotosList(QListWidget* photosListWidget)
 {
 	// TODO #91
-	return QList<QString>();
+	return QStringList();
 }

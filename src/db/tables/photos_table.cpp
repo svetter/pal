@@ -20,7 +20,7 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 
 
 
-QList<QString> PhotosTable::getPhotosForAscent(int ascentID) const
+QStringList PhotosTable::getPhotosForAscent(int ascentID) const
 {
 	QMap<int, QString> filtered = QMap<int, QString>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
@@ -30,7 +30,7 @@ QList<QString> PhotosTable::getPhotosForAscent(int ascentID) const
 			filtered.insert(photoIndex, filepath);
 		}
 	}
-	QList<QString> sortedList = filtered.values();
+	QStringList sortedList = filtered.values();
 	return sortedList;
 }
 
