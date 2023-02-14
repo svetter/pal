@@ -16,9 +16,8 @@ void PhotosOfAscent::addPhotos(const QStringList& photos)
 	endInsertRows();
 }
 
-void PhotosOfAscent::removePhoto(const QModelIndex& index)
+void PhotosOfAscent::removeRow(int rowIndex)
 {
-	int rowIndex = index.row();
 	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
 	list.removeAt(rowIndex);
 	endRemoveRows();

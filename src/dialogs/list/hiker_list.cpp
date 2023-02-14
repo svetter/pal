@@ -17,9 +17,8 @@ void HikersOnAscent::addHiker(Hiker* hiker)
 	endInsertRows();
 }
 
-void HikersOnAscent::removeHiker(const QModelIndex& index)
+void HikersOnAscent::removeRow(int rowIndex)
 {
-	int rowIndex = index.row();
 	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
 	list.removeAt(rowIndex);
 	endRemoveRows();

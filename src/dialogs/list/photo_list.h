@@ -13,7 +13,7 @@ public:
 	PhotosOfAscent();
 	
 	void addPhotos(const QStringList& photo);
-	void removePhoto(const QModelIndex& index);
+	void removeRow(int rowIndex);
 	
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;

@@ -196,7 +196,14 @@ void AscentDialog::handle_addHiker()
 
 void AscentDialog::handle_removeHikers()
 {
-	// TODO #98 get list of selected rows and remove them
+	QItemSelectionModel* selectionModel = hikersListView->selectionModel();
+	qDebug() << selectionModel->hasSelection();
+	if (!selectionModel->hasSelection()) return;
+	QModelIndexList selected = selectionModel->selectedIndexes();
+	qDebug() << selected;
+	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
+		hikersModel.removeRow((*iter).row());
+	}
 }
 
 void AscentDialog::handle_addPhotos()
@@ -212,7 +219,12 @@ void AscentDialog::handle_addPhotos()
 
 void AscentDialog::handle_removePhotos()
 {
-	// TODO #98 get list of selected rows and remove them
+	QItemSelectionModel* selectionModel = photosListView->selectionModel();
+	if (!selectionModel->hasSelection()) return;
+	QModelIndexList selected = selectionModel->selectedIndexes();
+	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
+		photosModel.removeRow((*iter).row());
+	}
 }
 
 
