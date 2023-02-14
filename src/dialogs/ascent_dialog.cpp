@@ -196,7 +196,7 @@ int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 	int newAscentIndex = -1;
 	
 	AscentDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* newAscent = dialog.extractData();
 		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
 		delete newAscent;

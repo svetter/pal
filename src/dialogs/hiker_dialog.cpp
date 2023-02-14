@@ -75,7 +75,7 @@ int openNewHikerDialogAndStore(QWidget* parent, Database* db)
 	int newHikerIndex = -1;
 	
 	HikerDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+	if (dialog.exec() == QDialog::Accepted) {
 		Hiker* newHiker = dialog.extractData();
 		newHikerIndex = db->hikersTable->addRow(parent, newHiker);
 		delete newHiker;

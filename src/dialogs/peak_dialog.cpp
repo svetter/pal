@@ -117,7 +117,7 @@ int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 	int newPeakIndex = -1;
 	
 	PeakDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+	if (dialog.exec() == QDialog::Accepted) {
 		Peak* newPeak = dialog.extractData();
 		newPeakIndex = db->peaksTable->addRow(parent, newPeak);
 		delete newPeak;

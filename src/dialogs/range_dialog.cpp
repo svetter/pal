@@ -86,7 +86,7 @@ int openNewRangeDialogAndStore(QWidget* parent, Database* db)
 	int newRangeIndex = -1;
 	
 	RangeDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+	if (dialog.exec() == QDialog::Accepted) {
 		Range* newRange = dialog.extractData();
 		newRangeIndex = db->rangesTable->addRow(parent, newRange);
 		delete newRange;

@@ -39,9 +39,9 @@ int AddHikerDialog::extractHikerIndex()
 }
 
 
-bool AddHikerDialog::changesMade()
+bool AddHikerDialog::hikerSelected()
 {
-	return extractHikerIndex() >=0;
+	return extractHikerIndex() >= 0;
 }
 
 
@@ -57,7 +57,7 @@ void AddHikerDialog::handle_newHiker()
 
 void AddHikerDialog::handle_ok()
 {
-	if (changesMade()) {
+	if (hikerSelected()) {
 		accept();
 	} else {
 		QString title = tr("Can't add hiker");

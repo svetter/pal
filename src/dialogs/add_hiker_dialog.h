@@ -20,7 +20,7 @@ public:
 private:
 	void populateComboBoxes();
 	
-	bool changesMade();
+	bool hikerSelected();
 	
 	void handle_newHiker();
 	

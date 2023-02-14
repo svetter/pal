@@ -113,7 +113,7 @@ int openNewTripDialogAndStore(QWidget* parent, Database* db)
 	int newTripIndex = -1;
 	
 	TripDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
+	if (dialog.exec() == QDialog::Accepted) {
 		Trip* newTrip = dialog.extractData();
 		newTripIndex = db->tripsTable->addRow(parent, newTrip);
 		delete newTrip;
