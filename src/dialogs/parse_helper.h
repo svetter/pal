@@ -8,7 +8,7 @@
 #include <QComboBox>
 #include <QDateEdit>
 #include <QTimeEdit>
-#include <QListWidget>
+#include <QListView>
 #include <QPlainTextEdit>
 
 
@@ -21,8 +21,8 @@ int			parseEnumCombo		(QComboBox*			combo, bool firstItemIsPlaceholder);
 bool		parseCheckbox		(QCheckBox*			checkbox);
 QDate		parseDateWidget		(QDateEdit*			dateEdit);
 QTime		parseTimeWidget		(QTimeEdit*			timeEdit);
-QList<int>	parseHikerList		(QListWidget*		hikersListWidget);
-QStringList	parsePhotosList		(QListWidget*		photosListWidget);
+QList<int>	parseHikersList		(QListView*			hikersListWidget);
+QStringList	parsePhotosList		(QListView*			photosListWidget);
 
 
 

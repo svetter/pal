@@ -112,8 +112,8 @@ Ascent* AscentDialog::extractData()
 	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
 	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
 	int			tripID				= parseIDCombo			(tripCombo);
-	QList<int>	hikerIDs			= parseHikerList		(hikersListWidget);
-	QStringList	photos				= parsePhotosList		(photosListWidget);
+	QList<int>	hikerIDs			= parseHikersList		(hikersListView);
+	QStringList	photos				= parsePhotosList		(photosListView);
 	QString		description			= parsePlainTextEdit	(descriptionEditor);
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= -1;

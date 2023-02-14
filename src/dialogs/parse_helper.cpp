@@ -56,13 +56,13 @@ QTime parseTimeWidget(QTimeEdit* timeEdit)
 	return timeEdit->time();
 }
 
-QList<int> parseHikerList(QListWidget* hikersListWidget)
+QList<int> parseHikersList(QListView* hikersListWidget)
 {
 	// TODO #91
 	return QList<int>();
 }
 
-QStringList parsePhotosList(QListWidget* photosListWidget)
+QStringList parsePhotosList(QListView* photosListWidget)
 {
 	// TODO #91
 	return QStringList();
