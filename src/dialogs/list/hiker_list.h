@@ -17,7 +17,7 @@ public:
 	HikersOnAscent();
 	
 	void addHiker(Hiker* hiker);
-	void removeRow(int rowIndex);
+	void removeHikerAt(int rowIndex);
 	
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;

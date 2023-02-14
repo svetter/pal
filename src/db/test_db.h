@@ -211,7 +211,7 @@ QSqlError initDB()
 	addPhoto(q, ascent2_1ID, 3, QString("M:/Photos/2004/Band camp/2317.jpg"));
 	addPhoto(q, ascent2_1ID, 4, QString("M:/Photos/2004/Band camp/2394.jpg"));
 	addPhoto(q, ascent3_1ID, 0, QString("M:/Photos/2020/Alps/1274.jpg"));
-	addPhoto(q, ascent3_1ID, 1, QString("M:/Photos/2020/Alps/1274.jpg"));
+	addPhoto(q, ascent3_1ID, 1, QString("M:/Photos/2020/Alps/1275.jpg"));
 	addPhoto(q, ascent3_2ID, 0, QString("M:/Photos/2020/Alps/1957.jpg"));
 	addPhoto(q, ascent3_3ID, 0, QString("M:/Photos/2020/Alps/2492.jpg"));
 	addPhoto(q, ascent3_3ID, 1, QString("M:/Photos/2020/Alps/2452.jpg"));

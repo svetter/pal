@@ -102,9 +102,7 @@ void AscentDialog::insertInitData()
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
-	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
-		photosModel.addPhotos(init->photos);
-	}
+	photosModel.addPhotos(init->photos);
 	descriptionEditor->setPlainText(init->description);
 }
 
@@ -197,10 +195,8 @@ void AscentDialog::handle_addHiker()
 void AscentDialog::handle_removeHikers()
 {
 	QItemSelectionModel* selectionModel = hikersListView->selectionModel();
-	qDebug() << selectionModel->hasSelection();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selected = selectionModel->selectedIndexes();
-	qDebug() << selected;
+	QModelIndexList selected = selectionModel->selectedRows();
 	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
 		hikersModel.removeRow((*iter).row());
 	}
@@ -211,7 +207,7 @@ void AscentDialog::handle_addPhotos()
 	QString caption = tr("Select photos of ascent");
 	QString preSelectedDir = QString();
 	QString filter = tr("Images") + " (*.jpg *.JPG *.jpeg *.JPEG *.png *.PNG *.bmp *.BMP *.gif *.GIF *.pbm *.PBM *.pgm *.PGM *.ppm *.PPM *.xbm *.XBM *.xpm *.XMP);;"
-			+ tr("All") + " (*.*)";
+			+ tr("All files") + " (*.*)";
 	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
 	if (filepaths.isEmpty()) return;
 	photosModel.addPhotos(filepaths);
@@ -221,7 +217,7 @@ void AscentDialog::handle_removePhotos()
 {
 	QItemSelectionModel* selectionModel = photosListView->selectionModel();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selected = selectionModel->selectedIndexes();
+	QModelIndexList selected = selectionModel->selectedRows();
 	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
 		photosModel.removeRow((*iter).row());
 	}
