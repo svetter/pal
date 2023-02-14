@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTranslator>
+#include <QImageReader>
 
 
 
@@ -28,9 +29,17 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&AscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_addHiker);
+	connect(removeHikersButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_removeHikers);
+	connect(addPhotosButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_addPhotos);
+	connect(removePhotosButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_removePhotos);
 	
 	connect(okButton,				&QPushButton::clicked,				this,	&AscentDialog::handle_ok);
 	connect(cancelButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_cancel);
+	
+	
+	hikersListView->setModel(&hikersModel);
+	hikersListView->setModelColumn(1);	
+	photosListView->setModel(&photosModel);
 	
 	
 	QDate initialDate = QDateTime::currentDateTime().date();
@@ -179,6 +188,7 @@ void AscentDialog::handle_newTrip()
 void AscentDialog::handle_addHiker()
 {
 	int hikerID = openAddHikerDialog(this, db);
+	if (hikerID < 0) return;
 	Hiker* hiker = db->getHiker(hikerID);
 	hikersModel.addHiker(hiker);
 	delete hiker;
@@ -193,8 +203,10 @@ void AscentDialog::handle_addPhotos()
 {
 	QString caption = tr("Select photos of ascent");
 	QString preSelectedDir = QString();
-	QString filter = tr("Images") + " (*.jpg, *.jpeg, *.png, *.bmp);;" + tr("All") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
+	QString filter = tr("Images") + " (*.jpg *.JPG *.jpeg *.JPEG *.png *.PNG *.bmp *.BMP *.gif *.GIF *.pbm *.PBM *.pgm *.PGM *.ppm *.PPM *.xbm *.XBM *.xpm *.XMP);;"
+			+ tr("All") + " (*.*)";
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	if (filepaths.isEmpty()) return;
 	photosModel.addPhotos(filepaths);
 }
 
