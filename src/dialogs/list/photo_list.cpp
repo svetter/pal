@@ -25,6 +25,13 @@ void PhotosOfAscent::removePhotoAt(int rowIndex)
 
 
 
+QStringList PhotosOfAscent::getPhotoList() const
+{
+	return list;
+}
+
+
+
 int PhotosOfAscent::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);

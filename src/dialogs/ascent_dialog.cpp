@@ -119,8 +119,8 @@ Ascent* AscentDialog::extractData()
 	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
 	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
 	int			tripID				= parseIDCombo			(tripCombo);
-	QList<int>	hikerIDs			= parseHikersList		(hikersListView);
-	QStringList	photos				= parsePhotosList		(photosListView);
+	QList<int>	hikerIDs			= hikersModel.getHikerIDList();
+	QStringList	photos				= photosModel.getPhotoList();
 	QString		description			= parsePlainTextEdit	(descriptionEditor);
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= -1;
@@ -198,7 +198,7 @@ void AscentDialog::handle_removeHikers()
 	if (!selectionModel->hasSelection()) return;
 	QModelIndexList selected = selectionModel->selectedRows();
 	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
-		hikersModel.removeRow((*iter).row());
+		hikersModel.removeHikerAt((*iter).row());
 	}
 }
 
@@ -219,7 +219,7 @@ void AscentDialog::handle_removePhotos()
 	if (!selectionModel->hasSelection()) return;
 	QModelIndexList selected = selectionModel->selectedRows();
 	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
-		photosModel.removeRow((*iter).row());
+		photosModel.removePhotoAt((*iter).row());
 	}
 }
 

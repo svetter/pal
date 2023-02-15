@@ -13,16 +13,14 @@
 
 
 
-QString		parseLineEdit		(QLineEdit*			lineEdit);
-QString		parsePlainTextEdit	(QPlainTextEdit*	plainTextEdit);
-int			parseSpinner		(QSpinBox*			spinBox);
-int			parseIDCombo		(QComboBox*			combo);
-int			parseEnumCombo		(QComboBox*			combo, bool firstItemIsPlaceholder);
-bool		parseCheckbox		(QCheckBox*			checkbox);
-QDate		parseDateWidget		(QDateEdit*			dateEdit);
-QTime		parseTimeWidget		(QTimeEdit*			timeEdit);
-QList<int>	parseHikersList		(QListView*			hikersListWidget);
-QStringList	parsePhotosList		(QListView*			photosListWidget);
+QString		parseLineEdit		(const QLineEdit*		lineEdit);
+QString		parsePlainTextEdit	(const QPlainTextEdit*	plainTextEdit);
+int			parseSpinner		(const QSpinBox*		spinBox);
+int			parseIDCombo		(const QComboBox*		combo);
+int			parseEnumCombo		(const QComboBox*		combo, bool firstItemIsPlaceholder);
+bool		parseCheckbox		(const QCheckBox*		checkbox);
+QDate		parseDateWidget		(const QDateEdit*		dateEdit);
+QTime		parseTimeWidget		(const QTimeEdit*		timeEdit);
 
 
 

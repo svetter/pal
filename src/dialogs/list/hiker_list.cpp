@@ -26,6 +26,17 @@ void HikersOnAscent::removeHikerAt(int rowIndex)
 
 
 
+QList<int> HikersOnAscent::getHikerIDList() const
+{
+	QList<int> result = QList<int>();
+	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
+		result.append((*iter).first);
+	}
+	return result;
+}
+
+
+
 int HikersOnAscent::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);

@@ -4,7 +4,7 @@
 
 
 
-QString parseLineEdit(QLineEdit* lineEdit) {
+QString parseLineEdit(const QLineEdit* lineEdit) {
 	QString raw = lineEdit->text();
 	if (raw.isEmpty()) {
 		return QString();
@@ -13,7 +13,7 @@ QString parseLineEdit(QLineEdit* lineEdit) {
 	}
 }
 
-QString parsePlainTextEdit(QPlainTextEdit* plainTextEdit)
+QString parsePlainTextEdit(const QPlainTextEdit* plainTextEdit)
 {
 	QString raw = plainTextEdit->toPlainText();
 	if (raw.isEmpty()) {
@@ -22,17 +22,17 @@ QString parsePlainTextEdit(QPlainTextEdit* plainTextEdit)
 	return raw;
 }
 
-int parseSpinner(QSpinBox* spinBox)
+int parseSpinner(const QSpinBox* spinBox)
 {
 	return spinBox->value();
 }
 
-int parseIDCombo(QComboBox* combo)
+int parseIDCombo(const QComboBox* combo)
 {
 	return combo->currentData(NormalTable::PrimaryKeyRole).toInt();
 }
 
-int parseEnumCombo(QComboBox* combo, bool firstItemIsPlaceholder)
+int parseEnumCombo(const QComboBox* combo, bool firstItemIsPlaceholder)
 {
 	int result = combo->currentIndex();
 	if (result == 0 && firstItemIsPlaceholder) {
@@ -41,29 +41,17 @@ int parseEnumCombo(QComboBox* combo, bool firstItemIsPlaceholder)
 	return result;
 }
 
-bool parseCheckbox(QCheckBox* checkbox)
+bool parseCheckbox(const QCheckBox* checkbox)
 {
 	return checkbox->isChecked();
 }
 
-QDate parseDateWidget(QDateEdit* dateEdit)
+QDate parseDateWidget(const QDateEdit* dateEdit)
 {
 	return dateEdit->date();
 }
 
-QTime parseTimeWidget(QTimeEdit* timeEdit)
+QTime parseTimeWidget(const QTimeEdit* timeEdit)
 {
 	return timeEdit->time();
-}
-
-QList<int> parseHikersList(QListView* hikersListWidget)
-{
-	// TODO #91
-	return QList<int>();
-}
-
-QStringList parsePhotosList(QListView* photosListWidget)
-{
-	// TODO #91
-	return QStringList();
 }
