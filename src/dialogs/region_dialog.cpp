@@ -66,6 +66,7 @@ Region* RegionDialog::extractData()
 	QString	name		= parseLineEdit	(nameLineEdit);
 	int		rangeID		= parseIDCombo	(rangeCombo);
 	int		countryID	= parseIDCombo	(countryCombo);
+	
 	Region* region = new Region(-1, name, rangeID, countryID);
 	return region;
 }

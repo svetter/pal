@@ -119,13 +119,17 @@ Ascent* AscentDialog::extractData()
 	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
 	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
 	int			tripID				= parseIDCombo			(tripCombo);
+	QString		description			= parsePlainTextEdit	(descriptionEditor);
 	QList<int>	hikerIDs			= hikersModel.getHikerIDList();
 	QStringList	photos				= photosModel.getPhotoList();
-	QString		description			= parsePlainTextEdit	(descriptionEditor);
+	
+	if (!dateCheckbox->isChecked())	date = QDate();	
+	if (!timeCheckbox->isChecked())	time = QTime();
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= -1;
 		difficultyGrade		= -1;
 	}
+	
 	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 	return ascent;
 }

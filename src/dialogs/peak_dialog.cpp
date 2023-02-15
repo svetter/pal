@@ -69,6 +69,9 @@ Peak* PeakDialog::extractData()
 	QString	mapsLink	= parseLineEdit	(googleMapsLineEdit);
 	QString	earthLink	= parseLineEdit	(googleEarthLineEdit);
 	QString	wikiLink	= parseLineEdit	(wikipediaLineEdit);
+	
+	if (!heightCheckbox->isChecked())	height = -1;
+	
 	Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 	return peak;
 }

@@ -41,6 +41,7 @@ void HikerDialog::insertInitData()
 Hiker* HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
+	
 	Hiker* hiker = new Hiker(-1, name);
 	return hiker;
 }

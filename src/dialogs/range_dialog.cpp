@@ -52,6 +52,7 @@ Range* RangeDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
 	int		continent	= parseEnumCombo	(continentCombo, true);
+	
 	Range* range = new Range(-1, name, continent);
 	return range;
 }
