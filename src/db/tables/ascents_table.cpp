@@ -35,7 +35,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 
 
 
-int AscentsTable::addRow(QWidget* parent, const Ascent* ascent)
+int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();

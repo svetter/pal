@@ -26,7 +26,7 @@ public:
 	
 	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
 	
-	int addRow(QWidget* parent, const Ascent* ascent);
+	int addRow(QWidget* parent, Ascent* ascent);
 };
 
 

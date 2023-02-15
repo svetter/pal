@@ -86,7 +86,7 @@ int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
 
 int NormalTable::getNumberOfRows() const
 {
-	return buffer.size();
+	return buffer->size();
 }
 
 
