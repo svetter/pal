@@ -206,9 +206,9 @@ void AscentDialog::handle_addPhotos()
 {
 	QString caption = tr("Select photos of ascent");
 	QString preSelectedDir = QString();
-	QString filter = tr("Images") + " (*.jpg *.JPG *.jpeg *.JPEG *.png *.PNG *.bmp *.BMP *.gif *.GIF *.pbm *.PBM *.pgm *.PGM *.ppm *.PPM *.xbm *.XBM *.xpm *.XMP);;"
+	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
 			+ tr("All files") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
 	if (filepaths.isEmpty()) return;
 	photosModel.addPhotos(filepaths);
 }
@@ -240,6 +240,7 @@ int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* newAscent = dialog.extractData();
 		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
+		db->photosTable->addRows(parent, newAscent);
 		delete newAscent;
 	}
 	
@@ -252,6 +253,9 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Ascent* editedAscent = dialog.extractData();
 		// TODO update database
+		if (originalAscent->photos != editedAscent->photos) {
+			// TODO remove and re-add all photos if they changed
+		}
 		delete editedAscent;
 	}
 }

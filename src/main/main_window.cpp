@@ -39,7 +39,7 @@ MainWindow::MainWindow() :
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
 	
-	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfEntries(this)));
+	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 	
 	setupTableView(ascentsTableView,	db.ascentsTable);
 	setupTableView(peaksTableView,		db.peaksTable);
