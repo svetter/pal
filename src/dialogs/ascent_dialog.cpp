@@ -206,9 +206,9 @@ void AscentDialog::handle_addPhotos()
 {
 	QString caption = tr("Select photos of ascent");
 	QString preSelectedDir = QString();
-	QString filter = tr("Images") + " (*.jpg *.JPG *.jpeg *.JPEG *.png *.PNG *.bmp *.BMP *.gif *.GIF *.pbm *.PBM *.pgm *.PGM *.ppm *.PPM *.xbm *.XBM *.xpm *.XMP);;"
+	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
 			+ tr("All files") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
 	if (filepaths.isEmpty()) return;
 	photosModel.addPhotos(filepaths);
 }
