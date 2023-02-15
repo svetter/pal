@@ -54,5 +54,6 @@ int AscentsTable::addRow(QWidget* parent, const Ascent* ascent)
 		assert(false);
 	}
 	int newAscentIndex = NormalTable::addRow(parent, data);
+	ascent->ascentID = buffer->at(newAscentIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newAscentIndex;
 }

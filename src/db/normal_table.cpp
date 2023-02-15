@@ -84,29 +84,9 @@ int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
 }
 
 
-int NormalTable::getNumberOfEntries(QWidget* parent)
+int NormalTable::getNumberOfRows() const
 {
-	QString queryString = QString(
-			"SELECT COUNT(" + getPrimaryKeyColumn()->getName() + ")" +
-			"\nFROM " + getName()
-	);
-	QSqlQuery query = QSqlQuery();
-	query.setForwardOnly(true);
-	if (!query.exec(queryString))
-		displayError(parent, query.lastError(), queryString);
-	if (!query.next()) {
-		displayError(parent, "Couldn't read record from SQL query \"" + queryString + "\"", queryString);
-	}
-	QVariant variantValue = query.value(0);
-	if (!variantValue.isValid())
-		displayError(parent, "Received invalid QVariant from query", queryString);
-	if (query.next())
-		displayError(parent, "More than one record returned for query", queryString);
-	bool intConversionOk;
-	int intValue = variantValue.toInt(&intConversionOk);
-	if (!intConversionOk)
-		displayError(parent, "Conversion to int failed for result from query", queryString);
-	return intValue;
+	return buffer.size();
 }
 
 
@@ -119,6 +99,8 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	beginInsertRows(index(0, 0, QModelIndex()), currentNumRows, currentNumRows);
 	int newRowIndex = Table::addRow(parent, data, getNonPrimaryKeyColumnList());
 	endInsertRows();
+	
+	// TODO write-through to database
 	
 	return newRowIndex;
 }

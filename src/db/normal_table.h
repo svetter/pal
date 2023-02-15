@@ -33,13 +33,13 @@ public:
 	Column* getColumnByIndex(int index) const;
 	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
-	int getNumberOfEntries(QWidget* parent);
+	int getNumberOfRows() const;
 	
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, int primaryKey);
 	
-	// QAbstractItemModel implementation
+	// QAbstractItemModel implementation	// TODO hide these except for friend classes?
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;

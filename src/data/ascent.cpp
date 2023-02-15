@@ -36,7 +36,7 @@ bool Ascent::equalTo(const Ascent* const other) const
 	if (difficultySystem	!= other->difficultySystem)	return false;
 	if (difficultyGrade		!= other->difficultyGrade)	return false;
 	if (tripID				!= other->tripID)			return false;
-	if (hikerIDs			!= other->hikerIDs)			return false;
+	if (hikerIDs			!= other->hikerIDs)			return false;	// TODO compare as sets, not lists
 	if (photos				!= other->photos)			return false;
 	if (description			!= other->description)		return false;
 	return true;

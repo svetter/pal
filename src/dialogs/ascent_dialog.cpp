@@ -240,6 +240,7 @@ int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* newAscent = dialog.extractData();
 		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
+		db->photosTable->addRows(parent, newAscent);
 		delete newAscent;
 	}
 	
@@ -252,6 +253,9 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Ascent* editedAscent = dialog.extractData();
 		// TODO update database
+		if (originalAscent->photos != editedAscent->photos) {
+			// TODO remove and re-add all photos if they changed
+		}
 		delete editedAscent;
 	}
 }
