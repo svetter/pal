@@ -55,14 +55,45 @@ Database::~Database() {
 
 Ascent* Database::getAscent(int ascentID) const
 {
-	// TODO
-	assert(false);
-	return nullptr;
+	return getAscentAt(ascentsTable->getBufferIndexForPrimaryKey(ascentID));
 }
+
+Peak* Database::getPeak(int peakID) const
+{
+	return getPeakAt(peaksTable->getBufferIndexForPrimaryKey(peakID));
+}
+
+Trip* Database::getTrip(int tripID) const
+{
+	return getTripAt(tripsTable->getBufferIndexForPrimaryKey(tripID));
+}
+
+Hiker* Database::getHiker(int hikerID) const
+{
+	return getHikerAt(hikersTable->getBufferIndexForPrimaryKey(hikerID));
+}
+
+Region* Database::getRegion(int regionID) const
+{
+	return getRegionAt(regionsTable->getBufferIndexForPrimaryKey(regionID));
+}
+
+Range* Database::getRange(int rangeID) const
+{
+	return getRangeAt(rangesTable->getBufferIndexForPrimaryKey(rangeID));
+}
+
+Country* Database::getCountry(int countryID) const
+{
+	return getCountryAt(countriesTable->getBufferIndexForPrimaryKey(countryID));
+}
+
+
 
 Ascent* Database::getAscentAt(int rowIndex) const
 {
 	const QList<QVariant>* row = ascentsTable->getBufferRow(rowIndex);
+	assert(row->size() == ascentsTable->getNumberOfColumns());
 	
 	int			ascentID			= row->at(ascentsTable->getPrimaryKeyColumn()->getIndex()).toInt();
 	QString		title				= row->at(ascentsTable->titleColumn->getIndex()).toString();
@@ -80,86 +111,124 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QSet<int>	hikerIDs			= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
 	QStringList	photos				= photosTable->getPhotosForAscent(ascentID);
 	
-	return new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
-Peak* Database::getPeak(int peakID) const {
-	// TODO
-	assert(false);
-	return nullptr;
-}
-
-Trip* Database::getTrip(int tripID) const {
-	// TODO
-	assert(false);
-	return nullptr;
-}
-
-Hiker* Database::getHiker(int hikerID) const {
-	assert(hikerID > 0);
-	QString queryString = QString(
-			"SELECT " + hikersTable->getColumnListString() +
-			"\nFROM " + hikersTable->getName() +
-			"\nWHERE " + hikersTable->getPrimaryKeyColumn()->getName() + "=" + QString::number(hikerID)
-	);
+Peak* Database::getPeakAt(int rowIndex) const
+{
+	const QList<QVariant>* row = peaksTable->getBufferRow(rowIndex);
+	assert(row->size() == peaksTable->getNumberOfColumns());
 	
-	QSqlQuery query = QSqlQuery();
-	query.setForwardOnly(true);
-	if (!query.exec(queryString))
-		displayError(parent, query.lastError(), queryString);
-	if (!query.next()) {
-		displayError(parent, "Couldn't read record from SQL query", queryString);
-	}
-	int readHikerID		= getIntFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->getPrimaryKeyColumn()));
-	QString readName	= getStringFromRecord(query, queryString, hikersTable->getColumnIndex(hikersTable->nameColumn));
-	if (query.next())
-		displayError(parent, "More than one record returned for query", queryString);
-	return new Hiker(readHikerID, readName);
+	int		peakID		= row->at(peaksTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name		= row->at(peaksTable->nameColumn->getIndex()).toString();
+	int		height		= row->at(peaksTable->heightColumn->getIndex()).toInt();
+	bool	volcano		= row->at(peaksTable->volcanoColumn->getIndex()).toBool();
+	int		regionID	= row->at(peaksTable->regionIDColumn->getIndex()).toInt();
+	QString	mapsLink	= row->at(peaksTable->mapsLinkColumn->getIndex()).toString();
+	QString	earthLink	= row->at(peaksTable->earthLinkColumn->getIndex()).toString();
+	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn->getIndex()).toString();
+	
+	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
-Region* Database::getRegion(int regionID) const {
-	// TODO
-	assert(false);
-	return nullptr;
+Trip* Database::getTripAt(int rowIndex) const
+{
+	const QList<QVariant>* row = tripsTable->getBufferRow(rowIndex);
+	assert(row->size() == tripsTable->getNumberOfColumns());
+	
+	int		tripID		= row->at(tripsTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name		= row->at(tripsTable->nameColumn->getIndex()).toString();
+	QDate	startDate	= row->at(tripsTable->startDateColumn->getIndex()).toDate();
+	QDate	endDate		= row->at(tripsTable->endDateColumn->getIndex()).toDate();
+	QString	description	= row->at(tripsTable->descriptionColumn->getIndex()).toString();
+	
+	return new Trip(tripID, name, startDate, endDate, description);
 }
 
-Range* Database::getRange(int rangeID) const {
-	// TODO
-	assert(false);
-	return nullptr;
+Hiker* Database::getHikerAt(int rowIndex) const
+{
+	const QList<QVariant>* row = hikersTable->getBufferRow(rowIndex);
+	assert(row->size() == hikersTable->getNumberOfColumns());
+	
+	int		hikerID	= row->at(hikersTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name	= row->at(hikersTable->nameColumn->getIndex()).toString();
+	
+	return new Hiker(hikerID, name);
 }
 
-Country* Database::getCountry(int countryID) const {
-	// TODO
-	assert(false);
-	return nullptr;
+Region* Database::getRegionAt(int rowIndex) const
+{
+	const QList<QVariant>* row = regionsTable->getBufferRow(rowIndex);
+	assert(row->size() == regionsTable->getNumberOfColumns());
+	
+	int		regionID	= row->at(regionsTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name		= row->at(regionsTable->nameColumn->getIndex()).toString();
+	int		rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
+	int		countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
+	
+	return new Region(regionID, name, rangeID, countryID);
+}
+
+Range* Database::getRangeAt(int rowIndex) const
+{
+	const QList<QVariant>* row = rangesTable->getBufferRow(rowIndex);
+	assert(row->size() == rangesTable->getNumberOfColumns());
+	
+	int		rangeID		= row->at(rangesTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name		= row->at(rangesTable->nameColumn->getIndex()).toString();
+	int		continent	= row->at(rangesTable->continentColumn->getIndex()).toInt();
+	
+	return new Range(rangeID, name, continent);
+}
+
+Country* Database::getCountryAt(int rowIndex) const
+{
+	const QList<QVariant>* row = countriesTable->getBufferRow(rowIndex);
+	assert(row->size() == countriesTable->getNumberOfColumns());
+	
+	int		countryID	= row->at(countriesTable->getPrimaryKeyColumn()->getIndex()).toInt();
+	QString	name		= row->at(countriesTable->nameColumn->getIndex()).toString();
+	
+	return new Country(countryID, name);
 }
 
 
 
 WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const {
-	
+	// TODO
+	assert(false);
+	return WhatIfResult();
 }
 
 WhatIfResult Database::whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const {
-	
+	// TODO
+	assert(false);
+	return WhatIfResult();
 }
 
 bool Database::removeRow(NormalTable* table, int primaryKey) {
-	
+	// TODO
+	assert(false);
+	return false;
 }
 
 bool Database::removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) {
-	
+	// TODO
+	assert(false);
+	return false;
 }
 
 
 WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const {	// NormalTables only
-	
+	// TODO
+	assert(false);
+	return WhatIfResult();
 }
 
 bool Database::changeCell(Column* column, int primaryKey, QVariant& cell) {	// NormalTables only
-	
+	// TODO
+	assert(false);
+	return false;
 }
 
 

@@ -32,12 +32,12 @@ MainWindow::MainWindow() :
 	connect(newTripButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newTrip);
 	
 	connect(ascentsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(peaksTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(tripsTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(hikersTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(regionsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(peaksTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editPeak);
+	connect(tripsTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editTrip);
+	connect(hikersTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editHiker);
+	connect(regionsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRegion);
+	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
+	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
 	
 	
 	updateAscentCounter();
@@ -132,30 +132,36 @@ void MainWindow::handle_editAscent(const QModelIndex& index)
 
 void MainWindow::handle_editPeak(const QModelIndex& index)
 {
-	//openEditPeakDialogAndStore(this, &db, selectedPeak);
+	Peak* selectedPeak = db.getPeakAt(index.row());
+	openEditPeakDialogAndStore(this, &db, selectedPeak);
 }
 
 void MainWindow::handle_editTrip(const QModelIndex& index)
 {
-	//openEditTripDialogAndStore(this, &db, selectedTrip);
+	Trip* selectedTrip = db.getTripAt(index.row());
+	openEditTripDialogAndStore(this, &db, selectedTrip);
 }
 
 void MainWindow::handle_editHiker(const QModelIndex& index)
 {
-	//openEditHikerDialogAndStore(this, &db, selectedHiker);
+	Hiker* selectedHiker = db.getHikerAt(index.row());
+	openEditHikerDialogAndStore(this, &db, selectedHiker);
 }
 
 void MainWindow::handle_editRegion(const QModelIndex& index)
 {
-	//openEditRegionDialogAndStore(this, &db, selectedRegion);
+	Region* selectedRegion = db.getRegionAt(index.row());
+	openEditRegionDialogAndStore(this, &db, selectedRegion);
 }
 
 void MainWindow::handle_editRange(const QModelIndex& index)
 {
-	//openEditRangeDialogAndStore(this, &db, selectedRange);
+	Range* selectedRange = db.getRangeAt(index.row());
+	openEditRangeDialogAndStore(this, &db, selectedRange);
 }
 
 void MainWindow::handle_editCountry(const QModelIndex& index)
 {
-	//openEditCountryDialogAndStore(this, &db, selectedCountry);
+	Country* selectedCountry = db.getCountryAt(index.row());
+	openEditCountryDialogAndStore(this, &db, selectedCountry);
 }

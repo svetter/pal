@@ -43,15 +43,21 @@ public:
 	Database(MainWindow* parent);
 	~Database();
 	
-	Ascent*		getAscent(int ascentID) const;
-	Peak*		getPeak(int peakID) const;
-	Trip*		getTrip(int tripID) const;
-	Hiker*		getHiker(int hikerID) const;
-	Region*		getRegion(int regionID) const;
-	Range*		getRange(int rangeID) const;
-	Country*	getCountry(int countryID) const;
+	Ascent*		getAscent	(int ascentID)	const;
+	Peak*		getPeak		(int peakID)	const;
+	Trip*		getTrip		(int tripID)	const;
+	Hiker*		getHiker	(int hikerID)	const;
+	Region*		getRegion	(int regionID)	const;
+	Range*		getRange	(int rangeID)	const;
+	Country*	getCountry	(int countryID)	const;
 	
-	Ascent*		getAscentAt(int rowIndex) const;
+	Ascent*		getAscentAt		(int rowIndex) const;
+	Peak*		getPeakAt		(int rowIndex) const;
+	Trip*		getTripAt		(int rowIndex) const;
+	Hiker*		getHikerAt		(int rowIndex) const;
+	Region*		getRegionAt		(int rowIndex) const;
+	Range*		getRangeAt		(int rowIndex) const;
+	Country*	getCountryAt	(int rowIndex) const;
 	
 	WhatIfResult whatIf_removeRow(NormalTable* table, int primaryKey) const;
 	WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
