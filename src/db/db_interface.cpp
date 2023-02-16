@@ -111,6 +111,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QSet<int>	hikerIDs			= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
 	QStringList	photos				= photosTable->getPhotosForAscent(ascentID);
 	
+	parent->setStatusLine(QString("Successfully retrieved ascent with ascentID=%0").arg(ascentID));
 	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
@@ -128,6 +129,7 @@ Peak* Database::getPeakAt(int rowIndex) const
 	QString	earthLink	= row->at(peaksTable->earthLinkColumn->getIndex()).toString();
 	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn->getIndex()).toString();
 	
+	parent->setStatusLine(QString("Successfully retrieved peak with peakID=%0").arg(peakID));
 	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
@@ -142,6 +144,7 @@ Trip* Database::getTripAt(int rowIndex) const
 	QDate	endDate		= row->at(tripsTable->endDateColumn->getIndex()).toDate();
 	QString	description	= row->at(tripsTable->descriptionColumn->getIndex()).toString();
 	
+	parent->setStatusLine(QString("Successfully retrieved trip with tripID=%0").arg(tripID));
 	return new Trip(tripID, name, startDate, endDate, description);
 }
 
@@ -153,6 +156,7 @@ Hiker* Database::getHikerAt(int rowIndex) const
 	int		hikerID	= row->at(hikersTable->getPrimaryKeyColumn()->getIndex()).toInt();
 	QString	name	= row->at(hikersTable->nameColumn->getIndex()).toString();
 	
+	parent->setStatusLine(QString("Successfully retrieved hiker with ascentID=%0").arg(hikerID));
 	return new Hiker(hikerID, name);
 }
 
@@ -166,6 +170,7 @@ Region* Database::getRegionAt(int rowIndex) const
 	int		rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
 	int		countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
 	
+	parent->setStatusLine(QString("Successfully retrieved region with regionID=%0").arg(regionID));
 	return new Region(regionID, name, rangeID, countryID);
 }
 
@@ -178,6 +183,7 @@ Range* Database::getRangeAt(int rowIndex) const
 	QString	name		= row->at(rangesTable->nameColumn->getIndex()).toString();
 	int		continent	= row->at(rangesTable->continentColumn->getIndex()).toInt();
 	
+	parent->setStatusLine(QString("Successfully retrieved range with rangeID=%0").arg(rangeID));
 	return new Range(rangeID, name, continent);
 }
 
@@ -189,6 +195,7 @@ Country* Database::getCountryAt(int rowIndex) const
 	int		countryID	= row->at(countriesTable->getPrimaryKeyColumn()->getIndex()).toInt();
 	QString	name		= row->at(countriesTable->nameColumn->getIndex()).toString();
 	
+	parent->setStatusLine(QString("Successfully retrieved country with countryID=%0").arg(countryID));
 	return new Country(countryID, name);
 }
 
