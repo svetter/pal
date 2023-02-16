@@ -19,6 +19,7 @@
 #include "src/db/tables/regions_table.h"
 #include "src/db/tables/trips_table.h"
 
+#include <QStatusBar>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -27,7 +28,7 @@ class MainWindow;
 
 
 class Database {
-	MainWindow* parent;
+	QStatusBar* statusBar;
 	
 public:
 	AscentsTable*		ascentsTable;
@@ -40,7 +41,7 @@ public:
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
 	
-	Database(MainWindow* parent);
+	Database(MainWindow* parent, QStatusBar* statusBar);
 	~Database();
 	
 	Ascent*		getAscent	(int ascentID)	const;
@@ -68,8 +69,8 @@ public:
 	bool changeCell(Column* column, int primaryKey, QVariant& cell);		// NormalTables only
 	
 private:
-	int getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const;
-	QString getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const;
+	int getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
+	QString getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 };
 
 
