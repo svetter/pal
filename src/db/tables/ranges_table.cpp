@@ -19,6 +19,7 @@ RangesTable::RangesTable() :
 
 int RangesTable::addRow(QWidget* parent, const Range* range)
 {
+	assert(range->rangeID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

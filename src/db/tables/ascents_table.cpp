@@ -37,6 +37,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 
 int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
+	assert(ascent->ascentID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

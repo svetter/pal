@@ -17,6 +17,7 @@ CountriesTable::CountriesTable() :
 
 int CountriesTable::addRow(QWidget* parent, const Country* country)
 {
+	assert(country->countryID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

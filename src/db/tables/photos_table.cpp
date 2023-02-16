@@ -38,6 +38,7 @@ QStringList PhotosTable::getPhotosForAscent(int ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
+	assert(ascent->ascentID > -1);
 	int sortIndex = 0;
 	for (auto iter = ascent->photos.constBegin(); iter != ascent->photos.constEnd(); iter++) {
 		addRow(parent, ascent->ascentID, sortIndex, *iter);

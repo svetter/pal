@@ -21,6 +21,7 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 
 int RegionsTable::addRow(QWidget* parent, const Region* region)
 {
+	assert(region->regionID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

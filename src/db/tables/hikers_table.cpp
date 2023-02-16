@@ -17,6 +17,7 @@ HikersTable::HikersTable() :
 
 int HikersTable::addRow(QWidget* parent, const Hiker* hiker)
 {
+	assert(hiker->hikerID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

@@ -23,6 +23,7 @@ TripsTable::TripsTable() :
 
 int TripsTable::addRow(QWidget* parent, const Trip* trip)
 {
+	assert(trip->tripID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {

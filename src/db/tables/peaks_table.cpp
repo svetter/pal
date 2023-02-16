@@ -29,6 +29,7 @@ PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 
 int PeaksTable::addRow(QWidget* parent, const Peak* peak)
 {
+	assert(peak->peakID == -1);
 	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
