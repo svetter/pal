@@ -208,7 +208,7 @@ WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) cons
 	return WhatIfResult(nullptr, QSet<int>());
 }
 
-WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
+WhatIfResult Database::whatIf_removeRows(AssociativeTable* table, Column* idColumn, int id) const
 {
 	assert(idColumn->getTable() == table);
 	assert(idColumn->getType() == integer);
