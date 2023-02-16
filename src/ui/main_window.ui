@@ -196,15 +196,12 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>60</width>
+            <width>75</width>
             <height>30</height>
            </size>
           </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
           <property name="digitCount">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="value" stdset="0">
            <double>-1.000000000000000</double>
