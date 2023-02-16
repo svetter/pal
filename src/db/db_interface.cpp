@@ -55,30 +55,9 @@ Database::~Database() {
 
 Ascent* Database::getAscent(int ascentID) const
 {
+	// TODO
 	assert(false);
-	assert(ascentID > 0);
-	QString queryString = QString(
-			"SELECT " + ascentsTable->getColumnListString() +
-			"\nFROM " + ascentsTable->getName() +
-			"\nWHERE " + ascentsTable->getPrimaryKeyColumn()->getName() + "=" + QString::number(ascentID)
-	);
-	
-	QSqlQuery query = QSqlQuery();
-	query.setForwardOnly(true);
-	if (!query.exec(queryString))
-		displayError(parent, query.lastError(), queryString);
-	if (!query.isActive())
-		displayError(parent, "query.isActive() returned false", queryString);
-	if (!query.isSelect())
-		displayError(parent, "query.isSelect() returned false", queryString);
-	if (!query.next()) {
-		displayError(parent, "Couldn't read record from SQL query", queryString);
-	}
-	QVariant variantValue = query.value(0);
-	if (query.next())
-		displayError(parent, "More than one record returned for query", queryString);
-	if (!variantValue.isValid())
-		displayError(parent, "Received invalid QVariant from query", queryString);
+	return nullptr;
 }
 
 Ascent* Database::getAscentAt(int rowIndex) const
@@ -105,11 +84,15 @@ Ascent* Database::getAscentAt(int rowIndex) const
 }
 
 Peak* Database::getPeak(int peakID) const {
-	
+	// TODO
+	assert(false);
+	return nullptr;
 }
 
 Trip* Database::getTrip(int tripID) const {
-	
+	// TODO
+	assert(false);
+	return nullptr;
 }
 
 Hiker* Database::getHiker(int hikerID) const {
@@ -135,40 +118,23 @@ Hiker* Database::getHiker(int hikerID) const {
 }
 
 Region* Database::getRegion(int regionID) const {
-	
+	// TODO
+	assert(false);
+	return nullptr;
 }
 
 Range* Database::getRange(int rangeID) const {
-	
+	// TODO
+	assert(false);
+	return nullptr;
 }
 
 Country* Database::getCountry(int countryID) const {
-	
+	// TODO
+	assert(false);
+	return nullptr;
 }
 
-
-
-int Database::addRow(NormalTable* table, QList<QVariant>& row) {
-	QString questionMarks = "";
-	for (int i = 0; i < table->getNumberOfNonPrimaryKeyColumns(); i++) {
-		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
-	}
-	QString queryString = QString(
-			"INSERT INTO " + table->getName() + "(" + table->getNonPrimaryKeyColumnListString() + ")" +
-			"\nVALUES(" + questionMarks + ")"
-	);
-	QSqlQuery query = QSqlQuery();
-	if (!query.prepare(queryString))
-		displayError(parent, query.lastError(), queryString);
-	for (auto iter = row.constBegin(); iter != row.constEnd(); iter++) {
-		query.addBindValue(*iter);
-	}
-	if (!query.exec())
-		displayError(parent, query.lastError(), queryString);
-	int index = query.lastInsertId().toInt();
-	assert(index > 0);
-	return index;
-}
 
 
 WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const {

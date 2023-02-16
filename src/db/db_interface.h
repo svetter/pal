@@ -53,9 +53,6 @@ public:
 	
 	Ascent*		getAscentAt(int rowIndex) const;
 	
-	int addRow(NormalTable* table, QList<QVariant>& row);
-//	bool addRow(AssociativeTable* table, QList<QVariant>& row);
-	
 	WhatIfResult whatIf_removeRow(NormalTable* table, int primaryKey) const;
 	WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
 	bool removeRow(NormalTable* table, int primaryKey);
