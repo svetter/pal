@@ -39,7 +39,8 @@ MainWindow::MainWindow() :
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
 	
-	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
+	
+	updateAscentCounter();
 	
 	setupTableView(ascentsTableView,	db.ascentsTable);
 	setupTableView(peaksTableView,		db.peaksTable);
@@ -60,6 +61,11 @@ void MainWindow::setStatusLine(QString content)
 	statusbar->showMessage(content);
 }
 
+void MainWindow::updateAscentCounter()
+{
+	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
+}
+
 
 
 void MainWindow::setupTableView(QTableView* view, NormalTable* table)
@@ -73,7 +79,8 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 
 void MainWindow::handle_newAscent()
 {
-	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);
+	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);	
+	updateAscentCounter();
 }
 
 void MainWindow::handle_newPeak()

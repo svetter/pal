@@ -22,6 +22,7 @@ public:
 	~MainWindow();
 	
 	void setStatusLine(QString content);
+	void updateAscentCounter();
 	
 private:
 	Database db;
