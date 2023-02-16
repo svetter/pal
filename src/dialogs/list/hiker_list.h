@@ -5,6 +5,7 @@
 
 #include <QAbstractTableModel>
 #include <QList>
+#include <QSet>
 #include <QPair>
 #include <QString>
 
@@ -19,7 +20,8 @@ public:
 	void addHiker(Hiker* hiker);
 	void removeHikerAt(int rowIndex);
 	
-	QList<int> getHikerIDList() const;
+	bool containsHiker(int hikerID) const;
+	QSet<int> getHikerIDSet() const;
 	
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;

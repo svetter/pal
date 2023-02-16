@@ -4,6 +4,7 @@
 #include <QList>
 #include <QString>
 #include <QStringList>
+#include <QSet>
 #include <QPair>
 #include <QDate>
 
@@ -23,14 +24,14 @@ public:
 	int				difficultySystem;
 	int				difficultyGrade;
 	int				tripID;
-	QList<int>		hikerIDs;
+	QSet<int>		hikerIDs;
 	QStringList		photos;
 	QString			description;
 	
 	static const QStringList hikeKindNames;
 	static const QList<QPair<QString, QStringList>> difficultyNames;
 	
-	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QList<QString>& photos, QString& description);
+	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QSet<int>& hikerIDs, QStringList& photos, QString& description);
 	
 	bool equalTo(const Ascent* const other) const;
 	

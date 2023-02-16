@@ -26,11 +26,19 @@ void HikersOnAscent::removeHikerAt(int rowIndex)
 
 
 
-QList<int> HikersOnAscent::getHikerIDList() const
+bool HikersOnAscent::containsHiker(int hikerID) const
 {
-	QList<int> result = QList<int>();
 	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
-		result.append((*iter).first);
+		if ((*iter).first == hikerID) return true;
+	}
+	return false;
+}
+
+QSet<int> HikersOnAscent::getHikerIDSet() const
+{
+	QSet<int> result = QSet<int>();
+	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
+		result.insert((*iter).first);
 	}
 	return result;
 }

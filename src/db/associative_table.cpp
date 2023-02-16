@@ -46,14 +46,14 @@ QList<Column*> AssociativeTable::getColumnList() const
 }
 
 
-QList<int> AssociativeTable::getMatchingEntries(Column* column, int primaryKey) const
+QSet<int> AssociativeTable::getMatchingEntries(Column* column, int primaryKey) const
 {
 	assert(column == column1 || column == column2);
 	Column* otherColumn = (column == column1) ? column2 : column1;
-	QList<int> filtered = QList<int>();
+	QSet<int> filtered = QSet<int>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey) {
-			filtered.append((*iter)->at(otherColumn->getIndex()).toInt());
+			filtered.insert((*iter)->at(otherColumn->getIndex()).toInt());
 		}
 	}
 	return filtered;
@@ -68,7 +68,7 @@ void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	Table::addRow(parent, data, getColumnList());
 }
 
-void removeRow(QWidget* parent, const QList<int>& primaryKeys)
+void removeRow(QWidget* parent, const QList<QVariant>& primaryKeys)
 {
 	assert(primaryKeys.size() == 2);
 

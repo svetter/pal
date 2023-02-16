@@ -120,7 +120,7 @@ Ascent* AscentDialog::extractData()
 	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
 	int			tripID				= parseIDCombo			(tripCombo);
 	QString		description			= parsePlainTextEdit	(descriptionEditor);
-	QList<int>	hikerIDs			= hikersModel.getHikerIDList();
+	QSet<int>	hikerIDs			= hikersModel.getHikerIDSet();
 	QStringList	photos				= photosModel.getPhotoList();
 	
 	if (!dateCheckbox->isChecked())	date = QDate();	
@@ -191,6 +191,7 @@ void AscentDialog::handle_addHiker()
 {
 	int hikerID = openAddHikerDialog(this, db);
 	if (hikerID < 0) return;
+	if (hikersModel.containsHiker(hikerID)) return;
 	Hiker* hiker = db->getHiker(hikerID);
 	hikersModel.addHiker(hiker);
 	delete hiker;

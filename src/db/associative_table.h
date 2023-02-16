@@ -6,7 +6,6 @@
 
 
 class AssociativeTable : public Table {
-protected:
 	Column*	column1;
 	Column*	column2;
 	
@@ -20,7 +19,7 @@ public:
 	int getNumberOfColumns() const override;
 	QList<Column*> getColumnList() const override;
 	
-	QList<int> getMatchingEntries(Column* column, int primaryKey) const;
+	QSet<int> getMatchingEntries(Column* column, int primaryKey) const;
 	
 	// Modifications
 	void addRow(QWidget* parent, const QList<QVariant>& data);

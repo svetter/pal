@@ -4,7 +4,7 @@
 
 
 
-Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QList<int>& hikerIDs, QStringList& photos, QString& description) :
+Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QSet<int>& hikerIDs, QStringList& photos, QString& description) :
 		ascentID(ascentID),
 		title(title),
 		peakID(peakID),
