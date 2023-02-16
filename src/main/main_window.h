@@ -21,6 +21,8 @@ public:
 	MainWindow();
 	~MainWindow();
 	
+	void setStatusLine(QString content);
+	
 private:
 	Database db;
 	

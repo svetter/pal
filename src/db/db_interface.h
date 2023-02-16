@@ -19,14 +19,15 @@
 #include "src/db/tables/regions_table.h"
 #include "src/db/tables/trips_table.h"
 
-#include <QWidget>
 #include <QSqlQuery>
 #include <QSqlError>
+
+class MainWindow;
 
 
 
 class Database {
-	QWidget* parent;
+	MainWindow* parent;
 	
 public:
 	AscentsTable*		ascentsTable;
@@ -39,7 +40,7 @@ public:
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
 	
-	Database(QWidget* parent);
+	Database(MainWindow* parent);
 	~Database();
 	
 	Ascent*		getAscent(int ascentID) const;

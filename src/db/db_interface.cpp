@@ -2,6 +2,7 @@
 
 #include "src/db/db_error.h"
 #include "src/db/test_db.h"
+#include "src/main/main_window.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -9,7 +10,7 @@
 
 
 
-Database::Database(QWidget* parent) :
+Database::Database(MainWindow* parent) :
 		parent(parent)
 {
 	tripsTable			= new TripsTable();

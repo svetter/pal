@@ -55,6 +55,13 @@ MainWindow::~MainWindow()
 
 
 
+void MainWindow::setStatusLine(QString content)
+{
+	statusbar->showMessage(content);
+}
+
+
+
 void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 {
 	view->setModel(table);
