@@ -27,7 +27,6 @@ public:
 	// Buffer
 	void deleteBuffer();
 	void initBuffer(QWidget* parent);
-	void ensureBuffer(QWidget* parent);
 	const QList<QVariant>* getBufferRow(int rowIndex) const;
 	
 	// Getters
@@ -35,13 +34,18 @@ public:
 	virtual QList<Column*> getColumnList() const = 0;
 	QString getColumnListString() const;
 	int getColumnIndex(Column* column) const;
-	QList<QList<QVariant>*>* getAllEntries(QWidget* parent) const;
 	
-	// Modification
+protected:
+	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns);
 	WhatIfResult whatIf_removeRow(int primaryKey);
 	WhatIfResult whatIf_changeCell(int primaryKey, Column* column);
 	template<typename T> void changeCell(int ascentID, Column* column, T newValue);
+	
+private:
+	// SQL
+	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
+	int addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns);
 };
 
 

@@ -100,8 +100,6 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	int newRowIndex = Table::addRow(parent, data, getNonPrimaryKeyColumnList());
 	endInsertRows();
 	
-	// TODO write-through to database
-	
 	return newRowIndex;
 }
 
