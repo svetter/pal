@@ -4,6 +4,13 @@
 
 
 
+WhatIfResult::WhatIfResult(Table* affectedTable, QSet<int> affectedIDs) :
+		affectedTable(affectedTable),
+		affectedIDs(affectedIDs)
+{}
+
+
+
 Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, Table* inTable) :
 		name(name),
 		uiName(uiName),

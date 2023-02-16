@@ -1,7 +1,7 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
-#include <QList>
+#include <QSet>
 
 
 
@@ -15,9 +15,12 @@ class NormalTable;
 class AssociativeTable;
 
 
+
 struct WhatIfResult {
-	QList<Table*>	affectedTables;
-	int				numAffectedRows;
+	Table*		affectedTable;
+	QSet<int>	affectedIDs;
+	
+	WhatIfResult(Table* affectedTable, QSet<int> affectedIDs);
 };
 
 

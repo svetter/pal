@@ -201,38 +201,30 @@ Country* Database::getCountryAt(int rowIndex) const
 
 
 
-WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const {
+WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const
+{
 	// TODO
 	assert(false);
-	return WhatIfResult();
+	return WhatIfResult(nullptr, QSet<int>());
 }
 
-WhatIfResult Database::whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const {
+WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const
+{
 	// TODO
 	assert(false);
-	return WhatIfResult();
-}
-
-bool Database::removeRow(NormalTable* table, int primaryKey) {
-	// TODO
-	assert(false);
-	return false;
-}
-
-bool Database::removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) {
-	// TODO
-	assert(false);
-	return false;
+	return WhatIfResult(nullptr, QSet<int>());
 }
 
 
-WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const {	// NormalTables only
+WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const	// NormalTables only
+{
 	// TODO
 	assert(false);
-	return WhatIfResult();
+	return WhatIfResult(nullptr, QSet<int>());
 }
 
-bool Database::changeCell(Column* column, int primaryKey, QVariant& cell) {	// NormalTables only
+bool Database::changeCell(Column* column, int primaryKey, QVariant& cell)	// NormalTables only
+{
 	// TODO
 	assert(false);
 	return false;
@@ -240,7 +232,7 @@ bool Database::changeCell(Column* column, int primaryKey, QVariant& cell) {	// N
 
 
 
-int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const
+int Database::getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
 {
 	assert(entryInd >= 0);
 	QVariant variantValue = query.value(entryInd);
@@ -253,7 +245,7 @@ int Database::getIntFromRecord(QSqlQuery& query, QString& queryString, int entry
 	return intValue;
 }
 
-QString Database::getStringFromRecord(QSqlQuery& query, QString& queryString, int entryInd) const
+QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
 {
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
