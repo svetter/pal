@@ -208,11 +208,20 @@ WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) cons
 	return WhatIfResult(nullptr, QSet<int>());
 }
 
-WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const
+WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
 {
-	// TODO
-	assert(false);
-	return WhatIfResult(nullptr, QSet<int>());
+	assert(idColumn->getTable() == table);
+	assert(idColumn->getType() == integer);
+	
+	Column* otherColumn = table->getOtherColumn(idColumn);
+	assert(otherColumn->isForeignKey());
+	Column* referencedColumn = otherColumn->getReferencedForeignColumn();
+	assert(!referencedColumn->getTable()->isAssociative());
+	NormalTable* referencedTable = (NormalTable*) referencedColumn->getTable();
+	
+	QSet<int> affectedOtherIDs = table->getMatchingEntries(idColumn, id);
+	
+	return WhatIfResult(referencedTable, affectedOtherIDs);
 }
 
 

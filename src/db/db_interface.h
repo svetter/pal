@@ -61,7 +61,7 @@ public:
 	Country*	getCountryAt	(int rowIndex) const;
 	
 	WhatIfResult whatIf_removeRow(NormalTable* table, int primaryKey) const;
-	WhatIfResult whatIf_removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2) const;
+	WhatIfResult whatIf_removeRows(AssociativeTable* table, Column* idColumn, int id) const;
 	bool removeRow(NormalTable* table, int primaryKey);
 	bool removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2);
 	
