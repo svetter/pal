@@ -13,8 +13,9 @@ public:
 	AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
 	~AssociativeTable();
 	
-	Column* getColumn1();
-	Column* getColumn2();
+	Column* getColumn1() const;
+	Column* getColumn2() const;
+	Column* getOtherColumn(Column* column) const;
 	
 	int getNumberOfColumns() const override;
 	QList<Column*> getColumnList() const override;

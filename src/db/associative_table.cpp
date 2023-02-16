@@ -24,14 +24,22 @@ AssociativeTable::~AssociativeTable()
 }
 
 
-Column* AssociativeTable::getColumn1()
+Column* AssociativeTable::getColumn1() const
 {
 	return column1;
 }
 
-Column* AssociativeTable::getColumn2()
+Column* AssociativeTable::getColumn2() const
 {
 	return column2;
+}
+
+Column* AssociativeTable::getOtherColumn(Column* column) const
+{
+	if (column == column1) return column2;
+	if (column == column2) return column1;
+	assert(false);
+	return nullptr;
 }
 
 
@@ -49,7 +57,7 @@ QList<Column*> AssociativeTable::getColumnList() const
 QSet<int> AssociativeTable::getMatchingEntries(Column* column, int primaryKey) const
 {
 	assert(column == column1 || column == column2);
-	Column* otherColumn = (column == column1) ? column2 : column1;
+	Column* otherColumn = getOtherColumn(column);
 	QSet<int> filtered = QSet<int>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey) {
