@@ -77,6 +77,8 @@ bool TripDialog::changesMade()
 void TripDialog::handle_datesSpecifiedChanged()
 {
 	bool enabled = !datesUnspecifiedCheckbox->isChecked();
+	startDateLabel->setEnabled(enabled);
+	endDateLabel->setEnabled(enabled);
 	startDateWidget->setEnabled(enabled);
 	endDateWidget->setEnabled(enabled);
 }
