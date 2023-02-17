@@ -28,7 +28,8 @@ class MainWindow;
 
 
 class Database {
-	QStatusBar* statusBar;
+	QStatusBar* mainWindowStatusBar;
+	void setStatusBarMessage(QString content) const;
 	
 public:
 	AscentsTable*		ascentsTable;
@@ -41,8 +42,10 @@ public:
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
 	
-	Database(MainWindow* parent, QStatusBar* statusBar);
+	Database(MainWindow* parent);
 	~Database();
+	
+	void setStatusBar(QStatusBar* mainWindowStatusBar);
 	
 	Ascent*		getAscent	(int ascentID)	const;
 	Peak*		getPeak		(int peakID)	const;

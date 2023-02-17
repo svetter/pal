@@ -10,8 +10,8 @@
 
 
 
-Database::Database(MainWindow* parent, QStatusBar* statusBar) :
-		statusBar(statusBar)
+Database::Database(MainWindow* parent) :
+		mainWindowStatusBar(nullptr)
 {
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();
@@ -49,6 +49,22 @@ Database::~Database() {
 	delete ascentsTable;
 	delete photosTable;
 	delete participatedTable;
+}
+
+
+
+void Database::setStatusBar(QStatusBar* mainWindowStatusBar)
+{
+	this->mainWindowStatusBar = mainWindowStatusBar;
+}
+
+void Database::setStatusBarMessage(QString content) const
+{
+	if (!mainWindowStatusBar) {
+		qDebug() << "class Database: Tried to show message on status bar but status bar has not been set";
+		return;
+	}
+	return mainWindowStatusBar->showMessage(content);
 }
 
 
@@ -111,7 +127,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QSet<int>	hikerIDs			= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
 	QStringList	photos				= photosTable->getPhotosForAscent(ascentID);
 	
-	statusBar->showMessage(QString("Successfully retrieved ascent with ascentID=%0").arg(ascentID));
+	setStatusBarMessage(QString("Successfully retrieved ascent with ascentID=%1").arg(ascentID));
 	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
@@ -129,7 +145,7 @@ Peak* Database::getPeakAt(int rowIndex) const
 	QString	earthLink	= row->at(peaksTable->earthLinkColumn->getIndex()).toString();
 	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn->getIndex()).toString();
 	
-	statusBar->showMessage(QString("Successfully retrieved peak with peakID=%0").arg(peakID));
+//	setStatusBarMessage(QString("Successfully retrieved peak with peakID=%1").arg(peakID));
 	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
@@ -144,7 +160,7 @@ Trip* Database::getTripAt(int rowIndex) const
 	QDate	endDate		= row->at(tripsTable->endDateColumn->getIndex()).toDate();
 	QString	description	= row->at(tripsTable->descriptionColumn->getIndex()).toString();
 	
-	statusBar->showMessage(QString("Successfully retrieved trip with tripID=%0").arg(tripID));
+//	setStatusBarMessage(QString("Successfully retrieved trip with tripID=%1").arg(tripID));
 	return new Trip(tripID, name, startDate, endDate, description);
 }
 
@@ -156,7 +172,7 @@ Hiker* Database::getHikerAt(int rowIndex) const
 	int		hikerID	= row->at(hikersTable->getPrimaryKeyColumn()->getIndex()).toInt();
 	QString	name	= row->at(hikersTable->nameColumn->getIndex()).toString();
 	
-	statusBar->showMessage(QString("Successfully retrieved hiker with ascentID=%0").arg(hikerID));
+//	setStatusBarMessage(QString("Successfully retrieved hiker with hikerID=%1").arg(hikerID));
 	return new Hiker(hikerID, name);
 }
 
@@ -170,7 +186,7 @@ Region* Database::getRegionAt(int rowIndex) const
 	int		rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
 	int		countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
 	
-	statusBar->showMessage(QString("Successfully retrieved region with regionID=%0").arg(regionID));
+//	setStatusBarMessage(QString("Successfully retrieved region with regionID=%1").arg(regionID));
 	return new Region(regionID, name, rangeID, countryID);
 }
 
@@ -183,7 +199,7 @@ Range* Database::getRangeAt(int rowIndex) const
 	QString	name		= row->at(rangesTable->nameColumn->getIndex()).toString();
 	int		continent	= row->at(rangesTable->continentColumn->getIndex()).toInt();
 	
-	statusBar->showMessage(QString("Successfully retrieved range with rangeID=%0").arg(rangeID));
+//	setStatusBarMessage(QString("Successfully retrieved range with rangeID=%1").arg(rangeID));
 	return new Range(rangeID, name, continent);
 }
 
@@ -195,7 +211,7 @@ Country* Database::getCountryAt(int rowIndex) const
 	int		countryID	= row->at(countriesTable->getPrimaryKeyColumn()->getIndex()).toInt();
 	QString	name		= row->at(countriesTable->nameColumn->getIndex()).toString();
 	
-	statusBar->showMessage(QString("Successfully retrieved country with countryID=%0").arg(countryID));
+//	setStatusBarMessage(QString("Successfully retrieved country with countryID=%1").arg(countryID));
 	return new Country(countryID, name);
 }
 

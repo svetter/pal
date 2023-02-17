@@ -49,6 +49,9 @@ MainWindow::MainWindow() :
 	setupTableView(regionsTableView,	db.regionsTable);
 	setupTableView(rangesTableView,		db.rangesTable);
 	setupTableView(countriesTableView,	db.countriesTable);
+	
+	
+	db.setStatusBar(statusbar);
 }
 
 MainWindow::~MainWindow()
