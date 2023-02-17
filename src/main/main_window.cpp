@@ -15,7 +15,8 @@
 
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
-		db(Database(this))
+		db(Database(this)),
+		tableContextMenu(QMenu(this))
 {
 	setupUi(this);
 	
@@ -39,6 +40,14 @@ MainWindow::MainWindow() :
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
 	
+	connect(ascentsTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(peaksTableView,		&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(tripsTableView,		&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(hikersTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(regionsTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(rangesTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	connect(countriesTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
+	
 	
 	updateAscentCounter();
 	
@@ -52,6 +61,8 @@ MainWindow::MainWindow() :
 	
 	
 	db.setStatusBar(statusbar);
+	
+	initTableContextMenu();
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +87,21 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 	view->setModel(table);
 	view->setRootIndex(table->getNormalRootModelIndex());
 	view->resizeColumnsToContents();
+}
+
+void MainWindow::initTableContextMenu()
+{
+	QAction* openAction			= tableContextMenu.addAction(tr("Open..."),						QKeySequence(Qt::Key_Enter));
+	tableContextMenu.addSeparator();
+	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						QKeySequence(Qt::CTRL | Qt::Key_Enter));
+	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	QKeySequence::Copy);
+	tableContextMenu.addSeparator();
+	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					QKeySequence::Delete);
+	
+	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_contextMenu_openItem);
+	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_contextMenu_editItem);
+	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_contextMenu_editDuplicatedItem);
+	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_contextMenu_deleteItem);
 }
 
 
@@ -110,7 +136,6 @@ void MainWindow::handle_newRange()
 {
 	handle_newItem(&openNewRangeDialogAndStore, db.rangesTable, rangesTableView);
 }
-
 
 void MainWindow::handle_newCountry()
 {
@@ -167,4 +192,68 @@ void MainWindow::handle_editCountry(const QModelIndex& index)
 {
 	Country* selectedCountry = db.getCountryAt(index.row());
 	openEditCountryDialogAndStore(this, &db, selectedCountry);
+}
+
+
+
+void MainWindow::handle_rightClick(QPoint pos)
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex index = currentTableView->indexAt(pos);
+	if (!index.isValid()) return;
+	
+	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
+}
+
+
+
+void MainWindow::handle_contextMenu_openItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
+	int selectedRowIndex = currentTableView->currentIndex().row();
+	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
+	qDebug() << QString("User requested to open %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
+	// TODO
+}
+
+void MainWindow::handle_contextMenu_editItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex selectedIndex = currentTableView->currentIndex();
+	if (currentTableView == ascentsTableView)	{ handle_editAscent		(selectedIndex);	return; }
+	if (currentTableView == peaksTableView)		{ handle_editPeak		(selectedIndex);	return; }
+	if (currentTableView == tripsTableView)		{ handle_editTrip		(selectedIndex);	return; }
+	if (currentTableView == hikersTableView)	{ handle_editHiker		(selectedIndex);	return; }
+	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
+	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
+	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
+	assert(false);
+}
+
+void MainWindow::handle_contextMenu_editDuplicatedItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
+	int selectedRowIndex = currentTableView->currentIndex().row();
+	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
+	qDebug() << QString("User requested to duplicate and edit %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
+	// TODO
+}
+
+void MainWindow::handle_contextMenu_deleteItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
+	int selectedRowIndex = currentTableView->currentIndex().row();
+	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
+	qDebug() << QString("User requested to delete %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
+	// TODO
+}
+
+
+
+QTableView* MainWindow::getCurrentTableView() const
+{
+	return mainAreaTabs->currentWidget()->findChild<QTableView*>();
 }

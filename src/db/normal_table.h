@@ -10,6 +10,7 @@
 
 
 class NormalTable : public Table, public QAbstractItemModel {
+	QString itemNameSingularLowercase;
 	QString noneString;
 	
 	Column*			primaryKeyColumn;
@@ -34,6 +35,8 @@ public:
 	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
 	int getNumberOfRows() const;
+
+	QString getItemNameSingularLowercase() const;
 	
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data);

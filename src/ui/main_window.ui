@@ -231,7 +231,7 @@
          <attribute name="title">
           <string>Ascents</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="ascentsTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -249,6 +249,9 @@
           </property>
           <item>
            <widget class="QTableView" name="ascentsTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -284,7 +287,7 @@
          <attribute name="title">
           <string>Peaks</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <layout class="QHBoxLayout" name="peaksTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -302,6 +305,9 @@
           </property>
           <item>
            <widget class="QTableView" name="peaksTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -334,7 +340,7 @@
          <attribute name="title">
           <string>Trips</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <layout class="QHBoxLayout" name="tripsTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -352,6 +358,9 @@
           </property>
           <item>
            <widget class="QTableView" name="tripsTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -384,7 +393,7 @@
          <attribute name="title">
           <string>Hikers</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="hikersTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -402,6 +411,9 @@
           </property>
           <item>
            <widget class="QTableView" name="hikersTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -434,7 +446,7 @@
          <attribute name="title">
           <string>Regions</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QHBoxLayout" name="regionsTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -452,6 +464,9 @@
           </property>
           <item>
            <widget class="QTableView" name="regionsTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -484,7 +499,7 @@
          <attribute name="title">
           <string>Mountain ranges</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="rangesTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -502,6 +517,9 @@
           </property>
           <item>
            <widget class="QTableView" name="rangesTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
@@ -534,7 +552,7 @@
          <attribute name="title">
           <string>Countries</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="countriesTabLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -552,6 +570,9 @@
           </property>
           <item>
            <widget class="QTableView" name="countriesTableView">
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>

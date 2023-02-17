@@ -17,6 +17,9 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 	
+	Database db;
+	QMenu tableContextMenu;
+	
 public:
 	MainWindow();
 	~MainWindow();
@@ -25,9 +28,8 @@ public:
 	void updateAscentCounter();
 	
 private:
-	Database db;
-	
 	void setupTableView(QTableView* view, NormalTable* table);
+	void initTableContextMenu();
 	
 private slots:
 	void handle_newAscent();
@@ -46,7 +48,15 @@ private slots:
 	void handle_editRange	(const QModelIndex& index);
 	void handle_editCountry	(const QModelIndex& index);
 	
+	void handle_rightClick(QPoint pos);
+	
+	void handle_contextMenu_openItem();
+	void handle_contextMenu_editItem();
+	void handle_contextMenu_editDuplicatedItem();
+	void handle_contextMenu_deleteItem();
+	
 private:
+	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
 };
 

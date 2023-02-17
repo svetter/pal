@@ -1,7 +1,5 @@
 #include "normal_table.h"
 
-#include "db_error.h"
-
 #include <QDate>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -14,6 +12,7 @@ const int NormalTable::PrimaryKeyRole = -1;
 
 NormalTable::NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString) :
 		Table(name, uiName, false),
+		itemNameSingularLowercase(itemNameSingularLowercase),
 		noneString(noneString),
 		primaryKeyColumn(new Column(itemNameSingularLowercase + "ID", QString(), DataType::integer, false, true, nullptr, this)),
 		nonPrimaryColumns(QList<Column*>())
@@ -26,6 +25,7 @@ NormalTable::~NormalTable()
 		delete *iter;
 	}
 }
+
 
 
 void NormalTable::addColumn(Column* column)
@@ -87,6 +87,13 @@ int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
 int NormalTable::getNumberOfRows() const
 {
 	return buffer->size();
+}
+
+
+
+QString NormalTable::getItemNameSingularLowercase() const
+{
+	return itemNameSingularLowercase;
 }
 
 
