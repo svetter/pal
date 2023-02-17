@@ -144,8 +144,8 @@ QSqlError initDB()
 	int franceID	= addCountry(q, QString("France"));
 	
 	if (!q.prepare(INSERT_RANGE)) return q.lastError();
-	int alpsID		= addRange(q, QString("Alps"),		2);
-	int pyreneesID	= addRange(q, QString("Pyrenees"),	2);
+	int alpsID		= addRange(q, QString("Alps"),		3);
+	int pyreneesID	= addRange(q, QString("Pyrénées"),	3);
 	
 	if (!q.prepare(INSERT_REGION)) return q.lastError();
 	int allgauID	= addRegion(q, QString("Allgäu"),				alpsID,	germanyID);
@@ -174,11 +174,11 @@ QSqlError initDB()
 	
 	if (!q.prepare(INSERT_ASCENT)) return q.lastError();
 	int ascent1_1ID	= addAscent(q, QString("Peak of Europe"),		montblancID,	QDate(1999, 12, 29),	1,	QTime(15, 35),	0,	false,	1,	4,	alpsTripID,		QString("Some notes"));
-	int ascent1_2ID	= addAscent(q, QString("Lake and stuff"),		pfanderID,		QDate(2000, 1, 2),		1,	QTime(13, 48),	0,	false,	1,	4,	alpsTripID,		QString("Some other notes"));
+	int ascent1_2ID	= addAscent(q, QString("Lake and stuff"),		pfanderID,		QDate(2000, 1, 2),		1,	QTime(13, 48),	0,	false,	2,	3,	alpsTripID,		QString("Some other notes"));
 	int ascent2_1ID	= addAscent(q, QString("A view to a Spain"),	pyrenMntnID,	QDate(2004, 3, 25),		1,	QTime(15, 35),	2,	false,	1,	4,	bandcampID,		QString("Other notes still"));
-	int ascent3_1ID	= addAscent(q, QString("Back here, huh?"),		pfanderID,		QDate(2020, 3, 16),		1,	QTime(11, 19),	0,	false,	1,	4,	alpsAgainID,	QString("Yet other notes"));
-	int ascent3_2ID	= addAscent(q, QString("Feels wrong"),			brockenID,		QDate(2020, 3, 16),		2,	QTime(16, 5),	3,	true,	1,	4,	alpsAgainID,	QString("These are not the same notes"));
-	int ascent3_3ID	= addAscent(q, QString("I can see my house"),	zugspitzeID,	QDate(2020, 7, 19),		1,	QTime(14, 55),	0,	false,	1,	4,	alpsAgainID,	QString("These aren't notes"));
+	int ascent3_1ID	= addAscent(q, QString("Back here, huh?"),		pfanderID,		QDate(2020, 3, 16),		1,	QTime(11, 19),	0,	false,	4,	6,	alpsAgainID,	QString("Yet other notes"));
+	int ascent3_2ID	= addAscent(q, QString("Feels wrong"),			brockenID,		QDate(2020, 3, 16),		2,	QTime(16, 5),	3,	true,	3,	3,	alpsAgainID,	QString("These are not the same notes"));
+	int ascent3_3ID	= addAscent(q, QString("I can see my house"),	zugspitzeID,	QDate(2020, 7, 19),		1,	QTime(14, 55),	0,	false,	2,	1,	alpsAgainID,	QString("These aren't notes"));
 	
 	if (!q.prepare(INSERT_PARTICIPATED)) return q.lastError();
 	addParticipated(q, ascent1_1ID, aliceID);
