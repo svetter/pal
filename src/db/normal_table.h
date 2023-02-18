@@ -17,7 +17,7 @@ public:
 	static const int PrimaryKeyRole;
 	
 	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);
-	~NormalTable();
+	virtual ~NormalTable();
 	
 	void addColumn(const Column* column);
 	

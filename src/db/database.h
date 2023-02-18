@@ -28,8 +28,9 @@ class MainWindow;
 
 
 class Database {
+	QList<Table*> tables;
+	
 	QStatusBar* mainWindowStatusBar;
-	void setStatusBarMessage(QString content) const;
 	
 public:
 	AscentsTable*		ascentsTable;
@@ -46,6 +47,8 @@ public:
 	~Database();
 	
 	void setStatusBar(QStatusBar* mainWindowStatusBar);
+	
+	QList<Table*> getTableList() const;
 	
 	Ascent*		getAscent	(int ascentID)	const;
 	Peak*		getPeak		(int peakID)	const;
@@ -72,6 +75,8 @@ public:
 	bool changeCell(Column* column, int primaryKey, QVariant& cell);		// NormalTables only
 	
 private:
+	void setStatusBarMessage(QString content) const;
+	
 	int getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 	QString getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 };

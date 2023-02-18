@@ -11,6 +11,7 @@
 
 
 Database::Database(MainWindow* parent) :
+		tables(QList<Table*>()),
 		mainWindowStatusBar(nullptr)
 {
 	tripsTable			= new TripsTable();
@@ -28,43 +29,30 @@ Database::Database(MainWindow* parent) :
 		displayError(parent, initError);
 	}
 	
-	ascentsTable->initBuffer(parent);
-	countriesTable->initBuffer(parent);
-	hikersTable->initBuffer(parent);
-	peaksTable->initBuffer(parent);
-	rangesTable->initBuffer(parent);
-	regionsTable->initBuffer(parent);
-	tripsTable->initBuffer(parent);
-	photosTable->initBuffer(parent);
-	participatedTable->initBuffer(parent);
+	tables.append(tripsTable);
+	tables.append(hikersTable);
+	tables.append(rangesTable);
+	tables.append(countriesTable);
+	tables.append(regionsTable);
+	tables.append(peaksTable);
+	tables.append(ascentsTable);
+	tables.append(photosTable);
+	tables.append(participatedTable);
+	
+	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
+		(*iter)->initBuffer(parent);
+	}
 }
 
 Database::~Database() {
-	delete tripsTable;
-	delete hikersTable;
-	delete rangesTable;
-	delete countriesTable;
-	delete regionsTable;
-	delete peaksTable;
-	delete ascentsTable;
-	delete photosTable;
-	delete participatedTable;
+	qDeleteAll(getTableList());
 }
 
 
 
-void Database::setStatusBar(QStatusBar* mainWindowStatusBar)
+QList<Table*> Database::getTableList() const
 {
-	this->mainWindowStatusBar = mainWindowStatusBar;
-}
-
-void Database::setStatusBarMessage(QString content) const
-{
-	if (!mainWindowStatusBar) {
-		qDebug() << "class Database: Tried to show message on status bar but status bar has not been set";
-		return;
-	}
-	return mainWindowStatusBar->showMessage(content);
+	return QList<Table*>(tables);
 }
 
 
@@ -257,6 +245,22 @@ bool Database::changeCell(Column* column, int primaryKey, QVariant& cell)	// Nor
 	qDebug() << "UNIMPLEMENTED: Database::changeCell()";
 	assert(false);
 	return false;
+}
+
+
+
+void Database::setStatusBar(QStatusBar* mainWindowStatusBar)
+{
+	this->mainWindowStatusBar = mainWindowStatusBar;
+}
+
+void Database::setStatusBarMessage(QString content) const
+{
+	if (!mainWindowStatusBar) {
+		qDebug() << "class Database: Tried to show message on status bar but status bar has not been set";
+		return;
+	}
+	return mainWindowStatusBar->showMessage(content);
 }
 
 

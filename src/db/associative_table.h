@@ -11,7 +11,7 @@ class AssociativeTable : public Table {
 	
 public:
 	AssociativeTable(QString name, const Column* foreignKeyColumn1, const Column* foreignKeyColumn2);
-	~AssociativeTable();
+	virtual ~AssociativeTable();
 	
 	const Column*	getColumn1() const;
 	const Column*	getColumn2() const;

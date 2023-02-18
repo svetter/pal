@@ -13,13 +13,13 @@ class Table {
 	QString	uiName;
 	bool associative;
 	
-protected:	
-	Table(QString name, QString uiName, bool isAssociative);
-	~Table();
-	
+protected:
 	QList<QList<QVariant>*>* buffer;
 	
+	Table(QString name, QString uiName, bool isAssociative);
 public:
+	virtual ~Table();
+	
 	QString getName() const;
 	QString getUIName() const;
 	bool isAssociative() const;
