@@ -1,7 +1,7 @@
 #ifndef ADD_HIKER_DIALOG_H
 #define ADD_HIKER_DIALOG_H
 
-#include "src/db/db_interface.h"
+#include "src/db/database.h"
 #include "ui_add_hiker_dialog.h"
 
 

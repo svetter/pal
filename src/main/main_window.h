@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "src/db/db_interface.h"
+#include "src/db/database.h"
 #include "ui_main_window.h"
 
 #include <QMainWindow>

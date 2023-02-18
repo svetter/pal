@@ -22,8 +22,8 @@ SOURCES += \
 	src/data/trip.cpp \
 	src/db/associative_table.cpp \
 	src/db/column.cpp \
+	src/db/database.cpp \
 	src/db/db_error.cpp \
-	src/db/db_interface.cpp \
 	src/db/normal_table.cpp \
 	src/db/table.cpp \
 	src/db/tables/ascents_table.cpp \
@@ -60,8 +60,8 @@ HEADERS += \
 	src/data/trip.h \
 	src/db/associative_table.h \
 	src/db/column.h \
+	src/db/database.h \
 	src/db/db_error.h \
-	src/db/db_interface.h \
 	src/db/normal_table.h \
 	src/db/table.h \
 	src/db/test_db.h \

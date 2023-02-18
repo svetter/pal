@@ -1,5 +1,5 @@
-#ifndef DB_INTERFACE_H
-#define DB_INTERFACE_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include "associative_table.h"
 #include "src/data/ascent.h"
@@ -78,4 +78,4 @@ private:
 
 
 
-#endif // DB_INTERFACE_H
+#endif // DATABASE_H

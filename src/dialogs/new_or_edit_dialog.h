@@ -1,7 +1,7 @@
 #ifndef NEW_OR_EDIT_DIALOG_H
 #define NEW_OR_EDIT_DIALOG_H
 
-#include "src/db/db_interface.h"
+#include "src/db/database.h"
 
 #include <QDialog>
 

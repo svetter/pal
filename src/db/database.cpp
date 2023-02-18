@@ -1,4 +1,4 @@
-#include "db_interface.h"
+#include "database.h"
 
 #include "src/db/db_error.h"
 #include "src/db/test_db.h"
