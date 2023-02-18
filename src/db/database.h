@@ -67,8 +67,6 @@ public:
 	Country*	getCountryAt	(int rowIndex) const;
 	
 	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, int primaryKey) const;
-	bool removeRow(NormalTable* table, int primaryKey);
-	bool removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2);
 	
 private:
 	void setStatusBarMessage(QString content) const;

@@ -243,21 +243,6 @@ QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, int pri
 }
 
 
-bool Database::removeRow(NormalTable* table, int primaryKey)
-{
-	// TODO #70
-	qDebug() << "Database::removeRow(NormalTable*, int)";
-	return false;
-}
-
-bool Database::removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2)
-{
-	// TODO #71
-	qDebug() << "Database::removeRow(AssociativeTable*, int, int)";
-	return false;
-}
-
-
 
 void Database::setStatusBar(QStatusBar* mainWindowStatusBar)
 {
