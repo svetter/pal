@@ -5,7 +5,7 @@
 
 
 
-const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, hikeKind INT NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER, difficultyGrade INTEGER, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
+const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, elevationGain INT, hikeKind INT NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER, difficultyGrade INTEGER, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
 const auto CREATE_PEAKS			= "CREATE TABLE Peaks(peakID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, height INTEGER, volcano BINARY NOT NULL, regionID INTEGER REFERENCES Regions(regionID), mapsLink NVARCHAR, earthLink NVARCHAR, wikiLink NVARCHAR)";
 const auto CREATE_TRIPS			= "CREATE TABLE Trips(tripID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, startDate DATE, endDate DATE, description NVARCHAR)";
 const auto CREATE_HIKERS		= "CREATE TABLE Hikers(hikerID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
@@ -15,7 +15,7 @@ const auto CREATE_COUNTRIES		= "CREATE TABLE Countries(countryID INTEGER PRIMARY
 const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), sortIndex INTEGER NOT NULL, filepath NVARCHAR NOT NULL)";
 const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
 
-const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, description) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, description) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const auto INSERT_PEAK			= "INSERT INTO Peaks(name, height, volcano, regionID, mapsLink, earthLink, wikiLink) VALUES(?, ?, ?, ?, ?, ?, ?)";
 const auto INSERT_TRIP			= "INSERT INTO Trips(name, startDate, endDate, description) VALUES(?, ?, ?, ?)";
 const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
@@ -27,13 +27,14 @@ const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VA
 
 
 
-int addAscent(QSqlQuery& q, const QString& title, int peakID, const QDate& date, int peakOnDay, const QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, const QString& description)
+int addAscent(QSqlQuery& q, const QString& title, int peakID, const QDate& date, int peakOnDay, const QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, const QString& description)
 {
 	q.addBindValue(title);
 	q.addBindValue(peakID);
 	q.addBindValue(date);
 	q.addBindValue(peakOnDay);
 	q.addBindValue(time);
+	q.addBindValue(elevationGain);
 	q.addBindValue(hikeKind);
 	q.addBindValue(traverse);
 	q.addBindValue(difficultySystem);
@@ -173,12 +174,12 @@ QSqlError initDB()
 	int alpsAgainID	= addTrip(q, QString("Alps again"),					QDate(2020, 3, 12),		QDate(2020, 8, 26),	QString("Train back cancelled for some reason"));
 	
 	if (!q.prepare(INSERT_ASCENT)) return q.lastError();
-	int ascent1_1ID	= addAscent(q, QString("Peak of Europe"),		montblancID,	QDate(1999, 12, 29),	1,	QTime(15, 35),	0,	false,	1,	4,	alpsTripID,		QString("Some notes"));
-	int ascent1_2ID	= addAscent(q, QString("Lake and stuff"),		pfanderID,		QDate(2000, 1, 2),		1,	QTime(13, 48),	0,	false,	2,	3,	alpsTripID,		QString("Some other notes"));
-	int ascent2_1ID	= addAscent(q, QString("A view to a Spain"),	pyrenMntnID,	QDate(2004, 3, 25),		1,	QTime(15, 35),	2,	false,	1,	4,	bandcampID,		QString("Other notes still"));
-	int ascent3_1ID	= addAscent(q, QString("Back here, huh?"),		pfanderID,		QDate(2020, 3, 16),		1,	QTime(11, 19),	0,	false,	4,	6,	alpsAgainID,	QString("Yet other notes"));
-	int ascent3_2ID	= addAscent(q, QString("Feels wrong"),			brockenID,		QDate(2020, 3, 16),		2,	QTime(16, 5),	3,	true,	3,	3,	alpsAgainID,	QString("These are not the same notes"));
-	int ascent3_3ID	= addAscent(q, QString("I can see my house"),	zugspitzeID,	QDate(2020, 7, 19),		1,	QTime(14, 55),	0,	false,	2,	1,	alpsAgainID,	QString("These aren't notes"));
+	int ascent1_1ID	= addAscent(q, QString("Peak of Europe"),		montblancID,	QDate(1999, 12, 29),	1,	QTime(15, 35),	3470,	0,	false,	1,	4,	alpsTripID,		QString("Some notes"));
+	int ascent1_2ID	= addAscent(q, QString("Lake and stuff"),		pfanderID,		QDate(2000, 1, 2),		1,	QTime(13, 48),	1030,	0,	false,	2,	3,	alpsTripID,		QString("Some other notes"));
+	int ascent2_1ID	= addAscent(q, QString("A view to a Spain"),	pyrenMntnID,	QDate(2004, 3, 25),		1,	QTime(15, 35),	1950,	2,	false,	1,	4,	bandcampID,		QString("Other notes still"));
+	int ascent3_1ID	= addAscent(q, QString("Back here, huh?"),		pfanderID,		QDate(2020, 3, 16),		1,	QTime(11, 19),	950,	0,	false,	4,	6,	alpsAgainID,	QString("Yet other notes"));
+	int ascent3_2ID	= addAscent(q, QString("Feels wrong"),			brockenID,		QDate(2020, 3, 16),		2,	QTime(16, 5),	320,	3,	true,	3,	3,	alpsAgainID,	QString("These are not the same notes"));
+	int ascent3_3ID	= addAscent(q, QString("I can see my house"),	zugspitzeID,	QDate(2020, 7, 19),		1,	QTime(14, 55),	3333,	0,	false,	2,	1,	alpsAgainID,	QString("These aren't notes"));
 	
 	if (!q.prepare(INSERT_PARTICIPATED)) return q.lastError();
 	addParticipated(q, ascent1_1ID, aliceID);

@@ -17,6 +17,7 @@ public:
 	Column* dateColumn;
 	Column* peakOnDayColumn;
 	Column* timeColumn;
+	Column* elevationGainColumn;
 	Column* hikeKindColumn;
 	Column* traverseColumn;
 	Column* difficultySystemColumn;

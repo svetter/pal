@@ -37,6 +37,7 @@ private:
 	void handle_newPeak();
 	void handle_dateSpecifiedChanged();
 	void handle_timeSpecifiedChanged();
+	void handle_elevationGainSpecifiedChanged();
 	void handle_difficultySystemChanged();
 	void handle_newTrip();
 	void handle_addHiker();

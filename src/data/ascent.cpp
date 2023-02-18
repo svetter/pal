@@ -4,13 +4,14 @@
 
 
 
-Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QSet<int>& hikerIDs, QStringList& photos, QString& description) :
+Ascent::Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QSet<int>& hikerIDs, QStringList& photos, QString& description) :
 		ascentID(ascentID),
 		title(title),
 		peakID(peakID),
 		date(date),
 		perDayIndex(perDayIndex),
 		time(time),
+		elevationGain(elevationGain),
 		hikeKind(hikeKind),
 		traverse(traverse),
 		difficultySystem(difficultySystem),
@@ -31,12 +32,13 @@ bool Ascent::equalTo(const Ascent* const other) const
 	if (date				!= other->date)				return false;
 	if (perDayIndex			!= other->perDayIndex)		return false;
 	if (time				!= other->time)				return false;
+	if (elevationGain		!= other->elevationGain)	return false;
 	if (hikeKind			!= other->hikeKind)			return false;
 	if (traverse			!= other->traverse)			return false;
 	if (difficultySystem	!= other->difficultySystem)	return false;
 	if (difficultyGrade		!= other->difficultyGrade)	return false;
 	if (tripID				!= other->tripID)			return false;
-	if (hikerIDs			!= other->hikerIDs)			return false;	// TODO compare as sets, not lists
+	if (hikerIDs			!= other->hikerIDs)			return false;
 	if (photos				!= other->photos)			return false;
 	if (description			!= other->description)		return false;
 	return true;
@@ -51,7 +53,12 @@ bool Ascent::dateSpecified() const
 
 bool Ascent::timeSpecified() const
 {
-	time.isValid();
+	return time.isValid();
+}
+
+bool Ascent::elevationGainSpecified() const
+{
+	return elevationGain != -1;
 }
 
 

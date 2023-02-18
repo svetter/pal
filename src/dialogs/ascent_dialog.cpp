@@ -26,6 +26,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	connect(newPeakButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newPeak);
 	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
 	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(elevationGainCheckbox,	&QCheckBox::stateChanged,			this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
 	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&AscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_addHiker);
@@ -124,6 +125,13 @@ void AscentDialog::insertInitData()
 		timeWidget->setTime(init->time);
 	}	
 	handle_timeSpecifiedChanged();
+	// Elevation gain
+	bool elevationGainSpecified = init->elevationGainSpecified();
+	elevationGainCheckbox->setChecked(elevationGainSpecified);
+	if (elevationGainSpecified) {
+		elevationGainSpinner->setValue(init->elevationGain);
+	}
+	handle_elevationGainSpecifiedChanged();
 	// Kind of hike
 	hikeKindCombo->setCurrentIndex(init->hikeKind);
 	// Traverse
@@ -152,6 +160,7 @@ Ascent* AscentDialog::extractData()
 	QDate		date				= parseDateWidget		(dateWidget);
 	int			perDayIndex			= parseSpinner			(peakIndexSpinner);
 	QTime		time				= parseTimeWidget		(timeWidget);
+	int			elevationGain		= parseSpinner			(elevationGainSpinner);
 	int			hikeKind			= parseEnumCombo		(hikeKindCombo, false);
 	bool		traverse			= parseCheckbox			(traverseCheckbox);
 	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
@@ -168,7 +177,7 @@ Ascent* AscentDialog::extractData()
 		difficultyGrade		= -1;
 	}
 	
-	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 	return ascent;
 }
 
@@ -201,6 +210,12 @@ void AscentDialog::handle_timeSpecifiedChanged()
 {
 	bool enabled = timeCheckbox->isChecked();
 	timeWidget->setEnabled(enabled);
+}
+
+void AscentDialog::handle_elevationGainSpecifiedChanged()
+{
+	bool enabled = elevationGainCheckbox->isChecked();
+	elevationGainSpinner->setEnabled(enabled);
 }
 
 void AscentDialog::handle_difficultySystemChanged()

@@ -117,6 +117,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QDate		date				= row->at(ascentsTable->dateColumn->getIndex()).toDate();
 	int			perDayIndex			= row->at(ascentsTable->peakOnDayColumn->getIndex()).toInt();
 	QTime		time				= row->at(ascentsTable->timeColumn->getIndex()).toTime();
+	int			elevationGain		= row->at(ascentsTable->elevationGainColumn->getIndex()).toInt();
 	int			hikeKind			= row->at(ascentsTable->hikeKindColumn->getIndex()).toInt();
 	bool		traverse			= row->at(ascentsTable->traverseColumn->getIndex()).toBool();
 	int			difficultySystem	= row->at(ascentsTable->difficultySystemColumn->getIndex()).toInt();
@@ -128,7 +129,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QStringList	photos				= photosTable->getPhotosForAscent(ascentID);
 	
 	setStatusBarMessage(QString("Successfully retrieved ascent with ascentID=%1").arg(ascentID));
-	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
 Peak* Database::getPeakAt(int rowIndex) const
