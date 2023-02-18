@@ -4,6 +4,7 @@
 #include "src/dialogs/peak_dialog.h"
 #include "src/dialogs/trip_dialog.h"
 #include "src/dialogs/parse_helper.h"
+#include "src/db/column.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -325,11 +326,12 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
 {
-	WhatIfResult whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID);
+	QList<WhatIfDeleteResult> whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID);
+	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIf);
 	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	QString title = AscentDialog::tr("Delete ascent");
-	QString question = AscentDialog::tr("Are you sure?");
+	QString question = whatIfResultString + "\n" + AscentDialog::tr("Are you sure?");
 	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto selected = QMessageBox::Cancel;
 	resultButton = QMessageBox::question(parent, title, question, options, selected);

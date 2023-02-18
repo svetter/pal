@@ -66,13 +66,9 @@ public:
 	Range*		getRangeAt		(int rowIndex) const;
 	Country*	getCountryAt	(int rowIndex) const;
 	
-	WhatIfResult whatIf_removeRow(NormalTable* table, int primaryKey) const;
-	WhatIfResult whatIf_removeRows(AssociativeTable* table, Column* idColumn, int id) const;
+	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, int primaryKey) const;
 	bool removeRow(NormalTable* table, int primaryKey);
 	bool removeRow(AssociativeTable* table, int primaryForeignKey1, int primaryForeignKey2);
-	
-	WhatIfResult whatIf_changeCell(Column* column, int primaryKey) const;	// NormalTables only
-	bool changeCell(Column* column, int primaryKey, QVariant& cell);		// NormalTables only
 	
 private:
 	void setStatusBarMessage(QString content) const;

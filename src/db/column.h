@@ -16,11 +16,12 @@ class AssociativeTable;
 
 
 
-struct WhatIfResult {
-	const Table*	affectedTable;
-	QSet<int>	affectedIDs;
+struct WhatIfDeleteResult {
+	const Table*		affectedTable;
+	const NormalTable*	itemTable;
+	QSet<int>			affectedRowIndices;
 	
-	WhatIfResult(const Table* affectedTable, QSet<int> affectedIDs);
+	WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, QSet<int> affectedRowIndices);
 };
 
 
@@ -55,6 +56,11 @@ public:
 
 
 QString getColumnListStringOf(QList<const Column*> columns);
+
+
+
+QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& whatIfResult);
+QString getTranslatedWhatIfDeleteResultDescription(const QList<WhatIfDeleteResult>& whatIfResults);
 
 
 

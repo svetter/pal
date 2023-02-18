@@ -39,8 +39,6 @@ public:
 protected:
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns);
-	WhatIfResult whatIf_removeRow(int primaryKey);
-	template<typename T> void changeCell(int ascentID, const Column* column, T newValue);
 	
 private:
 	// SQL

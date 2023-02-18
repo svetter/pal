@@ -206,45 +206,40 @@ Country* Database::getCountryAt(int rowIndex) const
 
 
 
-WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const
+QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, int primaryKey) const
 {
-	// TODO #68
-	qDebug() << "UNIMPLEMENTED: Database::whatIf_removeRow()";
-	assert(false);
-	return WhatIfResult(nullptr, QSet<int>());
-}
-
-WhatIfResult Database::whatIf_removeRows(AssociativeTable* table, Column* idColumn, int id) const
-{
-	assert(idColumn->getTable() == table);
-	assert(idColumn->getType() == integer);
-	
-	const Column* otherColumn = table->getOtherColumn(idColumn);
-	assert(otherColumn->isForeignKey());
-	const Column* referencedColumn = otherColumn->getReferencedForeignColumn();
-	assert(!referencedColumn->getTable()->isAssociative());
-	NormalTable* referencedTable = (NormalTable*) referencedColumn->getTable();
-	
-	QSet<int> affectedOtherIDs = table->getMatchingEntries(idColumn, id);
-	
-	return WhatIfResult(referencedTable, affectedOtherIDs);
-}
-
-
-WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const	// NormalTables only
-{
-	// TODO #72
-	qDebug() << "UNIMPLEMENTED: Database::whatIf_changeCell()";
-	assert(false);
-	return WhatIfResult(nullptr, QSet<int>());
-}
-
-bool Database::changeCell(Column* column, int primaryKey, QVariant& cell)	// NormalTables only
-{
-	// TODO #73
-	qDebug() << "UNIMPLEMENTED: Database::changeCell()";
-	assert(false);
-	return false;
+	const Column* primaryKeyColumn = table->getPrimaryKeyColumn();
+	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
+	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
+		if ((*iter)->isAssociative()) {	// associative table
+			const AssociativeTable* candidateTable = (AssociativeTable*) *iter;
+			
+			const Column* matchingColumn = candidateTable->getOwnColumnReferencing(primaryKeyColumn);
+			if (!matchingColumn) continue;
+			
+			QSet<int> affectedRowIndices = candidateTable->getMatchingBufferRowIndices(matchingColumn, primaryKey);
+			
+			if (!affectedRowIndices.isEmpty()) {
+				const NormalTable* itemTable = candidateTable->traverseAssociativeRelation(primaryKeyColumn);
+				result.append(WhatIfDeleteResult(candidateTable, itemTable, affectedRowIndices));
+			}
+		}
+		else {	// normal table
+			const NormalTable* candidateTable = (NormalTable*) *iter;
+			
+			QSet<int> affectedRowIndices = QSet<int>();
+			for (const Column* otherTableColumn : candidateTable->getColumnList()) {
+				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
+				
+				affectedRowIndices.unite(candidateTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey));
+			}
+			
+			if (!affectedRowIndices.isEmpty()) {
+				result.append(WhatIfDeleteResult(candidateTable, candidateTable, affectedRowIndices));
+			}
+		}
+	}
+	return result;
 }
 
 
