@@ -264,3 +264,9 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 		delete editedAscent;
 	}
 }
+
+void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
+{
+	WhatIfResult whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID);
+	// TODO
+}

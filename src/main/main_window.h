@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QTableView>
+#include <QShortcut>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,6 +20,8 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	
 	Database db;
 	QMenu tableContextMenu;
+	QAction* tableContextMenuOpenAction;
+	QList<QShortcut*> shortcuts;
 	
 public:
 	MainWindow();
@@ -29,9 +32,14 @@ public:
 	
 private:
 	void setupTableView(QTableView* view, NormalTable* table);
-	void initTableContextMenu();
+	void initTableContextMenuAndShortcuts();
 	
 private slots:
+	void handle_openSelectedItem();
+	void handle_editSelectedItem();
+	void handle_duplicateAndEditSelectedItem();
+	void handle_deleteSelectedItem();
+	
 	void handle_newAscent();
 	void handle_newPeak();
 	void handle_newTrip();
@@ -39,6 +47,8 @@ private slots:
 	void handle_newRegion();
 	void handle_newRange();
 	void handle_newCountry();
+	
+	void handle_openAscent	(const QModelIndex& index);
 	
 	void handle_editAscent	(const QModelIndex& index);
 	void handle_editPeak	(const QModelIndex& index);
@@ -48,12 +58,15 @@ private slots:
 	void handle_editRange	(const QModelIndex& index);
 	void handle_editCountry	(const QModelIndex& index);
 	
-	void handle_rightClick(QPoint pos);
+	void handle_deleteAscent	(int rowIndex);
+	void handle_deletePeak		(int rowIndex);
+	void handle_deleteTrip		(int rowIndex);
+	void handle_deleteHiker		(int rowIndex);
+	void handle_deleteRegion	(int rowIndex);
+	void handle_deleteRange		(int rowIndex);
+	void handle_deleteCountry	(int rowIndex);
 	
-	void handle_contextMenu_openItem();
-	void handle_contextMenu_editItem();
-	void handle_contextMenu_editDuplicatedItem();
-	void handle_contextMenu_deleteItem();
+	void handle_rightClick(QPoint pos);
 	
 private:
 	QTableView* getCurrentTableView() const;

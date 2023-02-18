@@ -27,7 +27,7 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 
 void NewOrEditDialog::handle_cancel()
 {
-	QMessageBox::StandardButton resBtn = QMessageBox::Yes;
+	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	if (changesMade()) {
 		QString title;
 		if (edit) {
@@ -38,9 +38,9 @@ void NewOrEditDialog::handle_cancel()
 		QString question = tr("Are you sure?");
 		auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 		auto selected = QMessageBox::Cancel;
-		resBtn = QMessageBox::question(this, title, question, options, selected);
+		resultButton = QMessageBox::question(this, title, question, options, selected);
 	}
-	if (resBtn == QMessageBox::Yes) {
+	if (resultButton == QMessageBox::Yes) {
 		QDialog::reject();
 	}
 }

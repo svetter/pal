@@ -49,6 +49,7 @@ private:
 
 int openNewAscentDialogAndStore(QWidget* parent, Database* db);
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent);
+void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent);
 
 
 

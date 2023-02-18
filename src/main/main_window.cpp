@@ -16,7 +16,8 @@
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
 		db(Database(this)),
-		tableContextMenu(QMenu(this))
+		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr),
+		shortcuts(QList<QShortcut*>())
 {
 	setupUi(this);
 	
@@ -62,11 +63,13 @@ MainWindow::MainWindow() :
 	
 	db.setStatusBar(statusbar);
 	
-	initTableContextMenu();
+	initTableContextMenuAndShortcuts();
 }
 
 MainWindow::~MainWindow()
-{}
+{
+	qDeleteAll(shortcuts);
+}
 
 
 
@@ -89,19 +92,110 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 	view->resizeColumnsToContents();
 }
 
-void MainWindow::initTableContextMenu()
+
+
+void MainWindow::initTableContextMenuAndShortcuts()
 {
-	QAction* openAction			= tableContextMenu.addAction(tr("Open..."),						QKeySequence(Qt::Key_Enter));
-	tableContextMenu.addSeparator();
-	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						QKeySequence(Qt::CTRL | Qt::Key_Enter));
-	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	QKeySequence::Copy);
-	tableContextMenu.addSeparator();
-	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					QKeySequence::Delete);
+	QKeySequence openKeySequence		= QKeySequence(Qt::Key_Enter);
+	QKeySequence editKeySequence		= QKeySequence(Qt::CTRL | Qt::Key_Enter);
+	QKeySequence duplicateKeySequence	= QKeySequence::Copy;
+	QKeySequence deleteKeySequence		= QKeySequence::Delete;
 	
-	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_contextMenu_openItem);
-	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_contextMenu_editItem);
-	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_contextMenu_editDuplicatedItem);
-	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_contextMenu_deleteItem);
+	// Context menu
+	QAction* openAction			= tableContextMenu.addAction(tr("Open..."),						openKeySequence);
+	tableContextMenu.addSeparator();
+	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						editKeySequence);
+	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
+	tableContextMenu.addSeparator();
+	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					deleteKeySequence);
+	// store openAction (for disbling it where it's not needed)
+	tableContextMenuOpenAction = openAction;
+	
+	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_openSelectedItem);
+	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
+	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_duplicateAndEditSelectedItem);
+	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_deleteSelectedItem);
+	
+	// Keyboard shortcuts
+	QList<QTableView*> tableViews = mainAreaTabs->findChildren<QTableView*>();
+	for (auto iter = tableViews.constBegin(); iter != tableViews.constEnd(); iter++) {
+		QShortcut* openShortcut			= new QShortcut(openKeySequence,		*iter);
+		QShortcut* editShortcut			= new QShortcut(editKeySequence,		*iter);
+		QShortcut* duplicateShortcut	= new QShortcut(duplicateKeySequence,	*iter);
+		QShortcut* deleteShortcut		= new QShortcut(deleteKeySequence,		*iter);
+		
+		shortcuts.append(openShortcut);
+		shortcuts.append(editShortcut);
+		shortcuts.append(duplicateShortcut);
+		shortcuts.append(deleteShortcut);
+		
+		connect(openShortcut,		&QShortcut::activated, this, &MainWindow::handle_openSelectedItem);
+		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::handle_editSelectedItem);
+		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
+		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItem);
+	}
+	
+}
+
+
+
+void MainWindow::handle_openSelectedItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex selectedIndex = currentTableView->currentIndex();
+	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
+	
+	if (currentTableView == ascentsTableView)	{ handle_openAscent		(selectedIndex);	return; }
+}
+
+void MainWindow::handle_editSelectedItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex selectedIndex = currentTableView->currentIndex();
+	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
+	
+	if (currentTableView == ascentsTableView)	{ handle_editAscent		(selectedIndex);	return; }
+	if (currentTableView == peaksTableView)		{ handle_editPeak		(selectedIndex);	return; }
+	if (currentTableView == tripsTableView)		{ handle_editTrip		(selectedIndex);	return; }
+	if (currentTableView == hikersTableView)	{ handle_editHiker		(selectedIndex);	return; }
+	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
+	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
+	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
+	assert(false);
+}
+
+void MainWindow::handle_duplicateAndEditSelectedItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex selectedIndex = currentTableView->currentIndex();
+	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
+	int rowIndex = selectedIndex.row();
+	
+	if (currentTableView == ascentsTableView)	{ handle_deleteAscent	(rowIndex);	return; }
+	if (currentTableView == peaksTableView)		{ handle_deletePeak		(rowIndex);	return; }
+	if (currentTableView == tripsTableView)		{ handle_deleteTrip		(rowIndex);	return; }
+	if (currentTableView == hikersTableView)	{ handle_deleteHiker	(rowIndex);	return; }
+	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
+	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
+	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	assert(false);
+}
+
+void MainWindow::handle_deleteSelectedItem()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	QModelIndex selectedIndex = currentTableView->currentIndex();
+	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
+	int rowIndex = selectedIndex.row();
+	
+	if (currentTableView == ascentsTableView)	{ handle_deleteAscent	(rowIndex);	return; }
+	if (currentTableView == peaksTableView)		{ handle_deletePeak		(rowIndex);	return; }
+	if (currentTableView == tripsTableView)		{ handle_deleteTrip		(rowIndex);	return; }
+	if (currentTableView == hikersTableView)	{ handle_deleteHiker	(rowIndex);	return; }
+	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
+	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
+	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	assert(false);
 }
 
 
@@ -152,6 +246,14 @@ void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*
 
 
 
+void MainWindow::handle_openAscent(const QModelIndex& index)
+{
+	// TODO
+	qDebug() << "handle_openAscent";
+}
+
+
+
 void MainWindow::handle_editAscent(const QModelIndex& index)
 {
 	Ascent* selectedAscent = db.getAscentAt(index.row());
@@ -196,59 +298,65 @@ void MainWindow::handle_editCountry(const QModelIndex& index)
 
 
 
+void MainWindow::handle_deleteAscent(int rowIndex)
+{
+	Ascent* selectedAscent = db.getAscentAt(rowIndex);
+	openDeleteAscentDialogAndExecute(this, &db, selectedAscent);
+}
+
+void MainWindow::handle_deletePeak(int rowIndex)
+{
+	Peak* selectedPeak = db.getPeakAt(rowIndex);
+//	openDeletePeakDialogAndExecute(this, &db, selectedPeak);
+	qDebug() << "handle_deletePeak";
+}
+
+void MainWindow::handle_deleteTrip(int rowIndex)
+{
+	Trip* selectedTrip = db.getTripAt(rowIndex);
+//	openDeleteTripDialogAndExecute(this, &db, selectedTrip);
+	qDebug() << "handle_deleteTrip";
+}
+
+void MainWindow::handle_deleteHiker(int rowIndex)
+{
+	Hiker* selectedHiker = db.getHikerAt(rowIndex);
+//	openDeleteHikerDialogAndExecute(this, &db, selectedHiker);
+	qDebug() << "handle_deleteHiker";
+}
+
+void MainWindow::handle_deleteRegion(int rowIndex)
+{
+	Region* selectedRegion = db.getRegionAt(rowIndex);
+//	openDeleteRegionDialogAndExecute(this, &db, selectedRegion);
+	qDebug() << "handle_deleteRegion";
+}
+
+void MainWindow::handle_deleteRange(int rowIndex)
+{
+	Range* selectedRange = db.getRangeAt(rowIndex);
+//	openDeleteRangeDialogAndExecute(this, &db, selectedRange);
+	qDebug() << "handle_deleteRange";
+}
+
+void MainWindow::handle_deleteCountry(int rowIndex)
+{
+	Country* selectedCountry = db.getCountryAt(rowIndex);
+//	openDeleteCountryDialogAndExecute(this, &db, selectedCountry);
+	qDebug() << "handle_deleteCountry";
+}
+
+
+
 void MainWindow::handle_rightClick(QPoint pos)
 {
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex index = currentTableView->indexAt(pos);
 	if (!index.isValid()) return;
 	
+	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);
+	
 	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
-}
-
-
-
-void MainWindow::handle_contextMenu_openItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
-	int selectedRowIndex = currentTableView->currentIndex().row();
-	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
-	qDebug() << QString("User requested to open %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
-	// TODO
-}
-
-void MainWindow::handle_contextMenu_editItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex selectedIndex = currentTableView->currentIndex();
-	if (currentTableView == ascentsTableView)	{ handle_editAscent		(selectedIndex);	return; }
-	if (currentTableView == peaksTableView)		{ handle_editPeak		(selectedIndex);	return; }
-	if (currentTableView == tripsTableView)		{ handle_editTrip		(selectedIndex);	return; }
-	if (currentTableView == hikersTableView)	{ handle_editHiker		(selectedIndex);	return; }
-	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
-	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
-	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
-	assert(false);
-}
-
-void MainWindow::handle_contextMenu_editDuplicatedItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
-	int selectedRowIndex = currentTableView->currentIndex().row();
-	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
-	qDebug() << QString("User requested to duplicate and edit %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
-	// TODO
-}
-
-void MainWindow::handle_contextMenu_deleteItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	NormalTable* currentTableModel = (NormalTable*) currentTableView->model();
-	int selectedRowIndex = currentTableView->currentIndex().row();
-	int itemID = currentTableModel->getBufferRow(selectedRowIndex)->at(0).toInt();
-	qDebug() << QString("User requested to delete %1 with ID=%2").arg(currentTableModel->getItemNameSingularLowercase()).arg(itemID);
-	// TODO
 }
 
 
