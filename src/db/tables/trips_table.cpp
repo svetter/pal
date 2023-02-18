@@ -6,7 +6,7 @@
 
 
 TripsTable::TripsTable() :
-		NormalTable(QString("Trips"), QString("trip"), tr("Trips"), tr("None")),
+		NormalTable(QString("Trips"), tr("Trips"), "tripID"),
 		//											name				uiName				type		nullable	primaryKey	foreignKey	inTable
 		nameColumn			(new const Column(QString("name"),			tr("Name"),			varchar,	true,		false,		nullptr,	this)),
 		startDateColumn		(new const Column(QString("startDate"),		tr("Start date"),	date,		true,		false,		nullptr,	this)),
@@ -35,4 +35,21 @@ int TripsTable::addRow(QWidget* parent, const Trip* trip)
 	}
 	int newTripIndex = NormalTable::addRow(parent, data);
 	return newTripIndex;
+}
+
+
+
+QString TripsTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString TripsTable::getItemNameSingularLowercase() const
+{
+	return tr("trip");
+}
+
+QString TripsTable::getItemNamePluralLowercase() const
+{
+	return tr("trips");
 }

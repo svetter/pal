@@ -20,6 +20,10 @@ public:
 	TripsTable();
 	
 	int addRow(QWidget* parent, const Trip* trip);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 

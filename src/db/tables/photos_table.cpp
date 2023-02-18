@@ -7,7 +7,7 @@
 
 
 PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
-		NormalTable(QString("Photos"), QString("photo"), QString(), QString()),
+		NormalTable(QString("Photos"), QString(), "photoID"),
 		//										name			uiName				type		nullable	primaryKey	foreignKey				inTable
 		ascentIDColumn	(new const Column(QString("ascentID"),	QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
 		sortIndexColumn	(new const Column(QString("sortIndex"),	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
@@ -57,4 +57,21 @@ void PhotosTable::addRow(QWidget* parent, int ascentID, int sortIndex, const QSt
 		assert(false);
 	}
 	NormalTable::addRow(parent, data);
+}
+
+
+
+QString PhotosTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString PhotosTable::getItemNameSingularLowercase() const
+{
+	return tr("photo");
+}
+
+QString PhotosTable::getItemNamePluralLowercase() const
+{
+	return tr("photos");
 }

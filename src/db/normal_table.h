@@ -10,16 +10,13 @@
 
 
 class NormalTable : public Table, public QAbstractItemModel {
-	QString itemNameSingularLowercase;
-	QString noneString;
-	
 	const Column*			primaryKeyColumn;
 	QList<const Column*>	nonPrimaryColumns;
 	
 public:
 	static const int PrimaryKeyRole;
 	
-	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString);
+	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);
 	~NormalTable();
 	
 	void addColumn(const Column* column);
@@ -35,8 +32,10 @@ public:
 	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
 	int getNumberOfRows() const;
-
-	QString getItemNameSingularLowercase() const;
+	
+	virtual QString getNoneString() const = 0;
+	virtual QString getItemNameSingularLowercase() const = 0;
+	virtual QString getItemNamePluralLowercase() const = 0;
 	
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data);

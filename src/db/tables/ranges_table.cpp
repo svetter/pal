@@ -6,7 +6,7 @@
 
 
 RangesTable::RangesTable() :
-		NormalTable(QString("Ranges"), QString("range"), tr("Mountain ranges"), tr("None")),
+		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID"),
 		//										name			uiName				type		nullable	primaryKey	foreignKey	inTable
 		nameColumn		(new const Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
 		continentColumn	(new const Column(QString("continent"),	tr("Continent"),	integer,	true,		false,		nullptr,	this))
@@ -29,4 +29,21 @@ int RangesTable::addRow(QWidget* parent, const Range* range)
 	}
 	int newRangeIndex = NormalTable::addRow(parent, data);
 	return newRangeIndex;
+}
+
+
+
+QString RangesTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString RangesTable::getItemNameSingularLowercase() const
+{
+	return tr("mountain range");
+}
+
+QString RangesTable::getItemNamePluralLowercase() const
+{
+	return tr("mountain ranges");
 }

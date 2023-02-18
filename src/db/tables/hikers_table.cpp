@@ -6,7 +6,7 @@
 
 
 HikersTable::HikersTable() :
-		NormalTable(QString("Hikers"), QString("hiker"), tr("Hikers"), tr("None")),
+		NormalTable(QString("Hikers"), tr("Hikers"), "hikerID"),
 		//									name		uiName		type		nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new const Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
@@ -26,4 +26,21 @@ int HikersTable::addRow(QWidget* parent, const Hiker* hiker)
 	}
 	int newHikerIndex = NormalTable::addRow(parent, data);
 	return newHikerIndex;
+}
+
+
+
+QString HikersTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString HikersTable::getItemNameSingularLowercase() const
+{
+	return tr("hiker");
+}
+
+QString HikersTable::getItemNamePluralLowercase() const
+{
+	return tr("hikers");
 }

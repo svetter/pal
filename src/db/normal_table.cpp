@@ -10,11 +10,9 @@ const int NormalTable::PrimaryKeyRole = -1;
 
 
 
-NormalTable::NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString) :
+NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
 		Table(name, uiName, false),
-		itemNameSingularLowercase(itemNameSingularLowercase),
-		noneString(noneString),
-		primaryKeyColumn(new Column(itemNameSingularLowercase + "ID", QString(), DataType::integer, false, true, nullptr, this)),
+		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), DataType::integer, false, true, nullptr, this)),
 		nonPrimaryColumns(QList<const Column*>())
 {}
 
@@ -91,13 +89,6 @@ int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
 int NormalTable::getNumberOfRows() const
 {
 	return buffer->size();
-}
-
-
-
-QString NormalTable::getItemNameSingularLowercase() const
-{
-	return itemNameSingularLowercase;
 }
 
 
@@ -195,7 +186,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			switch (role) {
 			case Qt::DisplayRole:
 				if (rowIndex == -1) {
-					result = QVariant(noneString);
+					result = QVariant(getNoneString());
 				} else {
 					result = bufferValue;
 				}
@@ -218,7 +209,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		case varchar:
 			if (role != Qt::DisplayRole) break;
 			if (rowIndex == -1) {
-				result = QVariant(noneString);
+				result = QVariant(getNoneString());
 			} else {
 				result = bufferValue;
 			}

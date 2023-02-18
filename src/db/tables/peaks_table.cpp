@@ -6,7 +6,7 @@
 
 
 PeaksTable::PeaksTable(const Column* foreignRegionIDColumn) :
-		NormalTable(QString("Peaks"), QString("peak"), tr("Peaks"), tr("None")),
+		NormalTable(QString("Peaks"), tr("Peaks"), "peakID"),
 		//										name			uiName						type		nullable	primaryKey	foreignKey				inTable
 		nameColumn		(new const Column(QString("name"),		tr("Name"),					varchar,	false,		false,		nullptr,				this)),
 		heightColumn	(new const Column(QString("height"),	tr("Height"),				integer,	true,		false,		nullptr,				this)),
@@ -44,4 +44,21 @@ int PeaksTable::addRow(QWidget* parent, const Peak* peak)
 	}
 	int newPeakIndex = NormalTable::addRow(parent, data);
 	return newPeakIndex;
+}
+
+
+
+QString PeaksTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString PeaksTable::getItemNameSingularLowercase() const
+{
+	return tr("peak");
+}
+
+QString PeaksTable::getItemNamePluralLowercase() const
+{
+	return tr("peaks");
 }

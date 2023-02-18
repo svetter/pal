@@ -28,6 +28,10 @@ public:
 	AscentsTable(const Column* foreignPeakIDColumn, const Column* foreignTripIDColumn);
 	
 	int addRow(QWidget* parent, Ascent* ascent);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 

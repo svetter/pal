@@ -22,6 +22,10 @@ public:
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
 	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
+	
 private:
 	void addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath);
 };

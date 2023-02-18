@@ -18,6 +18,10 @@ public:
 	RangesTable();
 	
 	int addRow(QWidget* parent, const Range* range);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 

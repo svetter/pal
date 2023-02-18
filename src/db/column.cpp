@@ -28,6 +28,7 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 }
 
 
+
 QString Column::getName() const
 {
 	return name;

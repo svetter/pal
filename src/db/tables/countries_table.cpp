@@ -6,7 +6,7 @@
 
 
 CountriesTable::CountriesTable() :
-		NormalTable(QString("Countries"), QString("country"), tr("Countries"), tr("None")),
+		NormalTable(QString("Countries"), tr("Countries"), "countryID"),
 		//									name		uiName		type		nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new const Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
@@ -26,4 +26,21 @@ int CountriesTable::addRow(QWidget* parent, const Country* country)
 	}
 	int newCountryIndex = NormalTable::addRow(parent, data);
 	return newCountryIndex;
+}
+
+
+
+QString CountriesTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString CountriesTable::getItemNameSingularLowercase() const
+{
+	return tr("country");
+}
+
+QString CountriesTable::getItemNamePluralLowercase() const
+{
+	return tr("countries");
 }

@@ -15,6 +15,10 @@ public:
 	RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn);
 	
 	int addRow(QWidget* parent, const Region* region);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 

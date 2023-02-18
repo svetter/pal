@@ -6,7 +6,7 @@
 
 
 AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* foreignTripIDColumn) :
-		NormalTable(QString("Ascents"), QString("ascent"), tr("Ascents"), tr("None")),
+		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID"),
 		//												name					uiName				type		nullable	primaryKey	foreignKey				inTable
 		titleColumn				(new const Column(QString("title"),				tr("Title"),		varchar,	true,		false,		nullptr,				this)),
 		peakIDColumn			(new const Column(QString("peakID"),			QString(),			integer,	true,		false,		foreignPeakIDColumn,	this)),
@@ -60,4 +60,21 @@ int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 	int newAscentIndex = NormalTable::addRow(parent, data);
 	ascent->ascentID = buffer->at(newAscentIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newAscentIndex;
+}
+
+
+
+QString AscentsTable::getNoneString() const
+{
+	return tr("None");
+}
+
+QString AscentsTable::getItemNameSingularLowercase() const
+{
+	return tr("ascent");
+}
+
+QString AscentsTable::getItemNamePluralLowercase() const
+{
+	return tr("ascents");
 }

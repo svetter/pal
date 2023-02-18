@@ -23,6 +23,10 @@ public:
 	PeaksTable(const Column* foreignRegionIDColumn);
 	
 	int addRow(QWidget* parent, const Peak* peak);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 

@@ -17,6 +17,10 @@ public:
 	HikersTable();
 	
 	int addRow(QWidget* parent, const Hiker* hiker);
+	
+	virtual QString getNoneString() const;
+	virtual QString getItemNameSingularLowercase() const;
+	virtual QString getItemNamePluralLowercase() const;
 };
 
 
