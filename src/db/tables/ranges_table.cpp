@@ -7,9 +7,9 @@
 
 RangesTable::RangesTable() :
 		NormalTable(QString("Ranges"), QString("range"), tr("Mountain ranges"), tr("None")),
-		//							name					uiName				type		nullable	primaryKey	foreignKey	inTable
-		nameColumn		(new Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
-		continentColumn	(new Column(QString("continent"),	tr("Continent"),	integer,	true,		false,		nullptr,	this))
+		//										name			uiName				type		nullable	primaryKey	foreignKey	inTable
+		nameColumn		(new const Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
+		continentColumn	(new const Column(QString("continent"),	tr("Continent"),	integer,	true,		false,		nullptr,	this))
 {
 	addColumn(nameColumn);
 	addColumn(continentColumn);
@@ -20,7 +20,7 @@ RangesTable::RangesTable() :
 int RangesTable::addRow(QWidget* parent, const Range* range)
 {
 	assert(range->rangeID == -1);
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == nameColumn)		{ data.append(range->name);			continue; }

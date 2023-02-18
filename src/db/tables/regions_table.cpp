@@ -5,12 +5,12 @@
 
 
 
-RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
+RegionsTable::RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn) :
 		NormalTable(QString("Regions"), QString("region"), tr("Regions"), tr("None")),
-		//							name					uiName		type		nullable	primaryKey	foreignKey				inTable
-		nameColumn		(new Column(QString("name"),		tr("Name"),	varchar,	false,		false,		nullptr,				this)),
-		rangeIDColumn	(new Column(QString("rangeID"),		QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),
-		countryIDColumn	(new Column(QString("countryID"),	QString(),	integer,	true,		false,		foreignCountryIDColumn,	this))
+		//										name			uiName		type		nullable	primaryKey	foreignKey				inTable
+		nameColumn		(new const Column(QString("name"),		tr("Name"),	varchar,	false,		false,		nullptr,				this)),
+		rangeIDColumn	(new const Column(QString("rangeID"),	QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),
+		countryIDColumn	(new const Column(QString("countryID"),	QString(),	integer,	true,		false,		foreignCountryIDColumn,	this))
 {
 	addColumn(nameColumn);
 	addColumn(rangeIDColumn);
@@ -22,7 +22,7 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 int RegionsTable::addRow(QWidget* parent, const Region* region)
 {
 	assert(region->regionID == -1);
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == nameColumn)		{ data.append(region->name);		continue; }

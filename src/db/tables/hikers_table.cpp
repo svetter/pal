@@ -7,8 +7,8 @@
 
 HikersTable::HikersTable() :
 		NormalTable(QString("Hikers"), QString("hiker"), tr("Hikers"), tr("None")),
-		//						name				uiName		type		nullable	primaryKey	foreignKey	inTable
-		nameColumn	(new Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
+		//									name		uiName		type		nullable	primaryKey	foreignKey	inTable
+		nameColumn	(new const Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
 	addColumn(nameColumn);
 }
@@ -18,7 +18,7 @@ HikersTable::HikersTable() :
 int HikersTable::addRow(QWidget* parent, const Hiker* hiker)
 {
 	assert(hiker->hikerID == -1);
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == nameColumn)	{ data.append(hiker->name);	continue; }

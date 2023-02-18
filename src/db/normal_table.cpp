@@ -15,7 +15,7 @@ NormalTable::NormalTable(QString name, QString itemNameSingularLowercase, QStrin
 		itemNameSingularLowercase(itemNameSingularLowercase),
 		noneString(noneString),
 		primaryKeyColumn(new Column(itemNameSingularLowercase + "ID", QString(), DataType::integer, false, true, nullptr, this)),
-		nonPrimaryColumns(QList<Column*>())
+		nonPrimaryColumns(QList<const Column*>())
 {}
 
 NormalTable::~NormalTable()
@@ -28,27 +28,31 @@ NormalTable::~NormalTable()
 
 
 
-void NormalTable::addColumn(Column* column)
+void NormalTable::addColumn(const Column* column)
 {
 	nonPrimaryColumns.append(column);
 }
 
 
-Column* NormalTable::getPrimaryKeyColumn() const
+const Column* NormalTable::getPrimaryKeyColumn() const
 {
 	return primaryKeyColumn;
 }
 
-QList<Column*> NormalTable::getColumnList() const
+QList<const Column*> NormalTable::getColumnList() const
 {
-	QList<Column*> result = { primaryKeyColumn };
-	result.append(nonPrimaryColumns);
+	QList<const Column*> result = getNonPrimaryKeyColumnList();
+	result.insert(0, primaryKeyColumn);
 	return result;
 }
 
-QList<Column*> NormalTable::getNonPrimaryKeyColumnList() const
+QList<const Column*> NormalTable::getNonPrimaryKeyColumnList() const
 {
-	return QList<Column*>(nonPrimaryColumns);
+	QList<const Column*> result = QList<const Column*>();
+	for (auto iter = nonPrimaryColumns.constBegin(); iter != nonPrimaryColumns.constEnd(); iter++) {
+		result.append(*iter);
+	}
+	return result;
 }
 
 QString NormalTable::getNonPrimaryKeyColumnListString() const
@@ -66,7 +70,7 @@ int NormalTable::getNumberOfNonPrimaryKeyColumns() const
 	return nonPrimaryColumns.size();
 }
 
-Column* NormalTable::getColumnByIndex(int index) const
+const Column* NormalTable::getColumnByIndex(int index) const
 {
 	assert(index >= 0 && index < getNumberOfColumns());
 	if (index == 0) return primaryKeyColumn;
@@ -181,7 +185,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			}
 			continue;
 		}
-		Column* column = getColumnByIndex(columnIndex);
+		const Column* column = getColumnByIndex(columnIndex);
 		
 		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer->at(rowIndex)->at(columnIndex);
 		QVariant result = QVariant();

@@ -5,21 +5,21 @@
 
 
 
-AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn) :
+AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* foreignTripIDColumn) :
 		NormalTable(QString("Ascents"), QString("ascent"), tr("Ascents"), tr("None")),
-		//									name							uiName				type		nullable	primaryKey	foreignKey				inTable
-		titleColumn				(new Column(QString("title"),				tr("Title"),		varchar,	true,		false,		nullptr,				this)),
-		peakIDColumn			(new Column(QString("peakID"),				QString(),			integer,	true,		false,		foreignPeakIDColumn,	this)),
-		dateColumn				(new Column(QString("date"),				tr("Date"),			date,		true,		false,		nullptr,				this)),
-		peakOnDayColumn			(new Column(QString("peakOnDay"),			tr("Peak/day"),		integer,	false,		false,		nullptr,				this)),
-		timeColumn				(new Column(QString("time"),				tr("Time"),			time_,		true,		false,		nullptr,				this)),
-		elevationGainColumn		(new Column(QString("elevationGain"),		tr("Elev. gain"),	integer,	true,		false,		nullptr,				this)),
-		hikeKindColumn			(new Column(QString("hikeKind"),			tr("Kind of hike"),	integer,	false,		false,		nullptr,				this)),
-		traverseColumn			(new Column(QString("traverse"),			tr("Traverse"),		bit,		false,		false,		nullptr,				this)),
-		difficultySystemColumn	(new Column(QString("difficultySystem"),	tr("Diff. system"),	integer,	true,		false,		nullptr,				this)),
-		difficultyGradeColumn	(new Column(QString("difficultyGrade"),		tr("Diff. grade"),	integer,	true,		false,		nullptr,				this)),
-		tripIDColumn			(new Column(QString("tripID"),				QString(),			integer,	true,		false,		foreignTripIDColumn,	this)),
-		descriptionColumn		(new Column(QString("description"),			tr("Description"),	varchar,	true,		false,		nullptr,				this))
+		//												name					uiName				type		nullable	primaryKey	foreignKey				inTable
+		titleColumn				(new const Column(QString("title"),				tr("Title"),		varchar,	true,		false,		nullptr,				this)),
+		peakIDColumn			(new const Column(QString("peakID"),			QString(),			integer,	true,		false,		foreignPeakIDColumn,	this)),
+		dateColumn				(new const Column(QString("date"),				tr("Date"),			date,		true,		false,		nullptr,				this)),
+		peakOnDayColumn			(new const Column(QString("peakOnDay"),			tr("Peak/day"),		integer,	false,		false,		nullptr,				this)),
+		timeColumn				(new const Column(QString("time"),				tr("Time"),			time_,		true,		false,		nullptr,				this)),
+		elevationGainColumn		(new const Column(QString("elevationGain"),		tr("Elev. gain"),	integer,	true,		false,		nullptr,				this)),
+		hikeKindColumn			(new const Column(QString("hikeKind"),			tr("Kind of hike"),	integer,	false,		false,		nullptr,				this)),
+		traverseColumn			(new const Column(QString("traverse"),			tr("Traverse"),		bit,		false,		false,		nullptr,				this)),
+		difficultySystemColumn	(new const Column(QString("difficultySystem"),	tr("Diff. system"),	integer,	true,		false,		nullptr,				this)),
+		difficultyGradeColumn	(new const Column(QString("difficultyGrade"),	tr("Diff. grade"),	integer,	true,		false,		nullptr,				this)),
+		tripIDColumn			(new const Column(QString("tripID"),			QString(),			integer,	true,		false,		foreignTripIDColumn,	this)),
+		descriptionColumn		(new const Column(QString("description"),		tr("Description"),	varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(titleColumn);
 	addColumn(peakIDColumn);
@@ -40,7 +40,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDCol
 int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	assert(ascent->ascentID == -1);
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == titleColumn)				{ data.append(ascent->title);				continue; }

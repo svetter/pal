@@ -6,12 +6,12 @@
 
 
 
-PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
+PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 		NormalTable(QString("Photos"), QString("photo"), QString(), QString()),
-		//							name					uiName				type		nullable	primaryKey	foreignKey				inTable
-		ascentIDColumn	(new Column(QString("ascentID"),	QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
-		sortIndexColumn	(new Column(QString("sortIndex"),	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
-		filepathColumn	(new Column(QString("filepath"),	tr("File path"),	varchar,	true,		false,		nullptr,				this))
+		//										name			uiName				type		nullable	primaryKey	foreignKey				inTable
+		ascentIDColumn	(new const Column(QString("ascentID"),	QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
+		sortIndexColumn	(new const Column(QString("sortIndex"),	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
+		filepathColumn	(new const Column(QString("filepath"),	tr("File path"),	varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(ascentIDColumn);
 	addColumn(sortIndexColumn);
@@ -48,7 +48,7 @@ void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 
 void PhotosTable::addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath)
 {
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }

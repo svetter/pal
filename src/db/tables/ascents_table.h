@@ -12,20 +12,20 @@ class AscentsTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	Column* titleColumn;
-	Column* peakIDColumn;
-	Column* dateColumn;
-	Column* peakOnDayColumn;
-	Column* timeColumn;
-	Column* elevationGainColumn;
-	Column* hikeKindColumn;
-	Column* traverseColumn;
-	Column* difficultySystemColumn;
-	Column* difficultyGradeColumn;
-	Column* tripIDColumn;
-	Column* descriptionColumn;
+	const Column* titleColumn;
+	const Column* peakIDColumn;
+	const Column* dateColumn;
+	const Column* peakOnDayColumn;
+	const Column* timeColumn;
+	const Column* elevationGainColumn;
+	const Column* hikeKindColumn;
+	const Column* traverseColumn;
+	const Column* difficultySystemColumn;
+	const Column* difficultyGradeColumn;
+	const Column* tripIDColumn;
+	const Column* descriptionColumn;
 	
-	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
+	AscentsTable(const Column* foreignPeakIDColumn, const Column* foreignTripIDColumn);
 	
 	int addRow(QWidget* parent, Ascent* ascent);
 };

@@ -231,9 +231,9 @@ WhatIfResult Database::whatIf_removeRows(AssociativeTable* table, Column* idColu
 	assert(idColumn->getTable() == table);
 	assert(idColumn->getType() == integer);
 	
-	Column* otherColumn = table->getOtherColumn(idColumn);
+	const Column* otherColumn = table->getOtherColumn(idColumn);
 	assert(otherColumn->isForeignKey());
-	Column* referencedColumn = otherColumn->getReferencedForeignColumn();
+	const Column* referencedColumn = otherColumn->getReferencedForeignColumn();
 	assert(!referencedColumn->getTable()->isAssociative());
 	NormalTable* referencedTable = (NormalTable*) referencedColumn->getTable();
 	

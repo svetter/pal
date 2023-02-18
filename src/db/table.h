@@ -20,9 +20,9 @@ protected:
 	QList<QList<QVariant>*>* buffer;
 	
 public:
-	QString getName();
-	QString getUIName();
-	bool isAssociative();
+	QString getName() const;
+	QString getUIName() const;
+	bool isAssociative() const;
 	
 	// Buffer
 	void deleteBuffer();
@@ -31,21 +31,20 @@ public:
 	
 	// Getters
 	virtual int getNumberOfColumns() const = 0;
-	virtual QList<Column*> getColumnList() const = 0;
+	virtual QList<const Column*> getColumnList() const = 0;
 	QString getColumnListString() const;
-	int getColumnIndex(Column* column) const;
+	int getColumnIndex(const Column* column) const;
 	
 protected:
 	// Modifications
-	int addRow(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns);
+	int addRow(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns);
 	WhatIfResult whatIf_removeRow(int primaryKey);
-	WhatIfResult whatIf_changeCell(int primaryKey, Column* column);
-	template<typename T> void changeCell(int ascentID, Column* column, T newValue);
+	template<typename T> void changeCell(int ascentID, const Column* column, T newValue);
 	
 private:
 	// SQL
 	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
-	int addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns);
+	int addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns);
 };
 
 

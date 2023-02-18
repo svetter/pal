@@ -13,8 +13,8 @@ class NormalTable : public Table, public QAbstractItemModel {
 	QString itemNameSingularLowercase;
 	QString noneString;
 	
-	Column*			primaryKeyColumn;
-	QList<Column*>	nonPrimaryColumns;
+	const Column*			primaryKeyColumn;
+	QList<const Column*>	nonPrimaryColumns;
 	
 public:
 	static const int PrimaryKeyRole;
@@ -22,16 +22,16 @@ public:
 	NormalTable(QString name, QString itemNameSingularLowercase, QString uiName, QString noneString);
 	~NormalTable();
 	
-	void addColumn(Column* column);
+	void addColumn(const Column* column);
 	
 	// Getters
-	QList<Column*> getColumnList() const override;
+	QList<const Column*> getColumnList() const override;
 	int getNumberOfColumns() const override;
-	Column* getPrimaryKeyColumn() const;
+	const Column* getPrimaryKeyColumn() const;
 	int getNumberOfNonPrimaryKeyColumns() const;
-	QList<Column*> getNonPrimaryKeyColumnList() const;
+	QList<const Column*> getNonPrimaryKeyColumnList() const;
 	QString getNonPrimaryKeyColumnListString() const;
-	Column* getColumnByIndex(int index) const;
+	const Column* getColumnByIndex(int index) const;
 	int getBufferIndexForPrimaryKey(int primaryKey) const;
 	
 	int getNumberOfRows() const;

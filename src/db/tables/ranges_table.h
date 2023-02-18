@@ -12,8 +12,8 @@ class RangesTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	Column* nameColumn;
-	Column* continentColumn;
+	const Column* nameColumn;
+	const Column* continentColumn;
 	
 	RangesTable();
 	

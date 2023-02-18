@@ -4,7 +4,7 @@
 
 
 
-ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
+ParticipatedTable::ParticipatedTable(const Column* foreignAscentIDColumn, const Column* foreignHikerIDColumn) :
 		AssociativeTable(QString("Participated"), foreignAscentIDColumn, foreignHikerIDColumn),
 		ascentIDColumn(getColumn1()),
 		hikerIDColumn(getColumn2())
@@ -12,7 +12,7 @@ ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* fore
 
 
 
-void ParticipatedTable::addRows(QWidget* parent, Ascent* ascent)
+void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (auto iter = ascent->hikerIDs.constBegin(); iter != ascent->hikerIDs.constEnd(); iter++) {
 		addRow(parent, ascent->ascentID, *iter);
@@ -21,7 +21,7 @@ void ParticipatedTable::addRows(QWidget* parent, Ascent* ascent)
 
 void ParticipatedTable::addRow(QWidget* parent, int ascentID, int hikerID)
 {
-	QList<Column*> columns = getColumnList();
+	QList<const Column*> columns = getColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }

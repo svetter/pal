@@ -19,16 +19,16 @@ Table::~Table()
 }
 
 
-QString Table::getName()
+QString Table::getName() const
 {
 	return name;
 }
-QString Table::getUIName()
+QString Table::getUIName() const
 {
 	return uiName;
 }
 
-bool Table::isAssociative()
+bool Table::isAssociative() const
 {
 	return associative;
 }
@@ -61,14 +61,14 @@ QString Table::getColumnListString() const
 	return getColumnListStringOf(getColumnList());
 }
 
-int Table::getColumnIndex(Column* column) const
+int Table::getColumnIndex(const Column* column) const
 {
 	return getColumnList().indexOf(column);
 }
 
 
 
-int Table::addRow(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns)
+int Table::addRow(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns)
 {	
 	int numColumns = columns.size();
 	assert(!isAssociative() && numColumns == (getNumberOfColumns() - 1) || isAssociative() && numColumns == getNumberOfColumns());
@@ -100,7 +100,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 	if (!query.exec(queryString))
 		displayError(parent, query.lastError(), queryString);
 	
-	QList<Column*> columns = getColumnList();
+	QList<const Column*> columns = getColumnList();
 	
 	int rowIndex = 0;
 	while (query.next()) {
@@ -108,7 +108,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 		int columnIndex = 0;
 		for (auto columnIter = columns.constBegin(); columnIter!= columns.constEnd(); columnIter++) {
 			QVariant value = query.value(columnIndex);
-			Column* column = *columnIter;
+			const Column* column = *columnIter;
 			assert(column->isNullable() || !value.isNull());
 			buffer->at(rowIndex)->append(value);
 			columnIndex++;
@@ -121,7 +121,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 	return buffer;
 }
 
-int Table::addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<Column*>& columns)
+int Table::addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns)
 {
 	QString questionMarks = "";
 	for (int i = 0; i < columns.size(); i++) {

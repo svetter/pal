@@ -5,16 +5,16 @@
 
 
 
-PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
+PeaksTable::PeaksTable(const Column* foreignRegionIDColumn) :
 		NormalTable(QString("Peaks"), QString("peak"), tr("Peaks"), tr("None")),
-		//							name					uiName						type		nullable	primaryKey	foreignKey				inTable
-		nameColumn		(new Column(QString("name"),		tr("Name"),					varchar,	false,		false,		nullptr,				this)),
-		heightColumn	(new Column(QString("height"),		tr("Height"),				integer,	true,		false,		nullptr,				this)),
-		volcanoColumn	(new Column(QString("volcano"),		tr("Volcano"),				bit,		false,		false,		nullptr,				this)),
-		regionIDColumn	(new Column(QString("regionID"),	QString(),					integer,	true,		false,		foreignRegionIDColumn,	this)),
-		mapsLinkColumn	(new Column(QString("mapsLink"),	tr("Google Maps link"),		varchar,	true,		false,		nullptr,				this)),
-		earthLinkColumn	(new Column(QString("earthLink"),	tr("Google Earth link"),	varchar,	true,		false,		nullptr,				this)),
-		wikiLinkColumn	(new Column(QString("wikiLink"),	tr("Wikipedia link"),		varchar,	true,		false,		nullptr,				this))
+		//										name			uiName						type		nullable	primaryKey	foreignKey				inTable
+		nameColumn		(new const Column(QString("name"),		tr("Name"),					varchar,	false,		false,		nullptr,				this)),
+		heightColumn	(new const Column(QString("height"),	tr("Height"),				integer,	true,		false,		nullptr,				this)),
+		volcanoColumn	(new const Column(QString("volcano"),	tr("Volcano"),				bit,		false,		false,		nullptr,				this)),
+		regionIDColumn	(new const Column(QString("regionID"),	QString(),					integer,	true,		false,		foreignRegionIDColumn,	this)),
+		mapsLinkColumn	(new const Column(QString("mapsLink"),	tr("Google Maps link"),		varchar,	true,		false,		nullptr,				this)),
+		earthLinkColumn	(new const Column(QString("earthLink"),	tr("Google Earth link"),	varchar,	true,		false,		nullptr,				this)),
+		wikiLinkColumn	(new const Column(QString("wikiLink"),	tr("Wikipedia link"),		varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(nameColumn);
 	addColumn(heightColumn);
@@ -30,7 +30,7 @@ PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 int PeaksTable::addRow(QWidget* parent, const Peak* peak)
 {
 	assert(peak->peakID == -1);
-	QList<Column*> columns = getNonPrimaryKeyColumnList();
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == nameColumn)		{ data.append(peak->name);		continue; }

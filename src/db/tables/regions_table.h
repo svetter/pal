@@ -8,11 +8,11 @@
 
 class RegionsTable : public NormalTable {
 public:
-	Column* nameColumn;
-	Column* rangeIDColumn;
-	Column* countryIDColumn;
+	const Column* nameColumn;
+	const Column* rangeIDColumn;
+	const Column* countryIDColumn;
 	
-	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn);
+	RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn);
 	
 	int addRow(QWidget* parent, const Region* region);
 };

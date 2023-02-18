@@ -17,36 +17,36 @@ class AssociativeTable;
 
 
 struct WhatIfResult {
-	Table*		affectedTable;
+	const Table*	affectedTable;
 	QSet<int>	affectedIDs;
 	
-	WhatIfResult(Table* affectedTable, QSet<int> affectedIDs);
+	WhatIfResult(const Table* affectedTable, QSet<int> affectedIDs);
 };
 
 
 
 class Column {
-	QString		name;
-	QString		uiName;
-	DataType	type;
-	bool		primaryKey;
-	Column*		foreignKey;
-	bool		nullable;
-	Table*		inTable;
+	QString			name;
+	QString			uiName;
+	DataType		type;
+	bool			primaryKey;
+	const Column*	foreignKey;
+	bool			nullable;
+	const Table*	inTable;
 	
 public:
-	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, Table* inTable);
+	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* inTable);
 	
-	QString getName();
-	QString getUIName();
-	DataType getType();
-	bool isPrimaryKey();
-	bool isForeignKey();
-	Column* getReferencedForeignColumn();
-	bool isNullable();
-	Table* getTable();
+	QString			getName() const;
+	QString			getUIName() const;
+	DataType		getType() const;
+	bool			isPrimaryKey() const;
+	bool			isForeignKey() const;
+	const Column*	getReferencedForeignColumn() const;
+	bool			isNullable() const;
+	const Table*	getTable() const;
 	
-	int getIndex();
+	int getIndex() const;
 	
 	friend class NormalTable;
 	friend class AssociativeTable;
@@ -54,7 +54,7 @@ public:
 
 
 
-QString getColumnListStringOf(QList<Column*> columns);
+QString getColumnListStringOf(QList<const Column*> columns);
 
 
 

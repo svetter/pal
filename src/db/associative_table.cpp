@@ -8,10 +8,10 @@
 
 
 
-AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
+AssociativeTable::AssociativeTable(QString name, const Column* foreignKeyColumn1, const Column* foreignKeyColumn2) :
 		Table(name, QString(), true),
-		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::integer, false, true, foreignKeyColumn1, this)),
-		column2(new Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::integer, false, true, foreignKeyColumn2, this))
+		column1(new const Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::integer, false, true, foreignKeyColumn1, this)),
+		column2(new const Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::integer, false, true, foreignKeyColumn2, this))
 {
 	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::integer);
 	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::integer);
@@ -24,17 +24,17 @@ AssociativeTable::~AssociativeTable()
 }
 
 
-Column* AssociativeTable::getColumn1() const
+const Column* AssociativeTable::getColumn1() const
 {
 	return column1;
 }
 
-Column* AssociativeTable::getColumn2() const
+const Column* AssociativeTable::getColumn2() const
 {
 	return column2;
 }
 
-Column* AssociativeTable::getOtherColumn(Column* column) const
+const Column* AssociativeTable::getOtherColumn(const Column* column) const
 {
 	if (column == column1) return column2;
 	if (column == column2) return column1;
@@ -48,16 +48,16 @@ int AssociativeTable::getNumberOfColumns() const
 	return 2;
 }
 
-QList<Column*> AssociativeTable::getColumnList() const
+QList<const Column*> AssociativeTable::getColumnList() const
 {
 	return { column1, column2 };
 }
 
 
-QSet<int> AssociativeTable::getMatchingEntries(Column* column, int primaryKey) const
+QSet<int> AssociativeTable::getMatchingEntries(const Column* column, int primaryKey) const
 {
 	assert(column == column1 || column == column2);
-	Column* otherColumn = getOtherColumn(column);
+	const Column* otherColumn = getOtherColumn(column);
 	QSet<int> filtered = QSet<int>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey) {

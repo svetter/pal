@@ -6,21 +6,21 @@
 
 
 class AssociativeTable : public Table {
-	Column*	column1;
-	Column*	column2;
+	const Column*	column1;
+	const Column*	column2;
 	
 public:
-	AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
+	AssociativeTable(QString name, const Column* foreignKeyColumn1, const Column* foreignKeyColumn2);
 	~AssociativeTable();
 	
-	Column* getColumn1() const;
-	Column* getColumn2() const;
-	Column* getOtherColumn(Column* column) const;
+	const Column*	getColumn1() const;
+	const Column*	getColumn2() const;
+	const Column*	getOtherColumn(const Column* column) const;
 	
 	int getNumberOfColumns() const override;
-	QList<Column*> getColumnList() const override;
+	QList<const Column*> getColumnList() const override;
 	
-	QSet<int> getMatchingEntries(Column* column, int primaryKey) const;
+	QSet<int> getMatchingEntries(const Column* column, int primaryKey) const;
 	
 	// Modifications
 	void addRow(QWidget* parent, const QList<QVariant>& data);

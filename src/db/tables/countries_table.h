@@ -12,7 +12,7 @@ class CountriesTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	Column* nameColumn;
+	const Column* nameColumn;
 	
 	CountriesTable();
 	

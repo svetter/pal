@@ -4,14 +4,14 @@
 
 
 
-WhatIfResult::WhatIfResult(Table* affectedTable, QSet<int> affectedIDs) :
+WhatIfResult::WhatIfResult(const Table* affectedTable, QSet<int> affectedIDs) :
 		affectedTable(affectedTable),
 		affectedIDs(affectedIDs)
 {}
 
 
 
-Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, Table* inTable) :
+Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* inTable) :
 		name(name),
 		uiName(uiName),
 		type(type),
@@ -28,55 +28,55 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 }
 
 
-QString Column::getName()
+QString Column::getName() const
 {
 	return name;
 }
 
-QString Column::getUIName()
+QString Column::getUIName() const
 {
 	return uiName;
 }
 
-DataType Column::getType()
+DataType Column::getType() const
 {
 	return type;
 }
 
-bool Column::isPrimaryKey()
+bool Column::isPrimaryKey() const
 {
 	return primaryKey;
 }
 
-bool Column::isForeignKey()
+bool Column::isForeignKey() const
 {
 	return foreignKey;
 }
 
-Column* Column::getReferencedForeignColumn()
+const Column* Column::getReferencedForeignColumn() const
 {
 	return foreignKey;
 }
 
-bool Column::isNullable()
+bool Column::isNullable() const
 {
 	return nullable;
 }
 
-Table* Column::getTable()
+const Table* Column::getTable() const
 {
 	return inTable;
 }
 
 
-int Column::getIndex()
+int Column::getIndex() const
 {
 	return inTable->getColumnIndex(this);
 }
 
 
 
-QString getColumnListStringOf(QList<Column*> columns)
+QString getColumnListStringOf(QList<const Column*> columns)
 {
 	QString result = "";
 	bool first = true;

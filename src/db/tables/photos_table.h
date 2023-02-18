@@ -12,11 +12,11 @@
 
 class PhotosTable : public NormalTable {
 public:
-	Column* ascentIDColumn;
-	Column* sortIndexColumn;
-	Column* filepathColumn;
+	const Column* ascentIDColumn;
+	const Column* sortIndexColumn;
+	const Column* filepathColumn;
 	
-	PhotosTable(Column* foreignAscentIDColumn);
+	PhotosTable(const Column* foreignAscentIDColumn);
 	
 	QStringList getPhotosForAscent(int ascentID) const;
 	
