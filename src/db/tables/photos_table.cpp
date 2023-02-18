@@ -48,7 +48,7 @@ void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 
 void PhotosTable::addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath)
 {
-	QList<Column*> columns = getColumnList();
+	QList<Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }
