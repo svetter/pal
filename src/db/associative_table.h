@@ -16,6 +16,8 @@ public:
 	const Column*	getColumn1() const;
 	const Column*	getColumn2() const;
 	const Column*	getOtherColumn(const Column* column) const;
+	const Column*	getOwnColumnReferencing(const Column* column) const;
+	const NormalTable* traverseAssociativeRelation(const Column* foreignColumn) const;
 	
 	int getNumberOfColumns() const override;
 	QList<const Column*> getColumnList() const override;

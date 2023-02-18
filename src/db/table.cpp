@@ -54,6 +54,20 @@ const QList<QVariant>* Table::getBufferRow(int rowIndex) const
 	return buffer->at(rowIndex);
 }
 
+QSet<int> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
+{
+	assert(column->getTable() == this);
+	QSet<int> result = QSet<int>();
+	int rowIndex = 0;
+	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+		if ((*iter)->at(column->getIndex()) == content) {
+			result.insert(rowIndex);
+		}
+		rowIndex++;
+	}
+	return result;
+}
+
 
 
 QString Table::getColumnListString() const

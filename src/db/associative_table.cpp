@@ -38,8 +38,23 @@ const Column* AssociativeTable::getOtherColumn(const Column* column) const
 {
 	if (column == column1) return column2;
 	if (column == column2) return column1;
-	assert(false);
 	return nullptr;
+}
+
+const Column* AssociativeTable::getOwnColumnReferencing(const Column* foreignColumn) const
+{
+	if (column1->foreignKey == foreignColumn)	return column1;
+	if (column2->foreignKey == foreignColumn)	return column2;
+	return nullptr;
+}
+
+const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* foreignColumn) const
+{
+	const Column* matchingOwnColumn = getOwnColumnReferencing(foreignColumn);
+	if (!matchingOwnColumn) return nullptr;
+	
+	const Column* otherColumn = getOtherColumn(matchingOwnColumn);
+	return (NormalTable*) otherColumn->foreignKey->inTable;
 }
 
 
