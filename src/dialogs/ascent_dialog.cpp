@@ -337,6 +337,5 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 	resultButton = QMessageBox::question(parent, title, question, options, selected);
 	if (resultButton != QMessageBox::Yes) return;
 	
-	// TODO
-	qDebug() << "UNIMPLEMENTED: openDeleteAscentDialogAndExecute()";
+	db->removeRow(parent, db->ascentsTable, ascent->ascentID);
 }

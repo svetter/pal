@@ -44,6 +44,11 @@ QList<const Column*> NormalTable::getColumnList() const
 	return result;
 }
 
+QList<const Column*> NormalTable::getPrimaryKeyColumnList() const
+{
+	return { primaryKeyColumn };
+}
+
 QList<const Column*> NormalTable::getNonPrimaryKeyColumnList() const
 {
 	QList<const Column*> result = QList<const Column*>();
@@ -99,7 +104,7 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	
 	int currentNumRows = buffer->size();
 	beginInsertRows(index(0, 0, QModelIndex()), currentNumRows, currentNumRows);
-	int newRowIndex = Table::addRow(parent, data, getNonPrimaryKeyColumnList());
+	int newRowIndex = Table::addRow(parent, getNonPrimaryKeyColumnList(), data);
 	endInsertRows();
 	
 	return newRowIndex;
@@ -107,8 +112,10 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 
 void NormalTable::removeRow(QWidget* parent, int primaryKey)
 {
-	// TODO #70
-	qDebug() << "UNIMPLEMENTED: NormalTable::removeRow()";
+	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
+	beginRemoveRows(index(0, 0, QModelIndex()), bufferRowIndex, bufferRowIndex);
+	Table::removeRow(parent, getPrimaryKeyColumnList(), { primaryKey });
+	endRemoveRows();
 }
 
 

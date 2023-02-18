@@ -3,25 +3,15 @@
 
 #include <QSet>
 
+class Table;
+class NormalTable;
+class AssociativeTable;
+struct WhatIfDeleteResult;
+
 
 
 enum DataType {
 	integer, bit, varchar, date, time_
-};
-
-
-class Table;
-class NormalTable;
-class AssociativeTable;
-
-
-
-struct WhatIfDeleteResult {
-	const Table*		affectedTable;
-	const NormalTable*	itemTable;
-	QSet<int>			affectedRowIndices;
-	
-	WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, QSet<int> affectedRowIndices);
 };
 
 

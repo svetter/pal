@@ -206,40 +206,87 @@ Country* Database::getCountryAt(int rowIndex) const
 
 
 
-QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, int primaryKey) const
+QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, int primaryKey)
+{
+	return Database::removeRow_referenceSearch(nullptr, true, table, primaryKey);
+}
+
+void Database::removeRow(QWidget* parent, NormalTable* table, int primaryKey)
+{
+	Database::removeRow_referenceSearch(parent, false, table, primaryKey);
+	
+	table->removeRow(parent, primaryKey);
+}
+
+QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, int primaryKey)
 {
 	const Column* primaryKeyColumn = table->getPrimaryKeyColumn();
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
-		if ((*iter)->isAssociative()) {	// associative table
-			const AssociativeTable* candidateTable = (AssociativeTable*) *iter;
+		
+		// Look for references in associative table
+		if ((*iter)->isAssociative()) {
+			AssociativeTable* candidateTable = (AssociativeTable*) *iter;
 			
 			const Column* matchingColumn = candidateTable->getOwnColumnReferencing(primaryKeyColumn);
 			if (!matchingColumn) continue;
 			
-			QSet<int> affectedRowIndices = candidateTable->getMatchingBufferRowIndices(matchingColumn, primaryKey);
-			
-			if (!affectedRowIndices.isEmpty()) {
-				const NormalTable* itemTable = candidateTable->traverseAssociativeRelation(primaryKeyColumn);
-				result.append(WhatIfDeleteResult(candidateTable, itemTable, affectedRowIndices));
+			// WHAT IF
+			if (searchNotExecute) {
+				int numAffectedRowIndices = candidateTable->getNumberOfMatchingRows(matchingColumn, primaryKey);
+				if (numAffectedRowIndices > 0) {
+					const NormalTable* itemTable = candidateTable->traverseAssociativeRelation(primaryKeyColumn);
+					result.append(WhatIfDeleteResult(candidateTable, itemTable, numAffectedRowIndices));
+				}
+			}
+			// EXECUTE
+			else {
+				candidateTable->removeMatchingRows(parent, matchingColumn, primaryKey);
 			}
 		}
-		else {	// normal table
-			const NormalTable* candidateTable = (NormalTable*) *iter;
+		
+		// Look for references in normal table
+		else {
+			NormalTable* candidateTable = (NormalTable*) *iter;
 			
 			QSet<int> affectedRowIndices = QSet<int>();
+			QList<QPair<const Column*, QSet<int>>> affectedCells = QList<QPair<const Column*, QSet<int>>>();
+			
 			for (const Column* otherTableColumn : candidateTable->getColumnList()) {
 				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
 				
-				affectedRowIndices.unite(candidateTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey));
+				QSet<int> rowIndices = candidateTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey);
+				affectedRowIndices.unite(rowIndices);
+				affectedCells.append({ otherTableColumn, rowIndices });
 			}
 			
-			if (!affectedRowIndices.isEmpty()) {
-				result.append(WhatIfDeleteResult(candidateTable, candidateTable, affectedRowIndices));
+			// WHAT IF
+			if (searchNotExecute) {
+				if (!affectedCells.isEmpty()) {
+					result.append(WhatIfDeleteResult(candidateTable, candidateTable, affectedRowIndices.size()));
+				}
+			}
+			// EXECUTE
+			else {
+				for (auto iter = affectedCells.constBegin(); iter != affectedCells.constEnd(); iter++) {
+					const Column* column = (*iter).first;
+					QSet<int> rowIndices = (*iter).second;
+					
+					for (int rowIndex : rowIndices) {
+						// Remove single instance of reference to the key about to be removed
+//						candidateTable->removeCell(parent, column, rowIndex);	// TODO
+					}
+				}
 			}
 		}
+		
 	}
 	return result;
+}
+
+void Database::removeRow(QWidget* parent, AssociativeTable* table, int primaryKey1, int primaryKey2)
+{
+	// TODO
 }
 
 
@@ -281,3 +328,13 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 	QString stringValue = variantValue.toString();
 	return stringValue;
 }
+
+
+
+
+
+WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices) :
+		affectedTable(affectedTable),
+		itemTable(itemTable),
+		numAffectedRowIndices(numAffectedRowIndices)
+{}

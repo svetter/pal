@@ -1,17 +1,9 @@
 #include "column.h"
 
 #include "table.h"
-#include "normal_table.h"
+#include "database.h"
 
 #include <QCoreApplication>
-
-
-
-WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, QSet<int> affectedRowIndices) :
-		affectedTable(affectedTable),
-		itemTable(itemTable),
-		affectedRowIndices(affectedRowIndices)
-{}
 
 
 
@@ -96,7 +88,7 @@ QString getColumnListStringOf(QList<const Column*> columns)
 
 QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& whatIfResult)
 {
-	int numAffectedItems = whatIfResult.affectedRowIndices.size();
+	int numAffectedItems = whatIfResult.numAffectedRowIndices;
 	QString itemName;
 	if (numAffectedItems == 1) {
 		itemName = whatIfResult.itemTable->getItemNameSingularLowercase();

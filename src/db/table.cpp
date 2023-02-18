@@ -82,14 +82,14 @@ int Table::getColumnIndex(const Column* column) const
 
 
 
-int Table::addRow(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns)
+int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {	
 	int numColumns = columns.size();
 	assert(!isAssociative() && numColumns == (getNumberOfColumns() - 1) || isAssociative() && numColumns == getNumberOfColumns());
 	assert(data.size() == numColumns);
 	
 	// Add data to SQL database
-	int newRowID = addRowToSql(parent, data, columns);
+	int newRowID = addRowToSql(parent, columns, data);
 	
 	// Update buffer
 	QList<QVariant>* newBufferRow = new QList<QVariant>(data);
@@ -97,6 +97,22 @@ int Table::addRow(QWidget* parent, const QList<QVariant>& data, const QList<cons
 	buffer->append(newBufferRow);
 	
 	return buffer->size() - 1;
+}
+
+void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)
+{
+	int numPrimaryKeys = getPrimaryKeyColumnList().size();
+	assert(primaryKeyColumns.size() == numPrimaryKeys);
+	assert(primaryKeys.size() == numPrimaryKeys);
+	
+	// Remove row from SQL database
+	removeRowFromSql(parent, primaryKeyColumns, primaryKeys);
+	
+	// Update buffer
+	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, primaryKeys);
+	const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
+	buffer->remove(bufferRowIndex);
+	delete rowToRemove;
 }
 
 
@@ -135,8 +151,10 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 	return buffer;
 }
 
-int Table::addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList<const Column*>& columns)
+int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
+	assert(columns.size() == data.size());
+	
 	QString questionMarks = "";
 	for (int i = 0; i < columns.size(); i++) {
 		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
@@ -158,4 +176,50 @@ int Table::addRowToSql(QWidget* parent, const QList<QVariant>& data, const QList
 	int newRowID = query.lastInsertId().toInt();
 	assert(newRowID > 0);
 	return newRowID;
+}
+
+int Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)
+{
+	QString condition = "";
+	for (int i = 0; i < primaryKeys.size(); i++) {
+		if (i > 0) condition.append(" AND ");
+		const Column* column = primaryKeyColumns.at(i);
+		int key = primaryKeys.at(i).toInt();
+		assert(column->getTable() == this && column->isPrimaryKey());
+		assert(key > 0);
+		
+		condition.append(column->getName() + " = " + QString::number(key));
+	}
+	QString queryString = QString(
+			"DELETE FROM " + name +
+			"\nWHERE " + condition
+	);
+	QSqlQuery query = QSqlQuery();
+	query.setForwardOnly(true);
+	
+	if (!query.exec(queryString))
+		displayError(parent, query.lastError(), queryString);
+}
+
+
+
+int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys) const
+{
+	int numPrimaryKeys = getPrimaryKeyColumnList().size();
+	assert(primaryKeyColumns.size() == numPrimaryKeys);
+	assert(primaryKeys.size() == numPrimaryKeys);
+	
+	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
+		const QList<QVariant>* row = getBufferRow(rowIndex);
+		bool match = true;
+		for (int i = 0; i < numPrimaryKeys; i++) {
+			if (row->at(i) != primaryKeys.at(i)) {
+				match = false;
+				break;
+			}
+		}
+		if (match) return rowIndex;
+	}
+	assert(false);
+	return -1;
 }

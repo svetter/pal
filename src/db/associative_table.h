@@ -21,8 +21,11 @@ public:
 	
 	int getNumberOfColumns() const override;
 	QList<const Column*> getColumnList() const override;
-	
+	QList<const Column*> getPrimaryKeyColumnList() const override;
+
 	QSet<int> getMatchingEntries(const Column* column, int primaryKey) const;
+	int getNumberOfMatchingRows(const Column* column, int primaryKey) const;
+	void removeMatchingRows(QWidget* parent, const Column* column, int primaryKey);
 	
 	// Modifications
 	void addRow(QWidget* parent, const QList<QVariant>& data);

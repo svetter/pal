@@ -23,6 +23,7 @@ public:
 	
 	// Getters
 	QList<const Column*> getColumnList() const override;
+	QList<const Column*> getPrimaryKeyColumnList() const override;
 	int getNumberOfColumns() const override;
 	const Column* getPrimaryKeyColumn() const;
 	int getNumberOfNonPrimaryKeyColumns() const;
@@ -41,7 +42,7 @@ public:
 	int addRow(QWidget* parent, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, int primaryKey);
 	
-	// QAbstractItemModel implementation	// TODO hide these except for friend classes?
+	// QAbstractItemModel implementation
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
