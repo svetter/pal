@@ -54,9 +54,17 @@ QString TripDialog::getEditWindowTitle()
 
 void TripDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
-	startDateWidget->setDate(init->startDate);
-	endDateWidget->setDate(init->endDate);
+	// Start/end date
+	bool datesSpecified = init->datesSpecified();
+	datesUnspecifiedCheckbox->setChecked(!datesSpecified);
+	if (datesSpecified) {
+		startDateWidget->setDate(init->startDate);
+		endDateWidget->setDate(init->endDate);
+	}	
+	handle_datesSpecifiedChanged();
+	// Description
 	descriptionEditor->setPlainText(init->description);
 }
 

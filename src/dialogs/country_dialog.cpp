@@ -46,6 +46,7 @@ QString CountryDialog::getEditWindowTitle()
 
 void CountryDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
 }
 

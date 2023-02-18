@@ -67,8 +67,11 @@ void RegionDialog::populateComboBoxes()
 
 void RegionDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
+	// Range
 	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID));
+	// Country
 	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID));
 }
 

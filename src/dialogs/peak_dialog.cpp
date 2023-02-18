@@ -65,10 +65,20 @@ void PeakDialog::populateComboBoxes()
 
 void PeakDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
-	heightSpinner->setValue(init->height);
+	// Height
+	bool heightSpecified = init->heightSpecified();
+	heightCheckbox->setChecked(heightSpecified);
+	if (heightSpecified) {
+		heightSpinner->setValue(init->height);
+	}	
+	handle_heightSpecifiedChanged();
+	// Volcano
 	volcanoCheckbox->setChecked(init->volcano);
+	// Region
 	regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID));
+	// Links
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);

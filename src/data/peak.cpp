@@ -27,3 +27,10 @@ bool Peak::equalTo(const Peak* const other) const
 	if (wikiLink	!= other->wikiLink)		return false;
 	return true;
 }
+
+
+
+bool Peak::heightSpecified() const
+{
+	return height != -1;
+}

@@ -44,6 +44,19 @@ bool Ascent::equalTo(const Ascent* const other) const
 
 
 
+bool Ascent::dateSpecified() const
+{
+	return date.isValid();
+}
+
+bool Ascent::timeSpecified() const
+{
+	time.isValid();
+}
+
+
+
+
 QString Ascent::tr(const char* string)
 {
 	return QCoreApplication::translate("Ascent", string);

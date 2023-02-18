@@ -21,3 +21,10 @@ bool Trip::equalTo(const Trip* const other) const
 	if (description	!= other->description)	return false;
 	return true;
 }
+
+
+
+bool Trip::datesSpecified() const
+{
+	return startDate.isValid() && endDate.isValid();
+}

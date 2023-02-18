@@ -46,6 +46,7 @@ QString HikerDialog::getEditWindowTitle()
 
 void HikerDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
 }
 

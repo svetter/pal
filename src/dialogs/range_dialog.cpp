@@ -55,7 +55,9 @@ void RangeDialog::populateComboBoxes()
 
 void RangeDialog::insertInitData()
 {
+	// Name
 	nameLineEdit->setText(init->name);
+	// Continent
 	continentCombo->setCurrentIndex(init->continent);
 }
 

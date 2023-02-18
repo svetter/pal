@@ -104,21 +104,42 @@ void AscentDialog::populateComboBoxes()
 
 void AscentDialog::insertInitData()
 {
+	// Title
 	titleLineEdit->setText(init->title);
+	//  Peak
 	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID));
-	dateWidget->setDate(init->date);
+	// Date
+	bool dateSpecified = init->dateSpecified();
+	dateCheckbox->setChecked(dateSpecified);
+	if (dateSpecified) {
+		dateWidget->setDate(init->date);
+	}	
+	handle_dateSpecifiedChanged();
+	// Peak on day
 	peakIndexSpinner->setValue(init->perDayIndex);
-	timeWidget->setTime(init->time);
+	// Time
+	bool timeSpecified = init->timeSpecified();
+	timeCheckbox->setChecked(timeSpecified);
+	if (timeSpecified) {
+		timeWidget->setTime(init->time);
+	}	
+	handle_timeSpecifiedChanged();
+	// Kind of hike
 	hikeKindCombo->setCurrentIndex(init->hikeKind);
+	// Traverse
 	traverseCheckbox->setChecked(init->traverse);
+	// Difficulty
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
+	// Trip
 	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
+	// Hikers
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
 		Hiker* hiker = db->getHiker(*iter);
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
+	// Photos
 	photosModel.addPhotos(init->photos);
 	descriptionEditor->setPlainText(init->description);
 }
