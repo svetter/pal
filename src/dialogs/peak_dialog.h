@@ -14,8 +14,10 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 	const Peak* init;
 	
 public:
-	PeakDialog(QWidget* parent, Database* db, Peak* init = nullptr);
+	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose = newItem, Peak* init= nullptr);
 	~PeakDialog();
+	
+	virtual QString getEditWindowTitle();
 	
 	Peak* extractData();
 	virtual bool changesMade();
@@ -33,7 +35,7 @@ private:
 
 
 int openNewPeakDialogAndStore(QWidget* parent, Database* db);
-int openNewPeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom);
+int openNewPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* copyFrom);
 void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak);
 
 

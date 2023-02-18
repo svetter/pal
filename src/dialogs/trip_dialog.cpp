@@ -6,7 +6,7 @@
 
 
 TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit trip")),
+		NewOrEditDialog(parent, db, init ? editItem : newItem),
 		init(init)
 {
 	setupUi(this);
@@ -25,17 +25,29 @@ TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
 	endDateWidget->setDate(initialDate);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	default:
+		assert(false);
 	}
 }
 
 TripDialog::~TripDialog()
 {
 	delete init;
+}
+
+
+
+QString TripDialog::getEditWindowTitle()
+{
+	return tr("Edit trip");
 }
 
 

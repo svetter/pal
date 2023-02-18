@@ -9,7 +9,7 @@
 
 
 RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit region")),
+		NewOrEditDialog(parent, db, init ? editItem : newItem),
 		init(init)
 {
 	setupUi(this);
@@ -25,17 +25,29 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
 	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	default:
+		assert(false);
 	}
 }
 
 RegionDialog::~RegionDialog()
 {
 	delete init;
+}
+
+
+
+QString RegionDialog::getEditWindowTitle()
+{
+	return tr("Edit region");
 }
 
 

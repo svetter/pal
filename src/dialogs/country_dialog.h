@@ -17,6 +17,8 @@ public:
 	CountryDialog(QWidget* parent, Database* db, Country* init = nullptr);
 	~CountryDialog();
 	
+	virtual QString getEditWindowTitle();
+	
 	Country* extractData();
 	virtual bool changesMade();
 	

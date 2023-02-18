@@ -7,23 +7,29 @@
 
 
 
+enum DialogPurpose {
+	newItem,
+	editItem,
+	duplicateItem
+};
+
+
+
 class NewOrEditDialog : public QDialog
 {
 	Q_OBJECT
 	
 protected:
-	QString editWindowTitle;
-	
 	Database* db;
+	DialogPurpose purpose;
 	
-	bool edit;
+	NewOrEditDialog(QWidget* parent, Database* db, DialogPurpose purpose);
 	
-	NewOrEditDialog(QWidget* parent, Database* db, bool edit, QString editWindowTitle);
+	virtual QString getEditWindowTitle() = 0;
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
 	void handle_cancel();
-	
 	void reject();
 	
 public:

@@ -6,7 +6,7 @@
 
 
 CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit country")),
+		NewOrEditDialog(parent, db, init ? editItem : newItem),
 		init(init)
 {
 	setupUi(this);
@@ -17,17 +17,29 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
 	connect(cancelButton,	&QPushButton::clicked,	this,	&CountryDialog::handle_cancel);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	default:
+		assert(false);
 	}
 }
 
 CountryDialog::~CountryDialog()
 {
 	delete init;
+}
+
+
+
+QString CountryDialog::getEditWindowTitle()
+{
+	return tr("Edit country");
 }
 
 

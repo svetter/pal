@@ -17,6 +17,8 @@ public:
 	TripDialog(QWidget* parent, Database* db, Trip* init = nullptr);
 	~TripDialog();
 	
+	virtual QString getEditWindowTitle();
+	
 	Trip* extractData();
 	virtual bool changesMade();
 	

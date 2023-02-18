@@ -198,7 +198,7 @@ void MainWindow::handle_deleteSelectedItem()
 
 void MainWindow::handle_newAscent()
 {
-	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);	
+	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);
 	updateAscentCounter();
 }
 
@@ -297,13 +297,22 @@ void MainWindow::handle_editCountry(const QModelIndex& index)
 void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
 {
 	Ascent* selectedAscent = db.getAscentAt(rowIndex);
-	openNewAscentDialogAndStore(this, &db, selectedAscent);
+	int newAscentIndex = openNewAscentDialogAndStore(this, &db, duplicateItem, selectedAscent);
+	
+	QModelIndex modelIndex = db.ascentsTable->index(newAscentIndex, 0, ascentsTableView->currentIndex().parent());
+	ascentsTableView->setCurrentIndex(modelIndex);
+	ascentsTableView->scrollTo(modelIndex);
+	updateAscentCounter();
 }
 
 void MainWindow::handle_duplicateAndEditPeak(int rowIndex)
 {
 	Peak* selectedPeak = db.getPeakAt(rowIndex);
-	openNewPeakDialogAndStore(this, &db, selectedPeak);
+	int newPeakIndex = openNewPeakDialogAndStore(this, &db, duplicateItem, selectedPeak);
+	
+	QModelIndex modelIndex = db.peaksTable->index(newPeakIndex, 0, peaksTableView->currentIndex().parent());
+	peaksTableView->setCurrentIndex(modelIndex);
+	peaksTableView->scrollTo(modelIndex);
 }
 
 

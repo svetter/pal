@@ -18,6 +18,8 @@ public:
 	HikerDialog(QWidget* parent, Database* db, Hiker* init = nullptr);
 	~HikerDialog();
 	
+	virtual QString getEditWindowTitle();
+	
 	Hiker* extractData();
 	virtual bool changesMade();
 	

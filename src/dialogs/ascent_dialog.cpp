@@ -12,8 +12,8 @@
 
 
 
-AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit ascent")),
+AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init),
 		hikersModel(HikersOnAscent()),
 		photosModel(PhotosOfAscent())
@@ -46,11 +46,19 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, Ascent* init) :
 	dateWidget->setDate(initialDate);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	case duplicateItem:
+		Ascent* blankAscent = extractData();
+		insertInitData();
+		this->init = blankAscent;
+		break;
 	}
 }
 
@@ -58,6 +66,15 @@ AscentDialog::~AscentDialog()
 {
 	delete init;
 }
+
+
+
+QString AscentDialog::getEditWindowTitle()
+{
+	return tr("Edit ascent");
+}
+
+
 
 void AscentDialog::populateComboBoxes()
 {
@@ -239,14 +256,14 @@ void AscentDialog::handle_ok()
 
 int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
-	return openNewAscentDialogAndStore(parent, db, nullptr);
+	return openNewAscentDialogAndStore(parent, db, newItem, nullptr);
 }
-int openNewAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom)
+int openNewAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* copyFrom)
 {
 	int newAscentIndex = -1;
 	if (copyFrom) copyFrom->ascentID = -1;
 	
-	AscentDialog dialog(parent, db, copyFrom);
+	AscentDialog dialog(parent, db, purpose, copyFrom);
 	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* newAscent = dialog.extractData();
 		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
@@ -259,7 +276,7 @@ int openNewAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom)
 
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent)
 {
-	AscentDialog dialog(parent, db, originalAscent);
+	AscentDialog dialog(parent, db, editItem, originalAscent);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Ascent* editedAscent = dialog.extractData();
 		// TODO update database

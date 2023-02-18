@@ -6,7 +6,7 @@
 
 
 HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit hiker")),
+		NewOrEditDialog(parent, db, init ? editItem : newItem),
 		init(init)
 {
 	setupUi(this);
@@ -17,17 +17,29 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
 	connect(cancelButton,	&QPushButton::clicked,		this,	&HikerDialog::handle_cancel);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	default:
+		assert(false);
 	}
 }
 
 HikerDialog::~HikerDialog()
 {
 	delete init;
+}
+
+
+
+QString HikerDialog::getEditWindowTitle()
+{
+	return tr("Edit hiker");
 }
 
 

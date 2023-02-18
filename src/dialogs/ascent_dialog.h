@@ -22,8 +22,10 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 	PhotosOfAscent photosModel;
 	
 public:
-	AscentDialog(QWidget* parent, Database* db, Ascent* init = nullptr);
+	AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose = newItem, Ascent* init = nullptr);
 	~AscentDialog();
+	
+	virtual QString getEditWindowTitle();
 	
 	Ascent* extractData();
 	virtual bool changesMade();
@@ -48,7 +50,7 @@ private:
 
 
 int openNewAscentDialogAndStore(QWidget* parent, Database* db);
-int openNewAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom);
+int openNewAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* copyFrom);
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent);
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent);
 

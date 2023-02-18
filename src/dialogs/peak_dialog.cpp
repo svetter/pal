@@ -7,8 +7,8 @@
 
 
 
-PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit peak")),
+PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -24,17 +24,32 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, Peak* init) :
 	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	case duplicateItem:
+		Peak* blankPeak = extractData();
+		insertInitData();
+		this->init = blankPeak;
+		break;
 	}
 }
 
 PeakDialog::~PeakDialog()
 {
 	delete init;
+}
+
+
+
+QString PeakDialog::getEditWindowTitle()
+{
+	return tr("Edit peak");
 }
 
 
@@ -117,14 +132,14 @@ void PeakDialog::handle_ok()
 
 int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
-	return openNewPeakDialogAndStore(parent, db, nullptr);
+	return openNewPeakDialogAndStore(parent, db, newItem, nullptr);
 }
-int openNewPeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom)
+int openNewPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* copyFrom)
 {
 	int newPeakIndex = -1;
 	if (copyFrom) copyFrom->peakID = -1;
 	
-	PeakDialog dialog(parent, db, copyFrom);
+	PeakDialog dialog(parent, db, purpose, copyFrom);
 	if (dialog.exec() == QDialog::Accepted) {
 		Peak* newPeak = dialog.extractData();
 		newPeakIndex = db->peaksTable->addRow(parent, newPeak);
@@ -136,7 +151,7 @@ int openNewPeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom)
 
 void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak)
 {
-	PeakDialog dialog(parent, db, originalPeak);
+	PeakDialog dialog(parent, db, editItem, originalPeak);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Peak* editedPeak = dialog.extractData();
 		// TODO update database

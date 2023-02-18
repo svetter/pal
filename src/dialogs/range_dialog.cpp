@@ -6,7 +6,7 @@
 
 
 RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
-		NewOrEditDialog(parent, db, init != nullptr, tr("Edit mountain range")),
+		NewOrEditDialog(parent, db, init ? editItem : newItem),
 		init(init)
 {
 	setupUi(this);
@@ -19,17 +19,29 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
 	
 	
-	if (edit) {	
+	switch (purpose) {
+	case newItem:
+		this->init = extractData();
+		break;
+	case editItem:
 		changeStringsForEdit(okButton);
 		insertInitData();
-	} else {
-		this->init = extractData();
+		break;
+	default:
+		assert(false);
 	}
 }
 
 RangeDialog::~RangeDialog()
 {
 	delete init;
+}
+
+
+
+QString RangeDialog::getEditWindowTitle()
+{
+	return tr("Edit mountain range");
 }
 
 

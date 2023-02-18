@@ -17,6 +17,8 @@ public:
 	RegionDialog(QWidget* parent, Database* db, Region* init = nullptr);
 	~RegionDialog();
 	
+	virtual QString getEditWindowTitle();
+	
 	Region* extractData();
 	virtual bool changesMade();
 	

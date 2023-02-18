@@ -17,6 +17,8 @@ public:
 	RangeDialog(QWidget* parent, Database* db, Range* init = nullptr);
 	~RangeDialog();
 	
+	virtual QString getEditWindowTitle();
+	
 	Range* extractData();
 	virtual bool changesMade();
 	
