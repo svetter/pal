@@ -115,7 +115,7 @@ void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalR
 	RangeDialog dialog(parent, db, originalRange);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Range* editedRange = dialog.extractData();
-		// TODO update database	
+		// TODO #107 update database	
 		delete editedRange;
 	}
 }

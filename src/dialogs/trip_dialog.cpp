@@ -153,7 +153,7 @@ void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTri
 	TripDialog dialog(parent, db, originalTrip);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Trip* editedTrip = dialog.extractData();
-		// TODO update database
+		// TODO #107 update database
 		delete editedTrip;
 	}
 }

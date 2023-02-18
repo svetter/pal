@@ -315,9 +315,9 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 	AscentDialog dialog(parent, db, editItem, originalAscent);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Ascent* editedAscent = dialog.extractData();
-		// TODO update database
+		// #107 TODO update database
 		if (originalAscent->photos != editedAscent->photos) {
-			// TODO remove and re-add all photos if they changed
+			// remove and re-add all photos if they changed
 		}
 		delete editedAscent;
 	}
@@ -336,4 +336,5 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 	if (resultButton != QMessageBox::Yes) return;
 	
 	// TODO
+	qDebug() << "UNIMPLEMENTED: openDeleteAscentDialogAndExecute()";
 }

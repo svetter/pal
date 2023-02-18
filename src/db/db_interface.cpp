@@ -220,7 +220,8 @@ Country* Database::getCountryAt(int rowIndex) const
 
 WhatIfResult Database::whatIf_removeRow(NormalTable* table, int primaryKey) const
 {
-	// TODO
+	// TODO #68
+	qDebug() << "UNIMPLEMENTED: Database::whatIf_removeRow()";
 	assert(false);
 	return WhatIfResult(nullptr, QSet<int>());
 }
@@ -244,14 +245,16 @@ WhatIfResult Database::whatIf_removeRows(AssociativeTable* table, Column* idColu
 
 WhatIfResult Database::whatIf_changeCell(Column* column, int primaryKey) const	// NormalTables only
 {
-	// TODO
+	// TODO #72
+	qDebug() << "UNIMPLEMENTED: Database::whatIf_changeCell()";
 	assert(false);
 	return WhatIfResult(nullptr, QSet<int>());
 }
 
 bool Database::changeCell(Column* column, int primaryKey, QVariant& cell)	// NormalTables only
 {
-	// TODO
+	// TODO #73
+	qDebug() << "UNIMPLEMENTED: Database::changeCell()";
 	assert(false);
 	return false;
 }

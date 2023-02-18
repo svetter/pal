@@ -112,7 +112,8 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 
 void NormalTable::removeRow(QWidget* parent, int primaryKey)
 {
-	// TODO
+	// TODO #70
+	qDebug() << "UNIMPLEMENTED: NormalTable::removeRow()";
 }
 
 

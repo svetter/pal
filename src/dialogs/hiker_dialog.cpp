@@ -103,7 +103,7 @@ void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalH
 	HikerDialog dialog(parent, db, originalHiker);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Hiker* editedHiker = dialog.extractData();
-		// TODO update database
+		// TODO #107 update database
 		delete editedHiker;
 	}
 }

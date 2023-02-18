@@ -76,9 +76,10 @@ void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	Table::addRow(parent, data, getColumnList());
 }
 
-void removeRow(QWidget* parent, const QList<QVariant>& primaryKeys)
+void AssociativeTable::removeRow(QWidget* parent, const QList<QVariant>& primaryKeys)
 {
 	assert(primaryKeys.size() == 2);
 
-	// TODO
+	// TODO #71
+	qDebug() << "UNIMPLEMENTED: AssociativeTable::removeRow()";
 }

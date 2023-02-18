@@ -144,7 +144,7 @@ void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* origina
 	RegionDialog dialog(parent, db, originalRegion);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Region* editedRegion = dialog.extractData();
-		// TODO update database
+		// TODO #107 update database
 		delete editedRegion;
 	}
 }

@@ -19,6 +19,7 @@ public:
 	
 private:
 	void addRow(QWidget* parent, int ascentID, int hikerID);
+	void removeRow(QWidget* parent, QPair<int, int>& primaryKey);
 };
 
 

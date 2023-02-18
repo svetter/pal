@@ -244,8 +244,8 @@ void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*
 
 void MainWindow::handle_openAscent(const QModelIndex& index)
 {
-	// TODO
-	qDebug() << "handle_openAscent";
+	// TODO open ascent display window
+	qDebug() << "UNIMPLEMENTED: MainWindow::handle_openAscent()";
 }
 
 

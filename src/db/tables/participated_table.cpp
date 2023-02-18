@@ -31,7 +31,8 @@ void ParticipatedTable::addRow(QWidget* parent, int ascentID, int hikerID)
 	AssociativeTable::addRow(parent, data);
 }
 
-void removeRow(QWidget* parent, QPair<int, int>& primaryKey)
+void ParticipatedTable::removeRow(QWidget* parent, QPair<int, int>& primaryKey)
 {
-	// TODO
+	// TODO #71
+	qDebug() << "UNIMPLEMENTED: ParticipatedTable::removeRow()";
 }

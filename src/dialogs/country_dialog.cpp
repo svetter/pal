@@ -103,7 +103,7 @@ void openEditCountryDialogAndStore(QWidget* parent, Database* db, Country* origi
 	CountryDialog dialog(parent, db, originalCountry);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Country* editedCountry = dialog.extractData();
-		// TODO update database
+		// TODO #107 update database
 		delete editedCountry;
 	}
 }

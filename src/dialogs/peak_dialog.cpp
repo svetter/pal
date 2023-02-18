@@ -164,7 +164,7 @@ void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPea
 	PeakDialog dialog(parent, db, editItem, originalPeak);
 	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
 		Peak* editedPeak = dialog.extractData();
-		// TODO update database
+		// TODO #107 update database
 		delete editedPeak;
 	}
 }
