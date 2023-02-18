@@ -77,7 +77,7 @@ void PeakDialog::insertInitData()
 	// Volcano
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
-	regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID));
+	regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID) + 1);	// 0 is None
 	// Links
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);

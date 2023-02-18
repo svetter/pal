@@ -108,7 +108,7 @@ void AscentDialog::insertInitData()
 	// Title
 	titleLineEdit->setText(init->title);
 	//  Peak
-	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID));
+	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID) + 1);	// 0 is None
 	// Date
 	bool dateSpecified = init->dateSpecified();
 	dateCheckbox->setChecked(dateSpecified);
@@ -140,7 +140,7 @@ void AscentDialog::insertInitData()
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	// Trip
-	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID));
+	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID) + 1);	// 0 is None
 	// Hikers
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
 		Hiker* hiker = db->getHiker(*iter);

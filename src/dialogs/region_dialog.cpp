@@ -70,9 +70,9 @@ void RegionDialog::insertInitData()
 	// Name
 	nameLineEdit->setText(init->name);
 	// Range
-	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID));
+	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID) + 1);	// 0 is None
 	// Country
-	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID));
+	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID) + 1);	// 0 is None
 }
 
 
