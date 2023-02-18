@@ -239,9 +239,14 @@ void AscentDialog::handle_ok()
 
 int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
+	return openNewAscentDialogAndStore(parent, db, nullptr);
+}
+int openNewAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom)
+{
 	int newAscentIndex = -1;
+	if (copyFrom) copyFrom->ascentID = -1;
 	
-	AscentDialog dialog(parent, db);
+	AscentDialog dialog(parent, db, copyFrom);
 	if (dialog.exec() == QDialog::Accepted) {
 		Ascent* newAscent = dialog.extractData();
 		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
@@ -268,5 +273,14 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
 {
 	WhatIfResult whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID);
+	
+	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
+	QString title = AscentDialog::tr("Delete ascent");
+	QString question = AscentDialog::tr("Are you sure?");
+	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+	auto selected = QMessageBox::Cancel;
+	resultButton = QMessageBox::question(parent, title, question, options, selected);
+	if (resultButton != QMessageBox::Yes) return;
+	
 	// TODO
 }

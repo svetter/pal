@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	Database db;
 	QMenu tableContextMenu;
 	QAction* tableContextMenuOpenAction;
+	QAction* tableContextMenuDuplicateAction;
 	QList<QShortcut*> shortcuts;
 	
 public:
@@ -57,6 +58,9 @@ private slots:
 	void handle_editRegion	(const QModelIndex& index);
 	void handle_editRange	(const QModelIndex& index);
 	void handle_editCountry	(const QModelIndex& index);
+	
+	void handle_duplicateAndEditAscent	(int rowIndex);
+	void handle_duplicateAndEditPeak	(int rowIndex);
 	
 	void handle_deleteAscent	(int rowIndex);
 	void handle_deletePeak		(int rowIndex);

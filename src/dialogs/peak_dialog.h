@@ -33,6 +33,7 @@ private:
 
 
 int openNewPeakDialogAndStore(QWidget* parent, Database* db);
+int openNewPeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom);
 void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak);
 
 

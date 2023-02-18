@@ -16,7 +16,7 @@
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
 		db(Database(this)),
-		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr),
+		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
 		shortcuts(QList<QShortcut*>())
 {
 	setupUi(this);
@@ -108,8 +108,9 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
 	tableContextMenu.addSeparator();
 	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					deleteKeySequence);
-	// store openAction (for disbling it where it's not needed)
-	tableContextMenuOpenAction = openAction;
+	// store actions for open and duplicate (for disbling them where they're not needed)
+	tableContextMenuOpenAction		= openAction;
+	tableContextMenuDuplicateAction	= duplicateAction;
 	
 	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_openSelectedItem);
 	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
@@ -171,13 +172,8 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	int rowIndex = selectedIndex.row();
 	
-	if (currentTableView == ascentsTableView)	{ handle_deleteAscent	(rowIndex);	return; }
-	if (currentTableView == peaksTableView)		{ handle_deletePeak		(rowIndex);	return; }
-	if (currentTableView == tripsTableView)		{ handle_deleteTrip		(rowIndex);	return; }
-	if (currentTableView == hikersTableView)	{ handle_deleteHiker	(rowIndex);	return; }
-	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
-	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
-	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	if (currentTableView == ascentsTableView)	{ handle_duplicateAndEditAscent	(rowIndex);	return; }
+	if (currentTableView == peaksTableView)		{ handle_duplicateAndEditPeak	(rowIndex);	return; }
 	assert(false);
 }
 
@@ -298,6 +294,20 @@ void MainWindow::handle_editCountry(const QModelIndex& index)
 
 
 
+void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
+{
+	Ascent* selectedAscent = db.getAscentAt(rowIndex);
+	openNewAscentDialogAndStore(this, &db, selectedAscent);
+}
+
+void MainWindow::handle_duplicateAndEditPeak(int rowIndex)
+{
+	Peak* selectedPeak = db.getPeakAt(rowIndex);
+	openNewPeakDialogAndStore(this, &db, selectedPeak);
+}
+
+
+
 void MainWindow::handle_deleteAscent(int rowIndex)
 {
 	Ascent* selectedAscent = db.getAscentAt(rowIndex);
@@ -354,7 +364,8 @@ void MainWindow::handle_rightClick(QPoint pos)
 	QModelIndex index = currentTableView->indexAt(pos);
 	if (!index.isValid()) return;
 	
-	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);
+	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);	
+	tableContextMenuDuplicateAction->setVisible(currentTableView == ascentsTableView || currentTableView == peaksTableView);
 	
 	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
 }
