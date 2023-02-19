@@ -190,11 +190,6 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 
 const int NormalTable::PrimaryKeyRole = -1;
 
-QModelIndex NormalTable::getNormalRootModelIndex() const
-{
-	return index(0, 0);
-}
-
 QModelIndex NormalTable::getNullableRootModelIndex() const
 {
 	return index(1, 0);
