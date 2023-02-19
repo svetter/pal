@@ -99,7 +99,16 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	return newRowIndex;
 }
 
-void NormalTable::removeRow(QWidget* parent, ValidItemID primaryKey)
+void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+{
+	assert(column->getTable() == this);
+	
+	int updatedRowIndex = Table::updateCellInNormalTable(parent, primaryKey, column, data);
+	QModelIndex updateIndex = index(updatedRowIndex, column->getIndex(), getNormalRootModelIndex());
+	Q_EMIT dataChanged(updateIndex, updateIndex, { Qt::DisplayRole });
+}
+
+void NormalTable::removeRow(QWidget* parent, const ValidItemID primaryKey)
 {
 	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
 	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);

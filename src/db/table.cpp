@@ -143,6 +143,22 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	return buffer->size() - 1;
 }
 
+int Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+{
+	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	assert(primaryKeyColumns.size() == 1);
+	assert(column->getTable() == this);
+	
+	// Update cell in SQL database
+	updateCellInSql(parent, primaryKey, column, data);
+	
+	// Update buffer
+	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	buffer->at(bufferRowIndex)->replace(column->getIndex(), data);
+	
+	return bufferRowIndex;
+}
+
 void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)
 {
 	int numPrimaryKeys = getPrimaryKeyColumnList().size();
@@ -220,6 +236,25 @@ int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, con
 	int newRowID = query.lastInsertId().toInt();
 	assert(newRowID > 0);
 	return newRowID;
+}
+
+void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+{
+	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	const Column* primaryKeyColumn = primaryKeyColumns.first();
+	
+	QString queryString = QString(
+			"UPDATE " + getName() + 
+			"\nSET " + column->getName() + " = ?" +
+			"\nWHERE " + primaryKeyColumn->getName() + " = " + QString::number(primaryKey.get())
+	);
+	QSqlQuery query = QSqlQuery();
+	if (!query.prepare(queryString))
+		displayError(parent, query.lastError(), queryString);
+	query.addBindValue(data);
+	
+	if (!query.exec())
+		displayError(parent, query.lastError(), queryString);
 }
 
 void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)

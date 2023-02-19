@@ -37,6 +37,7 @@ public:
 	
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data);
+	void updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void removeRow(QWidget* parent, ValidItemID primaryKey);
 	
 	// QAbstractItemModel implementation

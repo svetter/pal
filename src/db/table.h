@@ -44,12 +44,14 @@ public:
 protected:
 	// Modifications
 	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	int updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys);
 	
 private:
 	// SQL
 	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
 	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys);
 	
 public:
