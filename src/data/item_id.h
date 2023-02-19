@@ -2,6 +2,7 @@
 #define ITEM_ID_H
 
 #include <cstddef>
+#include <QVariant>
 #include <QHashFunctions>
 
 class ValidItemID;
@@ -22,6 +23,7 @@ public:
 	bool isNull() const;
 	
 	int get() const;
+	QVariant asQVariant() const;
 	
 	ValidItemID forceValid() const;
 };

@@ -47,12 +47,14 @@ void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 
 void PhotosTable::addRow(QWidget* parent, ValidItemID ascentID, int sortIndex, const QString& filepath)
 {
+	assert(sortIndex >= 0);
+	
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == ascentIDColumn)	{ data.append(ascentID.get());	continue; }
-		if (*iter == sortIndexColumn)	{ data.append(sortIndex);		continue; }
-		if (*iter == filepathColumn)	{ data.append(filepath);		continue; }
+		if (*iter == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
+		if (*iter == sortIndexColumn)	{ data.append(sortIndex);				continue; }
+		if (*iter == filepathColumn)	{ data.append(filepath);				continue; }
 		assert(false);
 	}
 	NormalTable::addRow(parent, data);

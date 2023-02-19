@@ -33,6 +33,15 @@ int ItemID::get() const
 	return id;
 }
 
+QVariant ItemID::asQVariant() const
+{
+	if (isValid()) {
+		return QVariant(id);
+	} else {
+		return QVariant();
+	}
+}
+
 ValidItemID ItemID::forceValid() const
 {
 	assert(valid);

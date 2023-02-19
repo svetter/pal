@@ -33,13 +33,13 @@ int PeaksTable::addRow(QWidget* parent, const Peak* peak)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(peak->name);				continue; }
-		if (*iter == heightColumn)		{ data.append(peak->height);			continue; }
-		if (*iter == volcanoColumn)		{ data.append(peak->volcano);			continue; }
-		if (*iter == regionIDColumn)	{ data.append(peak->regionID.get());	continue; }
-		if (*iter == mapsLinkColumn)	{ data.append(peak->mapsLink);			continue; }
-		if (*iter == earthLinkColumn)	{ data.append(peak->earthLink);			continue; }
-		if (*iter == wikiLinkColumn)	{ data.append(peak->wikiLink);			continue; }
+		if (*iter == nameColumn)		{ data.append(peak->name);					continue; }
+		if (*iter == heightColumn)		{ data.append(peak->height);				continue; }
+		if (*iter == volcanoColumn)		{ data.append(peak->volcano);				continue; }
+		if (*iter == regionIDColumn)	{ data.append(peak->regionID.asQVariant());	continue; }
+		if (*iter == mapsLinkColumn)	{ data.append(peak->mapsLink);				continue; }
+		if (*iter == earthLinkColumn)	{ data.append(peak->earthLink);				continue; }
+		if (*iter == wikiLinkColumn)	{ data.append(peak->wikiLink);				continue; }
 		assert(false);
 	}
 	int newPeakIndex = NormalTable::addRow(parent, data);

@@ -25,9 +25,9 @@ int RegionsTable::addRow(QWidget* parent, const Region* region)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(region->name);			continue; }
-		if (*iter == rangeIDColumn)		{ data.append(region->rangeID.get());	continue; }
-		if (*iter == countryIDColumn)	{ data.append(region->countryID.get());	continue; }
+		if (*iter == nameColumn)		{ data.append(region->name);					continue; }
+		if (*iter == rangeIDColumn)		{ data.append(region->rangeID.asQVariant());	continue; }
+		if (*iter == countryIDColumn)	{ data.append(region->countryID.asQVariant());	continue; }
 		assert(false);
 	}
 	int newRegionIndex = NormalTable::addRow(parent, data);

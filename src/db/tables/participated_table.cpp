@@ -24,8 +24,8 @@ void ParticipatedTable::addRow(QWidget* parent, ValidItemID ascentID, ValidItemI
 	QList<const Column*> columns = getColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == ascentIDColumn)	{ data.append(ascentID.get());	continue; }
-		if (*iter == hikerIDColumn)		{ data.append(hikerID.get());	continue; }
+		if (*iter == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
+		if (*iter == hikerIDColumn)		{ data.append(hikerID.asQVariant());	continue; }
 		assert(false);
 	}
 	AssociativeTable::addRow(parent, data);
