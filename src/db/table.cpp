@@ -144,6 +144,24 @@ int Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	return bufferRowIndex;
 }
 
+int Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+{
+	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	assert(primaryKeyColumns.size() == 1);
+	
+	// Update cell in SQL database
+	updateRowInSql(parent, primaryKey, columns, data);
+	
+	// Update buffer
+	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	QList<QVariant>* bufferRow = buffer->at(bufferRowIndex);
+	for (int i = 0; i < columns.size(); i++) {
+		bufferRow->replace(columns.at(i)->getIndex(), data.at(i));
+	}
+	
+	return bufferRowIndex;
+}
+
 void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	int numPrimaryKeys = getPrimaryKeyColumnList().size();
@@ -247,6 +265,30 @@ void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const
 	QString queryString = QString(
 			"UPDATE " + name + 
 			"\nSET " + column->name + " = ?" +
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
+	);
+	QSqlQuery query = QSqlQuery();
+	if (!query.prepare(queryString))
+		displayError(parent, query.lastError(), queryString);
+	query.addBindValue(data);
+	
+	if (!query.exec())
+		displayError(parent, query.lastError(), queryString);
+}
+
+void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+{
+	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	const Column* primaryKeyColumn = primaryKeyColumns.first();
+	
+	QString setString = "";
+	for (int i = 0; i < columns.size(); i++) {
+		if (i > 0) setString.append(", ");
+		setString.append(columns.at(i)->name).append(" = ?");
+	}
+	QString queryString = QString(
+			"UPDATE " + name + 
+			"\nSET " + setString +
 			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
 	);
 	QSqlQuery query = QSqlQuery();

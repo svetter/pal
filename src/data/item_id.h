@@ -43,6 +43,7 @@ inline bool operator==(const ItemID& id1, const ItemID& id2)
 	if (id1.isValid() != id2.isValid()) return false;
 	return id1.get() == id2.get();
 }
+
 inline bool operator!=(const ItemID& id1, const ItemID& id2)
 {
 	return !operator==(id1, id2);

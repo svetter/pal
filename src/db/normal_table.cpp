@@ -108,6 +108,20 @@ void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, cons
 	Q_EMIT dataChanged(updateIndex, updateIndex, { Qt::DisplayRole });
 }
 
+void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+{
+	int updatedRowIndex = Table::updateRowInNormalTable(parent, primaryKey, columns, data);
+	int minColumnIndex = INT_MAX;
+	int maxColumnIndex = INT_MIN;
+	for (const Column* column : columns) {
+		if (column->getIndex() < minColumnIndex)	minColumnIndex = column->getIndex();
+		if (column->getIndex() > maxColumnIndex)	maxColumnIndex = column->getIndex();
+	}
+	QModelIndex updateIndexLeft		= index(updatedRowIndex, minColumnIndex, getNormalRootModelIndex());
+	QModelIndex updateIndexRight	= index(updatedRowIndex, maxColumnIndex, getNormalRootModelIndex());
+	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, { Qt::DisplayRole });
+}
+
 void NormalTable::removeRow(QWidget* parent, const ValidItemID primaryKey)
 {
 	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
