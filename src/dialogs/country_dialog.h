@@ -14,7 +14,7 @@ class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
 	const Country* init;
 	
 public:
-	CountryDialog(QWidget* parent, Database* db, Country* init = nullptr);
+	CountryDialog(QWidget* parent, Database* db, DialogPurpose purpose, Country* init);
 	~CountryDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -32,6 +32,7 @@ private:
 
 int openNewCountryDialogAndStore(QWidget* parent, Database* db);
 void openEditCountryDialogAndStore(QWidget* parent, Database* db, Country* originalCountry);
+void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* ascent);
 
 
 

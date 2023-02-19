@@ -299,51 +299,64 @@ void AscentDialog::handle_ok()
 
 
 
+
+
+static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent);
+
 int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
-	return openNewAscentDialogAndStore(parent, db, newItem, nullptr);
+	return openAscentDialogAndStore(parent, db, newItem, nullptr);
 }
-int openNewAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* copyFrom)
+
+int openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom)
 {
-	int newAscentIndex = -1;
-	if (copyFrom) copyFrom->ascentID = -1;
-	
-	AscentDialog dialog(parent, db, purpose, copyFrom);
-	if (dialog.exec() == QDialog::Accepted) {
-		Ascent* newAscent = dialog.extractData();
-		newAscentIndex = db->ascentsTable->addRow(parent, newAscent);
-		db->photosTable->addRows(parent, newAscent);
-		delete newAscent;
-	}
-	
-	return newAscentIndex;
+	return openAscentDialogAndStore(parent, db, duplicateItem, copyFrom);
 }
 
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent)
 {
-	AscentDialog dialog(parent, db, editItem, originalAscent);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Ascent* editedAscent = dialog.extractData();
-		// #107 TODO update database
-		if (originalAscent->photos != editedAscent->photos) {
-			// remove and re-add all photos if they changed
-		}
-		delete editedAscent;
-	}
+	openAscentDialogAndStore(parent, db, editItem, originalAscent);
 }
 
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
 {
-	QList<WhatIfDeleteResult> whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
-	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIf);
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
 	
-	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
-	QString title = AscentDialog::tr("Delete ascent");
-	QString question = whatIfResultString + "\n" + AscentDialog::tr("Are you sure?");
-	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-	auto selected = QMessageBox::Cancel;
-	resultButton = QMessageBox::question(parent, title, question, options, selected);
-	if (resultButton != QMessageBox::Yes) return;
+	QString windowTitle = AscentDialog::tr("Delete ascent");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
 	
 	db->removeRow(parent, db->ascentsTable, ascent->ascentID.forceValid());
+}
+
+
+
+static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
+{
+	int newAscentIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalAscent);
+		originalAscent->ascentID = ItemID();
+	}
+	
+	AscentDialog dialog(parent, db, purpose, originalAscent);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Ascent* extractedAscent = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newAscentIndex = db->ascentsTable->addRow(parent, extractedAscent);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedAscent;
+	}
+	
+	return newAscentIndex;
 }

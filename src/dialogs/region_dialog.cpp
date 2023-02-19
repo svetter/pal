@@ -8,8 +8,8 @@
 
 
 
-RegionDialog::RegionDialog(QWidget* parent, Database* db, Region* init) :
-		NewOrEditDialog(parent, db, init ? editItem : newItem),
+RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -133,26 +133,59 @@ void RegionDialog::handle_ok()
 
 
 
+
+
+static int openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion);
+
 int openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
-	int newRegionIndex = -1;
-	
-	RegionDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		Region* newRegion = dialog.extractData();
-		newRegionIndex = db->regionsTable->addRow(parent, newRegion);
-		delete newRegion;
-	}
-	
-	return newRegionIndex;
+	return openRegionDialogAndStore(parent, db, newItem, nullptr);
 }
 
 void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* originalRegion)
 {
-	RegionDialog dialog(parent, db, originalRegion);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Region* editedRegion = dialog.extractData();
-		// TODO #107 update database
-		delete editedRegion;
+	openRegionDialogAndStore(parent, db, editItem, originalRegion);
+}
+
+void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* region)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, region->regionID.forceValid());
+	
+	QString windowTitle = RegionDialog::tr("Delete region");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->regionsTable, region->regionID.forceValid());
+}
+
+
+
+static int openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion)
+{
+	int newRegionIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalRegion);
+		originalRegion->regionID = ItemID();
 	}
+	
+	RegionDialog dialog(parent, db, purpose, originalRegion);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Region* extractedRegion = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newRegionIndex = db->regionsTable->addRow(parent, extractedRegion);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedRegion;
+	}
+	
+	return newRegionIndex;
 }

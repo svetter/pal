@@ -147,6 +147,7 @@ void MainWindow::handle_openSelectedItem()
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
 	if (currentTableView == ascentsTableView)	{ handle_openAscent		(selectedIndex);	return; }
+	qDebug() << "Missing implementation in MainWindow::handle_openSelectedItem() for" << currentTableView->objectName();
 }
 
 void MainWindow::handle_editSelectedItem()
@@ -162,7 +163,7 @@ void MainWindow::handle_editSelectedItem()
 	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
 	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
 	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
-	assert(false);
+	qDebug() << "Missing implementation in MainWindow::handle_editSelectedItem() for" << currentTableView->objectName();
 }
 
 void MainWindow::handle_duplicateAndEditSelectedItem()
@@ -174,7 +175,7 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	
 	if (currentTableView == ascentsTableView)	{ handle_duplicateAndEditAscent	(rowIndex);	return; }
 	if (currentTableView == peaksTableView)		{ handle_duplicateAndEditPeak	(rowIndex);	return; }
-	assert(false);
+	qDebug() << "Missing implementation in MainWindow::handle_duplicateAndEditSelectedItem() for" << currentTableView->objectName();
 }
 
 void MainWindow::handle_deleteSelectedItem()
@@ -191,7 +192,7 @@ void MainWindow::handle_deleteSelectedItem()
 	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
 	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
 	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
-	assert(false);
+	qDebug() << "Missing implementation in MainWindow::handle_deleteSelectedItem() for" << currentTableView->objectName();
 }
 
 
@@ -297,7 +298,7 @@ void MainWindow::handle_editCountry(const QModelIndex& index)
 void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
 {
 	Ascent* selectedAscent = db.getAscentAt(rowIndex);
-	int newAscentIndex = openNewAscentDialogAndStore(this, &db, duplicateItem, selectedAscent);
+	int newAscentIndex = openDuplicateAscentDialogAndStore(this, &db, selectedAscent);
 	
 	QModelIndex modelIndex = db.ascentsTable->index(newAscentIndex, 0, ascentsTableView->currentIndex().parent());
 	ascentsTableView->setCurrentIndex(modelIndex);
@@ -308,7 +309,7 @@ void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
 void MainWindow::handle_duplicateAndEditPeak(int rowIndex)
 {
 	Peak* selectedPeak = db.getPeakAt(rowIndex);
-	int newPeakIndex = openNewPeakDialogAndStore(this, &db, duplicateItem, selectedPeak);
+	int newPeakIndex = openDuplicatePeakDialogAndStore(this, &db, selectedPeak);
 	
 	QModelIndex modelIndex = db.peaksTable->index(newPeakIndex, 0, peaksTableView->currentIndex().parent());
 	peaksTableView->setCurrentIndex(modelIndex);
@@ -326,43 +327,37 @@ void MainWindow::handle_deleteAscent(int rowIndex)
 void MainWindow::handle_deletePeak(int rowIndex)
 {
 	Peak* selectedPeak = db.getPeakAt(rowIndex);
-//	openDeletePeakDialogAndExecute(this, &db, selectedPeak);
-	qDebug() << "handle_deletePeak";
+	openDeletePeakDialogAndExecute(this, &db, selectedPeak);
 }
 
 void MainWindow::handle_deleteTrip(int rowIndex)
 {
 	Trip* selectedTrip = db.getTripAt(rowIndex);
-//	openDeleteTripDialogAndExecute(this, &db, selectedTrip);
-	qDebug() << "handle_deleteTrip";
+	openDeleteTripDialogAndExecute(this, &db, selectedTrip);
 }
 
 void MainWindow::handle_deleteHiker(int rowIndex)
 {
 	Hiker* selectedHiker = db.getHikerAt(rowIndex);
-//	openDeleteHikerDialogAndExecute(this, &db, selectedHiker);
-	qDebug() << "handle_deleteHiker";
+	openDeleteHikerDialogAndExecute(this, &db, selectedHiker);
 }
 
 void MainWindow::handle_deleteRegion(int rowIndex)
 {
 	Region* selectedRegion = db.getRegionAt(rowIndex);
-//	openDeleteRegionDialogAndExecute(this, &db, selectedRegion);
-	qDebug() << "handle_deleteRegion";
+	openDeleteRegionDialogAndExecute(this, &db, selectedRegion);
 }
 
 void MainWindow::handle_deleteRange(int rowIndex)
 {
 	Range* selectedRange = db.getRangeAt(rowIndex);
-//	openDeleteRangeDialogAndExecute(this, &db, selectedRange);
-	qDebug() << "handle_deleteRange";
+	openDeleteRangeDialogAndExecute(this, &db, selectedRange);
 }
 
 void MainWindow::handle_deleteCountry(int rowIndex)
 {
 	Country* selectedCountry = db.getCountryAt(rowIndex);
-//	openDeleteCountryDialogAndExecute(this, &db, selectedCountry);
-	qDebug() << "handle_deleteCountry";
+	openDeleteCountryDialogAndExecute(this, &db, selectedCountry);
 }
 
 

@@ -5,8 +5,8 @@
 
 
 
-HikerDialog::HikerDialog(QWidget* parent, Database* db, Hiker* init) :
-		NewOrEditDialog(parent, db, init ? editItem : newItem),
+HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -84,26 +84,59 @@ void HikerDialog::handle_ok()
 
 
 
+
+
+static int openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker);
+
 int openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
-	int newHikerIndex = -1;
-	
-	HikerDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		Hiker* newHiker = dialog.extractData();
-		newHikerIndex = db->hikersTable->addRow(parent, newHiker);
-		delete newHiker;
-	}
-	
-	return newHikerIndex;
+	return openHikerDialogAndStore(parent, db, newItem, nullptr);
 }
 
 void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker)
 {
-	HikerDialog dialog(parent, db, originalHiker);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Hiker* editedHiker = dialog.extractData();
-		// TODO #107 update database
-		delete editedHiker;
+	openHikerDialogAndStore(parent, db, editItem, originalHiker);
+}
+
+void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hiker->hikerID.forceValid());
+	
+	QString windowTitle = HikerDialog::tr("Delete hiker");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->hikersTable, hiker->hikerID.forceValid());
+}
+
+
+
+static int openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker)
+{
+	int newHikerIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalHiker);
+		originalHiker->hikerID = ItemID();
 	}
+	
+	HikerDialog dialog(parent, db, purpose, originalHiker);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Hiker* extractedHiker = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newHikerIndex = db->hikersTable->addRow(parent, extractedHiker);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedHiker;
+	}
+	
+	return newHikerIndex;
 }

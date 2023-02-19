@@ -14,7 +14,7 @@ class TripDialog : public NewOrEditDialog, public Ui_TripDialog
 	const Trip* init;
 	
 public:
-	TripDialog(QWidget* parent, Database* db, Trip* init = nullptr);
+	TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Trip* init);
 	~TripDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -36,6 +36,7 @@ private:
 
 int openNewTripDialogAndStore(QWidget* parent, Database* db);
 void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTrip);
+void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* ascent);
 
 
 

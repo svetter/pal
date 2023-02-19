@@ -14,7 +14,7 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 	const Peak* init;
 	
 public:
-	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose = newItem, Peak* init= nullptr);
+	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init);
 	~PeakDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -35,8 +35,9 @@ private:
 
 
 int openNewPeakDialogAndStore(QWidget* parent, Database* db);
-int openNewPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* copyFrom);
+int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom);
 void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak);
+void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* ascent);
 
 
 

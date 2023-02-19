@@ -38,4 +38,8 @@ public:
 
 
 
+bool displayDeleteWarning(QWidget* parent, Database* db, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+
+
+
 #endif // NEW_OR_EDIT_DIALOG_H

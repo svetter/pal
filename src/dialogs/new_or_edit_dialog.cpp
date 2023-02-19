@@ -49,3 +49,19 @@ void NewOrEditDialog::reject()
 {
 	handle_cancel();
 }
+
+
+
+
+
+bool displayDeleteWarning(QWidget* parent, Database* db, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
+{
+	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIfResults);
+	QString question = whatIfResultString + "\n" + NewOrEditDialog::tr("Are you sure?");
+	
+	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
+	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+	auto selected = QMessageBox::Cancel;
+	resultButton = QMessageBox::question(parent, windowTitle, question, options, selected);
+	return resultButton == QMessageBox::Yes;
+}

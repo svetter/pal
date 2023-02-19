@@ -5,8 +5,8 @@
 
 
 
-RangeDialog::RangeDialog(QWidget* parent, Database* db, Range* init) :
-		NewOrEditDialog(parent, db, init ? editItem : newItem),
+RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -96,26 +96,59 @@ void RangeDialog::handle_ok()
 
 
 
+
+
+static int openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange);
+
 int openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
-	int newRangeIndex = -1;
-	
-	RangeDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		Range* newRange = dialog.extractData();
-		newRangeIndex = db->rangesTable->addRow(parent, newRange);
-		delete newRange;
-	}
-	
-	return newRangeIndex;
+	return openRangeDialogAndStore(parent, db, newItem, nullptr);
 }
 
 void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalRange)
 {
-	RangeDialog dialog(parent, db, originalRange);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Range* editedRange = dialog.extractData();
-		// TODO #107 update database	
-		delete editedRange;
+	openRangeDialogAndStore(parent, db, editItem, originalRange);
+}
+
+void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, range->rangeID.forceValid());
+	
+	QString windowTitle = RangeDialog::tr("Delete range");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->rangesTable, range->rangeID.forceValid());
+}
+
+
+
+static int openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange)
+{
+	int newRangeIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalRange);
+		originalRange->rangeID = ItemID();
 	}
+	
+	RangeDialog dialog(parent, db, purpose, originalRange);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Range* extractedRange = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newRangeIndex = db->rangesTable->addRow(parent, extractedRange);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedRange;
+	}
+	
+	return newRangeIndex;
 }

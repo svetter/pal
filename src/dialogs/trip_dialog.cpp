@@ -5,8 +5,8 @@
 
 
 
-TripDialog::TripDialog(QWidget* parent, Database* db, Trip* init) :
-		NewOrEditDialog(parent, db, init ? editItem : newItem),
+TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Trip* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -134,26 +134,59 @@ void TripDialog::handle_ok()
 
 
 
+
+
+static int openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip);
+
 int openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
-	int newTripIndex = -1;
-	
-	TripDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		Trip* newTrip = dialog.extractData();
-		newTripIndex = db->tripsTable->addRow(parent, newTrip);
-		delete newTrip;
-	}
-	
-	return newTripIndex;
+	return openTripDialogAndStore(parent, db, newItem, nullptr);
 }
 
 void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTrip)
 {
-	TripDialog dialog(parent, db, originalTrip);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Trip* editedTrip = dialog.extractData();
-		// TODO #107 update database
-		delete editedTrip;
+	openTripDialogAndStore(parent, db, editItem, originalTrip);
+}
+
+void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, trip->tripID.forceValid());
+	
+	QString windowTitle = TripDialog::tr("Delete Trip");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->tripsTable, trip->tripID.forceValid());
+}
+
+
+
+static int openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip)
+{
+	int newTripIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalTrip);
+		originalTrip->tripID = ItemID();
 	}
+	
+	TripDialog dialog(parent, db, purpose, originalTrip);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Trip* extractedTrip = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newTripIndex = db->tripsTable->addRow(parent, extractedTrip);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedTrip;
+	}
+	
+	return newTripIndex;
 }

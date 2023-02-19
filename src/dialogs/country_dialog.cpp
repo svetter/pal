@@ -5,8 +5,8 @@
 
 
 
-CountryDialog::CountryDialog(QWidget* parent, Database* db, Country* init) :
-		NewOrEditDialog(parent, db, init ? editItem : newItem),
+CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpose, Country* init) :
+		NewOrEditDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -84,26 +84,59 @@ void CountryDialog::handle_ok()
 
 
 
+
+
+static int openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry);
+
 int openNewCountryDialogAndStore(QWidget* parent, Database* db)
 {
-	int newCountryIndex = -1;
-	
-	CountryDialog dialog(parent, db);
-	if (dialog.exec() == QDialog::Accepted) {
-		Country* newCountry = dialog.extractData();
-		newCountryIndex = db->countriesTable->addRow(parent, newCountry);
-		delete newCountry;
-	}
-	
-	return newCountryIndex;
+	return openCountryDialogAndStore(parent, db, newItem, nullptr);
 }
 
 void openEditCountryDialogAndStore(QWidget* parent, Database* db, Country* originalCountry)
 {
-	CountryDialog dialog(parent, db, originalCountry);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Country* editedCountry = dialog.extractData();
-		// TODO #107 update database
-		delete editedCountry;
+	openCountryDialogAndStore(parent, db, editItem, originalCountry);
+}
+
+void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* country)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, country->countryID.forceValid());
+	
+	QString windowTitle = CountryDialog::tr("Delete country");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->countriesTable, country->countryID.forceValid());
+}
+
+
+
+static int openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry)
+{
+	int newCountryIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalCountry);
+		originalCountry->countryID = ItemID();
 	}
+	
+	CountryDialog dialog(parent, db, purpose, originalCountry);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Country* extractedCountry = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newCountryIndex = db->countriesTable->addRow(parent, extractedCountry);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedCountry;
+	}
+	
+	return newCountryIndex;
 }

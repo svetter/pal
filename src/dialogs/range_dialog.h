@@ -14,7 +14,7 @@ class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
 	const Range* init;
 	
 public:
-	RangeDialog(QWidget* parent, Database* db, Range* init = nullptr);
+	RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init);
 	~RangeDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -33,6 +33,7 @@ private:
 
 int openNewRangeDialogAndStore(QWidget* parent, Database* db);
 void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalRange);
+void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* ascent);
 
 
 

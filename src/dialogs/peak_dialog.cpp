@@ -144,31 +144,64 @@ void PeakDialog::handle_ok()
 
 
 
+
+
+static int openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak);
+
 int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
-	return openNewPeakDialogAndStore(parent, db, newItem, nullptr);
+	return openPeakDialogAndStore(parent, db, newItem, nullptr);
 }
-int openNewPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* copyFrom)
+
+int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom)
 {
-	int newPeakIndex = -1;
-	if (copyFrom) copyFrom->peakID = -1;
-	
-	PeakDialog dialog(parent, db, purpose, copyFrom);
-	if (dialog.exec() == QDialog::Accepted) {
-		Peak* newPeak = dialog.extractData();
-		newPeakIndex = db->peaksTable->addRow(parent, newPeak);
-		delete newPeak;
-	}
-	
-	return newPeakIndex;
+	return openPeakDialogAndStore(parent, db, duplicateItem, copyFrom);
 }
 
 void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak)
 {
-	PeakDialog dialog(parent, db, editItem, originalPeak);
-	if (dialog.exec() == QDialog::Accepted && dialog.changesMade()) {
-		Peak* editedPeak = dialog.extractData();
-		// TODO #107 update database
-		delete editedPeak;
+	openPeakDialogAndStore(parent, db, editItem, originalPeak);
+}
+
+void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
+{
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peak->peakID.forceValid());
+	
+	QString windowTitle = PeakDialog::tr("Delete peak");
+	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	if (!proceed) return;
+
+	db->removeRow(parent, db->peaksTable, peak->peakID.forceValid());
+}
+
+
+
+static int openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak)
+{
+	int newPeakIndex = -1;
+	if (purpose == duplicateItem) {
+		assert(originalPeak);
+		originalPeak->peakID = ItemID();
 	}
+	
+	PeakDialog dialog(parent, db, purpose, originalPeak);
+	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
+		Peak* extractedPeak = dialog.extractData();
+		
+		switch (purpose) {
+		case newItem:
+		case duplicateItem:
+			newPeakIndex = db->peaksTable->addRow(parent, extractedPeak);
+			break;
+		case editItem:
+			// TODO #107 update database
+			break;
+		default:
+			assert(false);
+		}
+		
+		delete extractedPeak;
+	}
+	
+	return newPeakIndex;
 }

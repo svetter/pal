@@ -14,7 +14,7 @@ class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 	const Region* init;
 	
 public:
-	RegionDialog(QWidget* parent, Database* db, Region* init = nullptr);
+	RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init);
 	~RegionDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -36,6 +36,7 @@ private:
 
 int openNewRegionDialogAndStore(QWidget* parent, Database* db);
 void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* originalRegion);
+void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* ascent);
 
 
 

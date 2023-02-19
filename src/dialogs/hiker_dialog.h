@@ -15,7 +15,7 @@ class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
 	const Hiker* init;
 	
 public:
-	HikerDialog(QWidget* parent, Database* db, Hiker* init = nullptr);
+	HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init);
 	~HikerDialog();
 	
 	virtual QString getEditWindowTitle();
@@ -33,6 +33,7 @@ private:
 
 int openNewHikerDialogAndStore(QWidget* parent, Database* db);
 void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker);
+void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* ascent);
 
 
 
