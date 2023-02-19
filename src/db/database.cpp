@@ -250,14 +250,17 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			NormalTable* candidateTable = (NormalTable*) *iter;
 			
 			QSet<int> affectedRowIndices = QSet<int>();
-			QList<QPair<const Column*, QSet<int>>> affectedCells = QList<QPair<const Column*, QSet<int>>>();
+			QList<QPair<const Column*, QList<int>>> affectedCells = QList<QPair<const Column*, QList<int>>>();
 			
 			for (const Column* otherTableColumn : candidateTable->getColumnList()) {
 				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
 				
-				QSet<int> rowIndices = candidateTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey.get());
-				affectedRowIndices.unite(rowIndices);
-				affectedCells.append({ otherTableColumn, rowIndices });
+				QList<int> rowIndexList = candidateTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey.get());
+				QSet<int> rowIndexSet = QSet<int>();
+				for (int index : rowIndexList) rowIndexSet.insert(index);
+				
+				affectedRowIndices.unite(rowIndexSet);
+				affectedCells.append({ otherTableColumn, rowIndexList });
 			}
 			
 			// WHAT IF
@@ -270,7 +273,9 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			else {
 				for (auto iter = affectedCells.constBegin(); iter != affectedCells.constEnd(); iter++) {
 					const Column* column = (*iter).first;
-					QSet<int> rowIndices = (*iter).second;
+					QList<int> rowIndices = (*iter).second;
+					NormalTable* table = (NormalTable*) column->getTable();
+					primaryKeyColumn = table->getPrimaryKeyColumn();
 					
 					for (int rowIndex : rowIndices) {
 						// Remove single instance of reference to the key about to be removed

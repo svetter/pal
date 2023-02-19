@@ -105,7 +105,7 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker
 	QString windowTitle = HikerDialog::tr("Delete hiker");
 	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
 	if (!proceed) return;
-
+	
 	db->removeRow(parent, db->hikersTable, hiker->hikerID.forceValid());
 }
 

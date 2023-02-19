@@ -29,7 +29,8 @@ public:
 	void deleteBuffer();
 	void initBuffer(QWidget* parent);
 	const QList<QVariant>* getBufferRow(int rowIndex) const;
-	QSet<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
+	QList<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
+	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
 	void printBuffer() const;
 	
 	// Getters

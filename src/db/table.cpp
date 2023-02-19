@@ -54,18 +54,39 @@ const QList<QVariant>* Table::getBufferRow(int rowIndex) const
 	return buffer->at(rowIndex);
 }
 
-QSet<int> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
+QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
 {
-	assert(column->getTable() == this);
-	QSet<int> result = QSet<int>();
-	int rowIndex = 0;
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == content) {
-			result.insert(rowIndex);
+	assert(getColumnList().contains(column));
+	
+	QList<int> result = QList<int>();
+	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
+		const QList<QVariant>* bufferRow = getBufferRow(rowIndex);
+		if (bufferRow->at(column->getIndex()) == content) {
+			result.append(rowIndex);
 		}
-		rowIndex++;
 	}
 	return result;
+}
+
+int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const
+{
+	int numPrimaryKeys = getPrimaryKeyColumnList().size();
+	assert(primaryKeyColumns.size() == numPrimaryKeys);
+	assert(primaryKeys.size() == numPrimaryKeys);
+
+	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
+		const QList<QVariant>* row = getBufferRow(rowIndex);
+		bool match = true;
+		for (int i = 0; i < numPrimaryKeys; i++) {
+			if (row->at(primaryKeyColumns.at(i)->getIndex()) != primaryKeys.at(i).get()) {
+				match = false;
+				break;
+			}
+		}
+		if (match) return rowIndex;
+	}
+	assert(false);
+	return -1;
 }
 
 void Table::printBuffer() const
@@ -222,29 +243,6 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	
 	if (!query.exec(queryString))
 		displayError(parent, query.lastError(), queryString);
-}
-
-
-
-int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys) const
-{
-	int numPrimaryKeys = getPrimaryKeyColumnList().size();
-	assert(primaryKeyColumns.size() == numPrimaryKeys);
-	assert(primaryKeys.size() == numPrimaryKeys);
-	
-	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
-		const QList<QVariant>* row = getBufferRow(rowIndex);
-		bool match = true;
-		for (int i = 0; i < numPrimaryKeys; i++) {
-			if (row->at(i) != primaryKeys.at(i)) {
-				match = false;
-				break;
-			}
-		}
-		if (match) return rowIndex;
-	}
-	assert(false);
-	return -1;
 }
 
 
