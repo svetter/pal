@@ -80,11 +80,11 @@ const Column* NormalTable::getColumnByIndex(int index) const
 	return nonPrimaryColumns.at(index - 1);
 }
 
-int NormalTable::getBufferIndexForPrimaryKey(int primaryKey) const
+int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
 	int index = 0;
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(0) == primaryKey) return index;
+		if ((*iter)->at(0) == primaryKey.get()) return index;
 		index++;
 	}
 	return -1;
@@ -110,11 +110,11 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	return newRowIndex;
 }
 
-void NormalTable::removeRow(QWidget* parent, int primaryKey)
+void NormalTable::removeRow(QWidget* parent, ValidItemID primaryKey)
 {
 	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
 	beginRemoveRows(index(0, 0, QModelIndex()), bufferRowIndex, bufferRowIndex);
-	Table::removeRow(parent, getPrimaryKeyColumnList(), { primaryKey });
+	Table::removeRow(parent, getPrimaryKeyColumnList(), { primaryKey.get() });
 	endRemoveRows();
 }
 

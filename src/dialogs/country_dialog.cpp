@@ -55,7 +55,7 @@ Country* CountryDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Country* country = new Country(-1, name);
+	Country* country = new Country(ItemID(), name);
 	return country;
 }
 

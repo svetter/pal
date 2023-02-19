@@ -18,7 +18,7 @@ public:
 	
 	PhotosTable(const Column* foreignAscentIDColumn);
 	
-	QStringList getPhotosForAscent(int ascentID) const;
+	QStringList getPhotosForAscent(ValidItemID ascentID) const;
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
 	
@@ -27,7 +27,7 @@ public:
 	virtual QString getItemNamePluralLowercase() const;
 	
 private:
-	void addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath);
+	void addRow(QWidget* parent, ValidItemID ascentID, int sortIndex, const QString& filepath);
 };
 
 

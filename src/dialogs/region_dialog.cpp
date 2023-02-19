@@ -70,19 +70,27 @@ void RegionDialog::insertInitData()
 	// Name
 	nameLineEdit->setText(init->name);
 	// Range
-	rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID) + 1);	// 0 is None
+	if (init->rangeID.isValid()) {
+		rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID.get()) + 1);	// 0 is None
+	} else {
+		rangeCombo->setCurrentIndex(0);
+	}
 	// Country
-	countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID) + 1);	// 0 is None
+	if (init->countryID.isValid()) {
+		countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID.get()) + 1);	// 0 is None
+	} else {
+		countryCombo->setCurrentIndex(0);
+	}
 }
 
 
 Region* RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit	(nameLineEdit);
-	int		rangeID		= parseIDCombo	(rangeCombo);
-	int		countryID	= parseIDCombo	(countryCombo);
+	ItemID	rangeID		= parseIDCombo	(rangeCombo);
+	ItemID	countryID	= parseIDCombo	(countryCombo);
 	
-	Region* region = new Region(-1, name, rangeID, countryID);
+	Region* region = new Region(ItemID(), name, rangeID, countryID);
 	return region;
 }
 

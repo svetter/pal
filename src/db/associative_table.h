@@ -3,6 +3,8 @@
 
 #include "table.h"
 
+#include "src/data/item_id.h"
+
 
 
 class AssociativeTable : public Table {
@@ -23,13 +25,13 @@ public:
 	QList<const Column*> getColumnList() const override;
 	QList<const Column*> getPrimaryKeyColumnList() const override;
 
-	QSet<int> getMatchingEntries(const Column* column, int primaryKey) const;
-	int getNumberOfMatchingRows(const Column* column, int primaryKey) const;
-	void removeMatchingRows(QWidget* parent, const Column* column, int primaryKey);
+	QSet<ValidItemID> getMatchingEntries(const Column* column, ValidItemID primaryKey) const;
+	int getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const;
+	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
 	
 	// Modifications
 	void addRow(QWidget* parent, const QList<QVariant>& data);
-	void removeRow(QWidget* parent, const QList<QVariant>& primaryKeys);
+	void removeRow(QWidget* parent, const QList<ValidItemID>& primaryKeys);
 };
 
 

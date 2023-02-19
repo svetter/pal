@@ -1,6 +1,8 @@
 #ifndef ASCENT_H
 #define ASCENT_H
 
+#include "item_id.h"
+
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -13,26 +15,26 @@
 class Ascent
 {
 public:
-	int			ascentID;
-	QString		title;
-	int			peakID;
-	QDate		date;
-	int			perDayIndex;
-	QTime		time;
-	int			elevationGain;
-	int			hikeKind;
-	bool		traverse;
-	int			difficultySystem;
-	int			difficultyGrade;
-	int			tripID;
-	QSet<int>	hikerIDs;
-	QStringList	photos;
-	QString		description;
+	ItemID				ascentID;
+	QString				title;
+	ItemID				peakID;
+	QDate				date;
+	int					perDayIndex;
+	QTime				time;
+	int					elevationGain;
+	int					hikeKind;
+	bool				traverse;
+	int					difficultySystem;
+	int					difficultyGrade;
+	ItemID				tripID;
+	QSet<ValidItemID>	hikerIDs;
+	QStringList			photos;
+	QString				description;
 	
 	static const QStringList hikeKindNames;
 	static const QList<QPair<QString, QStringList>> difficultyNames;
 	
-	Ascent(int ascentID, QString& title, int peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, int tripID, QSet<int>& hikerIDs, QStringList& photos, QString& description);
+	Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QStringList& photos, QString& description);
 	
 	bool equalTo(const Ascent* const other) const;
 	

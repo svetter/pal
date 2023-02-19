@@ -20,11 +20,11 @@ PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 
 
 
-QStringList PhotosTable::getPhotosForAscent(int ascentID) const
+QStringList PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
 	QMap<int, QString> filtered = QMap<int, QString>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(ascentIDColumn->getIndex()) == ascentID) {
+		if ((*iter)->at(ascentIDColumn->getIndex()) == ascentID.get()) {
 			int photoIndex = (*iter)->at(sortIndexColumn->getIndex()).toInt();
 			QString filepath = (*iter)->at(filepathColumn->getIndex()).toString();
 			filtered.insert(photoIndex, filepath);
@@ -38,22 +38,21 @@ QStringList PhotosTable::getPhotosForAscent(int ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	assert(ascent->ascentID > -1);
 	int sortIndex = 0;
 	for (auto iter = ascent->photos.constBegin(); iter != ascent->photos.constEnd(); iter++) {
-		addRow(parent, ascent->ascentID, sortIndex, *iter);
+		addRow(parent, ascent->ascentID.forceValid(), sortIndex, *iter);
 		sortIndex++;
 	}
 }
 
-void PhotosTable::addRow(QWidget* parent, int ascentID, int sortIndex, const QString& filepath)
+void PhotosTable::addRow(QWidget* parent, ValidItemID ascentID, int sortIndex, const QString& filepath)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == ascentIDColumn)	{ data.append(ascentID);	continue; }
-		if (*iter == sortIndexColumn)	{ data.append(sortIndex);	continue; }
-		if (*iter == filepathColumn)	{ data.append(filepath);	continue; }
+		if (*iter == ascentIDColumn)	{ data.append(ascentID.get());	continue; }
+		if (*iter == sortIndexColumn)	{ data.append(sortIndex);		continue; }
+		if (*iter == filepathColumn)	{ data.append(filepath);		continue; }
 		assert(false);
 	}
 	NormalTable::addRow(parent, data);

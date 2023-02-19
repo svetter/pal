@@ -4,7 +4,7 @@
 
 
 
-Range::Range(int rangeID, QString& name, int continent) :
+Range::Range(ItemID rangeID, QString& name, int continent) :
 		rangeID(rangeID),
 		name(name),
 		continent(continent)

@@ -51,13 +51,13 @@ public:
 	
 	QList<Table*> getTableList() const;
 	
-	Ascent*		getAscent	(int ascentID)	const;
-	Peak*		getPeak		(int peakID)	const;
-	Trip*		getTrip		(int tripID)	const;
-	Hiker*		getHiker	(int hikerID)	const;
-	Region*		getRegion	(int regionID)	const;
-	Range*		getRange	(int rangeID)	const;
-	Country*	getCountry	(int countryID)	const;
+	Ascent*		getAscent	(ValidItemID ascentID)	const;
+	Peak*		getPeak		(ValidItemID peakID)	const;
+	Trip*		getTrip		(ValidItemID tripID)	const;
+	Hiker*		getHiker	(ValidItemID hikerID)	const;
+	Region*		getRegion	(ValidItemID regionID)	const;
+	Range*		getRange	(ValidItemID rangeID)	const;
+	Country*	getCountry	(ValidItemID countryID)	const;
 	
 	Ascent*		getAscentAt		(int rowIndex) const;
 	Peak*		getPeakAt		(int rowIndex) const;
@@ -67,11 +67,11 @@ public:
 	Range*		getRangeAt		(int rowIndex) const;
 	Country*	getCountryAt	(int rowIndex) const;
 	
-	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, int primaryKey);
-	void removeRow(QWidget* parent, NormalTable* table, int primaryKey);
-	void removeRow(QWidget* parent, AssociativeTable* table, int primaryKey1, int primaryKey2);
+	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, ValidItemID primaryKey);
+	void removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey);
+	void removeRow(QWidget* parent, AssociativeTable* table, ValidItemID primaryKey1, ValidItemID primaryKey2);
 private:
-	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, int primaryKey);
+	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
 	
 	void setStatusBarMessage(QString content) const;
 	

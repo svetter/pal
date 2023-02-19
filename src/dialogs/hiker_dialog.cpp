@@ -55,7 +55,7 @@ Hiker* HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Hiker* hiker = new Hiker(-1, name);
+	Hiker* hiker = new Hiker(ItemID(), name);
 	return hiker;
 }
 

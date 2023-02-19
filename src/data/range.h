@@ -1,6 +1,8 @@
 #ifndef RANGE_H
 #define RANGE_H
 
+#include "item_id.h"
+
 #include <QStringList>
 #include <QTranslator>
 
@@ -9,13 +11,13 @@
 class Range
 {
 public:
-	int		rangeID;
+	ItemID	rangeID;
 	QString	name;
 	int		continent;
 	
 	static const QStringList continentNames;
 	
-	Range(int rangeID, QString& name, int continent);
+	Range(ItemID rangeID, QString& name, int continent);
 	
 	bool equalTo(const Range* const other) const;
 	

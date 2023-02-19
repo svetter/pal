@@ -12,7 +12,7 @@ void HikersOnAscent::addHiker(Hiker* hiker)
 {
 	int currentNumHikers = list.size();
 	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
-	QPair<int, QString> pair{ hiker->hikerID, hiker->name };
+	QPair<int, QString> pair{ hiker->hikerID.get(), hiker->name };
 	list.append(pair);
 	endInsertRows();
 }
@@ -34,9 +34,9 @@ bool HikersOnAscent::containsHiker(int hikerID) const
 	return false;
 }
 
-QSet<int> HikersOnAscent::getHikerIDSet() const
+QSet<ValidItemID> HikersOnAscent::getHikerIDSet() const
 {
-	QSet<int> result = QSet<int>();
+	QSet<ValidItemID> result = QSet<ValidItemID>();
 	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
 		result.insert((*iter).first);
 	}

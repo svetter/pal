@@ -2,7 +2,7 @@
 
 
 
-Peak::Peak(int peakID, QString& name, int height, bool volcano, int regionID, QString& mapsLink, QString& earthLink, QString& wikiLink) :
+Peak::Peak(ItemID peakID, QString& name, int height, bool volcano, ItemID regionID, QString& mapsLink, QString& earthLink, QString& wikiLink) :
 		peakID(peakID),
 		name(name),
 		height(height),

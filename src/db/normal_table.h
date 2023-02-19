@@ -2,6 +2,7 @@
 #define NORMAL_TABLE_H
 
 #include "table.h"
+#include "src/data/item_id.h"
 
 #include <QString>
 #include <QList>
@@ -30,7 +31,7 @@ public:
 	QList<const Column*> getNonPrimaryKeyColumnList() const;
 	QString getNonPrimaryKeyColumnListString() const;
 	const Column* getColumnByIndex(int index) const;
-	int getBufferIndexForPrimaryKey(int primaryKey) const;
+	int getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
 	
 	int getNumberOfRows() const;
 	
@@ -40,7 +41,7 @@ public:
 	
 	// Modifications
 	int addRow(QWidget* parent, const QList<QVariant>& data);
-	void removeRow(QWidget* parent, int primaryKey);
+	void removeRow(QWidget* parent, ValidItemID primaryKey);
 	
 	// QAbstractItemModel implementation
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

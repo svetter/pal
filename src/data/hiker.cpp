@@ -2,7 +2,7 @@
 
 
 
-Hiker::Hiker(int hikerID, QString& name) :
+Hiker::Hiker(ItemID hikerID, QString& name) :
 		hikerID(hikerID),
 		name(name)
 {}

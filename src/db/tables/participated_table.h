@@ -18,7 +18,7 @@ public:
 	void addRows(QWidget* parent, const Ascent* ascent);
 	
 private:
-	void addRow(QWidget* parent, int ascentID, int hikerID);
+	void addRow(QWidget* parent, ValidItemID ascentID, ValidItemID hikerID);
 	void removeRow(QWidget* parent, QPair<int, int>& primaryKey);
 };
 

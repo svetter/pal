@@ -2,7 +2,7 @@
 
 
 
-Country::Country(int countryID, QString& name) :
+Country::Country(ItemID countryID, QString& name) :
 		countryID(countryID),
 		name(name)
 {}

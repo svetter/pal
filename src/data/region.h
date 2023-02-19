@@ -1,7 +1,7 @@
 #ifndef REGION_H
 #define REGION_H
 
-#include "country.h"
+#include "item_id.h"
 
 #include <QString>
 
@@ -10,12 +10,12 @@
 class Region
 {
 public:
-	int		regionID;
+	ItemID	regionID;
 	QString	name;
-	int		rangeID;
-	int		countryID;
+	ItemID	rangeID;
+	ItemID	countryID;
 	
-	Region(int regionID, QString& name, int rangeID, int countryID);
+	Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID);
 	
 	bool equalTo(const Region* const other) const;
 };

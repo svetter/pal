@@ -79,7 +79,7 @@ Trip* TripDialog::extractData()
 	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();	
 	if (datesUnspecifiedCheckbox->isChecked())	endDate = QDate();
 	
-	Trip* trip = new Trip(-1, name, startDate, endDate, description);
+	Trip* trip = new Trip(ItemID(), name, startDate, endDate, description);
 	return trip;
 }
 

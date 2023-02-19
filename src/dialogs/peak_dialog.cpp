@@ -77,7 +77,11 @@ void PeakDialog::insertInitData()
 	// Volcano
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
-	regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID) + 1);	// 0 is None
+	if (init->regionID.isValid()) {
+		regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID.get()) + 1);	// 0 is None
+	} else {
+		regionCombo->setCurrentIndex(0);
+	}
 	// Links
 	googleMapsLineEdit->setText(init->mapsLink);
 	googleEarthLineEdit->setText(init->earthLink);
@@ -90,14 +94,14 @@ Peak* PeakDialog::extractData()
 	QString	name		= parseLineEdit	(nameLineEdit);
 	int		height		= parseSpinner	(heightSpinner);
 	bool	volcano		= parseCheckbox	(volcanoCheckbox);
-	int		regionID	= parseIDCombo	(regionCombo);
+	ItemID	regionID	= parseIDCombo	(regionCombo);
 	QString	mapsLink	= parseLineEdit	(googleMapsLineEdit);
 	QString	earthLink	= parseLineEdit	(googleEarthLineEdit);
 	QString	wikiLink	= parseLineEdit	(wikipediaLineEdit);
 	
 	if (!heightCheckbox->isChecked())	height = -1;
 	
-	Peak* peak = new Peak(-1, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
+	Peak* peak = new Peak(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 	return peak;
 }
 

@@ -15,6 +15,7 @@ SOURCES += \
 	src/data/ascent.cpp \
 	src/data/country.cpp \
 	src/data/hiker.cpp \
+	src/data/item_id.cpp \
 	src/data/names.cpp \
 	src/data/peak.cpp \
 	src/data/range.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/hiker.h \
+	src/data/item_id.h \
 	src/data/peak.h \
 	src/data/range.h \
 	src/data/region.h \

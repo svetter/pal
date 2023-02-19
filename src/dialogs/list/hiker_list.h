@@ -21,7 +21,7 @@ public:
 	void removeHikerAt(int rowIndex);
 	
 	bool containsHiker(int hikerID) const;
-	QSet<int> getHikerIDSet() const;
+	QSet<ValidItemID> getHikerIDSet() const;
 	
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;

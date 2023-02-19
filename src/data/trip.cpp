@@ -2,7 +2,7 @@
 
 
 
-Trip::Trip(int tripID, QString& name, QDate& startDate, QDate& endDate, QString& description) :
+Trip::Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QString& description) :
 		tripID(tripID),
 		name(name),
 		startDate(startDate),

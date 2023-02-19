@@ -2,7 +2,7 @@
 
 
 
-Region::Region(int regionID, QString& name, int rangeID, int countryID) :
+Region::Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID) :
 		regionID(regionID),
 		name(name),
 		rangeID(rangeID),

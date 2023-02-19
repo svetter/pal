@@ -27,9 +27,10 @@ int parseSpinner(const QSpinBox* spinBox)
 	return spinBox->value();
 }
 
-int parseIDCombo(const QComboBox* combo)
+ItemID parseIDCombo(const QComboBox* combo)
 {
-	return combo->currentData(NormalTable::PrimaryKeyRole).toInt();
+	int primaryKey = combo->currentData(NormalTable::PrimaryKeyRole).toInt();
+	return ItemID(primaryKey);
 }
 
 int parseEnumCombo(const QComboBox* combo, bool firstItemIsPlaceholder)

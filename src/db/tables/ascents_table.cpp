@@ -44,7 +44,7 @@ int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 	QList<QVariant> data = QList<QVariant>();
 	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
 		if (*iter == titleColumn)				{ data.append(ascent->title);				continue; }
-		if (*iter == peakIDColumn)				{ data.append(ascent->peakID);				continue; }
+		if (*iter == peakIDColumn)				{ data.append(ascent->peakID.get());		continue; }
 		if (*iter == dateColumn)				{ data.append(ascent->date);				continue; }
 		if (*iter == peakOnDayColumn)			{ data.append(ascent->perDayIndex);			continue; }
 		if (*iter == timeColumn)				{ data.append(ascent->time);				continue; }
@@ -53,7 +53,7 @@ int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 		if (*iter == traverseColumn)			{ data.append(ascent->traverse);			continue; }
 		if (*iter == difficultySystemColumn)	{ data.append(ascent->difficultySystem);	continue; }
 		if (*iter == difficultyGradeColumn)		{ data.append(ascent->difficultyGrade);		continue; }
-		if (*iter == tripIDColumn)				{ data.append(ascent->tripID);				continue; }
+		if (*iter == tripIDColumn)				{ data.append(ascent->tripID.get());		continue; }
 		if (*iter == descriptionColumn)			{ data.append(ascent->description);			continue; }
 		assert(false);
 	}

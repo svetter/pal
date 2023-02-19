@@ -109,7 +109,11 @@ void AscentDialog::insertInitData()
 	// Title
 	titleLineEdit->setText(init->title);
 	//  Peak
-	peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID) + 1);	// 0 is None
+	if (init->peakID.isValid()) {
+		peakCombo->setCurrentIndex(db->peaksTable->getBufferIndexForPrimaryKey(init->peakID.get()) + 1);	// 0 is None
+	} else {
+		peakCombo->setCurrentIndex(0);
+	}
 	// Date
 	bool dateSpecified = init->dateSpecified();
 	dateCheckbox->setChecked(dateSpecified);
@@ -141,7 +145,11 @@ void AscentDialog::insertInitData()
 	difficultySystemCombo->setCurrentIndex(init->difficultySystem);
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	// Trip
-	tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID) + 1);	// 0 is None
+	if (init->tripID.isValid()) {
+		tripCombo->setCurrentIndex(db->tripsTable->getBufferIndexForPrimaryKey(init->tripID.get()) + 1);	// 0 is None
+	} else {
+		tripCombo->setCurrentIndex(0);
+	}
 	// Hikers
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
 		Hiker* hiker = db->getHiker(*iter);
@@ -156,20 +164,20 @@ void AscentDialog::insertInitData()
 
 Ascent* AscentDialog::extractData()
 {
-	QString		title				= parseLineEdit			(titleLineEdit);
-	int			peakID				= parseIDCombo			(peakCombo);
-	QDate		date				= parseDateWidget		(dateWidget);
-	int			perDayIndex			= parseSpinner			(peakIndexSpinner);
-	QTime		time				= parseTimeWidget		(timeWidget);
-	int			elevationGain		= parseSpinner			(elevationGainSpinner);
-	int			hikeKind			= parseEnumCombo		(hikeKindCombo, false);
-	bool		traverse			= parseCheckbox			(traverseCheckbox);
-	int			difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
-	int			difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
-	int			tripID				= parseIDCombo			(tripCombo);
-	QString		description			= parsePlainTextEdit	(descriptionEditor);
-	QSet<int>	hikerIDs			= hikersModel.getHikerIDSet();
-	QStringList	photos				= photosModel.getPhotoList();
+	QString				title				= parseLineEdit			(titleLineEdit);
+	ItemID				peakID				= parseIDCombo			(peakCombo);
+	QDate				date				= parseDateWidget		(dateWidget);
+	int					perDayIndex			= parseSpinner			(peakIndexSpinner);
+	QTime				time				= parseTimeWidget		(timeWidget);
+	int					elevationGain		= parseSpinner			(elevationGainSpinner);
+	int					hikeKind			= parseEnumCombo		(hikeKindCombo, false);
+	bool				traverse			= parseCheckbox			(traverseCheckbox);
+	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
+	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
+	ItemID				tripID				= parseIDCombo			(tripCombo);
+	QString				description			= parsePlainTextEdit	(descriptionEditor);
+	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
+	QStringList			photos				= photosModel.getPhotoList();
 	
 	if (!dateCheckbox->isChecked())	date = QDate();	
 	if (!timeCheckbox->isChecked())	time = QTime();
@@ -178,7 +186,7 @@ Ascent* AscentDialog::extractData()
 		difficultyGrade		= -1;
 	}
 	
-	Ascent* ascent = new Ascent(-1, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	Ascent* ascent = new Ascent(ItemID(), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 	return ascent;
 }
 
@@ -326,7 +334,7 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
 {
-	QList<WhatIfDeleteResult> whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID);
+	QList<WhatIfDeleteResult> whatIf = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
 	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIf);
 	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
@@ -337,5 +345,5 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 	resultButton = QMessageBox::question(parent, title, question, options, selected);
 	if (resultButton != QMessageBox::Yes) return;
 	
-	db->removeRow(parent, db->ascentsTable, ascent->ascentID);
+	db->removeRow(parent, db->ascentsTable, ascent->ascentID.forceValid());
 }

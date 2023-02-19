@@ -75,41 +75,41 @@ QList<const Column*> AssociativeTable::getPrimaryKeyColumnList() const
 
 
 
-QSet<int> AssociativeTable::getMatchingEntries(const Column* column, int primaryKey) const
+QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
 	const Column* otherColumn = getOtherColumn(column);
-	QSet<int> filtered = QSet<int>();
+	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey) {
+		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
 			filtered.insert((*iter)->at(otherColumn->getIndex()).toInt());
 		}
 	}
 	return filtered;
 }
 
-int AssociativeTable::getNumberOfMatchingRows(const Column* column, int primaryKey) const
+int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
 	int numberOfMatches = 0;
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey) {
+		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
 			numberOfMatches++;
 		}
 	}
 	return numberOfMatches;
 }
 
-void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column, int primaryKey)
+void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey)
 {
 	assert(column == column1 || column == column2);
 	const Column* otherColumn = getOtherColumn(column);
 	
 	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey) {
+		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
 			QList<const Column*> columns = { column, otherColumn };
-			int otherKey = (*iter)->at(otherColumn->getIndex()).toInt();
-			QList<QVariant> primaryKeys = { primaryKey, otherKey };
+			ValidItemID otherKey = (*iter)->at(otherColumn->getIndex()).toInt();
+			QList<QVariant> primaryKeys = { primaryKey.get(), otherKey.get() };
 			Table::removeRow(parent, columns, primaryKeys);
 		}
 	}
@@ -124,7 +124,7 @@ void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	Table::addRow(parent, getColumnList(), data);
 }
 
-void AssociativeTable::removeRow(QWidget* parent, const QList<QVariant>& primaryKeys)
+void AssociativeTable::removeRow(QWidget* parent, const QList<ValidItemID>& primaryKeys)
 {
 	assert(primaryKeys.size() == 2);
 	
