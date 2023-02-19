@@ -349,7 +349,7 @@ static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose
 			newAscentIndex = db->ascentsTable->addRow(parent, extractedAscent);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->ascentsTable->updateRow(parent, originalAscent->ascentID.forceValid(), extractedAscent);
 			break;
 		default:
 			assert(false);

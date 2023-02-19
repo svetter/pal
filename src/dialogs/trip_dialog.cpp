@@ -179,7 +179,7 @@ static int openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose p
 			newTripIndex = db->tripsTable->addRow(parent, extractedTrip);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->tripsTable->updateRow(parent, originalTrip->tripID.forceValid(), extractedTrip);
 			break;
 		default:
 			assert(false);

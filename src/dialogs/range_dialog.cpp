@@ -141,7 +141,7 @@ static int openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose 
 			newRangeIndex = db->rangesTable->addRow(parent, extractedRange);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->rangesTable->updateRow(parent, originalRange->rangeID.forceValid(), extractedRange);
 			break;
 		default:
 			assert(false);

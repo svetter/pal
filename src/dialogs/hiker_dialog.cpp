@@ -129,7 +129,7 @@ static int openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose 
 			newHikerIndex = db->hikersTable->addRow(parent, extractedHiker);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->hikersTable->updateRow(parent, originalHiker->hikerID.forceValid(), extractedHiker);
 			break;
 		default:
 			assert(false);

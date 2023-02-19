@@ -178,7 +178,7 @@ static int openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose
 			newRegionIndex = db->regionsTable->addRow(parent, extractedRegion);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->regionsTable->updateRow(parent, originalRegion->regionID.forceValid(), extractedRegion);
 			break;
 		default:
 			assert(false);

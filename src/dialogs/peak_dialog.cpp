@@ -194,7 +194,7 @@ static int openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose p
 			newPeakIndex = db->peaksTable->addRow(parent, extractedPeak);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->peaksTable->updateRow(parent, originalPeak->peakID.forceValid(), extractedPeak);
 			break;
 		default:
 			assert(false);

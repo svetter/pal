@@ -129,7 +129,7 @@ static int openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpos
 			newCountryIndex = db->countriesTable->addRow(parent, extractedCountry);
 			break;
 		case editItem:
-			// TODO #107 update database
+			db->countriesTable->updateRow(parent, originalCountry->countryID.forceValid(), extractedCountry);
 			break;
 		default:
 			assert(false);
