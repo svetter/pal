@@ -30,20 +30,36 @@ PeaksTable::PeaksTable(const Column* foreignRegionIDColumn) :
 int PeaksTable::addRow(QWidget* parent, const Peak* peak)
 {
 	assert(peak->peakID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(peak->name);					continue; }
-		if (*iter == heightColumn)		{ data.append(peak->height);				continue; }
-		if (*iter == volcanoColumn)		{ data.append(peak->volcano);				continue; }
-		if (*iter == regionIDColumn)	{ data.append(peak->regionID.asQVariant());	continue; }
-		if (*iter == mapsLinkColumn)	{ data.append(peak->mapsLink);				continue; }
-		if (*iter == earthLinkColumn)	{ data.append(peak->earthLink);				continue; }
-		if (*iter == wikiLinkColumn)	{ data.append(peak->wikiLink);				continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(peak);
+	
 	int newPeakIndex = NormalTable::addRow(parent, data);
 	return newPeakIndex;
+}
+
+void PeaksTable::updateRow(QWidget* parent, ValidItemID hikerID, const Peak* peak)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(peak);
+	
+	NormalTable::updateRow(parent, hikerID, columns, data);
+}
+
+
+QList<QVariant> PeaksTable::mapDataToQVariantList(const Peak* peak) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)		{ data.append(peak->name);					continue; }
+		if (column == heightColumn)		{ data.append(peak->height);				continue; }
+		if (column == volcanoColumn)	{ data.append(peak->volcano);				continue; }
+		if (column == regionIDColumn)	{ data.append(peak->regionID.asQVariant());	continue; }
+		if (column == mapsLinkColumn)	{ data.append(peak->mapsLink);				continue; }
+		if (column == earthLinkColumn)	{ data.append(peak->earthLink);				continue; }
+		if (column == wikiLinkColumn)	{ data.append(peak->wikiLink);				continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

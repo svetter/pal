@@ -40,26 +40,42 @@ AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* fore
 int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	assert(ascent->ascentID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == titleColumn)				{ data.append(ascent->title);				continue; }
-		if (*iter == peakIDColumn)				{ data.append(ascent->peakID.asQVariant());	continue; }
-		if (*iter == dateColumn)				{ data.append(ascent->date);				continue; }
-		if (*iter == peakOnDayColumn)			{ data.append(ascent->perDayIndex);			continue; }
-		if (*iter == timeColumn)				{ data.append(ascent->time);				continue; }
-		if (*iter == elevationGainColumn)		{ data.append(ascent->elevationGain);		continue; }
-		if (*iter == hikeKindColumn)			{ data.append(ascent->hikeKind);			continue; }
-		if (*iter == traverseColumn)			{ data.append(ascent->traverse);			continue; }
-		if (*iter == difficultySystemColumn)	{ data.append(ascent->difficultySystem);	continue; }
-		if (*iter == difficultyGradeColumn)		{ data.append(ascent->difficultyGrade);		continue; }
-		if (*iter == tripIDColumn)				{ data.append(ascent->tripID.asQVariant());	continue; }
-		if (*iter == descriptionColumn)			{ data.append(ascent->description);			continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(ascent);
+	
 	int newAscentIndex = NormalTable::addRow(parent, data);
 	ascent->ascentID = buffer->at(newAscentIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newAscentIndex;
+}
+
+void AscentsTable::updateRow(QWidget* parent, ValidItemID ascentsID, const Ascent* ascent)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(ascent);
+	
+	NormalTable::updateRow(parent, ascentsID, columns, data);
+}
+
+
+QList<QVariant> AscentsTable::mapDataToQVariantList(const Ascent* ascent) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == titleColumn)				{ data.append(ascent->title);				continue; }
+		if (column == peakIDColumn)				{ data.append(ascent->peakID.asQVariant());	continue; }
+		if (column == dateColumn)				{ data.append(ascent->date);				continue; }
+		if (column == peakOnDayColumn)			{ data.append(ascent->perDayIndex);			continue; }
+		if (column == timeColumn)				{ data.append(ascent->time);				continue; }
+		if (column == elevationGainColumn)		{ data.append(ascent->elevationGain);		continue; }
+		if (column == hikeKindColumn)			{ data.append(ascent->hikeKind);			continue; }
+		if (column == traverseColumn)			{ data.append(ascent->traverse);			continue; }
+		if (column == difficultySystemColumn)	{ data.append(ascent->difficultySystem);	continue; }
+		if (column == difficultyGradeColumn)	{ data.append(ascent->difficultyGrade);		continue; }
+		if (column == tripIDColumn)				{ data.append(ascent->tripID.asQVariant());	continue; }
+		if (column == descriptionColumn)		{ data.append(ascent->description);			continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

@@ -18,14 +18,30 @@ HikersTable::HikersTable() :
 int HikersTable::addRow(QWidget* parent, const Hiker* hiker)
 {
 	assert(hiker->hikerID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)	{ data.append(hiker->name);	continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(hiker);
+	
 	int newHikerIndex = NormalTable::addRow(parent, data);
 	return newHikerIndex;
+}
+
+void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(hiker);
+	
+	NormalTable::updateRow(parent, hikerID, columns, data);
+}
+
+
+QList<QVariant> HikersTable::mapDataToQVariantList(const Hiker* hiker) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)	{ data.append(hiker->name);	continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

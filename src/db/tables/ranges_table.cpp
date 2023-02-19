@@ -20,15 +20,31 @@ RangesTable::RangesTable() :
 int RangesTable::addRow(QWidget* parent, const Range* range)
 {
 	assert(range->rangeID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(range->name);			continue; }
-		if (*iter == continentColumn)	{ data.append(range->continent);	continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(range);
+	
 	int newRangeIndex = NormalTable::addRow(parent, data);
 	return newRangeIndex;
+}
+
+void RangesTable::updateRow(QWidget* parent, ValidItemID hikerID, const Range* range)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(range);
+	
+	NormalTable::updateRow(parent, hikerID, columns, data);
+}
+
+
+QList<QVariant> RangesTable::mapDataToQVariantList(const Range* range) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)		{ data.append(range->name);			continue; }
+		if (column == continentColumn)	{ data.append(range->continent);	continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

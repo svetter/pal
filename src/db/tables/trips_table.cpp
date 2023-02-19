@@ -24,17 +24,33 @@ TripsTable::TripsTable() :
 int TripsTable::addRow(QWidget* parent, const Trip* trip)
 {
 	assert(trip->tripID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(trip->name);			continue; }
-		if (*iter == startDateColumn)	{ data.append(trip->startDate);		continue; }
-		if (*iter == endDateColumn)		{ data.append(trip->endDate);		continue; }
-		if (*iter == descriptionColumn)	{ data.append(trip->description);	continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(trip);
+	
 	int newTripIndex = NormalTable::addRow(parent, data);
 	return newTripIndex;
+}
+
+void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(trip);
+	
+	NormalTable::updateRow(parent, tripID, columns, data);
+}
+
+
+QList<QVariant> TripsTable::mapDataToQVariantList(const Trip* trip) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)			{ data.append(trip->name);			continue; }
+		if (column == startDateColumn)		{ data.append(trip->startDate);		continue; }
+		if (column == endDateColumn)		{ data.append(trip->endDate);		continue; }
+		if (column == descriptionColumn)	{ data.append(trip->description);	continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

@@ -15,6 +15,9 @@ public:
 	RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn);
 	
 	int addRow(QWidget* parent, const Region* region);
+	void updateRow(QWidget* parent, ValidItemID regionID, const Region* region);
+	
+	QList<QVariant> mapDataToQVariantList(const Region* region) const;
 	
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;

@@ -18,14 +18,30 @@ CountriesTable::CountriesTable() :
 int CountriesTable::addRow(QWidget* parent, const Country* country)
 {
 	assert(country->countryID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)	{ data.append(country->name);	continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(country);
+	
 	int newCountryIndex = NormalTable::addRow(parent, data);
 	return newCountryIndex;
+}
+
+void CountriesTable::updateRow(QWidget* parent, ValidItemID hikerID, const Country* country)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(country);
+	
+	NormalTable::updateRow(parent, hikerID, columns, data);
+}
+
+
+QList<QVariant> CountriesTable::mapDataToQVariantList(const Country* country) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)	{ data.append(country->name);	continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

@@ -22,16 +22,32 @@ RegionsTable::RegionsTable(const Column* foreignRangeIDColumn, const Column* for
 int RegionsTable::addRow(QWidget* parent, const Region* region)
 {
 	assert(region->regionID == -1);
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == nameColumn)		{ data.append(region->name);					continue; }
-		if (*iter == rangeIDColumn)		{ data.append(region->rangeID.asQVariant());	continue; }
-		if (*iter == countryIDColumn)	{ data.append(region->countryID.asQVariant());	continue; }
-		assert(false);
-	}
+	QList<QVariant> data = mapDataToQVariantList(region);
+	
 	int newRegionIndex = NormalTable::addRow(parent, data);
 	return newRegionIndex;
+}
+
+void RegionsTable::updateRow(QWidget* parent, ValidItemID hikerID, const Region* region)
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(region);
+	
+	NormalTable::updateRow(parent, hikerID, columns, data);
+}
+
+
+QList<QVariant> RegionsTable::mapDataToQVariantList(const Region* region) const
+{
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = QList<QVariant>();
+	for (const Column* column : columns) {
+		if (column == nameColumn)		{ data.append(region->name);					continue; }
+		if (column == rangeIDColumn)	{ data.append(region->rangeID.asQVariant());	continue; }
+		if (column == countryIDColumn)	{ data.append(region->countryID.asQVariant());	continue; }
+		assert(false);
+	}
+	return data;
 }
 
 

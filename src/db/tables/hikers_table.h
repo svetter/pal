@@ -17,6 +17,9 @@ public:
 	HikersTable();
 	
 	int addRow(QWidget* parent, const Hiker* hiker);
+	void updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker);
+	
+	QList<QVariant> mapDataToQVariantList(const Hiker* hiker) const;
 	
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;

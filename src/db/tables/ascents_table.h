@@ -28,6 +28,9 @@ public:
 	AscentsTable(const Column* foreignPeakIDColumn, const Column* foreignTripIDColumn);
 	
 	int addRow(QWidget* parent, Ascent* ascent);
+	void updateRow(QWidget* parent, ValidItemID ascentID, const Ascent* ascent);
+	
+	QList<QVariant> mapDataToQVariantList(const Ascent* ascent) const;
 	
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;
