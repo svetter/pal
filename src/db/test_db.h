@@ -155,7 +155,7 @@ QSqlError initDB()
 	int pyrenID		= addRegion(q, QString("Pyrénées Ariegéoises"),	pyreneesID,	franceID);
 	
 	if (!q.prepare(INSERT_PEAK)) return q.lastError();
-	int zugspitzeID	= addPeak(q, QString("Zugspitze"),			2456,	false,	allgauID,	QString("maps link 1"),	QString("earth link 1"),	QString("wiki link 1"));
+	int zugspitzeID	= addPeak(q, QString("Zugspitze"),			2456,	false,	allgauID,	QString("https://goo.gl/maps/jwn8DH2tEZb63dS99"),	QString("https://earth.google.com/web/search/zugspitze"),	QString("https://en.wikipedia.org/wiki/Zugspitze"));
 	int montblancID	= addPeak(q, QString("Mont Blanc"),			3435,	false,	vanoiseID,	QString("maps link 2"),	QString("earth link 2"),	QString("wiki link 2"));
 	int pfanderID	= addPeak(q, QString("Pfänder"),			1549,	false,	vabID,		QString("maps link 3"),	QString("earth link 3"),	QString("wiki link 3"));
 	int brockenID	= addPeak(q, QString("Brocken"),			520,	true,	allgauID,	QString("maps link 4"),	QString("earth link 4"),	QString("wiki link 4"));
