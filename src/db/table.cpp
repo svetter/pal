@@ -68,6 +68,23 @@ QSet<int> Table::getMatchingBufferRowIndices(const Column* column, const QVarian
 	return result;
 }
 
+void Table::printBuffer() const
+{
+	qDebug() << "Printing buffer of" << name;
+	QString header = "";
+	for (const Column* column : getColumnList()) {
+		header.append(column->getName() + "  ");
+	}
+	qDebug() << header;
+	for (QList<QVariant>* bufferRow : *buffer) {
+		QString rowString = "";
+		for (int columnIndex = 0; columnIndex < getNumberOfColumns(); columnIndex++) {
+			rowString.append(bufferRow->at(columnIndex).toString()).append("        ");
+		}
+		qDebug() << rowString;
+	}
+}
+
 
 
 QString Table::getColumnListString() const

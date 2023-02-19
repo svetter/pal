@@ -30,6 +30,7 @@ public:
 	void initBuffer(QWidget* parent);
 	const QList<QVariant>* getBufferRow(int rowIndex) const;
 	QSet<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
+	void printBuffer() const;
 	
 	// Getters
 	virtual int getNumberOfColumns() const = 0;
