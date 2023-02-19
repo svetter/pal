@@ -294,7 +294,9 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
 		displayError(parent, query.lastError(), queryString);
-	query.addBindValue(data);
+	for (int i = 0; i < data.size(); i++) {
+		query.addBindValue(data.at(i));
+	}
 	
 	if (!query.exec())
 		displayError(parent, query.lastError(), queryString);
