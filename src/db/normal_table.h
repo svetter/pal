@@ -6,17 +6,14 @@
 
 #include <QString>
 #include <QList>
-#include <QAbstractTableModel>
 
 
 
-class NormalTable : public Table, public QAbstractItemModel {
+class NormalTable : public Table {
 	const Column*			primaryKeyColumn;
 	QList<const Column*>	nonPrimaryColumns;
 	
 public:
-	static const int PrimaryKeyRole;
-	
 	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);
 	virtual ~NormalTable();
 	
@@ -30,7 +27,6 @@ public:
 	int getNumberOfNonPrimaryKeyColumns() const;
 	QList<const Column*> getNonPrimaryKeyColumnList() const;
 	QString getNonPrimaryKeyColumnListString() const;
-	const Column* getColumnByIndex(int index) const;
 	int getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
 	
 	int getNumberOfRows() const;
@@ -44,13 +40,9 @@ public:
 	void removeRow(QWidget* parent, ValidItemID primaryKey);
 	
 	// QAbstractItemModel implementation
-	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-	QModelIndex parent(const QModelIndex &index) const override;
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	void multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const override;
-	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	
+	static const int PrimaryKeyRole;
 	QModelIndex getNormalRootModelIndex() const;
 	QModelIndex getNullableRootModelIndex() const;
 };

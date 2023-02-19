@@ -39,6 +39,7 @@ public:
 	
 	int getIndex() const;
 	
+	friend class Table;
 	friend class NormalTable;
 	friend class AssociativeTable;
 };

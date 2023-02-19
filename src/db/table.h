@@ -3,12 +3,13 @@
 
 #include "column.h"
 
+#include <QAbstractTableModel>
 #include <QString>
 #include <QWidget>
 
 
 
-class Table {
+class Table : public QAbstractItemModel {
 	QString	name;
 	QString	uiName;
 	bool associative;
@@ -36,6 +37,7 @@ public:
 	virtual QList<const Column*> getPrimaryKeyColumnList() const = 0;
 	QString getColumnListString() const;
 	int getColumnIndex(const Column* column) const;
+	const Column* getColumnByIndex(int index) const;
 	
 protected:
 	// Modifications
@@ -48,7 +50,14 @@ private:
 	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys);
 	
-	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys) const;
+public:
+	// QAbstractItemModel implementation
+	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex parent(const QModelIndex &index) const override;
+	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 };
 
 

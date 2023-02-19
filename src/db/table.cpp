@@ -80,6 +80,12 @@ int Table::getColumnIndex(const Column* column) const
 	return getColumnList().indexOf(column);
 }
 
+const Column* Table::getColumnByIndex(int index) const
+{
+	assert(index >= 0 && index < getNumberOfColumns());
+	return getColumnList().at(index);
+}
+
 
 
 int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)

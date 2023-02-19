@@ -6,10 +6,6 @@
 
 
 
-const int NormalTable::PrimaryKeyRole = -1;
-
-
-
 NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
 		Table(name, uiName, false),
 		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), DataType::integer, false, true, nullptr, this)),
@@ -73,13 +69,6 @@ int NormalTable::getNumberOfNonPrimaryKeyColumns() const
 	return nonPrimaryColumns.size();
 }
 
-const Column* NormalTable::getColumnByIndex(int index) const
-{
-	assert(index >= 0 && index < getNumberOfColumns());
-	if (index == 0) return primaryKeyColumn;
-	return nonPrimaryColumns.at(index - 1);
-}
-
 int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
 	int index = 0;
@@ -119,48 +108,6 @@ void NormalTable::removeRow(QWidget* parent, ValidItemID primaryKey)
 }
 
 
-
-QModelIndex NormalTable::index(int row, int column, const QModelIndex& parent) const
-{
-	if (!hasIndex(row, column, parent)) {
-		qDebug() << QString("NormalTable::index() called with unrecognized location: row %1, column %2, parent").arg(row).arg(column) << parent;
-		return QModelIndex();
-	}
-	if (!parent.isValid()) {
-		return createIndex(row, column, -(row + 1));
-	}
-	return createIndex(row, column, parent.row());
-}
-
-QModelIndex NormalTable::parent(const QModelIndex& index) const
-{
-	if (!index.isValid()) {
-		return QModelIndex();
-	}
-	long long ptr = (long long) index.internalPointer();
-	if (ptr < 0) {
-		return QModelIndex();
-	} else {
-		return createIndex(ptr, 0, -(ptr + 1));
-	}
-}
-
-int NormalTable::rowCount(const QModelIndex& parent) const
-{
-	if (!parent.isValid()) return 2;
-	int numberActualRows = buffer->size();
-	if (parent.row() == 0) {
-		return numberActualRows;
-	} else {
-		return numberActualRows + 1;
-	}
-}
-
-int NormalTable::columnCount(const QModelIndex& parent) const
-{
-	if (!parent.isValid()) return 1;
-	return getNumberOfColumns();
-}
 
 void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
@@ -239,22 +186,9 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 	}
 }
 
-QVariant NormalTable::data(const QModelIndex& index, int role) const
-{
-	QModelRoleData roleData(role);
-	multiData(index, roleData);
-	return roleData.data();
-}
 
-QVariant NormalTable::headerData(int section, Qt::Orientation orientation, int role) const
-{
-	if (role != Qt::DisplayRole) return QVariant();
-	if (orientation != Qt::Orientation::Horizontal) return QVariant(section + 1);
-	QString result = getColumnByIndex(section)->uiName;
-	if (result.isEmpty()) result = getColumnByIndex(section)->name;
-	return result;
-}
 
+const int NormalTable::PrimaryKeyRole = -1;
 
 QModelIndex NormalTable::getNormalRootModelIndex() const
 {
