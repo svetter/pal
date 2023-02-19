@@ -178,7 +178,7 @@ int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, con
 	return newRowID;
 }
 
-int Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)
+void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys)
 {
 	QString condition = "";
 	for (int i = 0; i < primaryKeys.size(); i++) {

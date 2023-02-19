@@ -46,7 +46,7 @@ private:
 	// SQL
 	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
 	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
-	int removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys);
+	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys);
 	
 	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<QVariant>& primaryKeys) const;
 };
