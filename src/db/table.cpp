@@ -246,3 +246,68 @@ int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColum
 	assert(false);
 	return -1;
 }
+
+
+
+QModelIndex Table::index(int row, int column, const QModelIndex& parent) const
+{
+	if (!hasIndex(row, column, parent)) {
+		qDebug() << QString("NormalTable::index() called with unrecognized location: row %1, column %2, parent").arg(row).arg(column) << parent;
+		return QModelIndex();
+	}
+	if (!parent.isValid()) {
+		return createIndex(row, column, -(row + 1));
+	}
+	return createIndex(row, column, parent.row());
+}
+
+QModelIndex Table::parent(const QModelIndex& index) const
+{
+	if (!index.isValid()) {
+		return QModelIndex();
+	}
+	long long ptr = (long long) index.internalPointer();
+	if (ptr < 0) {
+		return QModelIndex();
+	} else {
+		return createIndex(ptr, 0, -(ptr + 1));
+	}
+}
+
+int Table::rowCount(const QModelIndex& parent) const
+{
+	if (!parent.isValid()) return 2;
+	int numberActualRows = buffer->size();
+	if (parent.row() == 0) {
+		return numberActualRows;
+	} else {
+		return numberActualRows + 1;
+	}
+}
+
+int Table::columnCount(const QModelIndex& parent) const
+{
+	if (!parent.isValid()) return 1;
+	return getNumberOfColumns();
+}
+
+QVariant Table::data(const QModelIndex& index, int role) const
+{
+	QModelRoleData roleData(role);
+	multiData(index, roleData);
+	return roleData.data();
+}
+
+QVariant Table::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role != Qt::DisplayRole) return QVariant();
+	if (orientation != Qt::Orientation::Horizontal) return QVariant(section + 1);
+	QString result = getColumnByIndex(section)->uiName;
+	if (result.isEmpty()) result = getColumnByIndex(section)->name;
+	return result;
+}
+
+QModelIndex Table::getNormalRootModelIndex() const
+{
+	return index(0, 0);
+}
