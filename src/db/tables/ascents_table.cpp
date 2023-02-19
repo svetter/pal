@@ -16,8 +16,8 @@ AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* fore
 		elevationGainColumn		(new const Column(QString("elevationGain"),		tr("Elev. gain"),	integer,	true,		false,		nullptr,				this)),
 		hikeKindColumn			(new const Column(QString("hikeKind"),			tr("Kind of hike"),	integer,	false,		false,		nullptr,				this)),
 		traverseColumn			(new const Column(QString("traverse"),			tr("Traverse"),		bit,		false,		false,		nullptr,				this)),
-		difficultySystemColumn	(new const Column(QString("difficultySystem"),	tr("Diff. system"),	integer,	true,		false,		nullptr,				this)),
-		difficultyGradeColumn	(new const Column(QString("difficultyGrade"),	tr("Diff. grade"),	integer,	true,		false,		nullptr,				this)),
+		difficultySystemColumn	(new const Column(QString("difficultySystem"),	tr("Diff. system"),	integer,	false,		false,		nullptr,				this)),
+		difficultyGradeColumn	(new const Column(QString("difficultyGrade"),	tr("Diff. grade"),	integer,	false,		false,		nullptr,				this)),
 		tripIDColumn			(new const Column(QString("tripID"),			QString(),			integer,	true,		false,		foreignTripIDColumn,	this)),
 		descriptionColumn		(new const Column(QString("description"),		tr("Description"),	varchar,	true,		false,		nullptr,				this))
 {

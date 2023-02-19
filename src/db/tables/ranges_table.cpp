@@ -9,7 +9,7 @@ RangesTable::RangesTable() :
 		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID"),
 		//										name			uiName				type		nullable	primaryKey	foreignKey	inTable
 		nameColumn		(new const Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
-		continentColumn	(new const Column(QString("continent"),	tr("Continent"),	integer,	true,		false,		nullptr,	this))
+		continentColumn	(new const Column(QString("continent"),	tr("Continent"),	integer,	false,		false,		nullptr,	this))
 {
 	addColumn(nameColumn);
 	addColumn(continentColumn);

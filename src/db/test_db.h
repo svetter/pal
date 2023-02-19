@@ -5,12 +5,12 @@
 
 
 
-const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, elevationGain INT, hikeKind INT NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER, difficultyGrade INTEGER, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
+const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, elevationGain INTEGER, hikeKind INTEGER NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER NOT NULL, difficultyGrade INTEGER NOT NULL, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
 const auto CREATE_PEAKS			= "CREATE TABLE Peaks(peakID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, height INTEGER, volcano BINARY NOT NULL, regionID INTEGER REFERENCES Regions(regionID), mapsLink NVARCHAR, earthLink NVARCHAR, wikiLink NVARCHAR)";
 const auto CREATE_TRIPS			= "CREATE TABLE Trips(tripID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, startDate DATE, endDate DATE, description NVARCHAR)";
 const auto CREATE_HIKERS		= "CREATE TABLE Hikers(hikerID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
 const auto CREATE_REGIONS		= "CREATE TABLE Regions(regionID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, rangeID INTEGER REFERENCES Ranges(rangeID), countryID INTEGER REFERENCES Countries(countryID))";
-const auto CREATE_RANGES		= "CREATE TABLE Ranges(rangeID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, continent INT)";
+const auto CREATE_RANGES		= "CREATE TABLE Ranges(rangeID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, continent INT NOT NULL)";
 const auto CREATE_COUNTRIES		= "CREATE TABLE Countries(countryID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
 const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), sortIndex INTEGER NOT NULL, filepath NVARCHAR NOT NULL)";
 const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
