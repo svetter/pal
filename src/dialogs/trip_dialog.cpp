@@ -153,7 +153,7 @@ void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, trip->tripID.forceValid());
 	
 	QString windowTitle = TripDialog::tr("Delete Trip");
-	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 	if (!proceed) return;
 
 	db->removeRow(parent, db->tripsTable, trip->tripID.forceValid());

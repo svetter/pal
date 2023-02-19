@@ -38,7 +38,7 @@ public:
 
 
 
-bool displayDeleteWarning(QWidget* parent, Database* db, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
 
 

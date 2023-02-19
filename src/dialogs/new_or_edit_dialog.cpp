@@ -54,7 +54,7 @@ void NewOrEditDialog::reject()
 
 
 
-bool displayDeleteWarning(QWidget* parent, Database* db, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
+bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
 {
 	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIfResults);
 	QString question = whatIfResultString + "\n" + NewOrEditDialog::tr("Are you sure?");

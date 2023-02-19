@@ -152,7 +152,7 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* reg
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, region->regionID.forceValid());
 	
 	QString windowTitle = RegionDialog::tr("Delete region");
-	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 	if (!proceed) return;
 
 	db->removeRow(parent, db->regionsTable, region->regionID.forceValid());

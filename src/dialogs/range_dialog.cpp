@@ -115,7 +115,7 @@ void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, range->rangeID.forceValid());
 	
 	QString windowTitle = RangeDialog::tr("Delete range");
-	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 	if (!proceed) return;
 
 	db->removeRow(parent, db->rangesTable, range->rangeID.forceValid());

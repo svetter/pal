@@ -168,7 +168,7 @@ void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peak->peakID.forceValid());
 	
 	QString windowTitle = PeakDialog::tr("Delete peak");
-	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 	if (!proceed) return;
 
 	db->removeRow(parent, db->peaksTable, peak->peakID.forceValid());

@@ -323,7 +323,7 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
 	
 	QString windowTitle = AscentDialog::tr("Delete ascent");
-	bool proceed = displayDeleteWarning(parent, db, windowTitle, whatIfResults);
+	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 	if (!proceed) return;
 	
 	db->removeRow(parent, db->ascentsTable, ascent->ascentID.forceValid());
