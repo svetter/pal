@@ -27,11 +27,11 @@ public:
 
 	QSet<ValidItemID> getMatchingEntries(const Column* column, ValidItemID primaryKey) const;
 	int getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const;
-	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
 	
 	// Modifications
 	void addRow(QWidget* parent, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, const QList<ValidItemID>& primaryKeys);
+	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
 };
 
 

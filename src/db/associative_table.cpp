@@ -100,21 +100,6 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 	return numberOfMatches;
 }
 
-void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey)
-{
-	assert(column == column1 || column == column2);
-	const Column* otherColumn = getOtherColumn(column);
-	
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
-			QList<const Column*> columns = { column, otherColumn };
-			ValidItemID otherKey = (*iter)->at(otherColumn->getIndex()).toInt();
-			QList<QVariant> primaryKeys = { primaryKey.get(), otherKey.get() };
-			Table::removeRow(parent, columns, primaryKeys);
-		}
-	}
-}
-
 
 
 void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
@@ -130,4 +115,9 @@ void AssociativeTable::removeRow(QWidget* parent, const QList<ValidItemID>& prim
 	
 	// TODO #71
 	qDebug() << "UNIMPLEMENTED: AssociativeTable::removeRow()";
+}
+
+void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey)
+{
+	Table::removeMatchingRows(parent, column, primaryKey);
 }
