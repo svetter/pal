@@ -9,28 +9,13 @@
 Table::Table(QString name, QString uiName, bool isAssociative) :
 		name(name),
 		uiName(uiName),
-		associative(isAssociative),
+		isAssociative(isAssociative),
 		buffer(nullptr)
 {}
 
 Table::~Table()
 {
 	deleteBuffer();
-}
-
-
-QString Table::getName() const
-{
-	return name;
-}
-QString Table::getUIName() const
-{
-	return uiName;
-}
-
-bool Table::isAssociative() const
-{
-	return associative;
 }
 
 
@@ -94,7 +79,7 @@ void Table::printBuffer() const
 	qDebug() << "Printing buffer of" << name;
 	QString header = "";
 	for (const Column* column : getColumnList()) {
-		header.append(column->getName() + "  ");
+		header.append(column->name + "  ");
 	}
 	qDebug() << header;
 	for (QList<QVariant>* bufferRow : *buffer) {
@@ -129,7 +114,7 @@ const Column* Table::getColumnByIndex(int index) const
 int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {	
 	int numColumns = columns.size();
-	assert(!isAssociative() && numColumns == (getNumberOfColumns() - 1) || isAssociative() && numColumns == getNumberOfColumns());
+	assert(!isAssociative && numColumns == (getNumberOfColumns() - 1) || isAssociative && numColumns == getNumberOfColumns());
 	assert(data.size() == numColumns);
 	
 	// Add data to SQL database
@@ -147,7 +132,7 @@ int Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey
 {
 	auto primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
-	assert(column->getTable() == this);
+	assert(column->table == this);
 	
 	// Update cell in SQL database
 	updateCellInSql(parent, primaryKey, column, data);
@@ -199,7 +184,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 {
 	QString queryString = QString(
 			"SELECT " + getColumnListString() +
-			"\nFROM " + getName()
+			"\nFROM " + name
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
@@ -217,7 +202,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 		for (auto columnIter = columns.constBegin(); columnIter!= columns.constEnd(); columnIter++) {
 			QVariant value = query.value(columnIndex);
 			const Column* column = *columnIter;
-			assert(column->isNullable() || !value.isNull());
+			assert(column->nullable || !value.isNull());
 			buffer->at(rowIndex)->append(value);
 			columnIndex++;
 		}
@@ -236,7 +221,7 @@ int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, con
 		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
 	}
 	QString queryString = QString(
-			"INSERT INTO " + getName() + "(" + getColumnListStringOf(columns) + ")" +
+			"INSERT INTO " + name + "(" + getColumnListStringOf(columns) + ")" +
 			"\nVALUES(" + questionMarks + ")"
 	);
 	QSqlQuery query = QSqlQuery();
@@ -260,9 +245,9 @@ void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
 	QString queryString = QString(
-			"UPDATE " + getName() + 
-			"\nSET " + column->getName() + " = ?" +
-			"\nWHERE " + primaryKeyColumn->getName() + " = " + QString::number(primaryKey.get())
+			"UPDATE " + name + 
+			"\nSET " + column->name + " = ?" +
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -279,12 +264,12 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	for (int i = 0; i < primaryKeys.size(); i++) {
 		if (i > 0) condition.append(" AND ");
 		const Column* column = primaryKeyColumns.at(i);
-		assert(column->getTable() == this && column->isPrimaryKey());
+		assert(column->table == this && column->isPrimaryKey());
 		
-		condition.append(column->getName() + " = " + QString::number(primaryKeys.at(i).get()));
+		condition.append(column->name + " = " + QString::number(primaryKeys.at(i).get()));
 	}
 	QString queryString = QString(
-			"DELETE FROM " + getName() +
+			"DELETE FROM " + name +
 			"\nWHERE " + condition
 	);
 	QSqlQuery query = QSqlQuery();
@@ -299,8 +284,8 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* primaryKeyC
 	assert(getPrimaryKeyColumnList().contains(primaryKeyColumn));
 	
 	QString queryString = QString(
-			"DELETE FROM " + getName() +
-			"\nWHERE " + primaryKeyColumn->getName() + " = " + QString::number(primaryKey.get())
+			"DELETE FROM " + name +
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);

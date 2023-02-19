@@ -101,7 +101,7 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 
 void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
-	assert(column->getTable() == this);
+	assert(column->table == this);
 	
 	int updatedRowIndex = Table::updateCellInNormalTable(parent, primaryKey, column, data);
 	QModelIndex updateIndex = index(updatedRowIndex, column->getIndex(), getNormalRootModelIndex());
@@ -144,7 +144,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer->at(rowIndex)->at(columnIndex);
 		QVariant result = QVariant();
 		
-		switch (column->getType()) {
+		switch (column->type) {
 		case integer:
 			switch (role) {
 			case Qt::DisplayRole:

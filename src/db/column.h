@@ -17,31 +17,21 @@ enum DataType {
 
 
 class Column {
-	QString			name;
-	QString			uiName;
-	DataType		type;
-	bool			primaryKey;
-	const Column*	foreignKey;
-	bool			nullable;
-	const Table*	inTable;
-	
 public:
-	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* inTable);
+	const QString		name;
+	const QString		uiName;
+	const DataType		type;
+	const bool			primaryKey;
+	const Column* const	foreignKey;
+	const bool			nullable;
+	const Table* const	table;
 	
-	QString			getName() const;
-	QString			getUIName() const;
-	DataType		getType() const;
+	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* table);
+	
 	bool			isPrimaryKey() const;
 	bool			isForeignKey() const;
 	const Column*	getReferencedForeignColumn() const;
-	bool			isNullable() const;
-	const Table*	getTable() const;
-	
-	int getIndex() const;
-	
-	friend class Table;
-	friend class NormalTable;
-	friend class AssociativeTable;
+	int				getIndex() const;
 };
 
 

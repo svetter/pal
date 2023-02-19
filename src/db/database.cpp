@@ -225,7 +225,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
 		
 		// Look for references in associative table
-		if ((*iter)->isAssociative()) {
+		if ((*iter)->isAssociative) {
 			AssociativeTable* candidateTable = (AssociativeTable*) *iter;
 			
 			const Column* matchingColumn = candidateTable->getOwnColumnReferencing(primaryKeyColumn);
@@ -274,7 +274,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 				for (auto iter = affectedCells.constBegin(); iter != affectedCells.constEnd(); iter++) {
 					const Column* column = (*iter).first;
 					QList<int> rowIndices = (*iter).second;
-					NormalTable* table = (NormalTable*) column->getTable();
+					NormalTable* table = (NormalTable*) column->table;
 					primaryKeyColumn = table->getPrimaryKeyColumn();
 					
 					for (int rowIndex : rowIndices) {

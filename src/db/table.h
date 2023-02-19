@@ -11,9 +11,10 @@
 
 
 class Table : public QAbstractItemModel {
-	QString	name;
-	QString	uiName;
-	bool associative;
+public:
+	const QString	name;
+	const QString	uiName;
+	const bool		isAssociative;
 	
 protected:
 	QList<QList<QVariant>*>* buffer;
@@ -21,10 +22,6 @@ protected:
 	Table(QString name, QString uiName, bool isAssociative);
 public:
 	virtual ~Table();
-	
-	QString getName() const;
-	QString getUIName() const;
-	bool isAssociative() const;
 	
 	// Buffer
 	void deleteBuffer();

@@ -54,7 +54,7 @@ const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* f
 	if (!matchingOwnColumn) return nullptr;
 	
 	const Column* otherColumn = getOtherColumn(matchingOwnColumn);
-	return (NormalTable*) otherColumn->foreignKey->inTable;
+	return (NormalTable*) otherColumn->foreignKey->table;
 }
 
 
