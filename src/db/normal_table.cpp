@@ -92,7 +92,7 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 	assert(data.size() == getNumberOfNonPrimaryKeyColumns());
 	
 	int currentNumRows = buffer->size();
-	beginInsertRows(index(0, 0, QModelIndex()), currentNumRows, currentNumRows);
+	beginInsertRows(getNormalRootModelIndex(), currentNumRows, currentNumRows);
 	int newRowIndex = Table::addRow(parent, getNonPrimaryKeyColumnList(), data);
 	endInsertRows();
 	
@@ -102,7 +102,7 @@ int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
 void NormalTable::removeRow(QWidget* parent, ValidItemID primaryKey)
 {
 	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
-	beginRemoveRows(index(0, 0, QModelIndex()), bufferRowIndex, bufferRowIndex);
+	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
 	Table::removeRow(parent, getPrimaryKeyColumnList(), { primaryKey.get() });
 	endRemoveRows();
 }

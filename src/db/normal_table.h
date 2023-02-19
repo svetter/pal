@@ -43,7 +43,6 @@ public:
 	void multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const override;
 	
 	static const int PrimaryKeyRole;
-	QModelIndex getNormalRootModelIndex() const;
 	QModelIndex getNullableRootModelIndex() const;
 };
 
