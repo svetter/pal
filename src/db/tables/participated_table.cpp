@@ -15,24 +15,28 @@ ParticipatedTable::ParticipatedTable(const Column* foreignAscentIDColumn, const 
 void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (ValidItemID hikerID : ascent->hikerIDs) {
-		addRow(parent, ascent->ascentID.get(), hikerID.get());
+		QList<QVariant> data = mapDataToQVariantList(ascentID, hikerID);
+		AssociativeTable::addRow(parent, data);
 	}
 }
 
-void ParticipatedTable::addRow(QWidget* parent, ValidItemID ascentID, ValidItemID hikerID)
+void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
+{
+	// delete pre-existing rows
+	removeMatchingRows(parent, ascentIDColumn, ascent->ascentID.forceValid());
+	// add back all current rows
+	addRows(parent, ascent);
+}
+
+
+QList<QVariant> ParticipatedTable::mapDataToQVariantList(ValidItemID ascentID, ValidItemID hikerID) const
 {
 	QList<const Column*> columns = getColumnList();
 	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
-		if (*iter == hikerIDColumn)		{ data.append(hikerID.asQVariant());	continue; }
+	for (const Column* column : columns) {
+		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
+		if (column == hikerIDColumn)	{ data.append(hikerID.asQVariant());	continue; }
 		assert(false);
 	}
-	AssociativeTable::addRow(parent, data);
-}
-
-void ParticipatedTable::removeRow(QWidget* parent, QPair<int, int>& primaryKey)
-{
-	// TODO #71
-	qDebug() << "UNIMPLEMENTED: ParticipatedTable::removeRow()";
+	return data;
 }

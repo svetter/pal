@@ -16,10 +16,9 @@ public:
 	ParticipatedTable(const Column* foreignAscentIDColumn, const Column* foreignHikerIDColumn);
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
-	
+	void updateRows(QWidget* parent, const Ascent* ascent);
 private:
-	void addRow(QWidget* parent, ValidItemID ascentID, ValidItemID hikerID);
-	void removeRow(QWidget* parent, QPair<int, int>& primaryKey);
+	QList<QVariant> mapDataToQVariantList(ValidItemID ascentID, ValidItemID hikerID) const;
 };
 
 

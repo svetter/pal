@@ -6,7 +6,8 @@
 
 #include <QString>
 #include <QWidget>
-#include <QTranslator>
+#include <QList>
+#include <QVariant>
 
 
 
@@ -21,13 +22,14 @@ public:
 	QStringList getPhotosForAscent(ValidItemID ascentID) const;
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
+	void updateRows(QWidget* parent, const Ascent* ascent);
+private:
+	QList<QVariant> mapDataToQVariantList(ValidItemID ascentID, int sortIndex, const QString& filepath) const;
 	
+public:
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;
 	virtual QString getItemNamePluralLowercase() const;
-	
-private:
-	void addRow(QWidget* parent, ValidItemID ascentID, int sortIndex, const QString& filepath);
 };
 
 

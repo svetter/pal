@@ -30,6 +30,7 @@ public:
 	
 	bool			isPrimaryKey() const;
 	bool			isForeignKey() const;
+	bool			isKey() const;
 	const Column*	getReferencedForeignColumn() const;
 	int				getIndex() const;
 };

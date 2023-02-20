@@ -35,6 +35,11 @@ bool Column::isForeignKey() const
 	return foreignKey;
 }
 
+bool Column::isKey() const
+{
+	return isPrimaryKey() || isForeignKey();
+}
+
 const Column* Column::getReferencedForeignColumn() const
 {
 	return foreignKey;

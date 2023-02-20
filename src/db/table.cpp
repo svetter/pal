@@ -178,15 +178,16 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	delete rowToRemove;
 }
 
-void Table::removeMatchingRows(QWidget* parent, const Column* primaryKeyColumn, ValidItemID primaryKey)
+void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key)
 {
-	assert(getPrimaryKeyColumnList().contains(primaryKeyColumn));
+	assert(getColumnList().contains(column));
+	assert(column->isKey());
 	
 	// Remove rows from SQL database
-	removeMatchingRowsFromSql(parent, primaryKeyColumn, primaryKey);
+	removeMatchingRowsFromSql(parent, column, key);
 	
 	// Update buffer
-	QList<int> bufferRowIndices = getMatchingBufferRowIndices(primaryKeyColumn, primaryKey.asQVariant());
+	QList<int> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
 	auto iter = bufferRowIndices.constEnd();
 	while (iter-- != bufferRowIndices.constBegin()) {
 		int rowIndex = *iter;
@@ -323,13 +324,13 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 		displayError(parent, query.lastError(), queryString);
 }
 
-void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* primaryKeyColumn, ValidItemID primaryKey)
+void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key)
 {
-	assert(getPrimaryKeyColumnList().contains(primaryKeyColumn));
+	assert(getColumnList().contains(column));
 	
 	QString queryString = QString(
 			"DELETE FROM " + name +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
+			"\nWHERE " + column->name + " = " + QString::number(key.get())
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);

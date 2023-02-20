@@ -347,9 +347,13 @@ static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose
 		case newItem:
 		case duplicateItem:
 			newAscentIndex = db->ascentsTable->addRow(parent, extractedAscent);
+			db->participatedTable->addRows(parent, extractedAscent);
+			db->photosTable->addRows(parent, extractedAscent);
 			break;
 		case editItem:
 			db->ascentsTable->updateRow(parent, originalAscent->ascentID.forceValid(), extractedAscent);
+			db->participatedTable->updateRows(parent, extractedAscent);
+			db->photosTable->updateRows(parent, extractedAscent);
 			break;
 		default:
 			assert(false);

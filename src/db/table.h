@@ -45,7 +45,7 @@ protected:
 	int updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	int updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
-	void removeMatchingRows(QWidget* parent, const Column* primaryKeyColumn, ValidItemID primaryKey);
+	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key);
 	
 private:
 	// SQL
@@ -54,7 +54,7 @@ private:
 	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
-	void removeMatchingRowsFromSql(QWidget* parent, const Column* primaryKeyColumn, ValidItemID primaryKey);
+	void removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key);
 	
 public:
 	// QAbstractItemModel implementation

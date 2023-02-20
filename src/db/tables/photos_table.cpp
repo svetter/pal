@@ -38,26 +38,32 @@ QStringList PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	int sortIndex = 0;
-	for (auto iter = ascent->photos.constBegin(); iter != ascent->photos.constEnd(); iter++) {
-		addRow(parent, ascent->ascentID.forceValid(), sortIndex, *iter);
-		sortIndex++;
+	for (int i = 0; i < ascent->photos.size(); i++ {
+		QList<QVariant> data = mapDataToQVariantList(ascent->ascentID.forceValid(), sortIndex, ascent->photos.at(i));
+		NormalTable::addRow(parent, data);
 	}
 }
 
-void PhotosTable::addRow(QWidget* parent, ValidItemID ascentID, int sortIndex, const QString& filepath)
+void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 {
-	assert(sortIndex >= 0);
-	
+	// delete pre-existing rows
+	removeMatchingRows(parent, ascentIDColumn, ascent->ascentID.forceValid());
+	// add back all current rows
+	addRows(parent, ascent);
+}
+
+
+QList<QVariant> PhotosTable::mapDataToQVariantList(ValidItemID ascentID, int sortIndex, const QString& filepath) const
+{
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
-	for (auto iter = columns.constBegin(); iter != columns.constEnd(); iter++) {
-		if (*iter == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
-		if (*iter == sortIndexColumn)	{ data.append(sortIndex);				continue; }
-		if (*iter == filepathColumn)	{ data.append(filepath);				continue; }
+	for (const Column* column : columns) {
+		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
+		if (column == sortIndexColumn)	{ data.append(sortIndex);				continue; }
+		if (column == filepathColumn)	{ data.append(filepath);				continue; }
 		assert(false);
 	}
-	NormalTable::addRow(parent, data);
+	return data;
 }
 
 
