@@ -29,9 +29,10 @@ public:
 	
 	int addRow(QWidget* parent, Ascent* ascent);
 	void updateRow(QWidget* parent, ValidItemID ascentID, const Ascent* ascent);
-	
+private:
 	QList<QVariant> mapDataToQVariantList(const Ascent* ascent) const;
 	
+public:
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;
 	virtual QString getItemNamePluralLowercase() const;

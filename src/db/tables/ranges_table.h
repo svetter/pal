@@ -19,9 +19,10 @@ public:
 	
 	int addRow(QWidget* parent, const Range* range);
 	void updateRow(QWidget* parent, ValidItemID rangeID, const Range* range);
-	
+private:
 	QList<QVariant> mapDataToQVariantList(const Range* range) const;
 	
+public:
 	virtual QString getNoneString() const;
 	virtual QString getItemNameSingularLowercase() const;
 	virtual QString getItemNamePluralLowercase() const;
