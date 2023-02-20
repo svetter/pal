@@ -10,6 +10,7 @@ CountriesTable::CountriesTable() :
 		//									name		uiName		type		nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new const Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 }
 
@@ -20,8 +21,8 @@ int CountriesTable::addRow(QWidget* parent, Country* country)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, country);
 	
-	int newCountryIndex = NormalTable::addRow(parent, data);
-	country->countryID = buffer->at(newCountryIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newCountryIndex = NormalTable::addRow(parent, columns, data);
+	country->countryID = buffer->at(newCountryIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newCountryIndex;
 }
 

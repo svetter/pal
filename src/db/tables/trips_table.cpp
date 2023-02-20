@@ -13,6 +13,7 @@ TripsTable::TripsTable() :
 		endDateColumn		(new const Column(QString("endDate"),		tr("End date"),		date,		true,		false,		nullptr,	this)),
 		descriptionColumn	(new const Column(QString("description"),	tr("Description"),	varchar,	true,		false,		nullptr,	this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(startDateColumn);
 	addColumn(endDateColumn);
@@ -26,8 +27,8 @@ int TripsTable::addRow(QWidget* parent, Trip* trip)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, trip);
 	
-	int newTripIndex = NormalTable::addRow(parent, data);
-	trip->tripID = buffer->at(newTripIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newTripIndex = NormalTable::addRow(parent, columns, data);
+	trip->tripID = buffer->at(newTripIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newTripIndex;
 }
 

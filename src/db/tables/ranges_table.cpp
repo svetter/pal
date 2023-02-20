@@ -11,6 +11,7 @@ RangesTable::RangesTable() :
 		nameColumn		(new const Column(QString("name"),		tr("Name"),			varchar,	false,		false,		nullptr,	this)),
 		continentColumn	(new const Column(QString("continent"),	tr("Continent"),	integer,	false,		false,		nullptr,	this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(continentColumn);
 }
@@ -22,8 +23,8 @@ int RangesTable::addRow(QWidget* parent, Range* range)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
-	int newRangeIndex = NormalTable::addRow(parent, data);
-	range->rangeID = buffer->at(newRangeIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newRangeIndex = NormalTable::addRow(parent, columns, data);
+	range->rangeID = buffer->at(newRangeIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newRangeIndex;
 }
 

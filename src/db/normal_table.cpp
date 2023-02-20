@@ -8,66 +8,15 @@
 
 NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
 		Table(name, uiName, false),
-		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), DataType::integer, false, true, nullptr, this)),
-		nonPrimaryColumns(QList<const Column*>())
+		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), DataType::integer, false, true, nullptr, this))
 {}
 
 NormalTable::~NormalTable()
-{
-	delete primaryKeyColumn;
-	for (auto iter = nonPrimaryColumns.begin(); iter != nonPrimaryColumns.end(); iter++) {
-		delete *iter;
-	}
-}
+{}
 
 
 
-void NormalTable::addColumn(const Column* column)
-{
-	nonPrimaryColumns.append(column);
-}
-
-
-const Column* NormalTable::getPrimaryKeyColumn() const
-{
-	return primaryKeyColumn;
-}
-
-QList<const Column*> NormalTable::getColumnList() const
-{
-	QList<const Column*> result = getNonPrimaryKeyColumnList();
-	result.insert(0, primaryKeyColumn);
-	return result;
-}
-
-QList<const Column*> NormalTable::getPrimaryKeyColumnList() const
-{
-	return { primaryKeyColumn };
-}
-
-QList<const Column*> NormalTable::getNonPrimaryKeyColumnList() const
-{
-	QList<const Column*> result = QList<const Column*>();
-	for (auto iter = nonPrimaryColumns.constBegin(); iter != nonPrimaryColumns.constEnd(); iter++) {
-		result.append(*iter);
-	}
-	return result;
-}
-
-QString NormalTable::getNonPrimaryKeyColumnListString() const
-{
-	return getColumnListStringOf(getNonPrimaryKeyColumnList());
-}
-
-int NormalTable::getNumberOfColumns() const
-{
-	return nonPrimaryColumns.size() + 1;
-}
-
-int NormalTable::getNumberOfNonPrimaryKeyColumns() const
-{
-	return nonPrimaryColumns.size();
-}
+// BUFFER ACCESS
 
 int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
@@ -80,57 +29,32 @@ int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 }
 
 
-int NormalTable::getNumberOfRows() const
+
+// MODIFICATIONS (PASSTHROUGH)
+
+int NormalTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
-	return buffer->size();
-}
-
-
-
-int NormalTable::addRow(QWidget* parent, const QList<QVariant>& data)
-{
-	assert(data.size() == getNumberOfNonPrimaryKeyColumns());
-	
-	int currentNumRows = buffer->size();
-	beginInsertRows(getNormalRootModelIndex(), currentNumRows, currentNumRows);
-	int newRowIndex = Table::addRow(parent, getNonPrimaryKeyColumnList(), data);
-	endInsertRows();
-	
-	return newRowIndex;
+	return Table::addRow(parent, columns, data);
 }
 
 void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
-	assert(column->table == this);
-	
-	int updatedRowIndex = Table::updateCellInNormalTable(parent, primaryKey, column, data);
-	QModelIndex updateIndex = index(updatedRowIndex, column->getIndex(), getNormalRootModelIndex());
-	Q_EMIT dataChanged(updateIndex, updateIndex, { Qt::DisplayRole });
+	return Table::updateCellInNormalTable(parent, primaryKey, column, data);
 }
 
 void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
-	int updatedRowIndex = Table::updateRowInNormalTable(parent, primaryKey, columns, data);
-	int minColumnIndex = INT_MAX;
-	int maxColumnIndex = INT_MIN;
-	for (const Column* column : columns) {
-		if (column->getIndex() < minColumnIndex)	minColumnIndex = column->getIndex();
-		if (column->getIndex() > maxColumnIndex)	maxColumnIndex = column->getIndex();
-	}
-	QModelIndex updateIndexLeft		= index(updatedRowIndex, minColumnIndex, getNormalRootModelIndex());
-	QModelIndex updateIndexRight	= index(updatedRowIndex, maxColumnIndex, getNormalRootModelIndex());
-	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, { Qt::DisplayRole });
+	return Table::updateRowInNormalTable(parent, primaryKey, columns, data);
 }
 
 void NormalTable::removeRow(QWidget* parent, const ValidItemID primaryKey)
 {
-	int bufferRowIndex = getBufferIndexForPrimaryKey(primaryKey);
-	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
-	Table::removeRow(parent, getPrimaryKeyColumnList(), { primaryKey.get() });
-	endRemoveRows();
+	return Table::removeRow(parent, { primaryKeyColumn }, { primaryKey });
 }
 
 
+
+// QABSTRACTIMTEMMODEL IMPLEMENTATION
 
 void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
@@ -207,13 +131,4 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		
 		roleData.setData(result);
 	}
-}
-
-
-
-const int NormalTable::PrimaryKeyRole = -1;
-
-QModelIndex NormalTable::getNullableRootModelIndex() const
-{
-	return index(1, 0);
 }

@@ -13,6 +13,7 @@ PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 		sortIndexColumn	(new const Column(QString("sortIndex"),	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
 		filepathColumn	(new const Column(QString("filepath"),	tr("File path"),	varchar,	true,		false,		nullptr,				this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);
 	addColumn(sortIndexColumn);
 	addColumn(filepathColumn);
@@ -42,7 +43,7 @@ void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
 		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i));
 		
-		NormalTable::addRow(parent, data);
+		NormalTable::addRow(parent, columns, data);
 	}
 }
 

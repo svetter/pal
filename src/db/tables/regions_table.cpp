@@ -12,6 +12,7 @@ RegionsTable::RegionsTable(const Column* foreignRangeIDColumn, const Column* for
 		rangeIDColumn	(new const Column(QString("rangeID"),	QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),
 		countryIDColumn	(new const Column(QString("countryID"),	QString(),	integer,	true,		false,		foreignCountryIDColumn,	this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(rangeIDColumn);
 	addColumn(countryIDColumn);
@@ -24,8 +25,8 @@ int RegionsTable::addRow(QWidget* parent, Region* region)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, region);
 	
-	int newRegionIndex = NormalTable::addRow(parent, data);
-	region->regionID = buffer->at(newRegionIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newRegionIndex = NormalTable::addRow(parent, columns, data);
+	region->regionID = buffer->at(newRegionIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newRegionIndex;
 }
 

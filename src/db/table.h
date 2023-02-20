@@ -11,6 +11,8 @@
 
 
 class Table : public QAbstractItemModel {
+	QList<const Column*> columns;
+
 public:
 	const QString	name;
 	const QString	uiName;
@@ -23,27 +25,36 @@ protected:
 public:
 	virtual ~Table();
 	
-	// Buffer
-	void deleteBuffer();
+protected:
+	void addColumn(const Column* column);
+	
+public:
+	// Column info
+	int getNumberOfColumns() const;
+	int getNumberOfPrimaryKeyColumns() const;
+	int getNumberOfNonPrimaryKeyColumns() const;
+	QList<const Column*> getColumnList() const;
+	QList<const Column*> getPrimaryKeyColumnList() const;
+	QList<const Column*> getNonPrimaryKeyColumnList() const;
+	QString getColumnListString() const;
+	QString getPrimaryKeyColumnListString() const;
+	int getColumnIndex(const Column* column) const;
+	const Column* getColumnByIndex(int index) const;
+
+	// Buffer access
 	void initBuffer(QWidget* parent);
+	int getNumberOfRows() const;
 	const QList<QVariant>* getBufferRow(int rowIndex) const;
 	QList<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
 	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
+	// Debugging
 	void printBuffer() const;
-	
-	// Getters
-	virtual int getNumberOfColumns() const = 0;
-	virtual QList<const Column*> getColumnList() const = 0;
-	virtual QList<const Column*> getPrimaryKeyColumnList() const = 0;
-	QString getColumnListString() const;
-	int getColumnIndex(const Column* column) const;
-	const Column* getColumnByIndex(int index) const;
 	
 protected:
 	// Modifications
 	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
-	int updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
-	int updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
+	void updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
+	void updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key);
 	
@@ -57,7 +68,7 @@ private:
 	void removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key);
 	
 public:
-	// QAbstractItemModel implementation
+	// QAbstractItemModel implementation (multiData implemented in subclasses)
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -65,7 +76,9 @@ public:
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	
+	static const int PrimaryKeyRole;
 	QModelIndex getNormalRootModelIndex() const;
+	QModelIndex getNullableRootModelIndex() const;
 };
 
 

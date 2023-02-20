@@ -21,6 +21,7 @@ AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* fore
 		tripIDColumn			(new const Column(QString("tripID"),			QString(),			integer,	true,		false,		foreignTripIDColumn,	this)),
 		descriptionColumn		(new const Column(QString("description"),		tr("Description"),	varchar,	true,		false,		nullptr,				this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(titleColumn);
 	addColumn(peakIDColumn);
 	addColumn(dateColumn);
@@ -42,8 +43,8 @@ int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
 	
-	int newAscentIndex = NormalTable::addRow(parent, data);
-	ascent->ascentID = buffer->at(newAscentIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newAscentIndex = NormalTable::addRow(parent, columns, data);
+	ascent->ascentID = buffer->at(newAscentIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newAscentIndex;
 }
 

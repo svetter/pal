@@ -10,6 +10,7 @@ HikersTable::HikersTable() :
 		//									name		uiName		type		nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new const Column(QString("name"),	tr("Name"),	varchar,	false,		false,		nullptr,	this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 }
 
@@ -20,8 +21,8 @@ int HikersTable::addRow(QWidget* parent, Hiker* hiker)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, hiker);
 	
-	int newHikerIndex = NormalTable::addRow(parent, data);
-	hiker->hikerID = buffer->at(newHikerIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newHikerIndex = NormalTable::addRow(parent, columns, data);
+	hiker->hikerID = buffer->at(newHikerIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newHikerIndex;
 }
 

@@ -16,6 +16,7 @@ PeaksTable::PeaksTable(const Column* foreignRegionIDColumn) :
 		earthLinkColumn	(new const Column(QString("earthLink"),	tr("Google Earth link"),	varchar,	true,		false,		nullptr,				this)),
 		wikiLinkColumn	(new const Column(QString("wikiLink"),	tr("Wikipedia link"),		varchar,	true,		false,		nullptr,				this))
 {
+	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(heightColumn);
 	addColumn(volcanoColumn);
@@ -32,8 +33,8 @@ int PeaksTable::addRow(QWidget* parent, Peak* peak)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
-	int newPeakIndex = NormalTable::addRow(parent, data);
-	peak->peakID = buffer->at(newPeakIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
+	int newPeakIndex = NormalTable::addRow(parent, columns, data);
+	peak->peakID = buffer->at(newPeakIndex)->at(primaryKeyColumn->getIndex()).toInt();
 	return newPeakIndex;
 }
 

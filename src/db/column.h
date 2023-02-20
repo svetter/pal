@@ -4,8 +4,6 @@
 #include <QSet>
 
 class Table;
-class NormalTable;
-class AssociativeTable;
 struct WhatIfDeleteResult;
 
 
