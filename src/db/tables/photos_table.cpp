@@ -38,8 +38,10 @@ QStringList PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	for (int i = 0; i < ascent->photos.size(); i++ {
-		QList<QVariant> data = mapDataToQVariantList(ascent->ascentID.forceValid(), sortIndex, ascent->photos.at(i));
+	for (int i = 0; i < ascent->photos.size(); i++) {
+		QList<const Column*> columns = getNonPrimaryKeyColumnList();
+		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i));
+		
 		NormalTable::addRow(parent, data);
 	}
 }
@@ -53,9 +55,8 @@ void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 }
 
 
-QList<QVariant> PhotosTable::mapDataToQVariantList(ValidItemID ascentID, int sortIndex, const QString& filepath) const
+QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath) const
 {
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }

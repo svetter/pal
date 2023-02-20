@@ -21,27 +21,27 @@ TripsTable::TripsTable() :
 
 
 
-int TripsTable::addRow(QWidget* parent, const Trip* trip)
+int TripsTable::addRow(QWidget* parent, Trip* trip)
 {
-	assert(trip->tripID == -1);
-	QList<QVariant> data = mapDataToQVariantList(trip);
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(columns, trip);
 	
 	int newTripIndex = NormalTable::addRow(parent, data);
+	trip->tripID = buffer->at(newTripIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newTripIndex;
 }
 
 void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(trip);
+	QList<QVariant> data = mapDataToQVariantList(columns, trip);
 	
 	NormalTable::updateRow(parent, tripID, columns, data);
 }
 
 
-QList<QVariant> TripsTable::mapDataToQVariantList(const Trip* trip) const
+QList<QVariant> TripsTable::mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const
 {
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == nameColumn)			{ data.append(trip->name);			continue; }

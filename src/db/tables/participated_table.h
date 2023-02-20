@@ -18,7 +18,7 @@ public:
 	void addRows(QWidget* parent, const Ascent* ascent);
 	void updateRows(QWidget* parent, const Ascent* ascent);
 private:
-	QList<QVariant> mapDataToQVariantList(ValidItemID ascentID, ValidItemID hikerID) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const;
 };
 
 

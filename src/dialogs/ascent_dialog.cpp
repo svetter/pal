@@ -351,9 +351,15 @@ static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose
 			db->photosTable->addRows(parent, extractedAscent);
 			break;
 		case editItem:
-			db->ascentsTable->updateRow(parent, originalAscent->ascentID.forceValid(), extractedAscent);
-			db->participatedTable->updateRows(parent, extractedAscent);
-			db->photosTable->updateRows(parent, extractedAscent);
+			extractedAscent->ascentID = originalAscent->ascentID;
+			
+			db->ascentsTable->updateRow(parent, extractedAscent);
+			if (originalAscent->hikerIDs != extractedAscent->hikerIDs) {
+				db->participatedTable->updateRows(parent, extractedAscent);
+			}
+			if (originalAscent->photos != extractedAscent->photos) {
+				db->photosTable->updateRows(parent, extractedAscent);
+			}
 			break;
 		default:
 			assert(false);

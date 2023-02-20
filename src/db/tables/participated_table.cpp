@@ -15,8 +15,10 @@ ParticipatedTable::ParticipatedTable(const Column* foreignAscentIDColumn, const 
 void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (ValidItemID hikerID : ascent->hikerIDs) {
-		QList<QVariant> data = mapDataToQVariantList(ascentID, hikerID);
-		AssociativeTable::addRow(parent, data);
+		QList<const Column*> columns = getColumnList();
+		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), hikerID);
+		
+		AssociativeTable::addRow(parent, columns, data);
 	}
 }
 
@@ -29,9 +31,8 @@ void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
 }
 
 
-QList<QVariant> ParticipatedTable::mapDataToQVariantList(ValidItemID ascentID, ValidItemID hikerID) const
+QList<QVariant> ParticipatedTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const
 {
-	QList<const Column*> columns = getColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }

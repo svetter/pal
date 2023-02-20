@@ -17,27 +17,27 @@ RangesTable::RangesTable() :
 
 
 
-int RangesTable::addRow(QWidget* parent, const Range* range)
+int RangesTable::addRow(QWidget* parent, Range* range)
 {
-	assert(range->rangeID == -1);
-	QList<QVariant> data = mapDataToQVariantList(range);
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
 	int newRangeIndex = NormalTable::addRow(parent, data);
+	range->rangeID = buffer->at(newRangeIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newRangeIndex;
 }
 
 void RangesTable::updateRow(QWidget* parent, ValidItemID hikerID, const Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(range);
+	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
 	NormalTable::updateRow(parent, hikerID, columns, data);
 }
 
 
-QList<QVariant> RangesTable::mapDataToQVariantList(const Range* range) const
+QList<QVariant> RangesTable::mapDataToQVariantList(QList<const Column*>& columns, const Range* range) const
 {
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == nameColumn)		{ data.append(range->name);			continue; }

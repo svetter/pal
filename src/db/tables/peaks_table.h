@@ -22,10 +22,10 @@ public:
 	
 	PeaksTable(const Column* foreignRegionIDColumn);
 	
-	int addRow(QWidget* parent, const Peak* peak);
+	int addRow(QWidget* parent, Peak* peak);
 	void updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak);
 private:
-	QList<QVariant> mapDataToQVariantList(const Peak* peak) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Peak* peak) const;
 	
 public:
 	virtual QString getNoneString() const;

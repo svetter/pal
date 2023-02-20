@@ -39,26 +39,25 @@ AscentsTable::AscentsTable(const Column* foreignPeakIDColumn, const Column* fore
 
 int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
-	assert(ascent->ascentID == -1);
-	QList<QVariant> data = mapDataToQVariantList(ascent);
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
 	
 	int newAscentIndex = NormalTable::addRow(parent, data);
 	ascent->ascentID = buffer->at(newAscentIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newAscentIndex;
 }
 
-void AscentsTable::updateRow(QWidget* parent, ValidItemID ascentsID, const Ascent* ascent)
+void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(ascent);
+	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
 	
-	NormalTable::updateRow(parent, ascentsID, columns, data);
+	NormalTable::updateRow(parent, ascent->ascentID.forceValid(), columns, data);
 }
 
 
-QList<QVariant> AscentsTable::mapDataToQVariantList(const Ascent* ascent) const
+QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& columns, const Ascent* ascent) const
 {
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == titleColumn)				{ data.append(ascent->title);				continue; }

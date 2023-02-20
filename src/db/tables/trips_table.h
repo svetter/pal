@@ -19,10 +19,10 @@ public:
 	
 	TripsTable();
 	
-	int addRow(QWidget* parent, const Trip* trip);
+	int addRow(QWidget* parent, Trip* trip);
 	void updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip);
 private:
-	QList<QVariant> mapDataToQVariantList(const Trip* trip) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const;
 	
 public:
 	virtual QString getNoneString() const;

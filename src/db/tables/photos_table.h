@@ -24,7 +24,7 @@ public:
 	void addRows(QWidget* parent, const Ascent* ascent);
 	void updateRows(QWidget* parent, const Ascent* ascent);
 private:
-	QList<QVariant> mapDataToQVariantList(ValidItemID ascentID, int sortIndex, const QString& filepath) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath) const;
 	
 public:
 	virtual QString getNoneString() const;

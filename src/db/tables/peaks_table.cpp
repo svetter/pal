@@ -27,27 +27,27 @@ PeaksTable::PeaksTable(const Column* foreignRegionIDColumn) :
 
 
 
-int PeaksTable::addRow(QWidget* parent, const Peak* peak)
+int PeaksTable::addRow(QWidget* parent, Peak* peak)
 {
-	assert(peak->peakID == -1);
-	QList<QVariant> data = mapDataToQVariantList(peak);
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
 	int newPeakIndex = NormalTable::addRow(parent, data);
+	peak->peakID = buffer->at(newPeakIndex)->at(getPrimaryKeyColumn()->getIndex()).toInt();
 	return newPeakIndex;
 }
 
 void PeaksTable::updateRow(QWidget* parent, ValidItemID hikerID, const Peak* peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(peak);
+	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
 	NormalTable::updateRow(parent, hikerID, columns, data);
 }
 
 
-QList<QVariant> PeaksTable::mapDataToQVariantList(const Peak* peak) const
+QList<QVariant> PeaksTable::mapDataToQVariantList(QList<const Column*>& columns, const Peak* peak) const
 {
-	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == nameColumn)		{ data.append(peak->name);					continue; }

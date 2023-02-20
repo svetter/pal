@@ -1,7 +1,5 @@
 #include "associative_table.h"
 
-#include "src/db/db_error.h"
-
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QModelIndex>
@@ -102,11 +100,11 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 
 
 
-void AssociativeTable::addRow(QWidget* parent, const QList<QVariant>& data)
+void AssociativeTable::addRow(QWidget* parent, QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	assert(data.size() == 2);
 	
-	Table::addRow(parent, getColumnList(), data);
+	Table::addRow(parent, columns, data);
 }
 
 void AssociativeTable::removeRow(QWidget* parent, const QList<ValidItemID>& primaryKeys)

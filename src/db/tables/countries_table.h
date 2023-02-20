@@ -16,10 +16,10 @@ public:
 	
 	CountriesTable();
 	
-	int addRow(QWidget* parent, const Country* country);
+	int addRow(QWidget* parent, Country* country);
 	void updateRow(QWidget* parent, ValidItemID countryID, const Country* country);
 private:
-	QList<QVariant> mapDataToQVariantList(const Country* country) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Country* country) const;
 	
 public:
 	virtual QString getNoneString() const;

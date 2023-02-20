@@ -14,10 +14,10 @@ public:
 	
 	RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn);
 	
-	int addRow(QWidget* parent, const Region* region);
+	int addRow(QWidget* parent, Region* region);
 	void updateRow(QWidget* parent, ValidItemID regionID, const Region* region);
 private:
-	QList<QVariant> mapDataToQVariantList(const Region* region) const;
+	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Region* region) const;
 	
 public:
 	virtual QString getNoneString() const;

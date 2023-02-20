@@ -114,7 +114,7 @@ const Column* Table::getColumnByIndex(int index) const
 int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {	
 	int numColumns = columns.size();
-	assert(!isAssociative && numColumns == (getNumberOfColumns() - 1) || isAssociative && numColumns == getNumberOfColumns());
+	assert((!isAssociative && numColumns == (getNumberOfColumns() - 1)) || (isAssociative && numColumns == getNumberOfColumns()));
 	assert(data.size() == numColumns);
 	
 	// Add data to SQL database
@@ -122,7 +122,9 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	
 	// Update buffer
 	QList<QVariant>* newBufferRow = new QList<QVariant>(data);
-	newBufferRow->insert(0, newRowID);
+	if (!isAssociative) {
+		newBufferRow->insert(0, newRowID);
+	}
 	buffer->append(newBufferRow);
 	
 	return buffer->size() - 1;

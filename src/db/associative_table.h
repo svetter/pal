@@ -29,7 +29,7 @@ public:
 	int getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const;
 	
 	// Modifications
-	void addRow(QWidget* parent, const QList<QVariant>& data);
+	void addRow(QWidget* parent, QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
 };
