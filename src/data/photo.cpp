@@ -2,9 +2,19 @@
 
 
 
-Photo::Photo(ItemID photoID, ItemID ascentID, bool useBasePath, QString& filepath, QString& description) :
+Photo::Photo() :
+		photoID(ItemID()),
+		ascentID(ItemID()),
+		sortIndex(sortIndex),
+		useBasePath(false),
+		filepath(QString()),
+		description(QString())
+{}
+
+Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, bool useBasePath, QString& filepath, QString& description) :
 		photoID(photoID),
 		ascentID(ascentID),
+		sortIndex(sortIndex),
 		useBasePath(useBasePath),
 		filepath(filepath),
 		description(description)

@@ -40,8 +40,9 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	
 	
 	hikersListView->setModel(&hikersModel);
-	hikersListView->setModelColumn(1);	
+	hikersListView->setModelColumn(1);
 	photosListView->setModel(&photosModel);
+	photosListView->setModelColumn(1);
 	
 	
 	QDate initialDate = QDateTime::currentDateTime().date();
@@ -177,7 +178,7 @@ Ascent* AscentDialog::extractData()
 	ItemID				tripID				= parseIDCombo			(tripCombo);
 	QString				description			= parsePlainTextEdit	(descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
-	QStringList			photos				= photosModel.getPhotoList();
+	QList<Photo*>		photos				= photosModel.getPhotoList();
 	
 	if (!dateCheckbox->isChecked())	date = QDate();	
 	if (!timeCheckbox->isChecked())	time = QTime();
@@ -277,7 +278,15 @@ void AscentDialog::handle_addPhotos()
 			+ tr("All files") + " (*.*)";
 	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
 	if (filepaths.isEmpty()) return;
-	photosModel.addPhotos(filepaths);
+	
+	QList<Photo*> photos = QList<Photo*>();
+	QString emptyDescription = QString();
+	for (QString& filepath : filepaths) {
+		// TODO check path for base path as prefix if enabled
+		photos.append(new Photo(ItemID(), ItemID(), -1, false, filepath, emptyDescription));
+	}
+	
+	photosModel.addPhotos(photos);
 }
 
 void AscentDialog::handle_removePhotos()

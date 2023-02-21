@@ -25,17 +25,23 @@ PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 
 
 
-QStringList PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
+QList<Photo*> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
-	QMap<int, QString> filtered = QMap<int, QString>();
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
-		if ((*iter)->at(ascentIDColumn->getIndex()) == ascentID.get()) {
-			int photoIndex = (*iter)->at(sortIndexColumn->getIndex()).toInt();
-			QString filepath = (*iter)->at(filepathColumn->getIndex()).toString();
-			filtered.insert(photoIndex, filepath);
-		}
+	QList<int> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ascentID.get());
+	
+	QMap<int, Photo*> photosMap = QMap<int, Photo*>();
+	for (int bufferRowIndex : bufferRowIndices) {
+		const QList<QVariant>* bufferRow = getBufferRow(bufferRowIndex);
+		
+		int sortIndex = bufferRow->at(sortIndexColumn->getIndex()).toInt();
+		bool useBasePath = bufferRow->at(useBasePathColumn->getIndex()).toBool();
+		QString filepath = bufferRow->at(filepathColumn->getIndex()).toString();
+		QString description = bufferRow->at(descriptionColumn->getIndex()).toString();
+		
+		Photo* newPhoto = new Photo(ItemID(), ascentID, sortIndex, useBasePath, filepath, description);
+		photosMap.insert(sortIndex, newPhoto);
 	}
-	QStringList sortedList = filtered.values();
+	QList<Photo*> sortedList = photosMap.values();
 	return sortedList;
 }
 
@@ -43,9 +49,10 @@ QStringList PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	for (int i = 0; i < ascent->photos.size(); i++) {
+	QList<Photo*> photos = ascent->photos;
+	for (int i = 0; i < photos.size(); i++) {
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, false, ascent->photos.at(i), QString());
+		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i)->useBasePath, ascent->photos.at(i)->filepath, ascent->photos.at(i)->description);
 		
 		NormalTable::addRow(parent, columns, data);
 	}
