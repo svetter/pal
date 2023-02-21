@@ -18,6 +18,7 @@ SOURCES += \
 	src/data/item_id.cpp \
 	src/data/names.cpp \
 	src/data/peak.cpp \
+	src/data/photo.cpp \
 	src/data/range.cpp \
 	src/data/region.cpp \
 	src/data/trip.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
 	src/data/hiker.h \
 	src/data/item_id.h \
 	src/data/peak.h \
+	src/data/photo.h \
 	src/data/range.h \
 	src/data/region.h \
 	src/data/trip.h \

@@ -8,15 +8,19 @@
 
 PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 		NormalTable(QString("Photos"), QString(), "photoID"),
-		//										name			uiName				type		nullable	primaryKey	foreignKey				inTable
-		ascentIDColumn	(new const Column(QString("ascentID"),	QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
-		sortIndexColumn	(new const Column(QString("sortIndex"),	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
-		filepathColumn	(new const Column(QString("filepath"),	tr("File path"),	varchar,	true,		false,		nullptr,				this))
+		//											name				uiName					type		nullable	primaryKey	foreignKey				inTable
+		ascentIDColumn		(new const Column(QString("ascentID"),		QString(),				integer,	true,		false,		foreignAscentIDColumn,	this)),
+		sortIndexColumn		(new const Column(QString("sortIndex"),		tr("Sort index"),		integer,	true,		false,		nullptr,				this)),
+		useBasePathColumn	(new const Column(QString("useBasePath"),	tr("Use base path"),	bit,		false,		false,		nullptr,				this)),
+		filepathColumn		(new const Column(QString("filepath"),		tr("File path"),		varchar,	false,		false,		nullptr,				this)),
+		descriptionColumn	(new const Column(QString("description"),	tr("Description"),		varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);
 	addColumn(sortIndexColumn);
+	addColumn(useBasePathColumn);
 	addColumn(filepathColumn);
+	addColumn(descriptionColumn);
 }
 
 
@@ -41,7 +45,7 @@ void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (int i = 0; i < ascent->photos.size(); i++) {
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i));
+		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, false, ascent->photos.at(i), QString());
 		
 		NormalTable::addRow(parent, columns, data);
 	}
@@ -56,13 +60,15 @@ void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 }
 
 
-QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath) const
+QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, bool useBasePath, const QString& filepath, const QString& description) const
 {
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
-		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
-		if (column == sortIndexColumn)	{ data.append(sortIndex);				continue; }
-		if (column == filepathColumn)	{ data.append(filepath);				continue; }
+		if (column == ascentIDColumn)		{ data.append(ascentID.asQVariant());	continue; }
+		if (column == sortIndexColumn)		{ data.append(sortIndex);				continue; }
+		if (column == useBasePathColumn)	{ data.append(useBasePath);				continue; }
+		if (column == filepathColumn)		{ data.append(filepath);				continue; }
+		if (column == descriptionColumn)	{ data.append(description);				continue; }
 		assert(false);
 	}
 	return data;
