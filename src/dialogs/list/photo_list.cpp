@@ -161,10 +161,12 @@ QMimeData* PhotosOfAscent::mimeData(const QModelIndexList &indexes) const
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 	
 	for (const QModelIndex& index : indexes) {
-		if (index.isValid()) {
-			QString text = data(index, Qt::DisplayRole).toString();
-			stream << text;
-		}
+		if (!index.isValid()) continue;
+		Photo* photo = list.at(index.row());
+		
+		stream << photo->useBasePath ? "true" : "false";
+		stream << photo->filepath;
+		stream << photo->description;
 	}
 	mimeData->setData(MimeType, encodedData);
 	return mimeData;
@@ -183,9 +185,8 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 	QByteArray encodedData = data->data(MimeType);
 	QDataStream stream(&encodedData, QIODevice::ReadOnly);
 	QList<Photo*> newPhotos = QList<Photo*>();
-	int rows = 0;
-	int currentColumn = 0;
 	
+	int currentColumn = 0;
 	while (!stream.atEnd()) {
 		QString text;
 		stream >> text;
@@ -206,15 +207,11 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 		}
 		
 		currentColumn++;
-		if (currentColumn == 3) {
-			currentColumn = 0;
-			rows++;
-		}
+		if (currentColumn == 3) currentColumn = 0;
 	}
-	qDebug() << currentColumn;
 	
-	insertRows(row, rows, QModelIndex());
-	for (int rowIndex = 0; rowIndex < newPhotos.size(); rowIndex++) {
+	insertRows(row, newPhotos.size(), QModelIndex());
+	for (int rowIndex = row; rowIndex < row + newPhotos.size(); rowIndex++) {
 		setData(index(rowIndex, 0, QModelIndex()), newPhotos.at(rowIndex)->useBasePath);
 		setData(index(rowIndex, 1, QModelIndex()), newPhotos.at(rowIndex)->filepath);
 		setData(index(rowIndex, 2, QModelIndex()), newPhotos.at(rowIndex)->description);
