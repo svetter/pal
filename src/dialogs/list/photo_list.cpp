@@ -31,7 +31,7 @@ void PhotosOfAscent::removePhotoAt(int rowIndex)
 QList<Photo*> PhotosOfAscent::getPhotoList() const
 {
 	// Update sorting indices before returning list
-	for (int i = 0; list.size(); i++) {
+	for (int i = 0; i < list.size(); i++) {
 		list.at(i)->photoID = i;
 	}
 	return QList<Photo*>(list);
@@ -117,7 +117,9 @@ bool PhotosOfAscent::insertRows(int row, int count, const QModelIndex& parent)
 {
 	if (parent.isValid()) return false;
 	beginInsertRows(QModelIndex(), row, row + count - 1);
-	list.insert(row, count, new Photo());
+	for (int rowIndex = row; rowIndex < row + count; rowIndex++) {
+		list.insert(rowIndex, 1, new Photo());
+	}
 	endInsertRows();
 	return true;
 }
@@ -155,18 +157,23 @@ bool PhotosOfAscent::canDropMimeData(const QMimeData* data, Qt::DropAction actio
 	return true;
 }
 
-QMimeData* PhotosOfAscent::mimeData(const QModelIndexList &indexes) const
+QMimeData* PhotosOfAscent::mimeData(const QModelIndexList& indexes) const
 {
 	QMimeData* mimeData = new QMimeData;
 	QByteArray encodedData;
-	
 	QDataStream stream(&encodedData, QIODevice::WriteOnly);
 	
+	QMap<int, QModelIndex> indexMap = QMap<int, QModelIndex>();
 	for (const QModelIndex& index : indexes) {
 		if (!index.isValid()) continue;
-		Photo* photo = list.at(index.row());
+		indexMap.insert(index.row(), index);
+	}
+	QList<int> sortedRowList = indexMap.keys();
+	
+	for (int rowIndex : sortedRowList) {
+		Photo* photo = list.at(rowIndex);
 		
-		stream << photo->useBasePath ? "true" : "false";
+		stream << (photo->useBasePath ? "true" : "false");
 		stream << photo->filepath;
 		stream << photo->description;
 	}
@@ -213,10 +220,10 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 	}
 	
 	insertRows(row, newPhotos.size(), QModelIndex());
-	for (int rowIndex = row; rowIndex < row + newPhotos.size(); rowIndex++) {
-		setData(index(rowIndex, 0, QModelIndex()), newPhotos.at(rowIndex)->useBasePath);
-		setData(index(rowIndex, 1, QModelIndex()), newPhotos.at(rowIndex)->filepath);
-		setData(index(rowIndex, 2, QModelIndex()), newPhotos.at(rowIndex)->description);
+	for (int i = 0; i < newPhotos.size(); i++) {
+		setData(index(row + i, 0, QModelIndex()), newPhotos.at(i)->useBasePath, Qt::DisplayRole);
+		setData(index(row + i, 1, QModelIndex()), newPhotos.at(i)->filepath, Qt::DisplayRole);
+		setData(index(row + i, 2, QModelIndex()), newPhotos.at(i)->description, Qt::DisplayRole);
 	}
 	
 	return true;

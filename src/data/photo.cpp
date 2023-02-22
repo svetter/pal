@@ -5,7 +5,7 @@
 Photo::Photo() :
 		photoID(ItemID()),
 		ascentID(ItemID()),
-		sortIndex(sortIndex),
+		sortIndex(-1),
 		useBasePath(false),
 		filepath(QString()),
 		description(QString())
