@@ -116,7 +116,9 @@ bool PhotosOfAscent::setData(const QModelIndex& index, const QVariant& value, in
 bool PhotosOfAscent::insertRows(int row, int count, const QModelIndex& parent)
 {
 	if (parent.isValid()) return false;
+	beginInsertRows(QModelIndex(), row, row + count - 1);
 	list.insert(row, count, new Photo());
+	endInsertRows();
 	return true;
 }
 
