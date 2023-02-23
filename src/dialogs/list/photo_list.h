@@ -9,15 +9,17 @@
 
 
 class PhotosOfAscent : public QAbstractItemModel {
-	QList<Photo*> list;
+	QList<Photo> list;
 	
 public:
 	PhotosOfAscent();
 	
-	void addPhotos(const QList<Photo*>& photo);
+	void addPhotos(const QList<Photo>& photo);	
+	const QString& getDescriptionAt(int rowIndex) const;
+	void setDescriptionAt(int rowIndex, QString description);
 	void removePhotoAt(int rowIndex);
 	
-	QList<Photo*> getPhotoList() const;
+	QList<Photo> getPhotoList();
 	
 	QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex& index) const override;

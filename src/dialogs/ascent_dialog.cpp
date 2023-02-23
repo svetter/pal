@@ -23,26 +23,26 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	
 	populateComboBoxes();
 	
-	
-	connect(newPeakButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newPeak);
-	connect(dateCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
-	connect(timeCheckbox,			&QCheckBox::stateChanged,			this,	&AscentDialog::handle_timeSpecifiedChanged);
-	connect(elevationGainCheckbox,	&QCheckBox::stateChanged,			this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
-	connect(difficultySystemCombo,	&QComboBox::currentIndexChanged,	this,	&AscentDialog::handle_difficultySystemChanged);
-	connect(newTripButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_newTrip);
-	connect(addHikerButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_addHiker);
-	connect(removeHikersButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_removeHikers);
-	connect(addPhotosButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_addPhotos);
-	connect(removePhotosButton,		&QPushButton::clicked,				this,	&AscentDialog::handle_removePhotos);
-	
-	connect(okButton,				&QPushButton::clicked,				this,	&AscentDialog::handle_ok);
-	connect(cancelButton,			&QPushButton::clicked,				this,	&AscentDialog::handle_cancel);
-	
-	
 	hikersListView->setModel(&hikersModel);
 	hikersListView->setModelColumn(1);
 	photosListView->setModel(&photosModel);
 	photosListView->setModelColumn(1);
+	
+	
+	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
+	connect(dateCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
+	connect(timeCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(elevationGainCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
+	connect(difficultySystemCombo,				&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_difficultySystemChanged);
+	connect(newTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newTrip);
+	connect(addHikerButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_addHiker);
+	connect(removeHikersButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_removeHikers);
+	connect(addPhotosButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_addPhotos);
+	connect(removePhotosButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_removePhotos);
+	connect(photosListView->selectionModel(),	&QItemSelectionModel::selectionChanged,	this,	&AscentDialog::handle_photoSelectionChanged);
+	
+	connect(okButton,							&QPushButton::clicked,					this,	&AscentDialog::handle_ok);
+	connect(cancelButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_cancel);
 	
 	
 	QDate initialDate = QDateTime::currentDateTime().date();
@@ -178,7 +178,7 @@ Ascent* AscentDialog::extractData()
 	ItemID				tripID				= parseIDCombo			(tripCombo);
 	QString				description			= parsePlainTextEdit	(descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
-	QList<Photo*>		photos				= photosModel.getPhotoList();
+	QList<Photo>		photos				= photosModel.getPhotoList();
 	
 	if (!dateCheckbox->isChecked())	date = QDate();	
 	if (!timeCheckbox->isChecked())	time = QTime();
@@ -279,11 +279,11 @@ void AscentDialog::handle_addPhotos()
 	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
 	if (filepaths.isEmpty()) return;
 	
-	QList<Photo*> photos = QList<Photo*>();
+	QList<Photo> photos = QList<Photo>();
 	QString emptyDescription = QString();
 	for (QString& filepath : filepaths) {
 		// TODO check path for base path as prefix if enabled
-		photos.append(new Photo(ItemID(), ItemID(), -1, false, filepath, emptyDescription));
+		photos.append(Photo(ItemID(), ItemID(), -1, false, filepath, emptyDescription));
 	}
 	
 	photosModel.addPhotos(photos);
@@ -299,11 +299,67 @@ void AscentDialog::handle_removePhotos()
 	}
 }
 
+void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	QSet<int> previouslySelectedRows = getPreviouslySelectedRows(selected, deselected);
+	QSet<int> nowSelectedRows = QSet<int>();
+	for (QModelIndex& index : photosListView->selectionModel()->selectedIndexes()) {
+		nowSelectedRows.insert(index.row());
+	}
+	
+	if (previouslySelectedRows.size() == 1) {
+		QList<int> previouslySelectedRowIndexValues = previouslySelectedRows.values();
+		int rowIndex = previouslySelectedRowIndexValues.first();
+		photosModel.setDescriptionAt(rowIndex, photoDescriptionLineEdit->text());
+	}
+	if (nowSelectedRows.size() == 1) {
+		QList<int> nowSelectedRowIndexValues = nowSelectedRows.values();
+		int rowIndex = nowSelectedRowIndexValues.first();
+		QString description = photosModel.getDescriptionAt(rowIndex);
+		photoDescriptionLineEdit->setText(description);
+		photoDescriptionLineEdit->setEnabled(true);
+	} else {
+		photoDescriptionLineEdit->setEnabled(false);
+		photoDescriptionLineEdit->clear();
+	}
+}
+
 
 
 void AscentDialog::handle_ok()
 {
 	accept();
+}
+
+void AscentDialog::handle_cancel()
+{
+	handle_photoSelectionChanged();
+	NewOrEditDialog::handle_cancel();
+}
+
+
+
+QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const
+{
+	QSet<int> unselectedRows = QSet<int>();
+	for (QModelIndex& index : deselected.indexes()) {
+		unselectedRows.insert(index.row());
+	}
+	QSet<int> newlySelectedRows = QSet<int>();
+	for (QModelIndex& index : selected.indexes()) {
+		newlySelectedRows.insert(index.row());
+	}
+	QSet<int> nowSelectedRows = QSet<int>();
+	for (QModelIndex& index : photosListView->selectionModel()->selectedIndexes()) {
+		nowSelectedRows.insert(index.row());
+	}
+	
+	QSet<int> stillSelectedRows = QSet<int>(nowSelectedRows);
+	stillSelectedRows.subtract(newlySelectedRows);
+	QSet<int> previouslySelectedRows = QSet<int>(unselectedRows);
+	previouslySelectedRows.unite(stillSelectedRows);
+	
+	return previouslySelectedRows;
 }
 
 

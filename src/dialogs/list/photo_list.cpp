@@ -6,17 +6,29 @@
 
 
 PhotosOfAscent::PhotosOfAscent() :
-		list(QList<Photo*>())
+		list(QList<Photo>())
 {}
 
 
 
-void PhotosOfAscent::addPhotos(const QList<Photo*>& photos)
+void PhotosOfAscent::addPhotos(const QList<Photo>& photos)
 {
 	int currentNumPhotos = list.size();
 	beginInsertRows(QModelIndex(), currentNumPhotos, currentNumPhotos + photos.size() - 1);
-	list.append(photos);
+	for (const Photo& photo : photos) {
+		list.append(Photo(photo));
+	}
 	endInsertRows();
+}
+
+const QString& PhotosOfAscent::getDescriptionAt(int rowIndex) const
+{
+	return list[rowIndex].description;
+}
+
+void PhotosOfAscent::setDescriptionAt(int rowIndex, QString description)
+{
+	list[rowIndex].description = description;
 }
 
 void PhotosOfAscent::removePhotoAt(int rowIndex)
@@ -28,13 +40,13 @@ void PhotosOfAscent::removePhotoAt(int rowIndex)
 
 
 
-QList<Photo*> PhotosOfAscent::getPhotoList() const
+QList<Photo> PhotosOfAscent::getPhotoList()
 {
 	// Update sorting indices before returning list
 	for (int i = 0; i < list.size(); i++) {
-		list.at(i)->photoID = i;
+		list[i].sortIndex = i;
 	}
-	return QList<Photo*>(list);
+	return QList<Photo>(list);
 }
 
 
@@ -71,11 +83,11 @@ QVariant PhotosOfAscent::data(const QModelIndex& index, int role) const
 	if (role != Qt::DisplayRole) return QVariant();
 	switch (index.column()) {
 	case 0:
-		return list.at(index.row())->useBasePath;
+		return list.at(index.row()).useBasePath;
 	case 1:
-		return list.at(index.row())->filepath;
+		return list.at(index.row()).filepath;
 	case 2:
-		return list.at(index.row())->description;
+		return list.at(index.row()).description;
 	}
 	assert(false);
 	return QVariant();
@@ -98,13 +110,13 @@ bool PhotosOfAscent::setData(const QModelIndex& index, const QVariant& value, in
 	
 	switch (index.column()) {
 	case 0:
-		list.at(index.row())->useBasePath = value.toBool();
+		list[index.row()].useBasePath = value.toBool();
 		break;
 	case 1:
-		list.at(index.row())->filepath = value.toString();
+		list[index.row()].filepath = value.toString();
 		break;
 	case 2:
-		list.at(index.row())->description = value.toString();
+		list[index.row()].description = value.toString();
 		break;
 	default:
 		assert(false);
@@ -118,7 +130,7 @@ bool PhotosOfAscent::insertRows(int row, int count, const QModelIndex& parent)
 	if (parent.isValid()) return false;
 	beginInsertRows(QModelIndex(), row, row + count - 1);
 	for (int rowIndex = row; rowIndex < row + count; rowIndex++) {
-		list.insert(rowIndex, 1, new Photo());
+		list.insert(rowIndex, 1, Photo());
 	}
 	endInsertRows();
 	return true;
@@ -171,11 +183,11 @@ QMimeData* PhotosOfAscent::mimeData(const QModelIndexList& indexes) const
 	QList<int> sortedRowList = indexMap.keys();
 	
 	for (int rowIndex : sortedRowList) {
-		Photo* photo = list.at(rowIndex);
+		Photo photo = list.at(rowIndex);
 		
-		stream << (photo->useBasePath ? "true" : "false");
-		stream << photo->filepath;
-		stream << photo->description;
+		stream << (photo.useBasePath ? "true" : "false");
+		stream << photo.filepath;
+		stream << photo.description;
 	}
 	mimeData->setData(MimeType, encodedData);
 	return mimeData;

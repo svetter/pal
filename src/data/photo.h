@@ -19,8 +19,9 @@ public:
 	
 	Photo();
 	Photo(ItemID photoID, ItemID ascentID, int sortIndex, bool useBasePath, QString& filepath, QString& description);
+	Photo(const Photo& originalPhoto);
 	
-	bool equalTo(const Photo* const other) const;
+	bool operator==(const Photo& other) const;
 };
 
 

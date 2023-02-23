@@ -20,14 +20,22 @@ Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, bool useBasePath, Q
 		description(description)
 {}
 
+Photo::Photo(const Photo& originalPhoto) :
+		photoID(originalPhoto.photoID),
+		ascentID(originalPhoto.ascentID),
+		sortIndex(originalPhoto.sortIndex),
+		useBasePath(originalPhoto.useBasePath),
+		filepath(originalPhoto.filepath),
+		description(originalPhoto.description)
+{}
 
 
-bool Photo::equalTo(const Photo* const other) const
+
+bool Photo::operator==(const Photo& other) const
 {
-	assert(other);
-	if (ascentID	!= other->ascentID)		return false;
-	if (useBasePath	!= other->useBasePath)	return false;
-	if (filepath	!= other->filepath)		return false;
-	if (description	!= other->description)	return false;
+	if (ascentID	!= other.ascentID)		return false;
+	if (useBasePath	!= other.useBasePath)	return false;
+	if (filepath	!= other.filepath)		return false;
+	if (description	!= other.description)	return false;
 	return true;
 }

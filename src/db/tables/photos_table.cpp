@@ -25,11 +25,11 @@ PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
 
 
 
-QList<Photo*> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
+QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
 	QList<int> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ascentID.get());
 	
-	QMap<int, Photo*> photosMap = QMap<int, Photo*>();
+	QMap<int, Photo> photosMap = QMap<int, Photo>();
 	for (int bufferRowIndex : bufferRowIndices) {
 		const QList<QVariant>* bufferRow = getBufferRow(bufferRowIndex);
 		
@@ -38,10 +38,10 @@ QList<Photo*> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 		QString filepath = bufferRow->at(filepathColumn->getIndex()).toString();
 		QString description = bufferRow->at(descriptionColumn->getIndex()).toString();
 		
-		Photo* newPhoto = new Photo(ItemID(), ascentID, sortIndex, useBasePath, filepath, description);
+		Photo newPhoto = Photo(ItemID(), ascentID, sortIndex, useBasePath, filepath, description);
 		photosMap.insert(sortIndex, newPhoto);
 	}
-	QList<Photo*> sortedList = photosMap.values();
+	QList<Photo> sortedList = photosMap.values();
 	return sortedList;
 }
 
@@ -49,10 +49,10 @@ QList<Photo*> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	QList<Photo*> photos = ascent->photos;
+	const QList<Photo>& photos = ascent->photos;
 	for (int i = 0; i < photos.size(); i++) {
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i)->useBasePath, ascent->photos.at(i)->filepath, ascent->photos.at(i)->description);
+		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i).useBasePath, ascent->photos.at(i).filepath, ascent->photos.at(i).description);
 		
 		NormalTable::addRow(parent, columns, data);
 	}

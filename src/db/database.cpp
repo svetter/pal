@@ -114,7 +114,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	QString		description			= row->at(ascentsTable->descriptionColumn->getIndex()).toString();
 	
 	QSet<ValidItemID>	hikerIDs	= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
-	QList<Photo*>		photos		= photosTable->getPhotosForAscent(ascentID);
+	QList<Photo>		photos		= photosTable->getPhotosForAscent(ascentID);
 	
 	setStatusBarMessage(QString("Successfully retrieved ascent with ascentID=%1").arg(ascentID.get()));
 	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);

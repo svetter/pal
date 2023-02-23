@@ -34,6 +34,7 @@ private:
 	void populateComboBoxes();
 	void insertInitData();
 	
+private slots:
 	void handle_newPeak();
 	void handle_dateSpecifiedChanged();
 	void handle_timeSpecifiedChanged();
@@ -44,8 +45,13 @@ private:
 	void handle_removeHikers();
 	void handle_addPhotos();
 	void handle_removePhotos();
+	void handle_photoSelectionChanged(const QItemSelection& selected = QItemSelection(), const QItemSelection& deselected = QItemSelection());
 	
 	void handle_ok();
+	void handle_cancel();
+	
+private:
+	QSet<int> getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const;
 };
 
 
