@@ -281,9 +281,21 @@ void AscentDialog::handle_addPhotos()
 	
 	QList<Photo> photos = QList<Photo>();
 	QString emptyDescription = QString();
-	for (QString& filepath : filepaths) {
-		// TODO check path for base path as prefix if enabled
-		photos.append(Photo(ItemID(), ItemID(), -1, false, filepath, emptyDescription));
+	for (const QString& filepath : filepaths) {
+		QString pathToStore = filepath;
+		bool useBasePath;
+		bool globalSettingUseBasePath = false;				// TODO replace with call to global settings (#12)
+		QString globalSettingsPhotoBasePath = QString();	// TODO replace with call to global settings (#12)
+		
+		if (globalSettingUseBasePath) {
+			useBasePath = filepath.startsWith(globalSettingsPhotoBasePath);
+			if (useBasePath)
+				pathToStore.remove(0, globalSettingsPhotoBasePath.size());
+		} else {
+			useBasePath = false;
+		}
+		
+		photos.append(Photo(ItemID(), ItemID(), -1, useBasePath, pathToStore, emptyDescription));
 	}
 	
 	photosModel.addPhotos(photos);
@@ -328,12 +340,15 @@ void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, 
 
 void AscentDialog::handle_ok()
 {
+	handle_photoSelectionChanged();
+	
 	accept();
 }
 
 void AscentDialog::handle_cancel()
 {
 	handle_photoSelectionChanged();
+	
 	NewOrEditDialog::handle_cancel();
 }
 
