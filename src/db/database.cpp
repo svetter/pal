@@ -24,11 +24,6 @@ Database::Database(MainWindow* parent) :
 	photosTable			= new PhotosTable(ascentsTable->primaryKeyColumn);
 	participatedTable	= new ParticipatedTable(ascentsTable->primaryKeyColumn, hikersTable->primaryKeyColumn);
 	
-	QSqlError initError = initDB();
-	if (initError.type() != QSqlError::NoError) {
-		displayError(parent, initError);
-	}
-	
 	tables.append(tripsTable);
 	tables.append(hikersTable);
 	tables.append(rangesTable);
@@ -38,6 +33,28 @@ Database::Database(MainWindow* parent) :
 	tables.append(ascentsTable);
 	tables.append(photosTable);
 	tables.append(participatedTable);
+	
+	
+	// Load/initialize SQL database
+	QString dbFilename = "PAL.db";
+	QDir dbFile = QDir();
+	qDebug() << "Looking for database file at" << dbFile.absolutePath() + "/" + dbFilename;
+	bool initNewDB = !dbFile.exists(dbFilename);
+	
+	QSqlDatabase sql = QSqlDatabase::addDatabase("QSQLITE");
+	sql.setDatabaseName(dbFile.path() + "/" + dbFilename);
+	
+	if (!sql.open())
+		displayError(parent, sql.lastError());
+	
+	if (initNewDB) {
+		qDebug() << "Database file not found. Creating new one";
+		QSqlError initError = initDB();
+		if (initError.type() != QSqlError::NoError) {
+			displayError(parent, initError);
+		}
+	}
+	
 	
 	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
 		(*iter)->initBuffer(parent);

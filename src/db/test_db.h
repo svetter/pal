@@ -122,12 +122,6 @@ int addParticipated(QSqlQuery& q, int ascentID, int hikerID)
 
 QSqlError initDB()
 {
-	QSqlDatabase sql = QSqlDatabase::addDatabase("QSQLITE");
-	sql.setDatabaseName(":memory:");
-	
-	if (!sql.open())
-		qDebug() << sql.lastError();
-	
 	QSqlQuery q;
 	if (!q.exec(CREATE_ASCENTS)
 			|| !q.exec(CREATE_PEAKS)
