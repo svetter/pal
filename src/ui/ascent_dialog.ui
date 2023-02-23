@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>700</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -43,6 +43,32 @@
      <property name="verticalSpacing">
       <number>10</number>
      </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="titleLabel">
+       <property name="text">
+        <string>Ascent title</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="titleLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="placeholderText">
+        <string>Optional</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="peakLabel">
        <property name="text">
@@ -82,6 +108,13 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="dateLabel">
+       <property name="text">
+        <string>Date</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
       <layout class="QHBoxLayout" name="dateSelectionLayout">
@@ -128,7 +161,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>2</day>
+           <day>4</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -281,6 +314,77 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="elevationGainLabel">
+       <property name="text">
+        <string>Elevation gain</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <layout class="QHBoxLayout" name="elevationGainLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="elevationGainCheckbox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="elevationGainSpinner">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>70</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="suffix">
+          <string notr="true"> m</string>
+         </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>8000</number>
+         </property>
+         <property name="value">
+          <number>500</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="elevationGainSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
            <height>20</height>
           </size>
          </property>
@@ -557,186 +661,99 @@
       </widget>
      </item>
      <item row="9" column="1">
-      <layout class="QHBoxLayout" name="photosSelectionLayout">
+      <layout class="QVBoxLayout" name="photosLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QListView" name="photosListView">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="photosListLayout">
+         <property name="spacing">
+          <number>10</number>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>94</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>130</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>0</width>
-           <height>18</height>
-          </size>
-         </property>
-         <property name="dragEnabled">
-          <bool>true</bool>
-         </property>
-         <property name="dragDropMode">
-          <enum>QAbstractItemView::InternalMove</enum>
-         </property>
-         <property name="defaultDropAction">
-          <enum>Qt::MoveAction</enum>
-         </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="photosToolLayout">
          <item>
-          <widget class="QToolButton" name="addPhotosButton">
+          <widget class="QListView" name="photosListView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
-             <width>25</width>
-             <height>0</height>
+             <width>200</width>
+             <height>94</height>
             </size>
            </property>
-           <property name="text">
-            <string notr="true">+</string>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>130</height>
+            </size>
+           </property>
+           <property name="sizeIncrement">
+            <size>
+             <width>0</width>
+             <height>18</height>
+            </size>
+           </property>
+           <property name="dragEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::InternalMove</enum>
+           </property>
+           <property name="defaultDropAction">
+            <enum>Qt::MoveAction</enum>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="removePhotosButton">
-           <property name="minimumSize">
-            <size>
-             <width>25</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text">
-            <string notr="true">-</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="photosToolLayout">
+           <item>
+            <widget class="QToolButton" name="addPhotosButton">
+             <property name="minimumSize">
+              <size>
+               <width>25</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string notr="true">+</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="removePhotosButton">
+             <property name="minimumSize">
+              <size>
+               <width>25</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string notr="true">-</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
-      </layout>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="titleLabel">
-       <property name="text">
-        <string>Ascent title</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="titleLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>150</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="placeholderText">
-        <string>Optional</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="dateLabel">
-       <property name="text">
-        <string>Date</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="elevationGainLabel">
-       <property name="text">
-        <string>Elevation gain</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <layout class="QHBoxLayout" name="elevationGainLayout">
-       <property name="spacing">
-        <number>10</number>
-       </property>
        <item>
-        <widget class="QCheckBox" name="elevationGainCheckbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QLineEdit" name="photoDescriptionLineEdit">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="placeholderText">
+          <string>Photo description</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="elevationGainSpinner">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>70</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="suffix">
-          <string notr="true"> m</string>
-         </property>
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>8000</number>
-         </property>
-         <property name="value">
-          <number>500</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="elevationGainSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </item>
