@@ -322,6 +322,7 @@ void MainWindow::handle_deleteAscent(int rowIndex)
 {
 	Ascent* selectedAscent = db.getAscentAt(rowIndex);
 	openDeleteAscentDialogAndExecute(this, &db, selectedAscent);
+	updateAscentCounter();
 }
 
 void MainWindow::handle_deletePeak(int rowIndex)
