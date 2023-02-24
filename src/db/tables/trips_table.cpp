@@ -8,7 +8,7 @@
 TripsTable::TripsTable() :
 		NormalTable(QString("Trips"), tr("Trips"), "tripID"),
 		//											name				uiName				type		nullable	primaryKey	foreignKey	inTable
-		nameColumn			(new const Column(QString("name"),			tr("Name"),			varchar,	true,		false,		nullptr,	this)),
+		nameColumn			(new const Column(QString("name"),			tr("Name"),			varchar,	false,		false,		nullptr,	this)),
 		startDateColumn		(new const Column(QString("startDate"),		tr("Start date"),	date,		true,		false,		nullptr,	this)),
 		endDateColumn		(new const Column(QString("endDate"),		tr("End date"),		date,		true,		false,		nullptr,	this)),
 		descriptionColumn	(new const Column(QString("description"),	tr("Description"),	varchar,	true,		false,		nullptr,	this))
