@@ -31,6 +31,8 @@ public:
 	bool			isKey() const;
 	const Column*	getReferencedForeignColumn() const;
 	int				getIndex() const;
+	
+	QString getSqlSpecificationString() const;
 };
 
 

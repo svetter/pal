@@ -52,6 +52,35 @@ int Column::getIndex() const
 
 
 
+QString Column::getSqlSpecificationString() const
+{
+	QString typeString;
+	switch (type) {
+	case integer:	typeString = "INTEGER";		break;
+	case bit:		typeString = "BIT";			break;
+	case varchar:	typeString = "NVARCHAR";	break;
+	case date:		typeString = "DATE";		break;
+	case time_:		typeString = "TIME";		break;
+	default: assert(false);
+	}
+	
+	QString primaryKeyString = "";
+	if (primaryKey)
+		primaryKeyString = " PRIMARY KEY";
+	
+	QString foreignKeyString = "";
+	if (foreignKey)
+		primaryKeyString = " REFERENCES " + foreignKey->table->name + "(" + foreignKey->name + ")";
+	
+	QString nullString = "";
+	if (!nullable)
+		nullString = " NOT NULL";
+	
+	return name + " " + typeString + primaryKeyString + foreignKeyString + nullString;
+}
+
+
+
 QString getColumnListStringOf(QList<const Column*> columns)
 {
 	QString result = "";

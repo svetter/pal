@@ -283,6 +283,32 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 
 // SQL
 
+void Table::createTableInSql(QWidget* parent)
+{
+	QString columnFormatsString = "";
+	for (int i = 0; i < columns.size(); i++) {
+		if (i > 0) columnFormatsString.append(",\n");
+		columnFormatsString.append("\t" + columns.at(i)->getSqlSpecificationString());
+	}
+	
+	QString associativeString;
+	if (isAssociative) {
+		associativeString = "CONSTRAINT " + name.toLower() + "PK PRIMARY KEY (" + getPrimaryKeyColumnListString() + ")";
+	}
+	
+	QString queryString = QString(
+			"CREATE TABLE " + name + "(" +
+			"\n" + columnFormatsString +
+			(isAssociative ? (",\n\t" + associativeString) : "") +
+			"\n)"
+	);
+	qDebug() << queryString;
+	QSqlQuery query = QSqlQuery();
+	
+	if (!query.exec(queryString))
+		displayError(parent, query.lastError(), queryString);
+}
+
 QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 {
 	QString queryString = QString(

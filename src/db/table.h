@@ -60,6 +60,7 @@ protected:
 	
 private:
 	// SQL
+	void createTableInSql(QWidget* parent);
 	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
 	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
