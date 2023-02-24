@@ -32,6 +32,7 @@ public:
 	void updateAscentCounter();
 	
 private:
+	void setUIEnabled(bool enabled);
 	void setupTableView(QTableView* view, NormalTable* table);
 	void initTableContextMenuAndShortcuts();
 	
@@ -71,6 +72,11 @@ private slots:
 	void handle_deleteCountry	(int rowIndex);
 	
 	void handle_rightClick(QPoint pos);
+	
+	void handle_newDatabase();
+	void handle_openDatabase();
+	void handle_saveDatabaseAs();
+	void handle_closeDatabase();
 	
 private:
 	QTableView* getCurrentTableView() const;

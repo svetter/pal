@@ -10,6 +10,7 @@
 
 #include <QList>
 #include <QStandardItemModel>
+#include <QFileDialog>
 
 
 
@@ -20,6 +21,12 @@ MainWindow::MainWindow() :
 		shortcuts(QList<QShortcut*>())
 {
 	setupUi(this);
+	setUIEnabled(false);
+	
+	connect(newDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
+	connect(openDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
+	connect(saveDatabaseAsAction,	&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
+	connect(closeDatabaseAction,	&QAction::triggered,	this,	&MainWindow::handle_closeDatabase);
 	
 	connect(newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
 	connect(newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
@@ -41,17 +48,6 @@ MainWindow::MainWindow() :
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
 	
-	connect(ascentsTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(peaksTableView,		&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(tripsTableView,		&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(hikersTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(regionsTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(rangesTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	connect(countriesTableView,	&QTableView::customContextMenuRequested,	this,	&MainWindow::handle_rightClick);
-	
-	
-	updateAscentCounter();
-	
 	setupTableView(ascentsTableView,	db.ascentsTable);
 	setupTableView(peaksTableView,		db.peaksTable);
 	setupTableView(tripsTableView,		db.tripsTable);
@@ -59,6 +55,10 @@ MainWindow::MainWindow() :
 	setupTableView(regionsTableView,	db.regionsTable);
 	setupTableView(rangesTableView,		db.rangesTable);
 	setupTableView(countriesTableView,	db.countriesTable);
+	
+	
+	updateAscentCounter();	
+	setUIEnabled(true);
 	
 	
 	db.setStatusBar(statusbar);
@@ -80,9 +80,20 @@ void MainWindow::setStatusLine(QString content)
 
 void MainWindow::updateAscentCounter()
 {
-	numAscentsLcdNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
+	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 }
 
+
+
+void MainWindow::setUIEnabled(bool enabled)
+{
+	mainAreaTabs->setEnabled(enabled);
+	newAscentButton->setEnabled(enabled);
+	newPeakButton->setEnabled(enabled);
+	newTripButton->setEnabled(enabled);
+	ascentCounterSegmentNumber->setEnabled(enabled);
+	ascentCounterLabel->setEnabled(enabled);
+}
 
 
 void MainWindow::setupTableView(QTableView* view, NormalTable* table)
@@ -90,8 +101,9 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table)
 	view->setModel(table);
 	view->setRootIndex(table->getNormalRootModelIndex());
 	view->resizeColumnsToContents();
+	
+	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 }
-
 
 
 void MainWindow::initTableContextMenuAndShortcuts()
@@ -369,10 +381,56 @@ void MainWindow::handle_rightClick(QPoint pos)
 	QModelIndex index = currentTableView->indexAt(pos);
 	if (!index.isValid()) return;
 	
-	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);	
+	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);
 	tableContextMenuDuplicateAction->setVisible(currentTableView == ascentsTableView || currentTableView == peaksTableView);
 	
 	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
+}
+
+
+
+void MainWindow::handle_newDatabase()
+{
+	QString caption = tr("Save new database as");
+	QString preSelectedDir = QDir().path();
+	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
+	if (filepath.isEmpty()) return;
+	
+	handle_closeDatabase();
+	db.createNew(this, filepath);
+	updateAscentCounter();
+	setUIEnabled(true);
+}
+
+void MainWindow::handle_openDatabase()
+{
+	QString caption = tr("Open database");
+	QString preSelectedDir = QDir().path();
+	QString filter = tr("Database files") + " (*.db);;" + tr("All files") + " (*.*)";
+	QString filepath = QFileDialog::getOpenFileName(this, caption, preSelectedDir, filter);
+	if (filepath.isEmpty() || !QFile(filepath).exists()) return;
+	
+	handle_closeDatabase();
+	db.openExisting(this, filepath);
+	updateAscentCounter();
+	setUIEnabled(true);
+}
+
+void MainWindow::handle_saveDatabaseAs()
+{
+	QString caption = tr("Save database as");
+	QString preSelectedDir = QDir().path();
+	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
+	if (filepath.isEmpty()) return;
+	
+	db.saveAs(this, filepath);
+}
+
+void MainWindow::handle_closeDatabase()
+{
+	setUIEnabled(false);
+	db.reset();
+	updateAscentCounter();
 }
 
 

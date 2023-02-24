@@ -55,14 +55,105 @@ Database::Database(MainWindow* parent) :
 		}
 	}
 	
-	
-	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
-		(*iter)->initBuffer(parent);
-	}
+	populateBuffers(parent);
 }
 
 Database::~Database() {
 	qDeleteAll(getTableList());
+}
+
+
+
+void Database::reset()
+{
+	for (Table* table : tables) {
+		table->resetBuffer();
+	}
+	QSqlDatabase sql = QSqlDatabase::database();
+	sql.close();
+}
+
+void Database::createNew(QWidget* parent, const QString& filepath)
+{
+	qDebug() << "Creating new database file at" << filepath;
+	
+	if (QFile(filepath).exists()) {
+		qDebug() << "Existing file needs to be removed";
+		QFile(filepath).remove();
+	}
+	
+	// Set filename
+	QSqlDatabase sql = QSqlDatabase::database();
+	sql.setDatabaseName(filepath);
+	
+	// Open connection
+	if (!sql.open())
+		displayError(parent, sql.lastError());
+	
+	qDebug() << "Creating tables in SQL";
+	for (Table* table : tables) {
+		table->createTableInSql(parent);
+	}
+	
+	// All tables still empty of course, but this doubles as a table format check
+	populateBuffers(parent, true);
+}
+
+void Database::openExisting(QWidget* parent, const QString& filepath)
+{
+	qDebug() << "Opening database file" << filepath;
+	
+	// Set filename
+	QSqlDatabase sql = QSqlDatabase::database();
+	sql.setDatabaseName(filepath);
+	
+	// Open connection
+	if (!sql.open())
+		displayError(parent, sql.lastError());
+	
+	populateBuffers(parent);
+}
+
+bool Database::saveAs(QWidget* parent, const QString& filepath)
+{
+	qDebug() << "Saving database file as" << filepath;
+	
+	QSqlDatabase sql = QSqlDatabase::database();
+	QString oldFilepath = sql.databaseName();
+	sql.close();
+	
+	if (QFile(filepath).exists()) {
+		qDebug() << "Existing file needs to be removed";
+		QFile(filepath).remove();
+	}
+	
+	// Copy file
+	if (!QFile(oldFilepath).copy(filepath)) {
+		qDebug() << "File copy failed:" << oldFilepath << "to" << filepath;
+		// reopen old connection
+		// TODO warning message
+		if (!sql.open())
+			displayError(parent, sql.lastError());
+		return false;
+	}
+	
+	// Set filename
+	sql.setDatabaseName(filepath);
+	
+	// Open connection
+	if (!sql.open())
+		displayError(parent, sql.lastError());
+	
+	return true;
+}
+
+
+void Database::populateBuffers(QWidget* parent, bool expectEmpty)
+{
+	for (Table* table : tables) {
+		assert(table->getNumberOfRows() == 0);
+		table->initBuffer(parent, expectEmpty);
+	}
 }
 
 
@@ -311,8 +402,6 @@ void Database::removeRow(QWidget* parent, AssociativeTable* table, ValidItemID p
 {
 	// TODO
 }
-
-
 
 void Database::setStatusBar(QStatusBar* mainWindowStatusBar)
 {

@@ -276,7 +276,7 @@ void AscentDialog::handle_addPhotos()
 	QString preSelectedDir = QString();
 	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
 			+ tr("All files") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter, &filter);
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();

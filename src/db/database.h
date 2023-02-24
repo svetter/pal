@@ -47,6 +47,11 @@ public:
 	Database(MainWindow* parent);
 	~Database();
 	
+	void reset();
+	void createNew(QWidget* parent, const QString& filepath);
+	void openExisting(QWidget* parent, const QString& filepath);
+	bool saveAs(QWidget* parent, const QString& filepath);
+	
 	void setStatusBar(QStatusBar* mainWindowStatusBar);
 	
 	QList<Table*> getTableList() const;
@@ -72,6 +77,8 @@ public:
 	void removeRow(QWidget* parent, AssociativeTable* table, ValidItemID primaryKey1, ValidItemID primaryKey2);
 private:
 	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
+	
+	void populateBuffers(QWidget* parent, bool expectEmpty = false);
 	
 	void setStatusBarMessage(QString content) const;
 	

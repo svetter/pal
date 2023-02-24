@@ -42,7 +42,8 @@ public:
 	const Column* getColumnByIndex(int index) const;
 
 	// Buffer access
-	void initBuffer(QWidget* parent);
+	void initBuffer(QWidget* parent, bool expectEmpty = false);
+	void resetBuffer();
 	int getNumberOfRows() const;
 	const QList<QVariant>* getBufferRow(int rowIndex) const;
 	QList<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
@@ -61,7 +62,7 @@ protected:
 private:
 	// SQL
 	void createTableInSql(QWidget* parent);
-	QList<QList<QVariant>*>* getAllEntriesFromSql(QWidget* parent) const;
+	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent, bool expectEmpty = false) const;
 	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
@@ -80,6 +81,8 @@ public:
 	static const int PrimaryKeyRole;
 	QModelIndex getNormalRootModelIndex() const;
 	QModelIndex getNullableRootModelIndex() const;
+	
+	friend class Database;
 };
 
 

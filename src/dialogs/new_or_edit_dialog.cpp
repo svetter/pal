@@ -1,9 +1,7 @@
 #include "new_or_edit_dialog.h"
 
-#include "qpushbutton.h"
-#include <QFileDialog>
+#include <QPushButton>
 #include <QMessageBox>
-#include <QTranslator>
 
 
 

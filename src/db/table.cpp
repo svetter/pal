@@ -96,9 +96,23 @@ const Column* Table::getColumnByIndex(int index) const
 
 // BUFFER ACCESS
 
-void Table::initBuffer(QWidget* parent)
+void Table::initBuffer(QWidget* parent, bool expectEmpty)
 {
-	buffer = getAllEntriesFromSql(parent);
+	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent, expectEmpty);
+	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
+	buffer.clear();
+	for (QList<QVariant>* newRow : newContents) {
+		buffer.append(newRow);
+	}
+	endInsertRows();
+}
+
+void Table::resetBuffer()
+{
+	beginRemoveRows(getNormalRootModelIndex(), 0, buffer.size() - 1);
+	qDeleteAll(buffer);
+	buffer.clear();
+	endRemoveRows();
 }
 
 int Table::getNumberOfRows() const
@@ -309,7 +323,7 @@ void Table::createTableInSql(QWidget* parent)
 		displayError(parent, query.lastError(), queryString);
 }
 
-QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
+QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expectEmpty) const
 {
 	QString queryString = QString(
 			"SELECT " + getColumnListString() +
@@ -338,9 +352,10 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
 		rowIndex++;
 	}
 	
-	if (result.empty())
-		displayError(parent, "Couldn't read record from SQL query", queryString);
-	return buffer;
+	if (!expectEmpty && result.empty()) {
+		qDebug() << "Couldn't read record from SQL query, or it returned nothing:";
+		qDebug() << queryString;
+	}
 	return result;
 }
 
