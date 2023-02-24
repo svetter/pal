@@ -33,10 +33,10 @@ QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 	for (int bufferRowIndex : bufferRowIndices) {
 		const QList<QVariant>* bufferRow = getBufferRow(bufferRowIndex);
 		
-		int sortIndex = bufferRow->at(sortIndexColumn->getIndex()).toInt();
-		bool useBasePath = bufferRow->at(useBasePathColumn->getIndex()).toBool();
-		QString filepath = bufferRow->at(filepathColumn->getIndex()).toString();
-		QString description = bufferRow->at(descriptionColumn->getIndex()).toString();
+		int sortIndex		= bufferRow->at(sortIndexColumn		->getIndex()).toInt();
+		bool useBasePath	= bufferRow->at(useBasePathColumn	->getIndex()).toBool();
+		QString filepath	= bufferRow->at(filepathColumn		->getIndex()).toString();
+		QString description	= bufferRow->at(descriptionColumn	->getIndex()).toString();
 		
 		Photo newPhoto = Photo(ItemID(), ascentID, sortIndex, useBasePath, filepath, description);
 		photosMap.insert(sortIndex, newPhoto);

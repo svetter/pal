@@ -24,7 +24,7 @@ int RangesTable::addRow(QWidget* parent, Range* range)
 	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
 	int newRangeIndex = NormalTable::addRow(parent, columns, data);
-	range->rangeID = buffer->at(newRangeIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	range->rangeID = getPrimaryKeyAt(newRangeIndex);
 	return newRangeIndex;
 }
 

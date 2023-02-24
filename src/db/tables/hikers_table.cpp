@@ -22,7 +22,7 @@ int HikersTable::addRow(QWidget* parent, Hiker* hiker)
 	QList<QVariant> data = mapDataToQVariantList(columns, hiker);
 	
 	int newHikerIndex = NormalTable::addRow(parent, columns, data);
-	hiker->hikerID = buffer->at(newHikerIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	hiker->hikerID = getPrimaryKeyAt(newHikerIndex);
 	return newHikerIndex;
 }
 

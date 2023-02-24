@@ -28,7 +28,7 @@ int TripsTable::addRow(QWidget* parent, Trip* trip)
 	QList<QVariant> data = mapDataToQVariantList(columns, trip);
 	
 	int newTripIndex = NormalTable::addRow(parent, columns, data);
-	trip->tripID = buffer->at(newTripIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	trip->tripID = getPrimaryKeyAt(newTripIndex);
 	return newTripIndex;
 }
 

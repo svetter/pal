@@ -44,7 +44,7 @@ int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
 	
 	int newAscentIndex = NormalTable::addRow(parent, columns, data);
-	ascent->ascentID = buffer->at(newAscentIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	ascent->ascentID = getPrimaryKeyAt(newAscentIndex);
 	return newAscentIndex;
 }
 

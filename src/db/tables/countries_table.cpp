@@ -22,7 +22,7 @@ int CountriesTable::addRow(QWidget* parent, Country* country)
 	QList<QVariant> data = mapDataToQVariantList(columns, country);
 	
 	int newCountryIndex = NormalTable::addRow(parent, columns, data);
-	country->countryID = buffer->at(newCountryIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	country->countryID = getPrimaryKeyAt(newCountryIndex);
 	return newCountryIndex;
 }
 

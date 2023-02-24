@@ -34,7 +34,7 @@ int PeaksTable::addRow(QWidget* parent, Peak* peak)
 	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
 	int newPeakIndex = NormalTable::addRow(parent, columns, data);
-	peak->peakID = buffer->at(newPeakIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	peak->peakID = getPrimaryKeyAt(newPeakIndex);
 	return newPeakIndex;
 }
 

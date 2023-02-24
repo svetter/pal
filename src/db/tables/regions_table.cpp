@@ -26,7 +26,7 @@ int RegionsTable::addRow(QWidget* parent, Region* region)
 	QList<QVariant> data = mapDataToQVariantList(columns, region);
 	
 	int newRegionIndex = NormalTable::addRow(parent, columns, data);
-	region->regionID = buffer->at(newRegionIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	region->regionID = getPrimaryKeyAt(newRegionIndex);
 	return newRegionIndex;
 }
 

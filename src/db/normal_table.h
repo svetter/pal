@@ -19,6 +19,7 @@ public:
 public:
 	// Buffer access
 	int getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
+	ValidItemID getPrimaryKeyAt(int bufferRowIndex) const;
 	
 	// Modifications (passthrough)
 	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
