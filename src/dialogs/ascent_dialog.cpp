@@ -353,6 +353,12 @@ void AscentDialog::handle_cancel()
 }
 
 
+void AscentDialog::reject()
+{
+	handle_cancel();
+}
+
+
 
 QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const
 {

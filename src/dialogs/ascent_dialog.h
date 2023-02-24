@@ -49,6 +49,7 @@ private slots:
 	
 	void handle_ok();
 	void handle_cancel();
+	void reject();
 	
 private:
 	QSet<int> getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const;
