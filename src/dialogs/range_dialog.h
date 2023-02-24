@@ -17,10 +17,10 @@ public:
 	RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init);
 	~RangeDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Range* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void populateComboBoxes();

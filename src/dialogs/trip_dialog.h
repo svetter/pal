@@ -17,16 +17,16 @@ public:
 	TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Trip* init);
 	~TripDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Trip* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void insertInitData();
 	
-	void handle_datesSpecifiedChanged();	
-	void handle_startDateChanged();	
+	void handle_datesSpecifiedChanged();
+	void handle_startDateChanged();
 	void handle_endDateChanged();
 	
 	void handle_ok();

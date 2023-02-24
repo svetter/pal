@@ -17,10 +17,10 @@ public:
 	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init);
 	~PeakDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Peak* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void populateComboBoxes();

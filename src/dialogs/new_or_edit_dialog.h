@@ -30,7 +30,7 @@ protected:
 	void changeStringsForEdit(QPushButton* okButton);
 	
 	void handle_cancel();
-	void reject();
+	void reject() override;
 	
 public:
 	virtual bool changesMade() = 0;

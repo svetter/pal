@@ -17,10 +17,10 @@ public:
 	CountryDialog(QWidget* parent, Database* db, DialogPurpose purpose, Country* init);
 	~CountryDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Country* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void insertInitData();

@@ -18,10 +18,10 @@ public:
 	HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init);
 	~HikerDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Hiker* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void insertInitData();

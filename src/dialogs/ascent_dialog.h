@@ -25,10 +25,10 @@ public:
 	AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init);
 	~AscentDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Ascent* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void populateComboBoxes();
@@ -49,7 +49,7 @@ private slots:
 	
 	void handle_ok();
 	void handle_cancel();
-	void reject();
+	void reject() override;
 	
 private:
 	QSet<int> getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const;

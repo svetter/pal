@@ -17,16 +17,16 @@ public:
 	RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init);
 	~RegionDialog();
 	
-	virtual QString getEditWindowTitle();
+	virtual QString getEditWindowTitle() override;
 	
 	Region* extractData();
-	virtual bool changesMade();
+	virtual bool changesMade() override;
 	
 private:
 	void populateComboBoxes();
 	void insertInitData();
 	
-	void handle_newRange();	
+	void handle_newRange();
 	void handle_newCountry();
 	
 	void handle_ok();
