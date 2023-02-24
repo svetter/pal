@@ -21,7 +21,7 @@ NormalTable::~NormalTable()
 int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
 	int index = 0;
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
 		if ((*iter)->at(0) == primaryKey.get()) return index;
 		index++;
 	}
@@ -76,7 +76,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		
 		if (role == PrimaryKeyRole) {
 			if (rowIndex >= 0) {
-				roleData.setData(buffer->at(rowIndex)->at(primaryKeyColumn->getIndex()));
+				roleData.setData(buffer.at(rowIndex)->at(primaryKeyColumn->getIndex()));
 			} else {
 				roleData.setData(-1);
 			}
@@ -84,7 +84,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		}
 		const Column* column = getColumnByIndex(columnIndex);
 		
-		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer->at(rowIndex)->at(columnIndex);
+		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer.at(rowIndex)->at(columnIndex);
 		QVariant result = QVariant();
 		
 		switch (column->type) {

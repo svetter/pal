@@ -10,7 +10,7 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
 		name(name),
 		uiName(uiName),
 		isAssociative(isAssociative),
-		buffer(nullptr)
+		buffer(QList<QList<QVariant>*>())
 {}
 
 Table::~Table()
@@ -103,12 +103,12 @@ void Table::initBuffer(QWidget* parent)
 
 int Table::getNumberOfRows() const
 {
-	return buffer->size();
+	return buffer.size();
 }
 
 const QList<QVariant>* Table::getBufferRow(int rowIndex) const
 {
-	return buffer->at(rowIndex);
+	return buffer.at(rowIndex);
 }
 
 QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
@@ -116,7 +116,7 @@ QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVaria
 	assert(getColumnList().contains(column));
 	
 	QList<int> result = QList<int>();
-	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
+	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
 		const QList<QVariant>* bufferRow = getBufferRow(rowIndex);
 		if (bufferRow->at(column->getIndex()) == content) {
 			result.append(rowIndex);
@@ -131,7 +131,7 @@ int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColum
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
 	assert(primaryKeys.size() == numPrimaryKeys);
 	
-	for (int rowIndex = 0; rowIndex < buffer->size(); rowIndex++) {
+	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
 		const QList<QVariant>* row = getBufferRow(rowIndex);
 		bool match = true;
 		for (int i = 0; i < numPrimaryKeys; i++) {
@@ -155,7 +155,7 @@ void Table::printBuffer() const
 		header.append(column->name + "  ");
 	}
 	qDebug() << header;
-	for (QList<QVariant>* bufferRow : *buffer) {
+	for (QList<QVariant>* bufferRow : buffer) {
 		QString rowString = "";
 		for (int columnIndex = 0; columnIndex < getNumberOfColumns(); columnIndex++) {
 			rowString.append(bufferRow->at(columnIndex).toString()).append("        ");
@@ -173,7 +173,7 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	assert(columns.size() == data.size());
 	
 	// Announce row insertion
-	int newItemBufferRowIndex = buffer->size();
+	int newItemBufferRowIndex = buffer.size();
 	beginInsertRows(getNormalRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
 	
 	// Add data to SQL database
@@ -184,7 +184,7 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	if (!isAssociative) {
 		newBufferRow->insert(0, newRowID);
 	}
-	buffer->append(newBufferRow);
+	buffer.append(newBufferRow);
 	
 	// Announce end of row insertion
 	endInsertRows();
@@ -204,7 +204,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	
 	// Update buffer
 	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	buffer->at(bufferRowIndex)->replace(column->getIndex(), data);
+	buffer.at(bufferRowIndex)->replace(column->getIndex(), data);
 	
 	// Announce changed data
 	QModelIndex updateIndex = index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
@@ -223,7 +223,7 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	// Update buffer
 	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
 	for (int i = 0; i < columns.size(); i++) {
-		buffer->at(bufferRowIndex)->replace(columns.at(i)->getIndex(), data.at(i));
+		buffer.at(bufferRowIndex)->replace(columns.at(i)->getIndex(), data.at(i));
 	}
 	
 	// Announce changed data
@@ -247,7 +247,7 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	
 	// Update buffer
 	const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
-	buffer->remove(bufferRowIndex);
+	buffer.remove(bufferRowIndex);
 	delete rowToRemove;
 	
 	// Announce end of row removal
@@ -271,7 +271,7 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
 		
 		const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
-		buffer->remove(bufferRowIndex);
+		buffer.remove(bufferRowIndex);
 		delete rowToRemove;
 		
 		// Announce end of row removal
@@ -309,7 +309,7 @@ void Table::createTableInSql(QWidget* parent)
 		displayError(parent, query.lastError(), queryString);
 }
 
-QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
+QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
 {
 	QString queryString = QString(
 			"SELECT " + getColumnListString() +
@@ -317,7 +317,7 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
-	QList<QList<QVariant>*>* buffer = new QList<QList<QVariant>*>();
+	QList<QList<QVariant>*> result = QList<QList<QVariant>*>();
 	
 	if (!query.exec(queryString))
 		displayError(parent, query.lastError(), queryString);
@@ -326,21 +326,22 @@ QList<QList<QVariant>*>* Table::getAllEntriesFromSql(QWidget* parent) const
 	
 	int rowIndex = 0;
 	while (query.next()) {
-		buffer->append(new QList<QVariant>());
+		result.append(new QList<QVariant>());
 		int columnIndex = 0;
 		for (auto columnIter = columns.constBegin(); columnIter!= columns.constEnd(); columnIter++) {
 			QVariant value = query.value(columnIndex);
 			const Column* column = *columnIter;
 			assert(column->nullable || !value.isNull());
-			buffer->at(rowIndex)->append(value);
+			result.at(rowIndex)->append(value);
 			columnIndex++;
 		}
 		rowIndex++;
 	}
 	
-	if (buffer->empty())
+	if (result.empty())
 		displayError(parent, "Couldn't read record from SQL query", queryString);
 	return buffer;
+	return result;
 }
 
 int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
@@ -481,7 +482,7 @@ QModelIndex Table::parent(const QModelIndex& index) const
 int Table::rowCount(const QModelIndex& parent) const
 {
 	if (!parent.isValid()) return 2;
-	int numberActualRows = buffer->size();
+	int numberActualRows = buffer.size();
 	if (parent.row() == 0) {
 		return numberActualRows;
 	} else {

@@ -66,7 +66,7 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 {
 	assert(column == column1 || column == column2);
 	int numberOfMatches = 0;
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
 			numberOfMatches++;
 		}
@@ -79,7 +79,7 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
 	assert(column == column1 || column == column2);
 	const Column* otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
-	for (auto iter = buffer->constBegin(); iter != buffer->constEnd(); iter++) {
+	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
 			filtered.insert((*iter)->at(otherColumn->getIndex()).toInt());
 		}

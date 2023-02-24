@@ -19,7 +19,7 @@ public:
 	const bool		isAssociative;
 	
 protected:
-	QList<QList<QVariant>*>* buffer;
+	QList<QList<QVariant>*> buffer;
 	
 	Table(QString name, QString uiName, bool isAssociative);
 public:
