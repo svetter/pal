@@ -1,6 +1,6 @@
 #include "add_hiker_dialog.h"
+
 #include "src/dialogs/hiker_dialog.h"
-#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 

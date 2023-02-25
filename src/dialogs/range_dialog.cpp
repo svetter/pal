@@ -1,4 +1,5 @@
 #include "range_dialog.h"
+
 #include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>

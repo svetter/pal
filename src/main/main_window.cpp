@@ -1,4 +1,5 @@
 #include "main_window.h"
+
 #include "src/dialogs/ascent_dialog.h"
 #include "src/dialogs/country_dialog.h"
 #include "src/dialogs/hiker_dialog.h"
