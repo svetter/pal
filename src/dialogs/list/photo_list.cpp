@@ -159,7 +159,7 @@ QStringList PhotosOfAscent::mimeTypes() const
 	return types;
 }
 
-bool PhotosOfAscent::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
+bool PhotosOfAscent::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) const
 {
 	Q_UNUSED(row);
 	Q_UNUSED(column);

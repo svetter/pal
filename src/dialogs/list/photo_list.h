@@ -21,6 +21,7 @@ public:
 	
 	QList<Photo> getPhotoList();
 	
+	// QAbstractItemModel implementation
 	QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex& index) const override;
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;	
@@ -33,7 +34,7 @@ public:
 	Qt::DropActions supportedDropActions() const override;
 	static const QString MimeType;
 	QStringList mimeTypes() const override;
-	bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent);
+	bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) const override;
 	QMimeData* mimeData(const QModelIndexList &indexes) const override;
 	bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
 };
