@@ -52,7 +52,8 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/main.cpp \
-	src/main/main_window.cpp
+	src/main/main_window.cpp \
+	src/main/settings.cpp
 
 HEADERS += \
 	src/data/ascent.h \
@@ -93,7 +94,8 @@ HEADERS += \
 	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
-	src/main/main_window.h
+	src/main/main_window.h \
+	src/main/settings.h
 
 FORMS += \
 	src/ui/about_window.ui \
