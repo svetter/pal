@@ -31,6 +31,15 @@ Photo::Photo(const Photo& originalPhoto) :
 
 
 
+Photo& Photo::operator=(const Photo& other)
+{
+	ascentID	= other.ascentID;
+	useBasePath	= other.useBasePath;
+	filepath	= other.filepath;
+	description	= other.description;
+	return *this;
+}
+
 bool Photo::operator==(const Photo& other) const
 {
 	if (ascentID	!= other.ascentID)		return false;

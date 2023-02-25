@@ -3,6 +3,7 @@
 
 
 HikersOnAscent::HikersOnAscent() :
+		QAbstractTableModel(),
 		list(QList<QPair<int, QString>>())
 {}
 

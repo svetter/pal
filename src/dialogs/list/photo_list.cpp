@@ -6,6 +6,7 @@
 
 
 PhotosOfAscent::PhotosOfAscent() :
+		QAbstractItemModel(),
 		list(QList<Photo>())
 {}
 
