@@ -74,7 +74,6 @@ public:
 	
 	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, ValidItemID primaryKey);
 	void removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey);
-	void removeRow(QWidget* parent, AssociativeTable* table, ValidItemID primaryKey1, ValidItemID primaryKey2);
 private:
 	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
 	

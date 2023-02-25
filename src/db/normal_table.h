@@ -25,7 +25,7 @@ public:
 	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
-	void removeRow(QWidget* parent, const ValidItemID primaryKey);
+	// removeRow(...) doesn't exist to avoid row removal without reference search. Outside interface is Database::removeRow(...)
 	
 	// Translation strings
 	virtual QString getNoneString() const = 0;

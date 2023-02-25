@@ -323,7 +323,7 @@ void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primar
 {
 	Database::removeRow_referenceSearch(parent, false, table, primaryKey);
 	
-	table->removeRow(parent, primaryKey);
+	table->removeRow(parent, { table->primaryKeyColumn }, { primaryKey });
 }
 
 QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey)
@@ -396,11 +396,6 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 		
 	}
 	return result;
-}
-
-void Database::removeRow(QWidget* parent, AssociativeTable* table, ValidItemID primaryKey1, ValidItemID primaryKey2)
-{
-	// TODO
 }
 
 void Database::setStatusBar(QStatusBar* mainWindowStatusBar)

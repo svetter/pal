@@ -52,11 +52,6 @@ void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const
 	return Table::updateRowInNormalTable(parent, primaryKey, columns, data);
 }
 
-void NormalTable::removeRow(QWidget* parent, const ValidItemID primaryKey)
-{
-	return Table::removeRow(parent, { primaryKeyColumn }, { primaryKey });
-}
-
 
 
 // QABSTRACTIMTEMMODEL IMPLEMENTATION
