@@ -254,6 +254,8 @@ void MainWindow::handle_newCountry()
 void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view)
 {
 	int newItemIndex = openNewItemDialogAndStoreMethod(this, &db);
+	if (newItemIndex == -1) return;
+	
 	QModelIndex modelIndex = table->index(newItemIndex, 0, view->currentIndex().parent());
 	view->setCurrentIndex(modelIndex);
 	view->scrollTo(modelIndex);
@@ -317,6 +319,7 @@ void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
 {
 	Ascent* selectedAscent = db.getAscentAt(rowIndex);
 	int newAscentIndex = openDuplicateAscentDialogAndStore(this, &db, selectedAscent);
+	if (newAscentIndex == -1) return;
 	
 	QModelIndex modelIndex = db.ascentsTable->index(newAscentIndex, 0, ascentsTableView->currentIndex().parent());
 	ascentsTableView->setCurrentIndex(modelIndex);
@@ -328,6 +331,7 @@ void MainWindow::handle_duplicateAndEditPeak(int rowIndex)
 {
 	Peak* selectedPeak = db.getPeakAt(rowIndex);
 	int newPeakIndex = openDuplicatePeakDialogAndStore(this, &db, selectedPeak);
+	if (newPeakIndex == -1) return;
 	
 	QModelIndex modelIndex = db.peaksTable->index(newPeakIndex, 0, peaksTableView->currentIndex().parent());
 	peaksTableView->setCurrentIndex(modelIndex);
