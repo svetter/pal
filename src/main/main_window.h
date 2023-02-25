@@ -78,6 +78,8 @@ private slots:
 	void handle_saveDatabaseAs();
 	void handle_closeDatabase();
 	
+	void handle_about();
+	
 private:
 	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);

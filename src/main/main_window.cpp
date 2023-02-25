@@ -6,6 +6,7 @@
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
+#include "src/main/about_window.h"
 #include "ui_main_window.h"
 
 #include <QList>
@@ -23,6 +24,7 @@ MainWindow::MainWindow() :
 	setupUi(this);
 	setUIEnabled(false);
 	
+	
 	connect(newDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
 	connect(openDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
 	connect(saveDatabaseAsAction,	&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
@@ -35,6 +37,9 @@ MainWindow::MainWindow() :
 	connect(newRegionAction,	&QAction::triggered,	this,	&MainWindow::handle_newRegion);
 	connect(newRangeAction,		&QAction::triggered,	this,	&MainWindow::handle_newRange);
 	connect(newCountryAction,	&QAction::triggered,	this,	&MainWindow::handle_newCountry);
+	
+	connect(aboutAction,		&QAction::triggered,	this,	&MainWindow::handle_about);
+	connect(aboutQtAction,		&QAction::triggered,	this,	&QApplication::aboutQt);
 	
 	connect(newAscentButton,	&QPushButton::clicked,	this,	&MainWindow::handle_newAscent);
 	connect(newPeakButton,		&QPushButton::clicked,	this,	&MainWindow::handle_newPeak);
@@ -57,7 +62,7 @@ MainWindow::MainWindow() :
 	setupTableView(countriesTableView,	db.countriesTable);
 	
 	
-	updateAscentCounter();	
+	updateAscentCounter();
 	setUIEnabled(true);
 	
 	
@@ -431,6 +436,13 @@ void MainWindow::handle_closeDatabase()
 	setUIEnabled(false);
 	db.reset();
 	updateAscentCounter();
+}
+
+
+
+void MainWindow::handle_about()
+{
+	AboutWindow(this).exec();
 }
 
 

@@ -1,5 +1,6 @@
 QT += core gui
 QT += sql
+QT += svg svgwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -49,6 +50,7 @@ SOURCES += \
 	src/dialogs/peak_dialog.cpp \
 	src/dialogs/region_dialog.cpp \
 	src/dialogs/trip_dialog.cpp \
+	src/main/about_window.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp
 
@@ -90,9 +92,11 @@ HEADERS += \
 	src/dialogs/region_dialog.h \
 	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
+	src/main/about_window.h \
 	src/main/main_window.h
 
 FORMS += \
+	src/ui/about_window.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \
@@ -105,6 +109,12 @@ FORMS += \
 
 
 
+DEFINES += APP_VERSION='"\\\"0.1\\\""'
+DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
+DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
+
+
+
 TRANSLATIONS += \
 	translation/PAL_de.ts
 
@@ -114,6 +124,18 @@ DISTFILES += \
 
 
 RC_ICONS = resources/logo/logo_multisize_square.ico
+
+
+
+resources.files = \
+	resources/logo/logo_path.svg \
+	resources/logo/logo_128.png \
+	resources/logo/logo_multisize_square.ico \
+	resources/logo/gpl-v3-logo.svg
+resources.base = resources
+resources.prefix = /
+
+RESOURCES = resources
 
 
 
