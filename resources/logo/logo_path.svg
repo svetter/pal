@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="14.355327mm"
+   height="12.432077mm"
+   viewBox="0 0 14.355327 12.432077"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="logo_path.svg"
+   inkscape:export-filename="logo256.png"
+   inkscape:export-xdpi="452.96078"
+   inkscape:export-ydpi="452.96078"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="10.35098"
+     inkscape:cx="-0.048304605"
+     inkscape:cy="35.793712"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid561"
+       originx="-11.303075"
+       originy="0.31296112" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3198">
+      <stop
+         style="stop-color:#229224;stop-opacity:1;"
+         offset="0.5"
+         id="stop3194" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0.5"
+         id="stop3196" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3198"
+       id="linearGradient3200"
+       x1="0"
+       y1="7.1530776"
+       x2="0"
+       y2="5.1530776"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-11.303074,0.3129611)">
+    <path
+       style="color:#000000;display:inline;fill:#000000;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="m 18.480469,-0.3125 -0.865235,1.5 -6.3125,10.931641 h 14.355469 z m 0,4 3.714843,6.431641 h -7.427734 z"
+       id="path318"
+       inkscape:label="border" />
+    <path
+       style="color:#000000;display:inline;fill:url(#linearGradient3200);stroke-width:2;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 18.480738,1.6870389 23.92635,11.119116 H 13.035125 Z"
+       id="path320"
+       inkscape:label="fill" />
+  </g>
+</svg>

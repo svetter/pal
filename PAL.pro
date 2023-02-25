@@ -107,14 +107,13 @@ FORMS += \
 
 TRANSLATIONS += \
 	translation/PAL_de.ts
-	
+
 DISTFILES +=
 	translation/PAL_de.ts
 	
 
 
-RC_ICONS += \
-	resources/logo_multisize.ico
+RC_ICONS = resources/logo/logo_multisize_square.ico
 
 
 
