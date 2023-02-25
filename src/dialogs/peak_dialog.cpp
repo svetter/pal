@@ -2,6 +2,7 @@
 
 #include "src/dialogs/parse_helper.h"
 #include "src/dialogs/region_dialog.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -22,6 +23,10 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 	
 	connect(okButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
 	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
+	
+	
+	heightCheckbox->setChecked(Settings::peakDialog_heightEnabledByDefault.get());
+	handle_heightSpecifiedChanged();
 	
 	
 	switch (purpose) {
@@ -132,7 +137,7 @@ void PeakDialog::handle_newRegion()
 
 void PeakDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save peak");
@@ -167,9 +172,11 @@ void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peak->peakID.forceValid());
 	
-	QString windowTitle = PeakDialog::tr("Delete peak");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = PeakDialog::tr("Delete peak");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 
 	db->removeRow(parent, db->peaksTable, peak->peakID.forceValid());
 }

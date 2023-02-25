@@ -5,6 +5,7 @@
 #include "src/dialogs/trip_dialog.h"
 #include "src/dialogs/parse_helper.h"
 #include "src/db/column.h"
+#include "src/main/settings.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -45,8 +46,14 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	connect(cancelButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_cancel);
 	
 	
-	QDate initialDate = QDateTime::currentDateTime().date();
+	QDate initialDate = QDateTime::currentDateTime().date().addDays(- Settings::ascentDialog_initialDateDaysInPast.get());
 	dateWidget->setDate(initialDate);
+	dateCheckbox->setChecked(Settings::ascentDialog_dateEnabledByDefault.get());
+	handle_dateSpecifiedChanged();
+	timeCheckbox->setChecked(Settings::ascentDialog_timeEnabledByDefault.get());
+	handle_timeSpecifiedChanged();
+	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledByDefault.get());
+	handle_elevationGainSpecifiedChanged();
 	
 	
 	switch (purpose) {
@@ -408,9 +415,11 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
 	
-	QString windowTitle = AscentDialog::tr("Delete ascent");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = AscentDialog::tr("Delete ascent");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 	
 	db->removeRow(parent, db->ascentsTable, ascent->ascentID.forceValid());
 }

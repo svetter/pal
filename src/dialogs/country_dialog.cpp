@@ -1,6 +1,7 @@
 #include "country_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -73,7 +74,7 @@ bool CountryDialog::changesMade()
 
 void CountryDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save country");
@@ -103,9 +104,11 @@ void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* c
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, country->countryID.forceValid());
 	
-	QString windowTitle = CountryDialog::tr("Delete country");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = CountryDialog::tr("Delete country");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 
 	db->removeRow(parent, db->countriesTable, country->countryID.forceValid());
 }

@@ -132,9 +132,6 @@
          <property name="text">
           <string/>
          </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item>
@@ -161,7 +158,7 @@
           <date>
            <year>2100</year>
            <month>1</month>
-           <day>4</day>
+           <day>1</day>
           </date>
          </property>
          <property name="minimumDate">
@@ -267,9 +264,6 @@
        </item>
        <item>
         <widget class="QTimeEdit" name="timeWidget">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -343,9 +337,6 @@
          </property>
          <property name="text">
           <string/>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
          </property>
         </widget>
        </item>

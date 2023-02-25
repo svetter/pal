@@ -1,6 +1,7 @@
 #include "trip_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -123,7 +124,7 @@ void TripDialog::handle_endDateChanged()
 
 void TripDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save trip");
@@ -153,9 +154,11 @@ void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, trip->tripID.forceValid());
 	
-	QString windowTitle = TripDialog::tr("Delete Trip");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = TripDialog::tr("Delete trip");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 
 	db->removeRow(parent, db->tripsTable, trip->tripID.forceValid());
 }

@@ -3,6 +3,7 @@
 #include "src/dialogs/parse_helper.h"
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/country_dialog.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -121,7 +122,7 @@ void RegionDialog::handle_newCountry()
 
 void RegionDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save region");
@@ -151,9 +152,11 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* reg
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, region->regionID.forceValid());
 	
-	QString windowTitle = RegionDialog::tr("Delete region");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = RegionDialog::tr("Delete region");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 
 	db->removeRow(parent, db->regionsTable, region->regionID.forceValid());
 }

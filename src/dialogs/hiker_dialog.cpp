@@ -1,6 +1,7 @@
 #include "hiker_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -73,7 +74,7 @@ bool HikerDialog::changesMade()
 
 void HikerDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save hiker");
@@ -103,9 +104,11 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hiker->hikerID.forceValid());
 	
-	QString windowTitle = HikerDialog::tr("Delete hiker");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = HikerDialog::tr("Delete hiker");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 	
 	db->removeRow(parent, db->hikersTable, hiker->hikerID.forceValid());
 }

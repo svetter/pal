@@ -1,6 +1,7 @@
 #include "range_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
+#include "src/main/settings.h"
 
 #include <QMessageBox>
 
@@ -85,7 +86,7 @@ bool RangeDialog::changesMade()
 
 void RangeDialog::handle_ok()
 {
-	if (!nameLineEdit->text().isEmpty()) {
+	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
 		QString title = tr("Can't save mountain range");
@@ -115,9 +116,11 @@ void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, range->rangeID.forceValid());
 	
-	QString windowTitle = RangeDialog::tr("Delete range");
-	bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-	if (!proceed) return;
+	if (Settings::showDeleteWarnings.get()) {
+		QString windowTitle = RangeDialog::tr("Delete mountain range");
+		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
+		if (!proceed) return;
+	}
 
 	db->removeRow(parent, db->rangesTable, range->rangeID.forceValid());
 }

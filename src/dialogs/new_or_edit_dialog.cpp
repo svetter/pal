@@ -1,5 +1,7 @@
 #include "new_or_edit_dialog.h"
 
+#include "src/main/settings.h"
+
 #include <QPushButton>
 #include <QMessageBox>
 
@@ -25,7 +27,8 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 void NewOrEditDialog::handle_cancel()
 {
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
-	if (changesMade()) {
+	
+	if (changesMade() && Settings::showCancelWarnings.get()) {
 		QString title;
 		if (purpose != editItem) {
 			title = tr("Discard changes");
@@ -37,6 +40,7 @@ void NewOrEditDialog::handle_cancel()
 		auto selected = QMessageBox::Cancel;
 		resultButton = QMessageBox::question(this, title, question, options, selected);
 	}
+	
 	if (resultButton == QMessageBox::Yes) {
 		QDialog::reject();
 	}
