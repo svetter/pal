@@ -11,6 +11,7 @@
 
 
 Database::Database(MainWindow* parent) :
+		databaseLoaded(false),
 		tables(QList<Table*>()),
 		mainWindowStatusBar(nullptr)
 {
@@ -71,10 +72,12 @@ void Database::reset()
 	}
 	QSqlDatabase sql = QSqlDatabase::database();
 	sql.close();
+	databaseLoaded = false;
 }
 
 void Database::createNew(QWidget* parent, const QString& filepath)
 {
+	assert(!databaseLoaded);
 	qDebug() << "Creating new database file at" << filepath;
 	
 	if (QFile(filepath).exists()) {
@@ -89,6 +92,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	// Open connection
 	if (!sql.open())
 		displayError(parent, sql.lastError());
+	databaseLoaded = true;
 	
 	qDebug() << "Creating tables in SQL";
 	for (Table* table : tables) {
@@ -101,6 +105,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 
 void Database::openExisting(QWidget* parent, const QString& filepath)
 {
+	assert(!databaseLoaded);
 	qDebug() << "Opening database file" << filepath;
 	
 	// Set filename
@@ -110,12 +115,14 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	// Open connection
 	if (!sql.open())
 		displayError(parent, sql.lastError());
+	databaseLoaded = true;
 	
 	populateBuffers(parent);
 }
 
 bool Database::saveAs(QWidget* parent, const QString& filepath)
 {
+	assert(databaseLoaded);
 	qDebug() << "Saving database file as" << filepath;
 	
 	QSqlDatabase sql = QSqlDatabase::database();
@@ -150,6 +157,7 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 
 void Database::populateBuffers(QWidget* parent, bool expectEmpty)
 {
+	assert(databaseLoaded);
 	for (Table* table : tables) {
 		assert(table->getNumberOfRows() == 0);
 		table->initBuffer(parent, expectEmpty);
@@ -167,36 +175,43 @@ QList<Table*> Database::getTableList() const
 
 Ascent* Database::getAscent(ValidItemID ascentID) const
 {
+	assert(databaseLoaded);
 	return getAscentAt(ascentsTable->getBufferIndexForPrimaryKey(ascentID));
 }
 
 Peak* Database::getPeak(ValidItemID peakID) const
 {
+	assert(databaseLoaded);
 	return getPeakAt(peaksTable->getBufferIndexForPrimaryKey(peakID));
 }
 
 Trip* Database::getTrip(ValidItemID tripID) const
 {
+	assert(databaseLoaded);
 	return getTripAt(tripsTable->getBufferIndexForPrimaryKey(tripID));
 }
 
 Hiker* Database::getHiker(ValidItemID hikerID) const
 {
+	assert(databaseLoaded);
 	return getHikerAt(hikersTable->getBufferIndexForPrimaryKey(hikerID));
 }
 
 Region* Database::getRegion(ValidItemID regionID) const
 {
+	assert(databaseLoaded);
 	return getRegionAt(regionsTable->getBufferIndexForPrimaryKey(regionID));
 }
 
 Range* Database::getRange(ValidItemID rangeID) const
 {
+	assert(databaseLoaded);
 	return getRangeAt(rangesTable->getBufferIndexForPrimaryKey(rangeID));
 }
 
 Country* Database::getCountry(ValidItemID countryID) const
 {
+	assert(databaseLoaded);
 	return getCountryAt(countriesTable->getBufferIndexForPrimaryKey(countryID));
 }
 
@@ -204,6 +219,8 @@ Country* Database::getCountry(ValidItemID countryID) const
 
 Ascent* Database::getAscentAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = ascentsTable->getBufferRow(rowIndex);
 	assert(row->size() == ascentsTable->getNumberOfColumns());
 	
@@ -230,6 +247,8 @@ Ascent* Database::getAscentAt(int rowIndex) const
 
 Peak* Database::getPeakAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = peaksTable->getBufferRow(rowIndex);
 	assert(row->size() == peaksTable->getNumberOfColumns());
 	
@@ -248,6 +267,8 @@ Peak* Database::getPeakAt(int rowIndex) const
 
 Trip* Database::getTripAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = tripsTable->getBufferRow(rowIndex);
 	assert(row->size() == tripsTable->getNumberOfColumns());
 	
@@ -263,6 +284,8 @@ Trip* Database::getTripAt(int rowIndex) const
 
 Hiker* Database::getHikerAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = hikersTable->getBufferRow(rowIndex);
 	assert(row->size() == hikersTable->getNumberOfColumns());
 	
@@ -275,6 +298,8 @@ Hiker* Database::getHikerAt(int rowIndex) const
 
 Region* Database::getRegionAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = regionsTable->getBufferRow(rowIndex);
 	assert(row->size() == regionsTable->getNumberOfColumns());
 	
@@ -289,6 +314,8 @@ Region* Database::getRegionAt(int rowIndex) const
 
 Range* Database::getRangeAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = rangesTable->getBufferRow(rowIndex);
 	assert(row->size() == rangesTable->getNumberOfColumns());
 	
@@ -302,6 +329,8 @@ Range* Database::getRangeAt(int rowIndex) const
 
 Country* Database::getCountryAt(int rowIndex) const
 {
+	assert(databaseLoaded);
+	
 	const QList<QVariant>* row = countriesTable->getBufferRow(rowIndex);
 	assert(row->size() == countriesTable->getNumberOfColumns());
 	
@@ -316,11 +345,15 @@ Country* Database::getCountryAt(int rowIndex) const
 
 QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, ValidItemID primaryKey)
 {
+	assert(databaseLoaded);
+	
 	return Database::removeRow_referenceSearch(nullptr, true, table, primaryKey);
 }
 
 void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey)
 {
+	assert(databaseLoaded);
+	
 	Database::removeRow_referenceSearch(parent, false, table, primaryKey);
 	
 	table->removeRow(parent, { table->primaryKeyColumn }, { primaryKey });
@@ -328,6 +361,8 @@ void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primar
 
 QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey)
 {
+	assert(databaseLoaded);
+	
 	const Column* primaryKeyColumn = table->primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (auto iter = tables.constBegin(); iter != tables.constEnd(); iter++) {
@@ -416,6 +451,7 @@ void Database::setStatusBarMessage(QString content) const
 
 int Database::getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
 {
+	assert(databaseLoaded);
 	assert(entryInd >= 0);
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
@@ -429,6 +465,7 @@ int Database::getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& query
 
 QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
 {
+	assert(databaseLoaded);
 	QVariant variantValue = query.value(entryInd);
 	if (!variantValue.isValid())
 		displayError(parent, "Received invalid QVariant from query", queryString);

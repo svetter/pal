@@ -29,6 +29,7 @@ struct WhatIfDeleteResult;
 
 
 class Database {
+	bool databaseLoaded;
 	QList<Table*> tables;
 	
 	QStatusBar* mainWindowStatusBar;
