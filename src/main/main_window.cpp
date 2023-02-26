@@ -19,7 +19,8 @@
 
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
-		db(Database(this)),
+		db(Database()),
+		openRecentActions(QList<QAction*>()),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
 		shortcuts(QList<QShortcut*>())
 {
@@ -46,11 +47,12 @@ MainWindow::MainWindow() :
 	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
 	
 	
-	connect(newDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
-	connect(openDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
-	connect(saveDatabaseAsAction,	&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
-	connect(closeDatabaseAction,	&QAction::triggered,	this,	&MainWindow::handle_closeDatabase);
-	connect(settingsAction,			&QAction::triggered,	this,	&MainWindow::handle_openSettings);
+	connect(newDatabaseAction,				&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
+	connect(openDatabaseAction,				&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
+	connect(clearRecentDatabaseListAction,	&QAction::triggered,	this,	&MainWindow::handle_clearRecentDatabasesList);
+	connect(saveDatabaseAsAction,			&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
+	connect(closeDatabaseAction,			&QAction::triggered,	this,	&MainWindow::handle_closeDatabase);
+	connect(settingsAction,					&QAction::triggered,	this,	&MainWindow::handle_openSettings);
 	
 	connect(newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
 	connect(newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
@@ -77,12 +79,22 @@ MainWindow::MainWindow() :
 	
 	
 	updateAscentCounter();
-	setUIEnabled(true);
+	setUIEnabled(false);
 	
 	
 	db.setStatusBar(statusbar);
 	
 	initTableContextMenuAndShortcuts();
+	
+	
+	updateRecentFilesMenu();
+	// Open database
+	QString lastOpen = Settings::lastOpenDatabaseFile.get();
+	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
+		db.openExisting(this, lastOpen);
+		updateAscentCounter();
+		setUIEnabled(true);
+	}
 }
 
 MainWindow::~MainWindow()
@@ -106,12 +118,51 @@ void MainWindow::updateAscentCounter()
 
 void MainWindow::setUIEnabled(bool enabled)
 {
-	mainAreaTabs->setEnabled(enabled);
-	newAscentButton->setEnabled(enabled);
-	newPeakButton->setEnabled(enabled);
-	newTripButton->setEnabled(enabled);
-	ascentCounterSegmentNumber->setEnabled(enabled);
-	ascentCounterLabel->setEnabled(enabled);
+	mainAreaTabs				->setEnabled(enabled);
+	newAscentButton				->setEnabled(enabled);
+	newPeakButton				->setEnabled(enabled);
+	newTripButton				->setEnabled(enabled);
+	ascentCounterSegmentNumber	->setEnabled(enabled);
+	ascentCounterLabel			->setEnabled(enabled);
+	
+	saveDatabaseAsAction		->setEnabled(enabled);
+	closeDatabaseAction			->setEnabled(enabled);
+	
+	newMenu						->setEnabled(enabled);
+}
+
+
+void MainWindow::updateRecentFilesMenu()
+{
+	clearRecentFilesMenu();
+	
+	openRecentMenu->clear();
+	
+	QStringList recentFiles = Settings::recentDatabaseFiles.get();
+	if (recentFiles.isEmpty()) {
+		qDebug() << "dfg";
+		openRecentMenu->setEnabled(false);
+		return;
+	}
+	
+	for (QString& filepath : recentFiles) {
+		auto handler = [=](){ handle_openRecentDatabase(filepath); };
+		QAction* newAction = openRecentMenu->addAction(filepath, this, handler);
+		openRecentActions.append(newAction);
+	}
+	
+	openRecentMenu->addSeparator();
+	openRecentMenu->addAction(clearRecentDatabaseListAction);
+	openRecentMenu->setEnabled(true);
+}
+
+void MainWindow::clearRecentFilesMenu()
+{
+	for (QAction* action : openRecentActions) {
+		openRecentMenu->removeAction(action);
+		// Don't clear, there's also a separator and the clear list action
+	}
+	openRecentActions.clear();
 }
 
 
@@ -438,6 +489,8 @@ void MainWindow::handle_newDatabase()
 	db.createNew(this, filepath);
 	updateAscentCounter();
 	setUIEnabled(true);
+	
+	addToRecentFilesList(filepath);
 }
 
 void MainWindow::handle_openDatabase()
@@ -452,6 +505,24 @@ void MainWindow::handle_openDatabase()
 	db.openExisting(this, filepath);
 	updateAscentCounter();
 	setUIEnabled(true);
+	
+	addToRecentFilesList(filepath);
+}
+
+void MainWindow::handle_openRecentDatabase(QString filepath)
+{
+	handle_closeDatabase();
+	db.openExisting(this, filepath);
+	updateAscentCounter();
+	setUIEnabled(true);
+	
+	addToRecentFilesList(filepath);
+}
+
+void MainWindow::handle_clearRecentDatabasesList()
+{
+	Settings::recentDatabaseFiles.set({ Settings::lastOpenDatabaseFile.get() });
+	updateRecentFilesMenu();
 }
 
 void MainWindow::handle_saveDatabaseAs()
@@ -462,6 +533,8 @@ void MainWindow::handle_saveDatabaseAs()
 	if (filepath.isEmpty()) return;
 	
 	db.saveAs(this, filepath);
+	
+	addToRecentFilesList(filepath);
 }
 
 void MainWindow::handle_closeDatabase()
@@ -510,6 +583,22 @@ void MainWindow::saveImplicitSettings() const
 	saveColumnWidths(regionsTableView,		db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
 	saveColumnWidths(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
 	saveColumnWidths(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
+}
+
+void MainWindow::addToRecentFilesList(const QString& filepath)
+{
+	Settings::lastOpenDatabaseFile.set(filepath);
+	
+	QStringList recentFiles = Settings::recentDatabaseFiles.get();
+	if (recentFiles.contains(filepath)) {
+		recentFiles.move(recentFiles.indexOf(filepath), 0);
+	} else {
+		recentFiles.insert(0, filepath);
+		while (recentFiles.size() > 10) recentFiles.removeAt(0);
+	}
+	
+	Settings::recentDatabaseFiles.set(recentFiles);
+	updateRecentFilesMenu();
 }
 
 

@@ -61,6 +61,8 @@ public:
 
 class Settings {
 public:
+	// === EXPLICIT ===
+	
 	// General/global
 	inline static const Setting<bool>	confirmDelete								= Setting<bool>		("confirmDelete",								true);
 	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
@@ -84,22 +86,29 @@ public:
 	// Trip dialog
 	inline static const Setting<bool>	tripDialog_datesEnabledInitially			= Setting<bool>		("tripDialog/datesEnabledInitially",			true);
 	
-	// Implicit: Window geometry
-	inline static const Setting<bool>	mainWindow_maximized						= Setting<bool>		("implicit/mainWindow/maximized",				false);
-	inline static const Setting<QRect>	mainWindow_geometry							= Setting<QRect>	("implicit/mainWindow/geometry");
-	inline static const Setting<QRect>	settingsWindow_geometry						= Setting<QRect>	("implicit/settingsWindow/geometry");
-	inline static const Setting<QRect>	ascentDialog_geometry						= Setting<QRect>	("implicit/ascentDialog/geometry");
-	inline static const Setting<QRect>	peakDialog_geometry							= Setting<QRect>	("implicit/peakDialog/geometry");
-	inline static const Setting<QRect>	tripDialog_geometry							= Setting<QRect>	("implicit/tripDialog/geometry");
-	inline static const Setting<QRect>	hikerDialog_geometry						= Setting<QRect>	("implicit/hikerDialog/geometry");
-	inline static const Setting<QRect>	regionDialog_geometry						= Setting<QRect>	("implicit/regionDialog/geometry");
-	inline static const Setting<QRect>	rangeDialog_geometry						= Setting<QRect>	("implicit/rangeDialog/geometry");
-	inline static const Setting<QRect>	countryDialog_geometry						= Setting<QRect>	("implicit/country/geometry");
 	
-	// Implicit: Open tab
-	inline static const Setting<int>	mainWindow_currentTabIndex					= Setting<int>		("implicit/mainWindow/currentTabIndex",			0);
+	// === IMPLICIT ===
 	
-	// Implicit: Column widths
+	// Recently opened databases
+	inline static const Setting<QString>		lastOpenDatabaseFile					= Setting<QString>		("openRecent/lastOpenDatabaseFile");
+	inline static const Setting<QStringList>	recentDatabaseFiles						= Setting<QStringList>	("openRecent/recentDatabaseFiles");
+	
+	// Window geometry
+	inline static const Setting<bool>			mainWindow_maximized					= Setting<bool>			("implicit/mainWindow/maximized",		false);
+	inline static const Setting<QRect>			mainWindow_geometry						= Setting<QRect>		("implicit/mainWindow/geometry");
+	inline static const Setting<QRect>			settingsWindow_geometry					= Setting<QRect>		("implicit/settingsWindow/geometry");
+	inline static const Setting<QRect>			ascentDialog_geometry					= Setting<QRect>		("implicit/ascentDialog/geometry");
+	inline static const Setting<QRect>			peakDialog_geometry						= Setting<QRect>		("implicit/peakDialog/geometry");
+	inline static const Setting<QRect>			tripDialog_geometry						= Setting<QRect>		("implicit/tripDialog/geometry");
+	inline static const Setting<QRect>			hikerDialog_geometry					= Setting<QRect>		("implicit/hikerDialog/geometry");
+	inline static const Setting<QRect>			regionDialog_geometry					= Setting<QRect>		("implicit/regionDialog/geometry");
+	inline static const Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
+	inline static const Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
+	
+	// Open tab
+	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
+	
+	// Column widths
 	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
 	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
 	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");

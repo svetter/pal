@@ -1,7 +1,6 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include "associative_table.h"
 #include "src/data/ascent.h"
 #include "src/data/peak.h"
 #include "src/data/trip.h"
@@ -45,7 +44,7 @@ public:
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
 	
-	Database(MainWindow* parent);
+	Database();
 	~Database();
 	
 	void reset();

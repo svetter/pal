@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	Q_OBJECT
 	
 	Database db;
+	QList<QAction*> openRecentActions;
 	QMenu tableContextMenu;
 	QAction* tableContextMenuOpenAction;
 	QAction* tableContextMenuDuplicateAction;
@@ -34,6 +35,8 @@ public:
 	
 private:
 	void setUIEnabled(bool enabled);
+	void updateRecentFilesMenu();
+	void clearRecentFilesMenu();
 	void setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void initTableContextMenuAndShortcuts();
 	
@@ -76,6 +79,8 @@ private slots:
 	
 	void handle_newDatabase();
 	void handle_openDatabase();
+	void handle_openRecentDatabase(QString filepath);
+	void handle_clearRecentDatabasesList();
 	void handle_saveDatabaseAs();
 	void handle_closeDatabase();
 	
@@ -86,6 +91,7 @@ private slots:
 private:
 	void closeEvent(QCloseEvent* event) override;
 	void saveImplicitSettings() const;
+	void addToRecentFilesList(const QString& filepath);
 	
 	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
