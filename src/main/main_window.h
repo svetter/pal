@@ -2,6 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include "src/db/database.h"
+#include "src/main/settings.h"
 #include "ui_main_window.h"
 
 #include <QMainWindow>
@@ -33,7 +34,7 @@ public:
 	
 private:
 	void setUIEnabled(bool enabled);
-	void setupTableView(QTableView* view, NormalTable* table);
+	void setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void initTableContextMenuAndShortcuts();
 	
 private slots:
@@ -82,9 +83,11 @@ private slots:
 	
 private:
 	void closeEvent(QCloseEvent* event) override;
+	void saveImplicitSettings() const;
 	
 	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
+	void saveColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting) const;
 };
 
 

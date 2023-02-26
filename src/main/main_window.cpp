@@ -9,7 +9,6 @@
 #include "src/dialogs/trip_dialog.h"
 #include "src/main/about_window.h"
 #include "ui_main_window.h"
-#include "src/main/settings.h"
 
 #include <QList>
 #include <QStandardItemModel>
@@ -37,13 +36,13 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	setupTableView(ascentsTableView,	db.ascentsTable);
-	setupTableView(peaksTableView,		db.peaksTable);
-	setupTableView(tripsTableView,		db.tripsTable);
-	setupTableView(hikersTableView,		db.hikersTable);
-	setupTableView(regionsTableView,	db.regionsTable);
-	setupTableView(rangesTableView,		db.rangesTable);
-	setupTableView(countriesTableView,	db.countriesTable);
+	setupTableView(ascentsTableView,	db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
+	setupTableView(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
+	setupTableView(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
+	setupTableView(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
+	setupTableView(regionsTableView,	db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
+	setupTableView(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
+	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
 	
 	
 	connect(newDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
@@ -114,12 +113,27 @@ void MainWindow::setUIEnabled(bool enabled)
 }
 
 
-void MainWindow::setupTableView(QTableView* view, NormalTable* table)
+void MainWindow::setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
+	// Set model
 	view->setModel(table);
 	view->setRootIndex(table->getNormalRootModelIndex());
-	view->resizeColumnsToContents();
 	
+	// Restore column widths
+	QStringList columnWidths = columnWidthsSetting->get();
+	if (columnWidths.size() == table->getNumberOfColumns()) {
+		for (int i = 0; i < table->getNumberOfColumns(); i++) {
+			view->setColumnWidth(i, columnWidths.at(i).toInt());
+		}
+	} else {
+		if (!columnWidths.isEmpty())
+			qDebug() << QString("Couldn't restore column widths for table %1: Expected %2 numbers, but got %3")
+					.arg(table->name).arg(table->getNumberOfColumns()).arg(columnWidths.size());
+		columnWidthsSetting->clear();
+		view->resizeColumnsToContents();
+	}
+	
+	// Enable context menu
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 }
 
@@ -466,13 +480,27 @@ void MainWindow::handle_about()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+	saveImplicitSettings();
+	
+	QMainWindow::closeEvent(event);
+}
+
+
+void MainWindow::saveImplicitSettings() const
+{
 	bool maximized = windowState() == Qt::WindowMaximized;
 	Settings::mainWindow_maximized.set(maximized);
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
 	
-	QMainWindow::closeEvent(event);
+	saveColumnWidths(ascentsTableView,		db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
+	saveColumnWidths(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
+	saveColumnWidths(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
+	saveColumnWidths(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
+	saveColumnWidths(regionsTableView,		db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
+	saveColumnWidths(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
+	saveColumnWidths(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
 }
 
 
@@ -480,4 +508,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
 QTableView* MainWindow::getCurrentTableView() const
 {
 	return mainAreaTabs->currentWidget()->findChild<QTableView*>();
+}
+
+
+
+void MainWindow::saveColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting) const
+{
+	QStringList columnWidths;
+	for (int i = 0; i < table->getNumberOfColumns(); i++) {
+		columnWidths.append(QString::number(view->columnWidth(i)));
+	}
+	columnWidthsSetting->set(columnWidths);
 }
