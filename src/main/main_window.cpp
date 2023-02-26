@@ -489,6 +489,8 @@ void MainWindow::handle_newDatabase()
 	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
 	if (filepath.isEmpty()) return;
 	
+	if (!filepath.endsWith(".db")) filepath.append(".db");
+	
 	handle_closeDatabase();
 	db.createNew(this, filepath);
 	updateAscentCounter();
@@ -540,6 +542,8 @@ void MainWindow::handle_saveDatabaseAs()
 	QString preSelectedDir = QDir().path();
 	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
 	if (filepath.isEmpty()) return;
+	
+	if (!filepath.endsWith(".db")) filepath.append(".db");
 	
 	db.saveAs(this, filepath);
 	
