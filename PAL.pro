@@ -52,8 +52,7 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/main.cpp \
-	src/main/main_window.cpp \
-	src/main/settings.cpp
+	src/main/main_window.cpp
 
 HEADERS += \
 	src/data/ascent.h \

@@ -2,72 +2,65 @@
 #define SETTINGS_H
 
 #include <QSettings>
+#include <QRect>
 
 
 
-class Setting {	
+template<typename T>
+class Setting {
 	inline static QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScope, "PeakAscentLogger", "PeakAscentLogger");
 	
 	const QString key;
 	const QVariant defaultValue;
 	
-protected:
-	Setting(const QString key, QVariant defaultValue);
-	
-	QString lookupAndValidate() const;
-	
-private:
-	virtual bool isValidValue(QString value) const = 0;
-};
-
-
-
-class BoolSetting : protected Setting {
 public:
-	BoolSetting(const QString key, bool defaultValue);
+	inline Setting(const QString key, QVariant defaultValue = QVariant()) :
+			key(key),
+			defaultValue(defaultValue)
+	{}
 	
-	bool get() const;
+	inline T get() const
+	{
+		if (qSettings.contains(key)) {
+			QVariant lookupResult = qSettings.value(key);
+			
+			// discard if invalid
+			if (!lookupResult.canConvert<T>()) {
+				qSettings.remove(key);
+				qDebug() << "Discarded invalid setting" << key << lookupResult;
+			}
+		}
+		
+		// Set default if not set
+		if (!qSettings.contains(key) && defaultValue.isValid()) {
+			qSettings.setValue(key, defaultValue);
+		}
+		
+		return qSettings.value(key).value<T>();
+	}
 	
-private:
-	virtual bool isValidValue(QString value) const override;
-};
-
-
-class IntSetting : protected Setting {
-public:
-	IntSetting(const QString key, int defaultValue);
-	
-	int get() const;
-	
-private:
-	virtual bool isValidValue(QString value) const override;
-};
-
-
-class StringSetting : protected Setting {
-public:
-	StringSetting(const QString key, QString defaultValue);
-	
-	QString get() const;
-	
-private:
-	virtual bool isValidValue(QString value) const override;
+	inline void set(T value) const
+	{
+		qSettings.setValue(key, QVariant::fromValue(value));
+	}
 };
 
 
 
 class Settings {
 public:
-	inline static const BoolSetting	showCancelWarnings							= BoolSetting	("showCancelWarnings",							true);
-	inline static const BoolSetting	showDeleteWarnings							= BoolSetting	("showDeleteWarnings",							true);
-	inline static const BoolSetting	allowEmptyNames								= BoolSetting	("allowEmptyNames",								false);
+	// General/global
+	inline static const Setting<bool>	showCancelWarnings							= Setting<bool>		("showCancelWarnings",							true);
+	inline static const Setting<bool>	showDeleteWarnings							= Setting<bool>		("showDeleteWarnings",							true);
+	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
 	
-	inline static const BoolSetting	ascentDialog_dateEnabledByDefault			= BoolSetting	("ascentDialog/dateEnabledByDefault",			true);
-	inline static const IntSetting	ascentDialog_initialDateDaysInPast			= IntSetting	("ascentDialog/initialDateDaysInPast",			0);
-	inline static const BoolSetting	ascentDialog_timeEnabledByDefault			= BoolSetting	("ascentDialog/timeEnabledByDefault",			false);
-	inline static const BoolSetting	ascentDialog_elevationGainEnabledByDefault	= BoolSetting	("ascentDialog/elevationGainEnabledByDefault",	true);
-	
-	inline static const BoolSetting	peakDialog_heightEnabledByDefault			= BoolSetting	("peakDialog/heightEnabledByDefault",			true);
+	// Ascent dialog
+	inline static const Setting<bool>	ascentDialog_dateEnabledByDefault			= Setting<bool>		("ascentDialog/dateEnabledByDefault",			true);
+	inline static const Setting<int>	ascentDialog_initialDateDaysInPast			= Setting<int>		("ascentDialog/initialDateDaysInPast",			0);
+	inline static const Setting<bool>	ascentDialog_timeEnabledByDefault			= Setting<bool>		("ascentDialog/timeEnabledByDefault",			false);
+	inline static const Setting<bool>	ascentDialog_elevationGainEnabledByDefault	= Setting<bool>		("ascentDialog/elevationGainEnabledByDefault",	true);
+	// Peak dialog
+	inline static const Setting<bool>	peakDialog_heightEnabledByDefault			= Setting<bool>		("peakDialog/heightEnabledByDefault",			true);
 };
 
 
