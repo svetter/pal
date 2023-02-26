@@ -56,7 +56,7 @@
       </size>
      </property>
      <property name="pixmap">
-      <pixmap resource="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc">:/logo/logo_128.png</pixmap>
+      <pixmap>:/logo/logo_128.png</pixmap>
      </property>
     </widget>
    </item>
@@ -175,7 +175,7 @@
       </size>
      </property>
      <property name="pixmap">
-      <pixmap resource="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc">:/logo/gpl-v3-logo.svg</pixmap>
+      <pixmap>:/logo/gpl-v3-logo.svg</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -217,8 +217,5 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc"/>
- </resources>
  <connections/>
 </ui>

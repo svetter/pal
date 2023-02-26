@@ -682,7 +682,7 @@
   </action>
   <action name="aboutAction">
    <property name="icon">
-    <iconset resource="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc">
+    <iconset>
      <normaloff>:/logo/logo_multisize_square.ico</normaloff>:/logo/logo_multisize_square.ico</iconset>
    </property>
    <property name="text">
@@ -690,11 +690,10 @@
    </property>
   </action>
   <action name="aboutQtAction">
-    <property name="icon">
-      <iconset resource="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc">
-        <normaloff>:/qt-project.org/qmessagebox/images/qtlogo-64.png</normaloff>:/qt-project.org/qmessagebox/images/qtlogo-64.png
-      </iconset>
-    </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/qt-project.org/qmessagebox/images/qtlogo-64.png</normaloff>:/qt-project.org/qmessagebox/images/qtlogo-64.png</iconset>
+   </property>
    <property name="text">
     <string>About Qt</string>
    </property>
@@ -755,8 +754,5 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="../../../build-PAL-Desktop_Qt_6_4_2_MinGW_64_bit-Debug/debug/qmake_resources.qrc"/>
- </resources>
  <connections/>
 </ui>
