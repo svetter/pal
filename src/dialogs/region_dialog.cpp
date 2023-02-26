@@ -164,7 +164,7 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* reg
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, region->regionID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = RegionDialog::tr("Delete region");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

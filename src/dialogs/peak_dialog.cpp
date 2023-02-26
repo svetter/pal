@@ -30,8 +30,10 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
 	
 	
-	heightCheckbox->setChecked(Settings::peakDialog_heightEnabledByDefault.get());
+	// Set initial height
+	heightCheckbox->setChecked(Settings::peakDialog_heightEnabledInitially.get());
 	handle_heightSpecifiedChanged();
+	heightSpinner->setValue(Settings::peakDialog_initialHeight.get());
 	
 	
 	switch (purpose) {
@@ -184,7 +186,7 @@ void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peak->peakID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = PeakDialog::tr("Delete peak");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

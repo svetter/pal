@@ -128,7 +128,7 @@ void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, range->rangeID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = RangeDialog::tr("Delete mountain range");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

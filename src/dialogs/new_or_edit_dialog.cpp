@@ -30,7 +30,7 @@ void NewOrEditDialog::handle_cancel()
 	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	
-	if (changesMade() && Settings::showCancelWarnings.get()) {
+	if (changesMade() && Settings::confirmCancel.get()) {
 		QString title;
 		if (purpose != editItem) {
 			title = tr("Discard changes");

@@ -27,9 +27,12 @@ TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Tri
 	connect(cancelButton,				&QPushButton::clicked,		this,	&TripDialog::handle_cancel);
 	
 	
+	// Set initial dates
 	QDate initialDate = QDateTime::currentDateTime().date();
 	startDateWidget->setDate(initialDate);
 	endDateWidget->setDate(initialDate);
+	datesUnspecifiedCheckbox->setChecked(!Settings::tripDialog_datesEnabledInitially.get());
+	handle_datesSpecifiedChanged();
 	
 	
 	switch (purpose) {
@@ -166,7 +169,7 @@ void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, trip->tripID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = TripDialog::tr("Delete trip");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

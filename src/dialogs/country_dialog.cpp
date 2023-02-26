@@ -116,7 +116,7 @@ void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* c
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, country->countryID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = CountryDialog::tr("Delete country");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

@@ -52,7 +52,8 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/main.cpp \
-	src/main/main_window.cpp
+	src/main/main_window.cpp \
+	src/main/settings_window.cpp
 
 HEADERS += \
 	src/data/ascent.h \
@@ -94,7 +95,8 @@ HEADERS += \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
 	src/main/main_window.h \
-	src/main/settings.h
+	src/main/settings.h \
+	src/main/settings_window.h
 
 FORMS += \
 	src/ui/about_window.ui \
@@ -106,6 +108,7 @@ FORMS += \
 	src/ui/peak_dialog.ui \
 	src/ui/range_dialog.ui \
 	src/ui/region_dialog.ui \
+	src/ui/settings_window.ui \
 	src/ui/trip_dialog.ui
 
 

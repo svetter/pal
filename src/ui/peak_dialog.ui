@@ -169,9 +169,6 @@
          <property name="maximum">
           <number>9000</number>
          </property>
-         <property name="value">
-          <number>2000</number>
-         </property>
         </widget>
        </item>
        <item>

@@ -116,7 +116,7 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hiker->hikerID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = HikerDialog::tr("Delete hiker");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

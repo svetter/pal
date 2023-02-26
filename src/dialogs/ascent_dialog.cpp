@@ -51,14 +51,19 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	connect(cancelButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_cancel);
 	
 	
+	// Set initial date
+	dateCheckbox->setChecked(Settings::ascentDialog_dateEnabledInitially.get());
+	handle_dateSpecifiedChanged();
 	QDate initialDate = QDateTime::currentDateTime().date().addDays(- Settings::ascentDialog_initialDateDaysInPast.get());
 	dateWidget->setDate(initialDate);
-	dateCheckbox->setChecked(Settings::ascentDialog_dateEnabledByDefault.get());
-	handle_dateSpecifiedChanged();
-	timeCheckbox->setChecked(Settings::ascentDialog_timeEnabledByDefault.get());
+	// Set initial time
+	timeCheckbox->setChecked(Settings::ascentDialog_timeEnabledInitially.get());
 	handle_timeSpecifiedChanged();
-	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledByDefault.get());
+	timeWidget->setTime(Settings::ascentDialog_initialTime.get());
+	// Set initial elevation gain
+	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
 	handle_elevationGainSpecifiedChanged();
+	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	
 	
 	switch (purpose) {
@@ -414,7 +419,7 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 {
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
 	
-	if (Settings::showDeleteWarnings.get()) {
+	if (Settings::confirmDelete.get()) {
 		QString windowTitle = AscentDialog::tr("Delete ascent");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;

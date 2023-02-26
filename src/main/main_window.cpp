@@ -8,6 +8,7 @@
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
 #include "src/main/about_window.h"
+#include "src/main/settings_window.h"
 #include "ui_main_window.h"
 
 #include <QList>
@@ -31,7 +32,7 @@ MainWindow::MainWindow() :
 		setGeometry(savedGeometry);
 	}
 	
-	if (Settings::mainWindow_restoreOpenTab.get()) {
+	if (Settings::mainWindow_rememberTab.get()) {
 		mainAreaTabs->setCurrentIndex(Settings::mainWindow_currentTabIndex.get());
 	}
 	
@@ -49,6 +50,7 @@ MainWindow::MainWindow() :
 	connect(openDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
 	connect(saveDatabaseAsAction,	&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
 	connect(closeDatabaseAction,	&QAction::triggered,	this,	&MainWindow::handle_closeDatabase);
+	connect(settingsAction,			&QAction::triggered,	this,	&MainWindow::handle_openSettings);
 	
 	connect(newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
 	connect(newPeakAction,		&QAction::triggered,	this,	&MainWindow::handle_newPeak);
@@ -467,6 +469,13 @@ void MainWindow::handle_closeDatabase()
 	setUIEnabled(false);
 	db.reset();
 	updateAscentCounter();
+}
+
+
+
+void MainWindow::handle_openSettings()
+{
+	SettingsWindow(this).exec();
 }
 
 
