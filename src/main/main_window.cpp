@@ -139,8 +139,12 @@ void MainWindow::updateRecentFilesMenu()
 	openRecentMenu->clear();
 	
 	QStringList recentFiles = Settings::recentDatabaseFiles.get();
+	for (QString& filepath : recentFiles) {
+		if (!QFile(filepath).exists()) recentFiles.removeAll(filepath);
+	}
+	Settings::recentDatabaseFiles.set(recentFiles);
+	
 	if (recentFiles.isEmpty()) {
-		qDebug() << "dfg";
 		openRecentMenu->setEnabled(false);
 		return;
 	}
@@ -511,6 +515,11 @@ void MainWindow::handle_openDatabase()
 
 void MainWindow::handle_openRecentDatabase(QString filepath)
 {
+	if (!QFile(filepath).exists()) {
+		qDebug() << "Database file" << filepath << "was selected to be opened from recent files, but doesn't exist";
+		return;
+	}
+	
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
 	updateAscentCounter();
