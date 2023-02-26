@@ -50,10 +50,12 @@ public:
 class Settings {
 public:
 	// General/global
-	inline static const Setting<bool>	showCancelWarnings							= Setting<bool>		("showCancelWarnings",							true);
 	inline static const Setting<bool>	showDeleteWarnings							= Setting<bool>		("showDeleteWarnings",							true);
+	inline static const Setting<bool>	showCancelWarnings							= Setting<bool>		("showCancelWarnings",							true);
 	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
 	
+	// Main window
+	inline static const Setting<bool>	mainWindow_restoreOpenTab					= Setting<bool>		("mainWindow/restoreOpenTab",					true);
 	// Ascent dialog
 	inline static const Setting<bool>	ascentDialog_dateEnabledByDefault			= Setting<bool>		("ascentDialog/dateEnabledByDefault",			true);
 	inline static const Setting<int>	ascentDialog_initialDateDaysInPast			= Setting<int>		("ascentDialog/initialDateDaysInPast",			0);
@@ -72,6 +74,9 @@ public:
 	inline static const Setting<QRect>	regionDialog_geometry						= Setting<QRect>	("implicit/regionDialog/geometry");
 	inline static const Setting<QRect>	rangeDialog_geometry						= Setting<QRect>	("implicit/rangeDialog/geometry");
 	inline static const Setting<QRect>	countryDialog_geometry						= Setting<QRect>	("implicit/country/geometry");
+	
+	// Implicit: Open tab
+	inline static const Setting<int>	mainWindow_currentTabIndex					= Setting<int>		("implicit/mainWindow/currentTabIndex",			0);
 };
 
 

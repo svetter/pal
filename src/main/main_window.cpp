@@ -32,6 +32,10 @@ MainWindow::MainWindow() :
 		setGeometry(savedGeometry);
 	}
 	
+	if (Settings::mainWindow_restoreOpenTab.get()) {
+		mainAreaTabs->setCurrentIndex(Settings::mainWindow_currentTabIndex.get());
+	}
+	
 	
 	setupTableView(ascentsTableView,	db.ascentsTable);
 	setupTableView(peaksTableView,		db.peaksTable);
@@ -465,6 +469,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	bool maximized = windowState() == Qt::WindowMaximized;
 	Settings::mainWindow_maximized.set(maximized);
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
+	
+	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
 	
 	QMainWindow::closeEvent(event);
 }
