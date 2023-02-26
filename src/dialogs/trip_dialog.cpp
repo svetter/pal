@@ -13,6 +13,11 @@ TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Tri
 {
 	setupUi(this);
 	
+	const QRect savedGeometry = Settings::tripDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
+	
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);	
 	connect(startDateWidget,			&QDateEdit::dateChanged,	this,	&TripDialog::handle_startDateChanged);	
@@ -124,6 +129,8 @@ void TripDialog::handle_endDateChanged()
 
 void TripDialog::handle_ok()
 {
+	aboutToClose();
+	
 	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
@@ -132,6 +139,11 @@ void TripDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
 	}
+}
+
+void TripDialog::aboutToClose()
+{	
+	Settings::tripDialog_geometry.set(geometry());
 }
 
 

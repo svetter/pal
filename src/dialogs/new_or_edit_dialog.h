@@ -2,6 +2,7 @@
 #define NEW_OR_EDIT_DIALOG_H
 
 #include "src/db/database.h"
+#include "src/main/settings.h"
 
 #include <QDialog>
 
@@ -29,8 +30,10 @@ protected:
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
-	void handle_cancel();
+	virtual void handle_cancel();
 	void reject() override;
+	
+	virtual void aboutToClose() = 0;
 	
 public:
 	virtual bool changesMade() = 0;

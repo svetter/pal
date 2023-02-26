@@ -26,6 +26,8 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 
 void NewOrEditDialog::handle_cancel()
 {
+	aboutToClose();
+	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	
 	if (changesMade() && Settings::showCancelWarnings.get()) {

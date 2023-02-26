@@ -13,6 +13,11 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 		init(init)
 {
 	setupUi(this);
+	
+	const QRect savedGeometry = Settings::peakDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
 	setFixedHeight(minimumSizeHint().height());
 	
 	populateComboBoxes();
@@ -137,6 +142,8 @@ void PeakDialog::handle_newRegion()
 
 void PeakDialog::handle_ok()
 {
+	aboutToClose();
+	
 	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
@@ -145,6 +152,11 @@ void PeakDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
 	}
+}
+
+void PeakDialog::aboutToClose()
+{	
+	Settings::peakDialog_geometry.set(geometry());
 }
 
 

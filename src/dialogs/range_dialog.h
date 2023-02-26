@@ -26,7 +26,11 @@ private:
 	void populateComboBoxes();
 	void insertInitData();
 	
+private slots:
 	void handle_ok();
+	
+private:
+	virtual void aboutToClose() override;
 };
 
 

@@ -81,6 +81,8 @@ private slots:
 	void handle_about();
 	
 private:
+	void closeEvent(QCloseEvent* event) override;
+	
 	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
 };

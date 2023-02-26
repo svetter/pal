@@ -22,6 +22,11 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 {
 	setupUi(this);
 	
+	const QRect savedGeometry = Settings::ascentDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
+	
 	populateComboBoxes();
 	
 	hikersListView->setModel(&hikersModel);
@@ -347,22 +352,16 @@ void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, 
 
 void AscentDialog::handle_ok()
 {
-	handle_photoSelectionChanged();
+	aboutToClose();
 	
 	accept();
 }
 
-void AscentDialog::handle_cancel()
-{
-	handle_photoSelectionChanged();
+void AscentDialog::aboutToClose()
+{	
+	Settings::ascentDialog_geometry.set(geometry());
 	
-	NewOrEditDialog::handle_cancel();
-}
-
-
-void AscentDialog::reject()
-{
-	handle_cancel();
+	handle_photoSelectionChanged();
 }
 
 

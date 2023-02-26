@@ -26,10 +26,14 @@ private:
 	void populateComboBoxes();
 	void insertInitData();
 	
+private slots:
 	void handle_newRange();
 	void handle_newCountry();
 	
 	void handle_ok();
+	
+private:
+	virtual void aboutToClose() override;
 };
 
 

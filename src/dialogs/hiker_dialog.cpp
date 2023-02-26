@@ -12,6 +12,11 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, H
 		init(init)
 {
 	setupUi(this);
+	
+	const QRect savedGeometry = Settings::hikerDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -74,6 +79,8 @@ bool HikerDialog::changesMade()
 
 void HikerDialog::handle_ok()
 {
+	aboutToClose();
+	
 	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
@@ -82,6 +89,11 @@ void HikerDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
 	}
+}
+
+void HikerDialog::aboutToClose()
+{	
+	Settings::hikerDialog_geometry.set(geometry());
 }
 
 

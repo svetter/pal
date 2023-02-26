@@ -9,6 +9,7 @@
 #include "src/dialogs/trip_dialog.h"
 #include "src/main/about_window.h"
 #include "ui_main_window.h"
+#include "src/main/settings.h"
 
 #include <QList>
 #include <QStandardItemModel>
@@ -24,6 +25,21 @@ MainWindow::MainWindow() :
 {
 	setupUi(this);
 	setUIEnabled(false);
+	
+	setWindowState(Settings::mainWindow_maximized.get() ? Qt::WindowMaximized : Qt::WindowNoState);
+	const QRect savedGeometry = Settings::mainWindow_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
+	
+	
+	setupTableView(ascentsTableView,	db.ascentsTable);
+	setupTableView(peaksTableView,		db.peaksTable);
+	setupTableView(tripsTableView,		db.tripsTable);
+	setupTableView(hikersTableView,		db.hikersTable);
+	setupTableView(regionsTableView,	db.regionsTable);
+	setupTableView(rangesTableView,		db.rangesTable);
+	setupTableView(countriesTableView,	db.countriesTable);
 	
 	
 	connect(newDatabaseAction,		&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
@@ -53,14 +69,6 @@ MainWindow::MainWindow() :
 	connect(regionsTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRegion);
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
-	
-	setupTableView(ascentsTableView,	db.ascentsTable);
-	setupTableView(peaksTableView,		db.peaksTable);
-	setupTableView(tripsTableView,		db.tripsTable);
-	setupTableView(hikersTableView,		db.hikersTable);
-	setupTableView(regionsTableView,	db.regionsTable);
-	setupTableView(rangesTableView,		db.rangesTable);
-	setupTableView(countriesTableView,	db.countriesTable);
 	
 	
 	updateAscentCounter();
@@ -448,6 +456,17 @@ void MainWindow::handle_closeDatabase()
 void MainWindow::handle_about()
 {
 	AboutWindow(this).exec();
+}
+
+
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	bool maximized = windowState() == Qt::WindowMaximized;
+	Settings::mainWindow_maximized.set(maximized);
+	if (!maximized) Settings::mainWindow_geometry.set(geometry());
+	
+	QMainWindow::closeEvent(event);
 }
 
 

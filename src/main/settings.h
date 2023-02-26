@@ -61,6 +61,17 @@ public:
 	inline static const Setting<bool>	ascentDialog_elevationGainEnabledByDefault	= Setting<bool>		("ascentDialog/elevationGainEnabledByDefault",	true);
 	// Peak dialog
 	inline static const Setting<bool>	peakDialog_heightEnabledByDefault			= Setting<bool>		("peakDialog/heightEnabledByDefault",			true);
+	
+	// Implicit: Window geometry
+	inline static const Setting<bool>	mainWindow_maximized						= Setting<bool>		("implicit/mainWindow/maximized",				false);
+	inline static const Setting<QRect>	mainWindow_geometry							= Setting<QRect>	("implicit/mainWindow/geometry");
+	inline static const Setting<QRect>	ascentDialog_geometry						= Setting<QRect>	("implicit/ascentDialog/geometry");
+	inline static const Setting<QRect>	peakDialog_geometry							= Setting<QRect>	("implicit/peakDialog/geometry");
+	inline static const Setting<QRect>	tripDialog_geometry							= Setting<QRect>	("implicit/tripDialog/geometry");
+	inline static const Setting<QRect>	hikerDialog_geometry						= Setting<QRect>	("implicit/hikerDialog/geometry");
+	inline static const Setting<QRect>	regionDialog_geometry						= Setting<QRect>	("implicit/regionDialog/geometry");
+	inline static const Setting<QRect>	rangeDialog_geometry						= Setting<QRect>	("implicit/rangeDialog/geometry");
+	inline static const Setting<QRect>	countryDialog_geometry						= Setting<QRect>	("implicit/country/geometry");
 };
 
 

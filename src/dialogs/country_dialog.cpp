@@ -12,6 +12,11 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpos
 		init(init)
 {
 	setupUi(this);
+	
+	const QRect savedGeometry = Settings::countryDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -74,6 +79,8 @@ bool CountryDialog::changesMade()
 
 void CountryDialog::handle_ok()
 {
+	aboutToClose();
+	
 	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
@@ -82,6 +89,11 @@ void CountryDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
 	}
+}
+
+void CountryDialog::aboutToClose()
+{	
+	Settings::countryDialog_geometry.set(geometry());
 }
 
 

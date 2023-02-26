@@ -48,10 +48,10 @@ private slots:
 	void handle_photoSelectionChanged(const QItemSelection& selected = QItemSelection(), const QItemSelection& deselected = QItemSelection());
 	
 	void handle_ok();
-	void handle_cancel();
-	void reject() override;
 	
 private:
+	virtual void aboutToClose() override;
+	
 	QSet<int> getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const;
 };
 

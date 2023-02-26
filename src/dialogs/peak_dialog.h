@@ -26,10 +26,14 @@ private:
 	void populateComboBoxes();
 	void insertInitData();
 	
+private slots:
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
 	
 	void handle_ok();
+	
+private:
+	virtual void aboutToClose() override;
 };
 
 

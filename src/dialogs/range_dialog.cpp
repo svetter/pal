@@ -12,6 +12,11 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, R
 		init(init)
 {
 	setupUi(this);
+	
+	const QRect savedGeometry = Settings::rangeDialog_geometry.get();
+	if (!savedGeometry.isEmpty()) {
+		setGeometry(savedGeometry);
+	}
 	setFixedHeight(minimumSizeHint().height());
 	
 	populateComboBoxes();
@@ -86,6 +91,8 @@ bool RangeDialog::changesMade()
 
 void RangeDialog::handle_ok()
 {
+	aboutToClose();
+	
 	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
 		accept();
 	} else {
@@ -94,6 +101,11 @@ void RangeDialog::handle_ok()
 		auto ok = QMessageBox::Ok;
 		QMessageBox::information(this, title, message, ok, ok);
 	}
+}
+
+void RangeDialog::aboutToClose()
+{	
+	Settings::rangeDialog_geometry.set(geometry());
 }
 
 

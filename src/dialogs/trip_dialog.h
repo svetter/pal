@@ -25,11 +25,15 @@ public:
 private:
 	void insertInitData();
 	
+private slots:
 	void handle_datesSpecifiedChanged();
 	void handle_startDateChanged();
 	void handle_endDateChanged();
 	
 	void handle_ok();
+	
+private:
+	virtual void aboutToClose() override;
 };
 
 
