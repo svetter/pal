@@ -14,9 +14,13 @@ PhotosOfAscent::PhotosOfAscent() :
 
 void PhotosOfAscent::addPhotos(const QList<Photo>& photos)
 {
+	QList<Photo> sortedPhotos = photos;
+	auto comparator = [](const Photo& p1, const Photo& p2) { return p1.sortIndex < p2.sortIndex; };
+	std::sort(sortedPhotos.begin(), sortedPhotos.end(), comparator);
+	
 	int currentNumPhotos = list.size();
 	beginInsertRows(QModelIndex(), currentNumPhotos, currentNumPhotos + photos.size() - 1);
-	for (const Photo& photo : photos) {
+	for (const Photo& photo : sortedPhotos) {
 		list.append(Photo(photo));
 	}
 	endInsertRows();
