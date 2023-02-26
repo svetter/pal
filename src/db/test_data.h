@@ -1,19 +1,9 @@
-#ifndef TEST_DB_H
-#define TEST_DB_H
+#ifndef TEST_DATA_H
+#define TEST_DATA_H
 
 #include <QtSql>
 
 
-
-const auto CREATE_ASCENTS		= "CREATE TABLE Ascents(ascentID INTEGER PRIMARY KEY, title NVARCHAR, peakID INTEGER REFERENCES Peaks(peakID), date DATE, peakOnDay INTEGER NOT NULL, time TIME, elevationGain INTEGER, hikeKind INTEGER NOT NULL, traverse BINARY NOT NULL, difficultySystem INTEGER NOT NULL, difficultyGrade INTEGER NOT NULL, tripID INTEGER REFERENCES Trips(tripID), description NVARCHAR)";
-const auto CREATE_PEAKS			= "CREATE TABLE Peaks(peakID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, height INTEGER, volcano BINARY NOT NULL, regionID INTEGER REFERENCES Regions(regionID), mapsLink NVARCHAR, earthLink NVARCHAR, wikiLink NVARCHAR)";
-const auto CREATE_TRIPS			= "CREATE TABLE Trips(tripID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, startDate DATE, endDate DATE, description NVARCHAR)";
-const auto CREATE_HIKERS		= "CREATE TABLE Hikers(hikerID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
-const auto CREATE_REGIONS		= "CREATE TABLE Regions(regionID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, rangeID INTEGER REFERENCES Ranges(rangeID), countryID INTEGER REFERENCES Countries(countryID))";
-const auto CREATE_RANGES		= "CREATE TABLE Ranges(rangeID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL, continent INT NOT NULL)";
-const auto CREATE_COUNTRIES		= "CREATE TABLE Countries(countryID INTEGER PRIMARY KEY, name NVARCHAR NOT NULL)";
-const auto CREATE_PHOTOS		= "CREATE TABLE Photos(photoID INTEGER PRIMARY KEY, ascentID INTEGER REFERENCES Ascents(ascentID), sortIndex INTEGER NOT NULL, useBasePath BIT NOT NULL, filepath NVARCHAR NOT NULL, description NVARCHAR)";
-const auto CREATE_PARTICIPATED	= "CREATE TABLE Participated(ascentID INTEGER NOT NULL, hikerID INTEGER NOT NULL, CONSTRAINT participatedPK PRIMARY KEY (ascentID, hikerID))";
 
 const auto INSERT_ASCENT		= "INSERT INTO Ascents(title, peakID, date, peakOnDay, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, description) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const auto INSERT_PEAK			= "INSERT INTO Peaks(name, height, volcano, regionID, mapsLink, earthLink, wikiLink) VALUES(?, ?, ?, ?, ?, ?, ?)";
@@ -120,20 +110,9 @@ int addParticipated(QSqlQuery& q, int ascentID, int hikerID)
 
 
 
-QSqlError initDB()
+QSqlError insertTestDataIntoSql()
 {
 	QSqlQuery q;
-	if (!q.exec(CREATE_ASCENTS)
-			|| !q.exec(CREATE_PEAKS)
-			|| !q.exec(CREATE_TRIPS)
-			|| !q.exec(CREATE_HIKERS)
-			|| !q.exec(CREATE_REGIONS)
-			|| !q.exec(CREATE_RANGES)
-			|| !q.exec(CREATE_COUNTRIES)
-			|| !q.exec(CREATE_PHOTOS)
-			|| !q.exec(CREATE_PARTICIPATED)) {
-		return q.lastError();
-	}
 	
 	if (!q.prepare(INSERT_COUNTRY)) return q.lastError();
 	int germanyID	= addCountry(q, QString("Germany"));
@@ -214,11 +193,11 @@ QSqlError initDB()
 	addPhoto(q, ascent3_3ID, 1, false, QString("M:/Photos/2020/Alps/2452.jpg"),			"Photo description 16");
 	addPhoto(q, ascent3_3ID, 2, false, QString("M:/Photos/2020/Alps/2503.jpg"),			"Photo description 17");
 	
-	qDebug() << "Database initialized with sample data";
+	qDebug() << "Test data added to database";
 	
 	return QSqlError();
 }
 
 
 
-#endif // TEST_DB_H
+#endif // TEST_DATA_H

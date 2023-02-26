@@ -95,6 +95,11 @@ MainWindow::MainWindow() :
 		updateAscentCounter();
 		setUIEnabled(true);
 	}
+	
+	
+	// Temporary: Add menu item to insert test data into current database
+	helpMenu->addSeparator();
+	helpMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateAscentCounter(); });
 }
 
 MainWindow::~MainWindow()

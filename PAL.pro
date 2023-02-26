@@ -71,7 +71,6 @@ HEADERS += \
 	src/db/db_error.h \
 	src/db/normal_table.h \
 	src/db/table.h \
-	src/db/test_db.h \
 	src/db/tables/ascents_table.h \
 	src/db/tables/countries_table.h \
 	src/db/tables/hikers_table.h \
@@ -81,6 +80,7 @@ HEADERS += \
 	src/db/tables/ranges_table.h \
 	src/db/tables/regions_table.h \
 	src/db/tables/trips_table.h \
+	src/db/test_data.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
