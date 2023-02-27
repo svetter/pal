@@ -491,7 +491,8 @@ void MainWindow::handle_rightClick(QPoint pos)
 void MainWindow::handle_newDatabase()
 {
 	QString caption = tr("Save new database as");
-	QString preSelectedDir = QDir().path();
+	QString preSelectedDir = Settings::lastOpenDatabaseFile.get();
+	if (preSelectedDir.isEmpty()) preSelectedDir = QDir::homePath();
 	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
 	if (filepath.isEmpty()) return;
 	
@@ -512,7 +513,8 @@ void MainWindow::handle_newDatabase()
 void MainWindow::handle_openDatabase()
 {
 	QString caption = tr("Open database");
-	QString preSelectedDir = QDir().path();
+	QString preSelectedDir = Settings::lastOpenDatabaseFile.get();
+	if (preSelectedDir.isEmpty()) preSelectedDir = QDir::homePath();
 	QString filter = tr("Database files") + " (*.db);;" + tr("All files") + " (*.*)";
 	QString filepath = QFileDialog::getOpenFileName(this, caption, preSelectedDir, filter);
 	if (filepath.isEmpty() || !QFile(filepath).exists()) return;
@@ -549,7 +551,8 @@ void MainWindow::handle_clearRecentDatabasesList()
 void MainWindow::handle_saveDatabaseAs()
 {
 	QString caption = tr("Save database as");
-	QString preSelectedDir = QDir().path();
+	QString preSelectedDir = Settings::lastOpenDatabaseFile.get();
+	if (preSelectedDir.isEmpty()) preSelectedDir = QDir::homePath();
 	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
 	if (filepath.isEmpty()) return;
 	
