@@ -80,7 +80,7 @@ public:
 		return getBufferRow(0)->at(setting->getIndex());
 	}
 	
-	inline void setValue(QWidget* parent, ProjectSetting* setting, QVariant value)
+	inline void setValue(QWidget* parent, const ProjectSetting* setting, QVariant value)
 	{
 		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex()).toInt();
 		updateCellInNormalTable(parent, primaryKey, setting, value);

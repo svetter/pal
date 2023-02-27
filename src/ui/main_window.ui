@@ -630,6 +630,8 @@
     <addaction name="saveDatabaseAsAction"/>
     <addaction name="closeDatabaseAction"/>
     <addaction name="separator"/>
+    <addaction name="projectSettingsAction"/>
+    <addaction name="separator"/>
     <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
@@ -698,11 +700,6 @@
     <string>About Qt</string>
    </property>
   </action>
-  <action name="settingsAction">
-   <property name="text">
-    <string>Settings...</string>
-   </property>
-  </action>
   <action name="newAscentAction">
    <property name="text">
     <string>New ascent...</string>
@@ -751,6 +748,16 @@
   <action name="newRegionAction">
    <property name="text">
     <string>New region...</string>
+   </property>
+  </action>
+  <action name="projectSettingsAction">
+   <property name="text">
+    <string>Project settings...</string>
+   </property>
+  </action>
+  <action name="settingsAction">
+   <property name="text">
+    <string>Settings...</string>
    </property>
   </action>
  </widget>

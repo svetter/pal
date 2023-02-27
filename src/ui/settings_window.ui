@@ -29,6 +29,9 @@
    <property name="spacing">
     <number>15</number>
    </property>
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <property name="leftMargin">
     <number>10</number>
    </property>

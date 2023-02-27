@@ -84,6 +84,7 @@ private slots:
 	void handle_saveDatabaseAs();
 	void handle_closeDatabase();
 	
+	void handle_openProjectSettings();
 	void handle_openSettings();
 	
 	void handle_about();

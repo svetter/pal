@@ -14,7 +14,6 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 	if (!savedGeometry.isEmpty()) {
 		setGeometry(savedGeometry);
 	}
-	setFixedSize(minimumSizeHint());
 	
 	
 	connect(ascentDateCheckbox,				&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentDateCheckboxChanged);

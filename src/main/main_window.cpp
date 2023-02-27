@@ -8,6 +8,7 @@
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
 #include "src/main/about_window.h"
+#include "src/main/project_settings_window.h"
 #include "src/main/settings_window.h"
 #include "ui_main_window.h"
 
@@ -52,6 +53,7 @@ MainWindow::MainWindow() :
 	connect(clearRecentDatabaseListAction,	&QAction::triggered,	this,	&MainWindow::handle_clearRecentDatabasesList);
 	connect(saveDatabaseAsAction,			&QAction::triggered,	this,	&MainWindow::handle_saveDatabaseAs);
 	connect(closeDatabaseAction,			&QAction::triggered,	this,	&MainWindow::handle_closeDatabase);
+	connect(projectSettingsAction,			&QAction::triggered,	this,	&MainWindow::handle_openProjectSettings);
 	connect(settingsAction,					&QAction::triggered,	this,	&MainWindow::handle_openSettings);
 	
 	connect(newAscentAction,	&QAction::triggered,	this,	&MainWindow::handle_newAscent);
@@ -563,6 +565,11 @@ void MainWindow::handle_closeDatabase()
 }
 
 
+
+void MainWindow::handle_openProjectSettings()
+{
+	ProjectSettingsWindow(this, &db).exec();
+}
 
 void MainWindow::handle_openSettings()
 {
