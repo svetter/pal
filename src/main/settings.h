@@ -68,6 +68,8 @@ public:
 	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
 	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
 	
+	inline static const Setting<bool>	openProjectSettingsOnNewDatabase			= Setting<bool>		("openProjectSettingsOnNewDatabase",			true);
+	
 	inline static const Setting<bool>	rememberWindowPositions						= Setting<bool>		("rememberWindowPositions",						true);
 	// Main window
 	inline static const Setting<bool>	mainWindow_rememberTab						= Setting<bool>		("mainWindow/rememberTab",						true);

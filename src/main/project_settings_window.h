@@ -13,9 +13,10 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	Q_OBJECT
 	
 	Database* db;
+	bool firstOpen;
 	
 public:
-	ProjectSettingsWindow(QWidget* parent, Database* db);
+	ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen = false);
 	
 private:
 	void loadSettings();

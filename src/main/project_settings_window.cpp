@@ -10,11 +10,20 @@
 
 
 
-ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db) :
+ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen) :
 		QDialog(parent),
-		db(db)
+		db(db),
+		firstOpen(firstOpen)
 {
 	setupUi(this);
+	
+	if (firstOpen) {
+		defaultHikerCombo->setVisible(false);
+		newHikerButton->setVisible(false);
+		bottomButtonBox->removeButton(bottomButtonBox->button(QDialogButtonBox::Apply));
+	} else {
+		newDefaultHikerLineEdit->setVisible(false);
+	}
 	
 	const QRect savedGeometry = Settings::projectSettingsWindow_geometry.get();
 	if (!savedGeometry.isEmpty()) {
@@ -59,7 +68,18 @@ void ProjectSettingsWindow::loadSettings()
 
 void ProjectSettingsWindow::saveSettings()
 {
+	if (firstOpen && !newDefaultHikerLineEdit->text().isEmpty()) {
+		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
+		Hiker* newDefaultHiker = new Hiker(ItemID(), newDefaultHikerName);
+		int newHikerIndex = db->hikersTable->addRow(this, newDefaultHiker);
+		defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
+	}
 	db->projectSettings->setValue(this, db->projectSettings->defaultHiker,		parseIDCombo(defaultHikerCombo).asQVariant());
+	
+	if (photosBasePathLineEdit->text().isEmpty()) {
+		usePhotosBasePathCheckbox->setChecked(false);
+		handle_photosBasePathCheckboxChanged();
+	}
 	db->projectSettings->setValue(this, db->projectSettings->usePhotosBasePath,	parseCheckbox(usePhotosBasePathCheckbox));
 	db->projectSettings->setValue(this, db->projectSettings->photosBasePath,	parseLineEdit(photosBasePathLineEdit));
 }

@@ -13,7 +13,6 @@
 #include "ui_main_window.h"
 
 #include <QList>
-#include <QStandardItemModel>
 #include <QFileDialog>
 
 
@@ -504,6 +503,10 @@ void MainWindow::handle_newDatabase()
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
+	
+	if (Settings::openProjectSettingsOnNewDatabase.get()) {
+		ProjectSettingsWindow(this, &db, true).exec();
+	}
 }
 
 void MainWindow::handle_openDatabase()

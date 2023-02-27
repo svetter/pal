@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>517</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,6 +95,13 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="newDefaultHikerLineEdit">
+        <property name="placeholderText">
+         <string>Enter hiker name (optional)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
