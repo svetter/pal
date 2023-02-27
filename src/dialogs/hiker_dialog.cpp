@@ -122,6 +122,10 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker
 		if (!proceed) return;
 	}
 	
+	if (db->projectSettings->getValue(db->projectSettings->defaultHiker).toInt() == hiker->hikerID.get()) {
+		db->projectSettings->setValue(parent, db->projectSettings->defaultHiker, QVariant());
+	}
+	
 	db->removeRow(parent, db->hikersTable, hiker->hikerID.forceValid());
 }
 

@@ -64,6 +64,13 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
+	// Set initial hiker
+	ItemID defaultHikerID = db->projectSettings->getValue(db->projectSettings->defaultHiker).toInt();
+	if (defaultHikerID.isValid()) {
+		Hiker* hiker = db->getHiker(defaultHikerID.forceValid());
+		hikersModel.addHiker(hiker);
+		delete hiker;
+	}
 	
 	
 	switch (purpose) {
