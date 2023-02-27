@@ -83,6 +83,7 @@ public:
 	QModelIndex getNullableRootModelIndex() const;
 	
 	friend class Database;
+	friend class ProjectSettings;
 };
 
 

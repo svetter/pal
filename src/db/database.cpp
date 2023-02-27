@@ -13,7 +13,8 @@
 Database::Database() :
 		databaseLoaded(false),
 		tables(QList<Table*>()),
-		mainWindowStatusBar(nullptr)
+		mainWindowStatusBar(nullptr),
+		projectSettings(new ProjectSettings())
 {
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();
@@ -41,6 +42,7 @@ Database::Database() :
 
 Database::~Database() {
 	qDeleteAll(getTableList());
+	delete projectSettings;
 }
 
 
@@ -50,8 +52,10 @@ void Database::reset()
 	for (Table* table : tables) {
 		table->resetBuffer();
 	}
-	QSqlDatabase sql = QSqlDatabase::database();
-	sql.close();
+	projectSettings->resetBuffer();
+	
+	QSqlDatabase::database().close();
+	
 	databaseLoaded = false;
 }
 
@@ -78,6 +82,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	for (Table* table : tables) {
 		table->createTableInSql(parent);
 	}
+	projectSettings->initializeForNewDatabase(parent);
 	
 	// All tables still empty of course, but this doubles as a table format check
 	populateBuffers(parent, true);
@@ -96,6 +101,8 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	if (!sql.open())
 		displayError(parent, sql.lastError());
 	databaseLoaded = true;
+	
+	projectSettings->initializeForExistingDatabase(parent);
 	
 	populateBuffers(parent);
 }
@@ -138,6 +145,7 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 void Database::populateBuffers(QWidget* parent, bool expectEmpty)
 {
 	assert(databaseLoaded);
+	
 	for (Table* table : tables) {
 		assert(table->getNumberOfRows() == 0);
 		table->initBuffer(parent, expectEmpty);

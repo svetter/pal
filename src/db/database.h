@@ -8,6 +8,7 @@
 #include "src/data/region.h"
 #include "src/data/range.h"
 #include "src/data/country.h"
+#include "src/db/project_settings.h"
 #include "src/db/tables/ascents_table.h"
 #include "src/db/tables/countries_table.h"
 #include "src/db/tables/hikers_table.h"
@@ -43,6 +44,8 @@ public:
 	CountriesTable*		countriesTable;
 	PhotosTable*		photosTable;
 	ParticipatedTable*	participatedTable;
+	
+	ProjectSettings*	projectSettings;
 	
 	Database();
 	~Database();

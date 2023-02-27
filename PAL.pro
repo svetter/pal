@@ -70,6 +70,7 @@ HEADERS += \
 	src/db/database.h \
 	src/db/db_error.h \
 	src/db/normal_table.h \
+	src/db/project_settings.h \
 	src/db/table.h \
 	src/db/tables/ascents_table.h \
 	src/db/tables/countries_table.h \
