@@ -137,7 +137,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
 void PeakDialog::handle_newRegion()
 {
 	int newRegionIndex = openNewRegionDialogAndStore(this, db);
-	regionCombo->setCurrentIndex(newRegionIndex);
+	regionCombo->setCurrentIndex(newRegionIndex + 1);	// 0 is None
 }
 
 

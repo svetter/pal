@@ -50,7 +50,7 @@ void AddHikerDialog::handle_newHiker()
 {
 	int newHikerIndex = openNewHikerDialogAndStore(this, db);
 	if (newHikerIndex >= 0) {
-		hikerCombo->setCurrentIndex(newHikerIndex);
+		hikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
 	}
 }
 

@@ -223,7 +223,7 @@ void AscentDialog::handle_newPeak()
 {
 	int newPeakIndex = openNewPeakDialogAndStore(this, db);
 	if (newPeakIndex >= 0) {
-		peakCombo->setCurrentIndex(newPeakIndex);
+		peakCombo->setCurrentIndex(newPeakIndex + 1);	// 0 is None
 	}
 }
 
@@ -264,7 +264,7 @@ void AscentDialog::handle_newTrip()
 {
 	int newTripIndex = openNewTripDialogAndStore(this, db);
 	if (newTripIndex < 0) return;
-	peakCombo->setCurrentIndex(newTripIndex);
+	tripCombo->setCurrentIndex(newTripIndex + 1);	// 0 is None
 }
 
 void AscentDialog::handle_addHiker()

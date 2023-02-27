@@ -114,13 +114,13 @@ bool RegionDialog::changesMade()
 void RegionDialog::handle_newRange()
 {
 	int newRegionIndex = openNewRangeDialogAndStore(this, db);
-	rangeCombo->setCurrentIndex(newRegionIndex);
+	rangeCombo->setCurrentIndex(newRegionIndex + 1);	// 0 is None
 }
 
 void RegionDialog::handle_newCountry()
 {
 	int newCountryIndex = openNewCountryDialogAndStore(this, db);
-	countryCombo->setCurrentIndex(newCountryIndex);
+	countryCombo->setCurrentIndex(newCountryIndex + 1);	// 0 is None
 }
 
 
