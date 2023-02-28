@@ -1,89 +1,60 @@
 #ifndef PROJECT_SETTINGS_H
 #define PROJECT_SETTINGS_H
 
-#include "qsqldatabase.h"
 #include "src/db/table.h"
+#include "src/db/settings_table.h"
 
 #include <QString>
 #include <QVariant>
 
 
 
+template<typename T>
 class ProjectSetting : public Column {
+	SettingsTable* settingsTable;
 	const QVariant defaultValue;
 	
 public:
-	inline ProjectSetting(const QString key, DataType type, bool nullable, Table* settingsTable, QVariant defaultValue = QVariant()) :
+	inline ProjectSetting(const QString key, DataType type, bool nullable, SettingsTable* settingsTable, QVariant defaultValue = QVariant()) :
 			Column(key, QString(), type, nullable, false, nullptr, settingsTable),
+			settingsTable(settingsTable),
 			defaultValue(defaultValue)
 	{}
 	
-	inline QVariant getDefault() const
+	inline T get() const
 	{
-		return defaultValue;
+		return settingsTable->getBufferRow(0)->at(getIndex()).value<T>();
+	}
+	
+	inline T getDefault() const
+	{
+		return defaultValue.value<T>();
+	}
+	
+	inline void set(QWidget* parent, T value)
+	{
+		settingsTable->updateSetting(parent, this, value);
 	}
 };
 
 
 
-class ProjectSettings : public Table {
-	QList<const ProjectSetting*> settings;
-	Column* primaryKeyColumn;
-	
+class ProjectSettings : public SettingsTable {
 public:
-	const ProjectSetting* defaultHiker;
-	const ProjectSetting* usePhotosBasePath;
-	const ProjectSetting* photosBasePath;
+	const ProjectSetting<int>*		defaultHiker;
+	const ProjectSetting<bool>*		usePhotosBasePath;
+	const ProjectSetting<QString>*	photosBasePath;
 	
 	inline ProjectSettings() :
-			Table("ProjectSettings", "Project settings", false),
-			primaryKeyColumn	(new Column("projectSettingsID", QString(), integer, false, true, nullptr, this)),
-			//										name					SQL type	nullable	table		default value
-			defaultHiker		(new ProjectSetting("defaultHiker",			integer,	true,		this)),
-			usePhotosBasePath	(new ProjectSetting("usePhotosBasePath",	bit,		false,		this,		false)),
-			photosBasePath		(new ProjectSetting("photosBasePath",		varchar,	true,		this))
+			SettingsTable(),
+			//												name					SQL type	nullable	table	default value
+			defaultHiker		(new ProjectSetting<int>	("defaultHiker",		integer,	true,		this)),
+			usePhotosBasePath	(new ProjectSetting<bool>	("usePhotosBasePath",	bit,		false,		this,	false)),
+			photosBasePath		(new ProjectSetting<QString>("photosBasePath",		varchar,	true,		this))
 	{
-		addColumn(primaryKeyColumn);
-		addSetting(defaultHiker);
-		addSetting(usePhotosBasePath);
-		addSetting(photosBasePath);
-	}
-	
-private:
-	inline void addSetting(const ProjectSetting* setting)
-	{
-		addColumn(setting);
-		settings.append(setting);
-	}
-	
-public:
-	inline void initializeForNewDatabase(QWidget* parent) {
-		createTableInSql(parent);
-		initBuffer(parent, true);
-		
-		QList<const Column*> columns = QList<const Column*>();
-		QList<QVariant> values = QList<QVariant>();
-		for (const ProjectSetting* setting : settings) {
-			columns.append((Column*) setting);
-			values.append(setting->getDefault());
-		}
-		addRow(parent, columns, values);
-	}
-	
-	inline void initializeForExistingDatabase(QWidget* parent) {
-		initBuffer(parent);
-	}
-	
-	
-	inline QVariant getValue(const ProjectSetting* setting) const
-	{
-		return getBufferRow(0)->at(setting->getIndex());
-	}
-	
-	inline void setValue(QWidget* parent, const ProjectSetting* setting, QVariant value)
-	{
-		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex()).toInt();
-		updateCellInNormalTable(parent, primaryKey, setting, value);
+		addColumn(defaultHiker);
+		addColumn(usePhotosBasePath);
+		addColumn(photosBasePath);
 	}
 };
 
