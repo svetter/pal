@@ -133,6 +133,7 @@ void MainWindow::setUIEnabled(bool enabled)
 	
 	saveDatabaseAsAction		->setEnabled(enabled);
 	closeDatabaseAction			->setEnabled(enabled);
+	projectSettingsAction		->setEnabled(enabled);
 	
 	newMenu						->setEnabled(enabled);
 }
