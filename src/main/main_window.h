@@ -38,6 +38,7 @@ private:
 	void updateRecentFilesMenu();
 	void clearRecentFilesMenu();
 	void setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
+	void setColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void initTableContextMenuAndShortcuts();
 	
 private slots:

@@ -38,15 +38,6 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	setupTableView(ascentsTableView,	db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
-	setupTableView(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
-	setupTableView(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
-	setupTableView(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
-	setupTableView(regionsTableView,	db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
-	setupTableView(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
-	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
-	
-	
 	connect(newDatabaseAction,				&QAction::triggered,	this,	&MainWindow::handle_newDatabase);
 	connect(openDatabaseAction,				&QAction::triggered,	this,	&MainWindow::handle_openDatabase);
 	connect(clearRecentDatabaseListAction,	&QAction::triggered,	this,	&MainWindow::handle_clearRecentDatabasesList);
@@ -96,6 +87,15 @@ MainWindow::MainWindow() :
 		updateAscentCounter();
 		setUIEnabled(true);
 	}
+	
+	
+	setupTableView(ascentsTableView,	db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
+	setupTableView(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
+	setupTableView(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
+	setupTableView(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
+	setupTableView(regionsTableView,	db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
+	setupTableView(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
+	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
 	
 	
 	// Temporary: Add menu item to insert test data into current database
@@ -183,22 +183,33 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table, const Sett
 	view->setModel(table);
 	view->setRootIndex(table->getNormalRootModelIndex());
 	
-	// Restore column widths
-	QStringList columnWidths = columnWidthsSetting->get();
-	if (columnWidths.size() == table->getNumberOfColumns()) {
-		for (int i = 0; i < table->getNumberOfColumns(); i++) {
-			view->setColumnWidth(i, columnWidths.at(i).toInt());
-		}
-	} else {
-		if (!columnWidths.isEmpty())
-			qDebug() << QString("Couldn't restore column widths for table %1: Expected %2 numbers, but got %3")
-					.arg(table->name).arg(table->getNumberOfColumns()).arg(columnWidths.size());
-		columnWidthsSetting->clear();
-		view->resizeColumnsToContents();
-	}
+	setColumnWidths(view, table, columnWidthsSetting);
 	
 	// Enable context menu
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+}
+
+void MainWindow::setColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting)
+{
+	if (!Settings::mainWindow_rememberColumnWidths.get()) {
+		return view->resizeColumnsToContents();
+	}
+	
+	QStringList columnWidths = columnWidthsSetting->get();
+	if (columnWidths.size() != table->getNumberOfColumns()) {
+		// Can't restore column widths from settings
+		if (!columnWidths.isEmpty())
+			qDebug() << QString("Couldn't restore column widths for table %1: Expected %2 numbers, but got %3")
+					.arg(table->name).arg(table->getNumberOfColumns()).arg(columnWidths.size());
+		
+		columnWidthsSetting->clear();
+		return view->resizeColumnsToContents();
+	}
+	
+	// Restore column widths
+	for (int i = 0; i < table->getNumberOfColumns(); i++) {
+		view->setColumnWidth(i, columnWidths.at(i).toInt());
+	}
 }
 
 
