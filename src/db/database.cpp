@@ -82,7 +82,9 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	for (Table* table : tables) {
 		table->createTableInSql(parent);
 	}
-	projectSettings->initializeForNewDatabase(parent);
+	projectSettings->createTableInSql(parent);
+	projectSettings->initBuffer(parent);
+	projectSettings->insertDefaults(parent);
 	
 	// All tables still empty of course, but this doubles as a table format check
 	populateBuffers(parent, true);
@@ -102,9 +104,8 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 		displayError(parent, sql.lastError());
 	databaseLoaded = true;
 	
-	projectSettings->initializeForExistingDatabase(parent);
-	
 	populateBuffers(parent);
+	projectSettings->initBuffer(parent);
 }
 
 bool Database::saveAs(QWidget* parent, const QString& filepath)

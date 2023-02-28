@@ -31,15 +31,23 @@ public:
 		return defaultValue.value<T>();
 	}
 	
-	inline void set(QWidget* parent, T value)
+	inline void set(QWidget* parent, QVariant value) const
 	{
 		settingsTable->updateSetting(parent, this, value);
+	}
+	
+	inline void setToNull(QWidget* parent) const
+	{
+		settingsTable->updateSetting(parent, this, QVariant());
 	}
 };
 
 
 
 class ProjectSettings : public SettingsTable {
+	// Can't store template objects ProjectSetting together directly, so storing Column + default value instead
+	QList<QPair<Column*, QVariant>> defaults;
+	
 public:
 	const ProjectSetting<int>*		defaultHiker;
 	const ProjectSetting<bool>*		usePhotosBasePath;
@@ -55,6 +63,24 @@ public:
 		addColumn(defaultHiker);
 		addColumn(usePhotosBasePath);
 		addColumn(photosBasePath);
+	}
+	
+	template<typename T> inline void addSetting(ProjectSetting<T>* setting)
+	{
+		addColumn(setting);
+		defaults.append({ (Column*) setting, setting->getDefault() });
+	}
+	
+	inline void insertDefaults(QWidget* parent) {
+		initBuffer(parent, true);
+		
+		QList<const Column*> columns = QList<const Column*>();
+		QList<QVariant> values = QList<QVariant>();
+		for (const QPair<Column*, QVariant> &columnDefaultPair : defaults) {
+			columns.append(columnDefaultPair.first);
+			values.append(columnDefaultPair.second);
+		}
+		addRow(parent, columns, values);
 	}
 };
 

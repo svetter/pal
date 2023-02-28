@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QVariant>
 
-class ProjectSetting;
+template<typename T> class ProjectSetting;
 
 
 
@@ -14,14 +14,26 @@ class SettingsTable : public Table {
 	Column* primaryKeyColumn;
 	
 public:
-	SettingsTable();
+	inline SettingsTable() :
+			Table("ProjectSettings", "Project settings", false),
+			primaryKeyColumn	(new Column("projectSettingsID", QString(), integer, false, true, nullptr, this))
+	{
+		addColumn(primaryKeyColumn);
+	}
 	
 public:
-	void initializeForNewDatabase(QWidget* parent);
-	void initializeForExistingDatabase(QWidget* parent);
+	template<typename T>
+	inline T readSetting(const ProjectSetting<T>* setting)
+	{
+		return getBufferRow(0)->at(setting->getIndex());
+	}
 	
-	QVariant readSetting(const ProjectSetting* setting);
-	void updateSetting(QWidget* parent, const ProjectSetting* setting, QVariant value);
+	template<typename T>
+	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value)
+	{
+		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex()).toInt();
+		updateCellInNormalTable(parent, primaryKey, setting, value);
+	}
 };
 
 

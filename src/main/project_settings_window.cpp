@@ -52,7 +52,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 
 void ProjectSettingsWindow::loadSettings()
 {
-	ItemID hikerID = db->projectSettings->getValue(db->projectSettings->defaultHiker).toInt();
+	ItemID hikerID = db->projectSettings->defaultHiker->get();
 	if (hikerID.isValid()) {
 		int bufferRowIndex = db->hikersTable->getBufferIndexForPrimaryKey(hikerID.get());
 		defaultHikerCombo->setCurrentIndex(bufferRowIndex + 1);	// 0 is None
@@ -60,8 +60,8 @@ void ProjectSettingsWindow::loadSettings()
 		defaultHikerCombo->setCurrentIndex(0);
 	}
 	
-	usePhotosBasePathCheckbox->setChecked(db->projectSettings->getValue(db->projectSettings->usePhotosBasePath).toBool());
-	photosBasePathLineEdit->setText(db->projectSettings->getValue(db->projectSettings->photosBasePath).toString());
+	usePhotosBasePathCheckbox->setChecked(db->projectSettings->usePhotosBasePath->get());
+	photosBasePathLineEdit->setText(db->projectSettings->photosBasePath->get());
 	
 	updateEnabled();
 }
@@ -74,14 +74,14 @@ void ProjectSettingsWindow::saveSettings()
 		int newHikerIndex = db->hikersTable->addRow(this, newDefaultHiker);
 		defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
 	}
-	db->projectSettings->setValue(this, db->projectSettings->defaultHiker,		parseIDCombo(defaultHikerCombo).asQVariant());
+	db->projectSettings->defaultHiker->set(this, parseIDCombo(defaultHikerCombo).asQVariant());
 	
 	if (photosBasePathLineEdit->text().isEmpty()) {
 		usePhotosBasePathCheckbox->setChecked(false);
 		handle_photosBasePathCheckboxChanged();
 	}
-	db->projectSettings->setValue(this, db->projectSettings->usePhotosBasePath,	parseCheckbox(usePhotosBasePathCheckbox));
-	db->projectSettings->setValue(this, db->projectSettings->photosBasePath,	parseLineEdit(photosBasePathLineEdit));
+	db->projectSettings->usePhotosBasePath->set(this, parseCheckbox(usePhotosBasePathCheckbox));
+	db->projectSettings->photosBasePath->set(this, parseLineEdit(photosBasePathLineEdit));
 }
 
 void ProjectSettingsWindow::updateEnabled()

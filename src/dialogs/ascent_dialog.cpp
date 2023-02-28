@@ -65,7 +65,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	// Set initial hiker
-	ItemID defaultHikerID = db->projectSettings->getValue(db->projectSettings->defaultHiker).toInt();
+	ItemID defaultHikerID = db->projectSettings->defaultHiker->get();
 	if (defaultHikerID.isValid()) {
 		Hiker* hiker = db->getHiker(defaultHikerID.forceValid());
 		hikersModel.addHiker(hiker);
@@ -307,10 +307,10 @@ void AscentDialog::handle_addPhotos()
 	for (const QString& filepath : filepaths) {
 		QString pathToStore = filepath;
 		bool useBasePath;
-		bool usePhotosBasePathSetting = db->projectSettings->getValue(db->projectSettings->usePhotosBasePath).toBool();
+		bool usePhotosBasePathSetting = db->projectSettings->usePhotosBasePath->get();
 		
 		if (usePhotosBasePathSetting) {
-			QString photosBasePath = db->projectSettings->getValue(db->projectSettings->photosBasePath).toString();
+			QString photosBasePath = db->projectSettings->photosBasePath->get();
 			useBasePath = filepath.startsWith(photosBasePath);
 			if (useBasePath) {
 				pathToStore.remove(0, photosBasePath.size());
