@@ -49,20 +49,14 @@ class ProjectSettings : public SettingsTable {
 	QList<QPair<Column*, QVariant>> defaults;
 	
 public:
-	const ProjectSetting<int>*		defaultHiker;
-	const ProjectSetting<bool>*		usePhotosBasePath;
-	const ProjectSetting<QString>*	photosBasePath;
+	const ProjectSetting<int>*	defaultHiker;
 	
 	inline ProjectSettings() :
 			SettingsTable(),
-			//												name					SQL type	nullable	table	default value
-			defaultHiker		(new ProjectSetting<int>	("defaultHiker",		integer,	true,		this)),
-			usePhotosBasePath	(new ProjectSetting<bool>	("usePhotosBasePath",	bit,		false,		this,	false)),
-			photosBasePath		(new ProjectSetting<QString>("photosBasePath",		varchar,	true,		this))
+			//											name				SQL type	nullable	table	default value
+			defaultHiker	(new ProjectSetting<int>	("defaultHiker",	integer,	true,		this))
 	{
 		addColumn(defaultHiker);
-		addColumn(usePhotosBasePath);
-		addColumn(photosBasePath);
 	}
 	
 	template<typename T> inline void addSetting(ProjectSetting<T>* setting)

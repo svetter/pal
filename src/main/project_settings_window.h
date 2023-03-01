@@ -21,12 +21,9 @@ public:
 private:
 	void loadSettings();
 	void saveSettings();
-	void updateEnabled();
 	
 private slots:	
 	void handle_newHiker();
-	void handle_photosBasePathCheckboxChanged();
-	void handle_photosBasePathBrowse();
 	
 	void handle_save();
 	void handle_apply();

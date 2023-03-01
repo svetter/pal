@@ -145,8 +145,8 @@ void SettingsWindow::handle_peakHeightCheckboxChanged()
 void SettingsWindow::handle_save()
 {
 	Settings::settingsWindow_geometry.set(geometry());
-	
 	saveSettings();
+	accept();
 }
 
 void SettingsWindow::handle_apply()
@@ -157,6 +157,7 @@ void SettingsWindow::handle_apply()
 void SettingsWindow::handle_cancel()
 {
 	Settings::settingsWindow_geometry.set(geometry());
+	QDialog::reject();
 }
 
 void SettingsWindow::handle_loadDefaults()
@@ -169,5 +170,4 @@ void SettingsWindow::handle_loadDefaults()
 void SettingsWindow::reject()
 {
 	handle_cancel();
-	QDialog::reject();
 }

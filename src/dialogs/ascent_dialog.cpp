@@ -32,7 +32,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	hikersListView->setModel(&hikersModel);
 	hikersListView->setModelColumn(1);
 	photosListView->setModel(&photosModel);
-	photosListView->setModelColumn(1);
+	photosListView->setModelColumn(0);
 	
 	
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
@@ -305,21 +305,7 @@ void AscentDialog::handle_addPhotos()
 	
 	QList<Photo> photos = QList<Photo>();
 	for (const QString& filepath : filepaths) {
-		QString pathToStore = filepath;
-		bool useBasePath;
-		bool usePhotosBasePathSetting = db->projectSettings->usePhotosBasePath->get();
-		
-		if (usePhotosBasePathSetting) {
-			QString photosBasePath = db->projectSettings->photosBasePath->get();
-			useBasePath = filepath.startsWith(photosBasePath);
-			if (useBasePath) {
-				pathToStore.remove(0, photosBasePath.size());
-			}
-		} else {
-			useBasePath = false;
-		}
-		
-		photos.append(Photo(ItemID(), ItemID(), -1, useBasePath, pathToStore, QString()));
+		photos.append(Photo(ItemID(), ItemID(), -1, filepath, QString()));
 	}
 	
 	photosModel.addPhotos(photos);
@@ -343,18 +329,19 @@ void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, 
 		nowSelectedRows.insert(index.row());
 	}
 	
-	if (previouslySelectedRows.size() == 1) {
+	if (previouslySelectedRows.size() == 1) {	// Save description
 		QList<int> previouslySelectedRowIndexValues = previouslySelectedRows.values();
 		int rowIndex = previouslySelectedRowIndexValues.first();
 		photosModel.setDescriptionAt(rowIndex, photoDescriptionLineEdit->text());
 	}
-	if (nowSelectedRows.size() == 1) {
+	
+	if (nowSelectedRows.size() == 1) {			// Load description
 		QList<int> nowSelectedRowIndexValues = nowSelectedRows.values();
 		int rowIndex = nowSelectedRowIndexValues.first();
 		QString description = photosModel.getDescriptionAt(rowIndex);
 		photoDescriptionLineEdit->setText(description);
 		photoDescriptionLineEdit->setEnabled(true);
-	} else {
+	} else {									// Clear description
 		photoDescriptionLineEdit->setEnabled(false);
 		photoDescriptionLineEdit->clear();
 	}

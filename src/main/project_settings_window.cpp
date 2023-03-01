@@ -36,9 +36,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	defaultHikerCombo->setModelColumn(db->hikersTable->nameColumn->getIndex());
 	
 	
-	connect(newHikerButton,				&QPushButton::clicked,		this,	&ProjectSettingsWindow::handle_newHiker);
-	connect(usePhotosBasePathCheckbox,	&QCheckBox::stateChanged,	this,	&ProjectSettingsWindow::handle_photosBasePathCheckboxChanged);
-	connect(photosBasePathBrowseButton,	&QPushButton::clicked,		this,	&ProjectSettingsWindow::handle_photosBasePathBrowse);
+	connect(newHikerButton,										&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_newHiker);
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Save),	&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_save);
 	connect(bottomButtonBox->button(QDialogButtonBox::Apply),	&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_apply);
@@ -59,11 +57,6 @@ void ProjectSettingsWindow::loadSettings()
 	} else {
 		defaultHikerCombo->setCurrentIndex(0);
 	}
-	
-	usePhotosBasePathCheckbox->setChecked(db->projectSettings->usePhotosBasePath->get());
-	photosBasePathLineEdit->setText(db->projectSettings->photosBasePath->get());
-	
-	updateEnabled();
 }
 
 void ProjectSettingsWindow::saveSettings()
@@ -75,18 +68,6 @@ void ProjectSettingsWindow::saveSettings()
 		defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
 	}
 	db->projectSettings->defaultHiker->set(this, parseIDCombo(defaultHikerCombo).asQVariant());
-	
-	if (photosBasePathLineEdit->text().isEmpty()) {
-		usePhotosBasePathCheckbox->setChecked(false);
-		handle_photosBasePathCheckboxChanged();
-	}
-	db->projectSettings->usePhotosBasePath->set(this, parseCheckbox(usePhotosBasePathCheckbox));
-	db->projectSettings->photosBasePath->set(this, parseLineEdit(photosBasePathLineEdit));
-}
-
-void ProjectSettingsWindow::updateEnabled()
-{
-	handle_photosBasePathCheckboxChanged();
 }
 
 
@@ -98,28 +79,13 @@ void ProjectSettingsWindow::handle_newHiker()
 	defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
 }
 
-void ProjectSettingsWindow::handle_photosBasePathCheckboxChanged()
-{
-	bool enabled = usePhotosBasePathCheckbox->checkState();
-	photosBasePathLineEdit->setEnabled(enabled);
-	photosBasePathBrowseButton->setEnabled(enabled);
-}
-
-void ProjectSettingsWindow::handle_photosBasePathBrowse()
-{
-	QString caption = tr("Select photos base folder");
-	QString preSelectedDir = QString();
-	QString basePath = QFileDialog::getExistingDirectory(this, caption, preSelectedDir);
-	if (!basePath.isEmpty()) photosBasePathLineEdit->setText(basePath);
-}
-
 
 
 void ProjectSettingsWindow::handle_save()
 {
 	Settings::projectSettingsWindow_geometry.set(geometry());
-	
 	saveSettings();
+	accept();
 }
 
 void ProjectSettingsWindow::handle_apply()
@@ -130,6 +96,7 @@ void ProjectSettingsWindow::handle_apply()
 void ProjectSettingsWindow::handle_cancel()
 {
 	Settings::projectSettingsWindow_geometry.set(geometry());
+	QDialog::reject();
 }
 
 
@@ -137,5 +104,4 @@ void ProjectSettingsWindow::handle_cancel()
 void ProjectSettingsWindow::reject()
 {
 	handle_cancel();
-	QDialog::reject();
 }

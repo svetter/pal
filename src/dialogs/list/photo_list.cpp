@@ -88,10 +88,8 @@ QVariant PhotosOfAscent::data(const QModelIndex& index, int role) const
 	if (role != Qt::DisplayRole) return QVariant();
 	switch (index.column()) {
 	case 0:
-		return list.at(index.row()).useBasePath;
-	case 1:
 		return list.at(index.row()).filepath;
-	case 2:
+	case 1:
 		return list.at(index.row()).description;
 	}
 	assert(false);
@@ -115,12 +113,9 @@ bool PhotosOfAscent::setData(const QModelIndex& index, const QVariant& value, in
 	
 	switch (index.column()) {
 	case 0:
-		list[index.row()].useBasePath = value.toBool();
-		break;
-	case 1:
 		list[index.row()].filepath = value.toString();
 		break;
-	case 2:
+	case 1:
 		list[index.row()].description = value.toString();
 		break;
 	default:
@@ -190,7 +185,6 @@ QMimeData* PhotosOfAscent::mimeData(const QModelIndexList& indexes) const
 	for (int rowIndex : sortedRowList) {
 		Photo photo = list.at(rowIndex);
 		
-		stream << (photo.useBasePath ? "true" : "false");
 		stream << photo.filepath;
 		stream << photo.description;
 	}
@@ -219,13 +213,9 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 		
 		switch (currentColumn) {
 		case 0:
-			newPhotos.append(new Photo());
-			newPhotos.last()->useBasePath = text.compare("true", Qt::CaseInsensitive) == 0;
-			break;
-		case 1:
 			newPhotos.last()->filepath = text;
 			break;
-		case 2:
+		case 1:
 			newPhotos.last()->description = text;
 			break;
 		default:
@@ -233,12 +223,11 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 		}
 		
 		currentColumn++;
-		if (currentColumn == 3) currentColumn = 0;
+		if (currentColumn == 2) currentColumn = 0;
 	}
 	
 	insertRows(row, newPhotos.size(), QModelIndex());
 	for (int i = 0; i < newPhotos.size(); i++) {
-		setData(index(row + i, 0, QModelIndex()), newPhotos.at(i)->useBasePath, Qt::DisplayRole);
 		setData(index(row + i, 1, QModelIndex()), newPhotos.at(i)->filepath, Qt::DisplayRole);
 		setData(index(row + i, 2, QModelIndex()), newPhotos.at(i)->description, Qt::DisplayRole);
 	}

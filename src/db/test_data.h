@@ -12,7 +12,7 @@ const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
 const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) VALUES(?, ?, ?)";
 const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) VALUES(?, ?)";
 const auto INSERT_COUNTRY		= "INSERT INTO Countries(name) VALUES(?)";
-const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, sortIndex, useBasePath, filepath, description) VALUES(?, ?, ?, ?, ?)";
+const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, sortIndex, filepath, description) VALUES(?, ?, ?, ?, ?)";
 const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VALUES(?, ?)";
 
 
@@ -89,11 +89,10 @@ int addRegion(QSqlQuery& q, const QString& name, int rangeID, int countryID)
 	return q.lastInsertId().toInt();
 }
 
-int addPhoto(QSqlQuery& q, int ascentID, int index, bool useBasePath, const QString& filepath, const QString& description)
+int addPhoto(QSqlQuery& q, int ascentID, int index, const QString& filepath, const QString& description)
 {
 	q.addBindValue(ascentID);
 	q.addBindValue(index);
-	q.addBindValue(useBasePath);
 	q.addBindValue(filepath);
 	q.addBindValue(description);
 	q.exec();
