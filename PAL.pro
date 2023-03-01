@@ -113,6 +113,7 @@ FORMS += \
 	src/ui/project_settings_window.ui \
 	src/ui/range_dialog.ui \
 	src/ui/region_dialog.ui \
+	src/ui/relocate_photos_dialog.ui \
 	src/ui/settings_window.ui \
 	src/ui/trip_dialog.ui
 

@@ -49,7 +49,7 @@
      <property name="title">
       <string>Default hiker</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="defaultHikerAlternativeLayout">
       <property name="spacing">
        <number>10</number>
       </property>
