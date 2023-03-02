@@ -174,23 +174,23 @@ QSqlError insertTestDataIntoSql()
 	addParticipated(q, ascent3_3ID, aliceID);
 	
 	if (!q.prepare(INSERT_PHOTO)) return q.lastError();
-	addPhoto(q, ascent1_1ID, 0, false, QString("M:/Photos/1999/Alps/2358.jpg"),			"Photo description 1");
-	addPhoto(q, ascent1_1ID, 1, false, QString("M:/Photos/1999/Alps/2363.jpg"),			"Photo description 2");
-	addPhoto(q, ascent1_2ID, 0, false, QString("M:/Photos/1999/Alps/2834.jpg"),			"Photo description 3");
-	addPhoto(q, ascent1_2ID, 1, false, QString("M:/Photos/1999/Alps/2835.jpg"),			"Photo description 4");
-	addPhoto(q, ascent1_2ID, 2, false, QString("M:/Photos/1999/Alps/2798.jpg"),			"Photo description 5");
-	addPhoto(q, ascent1_2ID, 3, false, QString("M:/Photos/1999/Alps/2815.jpg"),			"Photo description 6");
-	addPhoto(q, ascent2_1ID, 0, false, QString("M:/Photos/2004/Band camp/2358.jpg"),	"Photo description 7");
-	addPhoto(q, ascent2_1ID, 1, false, QString("M:/Photos/2004/Band camp/2327.jpg"),	"Photo description 8");
-	addPhoto(q, ascent2_1ID, 2, false, QString("M:/Photos/2004/Band camp/2357.jpg"),	"Photo description 9");
-	addPhoto(q, ascent2_1ID, 3, false, QString("M:/Photos/2004/Band camp/2317.jpg"),	"Photo description 10");
-	addPhoto(q, ascent2_1ID, 4, false, QString("M:/Photos/2004/Band camp/2394.jpg"),	"Photo description 11");
-	addPhoto(q, ascent3_1ID, 0, false, QString("M:/Photos/2020/Alps/1274.jpg"),			"Photo description 12");
-	addPhoto(q, ascent3_1ID, 1, false, QString("M:/Photos/2020/Alps/1275.jpg"),			"Photo description 13");
-	addPhoto(q, ascent3_2ID, 0, false, QString("M:/Photos/2020/Alps/1957.jpg"),			"Photo description 14");
-	addPhoto(q, ascent3_3ID, 0, false, QString("M:/Photos/2020/Alps/2492.jpg"),			"Photo description 15");
-	addPhoto(q, ascent3_3ID, 1, false, QString("M:/Photos/2020/Alps/2452.jpg"),			"Photo description 16");
-	addPhoto(q, ascent3_3ID, 2, false, QString("M:/Photos/2020/Alps/2503.jpg"),			"Photo description 17");
+	addPhoto(q, ascent1_1ID, 0, QString("M:/Photos/1999/Alps/2358.jpg"),		"Photo description 1");
+	addPhoto(q, ascent1_1ID, 1, QString("M:/Photos/1999/Alps/2363.jpg"),		"Photo description 2");
+	addPhoto(q, ascent1_2ID, 0, QString("M:/Photos/1999/Alps/2834.jpg"),		"Photo description 3");
+	addPhoto(q, ascent1_2ID, 1, QString("M:/Photos/1999/Alps/2835.jpg"),		"Photo description 4");
+	addPhoto(q, ascent1_2ID, 2, QString("M:/Photos/1999/Alps/2798.jpg"),		"Photo description 5");
+	addPhoto(q, ascent1_2ID, 3, QString("M:/Photos/1999/Alps/2815.jpg"),		"Photo description 6");
+	addPhoto(q, ascent2_1ID, 0, QString("M:/Photos/2004/Band camp/2358.jpg"),	"Photo description 7");
+	addPhoto(q, ascent2_1ID, 1, QString("M:/Photos/2004/Band camp/2327.jpg"),	"Photo description 8");
+	addPhoto(q, ascent2_1ID, 2, QString("M:/Photos/2004/Band camp/2357.jpg"),	"Photo description 9");
+	addPhoto(q, ascent2_1ID, 3, QString("M:/Photos/2004/Band camp/2317.jpg"),	"Photo description 10");
+	addPhoto(q, ascent2_1ID, 4, QString("M:/Photos/2004/Band camp/2394.jpg"),	"Photo description 11");
+	addPhoto(q, ascent3_1ID, 0, QString("M:/Photos/2020/Alps/1274.jpg"),		"Photo description 12");
+	addPhoto(q, ascent3_1ID, 1, QString("M:/Photos/2020/Alps/1275.jpg"),		"Photo description 13");
+	addPhoto(q, ascent3_2ID, 0, QString("M:/Photos/2020/Alps/1957.jpg"),		"Photo description 14");
+	addPhoto(q, ascent3_3ID, 0, QString("M:/Photos/2020/Alps/2492.jpg"),		"Photo description 15");
+	addPhoto(q, ascent3_3ID, 1, QString("M:/Photos/2020/Alps/2452.jpg"),		"Photo description 16");
+	addPhoto(q, ascent3_3ID, 2, QString("M:/Photos/2020/Alps/2503.jpg"),		"Photo description 17");
 	
 	qDebug() << "Test data added to database";
 	

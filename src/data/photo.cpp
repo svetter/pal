@@ -10,7 +10,7 @@ Photo::Photo() :
 		description(QString())
 {}
 
-Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString& filepath, QString description) :
+Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, QString description) :
 		photoID(photoID),
 		ascentID(ascentID),
 		sortIndex(sortIndex),
