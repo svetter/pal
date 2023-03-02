@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProjectSettingsWindow</class>
+ <class>RelocatePhotosDialog</class>
  <widget class="QDialog" name="RelocatePhotosDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>352</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>450</height>
+    <height>300</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -121,6 +121,9 @@
       </widget>
      </item>
      <item>
+      <widget class="QProgressBar" name="progressBar"/>
+     </item>
+     <item>
       <widget class="QPushButton" name="abortButton">
        <property name="text">
         <string>Abort</string>
@@ -158,4 +161,5 @@
   </layout>
  </widget>
  <resources/>
+ <connections/>
 </ui>
