@@ -29,7 +29,7 @@ public:
 	
 signals:
 	int reportWorkloadSize(int workloadSize);
-	void reportProgress(int processed);
+	void reportProgress(int processed, int updated);
 	
 	void callback_updateFilepathAt(int bufferRowIndex, QString newFilepath);
 };

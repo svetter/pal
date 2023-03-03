@@ -117,9 +117,10 @@ void RelocatePhotosDialog::handle_workloadSize(int workloadSize)
 	progressBar->setMaximum(workloadSize);
 }
 
-void RelocatePhotosDialog::handle_progressUpdate(int processed)
+void RelocatePhotosDialog::handle_progressUpdate(int processed, int updated)
 {
 	progressBar->setValue(processed);
+	feedbackLabel->setText(tr("Photo locations updated: %1").arg(updated));
 }
 
 void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath)

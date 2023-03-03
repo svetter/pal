@@ -32,7 +32,7 @@ private slots:
 	void handle_close();
 	
 	void handle_workloadSize(int workloadSize);
-	void handle_progressUpdate(int processed);
+	void handle_progressUpdate(int processed, int updated);
 	void handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath);
 	
 private:

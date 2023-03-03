@@ -19,6 +19,8 @@ void PhotoRelocationThread::run()
 	workloadSize = db->photosTable->getNumberOfRows();
 	reportWorkloadSize(workloadSize);
 	
+	int updatedPaths = 0;
+	
 	for (int i = 0; i < workloadSize; i++) {
 		if (abortWasCalled) break;
 		
@@ -28,9 +30,10 @@ void PhotoRelocationThread::run()
 		if (currentPath.startsWith(oldPrefix)) {
 			QString newPath = currentPath.replace(0, oldPrefix.size(), newPrefix);
 			callback_updateFilepathAt(i, newPath);
+			updatedPaths++;
 		}
 		
-		emit reportProgress(i + 1);
+		emit reportProgress(i + 1, updatedPaths);
 	}
 }
 
