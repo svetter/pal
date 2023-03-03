@@ -176,6 +176,7 @@ void AscentDialog::insertInitData()
 		tripCombo->setCurrentIndex(0);
 	}
 	// Hikers
+	hikersModel.clear();
 	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
 		Hiker* hiker = db->getHiker(*iter);
 		hikersModel.addHiker(hiker);

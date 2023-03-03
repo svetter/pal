@@ -19,6 +19,7 @@ public:
 	
 	void addHiker(Hiker* hiker);
 	void removeHikerAt(int rowIndex);
+	void clear();
 	
 	bool containsHiker(int hikerID) const;
 	QSet<ValidItemID> getHikerIDSet() const;

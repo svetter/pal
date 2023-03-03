@@ -25,6 +25,11 @@ void HikersOnAscent::removeHikerAt(int rowIndex)
 	endRemoveRows();
 }
 
+void HikersOnAscent::clear()
+{
+	while (rowCount()) removeHikerAt(0);
+}
+
 
 
 bool HikersOnAscent::containsHiker(int hikerID) const
