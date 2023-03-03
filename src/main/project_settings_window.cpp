@@ -16,6 +16,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 		firstOpen(firstOpen)
 {
 	setupUi(this);
+	setFixedSize(sizeHint());
 	
 	if (firstOpen) {
 		defaultHikerCombo->setVisible(false);
