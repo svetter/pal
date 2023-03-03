@@ -63,6 +63,12 @@ void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 	addRows(parent, ascent);
 }
 
+void PhotosTable::updateFilepathAt(QWidget* parent, int bufferRowIndex, QString newFilepath)
+{
+	ValidItemID primaryKey = getPrimaryKeyAt(bufferRowIndex);
+	updateCellInNormalTable(parent, primaryKey, filepathColumn, newFilepath);
+}
+
 
 QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const
 {

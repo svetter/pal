@@ -10,6 +10,7 @@
 #include "src/main/about_window.h"
 #include "src/main/project_settings_window.h"
 #include "src/main/settings_window.h"
+#include "src/tools/relocate_photos_dialog.h"
 #include "ui_main_window.h"
 
 #include <QList>
@@ -53,6 +54,8 @@ MainWindow::MainWindow() :
 	connect(newRegionAction,	&QAction::triggered,	this,	&MainWindow::handle_newRegion);
 	connect(newRangeAction,		&QAction::triggered,	this,	&MainWindow::handle_newRange);
 	connect(newCountryAction,	&QAction::triggered,	this,	&MainWindow::handle_newCountry);
+	
+	connect(relocatePhotosAction,	&QAction::triggered,	this,	&MainWindow::handle_relocatePhotos);
 	
 	connect(aboutAction,		&QAction::triggered,	this,	&MainWindow::handle_about);
 	connect(aboutQtAction,		&QAction::triggered,	this,	&QApplication::aboutQt);
@@ -99,8 +102,8 @@ MainWindow::MainWindow() :
 	
 	
 	// Temporary: Add menu item to insert test data into current database
-	helpMenu->addSeparator();
-	helpMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateAscentCounter(); });
+	toolsMenu->addSeparator();
+	toolsMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateAscentCounter(); });
 }
 
 MainWindow::~MainWindow()
@@ -592,6 +595,13 @@ void MainWindow::handle_openProjectSettings()
 void MainWindow::handle_openSettings()
 {
 	SettingsWindow(this).exec();
+}
+
+
+
+void MainWindow::handle_relocatePhotos()
+{
+	RelocatePhotosDialog(this, &db).exec();
 }
 
 

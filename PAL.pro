@@ -54,7 +54,9 @@ SOURCES += \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/main/project_settings_window.cpp \
-	src/main/settings_window.cpp
+	src/main/settings_window.cpp \
+	src/tools/photo_relocation_thread.cpp \
+	src/tools/relocate_photos_dialog.cpp
 
 HEADERS += \
 	src/data/ascent.h \
@@ -100,7 +102,9 @@ HEADERS += \
 	src/main/main_window.h \
 	src/main/project_settings_window.h \
 	src/main/settings.h \
-	src/main/settings_window.h
+	src/main/settings_window.h \
+	src/tools/photo_relocation_thread.h \
+	src/tools/relocate_photos_dialog.h
 
 FORMS += \
 	src/ui/about_window.ui \

@@ -88,6 +88,8 @@ private slots:
 	void handle_openProjectSettings();
 	void handle_openSettings();
 	
+	void handle_relocatePhotos();
+	
 	void handle_about();
 	
 private:
