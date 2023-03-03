@@ -51,18 +51,18 @@ class ProjectSettings : public SettingsTable {
 public:
 	const ProjectSetting<int>*	defaultHiker;
 	
+	template<typename T> inline void addSetting(const ProjectSetting<T>* setting)
+	{
+		addColumn(setting);
+		defaults.append({ (Column*) setting, setting->getDefault() });
+	}
+	
 	inline ProjectSettings() :
 			SettingsTable(),
 			//											name				SQL type	nullable	table	default value
 			defaultHiker	(new ProjectSetting<int>	("defaultHiker",	integer,	true,		this))
 	{
-		addColumn(defaultHiker);
-	}
-	
-	template<typename T> inline void addSetting(ProjectSetting<T>* setting)
-	{
-		addColumn(setting);
-		defaults.append({ (Column*) setting, setting->getDefault() });
+		addSetting(defaultHiker);
 	}
 	
 	inline void insertDefaults(QWidget* parent) {
