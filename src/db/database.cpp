@@ -83,7 +83,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 		table->createTableInSql(parent);
 	}
 	projectSettings->createTableInSql(parent);
-	projectSettings->initBuffer(parent);
+	projectSettings->initBuffer(parent, true);
 	projectSettings->insertDefaults(parent);
 	
 	// All tables still empty of course, but this doubles as a table format check

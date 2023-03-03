@@ -66,8 +66,6 @@ public:
 	}
 	
 	inline void insertDefaults(QWidget* parent) {
-		initBuffer(parent, true);
-		
 		QList<const Column*> columns = QList<const Column*>();
 		QList<QVariant> values = QList<QVariant>();
 		for (const QPair<Column*, QVariant> &columnDefaultPair : defaults) {
