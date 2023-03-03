@@ -12,7 +12,7 @@ const auto INSERT_HIKER			= "INSERT INTO Hikers(name) VALUES(?)";
 const auto INSERT_REGION		= "INSERT INTO Regions(name, rangeID, countryID) VALUES(?, ?, ?)";
 const auto INSERT_RANGE			= "INSERT INTO Ranges(name, continent) VALUES(?, ?)";
 const auto INSERT_COUNTRY		= "INSERT INTO Countries(name) VALUES(?)";
-const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, sortIndex, filepath, description) VALUES(?, ?, ?, ?, ?)";
+const auto INSERT_PHOTO			= "INSERT INTO Photos(ascentID, sortIndex, filepath, description) VALUES(?, ?, ?, ?)";
 const auto INSERT_PARTICIPATED	= "INSERT INTO Participated(ascentID, hikerID) VALUES(?, ?)";
 
 
