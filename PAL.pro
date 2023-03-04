@@ -123,6 +123,8 @@ FORMS += \
 
 
 
+VERSION = 0.1.0
+
 DEFINES += APP_VERSION='"\\\"0.1\\\""'
 DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
