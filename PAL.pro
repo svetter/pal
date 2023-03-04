@@ -85,7 +85,6 @@ HEADERS += \
 	src/db/tables/ranges_table.h \
 	src/db/tables/regions_table.h \
 	src/db/tables/trips_table.h \
-	src/db/test_data.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
@@ -104,7 +103,8 @@ HEADERS += \
 	src/main/settings.h \
 	src/main/settings_window.h \
 	src/tools/photo_relocation_thread.h \
-	src/tools/relocate_photos_dialog.h
+	src/tools/relocate_photos_dialog.h \
+	src/tools/test_data.h
 
 FORMS += \
 	src/ui/about_window.ui \
