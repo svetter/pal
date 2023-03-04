@@ -77,18 +77,4 @@ public:
 
 
 
-class SimpleFoldCompositeColumn : public CompositeColumn {
-	const CompositeColumnFoldOp op;
-	const Column* keyColumn;
-	const Column* matchingColumn;
-	const Column* contentColumn;
-	
-public:
-	SimpleFoldCompositeColumn(QString uiName, CompositeColumnFoldOp op, const Column* keyColumn, const Column* matchingColumn, const Column* contentColumn);
-	
-	virtual QVariant data(int rowIndex, int role) const override;
-};
-
-
-
 #endif // COMPOSITE_COLUMN_H
