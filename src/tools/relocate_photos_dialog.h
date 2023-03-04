@@ -36,7 +36,7 @@ private slots:
 	void handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath);
 	
 private:
-	void updateStartAbortButtons();
+	void updateEnableUI();
 	
 	void reject() override;
 };

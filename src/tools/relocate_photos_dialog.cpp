@@ -14,7 +14,7 @@ RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
 {
 	setupUi(this);
 	
-	updateStartAbortButtons();
+	updateEnableUI();
 	
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Close),	&QPushButton::clicked,	this,	&RelocatePhotosDialog::handle_close);
@@ -22,8 +22,8 @@ RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
 	connect(oldPathBrowseButton,	&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_browseOldPath);
 	connect(newPathBrowseButton,	&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_browseNewPath);
 	
-	connect(oldPathLineEdit,		&QLineEdit::textChanged,	this,	&RelocatePhotosDialog::updateStartAbortButtons);
-	connect(newPathLineEdit,		&QLineEdit::textChanged,	this,	&RelocatePhotosDialog::updateStartAbortButtons);
+	connect(oldPathLineEdit,		&QLineEdit::textChanged,	this,	&RelocatePhotosDialog::updateEnableUI);
+	connect(newPathLineEdit,		&QLineEdit::textChanged,	this,	&RelocatePhotosDialog::updateEnableUI);
 	
 	connect(startButton,			&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_start);
 	connect(abortButton,			&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_abort);
@@ -58,7 +58,7 @@ void RelocatePhotosDialog::handle_start()
 	assert(!running);
 	
 	running = true;
-	updateStartAbortButtons();
+	updateEnableUI();
 	
 	progressBar->setMinimum(0);
 	progressBar->setValue(0);
@@ -82,7 +82,7 @@ void RelocatePhotosDialog::handle_finished()
 	workerThread = nullptr;
 	
 	running = false;
-	updateStartAbortButtons();
+	updateEnableUI();
 }
 
 void RelocatePhotosDialog::handle_abort()
@@ -130,11 +130,12 @@ void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QS
 
 
 
-void RelocatePhotosDialog::updateStartAbortButtons()
+void RelocatePhotosDialog::updateEnableUI()
 {
+	oldPathLineEdit->setEnabled(!running);
+	newPathLineEdit->setEnabled(!running);
 	bool canStart = !oldPathLineEdit->text().isEmpty() || !newPathLineEdit->text().isEmpty();
 	startButton->setEnabled(!running && canStart);
-	
 	abortButton->setEnabled(running);
 }
 
