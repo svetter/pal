@@ -1,5 +1,6 @@
 #include "main_window.h"
 
+#include "src/comp_tables/comp_regions_table.h"
 #include "src/dialogs/ascent_dialog.h"
 #include "src/dialogs/country_dialog.h"
 #include "src/dialogs/hiker_dialog.h"
@@ -99,6 +100,12 @@ MainWindow::MainWindow() :
 	setupTableView(regionsTableView,	db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
 	setupTableView(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
 	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
+	
+
+	// Temporary: Tab for composite table test
+	CompositeRegionsTable* testTable = new CompositeRegionsTable(&db);
+	testTableView->setModel(testTable);
+	testTableView->resizeColumnsToContents();
 	
 	
 	// Temporary: Add menu item to insert test data into current database
