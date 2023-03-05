@@ -59,77 +59,8 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 
 
 
-CountCompositeColumn::CountCompositeColumn(QString uiName, QList<QPair<const Column*, const Column*>> breadcrumbs) :
-		CompositeColumn(uiName, Qt::AlignRight),
-		breadcrumbs(breadcrumbs)
-{}
-
-
-
-QVariant CountCompositeColumn::data(int rowIndex, int role) const
-{
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
-	
-	QSet<int> currentRowIndexSet = { rowIndex };
-	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
-	
-	for (int round = 0; round < breadcrumbs.size(); round++) {
-		const Column* firstColumn	= breadcrumbs.at(round).first;
-		const Column* secondColumn	= breadcrumbs.at(round).second;
-		
-		// Check continuity
-		assert(firstColumn->table == currentTable);
-		assert(firstColumn->table != secondColumn->table);
-		assert(firstColumn->isForeignKey() != secondColumn->isForeignKey());
-		
-		// Look up keys stored in firstColumn at given row indices
-		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
-		for (int rowIndex : currentRowIndexSet) {
-			ValidItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex()).toInt();
-			currentKeySet.insert(key);
-		}
-		
-		currentRowIndexSet.clear();
-		currentTable = secondColumn->table;
-		
-		// The second half of the transfer is dependent on the reference direction:
-		if (firstColumn->isForeignKey()) {
-			// Forward reference (lookup, result for each input element is single key)
-			assert(firstColumn->getReferencedForeignColumn() == secondColumn);
-			assert(secondColumn->isPrimaryKey());
-			
-			// Find row matching each primary key
-			for (ValidItemID key : currentKeySet) {
-				int rowIndex = currentTable->getMatchingBufferRowIndex({ secondColumn }, { key });
-				currentRowIndexSet.insert(rowIndex);
-			}
-		}
-		else if (secondColumn->isForeignKey()) {
-			// Backward reference (reference search, result for each input element is key set)
-			assert(firstColumn == secondColumn->getReferencedForeignColumn());
-			assert(firstColumn->isPrimaryKey());
-			
-			// Find rows in new currentTable where key in secondColumn matches any key in current set
-			for (ValidItemID key : currentKeySet) {
-				const QList<int> indexList = currentTable->getMatchingBufferRowIndices(secondColumn, key.asQVariant());
-				const QSet<int> matchingBufferRowIndices = QSet<int>(indexList.constBegin(), indexList.constEnd());
-				currentRowIndexSet.unite(matchingBufferRowIndices);
-			}
-		}
-		else assert(false);
-		
-		if (currentRowIndexSet.isEmpty()) return 0;
-	}
-	
-	return currentRowIndexSet.size();
-}
-
-
-
-
 FoldCompositeColumn::FoldCompositeColumn(QString uiName, CompositeColumnFoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn) :
-		CompositeColumn(uiName, Qt::AlignRight),
+		CompositeColumn(uiName, op == List ? Qt::AlignLeft : Qt::AlignRight),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn)

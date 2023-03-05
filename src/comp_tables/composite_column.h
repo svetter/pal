@@ -45,17 +45,6 @@ public:
 
 
 
-class CountCompositeColumn : public CompositeColumn {
-	QList<QPair<const Column*, const Column*>> breadcrumbs;
-	
-public:
-	CountCompositeColumn(QString uiName, QList<QPair<const Column*, const Column*>> breadcrumbs);
-	
-	virtual QVariant data(int rowIndex, int role) const override;
-};
-
-
-
 enum CompositeColumnFoldOp {
 	Count,
 	List,
