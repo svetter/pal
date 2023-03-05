@@ -205,8 +205,9 @@ Ascent* AscentDialog::extractData()
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
 	QList<Photo>		photos				= photosModel.getPhotoList();
 	
-	if (!dateCheckbox->isChecked())	date = QDate();	
-	if (!timeCheckbox->isChecked())	time = QTime();
+	if (!dateCheckbox->isChecked())				date = QDate();
+	if (!timeCheckbox->isChecked())				time = QTime();
+	if (!elevationGainCheckbox->isChecked())	elevationGain = -1;
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= -1;
 		difficultyGrade		= -1;

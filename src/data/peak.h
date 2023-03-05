@@ -24,6 +24,8 @@ public:
 	bool equalTo(const Peak* const other) const;
 	
 	bool heightSpecified() const;
+	
+	QVariant getHeightAsQVariant() const;
 };
 
 

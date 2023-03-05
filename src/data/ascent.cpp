@@ -58,7 +58,15 @@ bool Ascent::timeSpecified() const
 
 bool Ascent::elevationGainSpecified() const
 {
-	return elevationGain != -1;
+	return elevationGain >= 0;
+}
+
+
+
+QVariant Ascent::getElevationGainAsQVariant() const
+{
+	if (!elevationGainSpecified()) return QVariant();
+	return elevationGain;
 }
 
 

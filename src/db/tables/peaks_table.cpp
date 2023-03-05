@@ -52,7 +52,7 @@ QList<QVariant> PeaksTable::mapDataToQVariantList(QList<const Column*>& columns,
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
 		if (column == nameColumn)		{ data.append(peak->name);					continue; }
-		if (column == heightColumn)		{ data.append(peak->height);				continue; }
+		if (column == heightColumn)		{ data.append(peak->getHeightAsQVariant());	continue; }
 		if (column == volcanoColumn)	{ data.append(peak->volcano);				continue; }
 		if (column == regionIDColumn)	{ data.append(peak->regionID.asQVariant());	continue; }
 		if (column == mapsLinkColumn)	{ data.append(peak->mapsLink);				continue; }

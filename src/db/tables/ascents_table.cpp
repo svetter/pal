@@ -61,18 +61,18 @@ QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& column
 {
 	QList<QVariant> data = QList<QVariant>();
 	for (const Column* column : columns) {
-		if (column == titleColumn)				{ data.append(ascent->title);				continue; }
-		if (column == peakIDColumn)				{ data.append(ascent->peakID.asQVariant());	continue; }
-		if (column == dateColumn)				{ data.append(ascent->date);				continue; }
-		if (column == peakOnDayColumn)			{ data.append(ascent->perDayIndex);			continue; }
-		if (column == timeColumn)				{ data.append(ascent->time);				continue; }
-		if (column == elevationGainColumn)		{ data.append(ascent->elevationGain);		continue; }
-		if (column == hikeKindColumn)			{ data.append(ascent->hikeKind);			continue; }
-		if (column == traverseColumn)			{ data.append(ascent->traverse);			continue; }
-		if (column == difficultySystemColumn)	{ data.append(ascent->difficultySystem);	continue; }
-		if (column == difficultyGradeColumn)	{ data.append(ascent->difficultyGrade);		continue; }
-		if (column == tripIDColumn)				{ data.append(ascent->tripID.asQVariant());	continue; }
-		if (column == descriptionColumn)		{ data.append(ascent->description);			continue; }
+		if (column == titleColumn)				{ data.append(ascent->title);							continue; }
+		if (column == peakIDColumn)				{ data.append(ascent->peakID.asQVariant());				continue; }
+		if (column == dateColumn)				{ data.append(ascent->date);							continue; }
+		if (column == peakOnDayColumn)			{ data.append(ascent->perDayIndex);						continue; }
+		if (column == timeColumn)				{ data.append(ascent->time);							continue; }
+		if (column == elevationGainColumn)		{ data.append(ascent->getElevationGainAsQVariant());	continue; }
+		if (column == hikeKindColumn)			{ data.append(ascent->hikeKind);						continue; }
+		if (column == traverseColumn)			{ data.append(ascent->traverse);						continue; }
+		if (column == difficultySystemColumn)	{ data.append(ascent->difficultySystem);				continue; }
+		if (column == difficultyGradeColumn)	{ data.append(ascent->difficultyGrade);					continue; }
+		if (column == tripIDColumn)				{ data.append(ascent->tripID.asQVariant());				continue; }
+		if (column == descriptionColumn)		{ data.append(ascent->description);						continue; }
 		assert(false);
 	}
 	return data;

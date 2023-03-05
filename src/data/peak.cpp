@@ -32,5 +32,13 @@ bool Peak::equalTo(const Peak* const other) const
 
 bool Peak::heightSpecified() const
 {
-	return height != -1;
+	return height >= 0;
+}
+
+
+
+QVariant Peak::getHeightAsQVariant() const
+{
+	if (!heightSpecified()) return QVariant();
+	return height;
 }

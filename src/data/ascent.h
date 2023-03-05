@@ -43,6 +43,8 @@ public:
 	bool timeSpecified() const;
 	bool elevationGainSpecified() const;
 	
+	QVariant getElevationGainAsQVariant() const;
+	
 private:
 	static QString tr(const char* string);
 };
