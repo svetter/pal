@@ -51,6 +51,15 @@ QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 		return content.toBool() ? Qt::Checked : Qt::Unchecked;
 	}
 	
+	if (contentColumn->type == date) {
+		assert(content.canConvert<QDate>());
+		content = content.toDate().toString("dd.MM.yyyy");
+	}
+	if (contentColumn->type == time_) {
+		assert(content.canConvert<QTime>());
+		content = content.toTime().toString("HH:mm");
+	}
+	
 	return content;
 }
 
@@ -107,6 +116,15 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	if (role == Qt::CheckStateRole && isBitColumn) {
 		assert(content.canConvert<bool>());
 		return content.toBool() ? Qt::Checked : Qt::Unchecked;
+	}
+	
+	if (contentColumn->type == date) {
+		assert(content.canConvert<QDate>());
+		content = content.toDate().toString("dd.MM.yyyy");
+	}
+	if (contentColumn->type == time_) {
+		assert(content.canConvert<QTime>());
+		content = content.toTime().toString("HH:mm");
 	}
 	
 	return content;
