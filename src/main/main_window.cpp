@@ -81,6 +81,14 @@ MainWindow::MainWindow() :
 	connect(rangesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
 	connect(countriesTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
 	
+	connect(ascentsDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
+	connect(peaksDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editPeak);
+	connect(tripsDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editTrip);
+	connect(hikersDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editHiker);
+	connect(regionsDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editRegion);
+	connect(rangesDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
+	connect(countriesDebugTableView,	&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
+	
 	
 	updateAscentCounter();
 	setUIEnabled(false);
@@ -311,6 +319,15 @@ void MainWindow::handle_editSelectedItem()
 	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
 	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
 	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
+	
+	if (currentTableView == ascentsDebugTableView)		{ handle_editAscent		(selectedIndex);	return; }
+	if (currentTableView == peaksDebugTableView)		{ handle_editPeak		(selectedIndex);	return; }
+	if (currentTableView == tripsDebugTableView)		{ handle_editTrip		(selectedIndex);	return; }
+	if (currentTableView == hikersDebugTableView)		{ handle_editHiker		(selectedIndex);	return; }
+	if (currentTableView == regionsDebugTableView)		{ handle_editRegion		(selectedIndex);	return; }
+	if (currentTableView == rangesDebugTableView)		{ handle_editRange		(selectedIndex);	return; }
+	if (currentTableView == countriesDebugTableView)	{ handle_editCountry	(selectedIndex);	return; }
+	
 	qDebug() << "Missing implementation in MainWindow::handle_editSelectedItem() for" << currentTableView->objectName();
 }
 
@@ -323,6 +340,10 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	
 	if (currentTableView == ascentsTableView)	{ handle_duplicateAndEditAscent	(rowIndex);	return; }
 	if (currentTableView == peaksTableView)		{ handle_duplicateAndEditPeak	(rowIndex);	return; }
+	
+	if (currentTableView == ascentsDebugTableView)	{ handle_duplicateAndEditAscent	(rowIndex);	return; }
+	if (currentTableView == peaksDebugTableView)	{ handle_duplicateAndEditPeak	(rowIndex);	return; }
+	
 	qDebug() << "Missing implementation in MainWindow::handle_duplicateAndEditSelectedItem() for" << currentTableView->objectName();
 }
 
@@ -340,6 +361,15 @@ void MainWindow::handle_deleteSelectedItem()
 	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
 	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
 	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	
+	if (currentTableView == ascentsDebugTableView)		{ handle_deleteAscent	(rowIndex);	return; }
+	if (currentTableView == peaksDebugTableView)		{ handle_deletePeak		(rowIndex);	return; }
+	if (currentTableView == tripsDebugTableView)		{ handle_deleteTrip		(rowIndex);	return; }
+	if (currentTableView == hikersDebugTableView)		{ handle_deleteHiker	(rowIndex);	return; }
+	if (currentTableView == regionsDebugTableView)		{ handle_deleteRegion	(rowIndex);	return; }
+	if (currentTableView == rangesDebugTableView)		{ handle_deleteRange	(rowIndex);	return; }
+	if (currentTableView == countriesDebugTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	
 	qDebug() << "Missing implementation in MainWindow::handle_deleteSelectedItem() for" << currentTableView->objectName();
 }
 
