@@ -13,7 +13,6 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs depreca
 
 
 SOURCES += \
-	src/comp_tables/comp_regions_table.cpp \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/data/ascent.cpp \
