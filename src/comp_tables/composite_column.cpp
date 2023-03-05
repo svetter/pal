@@ -133,8 +133,8 @@ QVariant FoldCompositeColumn::data(int rowIndex, int role) const
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (int rowIndex : currentRowIndexSet) {
-			ValidItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex()).toInt();
-			currentKeySet.insert(key);
+			ItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex()).toInt();
+			if (key.isValid()) currentKeySet.insert(key.forceValid());
 		}
 		
 		currentRowIndexSet.clear();
