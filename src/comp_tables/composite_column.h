@@ -16,6 +16,8 @@ public:
 protected:
 	CompositeColumn(QString uiName, Qt::AlignmentFlag alignment);
 	
+	static QVariant replaceEnumIfApplicable(QVariant content, const QStringList* enumNames);
+	
 public:
 	virtual QVariant data(int rowIndex, int role) const = 0;
 };
@@ -23,10 +25,11 @@ public:
 
 
 class DirectCompositeColumn : public CompositeColumn {
-	const Column* baseColumn;
+	const Column* contentColumn;
+	const QStringList* enumNames;
 	
 public:
-	DirectCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* baseColumn);
+	DirectCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant data(int rowIndex, int role) const override;
 };
@@ -36,16 +39,17 @@ public:
 class ReferenceCompositeColumn : public CompositeColumn {
 	QList<const Column*> foreignKeyColumnSequence;
 	const Column* contentColumn;
+	const QStringList* enumNames;
 	
 public:
-	ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn);
+	ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant data(int rowIndex, int role) const override;
 };
 
 
 
-enum CompositeColumnFoldOp {
+enum FoldOp {
 	Count,
 	List,
 	Average,
@@ -54,12 +58,13 @@ enum CompositeColumnFoldOp {
 };
 
 class FoldCompositeColumn : public CompositeColumn {
-	const CompositeColumnFoldOp op;
+	const FoldOp op;
 	const QList<QPair<const Column*, const Column*>> breadcrumbs;
 	const Column* contentColumn;
+	const QStringList* enumNames;
 	
 public:
-	FoldCompositeColumn(QString uiName, CompositeColumnFoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn = nullptr);
+	FoldCompositeColumn(QString uiName, FoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant data(int rowIndex, int role) const override;
 };

@@ -12,11 +12,25 @@ CompositeColumn::CompositeColumn(QString uiName, Qt::AlignmentFlag alignment) :
 
 
 
+QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStringList* enumNames)
+{
+	if (!enumNames) return content;
+	
+	// If content is enumerative, replace index with the corresponding string
+	assert(content.canConvert<int>());
+	int index = content.toInt();
+	assert(index >= 0 && index < enumNames->size());
+	return enumNames->at(index);
+}
 
 
-DirectCompositeColumn::DirectCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* baseColumn) :
+
+
+
+DirectCompositeColumn::DirectCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(uiName, alignment),
-		baseColumn(baseColumn)
+		contentColumn(contentColumn),
+		enumNames(enumNames)
 {}
 
 
@@ -26,17 +40,20 @@ QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 	if (role == Qt::TextAlignmentRole)	return alignment;
 	if (role != Qt::DisplayRole)		return QVariant();
 	
-	return baseColumn->table->getBufferRow(rowIndex)->at(baseColumn->getIndex());
+	QVariant content = contentColumn->table->getBufferRow(rowIndex)->at(contentColumn->getIndex());
+	content = replaceEnumIfApplicable(content, enumNames);
+	return content;
 }
 
 
 
 
 
-ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(uiName, alignment),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
-		contentColumn(contentColumn)
+		contentColumn(contentColumn),
+		enumNames(enumNames)
 {}
 
 
@@ -53,9 +70,6 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	NormalTable* currentTable = (NormalTable*) foreignKeyColumnSequence.first()->table;
 	
 	for (const Column* currentColumn : foreignKeyColumnSequence) {
-		qDebug() << currentTable;
-		qDebug() << currentTable->name;
-		qDebug() << currentColumn->table->name;
 		assert(currentColumn->table == currentTable);
 		assert(currentColumn->isForeignKey());
 		
@@ -76,18 +90,22 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	
 	// Finally, look up content column at last row index
 	assert(contentColumn->table == currentTable);
-	return currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
+	QVariant content = currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
+	content = replaceEnumIfApplicable(content, enumNames);
+	
+	return content;
 }
 
 
 
 
 
-FoldCompositeColumn::FoldCompositeColumn(QString uiName, CompositeColumnFoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn) :
+FoldCompositeColumn::FoldCompositeColumn(QString uiName, FoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(uiName, op == List ? Qt::AlignLeft : Qt::AlignRight),
 		op(op),
 		breadcrumbs(breadcrumbs),
-		contentColumn(contentColumn)
+		contentColumn(contentColumn),
+		enumNames(enumNames)
 {
 	assert((op == Count) == (contentColumn == nullptr));
 }
@@ -168,22 +186,23 @@ QVariant FoldCompositeColumn::data(int rowIndex, int role) const
 	QString listString = "";
 	
 	for (int rowIndex : currentRowIndexSet) {
-		QVariant contentValue = contentTable->getBufferRow(rowIndex)->at(contentColumn->getIndex());
+		QVariant content = contentTable->getBufferRow(rowIndex)->at(contentColumn->getIndex());
 		
 		switch (op) {
 		case List:
-			assert(contentValue.canConvert<QString>());
+			assert(content.canConvert<QString>());
 			if (!listString.isEmpty()) listString.append(", ");
-			listString.append(contentValue.toString());
+			content = replaceEnumIfApplicable(content, enumNames);
+			listString.append(content.toString());
 			break;
 		case Average:
 		case Sum:
-			assert(contentValue.canConvert<int>());
-			aggregate += contentValue.toInt();
+			assert(content.canConvert<int>());
+			aggregate += content.toInt();
 			break;
 		case Max:
-			assert(contentValue.canConvert<int>());
-			if (contentValue.toInt() > aggregate) aggregate = contentValue.toInt();
+			assert(content.canConvert<int>());
+			if (content.toInt() > aggregate) aggregate = content.toInt();
 			break;
 		default:
 			assert(false);
