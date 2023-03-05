@@ -1,5 +1,6 @@
 #include "composite_column.h"
 
+#include "qdatetime.h"
 #include "src/db/normal_table.h"
 #include "src/db/table.h"
 
@@ -220,4 +221,94 @@ QVariant FoldCompositeColumn::data(int rowIndex, int role) const
 	}
 	
 	return QVariant();
+}
+
+
+
+
+
+DifferenceCompositeColumn::DifferenceCompositeColumn(QString uiName, const Column* minuendColumn, const Column* subtrahendColumn, const QString suffix) :
+		CompositeColumn(uiName, Qt::AlignRight),
+		minuendColumn(minuendColumn),
+		subtrahendColumn(subtrahendColumn),
+		suffix(suffix)
+{
+	assert(minuendColumn->table == subtrahendColumn->table);
+	assert(!minuendColumn->isKey() && !subtrahendColumn->isKey());
+	assert(minuendColumn->type == subtrahendColumn->type);
+	assert(minuendColumn != subtrahendColumn);
+	assert(minuendColumn->type == integer || minuendColumn->type == date);
+}
+
+
+
+QVariant DifferenceCompositeColumn::data(int rowIndex, int role) const
+{
+	if (role == Qt::TextAlignmentRole)	return alignment;
+	if (role != Qt::DisplayRole)		return QVariant();
+	
+	QVariant minuendContent = minuendColumn->table->getBufferRow(rowIndex)->at(minuendColumn->getIndex());
+	QVariant subtrahendContent = subtrahendColumn->table->getBufferRow(rowIndex)->at(subtrahendColumn->getIndex());
+	
+	if (!minuendContent.isValid() || !subtrahendContent.isValid()) return QVariant();
+	
+	switch (minuendColumn->type) {
+	case integer: {
+		assert(minuendContent.canConvert<int>() && subtrahendContent.canConvert<int>());
+		int minuend = minuendContent.toInt();
+		int subtrahend = subtrahendContent.toInt();
+		
+		return minuend - subtrahend;
+	}
+	case date: {
+		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
+		QDate minuend = minuendContent.toDate();
+		QDate subtrahend = subtrahendContent.toDate();
+		
+		int difference = subtrahend.daysTo(minuend);
+		return QString::number(difference) + suffix;
+	}
+	default:
+		assert(false);
+		return QVariant();
+	}
+}
+
+
+
+
+
+DependentEnumCompositeColumn::DependentEnumCompositeColumn(QString uiName, const Column* discerningEnumColumn, const Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
+		CompositeColumn(uiName, Qt::AlignLeft),
+		discerningEnumColumn(discerningEnumColumn),
+		displayedEnumColumn(displayedEnumColumn),
+		enumNameLists(enumNameLists)
+{
+	assert(discerningEnumColumn->table == displayedEnumColumn->table);
+	assert(!discerningEnumColumn->isKey() && !displayedEnumColumn->isKey());
+	assert(discerningEnumColumn->type == integer && displayedEnumColumn->type == integer);
+	assert(discerningEnumColumn != displayedEnumColumn);
+}
+
+
+
+QVariant DependentEnumCompositeColumn::data(int rowIndex, int role) const
+{
+	if (role == Qt::TextAlignmentRole)	return alignment;
+	if (role != Qt::DisplayRole)		return QVariant();
+	
+	QVariant discerningContent = discerningEnumColumn->table->getBufferRow(rowIndex)->at(discerningEnumColumn->getIndex());
+	QVariant displayedContent = displayedEnumColumn->table->getBufferRow(rowIndex)->at(displayedEnumColumn->getIndex());
+	
+	assert(discerningContent.canConvert<int>() && displayedContent.canConvert<int>());
+	int discerning = discerningContent.toInt();
+	int displayed = displayedContent.toInt();
+	
+	if (discerning < 1 || displayed < 1) return QVariant();
+	
+	assert(discerning >= 0 && discerning < enumNameLists->size());
+	const QStringList& enumNames = enumNameLists->at(discerning).second;
+	assert(displayed >= 0 && displayed < enumNames.size());
+	
+	return enumNames.at(displayed);
 }

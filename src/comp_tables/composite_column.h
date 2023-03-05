@@ -71,4 +71,30 @@ public:
 
 
 
+class DifferenceCompositeColumn : public CompositeColumn {
+	const Column* minuendColumn;
+	const Column* subtrahendColumn;
+	const QString suffix;
+	
+public:
+	DifferenceCompositeColumn(QString uiName, const Column* minuendColumn, const Column* subtrahendColumn, const QString suffix);
+	
+	virtual QVariant data(int rowIndex, int role) const override;
+};
+
+
+
+class DependentEnumCompositeColumn : public CompositeColumn {
+	const Column* discerningEnumColumn;
+	const Column* displayedEnumColumn;
+	const QList<QPair<QString, QStringList>>* enumNameLists;
+	
+public:
+	DependentEnumCompositeColumn(QString uiName, const Column* discerningEnumColumn, const Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists);
+	
+	virtual QVariant data(int rowIndex, int role) const override;
+};
+
+
+
 #endif // COMPOSITE_COLUMN_H
