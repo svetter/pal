@@ -14,6 +14,9 @@ class CompositeTable : public QAbstractTableModel {
 	
 	QList<const CompositeColumn*> columns;
 	
+public:
+	const QString name;
+	
 protected:
 	CompositeTable(Database* db, NormalTable* baseTable);
 	

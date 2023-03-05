@@ -1,6 +1,5 @@
 #include "main_window.h"
 
-#include "src/comp_tables/comp_regions_table.h"
 #include "src/dialogs/ascent_dialog.h"
 #include "src/dialogs/country_dialog.h"
 #include "src/dialogs/hiker_dialog.h"
@@ -24,7 +23,14 @@ MainWindow::MainWindow() :
 		db(Database()),
 		openRecentActions(QList<QAction*>()),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
-		shortcuts(QList<QShortcut*>())
+		shortcuts(QList<QShortcut*>()),
+		compAscents		(CompositeAscentsTable(&db)),
+		compPeaks		(CompositePeaksTable(&db)),
+		compTrips		(CompositeTripsTable(&db)),
+		compHikers		(CompositeHikersTable(&db)),
+		compRegions		(CompositeRegionsTable(&db)),
+		compRanges		(CompositeRangesTable(&db)),
+		compCountries	(CompositeCountriesTable(&db))
 {
 	setupUi(this);
 	setUIEnabled(false);
@@ -93,19 +99,21 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	setupTableView(ascentsTableView,	db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
-	setupTableView(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
-	setupTableView(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
-	setupTableView(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
-	setupTableView(regionsTableView,	db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
-	setupTableView(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
-	setupTableView(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
+	setupTableView(ascentsTableView,	&compAscents,	&Settings::mainWindow_columnWidths_ascentsTable);
+	setupTableView(peaksTableView,		&compPeaks,		&Settings::mainWindow_columnWidths_peaksTable);
+	setupTableView(tripsTableView,		&compTrips,		&Settings::mainWindow_columnWidths_tripsTable);
+	setupTableView(hikersTableView,		&compHikers,	&Settings::mainWindow_columnWidths_hikersTable);
+	setupTableView(regionsTableView,	&compRegions,	&Settings::mainWindow_columnWidths_regionsTable);
+	setupTableView(rangesTableView,		&compRanges,	&Settings::mainWindow_columnWidths_rangesTable);
+	setupTableView(countriesTableView,	&compCountries,	&Settings::mainWindow_columnWidths_countriesTable);
 	
-
-	// Temporary: Tab for composite table test
-	CompositeRegionsTable* testTable = new CompositeRegionsTable(&db);
-	testTableView->setModel(testTable);
-	testTableView->resizeColumnsToContents();
+	setupDebugTableView(ascentsDebugTableView,		db.ascentsTable);
+	setupDebugTableView(peaksDebugTableView,		db.peaksTable);
+	setupDebugTableView(tripsDebugTableView,		db.tripsTable);
+	setupDebugTableView(hikersDebugTableView,		db.hikersTable);
+	setupDebugTableView(regionsDebugTableView,		db.regionsTable);
+	setupDebugTableView(rangesDebugTableView,		db.rangesTable);
+	setupDebugTableView(countriesDebugTableView,	db.countriesTable);
 	
 	
 	// Temporary: Add menu item to insert test data into current database
@@ -187,11 +195,10 @@ void MainWindow::clearRecentFilesMenu()
 }
 
 
-void MainWindow::setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting)
+void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
 	// Set model
 	view->setModel(table);
-	view->setRootIndex(table->getNormalRootModelIndex());
 	
 	setColumnWidths(view, table, columnWidthsSetting);
 	
@@ -199,25 +206,35 @@ void MainWindow::setupTableView(QTableView* view, NormalTable* table, const Sett
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 }
 
-void MainWindow::setColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting)
+void MainWindow::setupDebugTableView(QTableView* view, NormalTable* table)
+{
+	// Set model
+	view->setModel(table);
+	view->setRootIndex(table->getNormalRootModelIndex());
+	
+	// Enable context menu
+	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+}
+
+void MainWindow::setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
 	if (!Settings::mainWindow_rememberColumnWidths.get()) {
 		return view->resizeColumnsToContents();
 	}
 	
 	QStringList columnWidths = columnWidthsSetting->get();
-	if (columnWidths.size() != table->getNumberOfColumns()) {
+	if (columnWidths.size() != table->columnCount()) {
 		// Can't restore column widths from settings
 		if (!columnWidths.isEmpty())
 			qDebug() << QString("Couldn't restore column widths for table %1: Expected %2 numbers, but got %3")
-					.arg(table->name).arg(table->getNumberOfColumns()).arg(columnWidths.size());
+					.arg(table->name).arg(table->columnCount()).arg(columnWidths.size());
 		
 		columnWidthsSetting->clear();
 		return view->resizeColumnsToContents();
 	}
 	
 	// Restore column widths
-	for (int i = 0; i < table->getNumberOfColumns(); i++) {
+	for (int i = 0; i < table->columnCount(); i++) {
 		view->setColumnWidth(i, columnWidths.at(i).toInt());
 	}
 }
@@ -636,13 +653,13 @@ void MainWindow::saveImplicitSettings() const
 	
 	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
 	
-	saveColumnWidths(ascentsTableView,		db.ascentsTable,	&Settings::mainWindow_columnWidths_ascentsTable);
-	saveColumnWidths(peaksTableView,		db.peaksTable,		&Settings::mainWindow_columnWidths_peaksTable);
-	saveColumnWidths(tripsTableView,		db.tripsTable,		&Settings::mainWindow_columnWidths_tripsTable);
-	saveColumnWidths(hikersTableView,		db.hikersTable,		&Settings::mainWindow_columnWidths_hikersTable);
-	saveColumnWidths(regionsTableView,		db.regionsTable,	&Settings::mainWindow_columnWidths_regionsTable);
-	saveColumnWidths(rangesTableView,		db.rangesTable,		&Settings::mainWindow_columnWidths_rangesTable);
-	saveColumnWidths(countriesTableView,	db.countriesTable,	&Settings::mainWindow_columnWidths_countriesTable);
+	saveColumnWidths(ascentsTableView,		&compAscents,	&Settings::mainWindow_columnWidths_ascentsTable);
+	saveColumnWidths(peaksTableView,		&compPeaks,		&Settings::mainWindow_columnWidths_peaksTable);
+	saveColumnWidths(tripsTableView,		&compTrips,		&Settings::mainWindow_columnWidths_tripsTable);
+	saveColumnWidths(hikersTableView,		&compHikers,	&Settings::mainWindow_columnWidths_hikersTable);
+	saveColumnWidths(regionsTableView,		&compRegions,	&Settings::mainWindow_columnWidths_regionsTable);
+	saveColumnWidths(rangesTableView,		&compRanges,	&Settings::mainWindow_columnWidths_rangesTable);
+	saveColumnWidths(countriesTableView,	&compCountries,	&Settings::mainWindow_columnWidths_countriesTable);
 }
 
 void MainWindow::addToRecentFilesList(const QString& filepath)
@@ -670,10 +687,10 @@ QTableView* MainWindow::getCurrentTableView() const
 
 
 
-void MainWindow::saveColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting) const
+void MainWindow::saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const
 {
 	QStringList columnWidths;
-	for (int i = 0; i < table->getNumberOfColumns(); i++) {
+	for (int i = 0; i < table->columnCount(); i++) {
 		columnWidths.append(QString::number(view->columnWidth(i)));
 	}
 	columnWidthsSetting->set(columnWidths);

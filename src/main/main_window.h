@@ -1,9 +1,16 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include "ui_main_window.h"
 #include "src/db/database.h"
 #include "src/main/settings.h"
-#include "ui_main_window.h"
+#include "src/comp_tables/comp_ascents_table.h"
+#include "src/comp_tables/comp_peaks_table.h"
+#include "src/comp_tables/comp_trips_table.h"
+#include "src/comp_tables/comp_hikers_table.h"
+#include "src/comp_tables/comp_regions_table.h"
+#include "src/comp_tables/comp_ranges_table.h"
+#include "src/comp_tables/comp_countries_table.h"
 
 #include <QMainWindow>
 #include <QTableView>
@@ -26,6 +33,14 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	QAction* tableContextMenuDuplicateAction;
 	QList<QShortcut*> shortcuts;
 	
+	CompositeAscentsTable	compAscents;
+	CompositePeaksTable		compPeaks;
+	CompositeTripsTable		compTrips;
+	CompositeHikersTable	compHikers;
+	CompositeRegionsTable	compRegions;
+	CompositeRangesTable	compRanges;
+	CompositeCountriesTable	compCountries;
+	
 public:
 	MainWindow();
 	~MainWindow();
@@ -37,8 +52,9 @@ private:
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
 	void clearRecentFilesMenu();
-	void setupTableView(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
-	void setColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting);
+	void setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
+	void setupDebugTableView(QTableView* view, NormalTable* table);
+	void setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void initTableContextMenuAndShortcuts();
 	
 private slots:
@@ -99,7 +115,7 @@ private:
 	
 	QTableView* getCurrentTableView() const;
 	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
-	void saveColumnWidths(QTableView* view, NormalTable* table, const Setting<QStringList>* columnWidthsSetting) const;
+	void saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const;
 };
 
 

@@ -5,7 +5,8 @@
 CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		QAbstractTableModel(),
 		baseTable(baseTable),
-		db(db)
+		db(db),
+		name(baseTable->name)
 {}
 
 
@@ -26,7 +27,7 @@ int CompositeTable::rowCount(const QModelIndex& parent) const
 int CompositeTable::columnCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
-	return 8;
+	return columns.size();
 }
 
 QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, int role) const
@@ -48,25 +49,8 @@ QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, in
 QVariant CompositeTable::data(const QModelIndex& index, int role) const
 {
 	assert(!index.parent().isValid());
+	int columnIndex = index.column();
+	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
-	if (index.column() < 8) return columns.at(index.column())->data(index.row(), role);
-	
-	switch (index.column()) {
-	case 7: {
-		if (role != Qt::DisplayRole) break;
-		ValidItemID regionID = db->regionsTable->getPrimaryKeyAt(index.row());
-		int result = 0;
-		for (int i = 0; i < db->ascentsTable->getNumberOfRows(); i++) {
-			ItemID peakID = db->ascentsTable->getBufferRow(i)->at(db->ascentsTable->peakIDColumn->getIndex()).toInt();
-			if (!peakID.isValid()) continue;
-			int peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID.forceValid());
-			result += regionID == db->peaksTable->getBufferRow(peakBufferRowIndex)->at(db->peaksTable->regionIDColumn->getIndex()).toInt();
-		}
-		return result;
-	}
-	default:
-		assert(false);
-	}
-	
-	return QVariant();
+	return columns.at(columnIndex)->data(index.row(), role);
 }
