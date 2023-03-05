@@ -34,11 +34,11 @@ public:
 
 
 class ReferenceCompositeColumn : public CompositeColumn {
-	const Column* keyColumn;
-	const Column* referencedColumn;
+	QList<const Column*> foreignKeyColumnSequence;
+	const Column* contentColumn;
 	
 public:
-	ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* keyColumn, const Column* referencedColumn);
+	ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn);
 	
 	virtual QVariant data(int rowIndex, int role) const override;
 };

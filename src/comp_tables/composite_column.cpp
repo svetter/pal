@@ -33,10 +33,10 @@ QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 
 
 
-ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* keyColumn, const Column* referencedColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn) :
 		CompositeColumn(uiName, alignment),
-		keyColumn(keyColumn),
-		referencedColumn(referencedColumn)
+		foreignKeyColumnSequence(foreignKeyColumnSequence),
+		contentColumn(contentColumn)
 {}
 
 
@@ -46,13 +46,37 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	if (role == Qt::TextAlignmentRole)	return alignment;
 	if (role != Qt::DisplayRole)		return QVariant();
 	
-	ItemID ownID = keyColumn->table->getBufferRow(rowIndex)->at(keyColumn->getIndex()).toInt();
-	if (!ownID.isValid()) return QVariant();
-	assert(!referencedColumn->table->isAssociative);
-	NormalTable* referencedTable = (NormalTable*) referencedColumn->table;
+	assert(foreignKeyColumnSequence.first()->isForeignKey());
 	
-	int referencedItemBufferRowIndex = referencedTable->getBufferIndexForPrimaryKey(ownID.forceValid());
-	return referencedTable->getBufferRow(referencedItemBufferRowIndex)->at(referencedColumn->getIndex());
+	int currentRowIndex = rowIndex;
+	assert(!foreignKeyColumnSequence.first()->table->isAssociative);
+	NormalTable* currentTable = (NormalTable*) foreignKeyColumnSequence.first()->table;
+	
+	for (const Column* currentColumn : foreignKeyColumnSequence) {
+		qDebug() << currentTable;
+		qDebug() << currentTable->name;
+		qDebug() << currentColumn->table->name;
+		assert(currentColumn->table == currentTable);
+		assert(currentColumn->isForeignKey());
+		
+		// Look up key stored in current column at current row index
+		ItemID key = currentTable->getBufferRow(currentRowIndex)->at(currentColumn->getIndex()).toInt();
+		
+		if (key.isNull()) return QVariant();
+		
+		// Get referenced primary key column of other table
+		const Column* referencedColumn = currentColumn->getReferencedForeignColumn();
+		assert(!referencedColumn->table->isAssociative);
+		currentTable = (NormalTable*) referencedColumn->table;
+		
+		// Find row index that contains the current primary key
+		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(key.forceValid());
+		assert(currentRowIndex >= 0);
+	}
+	
+	// Finally, look up content column at last row index
+	assert(contentColumn->table == currentTable);
+	return currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
 }
 
 
