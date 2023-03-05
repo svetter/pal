@@ -105,3 +105,25 @@ void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column,
 {
 	return Table::removeMatchingRows(parent, column, primaryKey);
 }
+
+
+
+// QABSTRACTIMTEMMODEL IMPLEMENTATION
+
+void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
+{
+	assert(getColumnByIndex(index.column())->type == integer);
+	
+	for (QModelRoleData& roleData : roleDataSpan) {
+		int role = roleData.role();
+		if (role == Qt::TextAlignmentRole) {
+			roleData.setData(Qt::AlignRight);
+			continue;
+		}
+		if (role == Qt::DisplayRole) {
+			QVariant result = buffer.at(index.row())->at(index.column());
+			roleData.setData(result);
+			continue;
+		}
+	}
+}

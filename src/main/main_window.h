@@ -53,7 +53,7 @@ private:
 	void updateRecentFilesMenu();
 	void clearRecentFilesMenu();
 	void setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
-	void setupDebugTableView(QTableView* view, NormalTable* table);
+	void setupDebugTableView(QTableView* view, Table* table);
 	void setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void initTableContextMenuAndShortcuts();
 	

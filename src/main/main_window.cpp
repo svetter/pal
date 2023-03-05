@@ -124,6 +124,8 @@ MainWindow::MainWindow() :
 	setupDebugTableView(regionsDebugTableView,		db.regionsTable);
 	setupDebugTableView(rangesDebugTableView,		db.rangesTable);
 	setupDebugTableView(countriesDebugTableView,	db.countriesTable);
+	setupDebugTableView(photosDebugTableView,		db.photosTable);
+	setupDebugTableView(participatedDebugTableView,	db.participatedTable);
 	
 	
 	// Temporary: Add menu item to insert test data into current database
@@ -216,7 +218,7 @@ void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const S
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 }
 
-void MainWindow::setupDebugTableView(QTableView* view, NormalTable* table)
+void MainWindow::setupDebugTableView(QTableView* view, Table* table)
 {
 	// Set model
 	view->setModel(table);
