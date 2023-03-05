@@ -411,7 +411,8 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* origina
 
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascent->ascentID.forceValid());
+	ValidItemID ascentID = ascent->ascentID.forceValid();
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascentID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = AscentDialog::tr("Delete ascent");
@@ -419,7 +420,12 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* asc
 		if (!proceed) return;
 	}
 	
-	db->removeRow(parent, db->ascentsTable, ascent->ascentID.forceValid());
+	// Remove all photos and participation associated with this ascent
+	db->photosTable->removeRowsForAscent(parent, ascentID);
+	db->participatedTable->removeMatchingRows(parent, db->participatedTable->ascentIDColumn, ascentID);
+	
+	// Remove ascent itself
+	db->removeRow(parent, db->ascentsTable, ascentID);
 }
 
 
