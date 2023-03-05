@@ -38,11 +38,19 @@ DirectCompositeColumn::DirectCompositeColumn(QString uiName, Qt::AlignmentFlag a
 
 QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 {
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
+	if (role == Qt::TextAlignmentRole) return alignment;
+	bool isBitColumn = contentColumn->type == bit;
+	if ((role != Qt::DisplayRole && !isBitColumn) || (isBitColumn && role != Qt::CheckStateRole))
+		return QVariant();
 	
 	QVariant content = contentColumn->table->getBufferRow(rowIndex)->at(contentColumn->getIndex());
 	content = replaceEnumIfApplicable(content, enumNames);
+	
+	if (role == Qt::CheckStateRole && isBitColumn) {
+		assert(content.canConvert<bool>());
+		return content.toBool() ? Qt::Checked : Qt::Unchecked;
+	}
+	
 	return content;
 }
 
@@ -61,8 +69,10 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::Alignment
 
 QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 {
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
+	if (role == Qt::TextAlignmentRole) return alignment;
+	bool isBitColumn = contentColumn->type == bit;
+	if ((role != Qt::DisplayRole && !isBitColumn) || (isBitColumn && role != Qt::CheckStateRole))
+		return QVariant();
 	
 	assert(foreignKeyColumnSequence.first()->isForeignKey());
 	
@@ -93,6 +103,11 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	assert(contentColumn->table == currentTable);
 	QVariant content = currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
 	content = replaceEnumIfApplicable(content, enumNames);
+	
+	if (role == Qt::CheckStateRole && isBitColumn) {
+		assert(content.canConvert<bool>());
+		return content.toBool() ? Qt::Checked : Qt::Unchecked;
+	}
 	
 	return content;
 }
