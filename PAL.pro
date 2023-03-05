@@ -61,7 +61,13 @@ SOURCES += \
 	src/tools/relocate_photos_dialog.cpp
 
 HEADERS += \
+	src/comp_tables/comp_ascents_table.h \
+	src/comp_tables/comp_countries_table.h \
+	src/comp_tables/comp_hikers_table.h \
+	src/comp_tables/comp_peaks_table.h \
+	src/comp_tables/comp_ranges_table.h \
 	src/comp_tables/comp_regions_table.h \
+	src/comp_tables/comp_trips_table.h \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
 	src/data/ascent.h \
