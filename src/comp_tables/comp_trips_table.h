@@ -15,6 +15,7 @@ public:
 	const FoldCompositeColumn*			avgElevationGainColumn;
 	const FoldCompositeColumn*			maxElevationGainColumn;
 	const FoldCompositeColumn*			sumElevationGainColumn;
+	const FoldCompositeColumn*			listHikersColumn;
 	
 public:
 	inline CompositeTripsTable(Database* db) :
@@ -27,7 +28,8 @@ public:
 			numAscentsColumn		(new const FoldCompositeColumn			(tr("Num. ascents"),	Count,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} })),
 			avgElevationGainColumn	(new const FoldCompositeColumn			(tr("Avg. elev. gain"),	Average,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
 			maxElevationGainColumn	(new const FoldCompositeColumn			(tr("Max. elev. gain"),	Max,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			sumElevationGainColumn	(new const FoldCompositeColumn			(tr("Sum elev. gain"),	Sum,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn))
+			sumElevationGainColumn	(new const FoldCompositeColumn			(tr("Sum elev. gain"),	Sum,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+			listHikersColumn		(new const FoldCompositeColumn			(tr("Participants"),	List,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(startDateColumn);
@@ -37,6 +39,7 @@ public:
 		addColumn(avgElevationGainColumn);
 		addColumn(maxElevationGainColumn);
 		addColumn(sumElevationGainColumn);
+		addColumn(listHikersColumn);
 	}
 };
 
