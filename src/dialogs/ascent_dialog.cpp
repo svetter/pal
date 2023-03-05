@@ -22,10 +22,8 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::ascentDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
+	
 	
 	populateComboBoxes();
 	
@@ -359,8 +357,8 @@ void AscentDialog::handle_ok()
 }
 
 void AscentDialog::aboutToClose()
-{	
-	Settings::ascentDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
 	
 	handle_photoSelectionChanged();
 }

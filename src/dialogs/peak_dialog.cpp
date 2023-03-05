@@ -14,10 +14,7 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::peakDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	populateComboBoxes();
@@ -157,8 +154,8 @@ void PeakDialog::handle_ok()
 }
 
 void PeakDialog::aboutToClose()
-{	
-	Settings::peakDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::peakDialog_geometry);
 }
 
 

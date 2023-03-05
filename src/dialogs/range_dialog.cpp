@@ -13,10 +13,7 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, R
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::rangeDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	populateComboBoxes();
@@ -104,8 +101,8 @@ void RangeDialog::handle_ok()
 }
 
 void RangeDialog::aboutToClose()
-{	
-	Settings::rangeDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
 }
 
 

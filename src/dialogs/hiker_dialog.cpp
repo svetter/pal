@@ -13,10 +13,7 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, H
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::hikerDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -92,8 +89,8 @@ void HikerDialog::handle_ok()
 }
 
 void HikerDialog::aboutToClose()
-{	
-	Settings::hikerDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
 }
 
 

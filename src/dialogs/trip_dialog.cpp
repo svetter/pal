@@ -13,10 +13,7 @@ TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Tri
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::tripDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::tripDialog_geometry);
 	
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);	
@@ -145,8 +142,8 @@ void TripDialog::handle_ok()
 }
 
 void TripDialog::aboutToClose()
-{	
-	Settings::tripDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::tripDialog_geometry);
 }
 
 

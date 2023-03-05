@@ -6,20 +6,19 @@
 
 
 SettingsWindow::SettingsWindow(QWidget* parent) :
-		QDialog(parent)
+		QDialog(parent),
+		parent(parent)
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::settingsWindow_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	
 	
-	connect(ascentDateCheckbox,				&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
-	connect(ascentTimeCheckbox,				&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
-	connect(ascentElevationGainCheckbox,	&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
-	connect(peakHeightCheckbox,				&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
+	connect(rememberWindowPositionsCheckbox,	&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
+	connect(ascentDateCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
+	connect(ascentTimeCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
+	connect(ascentElevationGainCheckbox,		&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
+	connect(peakHeightCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Save),			&QPushButton::clicked,	this,	&SettingsWindow::handle_save);
 	connect(bottomButtonBox->button(QDialogButtonBox::Apply),			&QPushButton::clicked,	this,	&SettingsWindow::handle_apply);
@@ -39,6 +38,7 @@ void SettingsWindow::loadSettings()
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.get());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
+	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
 	rememberTabCheckbox							->setChecked	(mainWindow_rememberTab						.get());
 	rememberColumnWidthsCheckbox				->setChecked	(mainWindow_rememberColumnWidths			.get());
 	
@@ -64,6 +64,7 @@ void SettingsWindow::loadDefaults()
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.getDefault());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
+	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
 	rememberTabCheckbox							->setChecked	(mainWindow_rememberTab						.getDefault());
 	rememberColumnWidthsCheckbox				->setChecked	(mainWindow_rememberColumnWidths			.getDefault());
 	
@@ -84,11 +85,14 @@ void SettingsWindow::loadDefaults()
 
 void SettingsWindow::saveSettings()
 {
+	bool rememberWindowPositionsRelativeBefore = rememberWindowPositionsRelative.get();
+	
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
 	confirmCancel								.set(confirmCancelCheckbox						->isChecked());
 	allowEmptyNames								.set(allowEmptyNamesCheckbox					->isChecked());
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());
+	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());
 	mainWindow_rememberTab						.set(rememberTabCheckbox						->isChecked());
 	mainWindow_rememberColumnWidths				.set(rememberColumnWidthsCheckbox				->isChecked());
 	
@@ -103,16 +107,28 @@ void SettingsWindow::saveSettings()
 	peakDialog_initialHeight					.set(peakHeightSpinner							->value());
 	
 	tripDialog_datesEnabledInitially			.set(tripDatesCheckbox							->isChecked());
+	
+	if (rememberWindowPositionsRelativeBefore != rememberWindowPositionsRelative.get()) {
+		Settings::resetGeometrySettings();
+	}
 }
 
 void SettingsWindow::updateEnabled()
 {
+	handle_rememberWindowPositionsCheckboxChanged();
 	handle_ascentDateCheckboxChanged();
 	handle_ascentTimeCheckboxChanged();
 	handle_ascentElevationGainCheckboxChanged();
 	handle_peakHeightCheckboxChanged();
 }
 
+
+
+void SettingsWindow::handle_rememberWindowPositionsCheckboxChanged()
+{
+	bool enabled = rememberWindowPositionsCheckbox->checkState();
+	rememberWindowPositionsRelativeCheckbox->setEnabled(enabled);
+}
 
 
 void SettingsWindow::handle_ascentDateCheckboxChanged()
@@ -144,8 +160,8 @@ void SettingsWindow::handle_peakHeightCheckboxChanged()
 
 void SettingsWindow::handle_save()
 {
-	Settings::settingsWindow_geometry.set(geometry());
 	saveSettings();
+	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	accept();
 }
 
@@ -156,7 +172,7 @@ void SettingsWindow::handle_apply()
 
 void SettingsWindow::handle_cancel()
 {
-	Settings::settingsWindow_geometry.set(geometry());
+	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	QDialog::reject();
 }
 

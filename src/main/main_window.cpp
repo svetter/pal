@@ -35,10 +35,12 @@ MainWindow::MainWindow() :
 	setupUi(this);
 	setUIEnabled(false);
 	
-	setWindowState(Settings::mainWindow_maximized.get() ? Qt::WindowMaximized : Qt::WindowNoState);
-	const QRect savedGeometry = Settings::mainWindow_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
+	if (Settings::rememberWindowPositions.get()) {
+		setWindowState(Settings::mainWindow_maximized.get() ? Qt::WindowMaximized : Qt::WindowNoState);
+		const QRect savedGeometry = Settings::mainWindow_geometry.get();
+		if (!savedGeometry.isEmpty()) {
+			setGeometry(savedGeometry);
+		}
 	}
 	
 	if (Settings::mainWindow_rememberTab.get()) {

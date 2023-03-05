@@ -10,6 +10,8 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 {
 	Q_OBJECT
 	
+	QWidget* parent;
+	
 public:
 	SettingsWindow(QWidget* parent);
 	
@@ -20,6 +22,8 @@ private:
 	void updateEnabled();
 	
 private slots:
+	void handle_rememberWindowPositionsCheckboxChanged();
+	
 	void handle_ascentDateCheckboxChanged();
 	void handle_ascentTimeCheckboxChanged();
 	void handle_ascentElevationGainCheckboxChanged();

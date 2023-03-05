@@ -15,10 +15,7 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::regionDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::regionDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	populateComboBoxes();
@@ -140,8 +137,8 @@ void RegionDialog::handle_ok()
 }
 
 void RegionDialog::aboutToClose()
-{	
-	Settings::regionDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::regionDialog_geometry);
 }
 
 

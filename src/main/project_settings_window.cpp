@@ -12,6 +12,7 @@
 
 ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen) :
 		QDialog(parent),
+		parent(parent),
 		db(db),
 		firstOpen(firstOpen)
 {
@@ -26,10 +27,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 		newDefaultHikerLineEdit->setVisible(false);
 	}
 	
-	const QRect savedGeometry = Settings::projectSettingsWindow_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	
 	
 	defaultHikerCombo->setModel(db->hikersTable);
@@ -85,8 +83,8 @@ void ProjectSettingsWindow::handle_newHiker()
 
 void ProjectSettingsWindow::handle_save()
 {
-	Settings::projectSettingsWindow_geometry.set(geometry());
 	saveSettings();
+	Settings::projectSettingsWindow_geometry.set(geometry());
 	accept();
 }
 
@@ -97,7 +95,7 @@ void ProjectSettingsWindow::handle_apply()
 
 void ProjectSettingsWindow::handle_cancel()
 {
-	Settings::projectSettingsWindow_geometry.set(geometry());
+	saveDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	QDialog::reject();
 }
 

@@ -13,10 +13,7 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpos
 {
 	setupUi(this);
 	
-	const QRect savedGeometry = Settings::countryDialog_geometry.get();
-	if (!savedGeometry.isEmpty()) {
-		setGeometry(savedGeometry);
-	}
+	restoreDialogGeometry(this, parent, &Settings::countryDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -92,8 +89,8 @@ void CountryDialog::handle_ok()
 }
 
 void CountryDialog::aboutToClose()
-{	
-	Settings::countryDialog_geometry.set(geometry());
+{
+	saveDialogGeometry(this, parent, &Settings::countryDialog_geometry);
 }
 
 

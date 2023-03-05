@@ -21,6 +21,8 @@ class NewOrEditDialog : public QDialog
 	Q_OBJECT
 	
 protected:
+	QWidget* parent;
+	
 	Database* db;
 	DialogPurpose purpose;
 	

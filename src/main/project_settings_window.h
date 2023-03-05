@@ -12,6 +12,8 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 {
 	Q_OBJECT
 	
+	QWidget* parent;
+	
 	Database* db;
 	bool firstOpen;
 	

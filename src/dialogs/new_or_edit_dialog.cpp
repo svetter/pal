@@ -9,6 +9,7 @@
 
 NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, DialogPurpose purpose):
 		QDialog(parent),
+		parent(parent),
 		db(db),
 		purpose(purpose)
 {}

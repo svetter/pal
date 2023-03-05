@@ -1,9 +1,11 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include "qdatetime.h"
+#include <QDate>
+#include <QTime>
 #include <QSettings>
 #include <QRect>
+#include <QWidget>
 
 
 
@@ -71,6 +73,7 @@ public:
 	inline static const Setting<bool>	openProjectSettingsOnNewDatabase			= Setting<bool>		("openProjectSettingsOnNewDatabase",			true);
 	
 	inline static const Setting<bool>	rememberWindowPositions						= Setting<bool>		("rememberWindowPositions",						true);
+	inline static const Setting<bool>	rememberWindowPositionsRelative				= Setting<bool>		("rememberWindowPositionsRelative",				true);
 	// Main window
 	inline static const Setting<bool>	mainWindow_rememberTab						= Setting<bool>		("mainWindow/rememberTab",						true);
 	inline static const Setting<bool>	mainWindow_rememberColumnWidths				= Setting<bool>		("mainWindow/rememberColumnWidths",				true);
@@ -126,7 +129,47 @@ public:
 	{
 		qSettings.clear();
 	}
+	
+	inline void resetGeometrySettings()
+	{
+		mainWindow_maximized			.clear();
+		mainWindow_geometry				.clear();
+		settingsWindow_geometry			.clear();
+		projectSettingsWindow_geometry	.clear();
+		ascentDialog_geometry			.clear();
+		peakDialog_geometry				.clear();
+		tripDialog_geometry				.clear();
+		hikerDialog_geometry			.clear();
+		regionDialog_geometry			.clear();
+		rangeDialog_geometry			.clear();
+		countryDialog_geometry			.clear();
+	}
 };
+
+
+
+inline void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
+{
+	QRect absoluteGeometry = dialog->geometry();
+	if (Settings::rememberWindowPositionsRelative.get()) {
+		absoluteGeometry.adjust(- parent->x(), - parent->y(), 0, 0);
+	}
+	geometrySetting->set(absoluteGeometry);
+}
+
+inline void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
+{
+	if (!Settings::rememberWindowPositions.get()) return;
+	
+	QRect savedGeometry = geometrySetting->get();
+	if (savedGeometry.isEmpty()) return;
+	
+	if (Settings::rememberWindowPositionsRelative.get()) {
+		savedGeometry.adjust(parent->x(), parent->y(), 0, 0);
+	}
+	
+	dialog->setGeometry(savedGeometry);
+}
 
 
 
