@@ -4,7 +4,7 @@
 
 
 
-ParticipatedTable::ParticipatedTable(const Column* foreignAscentIDColumn, const Column* foreignHikerIDColumn) :
+ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
 		AssociativeTable(QString("Participated"), foreignAscentIDColumn, foreignHikerIDColumn),
 		ascentIDColumn(getColumn1()),
 		hikerIDColumn(getColumn2())

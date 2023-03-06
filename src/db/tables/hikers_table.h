@@ -12,7 +12,7 @@ class HikersTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	const Column* nameColumn;
+	Column* const nameColumn;
 	
 	HikersTable();
 	

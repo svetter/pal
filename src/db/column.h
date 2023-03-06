@@ -20,17 +20,17 @@ public:
 	const QString		uiName;
 	const DataType		type;
 	const bool			primaryKey;
-	const Column* const	foreignKey;
+	Column* const		foreignKey;
 	const bool			nullable;
 	const Table* const	table;
 	
-	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* table);
+	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table);
 	
-	bool			isPrimaryKey() const;
-	bool			isForeignKey() const;
-	bool			isKey() const;
-	const Column*	getReferencedForeignColumn() const;
-	int				getIndex() const;
+	bool	isPrimaryKey() const;
+	bool	isForeignKey() const;
+	bool	isKey() const;
+	Column*	getReferencedForeignColumn() const;
+	int		getIndex() const;
 	
 	QString getSqlSpecificationString() const;
 };

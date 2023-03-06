@@ -5,12 +5,12 @@
 
 
 
-RegionsTable::RegionsTable(const Column* foreignRangeIDColumn, const Column* foreignCountryIDColumn) :
+RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
 		NormalTable(QString("Regions"), tr("Regions"), "regionID"),
-		//										name			uiName		type		nullable	primaryKey	foreignKey				inTable
-		nameColumn		(new const Column(QString("name"),		tr("Name"),	varchar,	false,		false,		nullptr,				this)),
-		rangeIDColumn	(new const Column(QString("rangeID"),	QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),
-		countryIDColumn	(new const Column(QString("countryID"),	QString(),	integer,	true,		false,		foreignCountryIDColumn,	this))
+		//							name			uiName		type		nullable	primaryKey	foreignKey				inTable
+		nameColumn		(new Column("name",			tr("Name"),	varchar,	false,		false,		nullptr,				this)),
+		rangeIDColumn	(new Column("rangeID",		QString(),	integer,	true,		false,		foreignRangeIDColumn,	this)),
+		countryIDColumn	(new Column("countryID",	QString(),	integer,	true,		false,		foreignCountryIDColumn,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

@@ -6,13 +6,13 @@
 
 
 
-PhotosTable::PhotosTable(const Column* foreignAscentIDColumn) :
+PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 		NormalTable(QString("Photos"), QString(), "photoID"),
-		//											name				uiName					type		nullable	primaryKey	foreignKey				inTable
-		ascentIDColumn		(new const Column(QString("ascentID"),		QString(),				integer,	true,		false,		foreignAscentIDColumn,	this)),
-		sortIndexColumn		(new const Column(QString("sortIndex"),		tr("Sort index"),		integer,	true,		false,		nullptr,				this)),
-		filepathColumn		(new const Column(QString("filepath"),		tr("File path"),		varchar,	false,		false,		nullptr,				this)),
-		descriptionColumn	(new const Column(QString("description"),	tr("Description"),		varchar,	true,		false,		nullptr,				this))
+		//								name			uiName				type		nullable	primaryKey	foreignKey				inTable
+		ascentIDColumn		(new Column("ascentID",		QString(),			integer,	true,		false,		foreignAscentIDColumn,	this)),
+		sortIndexColumn		(new Column("sortIndex",	tr("Sort index"),	integer,	true,		false,		nullptr,				this)),
+		filepathColumn		(new Column("filepath",		tr("File path"),	varchar,	false,		false,		nullptr,				this)),
+		descriptionColumn	(new Column("description",	tr("Description"),	varchar,	true,		false,		nullptr,				this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);

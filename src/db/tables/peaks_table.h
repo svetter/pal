@@ -12,15 +12,15 @@ class PeaksTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	const Column* nameColumn;
-	const Column* heightColumn;
-	const Column* volcanoColumn;
-	const Column* regionIDColumn;
-	const Column* mapsLinkColumn;
-	const Column* earthLinkColumn;
-	const Column* wikiLinkColumn;
+	Column* const nameColumn;
+	Column* const heightColumn;
+	Column* const volcanoColumn;
+	Column* const regionIDColumn;
+	Column* const mapsLinkColumn;
+	Column* const earthLinkColumn;
+	Column* const wikiLinkColumn;
 	
-	PeaksTable(const Column* foreignRegionIDColumn);
+	PeaksTable(Column* foreignRegionIDColumn);
 	
 	int addRow(QWidget* parent, Peak* peak);
 	void updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak);

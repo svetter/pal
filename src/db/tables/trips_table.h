@@ -12,10 +12,10 @@ class TripsTable : public NormalTable {
 	Q_OBJECT
 	
 public:
-	const Column* nameColumn;
-	const Column* startDateColumn;
-	const Column* endDateColumn;
-	const Column* descriptionColumn;
+	Column* const nameColumn;
+	Column* const startDateColumn;
+	Column* const endDateColumn;
+	Column* const descriptionColumn;
 	
 	TripsTable();
 	

@@ -11,7 +11,7 @@
 
 class NormalTable : public Table {
 public:
-	const Column* primaryKeyColumn;
+	Column* const primaryKeyColumn;
 	
 	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);
 	virtual ~NormalTable();

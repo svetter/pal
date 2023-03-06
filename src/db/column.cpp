@@ -7,7 +7,7 @@
 
 
 
-Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, const Column* foreignKey, const Table* table) :
+Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table) :
 		name(name),
 		uiName(uiName),
 		type(type),
@@ -40,7 +40,7 @@ bool Column::isKey() const
 	return isPrimaryKey() || isForeignKey();
 }
 
-const Column* Column::getReferencedForeignColumn() const
+Column* Column::getReferencedForeignColumn() const
 {
 	return foreignKey;
 }
