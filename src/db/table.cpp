@@ -1,12 +1,14 @@
 #include "table.h"
 
 #include "db_error.h"
+#include "src/comp_tables/composite_table.h"
 
 #include <QSqlQuery>
 
 
 
 Table::Table(QString name, QString uiName, bool isAssociative) :
+		rowChangeListener(nullptr),
 		name(name),
 		uiName(uiName),
 		isAssociative(isAssociative),
@@ -180,6 +182,27 @@ void Table::printBuffer() const
 
 
 
+// CHANGE PROPAGATION
+
+void Table::setRowChangeListener(CompositeTable* compositeTable)
+{
+	rowChangeListener = compositeTable;
+}
+
+void Table::notifyAllColumns()
+{
+	// Collect change listeners and notify them
+	QSet<const CompositeColumn*> changeListeners = QSet<const CompositeColumn*>();
+	for (const Column* column : columns) {
+		changeListeners.unite(column->getChangeListeners());
+	}
+	for (const CompositeColumn* changeListener : changeListeners) {
+		changeListener->announceChangedData();
+	}
+}
+
+
+
 // MODIFICATIONS
 
 int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
@@ -189,6 +212,7 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	// Announce row insertion
 	int newItemBufferRowIndex = buffer.size();
 	beginInsertRows(getNormalRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
+	if (rowChangeListener) rowChangeListener->beginInsertRow(newItemBufferRowIndex);
 	
 	// Add data to SQL database
 	int newRowID = addRowToSql(parent, columns, data);
@@ -202,6 +226,10 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	
 	// Announce end of row insertion
 	endInsertRows();
+	if (rowChangeListener) rowChangeListener->endInsertRow();
+	
+	// Row was added, all columns affected => Notify all column-attached change listeners
+	notifyAllColumns();
 	
 	return newItemBufferRowIndex;
 }
@@ -222,7 +250,13 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	
 	// Announce changed data
 	QModelIndex updateIndex = index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
-	Q_EMIT dataChanged(updateIndex, updateIndex, { Qt::DisplayRole });
+	const QList<int> updatedDatumRoles = { column->type == bit ? Qt::CheckStateRole : Qt::DisplayRole };
+	Q_EMIT dataChanged(updateIndex, updateIndex, updatedDatumRoles);
+	// Collect column's change listeners and notify them
+	QSet<const CompositeColumn*> changeListeners = column->getChangeListeners();
+	for (const CompositeColumn* changeListener : changeListeners) {
+		changeListener->announceChangedData();
+	}
 }
 
 void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
@@ -243,7 +277,10 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	// Announce changed data
 	QModelIndex updateIndexLeft = index(bufferRowIndex, 0, getNormalRootModelIndex());
 	QModelIndex updateIndexRight = index(bufferRowIndex, getNumberOfColumns(), getNormalRootModelIndex());
-	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, { Qt::DisplayRole });
+	const QList<int> updatedDatumRoles = { Qt::CheckStateRole, Qt::DisplayRole };
+	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, updatedDatumRoles);
+	// Whole row was updated, all columns affected => Notify all column-attached change listeners
+	notifyAllColumns();
 }
 
 void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
@@ -252,9 +289,12 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
 	assert(primaryKeys.size() == numPrimaryKeys);
 	
-	// Announce row removal
 	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, primaryKeys);
+	assert(bufferRowIndex >= 0);
+	
+	// Announce row removal
 	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
+	if (rowChangeListener) rowChangeListener->beginRemoveRow(bufferRowIndex);
 	
 	// Remove row from SQL database
 	removeRowFromSql(parent, primaryKeyColumns, primaryKeys);
@@ -266,6 +306,9 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	
 	// Announce end of row removal
 	endRemoveRows();
+	if (rowChangeListener) rowChangeListener->endRemoveRow();
+	// Row was removed, all columns affected => Notify all column-attached change listeners
+	notifyAllColumns();
 }
 
 void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key)
@@ -278,11 +321,14 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 	
 	// Update buffer
 	QList<int> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
+	if (bufferRowIndices.isEmpty()) return;
+	
 	auto iter = bufferRowIndices.constEnd();
 	while (iter-- != bufferRowIndices.constBegin()) {
 		// Announce row removal
 		int bufferRowIndex = *iter;
 		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
+		if (rowChangeListener) rowChangeListener->beginRemoveRow(bufferRowIndex);
 		
 		const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
 		buffer.remove(bufferRowIndex);
@@ -290,7 +336,11 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 		
 		// Announce end of row removal
 		endRemoveRows();
+		if (rowChangeListener) rowChangeListener->endRemoveRow();
 	}
+	
+	// Rows were removed, all columns affected => Notify all column-attached change listeners
+	notifyAllColumns();
 }
 
 

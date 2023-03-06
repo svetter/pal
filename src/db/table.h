@@ -8,10 +8,14 @@
 #include <QString>
 #include <QWidget>
 
+class CompositeTable;
+
 
 
 class Table : public QAbstractItemModel {
 	QList<const Column*> columns;
+	
+	CompositeTable* rowChangeListener;
 
 public:
 	const QString	name;
@@ -50,6 +54,11 @@ public:
 	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
 	// Debugging
 	void printBuffer() const;
+	
+	// Change propagation
+	void setRowChangeListener(CompositeTable* compositeTable);
+private:
+	void notifyAllColumns();
 	
 protected:
 	// Modifications

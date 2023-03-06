@@ -19,15 +19,15 @@ public:
 public:
 	inline CompositeRegionsTable(Database* db) :
 			CompositeTable(db, db->regionsTable),
-			//															uiName					align/fold op	breadcrumbs (column reference chain) + content column [+ enum names]
-			nameColumn			(new const DirectCompositeColumn	(tr("Region"),				Qt::AlignLeft,	db->regionsTable->nameColumn)),
-			rangeColumn			(new const ReferenceCompositeColumn	(tr("Mountain range"),		Qt::AlignLeft,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->nameColumn)),
-			countryColumn		(new const ReferenceCompositeColumn	(tr("Country"),				Qt::AlignLeft,	{ db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
-			continentColumn		(new const ReferenceCompositeColumn	(tr("Continent"),			Qt::AlignLeft,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->continentColumn,	&Range::continentNames)),
-			numPeaksColumn		(new const FoldCompositeColumn		(tr("Num. peaks"),			Count,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
-			avgPeakHeightColumn	(new const FoldCompositeColumn		(tr("Avg. peak height"),	Average,		{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
-			maxPeakHeightColumn	(new const FoldCompositeColumn		(tr("Max. peak height"),	Max,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
-			numAscentsColumn	(new const FoldCompositeColumn		(tr("Num. ascents"),		Count,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} }))
+			//																	uiName				align/fold op	breadcrumbs (column reference chain) + content column [+ enum names]
+			nameColumn			(new const DirectCompositeColumn	(this,	tr("Region"),			Qt::AlignLeft,	db->regionsTable->nameColumn)),
+			rangeColumn			(new const ReferenceCompositeColumn	(this,	tr("Mountain range"),	Qt::AlignLeft,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->nameColumn)),
+			countryColumn		(new const ReferenceCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,	{ db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
+			continentColumn		(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->continentColumn,	&Range::continentNames)),
+			numPeaksColumn		(new const FoldCompositeColumn		(this,	tr("Num. peaks"),		Count,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
+			avgPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Avg. peak height"),	Average,		{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
+			maxPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Max. peak height"),	Max,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
+			numAscentsColumn	(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,			{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} }))
 	{
 		addColumn(nameColumn);
 		addColumn(rangeColumn);

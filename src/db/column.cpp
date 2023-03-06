@@ -2,12 +2,14 @@
 
 #include "table.h"
 #include "database.h"
+#include "src/comp_tables/composite_column.h"
 
 #include <QCoreApplication>
 
 
 
 Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table) :
+		changeListeners(QSet<const CompositeColumn*>()),
 		name(name),
 		uiName(uiName),
 		type(type),
@@ -78,6 +80,20 @@ QString Column::getSqlSpecificationString() const
 	
 	return name + " " + typeString + primaryKeyString + foreignKeyString + nullString;
 }
+
+
+
+void Column::registerChangeListener(const CompositeColumn* compositeColumn)
+{
+	changeListeners.insert(compositeColumn);
+}
+
+QSet<const CompositeColumn*> Column::getChangeListeners() const
+{
+	return changeListeners;
+}
+
+
 
 
 

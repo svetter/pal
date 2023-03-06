@@ -1,12 +1,13 @@
 #include "composite_column.h"
 
-#include "qdatetime.h"
 #include "src/db/normal_table.h"
 #include "src/db/table.h"
+#include "src/comp_tables/composite_table.h"
 
 
 
-CompositeColumn::CompositeColumn(QString uiName, Qt::AlignmentFlag alignment) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment) :
+		table(table),
 		uiName(uiName),
 		alignment(alignment)
 {}
@@ -26,10 +27,21 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStrin
 
 
 
+void CompositeColumn::announceChangedData() const
+{
+	int thisColumnIndex = table->getIndexOf(this);
+	int lastRowIndex = table->rowCount() - 1;
+	QModelIndex topLeftIndex		= table->index(0, thisColumnIndex);
+	QModelIndex bottomRightIndex	= table->index(lastRowIndex, thisColumnIndex);
+	Q_EMIT table->dataChanged(topLeftIndex, bottomRightIndex);
+}
 
 
-DirectCompositeColumn::DirectCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, const Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(uiName, alignment),
+
+
+
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, alignment),
 		contentColumn(contentColumn),
 		enumNames(enumNames)
 {}
@@ -65,10 +77,17 @@ QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 
 
 
+const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
+{
+	return { contentColumn };
+}
 
 
-ReferenceCompositeColumn::ReferenceCompositeColumn(QString uiName, Qt::AlignmentFlag alignment, QList<const Column*> foreignKeyColumnSequence, const Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(uiName, alignment),
+
+
+
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, alignment),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn),
 		enumNames(enumNames)
@@ -132,10 +151,22 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 
 
 
+const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() const
+{
+	QSet<Column* const> result = { contentColumn };
+	for (Column* column : foreignKeyColumnSequence) {
+		result.insert(column);
+		result.insert(column->getReferencedForeignColumn());
+	}
+	return result;
+}
 
 
-FoldCompositeColumn::FoldCompositeColumn(QString uiName, FoldOp op, const QList<QPair<const Column*, const Column*>> breadcrumbs, const Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(uiName, op == List ? Qt::AlignLeft : Qt::AlignRight),
+
+
+
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn),
@@ -258,10 +289,23 @@ QVariant FoldCompositeColumn::data(int rowIndex, int role) const
 
 
 
+const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
+{
+	QSet<Column* const> result = QSet<Column* const>();
+	if (contentColumn) result.insert(contentColumn);
+	for (QPair<Column*, Column*> pair : breadcrumbs) {
+		result.insert(pair.first);
+		result.insert(pair.second);
+	}
+	return result;
+}
 
 
-DifferenceCompositeColumn::DifferenceCompositeColumn(QString uiName, const Column* minuendColumn, const Column* subtrahendColumn, const QString suffix) :
-		CompositeColumn(uiName, Qt::AlignRight),
+
+
+
+DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix) :
+		CompositeColumn(table, uiName, Qt::AlignRight),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn),
 		suffix(suffix)
@@ -309,10 +353,17 @@ QVariant DifferenceCompositeColumn::data(int rowIndex, int role) const
 
 
 
+const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() const
+{
+	return { minuendColumn, subtrahendColumn };
+}
 
 
-DependentEnumCompositeColumn::DependentEnumCompositeColumn(QString uiName, const Column* discerningEnumColumn, const Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(uiName, Qt::AlignLeft),
+
+
+
+DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
+		CompositeColumn(table, uiName, Qt::AlignLeft),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn),
 		enumNameLists(enumNameLists)
@@ -344,4 +395,11 @@ QVariant DependentEnumCompositeColumn::data(int rowIndex, int role) const
 	assert(displayed >= 0 && displayed < enumNames.size());
 	
 	return enumNames.at(displayed);
+}
+
+
+
+const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
+{
+	return { discerningEnumColumn, displayedEnumColumn };
 }

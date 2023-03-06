@@ -24,13 +24,13 @@ MainWindow::MainWindow() :
 		openRecentActions(QList<QAction*>()),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
 		shortcuts(QList<QShortcut*>()),
-		compAscents		(CompositeAscentsTable(&db)),
-		compPeaks		(CompositePeaksTable(&db)),
-		compTrips		(CompositeTripsTable(&db)),
-		compHikers		(CompositeHikersTable(&db)),
-		compRegions		(CompositeRegionsTable(&db)),
-		compRanges		(CompositeRangesTable(&db)),
-		compCountries	(CompositeCountriesTable(&db))
+		compAscents		(CompositeAscentsTable		(&db)),
+		compPeaks		(CompositePeaksTable		(&db)),
+		compTrips		(CompositeTripsTable		(&db)),
+		compHikers		(CompositeHikersTable		(&db)),
+		compRegions		(CompositeRegionsTable		(&db)),
+		compRanges		(CompositeRangesTable		(&db)),
+		compCountries	(CompositeCountriesTable	(&db))
 {
 	setupUi(this);
 	setUIEnabled(false);

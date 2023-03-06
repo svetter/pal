@@ -7,13 +7,48 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		baseTable(baseTable),
 		db(db),
 		name(baseTable->name)
-{}
+{
+	baseTable->setRowChangeListener(this);
+}
 
 
 
 void CompositeTable::addColumn(const CompositeColumn* column)
 {
 	columns.append(column);
+	
+	// Register as change listener at all underlying columns
+	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
+	for (Column* underlyingColumn : underlyingColumns) {
+		underlyingColumn->registerChangeListener(column);
+	}
+}
+
+int CompositeTable::getIndexOf(const CompositeColumn* column) const
+{
+	return columns.indexOf(column);
+}
+
+
+
+void CompositeTable::beginInsertRow(int bufferRowIndex)
+{
+	beginInsertRows(QModelIndex(), bufferRowIndex, bufferRowIndex);
+}
+
+void CompositeTable::endInsertRow()
+{
+	endInsertRows();
+}
+
+void CompositeTable::beginRemoveRow(int bufferRowIndex)
+{
+	beginRemoveRows(QModelIndex(), bufferRowIndex, bufferRowIndex);
+}
+
+void CompositeTable::endRemoveRow()
+{
+	endRemoveRows();
 }
 
 

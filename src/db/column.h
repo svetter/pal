@@ -5,6 +5,7 @@
 
 class Table;
 struct WhatIfDeleteResult;
+class CompositeColumn;
 
 
 
@@ -15,6 +16,8 @@ enum DataType {
 
 
 class Column {
+	QSet<const CompositeColumn*> changeListeners;
+	
 public:
 	const QString		name;
 	const QString		uiName;
@@ -33,6 +36,9 @@ public:
 	int		getIndex() const;
 	
 	QString getSqlSpecificationString() const;
+	
+	void registerChangeListener(const CompositeColumn* compositeColumn);
+	QSet<const CompositeColumn*> getChangeListeners() const;
 };
 
 
