@@ -95,7 +95,7 @@ void ProjectSettingsWindow::handle_newHiker()
 void ProjectSettingsWindow::handle_save()
 {
 	saveSettings();
-	Settings::projectSettingsWindow_geometry.set(geometry());
+	saveDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	accept();
 }
 
