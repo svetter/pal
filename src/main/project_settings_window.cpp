@@ -44,6 +44,17 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	
 	
 	loadSettings();
+	
+	
+	if (firstOpen) {
+		QString userName = qgetenv("USER");
+		if (userName.isEmpty()) {
+			userName = qgetenv("USERNAME");
+		}
+		if (!userName.isEmpty()) {
+			newDefaultHikerLineEdit->setText(userName);
+		}
+	}
 }
 
 
