@@ -30,6 +30,9 @@ protected:
 public:
 	int getIndexOf(const CompositeColumn* column) const;
 	
+	void initBuffer();
+	void resetBuffer();
+	
 public:
 	// Change annunciation
 	void beginInsertRow(int bufferRowIndex);

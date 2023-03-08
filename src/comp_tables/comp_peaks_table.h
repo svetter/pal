@@ -43,8 +43,6 @@ public:
 		addColumn(numAscentsColumn);
 		addColumn(sumElevationGainColumn);
 		addColumn(listHikersColumn);
-		
-		initBuffer();
 	}
 };
 

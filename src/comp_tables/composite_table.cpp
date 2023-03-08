@@ -78,10 +78,11 @@ void CompositeTable::beginInsertRow(int bufferRowIndex)
 void CompositeTable::endInsertRow()
 {
 	assert(rowBeingInserted >= 0);
-	buffer.insert(rowBeingInserted, new QList<QVariant>());
+	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 		newRow->append(computeCellContent(rowBeingInserted, columnIndex));
 	}
+	buffer.insert(rowBeingInserted, newRow);
 	rowBeingInserted = -1;
 	
 	endInsertRows();
@@ -141,7 +142,7 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	const CompositeColumn* column = columns.at(columnIndex);
 	
 	if (role == Qt::TextAlignmentRole) {
-		return alignment;
+		return column->alignment;
 	}
 	
 	int relevantRole = column->contentType == bit ? Qt::CheckStateRole : Qt::DisplayRole;
@@ -152,8 +153,8 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	if (result.isNull()) return QVariant();
 	
 	if (column->contentType == bit) {
-		assert(role == Qt::CheckStateRole)
-		result = result.toBool() ? Qt::Checked : Qt::Unchecked;
+		assert(role == Qt::CheckStateRole);
+		return result.toBool() ? Qt::Checked : Qt::Unchecked;
 	}
 	
 	return result;
@@ -161,7 +162,7 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 
 QVariant CompositeTable::computeCellContent(int rowIndex, int columnIndex) const
 {
-	assert(rowIndex >= 0 && rowIndex < buffer.size());
+	assert(rowIndex >= 0 && rowIndex < baseTable->getNumberOfRows());
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
 	const CompositeColumn* column = columns.at(columnIndex);

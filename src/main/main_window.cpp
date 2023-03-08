@@ -209,6 +209,8 @@ void MainWindow::clearRecentFilesMenu()
 
 void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
+	table->initBuffer();
+	
 	// Set model
 	view->setModel(table);
 	

@@ -31,8 +31,6 @@ public:
 		addColumn(avgElevationGainColumn);
 		addColumn(maxElevationGainColumn);
 		addColumn(sumElevationGainColumn);
-		
-		initBuffer();
 	}
 };
 
