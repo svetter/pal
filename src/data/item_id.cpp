@@ -14,7 +14,7 @@ ItemID::ItemID(int id) : valid(id >= LOWEST_LEGAL_ID), id(id)
 
 ItemID::ItemID(QVariant id) : valid(id.toInt() >= LOWEST_LEGAL_ID), id(id.toInt())
 {
-	assert(id.typeId() == QMetaType::Int);
+	assert(id.canConvert<int>());
 }
 
 ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
