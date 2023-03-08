@@ -14,12 +14,18 @@ class CompositeTable : public QAbstractTableModel {
 	
 	QList<const CompositeColumn*> columns;
 	
+	QList<QList<QVariant>*> buffer;
+	int rowBeingInserted;
+	
 public:
 	const QString name;
 	
 protected:
 	CompositeTable(Database* db, NormalTable* baseTable);
+public:
+	~CompositeTable();
 	
+protected:
 	void addColumn(const CompositeColumn* column);
 public:
 	int getIndexOf(const CompositeColumn* column) const;
@@ -36,6 +42,8 @@ public:
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+private:
+	QVariant computeCellContent(int rowIndex, int columnIndex) const;
 };
 
 

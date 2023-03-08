@@ -58,6 +58,8 @@ public:
 		addColumn(difficultyGradeColumn);
 		addColumn(hikersColumn);
 		addColumn(tripColumn);
+		
+		initBuffer();
 	}
 };
 

@@ -31,6 +31,8 @@ public:
 		addColumn(avgPeakHeightColumn);
 		addColumn(maxPeakHeightColumn);
 		addColumn(numAscentsColumn);
+		
+		initBuffer();
 	}
 };
 

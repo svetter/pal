@@ -40,6 +40,8 @@ public:
 		addColumn(maxElevationGainColumn);
 		addColumn(sumElevationGainColumn);
 		addColumn(listHikersColumn);
+		
+		initBuffer();
 	}
 };
 

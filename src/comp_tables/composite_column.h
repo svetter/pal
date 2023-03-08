@@ -16,14 +16,15 @@ class CompositeColumn {
 public:
 	const QString uiName;
 	const Qt::AlignmentFlag alignment;
+	const DataType contentType;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment);
+	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType);
 	
 	static QVariant replaceEnumIfApplicable(QVariant content, const QStringList* enumNames);
 	
 public:
-	virtual QVariant data(int rowIndex, int role) const = 0;
+	virtual QVariant getValueAt(int rowIndex) const = 0;
 	
 	int getIndexOf(const CompositeColumn* column) const;
 	
@@ -41,7 +42,7 @@ class DirectCompositeColumn : public CompositeColumn {
 public:
 	DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames = nullptr);
 	
-	virtual QVariant data(int rowIndex, int role) const override;
+	virtual QVariant getValueAt(int rowIndex) const override;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
@@ -56,7 +57,7 @@ class ReferenceCompositeColumn : public CompositeColumn {
 public:
 	ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames = nullptr);
 	
-	virtual QVariant data(int rowIndex, int role) const override;
+	virtual QVariant getValueAt(int rowIndex) const override;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
@@ -80,7 +81,7 @@ class FoldCompositeColumn : public CompositeColumn {
 public:
 	FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
-	virtual QVariant data(int rowIndex, int role) const override;
+	virtual QVariant getValueAt(int rowIndex) const override;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
@@ -95,7 +96,7 @@ class DifferenceCompositeColumn : public CompositeColumn {
 public:
 	DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix);
 	
-	virtual QVariant data(int rowIndex, int role) const override;
+	virtual QVariant getValueAt(int rowIndex) const override;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
@@ -110,7 +111,7 @@ class DependentEnumCompositeColumn : public CompositeColumn {
 public:
 	DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists);
 	
-	virtual QVariant data(int rowIndex, int role) const override;
+	virtual QVariant getValueAt(int rowIndex) const override;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };

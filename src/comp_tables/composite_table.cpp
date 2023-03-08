@@ -6,9 +6,18 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		QAbstractTableModel(),
 		baseTable(baseTable),
 		db(db),
+		columns(QList<const CompositeColumn*>()),
+		buffer(QList<QList<QVariant>*>()),
+		rowBeingInserted(-1),
 		name(baseTable->name)
 {
 	baseTable->setRowChangeListener(this);
+}
+
+CompositeTable::~CompositeTable()
+{
+	qDeleteAll(columns);
+	qDeleteAll(buffer);
 }
 
 
@@ -31,19 +40,60 @@ int CompositeTable::getIndexOf(const CompositeColumn* column) const
 
 
 
+void CompositeTable::initBuffer()
+{
+	assert(buffer.isEmpty());
+	
+	int numberOfRows = baseTable->getNumberOfRows();
+	beginInsertRows(QModelIndex(), 0, numberOfRows - 1);
+	
+	for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+		QList<QVariant>* newRow = new QList<QVariant>();
+		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+			newRow->append(computeCellContent(rowIndex, columnIndex));
+		}
+		buffer.append(newRow);
+	}
+	
+	endInsertRows();
+}
+
+void CompositeTable::resetBuffer()
+{
+	beginRemoveRows(QModelIndex(), 0, buffer.size() - 1);
+	qDeleteAll(buffer);
+	buffer.clear();
+	endRemoveRows();
+}
+
+
+
 void CompositeTable::beginInsertRow(int bufferRowIndex)
 {
 	beginInsertRows(QModelIndex(), bufferRowIndex, bufferRowIndex);
+	
+	rowBeingInserted = bufferRowIndex;
 }
 
 void CompositeTable::endInsertRow()
 {
+	assert(rowBeingInserted >= 0);
+	buffer.insert(rowBeingInserted, new QList<QVariant>());
+	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+		newRow->append(computeCellContent(rowBeingInserted, columnIndex));
+	}
+	rowBeingInserted = -1;
+	
 	endInsertRows();
 }
 
 void CompositeTable::beginRemoveRow(int bufferRowIndex)
 {
 	beginRemoveRows(QModelIndex(), bufferRowIndex, bufferRowIndex);
+	
+	QList<QVariant>* rowToRemove = buffer.at(bufferRowIndex);
+	buffer.removeAt(bufferRowIndex);
+	delete rowToRemove;
 }
 
 void CompositeTable::endRemoveRow()
@@ -56,7 +106,7 @@ void CompositeTable::endRemoveRow()
 int CompositeTable::rowCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
-	return baseTable->getNumberOfRows();
+	return buffer.size();
 }
 
 int CompositeTable::columnCount(const QModelIndex& parent) const
@@ -84,8 +134,50 @@ QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, in
 QVariant CompositeTable::data(const QModelIndex& index, int role) const
 {
 	assert(!index.parent().isValid());
+	int rowIndex = index.row();
+	assert(rowIndex >= 0 && rowIndex < buffer.size());
 	int columnIndex = index.column();
 	assert(columnIndex >= 0 && columnIndex < columns.size());
+	const CompositeColumn* column = columns.at(columnIndex);
 	
-	return columns.at(columnIndex)->data(index.row(), role);
+	if (role == Qt::TextAlignmentRole) {
+		return alignment;
+	}
+	
+	int relevantRole = column->contentType == bit ? Qt::CheckStateRole : Qt::DisplayRole;
+	if (role != relevantRole) return QVariant();
+	
+	QVariant result = buffer.at(rowIndex)->at(columnIndex);
+	
+	if (result.isNull()) return QVariant();
+	
+	if (column->contentType == bit) {
+		assert(role == Qt::CheckStateRole)
+		result = result.toBool() ? Qt::Checked : Qt::Unchecked;
+	}
+	
+	return result;
+}
+
+QVariant CompositeTable::computeCellContent(int rowIndex, int columnIndex) const
+{
+	assert(rowIndex >= 0 && rowIndex < buffer.size());
+	assert(columnIndex >= 0 && columnIndex < columns.size());
+	
+	const CompositeColumn* column = columns.at(columnIndex);
+	QVariant result = column->getValueAt(rowIndex);
+	
+	if (result.isNull()) return QVariant();
+	
+	if (column->contentType == date) {
+		assert(result.canConvert<QDate>());
+		return result.toDate().toString("dd.MM.yyyy");
+	}
+	
+	if (column->contentType == time_) {
+		assert(result.canConvert<QTime>());
+		return result.toTime().toString("HH:mm");
+	}
+	
+	return result;
 }

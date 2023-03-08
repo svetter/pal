@@ -6,10 +6,11 @@
 
 
 
-CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType) :
 		table(table),
 		uiName(uiName),
-		alignment(alignment)
+		alignment(alignment),
+		contentType(contentType)
 {}
 
 
@@ -41,36 +42,19 @@ void CompositeColumn::announceChangedData() const
 
 
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment),
+		CompositeColumn(table, uiName, alignment, enumNames ? varchar : contentColumn->type),
 		contentColumn(contentColumn),
 		enumNames(enumNames)
-{}
-
-
-
-QVariant DirectCompositeColumn::data(int rowIndex, int role) const
 {
-	if (role == Qt::TextAlignmentRole) return alignment;
-	bool isBitColumn = contentColumn->type == bit;
-	if ((role != Qt::DisplayRole && !isBitColumn) || (isBitColumn && role != Qt::CheckStateRole))
-		return QVariant();
-	
+	assert(contentColumn);
+}
+
+
+
+QVariant DirectCompositeColumn::getValueAt(int rowIndex) const
+{
 	QVariant content = contentColumn->table->getBufferRow(rowIndex)->at(contentColumn->getIndex());
 	content = replaceEnumIfApplicable(content, enumNames);
-	
-	if (role == Qt::CheckStateRole && isBitColumn) {
-		assert(content.canConvert<bool>());
-		return content.toBool() ? Qt::Checked : Qt::Unchecked;
-	}
-	
-	if (contentColumn->type == date) {
-		assert(content.canConvert<QDate>());
-		content = content.toDate().toString("dd.MM.yyyy");
-	}
-	if (contentColumn->type == time_) {
-		assert(content.canConvert<QTime>());
-		content = content.toTime().toString("HH:mm");
-	}
 	
 	return content;
 }
@@ -87,21 +71,18 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment),
+		CompositeColumn(table, uiName, alignment, enumNames ? varchar : contentColumn->type),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn),
 		enumNames(enumNames)
-{}
-
-
-
-QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 {
-	if (role == Qt::TextAlignmentRole) return alignment;
-	bool isBitColumn = contentColumn->type == bit;
-	if ((role != Qt::DisplayRole && !isBitColumn) || (isBitColumn && role != Qt::CheckStateRole))
-		return QVariant();
-	
+	assert(contentColumn);
+}
+
+
+
+QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
+{
 	assert(foreignKeyColumnSequence.first()->isForeignKey());
 	
 	int currentRowIndex = rowIndex;
@@ -132,20 +113,6 @@ QVariant ReferenceCompositeColumn::data(int rowIndex, int role) const
 	QVariant content = currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
 	content = replaceEnumIfApplicable(content, enumNames);
 	
-	if (role == Qt::CheckStateRole && isBitColumn) {
-		assert(content.canConvert<bool>());
-		return content.toBool() ? Qt::Checked : Qt::Unchecked;
-	}
-	
-	if (contentColumn->type == date) {
-		assert(content.canConvert<QDate>());
-		content = content.toDate().toString("dd.MM.yyyy");
-	}
-	if (contentColumn->type == time_) {
-		assert(content.canConvert<QTime>());
-		content = content.toTime().toString("HH:mm");
-	}
-	
 	return content;
 }
 
@@ -166,7 +133,7 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight),
+		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight, (op == List || enumNames) ? varchar : (op == Count ? integer : contentColumn->type)),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn),
@@ -177,11 +144,8 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, 
 
 
 
-QVariant FoldCompositeColumn::data(int rowIndex, int role) const
+QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 {
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
-	
 	QSet<int> currentRowIndexSet = { rowIndex };
 	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
 	
@@ -305,11 +269,12 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 
 
 DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix) :
-		CompositeColumn(table, uiName, Qt::AlignRight),
+		CompositeColumn(table, uiName, Qt::AlignRight, integer),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn),
 		suffix(suffix)
 {
+	assert(minuendColumn && subtrahendColumn);
 	assert(minuendColumn->table == subtrahendColumn->table);
 	assert(!minuendColumn->isKey() && !subtrahendColumn->isKey());
 	assert(minuendColumn->type == subtrahendColumn->type);
@@ -319,11 +284,8 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 
 
 
-QVariant DifferenceCompositeColumn::data(int rowIndex, int role) const
+QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 {
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
-	
 	QVariant minuendContent = minuendColumn->table->getBufferRow(rowIndex)->at(minuendColumn->getIndex());
 	QVariant subtrahendContent = subtrahendColumn->table->getBufferRow(rowIndex)->at(subtrahendColumn->getIndex());
 	
@@ -335,7 +297,8 @@ QVariant DifferenceCompositeColumn::data(int rowIndex, int role) const
 		int minuend = minuendContent.toInt();
 		int subtrahend = subtrahendContent.toInt();
 		
-		return minuend - subtrahend;
+		int difference = minuend - subtrahend;
+		return QString::number(difference) + suffix;
 	}
 	case date: {
 		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
@@ -363,11 +326,12 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(table, uiName, Qt::AlignLeft),
+		CompositeColumn(table, uiName, Qt::AlignLeft, varchar),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn),
 		enumNameLists(enumNameLists)
 {
+	assert(discerningEnumColumn && displayedEnumColumn);
 	assert(discerningEnumColumn->table == displayedEnumColumn->table);
 	assert(!discerningEnumColumn->isKey() && !displayedEnumColumn->isKey());
 	assert(discerningEnumColumn->type == integer && displayedEnumColumn->type == integer);
@@ -376,11 +340,8 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
 
 
 
-QVariant DependentEnumCompositeColumn::data(int rowIndex, int role) const
+QVariant DependentEnumCompositeColumn::getValueAt(int rowIndex) const
 {
-	if (role == Qt::TextAlignmentRole)	return alignment;
-	if (role != Qt::DisplayRole)		return QVariant();
-	
 	QVariant discerningContent = discerningEnumColumn->table->getBufferRow(rowIndex)->at(discerningEnumColumn->getIndex());
 	QVariant displayedContent = displayedEnumColumn->table->getBufferRow(rowIndex)->at(displayedEnumColumn->getIndex());
 	
