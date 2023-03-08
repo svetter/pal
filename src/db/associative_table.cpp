@@ -81,7 +81,7 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
 		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
-			filtered.insert((*iter)->at(otherColumn->getIndex()).toInt());
+			filtered.insert((*iter)->at(otherColumn->getIndex()));
 		}
 	}
 	return filtered;

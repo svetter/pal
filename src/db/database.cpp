@@ -213,9 +213,9 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	const QList<QVariant>* row = ascentsTable->getBufferRow(rowIndex);
 	assert(row->size() == ascentsTable->getNumberOfColumns());
 	
-	ValidItemID	ascentID			= row->at(ascentsTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	ascentID			= row->at(ascentsTable->primaryKeyColumn->getIndex());
 	QString		title				= row->at(ascentsTable->titleColumn->getIndex()).toString();
-	ItemID		peakID				= row->at(ascentsTable->peakIDColumn->getIndex()).toInt();
+	ItemID		peakID				= row->at(ascentsTable->peakIDColumn->getIndex());
 	QDate		date				= row->at(ascentsTable->dateColumn->getIndex()).toDate();
 	int			perDayIndex			= row->at(ascentsTable->peakOnDayColumn->getIndex()).toInt();
 	QTime		time				= row->at(ascentsTable->timeColumn->getIndex()).toTime();
@@ -224,7 +224,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	bool		traverse			= row->at(ascentsTable->traverseColumn->getIndex()).toBool();
 	int			difficultySystem	= row->at(ascentsTable->difficultySystemColumn->getIndex()).toInt();
 	int			difficultyGrade		= row->at(ascentsTable->difficultyGradeColumn->getIndex()).toInt();
-	ItemID		tripID				= row->at(ascentsTable->tripIDColumn->getIndex()).toInt();
+	ItemID		tripID				= row->at(ascentsTable->tripIDColumn->getIndex());
 	QString		description			= row->at(ascentsTable->descriptionColumn->getIndex()).toString();
 	
 	QSet<ValidItemID>	hikerIDs	= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
@@ -241,7 +241,7 @@ Peak* Database::getPeakAt(int rowIndex) const
 	const QList<QVariant>* row = peaksTable->getBufferRow(rowIndex);
 	assert(row->size() == peaksTable->getNumberOfColumns());
 	
-	ValidItemID	peakID		= row->at(peaksTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	peakID		= row->at(peaksTable->primaryKeyColumn->getIndex());
 	QString		name		= row->at(peaksTable->nameColumn->getIndex()).toString();
 	int			height		= row->at(peaksTable->heightColumn->getIndex()).toInt();
 	bool		volcano		= row->at(peaksTable->volcanoColumn->getIndex()).toBool();
@@ -261,7 +261,7 @@ Trip* Database::getTripAt(int rowIndex) const
 	const QList<QVariant>* row = tripsTable->getBufferRow(rowIndex);
 	assert(row->size() == tripsTable->getNumberOfColumns());
 	
-	ValidItemID	tripID		= row->at(tripsTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	tripID		= row->at(tripsTable->primaryKeyColumn->getIndex());
 	QString		name		= row->at(tripsTable->nameColumn->getIndex()).toString();
 	QDate		startDate	= row->at(tripsTable->startDateColumn->getIndex()).toDate();
 	QDate		endDate		= row->at(tripsTable->endDateColumn->getIndex()).toDate();
@@ -278,7 +278,7 @@ Hiker* Database::getHikerAt(int rowIndex) const
 	const QList<QVariant>* row = hikersTable->getBufferRow(rowIndex);
 	assert(row->size() == hikersTable->getNumberOfColumns());
 	
-	ValidItemID	hikerID	= row->at(hikersTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	hikerID	= row->at(hikersTable->primaryKeyColumn->getIndex());
 	QString		name	= row->at(hikersTable->nameColumn->getIndex()).toString();
 	
 //	setStatusBarMessage(QString("Successfully retrieved hiker with hikerID=%1").arg(hikerID.get()));
@@ -292,7 +292,7 @@ Region* Database::getRegionAt(int rowIndex) const
 	const QList<QVariant>* row = regionsTable->getBufferRow(rowIndex);
 	assert(row->size() == regionsTable->getNumberOfColumns());
 	
-	ValidItemID	regionID	= row->at(regionsTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	regionID	= row->at(regionsTable->primaryKeyColumn->getIndex());
 	QString		name		= row->at(regionsTable->nameColumn->getIndex()).toString();
 	int			rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
 	int			countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
@@ -308,7 +308,7 @@ Range* Database::getRangeAt(int rowIndex) const
 	const QList<QVariant>* row = rangesTable->getBufferRow(rowIndex);
 	assert(row->size() == rangesTable->getNumberOfColumns());
 	
-	ValidItemID	rangeID		= row->at(rangesTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	rangeID		= row->at(rangesTable->primaryKeyColumn->getIndex());
 	QString		name		= row->at(rangesTable->nameColumn->getIndex()).toString();
 	int			continent	= row->at(rangesTable->continentColumn->getIndex()).toInt();
 	
@@ -323,7 +323,7 @@ Country* Database::getCountryAt(int rowIndex) const
 	const QList<QVariant>* row = countriesTable->getBufferRow(rowIndex);
 	assert(row->size() == countriesTable->getNumberOfColumns());
 	
-	ValidItemID	countryID	= row->at(countriesTable->primaryKeyColumn->getIndex()).toInt();
+	ValidItemID	countryID	= row->at(countriesTable->primaryKeyColumn->getIndex());
 	QString		name		= row->at(countriesTable->nameColumn->getIndex()).toString();
 	
 //	setStatusBarMessage(QString("Successfully retrieved country with countryID=%1").arg(countryID.get()));
@@ -410,7 +410,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 					primaryKeyColumn = table->primaryKeyColumn;
 					
 					for (int rowIndex : rowIndices) {
-						ValidItemID primaryKey = table->getBufferRow(rowIndex)->at(primaryKeyColumn->getIndex()).toInt();
+						ValidItemID primaryKey = table->getBufferRow(rowIndex)->at(primaryKeyColumn->getIndex());
 						// Remove single instance of reference to the key about to be removed
 						candidateTable->updateCell(parent, primaryKey, column, ItemID().asQVariant());
 					}

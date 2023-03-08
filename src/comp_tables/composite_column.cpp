@@ -94,7 +94,7 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 		assert(currentColumn->isForeignKey());
 		
 		// Look up key stored in current column at current row index
-		ItemID key = currentTable->getBufferRow(currentRowIndex)->at(currentColumn->getIndex()).toInt();
+		ItemID key = currentTable->getBufferRow(currentRowIndex)->at(currentColumn->getIndex());
 		
 		if (key.isNull()) return QVariant();
 		
@@ -161,7 +161,7 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (int rowIndex : currentRowIndexSet) {
-			ItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex()).toInt();
+			ItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex());
 			if (key.isValid()) currentKeySet.insert(key.forceValid());
 		}
 		

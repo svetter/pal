@@ -17,6 +17,7 @@ class ItemID {
 	
 public:
 	ItemID(int id);
+	ItemID(QVariant id);
 	ItemID();
 	
 	bool isValid() const;
@@ -33,6 +34,7 @@ public:
 class ValidItemID : public ItemID {
 public:
 	ValidItemID(int id);
+	ValidItemID(QVariant id);
 };
 
 

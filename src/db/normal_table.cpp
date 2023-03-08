@@ -30,7 +30,7 @@ int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 
 ValidItemID NormalTable::getPrimaryKeyAt(int bufferRowIndex) const
 {
-	return buffer.at(bufferRowIndex)->at(primaryKeyColumn->getIndex()).toInt();
+	return buffer.at(bufferRowIndex)->at(primaryKeyColumn->getIndex());
 }
 
 

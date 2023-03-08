@@ -12,6 +12,11 @@ const int ItemID::LOWEST_LEGAL_ID = 1;
 ItemID::ItemID(int id) : valid(id >= LOWEST_LEGAL_ID), id(id)
 {}
 
+ItemID::ItemID(QVariant id) : valid(id.toInt() >= LOWEST_LEGAL_ID), id(id.toInt())
+{
+	assert(id.typeId() == QMetaType::Int);
+}
+
 ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
 {}
 
@@ -53,6 +58,11 @@ ValidItemID ItemID::forceValid() const
 
 
 ValidItemID::ValidItemID(int id) : ItemID(id)
+{
+	assert(isValid());
+}
+
+ValidItemID::ValidItemID(QVariant id) : ItemID(id)
 {
 	assert(isValid());
 }

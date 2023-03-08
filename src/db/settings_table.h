@@ -31,7 +31,7 @@ public:
 	template<typename T>
 	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value)
 	{
-		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex()).toInt();
+		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex());
 		updateCellInNormalTable(parent, primaryKey, setting, value);
 	}
 };
