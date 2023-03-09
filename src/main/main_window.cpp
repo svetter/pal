@@ -753,7 +753,12 @@ void MainWindow::saveColumnWidths(QTableView* view, const CompositeTable* table,
 {
 	QStringList columnWidths;
 	for (int i = 0; i < table->columnCount(); i++) {
-		columnWidths.append(QString::number(view->columnWidth(i)));
+		int currentColumnWidth = view->columnWidth(i);
+		if (currentColumnWidth == 0) {
+			qDebug() << "Couldn't read column width for column" << i << "in table" << table->name << "- skipping table";
+			return;
+		}
+		columnWidths.append(QString::number(currentColumnWidth));
 	}
 	columnWidthsSetting->set(columnWidths);
 }
