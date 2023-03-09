@@ -213,6 +213,7 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	// Announce row insertion
 	int newItemBufferRowIndex = buffer.size();
 	beginInsertRows(getNormalRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
+	beginInsertRows(getNullableRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
 	if (rowChangeListener) rowChangeListener->beginInsertRow(newItemBufferRowIndex);
 	
 	// Add data to SQL database
@@ -250,9 +251,11 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	buffer.at(bufferRowIndex)->replace(column->getIndex(), data);
 	
 	// Announce changed data
-	QModelIndex updateIndex = index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
+	QModelIndex updateIndexNormal	= index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
+	QModelIndex updateIndexNullable	= index(bufferRowIndex, column->getIndex(), getNullableRootModelIndex());
 	const QList<int> updatedDatumRoles = { column->type == bit ? Qt::CheckStateRole : Qt::DisplayRole };
-	Q_EMIT dataChanged(updateIndex, updateIndex, updatedDatumRoles);
+	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
+	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them
 	QSet<const CompositeColumn*> changeListeners = column->getChangeListeners();
 	for (const CompositeColumn* changeListener : changeListeners) {

@@ -31,10 +31,7 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStrin
 void CompositeColumn::announceChangedData() const
 {
 	int thisColumnIndex = table->getIndexOf(this);
-	int lastRowIndex = table->rowCount() - 1;
-	QModelIndex topLeftIndex		= table->index(0, thisColumnIndex);
-	QModelIndex bottomRightIndex	= table->index(lastRowIndex, thisColumnIndex);
-	Q_EMIT table->dataChanged(topLeftIndex, bottomRightIndex);
+	table->announceChangesUnderColumn(thisColumnIndex);
 }
 
 

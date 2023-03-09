@@ -70,6 +70,8 @@ void CompositeTable::resetBuffer()
 
 void CompositeTable::beginInsertRow(int bufferRowIndex)
 {
+	assert(rowBeingInserted < 0);
+	
 	beginInsertRows(QModelIndex(), bufferRowIndex, bufferRowIndex);
 	
 	rowBeingInserted = bufferRowIndex;
@@ -78,6 +80,7 @@ void CompositeTable::beginInsertRow(int bufferRowIndex)
 void CompositeTable::endInsertRow()
 {
 	assert(rowBeingInserted >= 0);
+	
 	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 		newRow->append(computeCellContent(rowBeingInserted, columnIndex));
@@ -100,6 +103,21 @@ void CompositeTable::beginRemoveRow(int bufferRowIndex)
 void CompositeTable::endRemoveRow()
 {
 	endRemoveRows();
+}
+
+void CompositeTable::announceChangesUnderColumn(int columnIndex)
+{
+	// Update buffer
+	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
+		QList<QVariant>* bufferRow = buffer.at(rowIndex);
+		bufferRow->replace(columnIndex, computeCellContent(rowIndex, columnIndex));
+	}
+	
+	// Notify model users (views)
+	int lastRowIndex = buffer.size() - 1;
+	QModelIndex topLeftIndex		= index(0, columnIndex);
+	QModelIndex bottomRightIndex	= index(lastRowIndex, columnIndex);
+	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 }
 
 

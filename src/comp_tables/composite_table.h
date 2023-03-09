@@ -39,6 +39,7 @@ public:
 	void endInsertRow();
 	void beginRemoveRow(int bufferRowIndex);
 	void endRemoveRow();
+	void announceChangesUnderColumn(int columnIndex);
 	
 	// QAbstractTableModel implementation
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
