@@ -20,7 +20,10 @@ public:
 	
 protected:
 	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType);
+public:
+	virtual ~CompositeColumn();
 	
+protected:
 	static QVariant replaceEnumIfApplicable(QVariant content, const QStringList* enumNames);
 	
 public:

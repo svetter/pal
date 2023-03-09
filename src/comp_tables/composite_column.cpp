@@ -13,6 +13,9 @@ CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::Alig
 		contentType(contentType)
 {}
 
+CompositeColumn::~CompositeColumn()
+{}
+
 
 
 QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStringList* enumNames)
