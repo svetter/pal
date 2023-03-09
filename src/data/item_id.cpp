@@ -12,10 +12,8 @@ const int ItemID::LOWEST_LEGAL_ID = 1;
 ItemID::ItemID(int id) : valid(id >= LOWEST_LEGAL_ID), id(id)
 {}
 
-ItemID::ItemID(QVariant id) : valid(id.toInt() >= LOWEST_LEGAL_ID), id(id.toInt())
-{
-	assert(id.canConvert<int>());
-}
+ItemID::ItemID(QVariant id) : valid(id.isValid() && id.canConvert<int>() && id.toInt() >= LOWEST_LEGAL_ID), id(id.toInt())
+{}
 
 ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
 {}
