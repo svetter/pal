@@ -40,6 +40,7 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	CompositeRegionsTable	compRegions;
 	CompositeRangesTable	compRanges;
 	CompositeCountriesTable	compCountries;
+	QList<CompositeTable*>	compTables;
 	
 public:
 	MainWindow();
@@ -52,6 +53,7 @@ private:
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
 	void clearRecentFilesMenu();
+	void initCompositeBuffers();
 	void setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
 	void setupDebugTableView(QTableView* view, Table* table);
 	void setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);

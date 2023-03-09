@@ -15,6 +15,7 @@
 
 #include <QList>
 #include <QFileDialog>
+#include <QProgressDialog>
 
 
 
@@ -30,7 +31,8 @@ MainWindow::MainWindow() :
 		compHikers		(CompositeHikersTable		(&db)),
 		compRegions		(CompositeRegionsTable		(&db)),
 		compRanges		(CompositeRangesTable		(&db)),
-		compCountries	(CompositeCountriesTable	(&db))
+		compCountries	(CompositeCountriesTable	(&db)),
+		compTables({ &compAscents, &compPeaks, &compTrips, &compHikers, &compRegions, &compRanges, &compCountries })
 {
 	setupUi(this);
 	setUIEnabled(false);
@@ -104,10 +106,10 @@ MainWindow::MainWindow() :
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
 	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
 		db.openExisting(this, lastOpen);
+		initCompositeBuffers();
 		updateAscentCounter();
 		setUIEnabled(true);
 	}
-	
 	
 	setupTableView(ascentsTableView,	&compAscents,	&Settings::mainWindow_columnWidths_ascentsTable);
 	setupTableView(peaksTableView,		&compPeaks,		&Settings::mainWindow_columnWidths_peaksTable);
@@ -207,10 +209,27 @@ void MainWindow::clearRecentFilesMenu()
 }
 
 
+void MainWindow::initCompositeBuffers()
+{
+	QProgressDialog progress(tr("Preparing tables..."), QString(), 0, 0, this);
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setCancelButton(nullptr);
+	progress.setMinimumDuration(100);
+	
+	int numCells = 0;
+	for (CompositeTable* compTable : compTables) {
+		numCells += compTable->getBaseTable()->getNumberOfRows() * compTable->columnCount();
+	}
+	progress.setMaximum(numCells);
+	progress.setValue(0);
+	
+	for (CompositeTable* compTable : compTables) {
+		compTable->initBuffer(&progress);
+	}
+}
+
 void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
-	table->initBuffer();
-	
 	// Set model
 	view->setModel(table);
 	
@@ -598,6 +617,7 @@ void MainWindow::handle_openDatabase()
 	
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
+	initCompositeBuffers();
 	updateAscentCounter();
 	setUIEnabled(true);
 	
@@ -613,6 +633,7 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
+	initCompositeBuffers();
 	updateAscentCounter();
 	setUIEnabled(true);
 	
@@ -644,6 +665,9 @@ void MainWindow::handle_closeDatabase()
 {
 	setUIEnabled(false);
 	db.reset();
+	for (CompositeTable* compTable : compTables) {
+		compTable->resetBuffer();
+	}
 	updateAscentCounter();
 }
 

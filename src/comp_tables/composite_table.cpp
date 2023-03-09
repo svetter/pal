@@ -38,9 +38,14 @@ int CompositeTable::getIndexOf(const CompositeColumn* column) const
 	return columns.indexOf(column);
 }
 
+const NormalTable* CompositeTable::getBaseTable() const
+{
+	return baseTable;
+}
 
 
-void CompositeTable::initBuffer()
+
+void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 {
 	assert(buffer.isEmpty());
 	
@@ -51,6 +56,8 @@ void CompositeTable::initBuffer()
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 			newRow->append(computeCellContent(rowIndex, columnIndex));
+			
+			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
 		buffer.append(newRow);
 	}

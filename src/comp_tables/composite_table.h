@@ -5,6 +5,7 @@
 #include "src/db/database.h"
 
 #include <QAbstractTableModel>
+#include <QProgressDialog>
 
 
 
@@ -29,8 +30,9 @@ protected:
 	void addColumn(const CompositeColumn* column);
 public:
 	int getIndexOf(const CompositeColumn* column) const;
+	const NormalTable* getBaseTable() const;
 	
-	void initBuffer();
+	void initBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();
 	
 public:
