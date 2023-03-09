@@ -134,8 +134,7 @@ QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVaria
 	
 	QList<int> result = QList<int>();
 	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
-		const QList<QVariant>* bufferRow = getBufferRow(rowIndex);
-		if (bufferRow->at(column->getIndex()) == content) {
+		if (column->getValueAt(rowIndex) == content) {
 			result.append(rowIndex);
 		}
 	}
@@ -149,10 +148,9 @@ int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColum
 	assert(primaryKeys.size() == numPrimaryKeys);
 	
 	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
-		const QList<QVariant>* row = getBufferRow(rowIndex);
 		bool match = true;
 		for (int i = 0; i < numPrimaryKeys; i++) {
-			if (row->at(primaryKeyColumns.at(i)->getIndex()) != primaryKeys.at(i).get()) {
+			if (primaryKeyColumns.at(i)->getValueAt(rowIndex) != primaryKeys.at(i).get()) {
 				match = false;
 				break;
 			}

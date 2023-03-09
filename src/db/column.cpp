@@ -54,6 +54,13 @@ int Column::getIndex() const
 
 
 
+QVariant Column::getValueAt(int bufferRowIndex) const
+{
+	return table->getBufferRow(bufferRowIndex)->at(getIndex());
+}
+
+
+
 QString Column::getSqlSpecificationString() const
 {
 	QString typeString;

@@ -25,13 +25,13 @@ public:
 	template<typename T>
 	inline T readSetting(const ProjectSetting<T>* setting)
 	{
-		return getBufferRow(0)->at(setting->getIndex());
+		return setting->getValueAt(0);
 	}
 	
 	template<typename T>
 	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value)
 	{
-		ValidItemID primaryKey = getBufferRow(0)->at(primaryKeyColumn->getIndex());
+		ValidItemID primaryKey = primaryKeyColumn->getValueAt(0);
 		updateCellInNormalTable(parent, primaryKey, setting, value);
 	}
 };

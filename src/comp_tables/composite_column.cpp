@@ -50,7 +50,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 
 QVariant DirectCompositeColumn::getValueAt(int rowIndex) const
 {
-	QVariant content = contentColumn->table->getBufferRow(rowIndex)->at(contentColumn->getIndex());
+	QVariant content = contentColumn->getValueAt(rowIndex);
 	content = replaceEnumIfApplicable(content, enumNames);
 	
 	return content;
@@ -91,7 +91,7 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 		assert(currentColumn->isForeignKey());
 		
 		// Look up key stored in current column at current row index
-		ItemID key = currentTable->getBufferRow(currentRowIndex)->at(currentColumn->getIndex());
+		ItemID key = currentColumn->getValueAt(currentRowIndex);
 		
 		if (key.isNull()) return QVariant();
 		
@@ -107,7 +107,7 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 	
 	// Finally, look up content column at last row index
 	assert(contentColumn->table == currentTable);
-	QVariant content = currentTable->getBufferRow(currentRowIndex)->at(contentColumn->getIndex());
+	QVariant content = contentColumn->getValueAt(currentRowIndex);
 	content = replaceEnumIfApplicable(content, enumNames);
 	
 	return content;
@@ -158,7 +158,7 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (int rowIndex : currentRowIndexSet) {
-			ItemID key = currentTable->getBufferRow(rowIndex)->at(firstColumn->getIndex());
+			ItemID key = firstColumn->getValueAt(rowIndex);
 			if (key.isValid()) currentKeySet.insert(key.forceValid());
 		}
 		
@@ -206,13 +206,12 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 	
 	assert(currentTable == contentColumn->table);
 	assert(!currentTable->isAssociative);
-	NormalTable* contentTable = (NormalTable*) currentTable;
 	
 	int aggregate = 0;
 	QString listString = "";
 	
 	for (int rowIndex : currentRowIndexSet) {
-		QVariant content = contentTable->getBufferRow(rowIndex)->at(contentColumn->getIndex());
+		QVariant content = contentColumn->getValueAt(rowIndex);
 		
 		switch (op) {
 		case List:
@@ -283,8 +282,8 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 
 QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 {
-	QVariant minuendContent = minuendColumn->table->getBufferRow(rowIndex)->at(minuendColumn->getIndex());
-	QVariant subtrahendContent = subtrahendColumn->table->getBufferRow(rowIndex)->at(subtrahendColumn->getIndex());
+	QVariant minuendContent = minuendColumn->getValueAt(rowIndex);
+	QVariant subtrahendContent = subtrahendColumn->getValueAt(rowIndex);
 	
 	if (!minuendContent.isValid() || !subtrahendContent.isValid()) return QVariant();
 	
@@ -339,8 +338,8 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
 
 QVariant DependentEnumCompositeColumn::getValueAt(int rowIndex) const
 {
-	QVariant discerningContent = discerningEnumColumn->table->getBufferRow(rowIndex)->at(discerningEnumColumn->getIndex());
-	QVariant displayedContent = displayedEnumColumn->table->getBufferRow(rowIndex)->at(displayedEnumColumn->getIndex());
+	QVariant discerningContent = discerningEnumColumn->getValueAt(rowIndex);
+	QVariant displayedContent = displayedEnumColumn->getValueAt(rowIndex);
 	
 	assert(discerningContent.canConvert<int>() && displayedContent.canConvert<int>());
 	int discerning = discerningContent.toInt();

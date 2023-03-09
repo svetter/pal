@@ -35,6 +35,8 @@ public:
 	Column*	getReferencedForeignColumn() const;
 	int		getIndex() const;
 	
+	QVariant getValueAt(int bufferRowIndex) const;
+	
 	QString getSqlSpecificationString() const;
 	
 	void registerChangeListener(const CompositeColumn* compositeColumn);

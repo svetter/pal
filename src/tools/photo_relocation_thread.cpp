@@ -24,8 +24,7 @@ void PhotoRelocationThread::run()
 	for (int i = 0; i < workloadSize; i++) {
 		if (abortWasCalled) break;
 		
-		const QList<QVariant>* bufferRow = db->photosTable->getBufferRow(i);
-		QString currentPath = bufferRow->at(db->photosTable->filepathColumn->getIndex()).toString();
+		QString currentPath = db->photosTable->filepathColumn->getValueAt(i).toString();
 		
 		if (currentPath.startsWith(oldPrefix)) {
 			QString newPath = currentPath.replace(0, oldPrefix.size(), newPrefix);

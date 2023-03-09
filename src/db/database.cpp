@@ -410,7 +410,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 					primaryKeyColumn = table->primaryKeyColumn;
 					
 					for (int rowIndex : rowIndices) {
-						ValidItemID primaryKey = table->getBufferRow(rowIndex)->at(primaryKeyColumn->getIndex());
+						ValidItemID primaryKey = primaryKeyColumn->getValueAt(rowIndex);
 						// Remove single instance of reference to the key about to be removed
 						candidateTable->updateCell(parent, primaryKey, column, ItemID().asQVariant());
 					}
