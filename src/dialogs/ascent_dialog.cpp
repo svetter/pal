@@ -194,10 +194,10 @@ Ascent* AscentDialog::extractData()
 	int					perDayIndex			= parseSpinner			(peakIndexSpinner);
 	QTime				time				= parseTimeWidget		(timeWidget);
 	int					elevationGain		= parseSpinner			(elevationGainSpinner);
-	int					hikeKind			= parseEnumCombo		(hikeKindCombo, false);
+	int					hikeKind			= parseEnumCombo		(hikeKindCombo);
 	bool				traverse			= parseCheckbox			(traverseCheckbox);
-	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
-	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
+	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo);
+	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo);
 	ItemID				tripID				= parseIDCombo			(tripCombo);
 	QString				description			= parsePlainTextEdit	(descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
@@ -207,8 +207,8 @@ Ascent* AscentDialog::extractData()
 	if (!timeCheckbox->isChecked())				time = QTime();
 	if (!elevationGainCheckbox->isChecked())	elevationGain = -1;
 	if (difficultySystem < 1 || difficultyGrade < 1) {
-		difficultySystem	= -1;
-		difficultyGrade		= -1;
+		difficultySystem	= 0;
+		difficultyGrade		= 0;
 	}
 	
 	Ascent* ascent = new Ascent(ItemID(), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);

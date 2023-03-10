@@ -69,7 +69,7 @@ void RangeDialog::insertInitData()
 Range* RangeDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
-	int		continent	= parseEnumCombo	(continentCombo, true);
+	int		continent	= parseEnumCombo	(continentCombo);
 	
 	Range* range = new Range(ItemID(), name, continent);
 	return range;

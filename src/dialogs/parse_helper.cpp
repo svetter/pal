@@ -33,13 +33,9 @@ ItemID parseIDCombo(const QComboBox* combo)
 	return ItemID(primaryKey);
 }
 
-int parseEnumCombo(const QComboBox* combo, bool firstItemIsPlaceholder)
+int parseEnumCombo(const QComboBox* combo)
 {
-	int result = combo->currentIndex();
-	if (result == 0 && firstItemIsPlaceholder) {
-		result = -1;
-	}
-	return result;
+	return combo->currentIndex();
 }
 
 bool parseCheckbox(const QCheckBox* checkbox)
