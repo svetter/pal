@@ -211,19 +211,23 @@ void MainWindow::clearRecentFilesMenu()
 
 void MainWindow::initCompositeBuffers()
 {
-	QProgressDialog progress(tr("Preparing tables..."), QString(), 0, 0, this);
+	QProgressDialog progress(this);
 	progress.setWindowModality(Qt::WindowModal);
+	progress.setMinimumWidth(250);
 	progress.setCancelButton(nullptr);
-	progress.setMinimumDuration(100);
+	progress.setMinimumDuration(250);
+	progress.setLabel(new QLabel(tr("Preparing tables..."), &progress));
 	
 	int numCells = 0;
 	for (CompositeTable* compTable : compTables) {
 		numCells += compTable->getBaseTable()->getNumberOfRows() * compTable->columnCount();
 	}
+	progress.setMinimum(0);
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
 	for (CompositeTable* compTable : compTables) {
+		progress.setLabelText(tr("Preparing table %1...").arg(compTable->getBaseTable()->uiName));
 		compTable->initBuffer(&progress);
 	}
 }
