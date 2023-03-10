@@ -212,6 +212,7 @@ void MainWindow::clearRecentFilesMenu()
 void MainWindow::initCompositeBuffers()
 {
 	QProgressDialog progress(this);
+	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
 	progress.setWindowModality(Qt::WindowModal);
 	progress.setMinimumWidth(250);
 	progress.setCancelButton(nullptr);
