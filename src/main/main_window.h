@@ -65,34 +65,15 @@ private slots:
 	void handle_duplicateAndEditSelectedItem();
 	void handle_deleteSelectedItem();
 	
-	void handle_newAscent();
-	void handle_newPeak();
-	void handle_newTrip();
-	void handle_newHiker();
-	void handle_newRegion();
-	void handle_newRange();
-	void handle_newCountry();
+private:
+	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* tableView);
+	void handle_duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, int viewRowIndex);
+	void handle_editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index);
+	void handle_deleteItem(void (*openDeleteItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, int viewRowIndex);
+	void updateSelectionAfterUserAction(QTableView* tableView, CompositeTable* compTable, int viewRowIndex);
 	
+private slots:
 	void handle_openAscent	(const QModelIndex& index);
-	
-	void handle_editAscent	(const QModelIndex& index);
-	void handle_editPeak	(const QModelIndex& index);
-	void handle_editTrip	(const QModelIndex& index);
-	void handle_editHiker	(const QModelIndex& index);
-	void handle_editRegion	(const QModelIndex& index);
-	void handle_editRange	(const QModelIndex& index);
-	void handle_editCountry	(const QModelIndex& index);
-	
-	void handle_duplicateAndEditAscent	(int viewRowIndex);
-	void handle_duplicateAndEditPeak	(int viewRowIndex);
-	
-	void handle_deleteAscent	(int viewRowIndex);
-	void handle_deletePeak		(int viewRowIndex);
-	void handle_deleteTrip		(int viewRowIndex);
-	void handle_deleteHiker		(int viewRowIndex);
-	void handle_deleteRegion	(int viewRowIndex);
-	void handle_deleteRange		(int viewRowIndex);
-	void handle_deleteCountry	(int viewRowIndex);
 	
 	void handle_rightClick(QPoint pos);
 	
@@ -112,12 +93,42 @@ private slots:
 	
 private:
 	void closeEvent(QCloseEvent* event) override;
-	void saveImplicitSettings() const;
+	void saveImplicitSettings() const;	
+	void saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const;
 	void addToRecentFilesList(const QString& filepath);
 	
 	QTableView* getCurrentTableView() const;
-	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* view);
-	void saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const;
+	
+	
+	
+	
+private slots:
+	void handle_newAscent();
+	void handle_newPeak();
+	void handle_newTrip();
+	void handle_newHiker();
+	void handle_newRegion();
+	void handle_newRange();
+	void handle_newCountry();
+	
+	void handle_duplicateAndEditAscent	(int viewRowIndex);
+	void handle_duplicateAndEditPeak	(int viewRowIndex);
+	
+	void handle_editAscent	(const QModelIndex& index);
+	void handle_editPeak	(const QModelIndex& index);
+	void handle_editTrip	(const QModelIndex& index);
+	void handle_editHiker	(const QModelIndex& index);
+	void handle_editRegion	(const QModelIndex& index);
+	void handle_editRange	(const QModelIndex& index);
+	void handle_editCountry	(const QModelIndex& index);
+	
+	void handle_deleteAscent	(int viewRowIndex);
+	void handle_deletePeak		(int viewRowIndex);
+	void handle_deleteTrip		(int viewRowIndex);
+	void handle_deleteHiker		(int viewRowIndex);
+	void handle_deleteRegion	(int viewRowIndex);
+	void handle_deleteRange		(int viewRowIndex);
+	void handle_deleteCountry	(int viewRowIndex);
 };
 
 

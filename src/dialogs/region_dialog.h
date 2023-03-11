@@ -38,9 +38,9 @@ private:
 
 
 
-int openNewRegionDialogAndStore(QWidget* parent, Database* db);
-void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* originalRegion);
-void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* ascent);
+int openNewRegionDialogAndStore			(QWidget* parent, Database* db);
+void openEditRegionDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
+void openDeleteRegionDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
 
 
 

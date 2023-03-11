@@ -35,9 +35,9 @@ private:
 
 
 
-int openNewHikerDialogAndStore(QWidget* parent, Database* db);
-void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker);
-void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* ascent);
+int openNewHikerDialogAndStore		(QWidget* parent, Database* db);
+void openEditHikerDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
+void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex);
 
 
 

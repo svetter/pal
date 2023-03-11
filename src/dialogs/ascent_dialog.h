@@ -57,10 +57,10 @@ private:
 
 
 
-int openNewAscentDialogAndStore(QWidget* parent, Database* db);
-int openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom);
-void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent);
-void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent);
+int openNewAscentDialogAndStore			(QWidget* parent, Database* db);
+int openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
+void openEditAscentDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
+void openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
 
 
 

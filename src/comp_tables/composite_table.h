@@ -45,6 +45,7 @@ public:
 	void insertRowAndAnnounce(int bufferRowIndex);
 	void removeRowAndAnnounce(int bufferRowIndex);
 	void announceChangesUnderColumn(int columnIndex);
+	int updateSortingAfterItemEdit(int viewRowIndex);
 	
 	// QAbstractTableModel implementation
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;

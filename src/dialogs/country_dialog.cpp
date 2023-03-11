@@ -104,14 +104,18 @@ int openNewCountryDialogAndStore(QWidget* parent, Database* db)
 	return openCountryDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditCountryDialogAndStore(QWidget* parent, Database* db, Country* originalCountry)
+void openEditCountryDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Country* originalCountry = db->getCountryAt(bufferRowIndex);
 	openCountryDialogAndStore(parent, db, editItem, originalCountry);
 }
 
-void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* country)
+void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, country->countryID.forceValid());
+	Country* country = db->getCountryAt(bufferRowIndex);
+	ValidItemID countryID = country->countryID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, countryID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = CountryDialog::tr("Delete country");
@@ -119,7 +123,7 @@ void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* c
 		if (!proceed) return;
 	}
 	
-	db->removeRow(parent, db->countriesTable, country->countryID.forceValid());
+	db->removeRow(parent, db->countriesTable, countryID);
 }
 
 

@@ -38,10 +38,10 @@ private:
 
 
 
-int openNewPeakDialogAndStore(QWidget* parent, Database* db);
-int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom);
-void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak);
-void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* ascent);
+int openNewPeakDialogAndStore		(QWidget* parent, Database* db);
+int openDuplicatePeakDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
+void openEditPeakDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
+void openDeletePeakDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
 
 
 

@@ -157,14 +157,18 @@ int openNewTripDialogAndStore(QWidget* parent, Database* db)
 	return openTripDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditTripDialogAndStore(QWidget* parent, Database* db, Trip* originalTrip)
+void openEditTripDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Trip* originalTrip = db->getTripAt(bufferRowIndex);
 	openTripDialogAndStore(parent, db, editItem, originalTrip);
 }
 
-void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
+void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, trip->tripID.forceValid());
+	Trip* trip = db->getTripAt(bufferRowIndex);
+	ValidItemID tripID = trip->tripID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, tripID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = TripDialog::tr("Delete trip");
@@ -172,7 +176,7 @@ void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, Trip* trip)
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->tripsTable, trip->tripID.forceValid());
+	db->removeRow(parent, db->tripsTable, tripID);
 }
 
 

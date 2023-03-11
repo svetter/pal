@@ -35,9 +35,9 @@ private:
 
 
 
-int openNewRangeDialogAndStore(QWidget* parent, Database* db);
-void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalRange);
-void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* ascent);
+int openNewRangeDialogAndStore		(QWidget* parent, Database* db);
+void openEditRangeDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
+void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex);
 
 
 

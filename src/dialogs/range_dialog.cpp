@@ -116,14 +116,18 @@ int openNewRangeDialogAndStore(QWidget* parent, Database* db)
 	return openRangeDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditRangeDialogAndStore(QWidget* parent, Database* db, Range* originalRange)
+void openEditRangeDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Range* originalRange = db->getRangeAt(bufferRowIndex);
 	openRangeDialogAndStore(parent, db, editItem, originalRange);
 }
 
-void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range)
+void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, range->rangeID.forceValid());
+	Range* range = db->getRangeAt(bufferRowIndex);
+	ValidItemID rangeID = range->rangeID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, rangeID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = RangeDialog::tr("Delete mountain range");
@@ -131,7 +135,7 @@ void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, Range* range
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->rangesTable, range->rangeID.forceValid());
+	db->removeRow(parent, db->rangesTable, rangeID);
 }
 
 

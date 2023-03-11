@@ -152,14 +152,18 @@ int openNewRegionDialogAndStore(QWidget* parent, Database* db)
 	return openRegionDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditRegionDialogAndStore(QWidget* parent, Database* db, Region* originalRegion)
+void openEditRegionDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Region* originalRegion = db->getRegionAt(bufferRowIndex);
 	openRegionDialogAndStore(parent, db, editItem, originalRegion);
 }
 
-void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* region)
+void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, region->regionID.forceValid());
+	Region* region = db->getRegionAt(bufferRowIndex);
+	ValidItemID regionID = region->regionID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, regionID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = RegionDialog::tr("Delete region");
@@ -167,7 +171,7 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, Region* reg
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->regionsTable, region->regionID.forceValid());
+	db->removeRow(parent, db->regionsTable, regionID);
 }
 
 

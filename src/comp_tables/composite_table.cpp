@@ -150,6 +150,22 @@ void CompositeTable::announceChangesUnderColumn(int columnIndex)
 	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 }
 
+int CompositeTable::updateSortingAfterItemEdit(int viewRowIndex)
+{
+	int bufferRowIndex = bufferOrder.at(viewRowIndex);
+	
+	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
+	bufferOrder.removeAt(viewRowIndex);
+	endRemoveRows();
+	
+	int newViewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
+	beginInsertRows(QModelIndex(), newViewRowIndex, newViewRowIndex);
+	bufferOrder.insert(newViewRowIndex, bufferRowIndex);
+	endInsertRows();
+	
+	return newViewRowIndex;
+}
+
 
 
 int CompositeTable::rowCount(const QModelIndex& parent) const

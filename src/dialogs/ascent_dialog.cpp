@@ -399,19 +399,23 @@ int openNewAscentDialogAndStore(QWidget* parent, Database* db)
 	return openAscentDialogAndStore(parent, db, newItem, nullptr);
 }
 
-int openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, Ascent* copyFrom)
+int openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	return openAscentDialogAndStore(parent, db, duplicateItem, copyFrom);
+	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
+	return openAscentDialogAndStore(parent, db, duplicateItem, originalAscent);
 }
 
-void openEditAscentDialogAndStore(QWidget* parent, Database* db, Ascent* originalAscent)
+void openEditAscentDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
 	openAscentDialogAndStore(parent, db, editItem, originalAscent);
 }
 
-void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, Ascent* ascent)
+void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Ascent* ascent = db->getAscentAt(bufferRowIndex);
 	ValidItemID ascentID = ascent->ascentID.forceValid();
+	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascentID);
 	
 	if (Settings::confirmDelete.get()) {

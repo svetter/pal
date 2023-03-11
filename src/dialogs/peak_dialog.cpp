@@ -169,19 +169,24 @@ int openNewPeakDialogAndStore(QWidget* parent, Database* db)
 	return openPeakDialogAndStore(parent, db, newItem, nullptr);
 }
 
-int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, Peak* copyFrom)
+int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	return openPeakDialogAndStore(parent, db, duplicateItem, copyFrom);
+	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
+	return openPeakDialogAndStore(parent, db, duplicateItem, originalPeak);
 }
 
-void openEditPeakDialogAndStore(QWidget* parent, Database* db, Peak* originalPeak)
+void openEditPeakDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
 	openPeakDialogAndStore(parent, db, editItem, originalPeak);
 }
 
-void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
+void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peak->peakID.forceValid());
+	Peak* peak = db->getPeakAt(bufferRowIndex);
+	ValidItemID peakID = peak->peakID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peakID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = PeakDialog::tr("Delete peak");
@@ -189,7 +194,7 @@ void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, Peak* peak)
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->peaksTable, peak->peakID.forceValid());
+	db->removeRow(parent, db->peaksTable, peakID);
 }
 
 

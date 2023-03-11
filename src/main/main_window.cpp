@@ -349,21 +349,13 @@ void MainWindow::handle_editSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	if (currentTableView == ascentsTableView)	{ handle_editAscent		(selectedIndex);	return; }
-	if (currentTableView == peaksTableView)		{ handle_editPeak		(selectedIndex);	return; }
-	if (currentTableView == tripsTableView)		{ handle_editTrip		(selectedIndex);	return; }
-	if (currentTableView == hikersTableView)	{ handle_editHiker		(selectedIndex);	return; }
-	if (currentTableView == regionsTableView)	{ handle_editRegion		(selectedIndex);	return; }
-	if (currentTableView == rangesTableView)	{ handle_editRange		(selectedIndex);	return; }
-	if (currentTableView == countriesTableView)	{ handle_editCountry	(selectedIndex);	return; }
-	
-	if (currentTableView == ascentsDebugTableView)		{ handle_editAscent		(selectedIndex);	return; }
-	if (currentTableView == peaksDebugTableView)		{ handle_editPeak		(selectedIndex);	return; }
-	if (currentTableView == tripsDebugTableView)		{ handle_editTrip		(selectedIndex);	return; }
-	if (currentTableView == hikersDebugTableView)		{ handle_editHiker		(selectedIndex);	return; }
-	if (currentTableView == regionsDebugTableView)		{ handle_editRegion		(selectedIndex);	return; }
-	if (currentTableView == rangesDebugTableView)		{ handle_editRange		(selectedIndex);	return; }
-	if (currentTableView == countriesDebugTableView)	{ handle_editCountry	(selectedIndex);	return; }
+	if (currentTableView == ascentsTableView	|| currentTableView == ascentsDebugTableView)	{ handle_editAscent		(selectedIndex);	return; }
+	if (currentTableView == peaksTableView		|| currentTableView == peaksDebugTableView)		{ handle_editPeak		(selectedIndex);	return; }
+	if (currentTableView == tripsTableView		|| currentTableView == tripsDebugTableView)		{ handle_editTrip		(selectedIndex);	return; }
+	if (currentTableView == hikersTableView		|| currentTableView == hikersDebugTableView)	{ handle_editHiker		(selectedIndex);	return; }
+	if (currentTableView == regionsTableView	|| currentTableView == regionsDebugTableView)	{ handle_editRegion		(selectedIndex);	return; }
+	if (currentTableView == rangesTableView		|| currentTableView == rangesDebugTableView)	{ handle_editRange		(selectedIndex);	return; }
+	if (currentTableView == countriesTableView	|| currentTableView == countriesDebugTableView)	{ handle_editCountry	(selectedIndex);	return; }
 	
 	qDebug() << "Missing implementation in MainWindow::handle_editSelectedItem() for" << currentTableView->objectName();
 }
@@ -389,74 +381,60 @@ void MainWindow::handle_deleteSelectedItem()
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	int rowIndex = selectedIndex.row();
+	int viewRowIndex = selectedIndex.row();
 	
-	if (currentTableView == ascentsTableView)	{ handle_deleteAscent	(rowIndex);	return; }
-	if (currentTableView == peaksTableView)		{ handle_deletePeak		(rowIndex);	return; }
-	if (currentTableView == tripsTableView)		{ handle_deleteTrip		(rowIndex);	return; }
-	if (currentTableView == hikersTableView)	{ handle_deleteHiker	(rowIndex);	return; }
-	if (currentTableView == regionsTableView)	{ handle_deleteRegion	(rowIndex);	return; }
-	if (currentTableView == rangesTableView)	{ handle_deleteRange	(rowIndex);	return; }
-	if (currentTableView == countriesTableView)	{ handle_deleteCountry	(rowIndex);	return; }
-	
-	if (currentTableView == ascentsDebugTableView)		{ handle_deleteAscent	(rowIndex);	return; }
-	if (currentTableView == peaksDebugTableView)		{ handle_deletePeak		(rowIndex);	return; }
-	if (currentTableView == tripsDebugTableView)		{ handle_deleteTrip		(rowIndex);	return; }
-	if (currentTableView == hikersDebugTableView)		{ handle_deleteHiker	(rowIndex);	return; }
-	if (currentTableView == regionsDebugTableView)		{ handle_deleteRegion	(rowIndex);	return; }
-	if (currentTableView == rangesDebugTableView)		{ handle_deleteRange	(rowIndex);	return; }
-	if (currentTableView == countriesDebugTableView)	{ handle_deleteCountry	(rowIndex);	return; }
+	if (currentTableView == ascentsTableView	|| currentTableView == ascentsDebugTableView)	{ handle_deleteAscent	(viewRowIndex);	return; }
+	if (currentTableView == peaksTableView		|| currentTableView == peaksDebugTableView)		{ handle_deletePeak		(viewRowIndex);	return; }
+	if (currentTableView == tripsTableView		|| currentTableView == tripsDebugTableView)		{ handle_deleteTrip		(viewRowIndex);	return; }
+	if (currentTableView == hikersTableView		|| currentTableView == hikersDebugTableView)	{ handle_deleteHiker	(viewRowIndex);	return; }
+	if (currentTableView == regionsTableView	|| currentTableView == regionsDebugTableView)	{ handle_deleteRegion	(viewRowIndex);	return; }
+	if (currentTableView == rangesTableView		|| currentTableView == rangesDebugTableView)	{ handle_deleteRange	(viewRowIndex);	return; }
+	if (currentTableView == countriesTableView	|| currentTableView == countriesDebugTableView)	{ handle_deleteCountry	(viewRowIndex);	return; }
 	
 	qDebug() << "Missing implementation in MainWindow::handle_deleteSelectedItem() for" << currentTableView->objectName();
 }
 
 
 
-void MainWindow::handle_newAscent()
-{
-	handle_newItem(&openNewAscentDialogAndStore, &compAscents, ascentsTableView);
-	updateAscentCounter();
-}
-
-void MainWindow::handle_newPeak()
-{
-	handle_newItem(&openNewPeakDialogAndStore, &compPeaks, peaksTableView);
-}
-
-void MainWindow::handle_newTrip()
-{
-	handle_newItem(&openNewTripDialogAndStore, &compTrips, tripsTableView);
-}
-
-void MainWindow::handle_newHiker()
-{
-	handle_newItem(&openNewHikerDialogAndStore, &compHikers, hikersTableView);
-}
-
-void MainWindow::handle_newRegion()
-{
-	handle_newItem(&openNewRegionDialogAndStore, &compRegions, regionsTableView);
-}
-
-void MainWindow::handle_newRange()
-{
-	handle_newItem(&openNewRangeDialogAndStore, &compRanges, rangesTableView);
-}
-
-void MainWindow::handle_newCountry()
-{
-	handle_newItem(&openNewCountryDialogAndStore, &compCountries, countriesTableView);
-}
-
-void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* compTable, QTableView* view)
+void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* compTable, QTableView* tableView)
 {
 	int newItemIndex = openNewItemDialogAndStoreMethod(this, &db);
 	if (newItemIndex == -1) return;
 	
 	int viewRowIndex = compTable->findCurrentViewRowIndex(newItemIndex);
+	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
+}
+
+void MainWindow::handle_duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, int viewRowIndex)
+{
+	int bufferRowIndex = compTable->getBufferRowForViewRow(viewRowIndex);
+	int newBufferRowIndex = openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	if (newBufferRowIndex == -1) return;
+	
+	updateSelectionAfterUserAction(tableView, compTable, newBufferRowIndex);
+}
+
+void MainWindow::handle_editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index)
+{
+	int bufferRowIndex = compTable->getBufferRowForViewRow(index.row());
+	openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	
+	int viewRowIndex = compAscents.updateSortingAfterItemEdit(index.row());
+	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
+}
+
+void MainWindow::handle_deleteItem(void (*openDeleteItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, int viewRowIndex)
+{
+	int bufferRowIndex = compTable->getBufferRowForViewRow(viewRowIndex);
+	openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+}
+
+
+void MainWindow::updateSelectionAfterUserAction(QTableView* tableView, CompositeTable* compTable, int viewRowIndex)
+{
 	QModelIndex modelIndex = compTable->index(viewRowIndex, 0);
-	view->setCurrentIndex(modelIndex);
-	view->scrollTo(modelIndex);
+	tableView->setCurrentIndex(modelIndex);
+	tableView->scrollTo(modelIndex);
 }
 
 
@@ -465,139 +443,6 @@ void MainWindow::handle_openAscent(const QModelIndex& index)
 {
 	// TODO open ascent display window
 	qDebug() << "UNIMPLEMENTED: MainWindow::handle_openAscent(), row" << index.row();
-}
-
-
-
-void MainWindow::handle_editAscent(const QModelIndex& index)
-{
-	int bufferRowIndex = compAscents.getBufferRowForViewRow(index.row());
-	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
-	openEditAscentDialogAndStore(this, &db, selectedAscent);
-}
-
-void MainWindow::handle_editPeak(const QModelIndex& index)
-{
-	int bufferRowIndex = compPeaks.getBufferRowForViewRow(index.row());
-	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
-	openEditPeakDialogAndStore(this, &db, selectedPeak);
-}
-
-void MainWindow::handle_editTrip(const QModelIndex& index)
-{
-	int bufferRowIndex = compTrips.getBufferRowForViewRow(index.row());
-	Trip* selectedTrip = db.getTripAt(bufferRowIndex);
-	openEditTripDialogAndStore(this, &db, selectedTrip);
-}
-
-void MainWindow::handle_editHiker(const QModelIndex& index)
-{
-	int bufferRowIndex = compHikers.getBufferRowForViewRow(index.row());
-	Hiker* selectedHiker = db.getHikerAt(bufferRowIndex);
-	openEditHikerDialogAndStore(this, &db, selectedHiker);
-}
-
-void MainWindow::handle_editRegion(const QModelIndex& index)
-{
-	int bufferRowIndex = compRegions.getBufferRowForViewRow(index.row());
-	Region* selectedRegion = db.getRegionAt(bufferRowIndex);
-	openEditRegionDialogAndStore(this, &db, selectedRegion);
-}
-
-void MainWindow::handle_editRange(const QModelIndex& index)
-{
-	int bufferRowIndex = compRanges.getBufferRowForViewRow(index.row());
-	Range* selectedRange = db.getRangeAt(bufferRowIndex);
-	openEditRangeDialogAndStore(this, &db, selectedRange);
-}
-
-void MainWindow::handle_editCountry(const QModelIndex& index)
-{
-	int bufferRowIndex = compCountries.getBufferRowForViewRow(index.row());
-	Country* selectedCountry = db.getCountryAt(bufferRowIndex);
-	openEditCountryDialogAndStore(this, &db, selectedCountry);
-}
-
-
-
-void MainWindow::handle_duplicateAndEditAscent(int viewRowIndex)
-{
-	int bufferRowIndex = compAscents.getBufferRowForViewRow(viewRowIndex);
-	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
-	int newAscentIndex = openDuplicateAscentDialogAndStore(this, &db, selectedAscent);
-	if (newAscentIndex == -1) return;
-	
-	int newViewRowIndex = compAscents.findCurrentViewRowIndex(newAscentIndex);
-	QModelIndex modelIndex = compAscents.index(newViewRowIndex, 0);
-	ascentsTableView->setCurrentIndex(modelIndex);
-	ascentsTableView->scrollTo(modelIndex);
-	
-	updateAscentCounter();
-}
-
-void MainWindow::handle_duplicateAndEditPeak(int viewRowIndex)
-{
-	int bufferRowIndex = compPeaks.getBufferRowForViewRow(viewRowIndex);
-	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
-	int newPeakIndex = openDuplicatePeakDialogAndStore(this, &db, selectedPeak);
-	if (newPeakIndex == -1) return;
-	
-	int newViewRowIndex = compPeaks.findCurrentViewRowIndex(newPeakIndex);
-	QModelIndex modelIndex = compPeaks.index(newViewRowIndex, 0);
-	peaksTableView->setCurrentIndex(modelIndex);
-	peaksTableView->scrollTo(modelIndex);
-}
-
-
-
-void MainWindow::handle_deleteAscent(int viewRowIndex)
-{
-	int bufferRowIndex = compAscents.getBufferRowForViewRow(viewRowIndex);
-	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
-	openDeleteAscentDialogAndExecute(this, &db, selectedAscent);
-	updateAscentCounter();
-}
-
-void MainWindow::handle_deletePeak(int viewRowIndex)
-{
-	int bufferRowIndex = compPeaks.getBufferRowForViewRow(viewRowIndex);
-	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
-	openDeletePeakDialogAndExecute(this, &db, selectedPeak);
-}
-
-void MainWindow::handle_deleteTrip(int viewRowIndex)
-{
-	int bufferRowIndex = compTrips.getBufferRowForViewRow(viewRowIndex);
-	Trip* selectedTrip = db.getTripAt(bufferRowIndex);
-	openDeleteTripDialogAndExecute(this, &db, selectedTrip);
-}
-
-void MainWindow::handle_deleteHiker(int viewRowIndex)
-{
-	int bufferRowIndex = compHikers.getBufferRowForViewRow(viewRowIndex);
-	Hiker* selectedHiker = db.getHikerAt(bufferRowIndex);
-	openDeleteHikerDialogAndExecute(this, &db, selectedHiker);
-}
-
-void MainWindow::handle_deleteRegion(int viewRowIndex)
-{
-	int bufferRowIndex = compRegions.getBufferRowForViewRow(viewRowIndex);
-	Region* selectedRegion = db.getRegionAt(bufferRowIndex);
-	openDeleteRegionDialogAndExecute(this, &db, selectedRegion);
-}
-
-void MainWindow::handle_deleteRange(int viewRowIndex)
-{
-	int bufferRowIndex = compRanges.getBufferRowForViewRow(viewRowIndex);
-	Range* selectedRange = db.getRangeAt(bufferRowIndex);
-	openDeleteRangeDialogAndExecute(this, &db, selectedRange);
-}
-
-void MainWindow::handle_deleteCountry(int viewRowIndex)
-{
-	int bufferRowIndex = compCountries.getBufferRowForViewRow(viewRowIndex);
-	Country* selectedCountry = db.getCountryAt(bufferRowIndex);
-	openDeleteCountryDialogAndExecute(this, &db, selectedCountry);
 }
 
 
@@ -756,6 +601,21 @@ void MainWindow::saveImplicitSettings() const
 	saveColumnWidths(countriesTableView,	&compCountries,	&Settings::mainWindow_columnWidths_countriesTable);
 }
 
+void MainWindow::saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const
+{
+	QStringList columnWidths;
+	for (int i = 0; i < table->columnCount(); i++) {
+		int currentColumnWidth = view->columnWidth(i);
+		if (currentColumnWidth == 0) {
+			qDebug() << "Couldn't read column width for column" << i << "in table" << table->name << "- skipping table";
+			return;
+		}
+		columnWidths.append(QString::number(currentColumnWidth));
+	}
+	columnWidthsSetting->set(columnWidths);
+}
+
+
 void MainWindow::addToRecentFilesList(const QString& filepath)
 {
 	Settings::lastOpenDatabaseFile.set(filepath);
@@ -781,16 +641,103 @@ QTableView* MainWindow::getCurrentTableView() const
 
 
 
-void MainWindow::saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const
+
+
+void MainWindow::handle_newAscent()
 {
-	QStringList columnWidths;
-	for (int i = 0; i < table->columnCount(); i++) {
-		int currentColumnWidth = view->columnWidth(i);
-		if (currentColumnWidth == 0) {
-			qDebug() << "Couldn't read column width for column" << i << "in table" << table->name << "- skipping table";
-			return;
-		}
-		columnWidths.append(QString::number(currentColumnWidth));
-	}
-	columnWidthsSetting->set(columnWidths);
+	handle_newItem(&openNewAscentDialogAndStore, &compAscents, ascentsTableView);
+	updateAscentCounter();
+}
+void MainWindow::handle_newPeak()
+{
+	handle_newItem(&openNewPeakDialogAndStore, &compPeaks, peaksTableView);
+}
+void MainWindow::handle_newTrip()
+{
+	handle_newItem(&openNewTripDialogAndStore, &compTrips, tripsTableView);
+}
+void MainWindow::handle_newHiker()
+{
+	handle_newItem(&openNewHikerDialogAndStore, &compHikers, hikersTableView);
+}
+void MainWindow::handle_newRegion()
+{
+	handle_newItem(&openNewRegionDialogAndStore, &compRegions, regionsTableView);
+}
+void MainWindow::handle_newRange()
+{
+	handle_newItem(&openNewRangeDialogAndStore, &compRanges, rangesTableView);
+}
+void MainWindow::handle_newCountry()
+{
+	handle_newItem(&openNewCountryDialogAndStore, &compCountries, countriesTableView);
+}
+
+void MainWindow::handle_duplicateAndEditAscent(int viewRowIndex)
+{
+	handle_duplicateAndEditItem(&openDuplicateAscentDialogAndStore, &compAscents, ascentsTableView, viewRowIndex);
+	updateAscentCounter();
+}
+void MainWindow::handle_duplicateAndEditPeak(int viewRowIndex)
+{
+	handle_duplicateAndEditItem(&openDuplicatePeakDialogAndStore, &compPeaks, peaksTableView, viewRowIndex);
+}
+
+void MainWindow::handle_editAscent(const QModelIndex& index)
+{
+	handle_editItem(&openEditAscentDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editPeak(const QModelIndex& index)
+{
+	handle_editItem(&openEditPeakDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editTrip(const QModelIndex& index)
+{
+	handle_editItem(&openEditTripDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editHiker(const QModelIndex& index)
+{
+	handle_editItem(&openEditHikerDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editRegion(const QModelIndex& index)
+{
+	handle_editItem(&openEditRegionDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editRange(const QModelIndex& index)
+{
+	handle_editItem(&openEditRangeDialogAndStore, &compAscents, ascentsTableView, index);
+}
+void MainWindow::handle_editCountry(const QModelIndex& index)
+{
+	handle_editItem(&openEditCountryDialogAndStore, &compAscents, ascentsTableView, index);
+}
+
+void MainWindow::handle_deleteAscent(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteAscentDialogAndExecute, &compAscents, viewRowIndex);
+	updateAscentCounter();
+}
+void MainWindow::handle_deletePeak(int viewRowIndex)
+{
+	handle_deleteItem(&openDeletePeakDialogAndExecute, &compPeaks, viewRowIndex);
+}
+void MainWindow::handle_deleteTrip(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteTripDialogAndExecute, &compTrips, viewRowIndex);
+}
+void MainWindow::handle_deleteHiker(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteHikerDialogAndExecute, &compHikers, viewRowIndex);
+}
+void MainWindow::handle_deleteRegion(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteRegionDialogAndExecute, &compRegions, viewRowIndex);
+}
+void MainWindow::handle_deleteRange(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteRangeDialogAndExecute, &compRanges, viewRowIndex);
+}
+void MainWindow::handle_deleteCountry(int viewRowIndex)
+{
+	handle_deleteItem(&openDeleteCountryDialogAndExecute, &compCountries, viewRowIndex);
 }

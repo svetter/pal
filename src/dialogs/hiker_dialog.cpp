@@ -104,14 +104,18 @@ int openNewHikerDialogAndStore(QWidget* parent, Database* db)
 	return openHikerDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditHikerDialogAndStore(QWidget* parent, Database* db, Hiker* originalHiker)
+void openEditHikerDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
 {
+	Hiker* originalHiker = db->getHikerAt(bufferRowIndex);
 	openHikerDialogAndStore(parent, db, editItem, originalHiker);
 }
 
-void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker)
+void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
 {
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hiker->hikerID.forceValid());
+	Hiker* hiker = db->getHikerAt(bufferRowIndex);
+	ValidItemID hikerID = hiker->hikerID.forceValid();
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hikerID);
 	
 	if (Settings::confirmDelete.get()) {
 		QString windowTitle = HikerDialog::tr("Delete hiker");
@@ -119,11 +123,11 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, Hiker* hiker
 		if (!proceed) return;
 	}
 	
-	if (db->projectSettings->defaultHiker->get() == hiker->hikerID.get()) {
+	if (db->projectSettings->defaultHiker->get() == hikerID) {
 		db->projectSettings->defaultHiker->setToNull(parent);
 	}
 	
-	db->removeRow(parent, db->hikersTable, hiker->hikerID.forceValid());
+	db->removeRow(parent, db->hikersTable, hikerID);
 }
 
 
