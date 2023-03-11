@@ -118,7 +118,7 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 	case String:
 		if (!value1Valid && value2Valid)	return false;
 		if (value1Valid && !value2Valid)	return true;
-		return value1.toString() < value2.toString();
+		return QString::localeAwareCompare(value1.toString(), value2.toString()) < 0;
 	case Date:
 		if (!value1Valid && value2Valid)	return true;
 		if (value1Valid && !value2Valid)	return false;
