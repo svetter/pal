@@ -118,7 +118,7 @@ void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, Country* c
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
-
+	
 	db->removeRow(parent, db->countriesTable, country->countryID.forceValid());
 }
 

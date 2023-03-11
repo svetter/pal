@@ -255,7 +255,9 @@ void MainWindow::setupDebugTableView(QTableView* view, Table* table)
 	view->setModel(table);
 	view->setRootIndex(table->getNormalRootModelIndex());
 	view->resizeColumnsToContents();
-	if (view == ascentsDebugTableView) view->setColumnWidth(db.ascentsTable->descriptionColumn->getIndex(), 400);
+	if (view == ascentsDebugTableView && view->columnWidth(db.ascentsTable->descriptionColumn->getIndex()) > 400) {
+		view->setColumnWidth(db.ascentsTable->descriptionColumn->getIndex(), 400);
+	}
 	
 	// Enable context menu
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
