@@ -102,6 +102,14 @@ void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
 	}
 	buffer.insert(bufferRowIndex, newRow);
 	
+	// Update order buffer
+	for (int i = 0; i < bufferOrder.size(); i++) {
+		int currentBufferRowIndex = bufferOrder.at(i);
+		if (currentBufferRowIndex > bufferRowIndex) {
+			bufferOrder.replace(i, currentBufferRowIndex + 1);
+		}
+	}
+	
 	int viewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
 	beginInsertRows(QModelIndex(), viewRowIndex, viewRowIndex);
 	bufferOrder.insert(viewRowIndex, bufferRowIndex);
@@ -114,6 +122,14 @@ void CompositeTable::removeRowAndAnnounce(int bufferRowIndex)
 	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
 	bufferOrder.removeAt(viewRowIndex);
 	endRemoveRows();
+	
+	// Update order buffer
+	for (int i = 0; i < bufferOrder.size(); i++) {
+		int currentBufferRowIndex = bufferOrder.at(i);
+		if (currentBufferRowIndex > bufferRowIndex) {
+			bufferOrder.replace(i, currentBufferRowIndex - 1);
+		}
+	}
 	
 	QList<QVariant>* rowToRemove = buffer.at(bufferRowIndex);
 	buffer.removeAt(bufferRowIndex);
