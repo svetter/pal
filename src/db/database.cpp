@@ -355,6 +355,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 	const Column* primaryKeyColumn = table->primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (Table* candidateTable : tables) {
+		if (candidateTable == table) continue;
 		if (candidateTable->getNumberOfRows() == 0) continue;	// No conflicts in empty tables
 		
 		// Look for references in associative table
@@ -397,7 +398,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			
 			// WHAT IF
 			if (searchNotExecute) {
-				if (!affectedCells.isEmpty()) {
+				if (!affectedRowIndices.isEmpty()) {
 					result.append(WhatIfDeleteResult(candidateNormalTable, candidateNormalTable, affectedRowIndices.size()));
 				}
 			}
