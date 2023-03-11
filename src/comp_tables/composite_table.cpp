@@ -51,7 +51,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 	assert(buffer.isEmpty() && bufferOrder.isEmpty());
 	
 	int numberOfRows = baseTable->getNumberOfRows();
-//	beginInsertRows(QModelIndex(), 0, numberOfRows - 1);
+	beginResetModel();
 	
 	for (int bufferRowIndex = 0; bufferRowIndex < numberOfRows; bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
@@ -62,20 +62,11 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 		}
 		buffer.append(newRow);
 		
-//		int viewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
-//		bufferOrder.insert(viewRowIndex, bufferRowIndex);
-	}
-	
-//	endInsertRows();
-	
-	beginResetModel();	// Necessary due to what seems like a bug in Qt
-	endResetModel();
-	beginInsertRows(QModelIndex(), 0, buffer.size());
-	for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
 		int viewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
 		bufferOrder.insert(viewRowIndex, bufferRowIndex);
 	}
-	endInsertRows();
+	
+	endResetModel();
 }
 
 void CompositeTable::resetBuffer()
