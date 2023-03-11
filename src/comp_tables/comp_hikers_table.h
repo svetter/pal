@@ -37,7 +37,7 @@ public:
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
-		return {nameColumn, Qt::AscendingOrder};
+		return {numAscentsColumn, Qt::DescendingOrder};
 	}
 };
 
