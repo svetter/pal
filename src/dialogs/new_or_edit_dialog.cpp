@@ -61,8 +61,13 @@ void NewOrEditDialog::reject()
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
 {
-	QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIfResults);
-	QString question = whatIfResultString + "\n" + NewOrEditDialog::tr("Are you sure?");
+	QString question;
+	if (whatIfResults.isEmpty()) {
+		question = NewOrEditDialog::tr("Are you sure you want to delete this item?");
+	} else {
+		QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIfResults);
+		question = whatIfResultString + "\n" + NewOrEditDialog::tr("Are you sure?");
+	}
 	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
