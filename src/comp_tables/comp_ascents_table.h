@@ -59,6 +59,13 @@ public:
 		addColumn(hikersColumn);
 		addColumn(tripColumn);
 	}
+	
+	
+	
+	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
+	{
+		return {dateColumn, Qt::AscendingOrder};
+	}
 };
 
 

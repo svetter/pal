@@ -32,6 +32,13 @@ public:
 		addColumn(maxElevationGainColumn);
 		addColumn(sumElevationGainColumn);
 	}
+	
+	
+	
+	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
+	{
+		return {nameColumn, Qt::AscendingOrder};
+	}
 };
 
 

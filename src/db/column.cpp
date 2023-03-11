@@ -22,7 +22,7 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 	assert(table->isAssociative == (primaryKey && foreignKey));
 	if (primaryKey)					assert(!nullable);
 	if (primaryKey || foreignKey)	assert(type == ID && name.endsWith("ID"));
-	if (name.endsWith("ID"))		assert(type == ID && primaryKey || foreignKey);
+	if (name.endsWith("ID"))		assert((type == ID) && (primaryKey || foreignKey));
 }
 
 

@@ -20,19 +20,6 @@ CompositeColumn::~CompositeColumn()
 
 
 
-QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
-{
-	if (!enumNames) return content;
-	
-	// If content is enumerative, replace index with the corresponding string
-	assert(content.canConvert<int>());
-	int index = content.toInt();
-	assert(index >= 0 && index < enumNames->size());
-	return enumNames->at(index);
-}
-
-
-
 QVariant CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 {
 	if (!rawCellContent.isValid()) return QVariant();
@@ -69,6 +56,83 @@ QVariant CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	}
 	
 	return rawCellContent;
+}
+
+
+
+int CompositeColumn::getIndex() const
+{
+	return table->getIndexOf(this);
+}
+
+
+
+QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
+{
+	if (!enumNames) return content;
+	
+	// If content is enumerative, replace index with the corresponding string
+	assert(content.canConvert<int>());
+	int index = content.toInt();
+	assert(index >= 0 && index < enumNames->size());
+	return enumNames->at(index);
+}
+
+
+
+bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) const
+{
+	// return result of operation 'value1 < value2'
+	bool value1Valid = value1.isValid();
+	bool value2Valid = value2.isValid();
+	
+	if (!value1Valid && !value2Valid)	return false;
+	
+	switch (contentType) {
+	case Integer:
+		if (!value1Valid && value2Valid)	return true;
+		if (value1Valid && !value2Valid)	return false;
+		return value1.toInt() < value2.toInt();
+	case Enum:
+		assert(value1Valid && value2Valid);
+		return value1.toInt() < value2.toInt();
+	case DualEnum: {
+		assert(value1Valid && value2Valid);
+		assert(value1.canConvert<QList<QVariant>>() && value2.canConvert<QList<QVariant>>());
+		QList<QVariant> intList1 = value1.toList();
+		QList<QVariant> intList2 = value2.toList();
+		assert(intList1.size() == 2 && intList2.size() == 2);
+		assert(intList1.at(0).canConvert<int>() && intList2.at(0).canConvert<int>());
+		int descerning1 = intList1.at(0).toInt();
+		int descerning2 = intList2.at(0).toInt();
+		if (descerning1 != descerning2) return descerning1 < descerning2;
+		assert(intList1.at(1).canConvert<int>() && intList2.at(1).canConvert<int>());
+		int displayed1 = intList1.at(1).toInt();
+		int displayed2 = intList2.at(1).toInt();
+		return displayed1 < displayed2;
+	}
+	case Bit:
+		assert(value1Valid && value2Valid);
+		assert(value1.canConvert<bool>() && value2.canConvert<bool>());
+		return value1.toBool() < value2.toBool();
+	case String:
+		if (!value1Valid && value2Valid)	return false;
+		if (value1Valid && !value2Valid)	return true;
+		return value1.toString() < value2.toString();
+	case Date:
+		if (!value1Valid && value2Valid)	return true;
+		if (value1Valid && !value2Valid)	return false;
+		assert(value1.canConvert<QDate>() && value2.canConvert<QDate>());
+		return value1.toDate() < value2.toDate();
+	case Time:
+		if (!value1Valid && value2Valid)	return true;
+		if (value1Valid && !value2Valid)	return false;
+		assert(value1.canConvert<QTime>() && value2.canConvert<QTime>());
+		return value1.toTime() < value2.toTime();
+	default:
+		assert(false);
+		return false;
+	}
 }
 
 

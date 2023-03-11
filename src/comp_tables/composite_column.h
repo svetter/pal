@@ -27,12 +27,16 @@ protected:
 public:
 	virtual ~CompositeColumn();
 	
+public:
+	int getIndex() const;
+	
+	virtual QVariant getValueAt(int rowIndex) const = 0;
 protected:
 	QVariant replaceEnumIfApplicable(QVariant content) const;
-	
 public:
-	virtual QVariant getValueAt(int rowIndex) const = 0;
 	QVariant toFormattedTableContent(QVariant rawCellContent) const;
+	
+	bool compare(const QVariant& value1, const QVariant& value2) const;
 	
 	void announceChangedData() const;
 	

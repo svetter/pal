@@ -44,6 +44,13 @@ public:
 		addColumn(sumElevationGainColumn);
 		addColumn(listHikersColumn);
 	}
+	
+	
+	
+	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
+	{
+		return {nameColumn, Qt::AscendingOrder};
+	}
 };
 
 

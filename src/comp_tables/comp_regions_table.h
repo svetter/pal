@@ -38,6 +38,13 @@ public:
 		addColumn(maxPeakHeightColumn);
 		addColumn(numAscentsColumn);
 	}
+	
+	
+	
+	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
+	{
+		return {nameColumn, Qt::AscendingOrder};
+	}
 };
 
 

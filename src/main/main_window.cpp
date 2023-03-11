@@ -214,6 +214,7 @@ void MainWindow::initCompositeBuffers()
 	QProgressDialog progress(this);
 	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
 	progress.setWindowModality(Qt::WindowModal);
+	progress.setWindowTitle(tr("Opening database"));
 	progress.setMinimumWidth(250);
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(250);
@@ -242,6 +243,10 @@ void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const S
 	
 	// Enable context menu
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+	
+	// Set sorting
+	QPair<const CompositeColumn*, Qt::SortOrder> sorting = table->getDefaultSorting();
+	view->sortByColumn(sorting.first->getIndex(), sorting.second);
 }
 
 void MainWindow::setupDebugTableView(QTableView* view, Table* table)
@@ -407,46 +412,47 @@ void MainWindow::handle_deleteSelectedItem()
 
 void MainWindow::handle_newAscent()
 {
-	handle_newItem(&openNewAscentDialogAndStore, db.ascentsTable, ascentsTableView);
+	handle_newItem(&openNewAscentDialogAndStore, &compAscents, ascentsTableView);
 	updateAscentCounter();
 }
 
 void MainWindow::handle_newPeak()
 {
-	handle_newItem(&openNewPeakDialogAndStore, db.peaksTable, peaksTableView);
+	handle_newItem(&openNewPeakDialogAndStore, &compPeaks, peaksTableView);
 }
 
 void MainWindow::handle_newTrip()
 {
-	handle_newItem(&openNewTripDialogAndStore, db.tripsTable, tripsTableView);
+	handle_newItem(&openNewTripDialogAndStore, &compTrips, tripsTableView);
 }
 
 void MainWindow::handle_newHiker()
 {
-	handle_newItem(&openNewHikerDialogAndStore, db.hikersTable, hikersTableView);
+	handle_newItem(&openNewHikerDialogAndStore, &compHikers, hikersTableView);
 }
 
 void MainWindow::handle_newRegion()
 {
-	handle_newItem(&openNewRegionDialogAndStore, db.regionsTable, regionsTableView);
+	handle_newItem(&openNewRegionDialogAndStore, &compRegions, regionsTableView);
 }
 
 void MainWindow::handle_newRange()
 {
-	handle_newItem(&openNewRangeDialogAndStore, db.rangesTable, rangesTableView);
+	handle_newItem(&openNewRangeDialogAndStore, &compRanges, rangesTableView);
 }
 
 void MainWindow::handle_newCountry()
 {
-	handle_newItem(&openNewCountryDialogAndStore, db.countriesTable, countriesTableView);
+	handle_newItem(&openNewCountryDialogAndStore, &compCountries, countriesTableView);
 }
 
-void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view)
+void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* compTable, QTableView* view)
 {
 	int newItemIndex = openNewItemDialogAndStoreMethod(this, &db);
 	if (newItemIndex == -1) return;
 	
-	QModelIndex modelIndex = table->index(newItemIndex, 0, view->currentIndex().parent());
+	int viewRowIndex = compTable->findCurrentViewRowIndex(newItemIndex);
+	QModelIndex modelIndex = compTable->index(viewRowIndex, 0);
 	view->setCurrentIndex(modelIndex);
 	view->scrollTo(modelIndex);
 }
@@ -463,113 +469,132 @@ void MainWindow::handle_openAscent(const QModelIndex& index)
 
 void MainWindow::handle_editAscent(const QModelIndex& index)
 {
-	Ascent* selectedAscent = db.getAscentAt(index.row());
+	int bufferRowIndex = compAscents.getBufferRowForViewRow(index.row());
+	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
 	openEditAscentDialogAndStore(this, &db, selectedAscent);
 }
 
 void MainWindow::handle_editPeak(const QModelIndex& index)
 {
-	Peak* selectedPeak = db.getPeakAt(index.row());
+	int bufferRowIndex = compPeaks.getBufferRowForViewRow(index.row());
+	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
 	openEditPeakDialogAndStore(this, &db, selectedPeak);
 }
 
 void MainWindow::handle_editTrip(const QModelIndex& index)
 {
-	Trip* selectedTrip = db.getTripAt(index.row());
+	int bufferRowIndex = compTrips.getBufferRowForViewRow(index.row());
+	Trip* selectedTrip = db.getTripAt(bufferRowIndex);
 	openEditTripDialogAndStore(this, &db, selectedTrip);
 }
 
 void MainWindow::handle_editHiker(const QModelIndex& index)
 {
-	Hiker* selectedHiker = db.getHikerAt(index.row());
+	int bufferRowIndex = compHikers.getBufferRowForViewRow(index.row());
+	Hiker* selectedHiker = db.getHikerAt(bufferRowIndex);
 	openEditHikerDialogAndStore(this, &db, selectedHiker);
 }
 
 void MainWindow::handle_editRegion(const QModelIndex& index)
 {
-	Region* selectedRegion = db.getRegionAt(index.row());
+	int bufferRowIndex = compRegions.getBufferRowForViewRow(index.row());
+	Region* selectedRegion = db.getRegionAt(bufferRowIndex);
 	openEditRegionDialogAndStore(this, &db, selectedRegion);
 }
 
 void MainWindow::handle_editRange(const QModelIndex& index)
 {
-	Range* selectedRange = db.getRangeAt(index.row());
+	int bufferRowIndex = compRanges.getBufferRowForViewRow(index.row());
+	Range* selectedRange = db.getRangeAt(bufferRowIndex);
 	openEditRangeDialogAndStore(this, &db, selectedRange);
 }
 
 void MainWindow::handle_editCountry(const QModelIndex& index)
 {
-	Country* selectedCountry = db.getCountryAt(index.row());
+	int bufferRowIndex = compCountries.getBufferRowForViewRow(index.row());
+	Country* selectedCountry = db.getCountryAt(bufferRowIndex);
 	openEditCountryDialogAndStore(this, &db, selectedCountry);
 }
 
 
 
-void MainWindow::handle_duplicateAndEditAscent(int rowIndex)
+void MainWindow::handle_duplicateAndEditAscent(int viewRowIndex)
 {
-	Ascent* selectedAscent = db.getAscentAt(rowIndex);
+	int bufferRowIndex = compAscents.getBufferRowForViewRow(viewRowIndex);
+	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
 	int newAscentIndex = openDuplicateAscentDialogAndStore(this, &db, selectedAscent);
 	if (newAscentIndex == -1) return;
 	
-	QModelIndex modelIndex = db.ascentsTable->index(newAscentIndex, 0, ascentsTableView->currentIndex().parent());
+	int newViewRowIndex = compAscents.findCurrentViewRowIndex(newAscentIndex);
+	QModelIndex modelIndex = compAscents.index(newViewRowIndex, 0);
 	ascentsTableView->setCurrentIndex(modelIndex);
 	ascentsTableView->scrollTo(modelIndex);
+	
 	updateAscentCounter();
 }
 
-void MainWindow::handle_duplicateAndEditPeak(int rowIndex)
+void MainWindow::handle_duplicateAndEditPeak(int viewRowIndex)
 {
-	Peak* selectedPeak = db.getPeakAt(rowIndex);
+	int bufferRowIndex = compPeaks.getBufferRowForViewRow(viewRowIndex);
+	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
 	int newPeakIndex = openDuplicatePeakDialogAndStore(this, &db, selectedPeak);
 	if (newPeakIndex == -1) return;
 	
-	QModelIndex modelIndex = db.peaksTable->index(newPeakIndex, 0, peaksTableView->currentIndex().parent());
+	int newViewRowIndex = compPeaks.findCurrentViewRowIndex(newPeakIndex);
+	QModelIndex modelIndex = compPeaks.index(newViewRowIndex, 0);
 	peaksTableView->setCurrentIndex(modelIndex);
 	peaksTableView->scrollTo(modelIndex);
 }
 
 
 
-void MainWindow::handle_deleteAscent(int rowIndex)
+void MainWindow::handle_deleteAscent(int viewRowIndex)
 {
-	Ascent* selectedAscent = db.getAscentAt(rowIndex);
+	int bufferRowIndex = compAscents.getBufferRowForViewRow(viewRowIndex);
+	Ascent* selectedAscent = db.getAscentAt(bufferRowIndex);
 	openDeleteAscentDialogAndExecute(this, &db, selectedAscent);
 	updateAscentCounter();
 }
 
-void MainWindow::handle_deletePeak(int rowIndex)
+void MainWindow::handle_deletePeak(int viewRowIndex)
 {
-	Peak* selectedPeak = db.getPeakAt(rowIndex);
+	int bufferRowIndex = compPeaks.getBufferRowForViewRow(viewRowIndex);
+	Peak* selectedPeak = db.getPeakAt(bufferRowIndex);
 	openDeletePeakDialogAndExecute(this, &db, selectedPeak);
 }
 
-void MainWindow::handle_deleteTrip(int rowIndex)
+void MainWindow::handle_deleteTrip(int viewRowIndex)
 {
-	Trip* selectedTrip = db.getTripAt(rowIndex);
+	int bufferRowIndex = compTrips.getBufferRowForViewRow(viewRowIndex);
+	Trip* selectedTrip = db.getTripAt(bufferRowIndex);
 	openDeleteTripDialogAndExecute(this, &db, selectedTrip);
 }
 
-void MainWindow::handle_deleteHiker(int rowIndex)
+void MainWindow::handle_deleteHiker(int viewRowIndex)
 {
-	Hiker* selectedHiker = db.getHikerAt(rowIndex);
+	int bufferRowIndex = compHikers.getBufferRowForViewRow(viewRowIndex);
+	Hiker* selectedHiker = db.getHikerAt(bufferRowIndex);
 	openDeleteHikerDialogAndExecute(this, &db, selectedHiker);
 }
 
-void MainWindow::handle_deleteRegion(int rowIndex)
+void MainWindow::handle_deleteRegion(int viewRowIndex)
 {
-	Region* selectedRegion = db.getRegionAt(rowIndex);
+	int bufferRowIndex = compRegions.getBufferRowForViewRow(viewRowIndex);
+	Region* selectedRegion = db.getRegionAt(bufferRowIndex);
 	openDeleteRegionDialogAndExecute(this, &db, selectedRegion);
 }
 
-void MainWindow::handle_deleteRange(int rowIndex)
+void MainWindow::handle_deleteRange(int viewRowIndex)
 {
-	Range* selectedRange = db.getRangeAt(rowIndex);
+	int bufferRowIndex = compRanges.getBufferRowForViewRow(viewRowIndex);
+	Range* selectedRange = db.getRangeAt(bufferRowIndex);
 	openDeleteRangeDialogAndExecute(this, &db, selectedRange);
 }
 
-void MainWindow::handle_deleteCountry(int rowIndex)
+void MainWindow::handle_deleteCountry(int viewRowIndex)
 {
-	Country* selectedCountry = db.getCountryAt(rowIndex);
+	int bufferRowIndex = compCountries.getBufferRowForViewRow(viewRowIndex);
+	Country* selectedCountry = db.getCountryAt(bufferRowIndex);
 	openDeleteCountryDialogAndExecute(this, &db, selectedCountry);
 }
 

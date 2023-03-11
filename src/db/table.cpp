@@ -212,7 +212,6 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	int newItemBufferRowIndex = buffer.size();
 	beginInsertRows(getNormalRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
 	beginInsertRows(getNullableRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
-	if (rowChangeListener) rowChangeListener->beginInsertRow(newItemBufferRowIndex);
 	
 	// Add data to SQL database
 	int newRowID = addRowToSql(parent, columns, data);
@@ -226,7 +225,7 @@ int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QL
 	
 	// Announce end of row insertion
 	endInsertRows();
-	if (rowChangeListener) rowChangeListener->endInsertRow();
+	if (rowChangeListener) rowChangeListener->insertRowAndAnnounce(newItemBufferRowIndex);
 	
 	// Row was added, all columns affected => Notify all column-attached change listeners
 	notifyAllColumns();
@@ -296,7 +295,7 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	
 	// Announce row removal
 	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
-	if (rowChangeListener) rowChangeListener->beginRemoveRow(bufferRowIndex);
+	if (rowChangeListener) rowChangeListener->removeRowAndAnnounce(bufferRowIndex);
 	
 	// Remove row from SQL database
 	removeRowFromSql(parent, primaryKeyColumns, primaryKeys);
@@ -308,7 +307,6 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	
 	// Announce end of row removal
 	endRemoveRows();
-	if (rowChangeListener) rowChangeListener->endRemoveRow();
 	// Row was removed, all columns affected => Notify all column-attached change listeners
 	notifyAllColumns();
 }
@@ -330,7 +328,7 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 		// Announce row removal
 		int bufferRowIndex = *iter;
 		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
-		if (rowChangeListener) rowChangeListener->beginRemoveRow(bufferRowIndex);
+		if (rowChangeListener) rowChangeListener->removeRowAndAnnounce(bufferRowIndex);
 		
 		const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
 		buffer.remove(bufferRowIndex);
@@ -338,7 +336,6 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 		
 		// Announce end of row removal
 		endRemoveRows();
-		if (rowChangeListener) rowChangeListener->endRemoveRow();
 	}
 	
 	// Rows were removed, all columns affected => Notify all column-attached change listeners

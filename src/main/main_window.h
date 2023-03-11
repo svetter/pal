@@ -83,16 +83,16 @@ private slots:
 	void handle_editRange	(const QModelIndex& index);
 	void handle_editCountry	(const QModelIndex& index);
 	
-	void handle_duplicateAndEditAscent	(int rowIndex);
-	void handle_duplicateAndEditPeak	(int rowIndex);
+	void handle_duplicateAndEditAscent	(int viewRowIndex);
+	void handle_duplicateAndEditPeak	(int viewRowIndex);
 	
-	void handle_deleteAscent	(int rowIndex);
-	void handle_deletePeak		(int rowIndex);
-	void handle_deleteTrip		(int rowIndex);
-	void handle_deleteHiker		(int rowIndex);
-	void handle_deleteRegion	(int rowIndex);
-	void handle_deleteRange		(int rowIndex);
-	void handle_deleteCountry	(int rowIndex);
+	void handle_deleteAscent	(int viewRowIndex);
+	void handle_deletePeak		(int viewRowIndex);
+	void handle_deleteTrip		(int viewRowIndex);
+	void handle_deleteHiker		(int viewRowIndex);
+	void handle_deleteRegion	(int viewRowIndex);
+	void handle_deleteRange		(int viewRowIndex);
+	void handle_deleteCountry	(int viewRowIndex);
 	
 	void handle_rightClick(QPoint pos);
 	
@@ -116,7 +116,7 @@ private:
 	void addToRecentFilesList(const QString& filepath);
 	
 	QTableView* getCurrentTableView() const;
-	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), NormalTable* table, QTableView* view);
+	void handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* view);
 	void saveColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting) const;
 };
 
