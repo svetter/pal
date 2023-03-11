@@ -6,8 +6,10 @@
 
 
 
-CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		table(table),
+		enumNames(enumNames),
+		enumNameLists(enumNameLists),
 		uiName(uiName),
 		alignment(alignment),
 		contentType(contentType)
@@ -18,7 +20,7 @@ CompositeColumn::~CompositeColumn()
 
 
 
-QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStringList* enumNames)
+QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 {
 	if (!enumNames) return content;
 	
@@ -27,6 +29,46 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content, const QStrin
 	int index = content.toInt();
 	assert(index >= 0 && index < enumNames->size());
 	return enumNames->at(index);
+}
+
+
+
+QVariant CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
+{
+	if (!rawCellContent.isValid()) return QVariant();
+	
+	if (contentType == Date) {
+		assert(rawCellContent.canConvert<QDate>());
+		return rawCellContent.toDate().toString("dd.MM.yyyy");
+	}
+	
+	if (contentType == Time) {
+		assert(rawCellContent.canConvert<QTime>());
+		return rawCellContent.toTime().toString("HH:mm");
+	}
+	
+	if (contentType == Enum) {
+		assert(enumNames);
+		assert(rawCellContent.canConvert<int>());
+		int enumIndex = rawCellContent.toInt();
+		assert(enumIndex >= 0 && enumIndex < enumNames->size());
+		return enumNames->at(enumIndex);
+	}
+	if (contentType == DualEnum) {
+		assert(enumNameLists);
+		assert(rawCellContent.canConvert<QList<QVariant>>());
+		QList<QVariant> intList = rawCellContent.toList();
+		assert(intList.size() == 2);
+		assert(intList.at(0).canConvert<int>() && intList.at(1).canConvert<int>());
+		int discerningEnumIndex	= intList.at(0).toInt();
+		int displayedEnumIndex	= intList.at(1).toInt();
+		assert(discerningEnumIndex >= 0 && discerningEnumIndex <= enumNameLists->size());
+		QList<QString> specifiedEnumNames = enumNameLists->at(discerningEnumIndex).second;
+		assert(displayedEnumIndex >= 0 && displayedEnumIndex <= specifiedEnumNames.size());
+		return specifiedEnumNames.at(displayedEnumIndex);
+	}
+	
+	return rawCellContent;
 }
 
 
@@ -42,9 +84,8 @@ void CompositeColumn::announceChangedData() const
 
 
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, enumNames ? varchar : contentColumn->type),
-		contentColumn(contentColumn),
-		enumNames(enumNames)
+		CompositeColumn(table, uiName, alignment, contentColumn->type, enumNames),
+		contentColumn(contentColumn)
 {
 	assert(contentColumn);
 }
@@ -54,7 +95,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 QVariant DirectCompositeColumn::getValueAt(int rowIndex) const
 {
 	QVariant content = contentColumn->getValueAt(rowIndex);
-	content = replaceEnumIfApplicable(content, enumNames);
+	content = replaceEnumIfApplicable(content);
 	
 	return content;
 }
@@ -71,10 +112,9 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, enumNames ? varchar : contentColumn->type),
+		CompositeColumn(table, uiName, alignment, contentColumn->type, enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
-		contentColumn(contentColumn),
-		enumNames(enumNames)
+		contentColumn(contentColumn)
 {
 	assert(contentColumn);
 }
@@ -111,7 +151,7 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 	// Finally, look up content column at last row index
 	assert(contentColumn->table == currentTable);
 	QVariant content = contentColumn->getValueAt(currentRowIndex);
-	content = replaceEnumIfApplicable(content, enumNames);
+	content = replaceEnumIfApplicable(content);
 	
 	return content;
 }
@@ -133,11 +173,10 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight, (op == List || enumNames) ? varchar : (op == Count ? integer : contentColumn->type)),
+		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight, op == List ? String : (op == Count ? Integer : contentColumn->type), enumNames),
 		op(op),
 		breadcrumbs(breadcrumbs),
-		contentColumn(contentColumn),
-		enumNames(enumNames)
+		contentColumn(contentColumn)
 {
 	assert((op == Count) == (contentColumn == nullptr));
 }
@@ -220,7 +259,7 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 		case List:
 			assert(content.canConvert<QString>());
 			if (!listString.isEmpty()) listString.append(", ");
-			content = replaceEnumIfApplicable(content, enumNames);
+			content = replaceEnumIfApplicable(content);
 			listString.append(content.toString());
 			break;
 		case Average:
@@ -268,7 +307,7 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 
 
 DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix) :
-		CompositeColumn(table, uiName, Qt::AlignRight, integer),
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn),
 		suffix(suffix)
@@ -278,7 +317,7 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 	assert(!minuendColumn->isKey() && !subtrahendColumn->isKey());
 	assert(minuendColumn->type == subtrahendColumn->type);
 	assert(minuendColumn != subtrahendColumn);
-	assert(minuendColumn->type == integer || minuendColumn->type == date);
+	assert(minuendColumn->type == Integer || minuendColumn->type == Date);
 }
 
 
@@ -291,7 +330,7 @@ QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 	if (!minuendContent.isValid() || !subtrahendContent.isValid()) return QVariant();
 	
 	switch (minuendColumn->type) {
-	case integer: {
+	case Integer: {
 		assert(minuendContent.canConvert<int>() && subtrahendContent.canConvert<int>());
 		int minuend = minuendContent.toInt();
 		int subtrahend = subtrahendContent.toInt();
@@ -299,7 +338,7 @@ QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 		int difference = minuend - subtrahend;
 		return QString::number(difference) + suffix;
 	}
-	case date: {
+	case Date: {
 		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
 		QDate minuend = minuendContent.toDate();
 		QDate subtrahend = subtrahendContent.toDate();
@@ -325,15 +364,14 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(table, uiName, Qt::AlignLeft, varchar),
+		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, nullptr, enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
-		displayedEnumColumn(displayedEnumColumn),
-		enumNameLists(enumNameLists)
+		displayedEnumColumn(displayedEnumColumn)
 {
 	assert(discerningEnumColumn && displayedEnumColumn);
 	assert(discerningEnumColumn->table == displayedEnumColumn->table);
 	assert(!discerningEnumColumn->isKey() && !displayedEnumColumn->isKey());
-	assert(discerningEnumColumn->type == integer && displayedEnumColumn->type == integer);
+	assert(discerningEnumColumn->type == DualEnum && displayedEnumColumn->type == DualEnum);
 	assert(discerningEnumColumn != displayedEnumColumn);
 }
 
@@ -350,11 +388,7 @@ QVariant DependentEnumCompositeColumn::getValueAt(int rowIndex) const
 	
 	if (discerning < 1 || displayed < 1) return QVariant();
 	
-	assert(discerning >= 0 && discerning < enumNameLists->size());
-	const QStringList& enumNames = enumNameLists->at(discerning).second;
-	assert(displayed >= 0 && displayed < enumNames.size());
-	
-	return enumNames.at(displayed);
+	return QVariant(QList<QVariant>({ discerning, displayed }));
 }
 
 

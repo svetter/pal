@@ -7,11 +7,11 @@
 
 TripsTable::TripsTable() :
 		NormalTable(QString("Trips"), tr("Trips"), "tripID"),
-		//								name			uiName				type		nullable	primaryKey	foreignKey	inTable
-		nameColumn			(new Column("name",			tr("Name"),			varchar,	false,		false,		nullptr,	this)),
-		startDateColumn		(new Column("startDate",	tr("Start date"),	date,		true,		false,		nullptr,	this)),
-		endDateColumn		(new Column("endDate",		tr("End date"),		date,		true,		false,		nullptr,	this)),
-		descriptionColumn	(new Column("description",	tr("Description"),	varchar,	true,		false,		nullptr,	this))
+		//								name			uiName				type	nullable	primaryKey	foreignKey	inTable
+		nameColumn			(new Column("name",			tr("Name"),			String,	false,		false,		nullptr,	this)),
+		startDateColumn		(new Column("startDate",	tr("Start date"),	Date,	true,		false,		nullptr,	this)),
+		endDateColumn		(new Column("endDate",		tr("End date"),		Date,	true,		false,		nullptr,	this)),
+		descriptionColumn	(new Column("description",	tr("Description"),	String,	true,		false,		nullptr,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

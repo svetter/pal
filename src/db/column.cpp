@@ -21,8 +21,8 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
 	assert(table->isAssociative == (primaryKey && foreignKey));
 	if (primaryKey)					assert(!nullable);
-	if (primaryKey || foreignKey)	assert(type == integer && name.endsWith("ID"));
-	if (name.endsWith("ID"))		assert(primaryKey || foreignKey);
+	if (primaryKey || foreignKey)	assert(type == ID && name.endsWith("ID"));
+	if (name.endsWith("ID"))		assert(type == ID && primaryKey || foreignKey);
 }
 
 
@@ -65,11 +65,14 @@ QString Column::getSqlSpecificationString() const
 {
 	QString typeString;
 	switch (type) {
-	case integer:	typeString = "INTEGER";		break;
-	case bit:		typeString = "BIT";			break;
-	case varchar:	typeString = "NVARCHAR";	break;
-	case date:		typeString = "DATE";		break;
-	case time_:		typeString = "TIME";		break;
+	case Integer:
+	case ID:
+	case Enum:
+	case DualEnum:	typeString = "INTEGER";		break;
+	case Bit:		typeString = "BIT";			break;
+	case String:	typeString = "NVARCHAR";	break;
+	case Date:		typeString = "DATE";		break;
+	case Time:		typeString = "TIME";		break;
 	default: assert(false);
 	}
 	

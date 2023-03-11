@@ -7,8 +7,8 @@
 
 CountriesTable::CountriesTable() :
 		NormalTable(QString("Countries"), tr("Countries"), "countryID"),
-		//						name	uiName		type		nullable	primaryKey	foreignKey	inTable
-		nameColumn	(new Column("name",	tr("Name"),	varchar,	false,		false,		nullptr,	this))
+		//						name	uiName		type	nullable	primaryKey	foreignKey	inTable
+		nameColumn	(new Column("name",	tr("Name"),	String,	false,		false,		nullptr,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

@@ -8,7 +8,7 @@
 
 NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
 		Table(name, uiName, false),
-		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), DataType::integer, false, true, nullptr, this))
+		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), ID, false, true, nullptr, this))
 {}
 
 NormalTable::~NormalTable()
@@ -83,7 +83,10 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		QVariant result = QVariant();
 		
 		switch (column->type) {
-		case integer:
+		case Integer:
+		case ID:
+		case Enum:
+		case DualEnum:
 			switch (role) {
 			case Qt::DisplayRole:
 				if (rowIndex == -1) {
@@ -97,7 +100,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 				break;
 			}
 			break;
-		case bit:
+		case Bit:
 			switch (role) {
 			case Qt::CheckStateRole:
 				result = bufferValue.toBool() ? Qt::Checked : Qt::Unchecked;
@@ -107,7 +110,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 				break;
 			}
 			break;
-		case varchar:
+		case String:
 			if (role != Qt::DisplayRole) break;
 			if (rowIndex == -1) {
 				result = QVariant(getNoneString());
@@ -115,12 +118,12 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 				result = bufferValue;
 			}
 			break;
-		case date:
+		case Date:
 			if (role == Qt::DisplayRole) {
 				result = QVariant(bufferValue.toDate().toString("dd.MM.yyyy"));
 			}
 			break;
-		case time_:
+		case Time:
 			if (role == Qt::DisplayRole) {
 				result = QVariant(bufferValue.toTime().toString("HH:mm"));
 			}

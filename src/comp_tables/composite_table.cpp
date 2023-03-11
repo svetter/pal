@@ -170,19 +170,19 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 		return column->alignment;
 	}
 	
-	int relevantRole = column->contentType == bit ? Qt::CheckStateRole : Qt::DisplayRole;
+	int relevantRole = column->contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
 	if (role != relevantRole) return QVariant();
 	
 	QVariant result = buffer.at(rowIndex)->at(columnIndex);
 	
 	if (result.isNull()) return QVariant();
 	
-	if (column->contentType == bit) {
+	if (column->contentType == Bit) {
 		assert(role == Qt::CheckStateRole);
 		return result.toBool() ? Qt::Checked : Qt::Unchecked;
 	}
 	
-	return result;
+	return column->toFormattedTableContent(result);
 }
 
 QVariant CompositeTable::computeCellContent(int rowIndex, int columnIndex) const
@@ -193,17 +193,7 @@ QVariant CompositeTable::computeCellContent(int rowIndex, int columnIndex) const
 	const CompositeColumn* column = columns.at(columnIndex);
 	QVariant result = column->getValueAt(rowIndex);
 	
-	if (result.isNull()) return QVariant();
-	
-	if (column->contentType == date) {
-		assert(result.canConvert<QDate>());
-		return result.toDate().toString("dd.MM.yyyy");
-	}
-	
-	if (column->contentType == time_) {
-		assert(result.canConvert<QTime>());
-		return result.toTime().toString("HH:mm");
-	}
+	if (!result.isValid()) return QVariant();
 	
 	return result;
 }

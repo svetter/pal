@@ -8,11 +8,11 @@
 
 AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
 		Table(name, QString(), true),
-		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::integer, false, true, foreignKeyColumn1, this)),
-		column2(new Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::integer, false, true, foreignKeyColumn2, this))
+		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::ID, false, true, foreignKeyColumn1, this)),
+		column2(new Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::ID, false, true, foreignKeyColumn2, this))
 {
-	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::integer);
-	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::integer);
+	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::ID);
+	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::ID);
 	
 	addColumn(column1);
 	addColumn(column2);
@@ -112,7 +112,7 @@ void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column,
 
 void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
-	assert(getColumnByIndex(index.column())->type == integer);
+	assert(getColumnByIndex(index.column())->type == ID);
 	
 	for (QModelRoleData& roleData : roleDataSpan) {
 		int role = roleData.role();

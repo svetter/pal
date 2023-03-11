@@ -251,7 +251,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	// Announce changed data
 	QModelIndex updateIndexNormal	= index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
 	QModelIndex updateIndexNullable	= index(bufferRowIndex, column->getIndex(), getNullableRootModelIndex());
-	const QList<int> updatedDatumRoles = { column->type == bit ? Qt::CheckStateRole : Qt::DisplayRole };
+	const QList<int> updatedDatumRoles = { column->type == Bit ? Qt::CheckStateRole : Qt::DisplayRole };
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them

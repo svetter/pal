@@ -16,7 +16,7 @@ class SettingsTable : public Table {
 public:
 	inline SettingsTable() :
 			Table("ProjectSettings", "Project settings", false),
-			primaryKeyColumn	(new Column("projectSettingsID", QString(), integer, false, true, nullptr, this))
+			primaryKeyColumn	(new Column("projectSettingsID", QString(), ID, false, true, nullptr, this))
 	{
 		addColumn(primaryKeyColumn);
 	}

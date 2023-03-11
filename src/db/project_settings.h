@@ -60,7 +60,7 @@ public:
 	inline ProjectSettings() :
 			SettingsTable(),
 			//											name				SQL type	nullable	table	default value
-			defaultHiker	(new ProjectSetting<int>	("defaultHiker",	integer,	true,		this))
+			defaultHiker	(new ProjectSetting<int>	("defaultHiker",	ID,			true,		this))
 	{
 		addSetting(defaultHiker);
 	}

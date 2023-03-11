@@ -13,23 +13,26 @@ class CompositeTable;
 class CompositeColumn {
 	CompositeTable* const table;
 	
+protected:
+	const QStringList* const enumNames;
+	const QList<QPair<QString, QStringList>>* const enumNameLists;
+	
 public:
 	const QString uiName;
 	const Qt::AlignmentFlag alignment;
 	const DataType contentType;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType);
+	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
 protected:
-	static QVariant replaceEnumIfApplicable(QVariant content, const QStringList* enumNames);
+	QVariant replaceEnumIfApplicable(QVariant content) const;
 	
 public:
 	virtual QVariant getValueAt(int rowIndex) const = 0;
-	
-	int getIndexOf(const CompositeColumn* column) const;
+	QVariant toFormattedTableContent(QVariant rawCellContent) const;
 	
 	void announceChangedData() const;
 	
@@ -40,7 +43,6 @@ public:
 
 class DirectCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
-	const QStringList* enumNames;
 	
 public:
 	DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames = nullptr);
@@ -55,7 +57,6 @@ public:
 class ReferenceCompositeColumn : public CompositeColumn {
 	QList<Column*> foreignKeyColumnSequence;
 	Column* const contentColumn;
-	const QStringList* enumNames;
 	
 public:
 	ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames = nullptr);
@@ -79,7 +80,6 @@ class FoldCompositeColumn : public CompositeColumn {
 	const FoldOp op;
 	const QList<QPair<Column*, Column*>> breadcrumbs;
 	Column* const contentColumn;
-	const QStringList* enumNames;
 	
 public:
 	FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
@@ -109,7 +109,6 @@ public:
 class DependentEnumCompositeColumn : public CompositeColumn {
 	Column* const discerningEnumColumn;
 	Column* const displayedEnumColumn;
-	const QList<QPair<QString, QStringList>>* enumNameLists;
 	
 public:
 	DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists);

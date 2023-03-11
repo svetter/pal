@@ -7,9 +7,9 @@
 
 RangesTable::RangesTable() :
 		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID"),
-		//							name			uiName				type		nullable	primaryKey	foreignKey	inTable
-		nameColumn		(new Column("name",			tr("Name"),			varchar,	false,		false,		nullptr,	this)),
-		continentColumn	(new Column("continent",	tr("Continent"),	integer,	false,		false,		nullptr,	this))
+		//							name			uiName				type	nullable	primaryKey	foreignKey	inTable
+		nameColumn		(new Column("name",			tr("Name"),			String,	false,		false,		nullptr,	this)),
+		continentColumn	(new Column("continent",	tr("Continent"),	Enum,	false,		false,		nullptr,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

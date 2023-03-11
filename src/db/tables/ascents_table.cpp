@@ -8,18 +8,18 @@
 AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDColumn) :
 		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID"),
 		//									name				uiName				type		nullable	primaryKey	foreignKey				inTable
-		titleColumn				(new Column("title",			tr("Title"),		varchar,	true,		false,		nullptr,				this)),
-		peakIDColumn			(new Column("peakID",			QString(),			integer,	true,		false,		foreignPeakIDColumn,	this)),
-		dateColumn				(new Column("date",				tr("Date"),			date,		true,		false,		nullptr,				this)),
-		peakOnDayColumn			(new Column("peakOnDay",		tr("Peak/day"),		integer,	false,		false,		nullptr,				this)),
-		timeColumn				(new Column("time",				tr("Time"),			time_,		true,		false,		nullptr,				this)),
-		elevationGainColumn		(new Column("elevationGain",	tr("Elev. gain"),	integer,	true,		false,		nullptr,				this)),
-		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	integer,	false,		false,		nullptr,				this)),
-		traverseColumn			(new Column("traverse",			tr("Traverse"),		bit,		false,		false,		nullptr,				this)),
-		difficultySystemColumn	(new Column("difficultySystem",	tr("Diff. system"),	integer,	false,		false,		nullptr,				this)),
-		difficultyGradeColumn	(new Column("difficultyGrade",	tr("Diff. grade"),	integer,	false,		false,		nullptr,				this)),
-		tripIDColumn			(new Column("tripID",			QString(),			integer,	true,		false,		foreignTripIDColumn,	this)),
-		descriptionColumn		(new Column("description",		tr("Description"),	varchar,	true,		false,		nullptr,				this))
+		titleColumn				(new Column("title",			tr("Title"),		String,		true,		false,		nullptr,				this)),
+		peakIDColumn			(new Column("peakID",			QString(),			ID,			true,		false,		foreignPeakIDColumn,	this)),
+		dateColumn				(new Column("date",				tr("Date"),			Date,		true,		false,		nullptr,				this)),
+		peakOnDayColumn			(new Column("peakOnDay",		tr("Peak/day"),		Integer,	false,		false,		nullptr,				this)),
+		timeColumn				(new Column("time",				tr("Time"),			Time,		true,		false,		nullptr,				this)),
+		elevationGainColumn		(new Column("elevationGain",	tr("Elev. gain"),	Integer,	true,		false,		nullptr,				this)),
+		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	Enum,		false,		false,		nullptr,				this)),
+		traverseColumn			(new Column("traverse",			tr("Traverse"),		Bit,		false,		false,		nullptr,				this)),
+		difficultySystemColumn	(new Column("difficultySystem",	tr("Diff. system"),	DualEnum,	false,		false,		nullptr,				this)),
+		difficultyGradeColumn	(new Column("difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		false,		nullptr,				this)),
+		tripIDColumn			(new Column("tripID",			QString(),			ID,			true,		false,		foreignTripIDColumn,	this)),
+		descriptionColumn		(new Column("description",		tr("Description"),	String,		true,		false,		nullptr,				this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(titleColumn);
