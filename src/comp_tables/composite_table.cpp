@@ -36,6 +36,11 @@ void CompositeTable::addColumn(const CompositeColumn* column)
 	}
 }
 
+const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
+{
+	return columns.at(columnIndex);
+}
+
 int CompositeTable::getIndexOf(const CompositeColumn* column) const
 {
 	return columns.indexOf(column);
@@ -123,6 +128,13 @@ int CompositeTable::findCurrentViewRowIndex(int bufferRowIndex) const
 		if (bufferOrder.at(i) == bufferRowIndex) return i;
 	}
 	return -1;
+}
+
+
+
+QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting() const
+{
+	return currentSorting;
 }
 
 

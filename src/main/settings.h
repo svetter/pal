@@ -53,6 +53,11 @@ public:
 		qSettings.setValue(key, QVariant::fromValue(value));
 	}
 	
+	inline bool present() const
+	{
+		return qSettings.contains(key);
+	}
+	
 	inline void clear() const
 	{
 		qSettings.remove(key);
@@ -117,17 +122,27 @@ public:
 	inline static const Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
 	// Open tab
 	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
-	// Ascent filters
-	inline static const Setting<int>			mainWindow_ascentFilters				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
 	
 	// Column widths
-	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_hikersTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/hikersTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_regionsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/regionsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_rangesTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/rangesTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_countriesTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/countriesTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_hikersTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/hikersTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_regionsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/regionsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_rangesTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/rangesTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_countriesTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/countriesTable");
+	
+	// Sorting
+	inline static const Setting<QStringList>	mainWindow_sorting_ascentsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_peaksTable				= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_tripsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_hikersTable				= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_regionsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_rangesTable				= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_countriesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
+	
+	// Ascent filters
+	inline static const Setting<QStringList>	mainWindow_ascentFilters					= Setting<QStringList>	("implicit/mainWindow/filters");
 	
 	
 	

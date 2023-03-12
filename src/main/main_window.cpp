@@ -171,16 +171,14 @@ void MainWindow::setupTableViews()
 		// Set model
 		mapper.tableView->setModel(mapper.compTable);
 		
-		setColumnWidths(mapper.tableView, mapper.compTable, mapper.columnWidthsSetting);
+		setColumnWidths(mapper);
 		
 		// Enable context menu
 		connect(mapper.tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 		
 		mapper.compTable->setUpdateImmediately(mapper.tableView == getCurrentTableView());
 		
-		// Set sorting
-		QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper.compTable->getDefaultSorting();
-		mapper.tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
+		setSorting(mapper);
 	});
 }
 
@@ -207,27 +205,55 @@ void MainWindow::setupDebugTableViews()
 	setupFunction(participatedDebugTableView,	db.participatedTable);
 }
 
-void MainWindow::setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
+void MainWindow::setColumnWidths(const ItemTypeMapper& mapper)
 {
 	if (!Settings::rememberColumnWidths.get()) {
-		return view->resizeColumnsToContents();
+		return mapper.tableView->resizeColumnsToContents();
 	}
 	
-	QStringList columnWidths = columnWidthsSetting->get();
-	if (columnWidths.size() != table->columnCount()) {
+	QStringList columnWidths = mapper.columnWidthsSetting->get();
+	if (columnWidths.size() != mapper.compTable->columnCount()) {
 		// Can't restore column widths from settings
 		if (!columnWidths.isEmpty())
 			qDebug() << QString("Couldn't restore column widths for table %1: Expected %2 numbers, but got %3")
-					.arg(table->name).arg(table->columnCount()).arg(columnWidths.size());
+					.arg(mapper.compTable->name).arg(mapper.compTable->columnCount()).arg(columnWidths.size());
 		
-		columnWidthsSetting->clear();
-		return view->resizeColumnsToContents();
+		mapper.columnWidthsSetting->clear();
+		return mapper.tableView->resizeColumnsToContents();
 	}
 	
 	// Restore column widths
-	for (int i = 0; i < table->columnCount(); i++) {
-		view->setColumnWidth(i, columnWidths.at(i).toInt());
+	for (int i = 0; i < mapper.compTable->columnCount(); i++) {
+		mapper.tableView->setColumnWidth(i, columnWidths.at(i).toInt());
 	}
+}
+
+void MainWindow::setSorting(const ItemTypeMapper& mapper)
+{
+	QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper.compTable->getDefaultSorting();
+	bool sortingSettingValid = true;
+	
+	while (Settings::rememberSorting.get() && mapper.sortingSetting->present()) {
+		sortingSettingValid = false;
+		
+		QStringList saved = mapper.sortingSetting->get();
+		if (saved.size() != 2) break;
+		bool canConvert = false;
+		saved.at(0).toInt(&canConvert);
+		if (!canConvert) break;
+		
+		int columnIndex = saved.at(0).toInt();
+		bool ascending = saved.at(1).compare("Descending", Qt::CaseInsensitive) != 0;
+		Qt::SortOrder order = ascending ? Qt::AscendingOrder : Qt::DescendingOrder;
+		sorting.first = mapper.compTable->getColumnAt(columnIndex);
+		sorting.second = order;
+		
+		sortingSettingValid = true;
+		break;
+	}
+	mapper.tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
+	
+	if (!sortingSettingValid) mapper.sortingSetting->clear();
 }
 
 
@@ -562,6 +588,7 @@ void MainWindow::handle_clearFilters()
 {
 	// TODO
 	clearFiltersButton->setEnabled(false);
+	applyFiltersButton->setEnabled(true);
 	qDebug() << "UNIMPLEMENTED: Clear filters";
 }
 
@@ -716,8 +743,8 @@ void MainWindow::saveImplicitSettings() const
 	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
 	Settings::mainWindow_showFilters.set(showFiltersAction->isChecked());
 	
-	// Save column widths
 	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
+		// Save column widths
 		QStringList columnWidths;
 		for (int i = 0; i < mapper.compTable->columnCount(); i++) {
 			int currentColumnWidth = mapper.tableView->columnWidth(i);
@@ -728,6 +755,13 @@ void MainWindow::saveImplicitSettings() const
 			columnWidths.append(QString::number(currentColumnWidth));
 		}
 		mapper.columnWidthsSetting->set(columnWidths);
+		
+		// Save sorting
+		QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
+		int columnIndex = currentSorting.first->getIndex();
+		Qt::SortOrder order = currentSorting.second;
+		QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
+		mapper.sortingSetting->set({QString::number(columnIndex), orderString});
 	});
 }
 

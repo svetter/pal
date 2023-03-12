@@ -50,6 +50,7 @@ public:
 	
 	const Setting<QRect>* const			dialogGeometrySetting;
 	const Setting<QStringList>* const	columnWidthsSetting;
+	const Setting<QStringList>* const	sortingSetting;
 	
 	int  (* const openNewItemDialogAndStoreMethod)			(QWidget*, Database*);
 	int  (* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, int);
@@ -69,6 +70,7 @@ public:
 			QPushButton* const	newItemButton,
 			const Setting<QRect>*		dialogGeometrySetting,
 			const Setting<QStringList>*	columnWidthsSetting,
+			const Setting<QStringList>*	sortingSetting,
 			int  (* const openNewItemDialogAndStoreMethod)			(QWidget*, Database*),
 			int  (* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, int),
 			void (* const openEditItemDialogAndStoreMethod)			(QWidget*, Database*, int),
@@ -84,6 +86,7 @@ public:
 			newItemButton							(newItemButton),
 			dialogGeometrySetting					(dialogGeometrySetting),
 			columnWidthsSetting						(columnWidthsSetting),
+			sortingSetting							(sortingSetting),
 			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
 			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
 			openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
@@ -121,6 +124,7 @@ public:
 			ItemTypeMapper(Ascent, db->ascentsTable, new CompositeAscentsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::ascentDialog_geometry,
 				&Settings::mainWindow_columnWidths_ascentsTable,
+				&Settings::mainWindow_sorting_ascentsTable,
 				&openNewAscentDialogAndStore,
 				&openDuplicateAscentDialogAndStore,
 				&openEditAscentDialogAndStore,
@@ -135,6 +139,7 @@ public:
 			ItemTypeMapper(Peak, db->peaksTable, new CompositePeaksTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::peakDialog_geometry,
 				&Settings::mainWindow_columnWidths_peaksTable,
+				&Settings::mainWindow_sorting_peaksTable,
 				&openNewPeakDialogAndStore,
 				&openDuplicatePeakDialogAndStore,
 				&openEditPeakDialogAndStore,
@@ -149,6 +154,7 @@ public:
 			ItemTypeMapper(Trip, db->tripsTable, new CompositeTripsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::tripDialog_geometry,
 				&Settings::mainWindow_columnWidths_tripsTable,
+				&Settings::mainWindow_sorting_tripsTable,
 				&openNewTripDialogAndStore,
 				nullptr,
 				&openEditTripDialogAndStore,
@@ -163,6 +169,7 @@ public:
 			ItemTypeMapper(Hiker, db->hikersTable, new CompositeHikersTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::hikerDialog_geometry,
 				&Settings::mainWindow_columnWidths_hikersTable,
+				&Settings::mainWindow_sorting_hikersTable,
 				&openNewHikerDialogAndStore,
 				nullptr,
 				&openEditHikerDialogAndStore,
@@ -177,6 +184,7 @@ public:
 			ItemTypeMapper(Region, db->regionsTable, new CompositeRegionsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::regionDialog_geometry,
 				&Settings::mainWindow_columnWidths_regionsTable,
+				&Settings::mainWindow_sorting_regionsTable,
 				&openNewRegionDialogAndStore,
 				nullptr,
 				&openEditRegionDialogAndStore,
@@ -191,6 +199,7 @@ public:
 			ItemTypeMapper(Range, db->rangesTable, new CompositeRangesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::rangeDialog_geometry,
 				&Settings::mainWindow_columnWidths_rangesTable,
+				&Settings::mainWindow_sorting_rangesTable,
 				&openNewRangeDialogAndStore,
 				nullptr,
 				&openEditRangeDialogAndStore,
@@ -205,6 +214,7 @@ public:
 			ItemTypeMapper(Country, db->countriesTable, new CompositeCountriesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::countryDialog_geometry,
 				&Settings::mainWindow_columnWidths_countriesTable,
+				&Settings::mainWindow_sorting_countriesTable,
 				&openNewCountryDialogAndStore,
 				nullptr,
 				&openEditCountryDialogAndStore,

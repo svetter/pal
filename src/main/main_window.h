@@ -38,7 +38,8 @@ private:
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
-	void setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting);
+	void setColumnWidths(const ItemTypeMapper& mapper);
+	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
 	
 	// Project setup (on load)

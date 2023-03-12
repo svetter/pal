@@ -18,6 +18,7 @@ class CompositeTable : public QAbstractTableModel {
 	QList<QList<QVariant>*> buffer;
 	QList<int> bufferOrder;
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
+	
 	QSet<const CompositeColumn*> columnsToUpdate;
 	bool updateImmediately;
 	
@@ -32,6 +33,7 @@ public:
 protected:
 	void addColumn(const CompositeColumn* column);
 public:
+	const CompositeColumn* getColumnAt(int columnIndex) const;
 	int getIndexOf(const CompositeColumn* column) const;
 	const NormalTable* getBaseTable() const;
 	
@@ -43,6 +45,7 @@ public:
 	int findCurrentViewRowIndex(int bufferRowIndex) const;
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
+	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
 	
 public:
 	// Change annunciation
