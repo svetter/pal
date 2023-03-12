@@ -398,10 +398,10 @@ void MainWindow::handle_deleteSelectedItem()
 
 void MainWindow::handle_newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* compTable, QTableView* tableView)
 {
-	int newItemIndex = openNewItemDialogAndStoreMethod(this, &db);
-	if (newItemIndex == -1) return;
+	int newBufferRowIndex = openNewItemDialogAndStoreMethod(this, &db);
+	if (newBufferRowIndex == -1) return;
 	
-	int viewRowIndex = compTable->findCurrentViewRowIndex(newItemIndex);
+	int viewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
 	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
 }
 
@@ -411,7 +411,8 @@ void MainWindow::handle_duplicateAndEditItem(int (*openDuplicateItemDialogAndSto
 	int newBufferRowIndex = openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
-	updateSelectionAfterUserAction(tableView, compTable, newBufferRowIndex);
+	int newViewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
+	updateSelectionAfterUserAction(tableView, compTable, newViewRowIndex);
 }
 
 void MainWindow::handle_editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index)
@@ -419,7 +420,7 @@ void MainWindow::handle_editItem(void (*openEditItemDialogAndStoreMethod) (QWidg
 	int bufferRowIndex = compTable->getBufferRowForViewRow(index.row());
 	openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
-	int viewRowIndex = compAscents.updateSortingAfterItemEdit(index.row());
+	int viewRowIndex = compTable->updateSortingAfterItemEdit(index.row());
 	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
 }
 

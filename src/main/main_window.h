@@ -73,7 +73,7 @@ private:
 	void updateSelectionAfterUserAction(QTableView* tableView, CompositeTable* compTable, int viewRowIndex);
 	
 private slots:
-	void handle_openAscent	(const QModelIndex& index);
+	void handle_openAscent(const QModelIndex& index);
 	
 	void handle_rightClick(QPoint pos);
 	
@@ -98,7 +98,6 @@ private:
 	void addToRecentFilesList(const QString& filepath);
 	
 	QTableView* getCurrentTableView() const;
-	
 	
 	
 	
