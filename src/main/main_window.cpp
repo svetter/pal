@@ -38,6 +38,8 @@ MainWindow::MainWindow() :
 		mainAreaTabs->setCurrentIndex(Settings::mainWindow_currentTabIndex.get());
 	}
 	
+	showFiltersAction->setChecked(Settings::mainWindow_showFilters.get());
+	
 	
 	db.setStatusBar(statusbar);
 	
@@ -58,6 +60,7 @@ MainWindow::MainWindow() :
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
 	updateFilterUIEnabled();
+	handle_showFiltersChanged();
 	
 	// Open database
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
@@ -711,6 +714,7 @@ void MainWindow::saveImplicitSettings() const
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
+	Settings::mainWindow_showFilters.set(showFiltersAction->isChecked());
 	
 	// Save column widths
 	typesHandler->forEach([] (const ItemTypeMapper& mapper) {

@@ -77,6 +77,8 @@ public:
 	inline static const Setting<bool>	rememberWindowPositionsRelative				= Setting<bool>		("rememberWindowPositionsRelative",				true);
 	inline static const Setting<bool>	rememberTab									= Setting<bool>		("rememberTab",									true);
 	inline static const Setting<bool>	rememberColumnWidths						= Setting<bool>		("rememberColumnWidths",						true);
+	inline static const Setting<bool>	rememberSorting								= Setting<bool>		("rememberSorting",								true);
+	inline static const Setting<bool>	rememberFilters								= Setting<bool>		("rememberFilters",								true);
 	
 	// Ascent dialog
 	inline static const Setting<bool>	ascentDialog_dateEnabledInitially			= Setting<bool>		("ascentDialog/dateEnabledInitially",			true);
@@ -111,8 +113,12 @@ public:
 	inline static const Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
 	inline static const Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
 	
+	// View state
+	inline static const Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
 	// Open tab
 	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
+	// Ascent filters
+	inline static const Setting<int>			mainWindow_ascentFilters				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
 	
 	// Column widths
 	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");

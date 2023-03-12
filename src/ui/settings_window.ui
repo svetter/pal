@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>590</height>
+    <height>663</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Settings</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="settingsWindowLayout">
    <property name="spacing">
     <number>15</number>
    </property>
@@ -99,7 +99,7 @@
    <item>
     <widget class="QGroupBox" name="rememberBox">
      <property name="title">
-      <string>Remember window states</string>
+      <string>Remember after restart</string>
      </property>
      <layout class="QVBoxLayout" name="rememberBoxLayout">
       <property name="spacing">
@@ -115,38 +115,96 @@
        <number>10</number>
       </property>
       <property name="bottomMargin">
-       <number>5</number>
+       <number>10</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="rememberWindowPositionsLayout">
-        <item>
-         <widget class="QCheckBox" name="rememberWindowPositionsCheckbox">
-          <property name="text">
-           <string>Remember window positions</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="rememberWindowPositionsRelativeCheckbox">
-          <property name="text">
-           <string>Relative to main window</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="rememberTabCheckbox">
-        <property name="text">
-         <string>Remember open tab after restart</string>
+       <widget class="QGroupBox" name="rememberWindowsBox">
+        <property name="title">
+         <string>Windows</string>
         </property>
+        <layout class="QGridLayout" name="rememberWindowsBoxLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="topMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <property name="bottomMargin">
+          <number>5</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="rememberWindowPositionsCheckbox">
+           <property name="text">
+            <string>Positions</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="rememberWindowPositionsRelativeCheckbox">
+           <property name="text">
+            <string>Relative to main window</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="rememberColumnWidthsCheckbox">
-        <property name="text">
-         <string>Remember column widths after restart</string>
+       <widget class="QGroupBox" name="rememberTablesBox">
+        <property name="title">
+         <string>Tables</string>
         </property>
+        <layout class="QGridLayout" name="rememberTablesBoxLayout">
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="topMargin">
+          <number>5</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <property name="bottomMargin">
+          <number>5</number>
+         </property>
+         <property name="horizontalSpacing">
+          <number>10</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>5</number>
+         </property>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="rememberSortingCheckbox">
+           <property name="text">
+            <string>Sorting</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="rememberFiltersCheckbox">
+           <property name="text">
+            <string>Active filters</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="rememberTableCheckbox">
+           <property name="text">
+            <string>Open table</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="rememberColumnWidthsCheckbox">
+           <property name="text">
+            <string>Column widths</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -413,7 +471,7 @@
           <property name="title">
            <string>Trip</string>
           </property>
-          <layout class="QFormLayout" name="formLayout_3">
+          <layout class="QFormLayout" name="tripSettingsBoxLayout">
            <property name="horizontalSpacing">
             <number>10</number>
            </property>

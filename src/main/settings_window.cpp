@@ -39,8 +39,10 @@ void SettingsWindow::loadSettings()
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
-	rememberTabCheckbox							->setChecked	(rememberTab								.get());
+	rememberTableCheckbox						->setChecked	(rememberTab								.get());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.get());
+	rememberSortingCheckbox						->setChecked	(rememberSorting							.get());
+	rememberFiltersCheckbox						->setChecked	(rememberFilters							.get());
 	
 	ascentDateCheckbox							->setChecked	(ascentDialog_dateEnabledInitially			.get());
 	ascentDateDaysInPastSpinner					->setValue		(ascentDialog_initialDateDaysInPast			.get());
@@ -65,8 +67,10 @@ void SettingsWindow::loadDefaults()
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
-	rememberTabCheckbox							->setChecked	(rememberTab								.getDefault());
+	rememberTableCheckbox						->setChecked	(rememberTab								.getDefault());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.getDefault());
+	rememberSortingCheckbox						->setChecked	(rememberSorting							.getDefault());
+	rememberFiltersCheckbox						->setChecked	(rememberFilters							.getDefault());
 	
 	ascentDateCheckbox							->setChecked	(ascentDialog_dateEnabledInitially			.getDefault());
 	ascentDateDaysInPastSpinner					->setValue		(ascentDialog_initialDateDaysInPast			.getDefault());
@@ -93,8 +97,10 @@ void SettingsWindow::saveSettings()
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());
 	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());
-	rememberTab									.set(rememberTabCheckbox						->isChecked());
+	rememberTab									.set(rememberTableCheckbox						->isChecked());
 	rememberColumnWidths						.set(rememberColumnWidthsCheckbox				->isChecked());
+	rememberSorting								.set(rememberSortingCheckbox					->isChecked());
+	rememberFilters								.set(rememberFiltersCheckbox					->isChecked());
 	
 	ascentDialog_dateEnabledInitially			.set(ascentDateCheckbox							->isChecked());
 	ascentDialog_initialDateDaysInPast			.set(ascentDateDaysInPastSpinner				->value());
