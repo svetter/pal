@@ -186,7 +186,7 @@ QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, in
 		assert(section >= 0 && section < bufferOrder.size());
 		switch (role) {
 		case Qt::TextAlignmentRole:	return Qt::AlignRight;
-		case Qt::DisplayRole:		return bufferOrder.at(section) + 1;
+		case Qt::DisplayRole:		return section + 1;
 		}
 		return QVariant();
 	}
@@ -258,7 +258,7 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	QModelIndex topLeftIndex		= index(0, 0);
 	QModelIndex bottomRightIndex	= index(bufferOrder.size() - 1, columns.size() - 1);
 	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
-	headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
+	//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
 	
 	currentSorting = {column, order};
 }
