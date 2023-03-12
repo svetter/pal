@@ -49,7 +49,7 @@
      <property name="title">
       <string>General settings</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="generalSettingsBoxLayout">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -97,11 +97,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="rememberBox">
      <property name="title">
       <string>Remember window states</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="rememberBoxLayout">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -157,7 +157,7 @@
      <property name="title">
       <string>Default values for new items</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
+     <layout class="QVBoxLayout" name="defaultValuesSettingsBoxLayout">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -178,7 +178,7 @@
         <property name="title">
          <string>Ascent</string>
         </property>
-        <layout class="QFormLayout" name="formLayout">
+        <layout class="QFormLayout" name="ascentSettingsBoxLayout">
          <property name="horizontalSpacing">
           <number>10</number>
          </property>
@@ -263,6 +263,9 @@
          </item>
          <item row="1" column="1">
           <layout class="QHBoxLayout" name="ascentTimeLayout">
+           <property name="spacing">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QTimeEdit" name="ascentTimeWidget">
              <property name="minimumSize">
@@ -290,6 +293,9 @@
          </item>
          <item row="2" column="1">
           <layout class="QHBoxLayout" name="ascentElevationGainLayout">
+           <property name="spacing">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QSpinBox" name="ascentElevationGainSpinner">
              <property name="minimumSize">
@@ -334,7 +340,7 @@
           <property name="title">
            <string>Peak</string>
           </property>
-          <layout class="QFormLayout" name="formLayout_2">
+          <layout class="QFormLayout" name="peakSettingsBoxLayout">
            <property name="horizontalSpacing">
             <number>10</number>
            </property>
@@ -362,6 +368,9 @@
            </item>
            <item row="0" column="1">
             <layout class="QHBoxLayout" name="peakHeightLayout">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <item>
               <widget class="QSpinBox" name="peakHeightSpinner">
                <property name="minimumSize">
@@ -480,4 +489,5 @@
   </layout>
  </widget>
  <resources/>
+ <connections/>
 </ui>
