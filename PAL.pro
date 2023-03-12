@@ -109,6 +109,7 @@ HEADERS += \
 	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
+	src/main/item_types_handler.h \
 	src/main/main_window.h \
 	src/main/project_settings_window.h \
 	src/main/settings.h \
