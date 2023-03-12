@@ -39,6 +39,9 @@ MainWindow::MainWindow() :
 	}
 	
 	
+	db.setStatusBar(statusbar);
+	
+	
 	typesHandler = new ItemTypesHandler(
 		new AscentTypeMapper	(&db, ascentsTab,	ascentsTableView,	ascentsDebugTableView,		newAscentAction,	newAscentButton),
 		new PeakTypeMapper		(&db, peaksTab,		peaksTableView,		peaksDebugTableView,		newPeakAction,		newPeakButton),
@@ -127,9 +130,12 @@ void MainWindow::connectUI()
 		auto editFunction = [this, &mapper] (const QModelIndex& index) {
 			editItem(mapper.openEditItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, index);
 		};
-		
 		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	editFunction);
-		connect(mapper.debugTableView,		&QTableView::doubleClicked,		this,	editFunction);
+		
+		auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
+			mapper.openEditItemDialogAndStoreMethod(this, &db, index.row());
+		};
+		connect(mapper.debugTableView,		&QTableView::doubleClicked,		this,	editFunctionDebug);
 	});
 	// Filters
 	connect(applyFiltersButton,				&QPushButton::clicked,				this,	&MainWindow::handle_applyFilters);
@@ -485,8 +491,12 @@ void MainWindow::handle_editSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper) {
-		editItem(mapper.openEditItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, selectedIndex);
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+		if (debugTable) {
+			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
+		} else {
+			editItem(mapper.openEditItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, selectedIndex);
+		}
 	});
 	assert(done);
 }
@@ -498,8 +508,12 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	int viewRowIndex = selectedIndex.row();
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper) {
-		duplicateAndEditItem(mapper.openDuplicateItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, viewRowIndex);
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+		if (debugTable) {
+			mapper.openDuplicateItemDialogAndStoreMethod(this, &db, viewRowIndex);
+		} else {
+			duplicateAndEditItem(mapper.openDuplicateItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, viewRowIndex);
+		}
 		if (mapper.type == Ascent) updateAscentCounter();
 	});
 	assert(done);
@@ -512,8 +526,12 @@ void MainWindow::handle_deleteSelectedItem()
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	int viewRowIndex = selectedIndex.row();
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper) {
-		deleteItem(mapper.openDeleteItemDialogAndStoreMethod, mapper.compTable, viewRowIndex);
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+		if (debugTable) {
+			mapper.openDeleteItemDialogAndStoreMethod(this, &db, viewRowIndex);
+		} else {
+			deleteItem(mapper.openDeleteItemDialogAndStoreMethod, mapper.compTable, viewRowIndex);
+		}
 		if (mapper.type == Ascent) updateAscentCounter();
 	});
 	assert(done);

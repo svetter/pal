@@ -248,16 +248,20 @@ public:
 		}
 	}
 	
-	inline bool forMatchingTableView(QTableView* tableView, std::function<void (const ItemTypeMapper&)> lambda) const
+	inline bool forMatchingTableView(QTableView* tableView, std::function<void (const ItemTypeMapper&, bool)> lambda) const
 	{
 		const ItemTypeMapper* matchingMapper = nullptr;
+		bool debugTable = false;
 		for (const ItemTypeMapper* mapper : mappers) {
 			if (mapper->tableView == tableView) matchingMapper = mapper;
-			if (mapper->debugTableView == tableView) matchingMapper = mapper;
+			if (mapper->debugTableView == tableView) {
+				matchingMapper = mapper;
+				debugTable = true;
+			}
 		}
 		if (!matchingMapper) return false;
 		
-		lambda(*matchingMapper);
+		lambda(*matchingMapper, debugTable);
 		return true;
 	}
 };
