@@ -10,6 +10,7 @@
 #include <QList>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <QCalendarWidget>
 
 
 
@@ -53,6 +54,7 @@ MainWindow::MainWindow() :
 	setupTableViews();
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
+	updateFilterUIEnabled();
 	
 	// Open database
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
@@ -95,6 +97,8 @@ void MainWindow::connectUI()
 	connect(closeDatabaseAction,			&QAction::triggered,			this,	&MainWindow::handle_closeDatabase);
 	connect(projectSettingsAction,			&QAction::triggered,			this,	&MainWindow::handle_openProjectSettings);
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
+	// Menu "View"
+	connect(showFiltersAction,				&QAction::triggered,			this,	&MainWindow::handle_showFiltersChanged);
 	// Menu "New"
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
@@ -127,6 +131,29 @@ void MainWindow::connectUI()
 		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	editFunction);
 		connect(mapper.debugTableView,		&QTableView::doubleClicked,		this,	editFunction);
 	});
+	// Filters
+	connect(applyFiltersButton,				&QPushButton::clicked,				this,	&MainWindow::handle_applyFilters);
+	connect(clearFiltersButton,				&QPushButton::clicked,				this,	&MainWindow::handle_clearFilters);
+	connect(dateFilterBox,					&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(peakHeightFilterBox,			&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(volcanoFilterBox,				&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(rangeFilterBox,					&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(hikeKindFilterBox,				&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(difficultyFilterBox,			&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(hikerFilterBox,					&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(dateFilterMinWidget,			&QDateEdit::dateChanged,			this,	&MainWindow::handle_filtersChanged);
+	connect(dateFilterMaxCheckbox,			&QCheckBox::stateChanged,			this,	&MainWindow::handle_filtersChanged);
+	connect(dateFilterMaxWidget,			&QDateEdit::dateChanged,			this,	&MainWindow::handle_filtersChanged);
+	connect(peakHeightFilterMinCombo,		&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(peakHeightFilterMaxCheckbox,	&QCheckBox::stateChanged,			this,	&MainWindow::handle_filtersChanged);
+	connect(peakHeightFilterMaxCombo,		&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(volcanoFilterYesRadio,			&QRadioButton::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(volcanoFilterNoRadio,			&QRadioButton::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(rangeFilterCombo,				&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(hikeKindFilterCombo,			&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(difficultyFilterSystemCombo,	&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(difficultyFilterGradeCombo,		&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(hikerFilterCombo,				&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
 }
 
 void MainWindow::setupTableViews()
@@ -319,6 +346,35 @@ void MainWindow::updateAscentCounter()
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 }
 
+void MainWindow::updateFilterUIEnabled()
+{
+	dateFilterMaxWidget			->setEnabled(dateFilterMaxCheckbox->checkState());
+	peakHeightFilterMaxCombo	->setEnabled(peakHeightFilterMaxCheckbox->checkState());
+	difficultyFilterGradeCombo	->setEnabled(difficultyFilterSystemCombo->currentIndex() > 0);
+	
+	if (!dateFilterMaxCheckbox->checkState()) {
+		dateFilterMaxWidget->setDate(dateFilterMinWidget->date());
+	}
+	else if (dateFilterMinWidget->date() > dateFilterMaxWidget->date()) {
+		if (dateFilterMaxWidget->hasFocus() || dateFilterMaxWidget->calendarWidget()->hasFocus()) {
+			dateFilterMinWidget->setDate(dateFilterMaxWidget->date());
+		} else {
+			dateFilterMaxWidget->setDate(dateFilterMinWidget->date());
+		}
+	}
+	
+	if (!peakHeightFilterMaxCheckbox->checkState()) {
+		peakHeightFilterMaxCombo->setCurrentIndex(peakHeightFilterMinCombo->currentIndex());
+	}
+	else if (peakHeightFilterMinCombo->currentIndex() > peakHeightFilterMaxCombo->currentIndex()) {
+		if (peakHeightFilterMaxCombo->hasFocus()) {
+			peakHeightFilterMinCombo->setCurrentIndex(peakHeightFilterMaxCombo->currentIndex());
+		} else {
+			peakHeightFilterMaxCombo->setCurrentIndex(peakHeightFilterMinCombo->currentIndex());
+		}
+	}
+}
+
 
 
 // EXECUTE USER COMMANDS
@@ -465,6 +521,31 @@ void MainWindow::handle_deleteSelectedItem()
 
 
 
+// FILTER EVENT HANDLERS
+
+void MainWindow::handle_filtersChanged()
+{
+	updateFilterUIEnabled();
+	applyFiltersButton->setEnabled(true);
+}
+
+void MainWindow::handle_applyFilters()
+{
+	// TODO
+	applyFiltersButton->setEnabled(false);
+	clearFiltersButton->setEnabled(true);
+	qDebug() << "UNIMPLEMENTED: Apply filters";
+}
+
+void MainWindow::handle_clearFilters()
+{
+	// TODO
+	clearFiltersButton->setEnabled(false);
+	qDebug() << "UNIMPLEMENTED: Clear filters";
+}
+
+
+
 // FILE MENU ACTION HANDLERS
 
 void MainWindow::handle_newDatabase()
@@ -563,6 +644,17 @@ void MainWindow::handle_openProjectSettings()
 void MainWindow::handle_openSettings()
 {
 	SettingsWindow(this).exec();
+}
+
+
+
+// VIEW MENU ACTION HANDLERS
+
+void MainWindow::handle_showFiltersChanged()
+{
+	bool showFilters = showFiltersAction->isChecked();
+	filtersLayoutWidget->setVisible(showFilters);
+	if (!showFilters) handle_clearFilters();
 }
 
 

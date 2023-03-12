@@ -1,10 +1,10 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "src/main/item_types_handler.h"
 #include "ui_main_window.h"
 #include "src/db/database.h"
 #include "src/main/settings.h"
+#include "src/main/item_types_handler.h"
 
 #include <QMainWindow>
 #include <QTableView>
@@ -48,6 +48,7 @@ private:
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
 	void updateAscentCounter();
+	void updateFilterUIEnabled();
 	
 	// Execute user commands
 	void newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* tableView);
@@ -67,6 +68,11 @@ private slots:
 	void handle_duplicateAndEditSelectedItem();
 	void handle_deleteSelectedItem();
 	
+	// Filter event handlers
+	void handle_filtersChanged();
+	void handle_applyFilters();
+	void handle_clearFilters();
+	
 	// File menu action handlers
 	void handle_newDatabase();
 	void handle_openDatabase();
@@ -76,6 +82,8 @@ private slots:
 	void handle_closeDatabase();
 	void handle_openProjectSettings();
 	void handle_openSettings();
+	// View menu action handlers
+	void handle_showFiltersChanged();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
 	// Help menu action handlers
