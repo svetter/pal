@@ -45,7 +45,7 @@ MainWindow::MainWindow() :
 		}
 	}
 	
-	if (Settings::mainWindow_rememberTab.get()) {
+	if (Settings::rememberTab.get()) {
 		mainAreaTabs->setCurrentIndex(Settings::mainWindow_currentTabIndex.get());
 	}
 	
@@ -269,7 +269,7 @@ void MainWindow::setupDebugTableView(QTableView* view, Table* table)
 
 void MainWindow::setColumnWidths(QTableView* view, const CompositeTable* table, const Setting<QStringList>* columnWidthsSetting)
 {
-	if (!Settings::mainWindow_rememberColumnWidths.get()) {
+	if (!Settings::rememberColumnWidths.get()) {
 		return view->resizeColumnsToContents();
 	}
 	

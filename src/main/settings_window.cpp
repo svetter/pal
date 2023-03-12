@@ -39,8 +39,8 @@ void SettingsWindow::loadSettings()
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
-	rememberTabCheckbox							->setChecked	(mainWindow_rememberTab						.get());
-	rememberColumnWidthsCheckbox				->setChecked	(mainWindow_rememberColumnWidths			.get());
+	rememberTabCheckbox							->setChecked	(rememberTab								.get());
+	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.get());
 	
 	ascentDateCheckbox							->setChecked	(ascentDialog_dateEnabledInitially			.get());
 	ascentDateDaysInPastSpinner					->setValue		(ascentDialog_initialDateDaysInPast			.get());
@@ -65,8 +65,8 @@ void SettingsWindow::loadDefaults()
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
-	rememberTabCheckbox							->setChecked	(mainWindow_rememberTab						.getDefault());
-	rememberColumnWidthsCheckbox				->setChecked	(mainWindow_rememberColumnWidths			.getDefault());
+	rememberTabCheckbox							->setChecked	(rememberTab								.getDefault());
+	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.getDefault());
 	
 	ascentDateCheckbox							->setChecked	(ascentDialog_dateEnabledInitially			.getDefault());
 	ascentDateDaysInPastSpinner					->setValue		(ascentDialog_initialDateDaysInPast			.getDefault());
@@ -93,8 +93,8 @@ void SettingsWindow::saveSettings()
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());
 	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());
-	mainWindow_rememberTab						.set(rememberTabCheckbox						->isChecked());
-	mainWindow_rememberColumnWidths				.set(rememberColumnWidthsCheckbox				->isChecked());
+	rememberTab									.set(rememberTabCheckbox						->isChecked());
+	rememberColumnWidths						.set(rememberColumnWidthsCheckbox				->isChecked());
 	
 	ascentDialog_dateEnabledInitially			.set(ascentDateCheckbox							->isChecked());
 	ascentDialog_initialDateDaysInPast			.set(ascentDateDaysInPastSpinner				->value());

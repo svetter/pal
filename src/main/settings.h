@@ -72,11 +72,11 @@ public:
 	
 	inline static const Setting<bool>	openProjectSettingsOnNewDatabase			= Setting<bool>		("openProjectSettingsOnNewDatabase",			true);
 	
+	// Remember UI
 	inline static const Setting<bool>	rememberWindowPositions						= Setting<bool>		("rememberWindowPositions",						true);
 	inline static const Setting<bool>	rememberWindowPositionsRelative				= Setting<bool>		("rememberWindowPositionsRelative",				true);
-	// Main window
-	inline static const Setting<bool>	mainWindow_rememberTab						= Setting<bool>		("mainWindow/rememberTab",						true);
-	inline static const Setting<bool>	mainWindow_rememberColumnWidths				= Setting<bool>		("mainWindow/rememberColumnWidths",				true);
+	inline static const Setting<bool>	rememberTab									= Setting<bool>		("rememberTab",									true);
+	inline static const Setting<bool>	rememberColumnWidths						= Setting<bool>		("rememberColumnWidths",						true);
 	
 	// Ascent dialog
 	inline static const Setting<bool>	ascentDialog_dateEnabledInitially			= Setting<bool>		("ascentDialog/dateEnabledInitially",			true);
