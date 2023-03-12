@@ -690,27 +690,27 @@ void MainWindow::handle_editAscent(const QModelIndex& index)
 }
 void MainWindow::handle_editPeak(const QModelIndex& index)
 {
-	handle_editItem(&openEditPeakDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditPeakDialogAndStore, &compPeaks, peaksTableView, index);
 }
 void MainWindow::handle_editTrip(const QModelIndex& index)
 {
-	handle_editItem(&openEditTripDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditTripDialogAndStore, &compTrips, tripsTableView, index);
 }
 void MainWindow::handle_editHiker(const QModelIndex& index)
 {
-	handle_editItem(&openEditHikerDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditHikerDialogAndStore, &compHikers, hikersTableView, index);
 }
 void MainWindow::handle_editRegion(const QModelIndex& index)
 {
-	handle_editItem(&openEditRegionDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditRegionDialogAndStore, &compRegions, regionsTableView, index);
 }
 void MainWindow::handle_editRange(const QModelIndex& index)
 {
-	handle_editItem(&openEditRangeDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditRangeDialogAndStore, &compRanges, rangesTableView, index);
 }
 void MainWindow::handle_editCountry(const QModelIndex& index)
 {
-	handle_editItem(&openEditCountryDialogAndStore, &compAscents, ascentsTableView, index);
+	handle_editItem(&openEditCountryDialogAndStore, &compCountries, countriesTableView, index);
 }
 
 void MainWindow::handle_deleteAscent(int viewRowIndex)
