@@ -18,6 +18,8 @@ class CompositeTable : public QAbstractTableModel {
 	QList<QList<QVariant>*> buffer;
 	QList<int> bufferOrder;
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
+	QSet<const CompositeColumn*> columnsToUpdate;
+	bool updateImmediately;
 	
 public:
 	const QString name;
@@ -34,6 +36,8 @@ public:
 	const NormalTable* getBaseTable() const;
 	
 	void initBuffer(QProgressDialog* progressDialog);
+	int getNumberOfCellsToUpdate() const;
+	void updateBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();
 	int getBufferRowForViewRow(int viewRowIndex) const;
 	int findCurrentViewRowIndex(int bufferRowIndex) const;
@@ -42,6 +46,7 @@ public:
 	
 public:
 	// Change annunciation
+	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
 	void insertRowAndAnnounce(int bufferRowIndex);
 	void removeRowAndAnnounce(int bufferRowIndex);
 	void announceChangesUnderColumn(int columnIndex);
@@ -53,6 +58,8 @@ public:
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	void sort(int columnIndex, Qt::SortOrder order = Qt::AscendingOrder) override;
+private:
+	void performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse);
 	
 private:
 	QVariant computeCellContent(int bufferRowIndex, int columnIndex) const;

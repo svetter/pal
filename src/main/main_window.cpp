@@ -50,46 +50,48 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	connect(newDatabaseAction,				&QAction::triggered,		this,	&MainWindow::handle_newDatabase);
-	connect(openDatabaseAction,				&QAction::triggered,		this,	&MainWindow::handle_openDatabase);
-	connect(clearRecentDatabaseListAction,	&QAction::triggered,		this,	&MainWindow::handle_clearRecentDatabasesList);
-	connect(saveDatabaseAsAction,			&QAction::triggered,		this,	&MainWindow::handle_saveDatabaseAs);
-	connect(closeDatabaseAction,			&QAction::triggered,		this,	&MainWindow::handle_closeDatabase);
-	connect(projectSettingsAction,			&QAction::triggered,		this,	&MainWindow::handle_openProjectSettings);
-	connect(settingsAction,					&QAction::triggered,		this,	&MainWindow::handle_openSettings);
+	connect(newDatabaseAction,				&QAction::triggered,			this,	&MainWindow::handle_newDatabase);
+	connect(openDatabaseAction,				&QAction::triggered,			this,	&MainWindow::handle_openDatabase);
+	connect(clearRecentDatabaseListAction,	&QAction::triggered,			this,	&MainWindow::handle_clearRecentDatabasesList);
+	connect(saveDatabaseAsAction,			&QAction::triggered,			this,	&MainWindow::handle_saveDatabaseAs);
+	connect(closeDatabaseAction,			&QAction::triggered,			this,	&MainWindow::handle_closeDatabase);
+	connect(projectSettingsAction,			&QAction::triggered,			this,	&MainWindow::handle_openProjectSettings);
+	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
 	
-	connect(newAscentAction,				&QAction::triggered,		this,	&MainWindow::handle_newAscent);
-	connect(newPeakAction,					&QAction::triggered,		this,	&MainWindow::handle_newPeak);
-	connect(newTripAction,					&QAction::triggered,		this,	&MainWindow::handle_newTrip);
-	connect(newHikerAction,					&QAction::triggered,		this,	&MainWindow::handle_newHiker);
-	connect(newRegionAction,				&QAction::triggered,		this,	&MainWindow::handle_newRegion);
-	connect(newRangeAction,					&QAction::triggered,		this,	&MainWindow::handle_newRange);
-	connect(newCountryAction,				&QAction::triggered,		this,	&MainWindow::handle_newCountry);
+	connect(newAscentAction,				&QAction::triggered,			this,	&MainWindow::handle_newAscent);
+	connect(newPeakAction,					&QAction::triggered,			this,	&MainWindow::handle_newPeak);
+	connect(newTripAction,					&QAction::triggered,			this,	&MainWindow::handle_newTrip);
+	connect(newHikerAction,					&QAction::triggered,			this,	&MainWindow::handle_newHiker);
+	connect(newRegionAction,				&QAction::triggered,			this,	&MainWindow::handle_newRegion);
+	connect(newRangeAction,					&QAction::triggered,			this,	&MainWindow::handle_newRange);
+	connect(newCountryAction,				&QAction::triggered,			this,	&MainWindow::handle_newCountry);
 	
-	connect(relocatePhotosAction,			&QAction::triggered,		this,	&MainWindow::handle_relocatePhotos);
+	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
 	
-	connect(aboutAction,					&QAction::triggered,		this,	&MainWindow::handle_about);
-	connect(aboutQtAction,					&QAction::triggered,		this,	&QApplication::aboutQt);
+	connect(aboutAction,					&QAction::triggered,			this,	&MainWindow::handle_about);
+	connect(aboutQtAction,					&QAction::triggered,			this,	&QApplication::aboutQt);
 	
-	connect(newAscentButton,				&QPushButton::clicked,		this,	&MainWindow::handle_newAscent);
-	connect(newPeakButton,					&QPushButton::clicked,		this,	&MainWindow::handle_newPeak);
-	connect(newTripButton,					&QPushButton::clicked,		this,	&MainWindow::handle_newTrip);
+	connect(newAscentButton,				&QPushButton::clicked,			this,	&MainWindow::handle_newAscent);
+	connect(newPeakButton,					&QPushButton::clicked,			this,	&MainWindow::handle_newPeak);
+	connect(newTripButton,					&QPushButton::clicked,			this,	&MainWindow::handle_newTrip);
 	
-	connect(ascentsTableView,				&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(peaksTableView,					&QTableView::doubleClicked,	this,	&MainWindow::handle_editPeak);
-	connect(tripsTableView,					&QTableView::doubleClicked,	this,	&MainWindow::handle_editTrip);
-	connect(hikersTableView,				&QTableView::doubleClicked,	this,	&MainWindow::handle_editHiker);
-	connect(regionsTableView,				&QTableView::doubleClicked,	this,	&MainWindow::handle_editRegion);
-	connect(rangesTableView,				&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
-	connect(countriesTableView,				&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
+	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	
-	connect(ascentsDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editAscent);
-	connect(peaksDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editPeak);
-	connect(tripsDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editTrip);
-	connect(hikersDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editHiker);
-	connect(regionsDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editRegion);
-	connect(rangesDebugTableView,			&QTableView::doubleClicked,	this,	&MainWindow::handle_editRange);
-	connect(countriesDebugTableView,		&QTableView::doubleClicked,	this,	&MainWindow::handle_editCountry);
+	connect(ascentsTableView,				&QTableView::doubleClicked,		this,	&MainWindow::handle_editAscent);
+	connect(peaksTableView,					&QTableView::doubleClicked,		this,	&MainWindow::handle_editPeak);
+	connect(tripsTableView,					&QTableView::doubleClicked,		this,	&MainWindow::handle_editTrip);
+	connect(hikersTableView,				&QTableView::doubleClicked,		this,	&MainWindow::handle_editHiker);
+	connect(regionsTableView,				&QTableView::doubleClicked,		this,	&MainWindow::handle_editRegion);
+	connect(rangesTableView,				&QTableView::doubleClicked,		this,	&MainWindow::handle_editRange);
+	connect(countriesTableView,				&QTableView::doubleClicked,		this,	&MainWindow::handle_editCountry);
+	
+	connect(ascentsDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editAscent);
+	connect(peaksDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editPeak);
+	connect(tripsDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editTrip);
+	connect(hikersDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editHiker);
+	connect(regionsDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editRegion);
+	connect(rangesDebugTableView,			&QTableView::doubleClicked,		this,	&MainWindow::handle_editRange);
+	connect(countriesDebugTableView,		&QTableView::doubleClicked,		this,	&MainWindow::handle_editCountry);
 	
 	
 	db.setStatusBar(statusbar);
@@ -243,6 +245,8 @@ void MainWindow::setupTableView(QTableView* view, CompositeTable* table, const S
 	
 	// Enable context menu
 	connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+	
+	table->setUpdateImmediately(view == getCurrentTableView());
 	
 	// Set sorting
 	QPair<const CompositeColumn*, Qt::SortOrder> sorting = table->getDefaultSorting();
@@ -444,6 +448,32 @@ void MainWindow::handle_openAscent(const QModelIndex& index)
 {
 	// TODO open ascent display window
 	qDebug() << "UNIMPLEMENTED: MainWindow::handle_openAscent(), row" << index.row();
+}
+
+
+
+void MainWindow::handle_tabChanged()
+{
+	QProgressDialog progress(this);
+	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setWindowTitle(tr("Updating table"));
+	progress.setLabel(new QLabel(tr("Updating table..."), &progress));
+	progress.setMinimumWidth(250);
+	progress.setCancelButton(nullptr);
+	progress.setMinimumDuration(500);
+	
+	QAbstractItemModel* currentModel = getCurrentTableView()->model();
+	for (CompositeTable* compTable : compTables) {
+		if (currentModel == compTable) {
+			progress.setMaximum(compTable->getNumberOfCellsToUpdate());
+			
+			compTable->setUpdateImmediately(true, &progress);
+		}
+		else {
+			compTable->setUpdateImmediately(false);
+		}
+	}
 }
 
 

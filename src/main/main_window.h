@@ -75,6 +75,8 @@ private:
 private slots:
 	void handle_openAscent(const QModelIndex& index);
 	
+	void handle_tabChanged();
+	
 	void handle_rightClick(QPoint pos);
 	
 	void handle_newDatabase();

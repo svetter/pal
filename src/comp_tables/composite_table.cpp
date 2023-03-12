@@ -10,6 +10,8 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		buffer(QList<QList<QVariant>*>()),
 		bufferOrder(QList<int>()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
+		columnsToUpdate(QSet<const CompositeColumn*>()),
+		updateImmediately(false),
 		name(baseTable->name)
 {
 	baseTable->setRowChangeListener(this);
@@ -67,6 +69,37 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 	}
 	
 	endResetModel();
+	columnsToUpdate.clear();
+}
+
+int CompositeTable::getNumberOfCellsToUpdate() const
+{
+	return columnsToUpdate.size() * buffer.size();
+}
+
+void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
+{
+	if (columnsToUpdate.isEmpty()) return;
+	
+	for (const CompositeColumn* column : columnsToUpdate) {
+		int columnIndex = column->getIndex();
+		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
+			QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
+			buffer.at(bufferRowIndex)->replace(columnIndex, newContent);
+			
+			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+		}
+		
+		QModelIndex topLeftIndex		= index(0, columnIndex);
+		QModelIndex bottomRightIndex	= index(bufferOrder.size(), columnIndex);
+		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
+	}
+	
+	if (columnsToUpdate.contains(currentSorting.first)) {
+		performSortByColumn(currentSorting.first, currentSorting.second, false);
+	}
+	
+	columnsToUpdate.clear();
 }
 
 void CompositeTable::resetBuffer()
@@ -93,6 +126,12 @@ int CompositeTable::findCurrentViewRowIndex(int bufferRowIndex) const
 }
 
 
+
+void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialog* progress)
+{
+	this->updateImmediately = updateImmediately;
+	if (updateImmediately) updateBuffer(progress);
+}
 
 void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
 {
@@ -138,16 +177,8 @@ void CompositeTable::removeRowAndAnnounce(int bufferRowIndex)
 
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
-	// Update buffer
-	for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
-		QList<QVariant>* bufferRow = buffer.at(bufferRowIndex);
-		bufferRow->replace(columnIndex, computeCellContent(bufferRowIndex, columnIndex));
-	}
-	
-	// Notify model users (views)
-	QModelIndex topLeftIndex		= index(0, columnIndex);
-	QModelIndex bottomRightIndex	= index(bufferOrder.size() - 1, columnIndex);
-	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
+	columnsToUpdate.insert(columns.at(columnIndex));
+	if (updateImmediately) updateBuffer(nullptr);
 }
 
 int CompositeTable::updateSortingAfterItemEdit(int viewRowIndex)
@@ -234,7 +265,14 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn* const column = columns.at(columnIndex);
 	
-	if (column == currentSorting.first) {
+	performSortByColumn(column, order, true);
+}
+
+void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse)
+{
+	assert(column);
+	
+	if (allowPassAndReverse && column == currentSorting.first) {
 		if (order == currentSorting.second) return;
 		
 		std::reverse(bufferOrder.begin(), bufferOrder.end());
