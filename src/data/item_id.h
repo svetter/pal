@@ -21,7 +21,7 @@ public:
 	ItemID();
 	
 	bool isValid() const;
-	bool isNull() const;
+	bool isInvalid() const;
 	
 	int get() const;
 	QVariant asQVariant() const;
@@ -41,7 +41,7 @@ public:
 
 inline bool operator==(const ItemID& id1, const ItemID& id2)
 {
-	if (id1.isNull() && id2.isNull()) return true;
+	if (id1.isInvalid() && id2.isInvalid()) return true;
 	if (id1.isValid() != id2.isValid()) return false;
 	return id1.get() == id2.get();
 }

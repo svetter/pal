@@ -200,7 +200,7 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 		// Look up key stored in current column at current row index
 		ItemID key = currentColumn->getValueAt(currentRowIndex);
 		
-		if (key.isNull()) return QVariant();
+		if (key.isInvalid()) return QVariant();
 		
 		// Get referenced primary key column of other table
 		const Column* referencedColumn = currentColumn->getReferencedForeignColumn();

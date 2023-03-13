@@ -25,7 +25,7 @@ bool ItemID::isValid() const
 	return valid;
 }
 
-bool ItemID::isNull() const
+bool ItemID::isInvalid() const
 {
 	return !valid;
 }
