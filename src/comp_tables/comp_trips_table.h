@@ -29,7 +29,7 @@ public:
 			avgElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Avg. elev. gain"),	Average,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
 			maxElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Max. elev. gain"),	Max,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
 			sumElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Sum elev. gain"),	Sum,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			listHikersColumn		(new const FoldCompositeColumn			(this,	tr("Participants"),		List,			{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
+			listHikersColumn		(new const FoldCompositeColumn			(this,	tr("Participants"),		ListString,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(startDateColumn);

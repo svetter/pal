@@ -14,10 +14,12 @@ class CompositeTable : public QAbstractTableModel {
 	Database* db;
 	
 	QList<const CompositeColumn*> columns;
+	int firstHiddenColumnIndex;
 	
 	QList<QList<QVariant>*> buffer;
 	QList<int> bufferOrder;
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
+	QList<QPair<const CompositeColumn*, QVariant>> currentFilters;
 	
 	QSet<const CompositeColumn*> columnsToUpdate;
 	bool updateImmediately;
@@ -31,12 +33,13 @@ public:
 	~CompositeTable();
 	
 protected:
-	void addColumn(const CompositeColumn* column);
+	void addColumn(const CompositeColumn* column, bool hidden = false);
 public:
 	const CompositeColumn* getColumnAt(int columnIndex) const;
 	int getIndexOf(const CompositeColumn* column) const;
 	const NormalTable* getBaseTable() const;
 	
+	int getNumberOfCellsToInit() const;
 	void initBuffer(QProgressDialog* progressDialog);
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
@@ -46,6 +49,11 @@ public:
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
+	
+	void applyFilters(QList<QPair<const CompositeColumn*, QVariant>> filters);
+	void clearFilters();
+	QList<QPair<const CompositeColumn*, QVariant>> getCurrentFilters() const;
+	bool filterIsActive() const;
 	
 public:
 	// Change annunciation

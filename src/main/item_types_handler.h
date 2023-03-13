@@ -251,6 +251,11 @@ public:
 			})
 	{}
 	
+	inline const ItemTypeMapper* get(PALItemType type) const
+	{
+		return mappers.value(type);
+	}
+	
 	inline void forEach(std::function<void (const ItemTypeMapper&)> lambda) const
 	{
 		for (const ItemTypeMapper* mapper : mappers) {

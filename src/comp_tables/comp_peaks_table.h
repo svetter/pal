@@ -31,7 +31,7 @@ public:
 			continentColumn			(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,		{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->continentColumn,			&Range::continentNames)),
 			numAscentsColumn		(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,				{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
 			sumElevationGainColumn	(new const FoldCompositeColumn		(this,	tr("Sum elev. gain"),	Sum,				{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			listHikersColumn		(new const FoldCompositeColumn		(this,	tr("Scaled by"),		List,				{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
+			listHikersColumn		(new const FoldCompositeColumn		(this,	tr("Scaled by"),		ListString,			{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(heightColumn);

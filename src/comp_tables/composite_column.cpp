@@ -137,6 +137,164 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 
 
 
+void CompositeColumn::applySingleFilter(QVariant rawValue, QList<int>& orderBuffer) const
+{
+	bool isInt	= rawValue.canConvert<int>();
+	bool isBool	= rawValue.canConvert<bool>();
+	bool isDate	= rawValue.canConvert<QDate>();
+	bool isTime	= rawValue.canConvert<QTime>();
+	bool isList	= rawValue.canConvert<QList<QVariant>>();
+	
+	std::function<bool (QVariant)> valuePasses = nullptr;
+	
+	switch (contentType) {
+	case Integer: {
+		if (isList) {
+			QList<QVariant> list = rawValue.toList();
+			if (list.size() != 2) { qDebug() << "Problem with parsing filter: Filter value is list but has length" << list.size(); return; }
+			QVariant rawMin = list.at(0);
+			bool conversionOk = false;
+			int min = rawMin.toInt(&conversionOk);
+			if (!conversionOk) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value list is not"; return; }
+			QVariant rawMax = list.at(1);
+			int max = rawMax.toInt(&conversionOk);
+			if (!conversionOk) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value list is not"; return; }
+			valuePasses = [min, max] (QVariant valueToFilter) {
+				return min <= valueToFilter.toInt() && valueToFilter.toInt() <= max;
+			};
+		} else {
+			if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value is not list and not int"; return; }
+			int value = rawValue.toInt();
+			valuePasses = [value] (QVariant valueToFilter) {
+				return valueToFilter.toInt() == value;
+			};
+		}
+		break;
+	}
+	case ID: {
+		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is ID but filter value is not int"; return; }
+		ItemID id = rawValue.toInt();
+		if (id.isInvalid()) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value is invalid as an ID"; return; }
+		valuePasses = [id] (QVariant valueToFilter) {
+			return valueToFilter == id.asQVariant();
+		};
+		break;
+	}
+	case IDList: {
+		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is IDList but filter value is not int"; return; }
+		ItemID id = rawValue.toInt();
+		if (id.isInvalid()) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value is invalid as an ID"; return; }
+		valuePasses = [id] (QVariant valueToFilter) {
+			QList<QVariant> list = valueToFilter.toList();
+			return list.contains(id.asQVariant());
+		};
+		break;
+	}
+	case Enum: {
+		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is Enum but filter value is not int"; return; }
+		int value = rawValue.toInt();
+		if (value < 0) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value is invalid as an enum"; return; }
+		valuePasses = [value] (QVariant valueToFilter) {
+			return valueToFilter.toInt() == value;
+		};
+		break;
+	}
+	case DualEnum: {
+		if (!isList) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value is not a list"; return; }
+		QList<QVariant> list = rawValue.toList();
+		if (list.size() != 2) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list has length" << list.size(); return; }
+		QVariant rawDiscerning = list.at(0);
+		bool conversionOk = false;
+		int discerning = rawDiscerning.toInt(&conversionOk);
+		if (!conversionOk) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is not int"; return; }
+		if (discerning < 0) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is invalid as an enum"; return; }
+		QVariant rawDisplayed = list.at(1);
+		int displayed = rawDisplayed.toInt(&conversionOk);
+		if (!conversionOk) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is not int"; return; }
+		if (displayed < 0) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is invalid as an enum"; return; }
+		valuePasses = [discerning, displayed] (QVariant valueToFilter) {
+			QList<QVariant> list = valueToFilter.toList();
+			if (list.size() < 2) return discerning == 0;
+			return list.at(0) == discerning && list.at(1) == displayed;
+		};
+		break;
+	}
+	case Bit: {
+		if (!isBool) { qDebug() << "Problem with parsing filter: Column content type is Bit but filter value is not bool"; return; }
+		bool value = rawValue.toBool();
+		valuePasses = [value] (QVariant valueToFilter) {
+			return valueToFilter.toBool() == value;
+		};
+		break;
+	}
+	case String: {
+		qDebug() << "WARNING: Case String in CompositeColumn::applySingleFilter() should probably not be used";
+		QString value = rawValue.toString();
+		valuePasses = [value] (QVariant valueToFilter) {
+			return valueToFilter.toString() == value;
+		};
+		break;
+	}
+	case Date: {
+		if (isList) {
+			QList<QVariant> list = rawValue.toList();
+			if (list.size() != 2) { qDebug() << "Problem with parsing filter: Filter value is list but has length" << list.size(); return; }
+			QVariant rawMin = list.at(0);
+			QDate min = rawMin.toDate();
+			if (!min.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value list value is invalid as QDate"; return; }
+			QVariant rawMax = list.at(1);
+			QDate max = rawMax.toDate();
+			if (!max.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value list value is invalid as QDate"; return; }
+			valuePasses = [min, max] (QVariant valueToFilter) {
+				return min <= valueToFilter.toDate() && valueToFilter.toDate() <= max;
+			};
+		} else {
+			if (!isDate) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value is not QDate"; return; }
+			QDate value = rawValue.toDate();
+			if (!value.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value is invalid as QDate"; return; }
+			valuePasses = [value] (QVariant valueToFilter) {
+				return valueToFilter.toDate() == value;
+			};
+		}
+		break;
+	}
+	case Time: {
+		if (isList) {
+			QList<QVariant> list = rawValue.toList();
+			if (list.size() != 2) { qDebug() << "Problem with parsing filter: Filter value is list but has length" << list.size(); return; }
+			QVariant rawMin = list.at(0);
+			QTime min = rawMin.toTime();
+			if (!min.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value list value is invalid as QTime"; return; }
+			QVariant rawMax = list.at(1);
+			QTime max = rawMax.toTime();
+			if (!max.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value list value is invalid as QTime"; return; }
+			valuePasses = [min, max] (QVariant valueToFilter) {
+				return min <= valueToFilter.toTime() && valueToFilter.toTime() <= max;
+			};
+		} else {
+			if (!isTime) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value is not QTime"; return; }
+			QTime value = rawValue.toTime();
+			if (!value.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value is invalid as QTime"; return; }
+			valuePasses = [value] (QVariant valueToFilter) {
+				return valueToFilter.toTime() == value;
+			};
+		}
+		break;
+	}
+	default: assert(false);
+	}
+	
+	if (!valuePasses) return;
+	// Do the actual filter pass
+	for (int i = orderBuffer.size() - 1; i >= 0; i--) {
+		bool letThrough = valuePasses(getValueAt(orderBuffer.at(i)));
+		if (letThrough) continue;
+		orderBuffer.removeAt(i);
+	}
+}
+
+
+
 void CompositeColumn::announceChangedData() const
 {
 	int thisColumnIndex = table->getIndexOf(this);
@@ -237,7 +395,7 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == List ? Qt::AlignLeft : Qt::AlignRight, op == List ? String : (op == Count ? Integer : contentColumn->type), enumNames),
+		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), enumNames),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn)
@@ -303,8 +461,15 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 		}
 	}
 	
-	// RETURN IF COUNT
+	// RETURN IF COUNT OR INT LIST
 	if (op == Count) return currentRowIndexSet.size();
+	if (op == IntList) {
+		QList<QVariant> list = QList<QVariant>();
+		for (int rowIndex : currentRowIndexSet) {
+			list.append(contentColumn->getValueAt(rowIndex));
+		}
+		return list;
+	}
 	
 	
 	
@@ -320,7 +485,7 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		
 		switch (op) {
-		case List:
+		case ListString:
 			assert(content.canConvert<QString>());
 			if (!listString.isEmpty()) listString.append(", ");
 			content = replaceEnumIfApplicable(content);
@@ -343,11 +508,11 @@ QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
 	assert(currentRowIndexSet.size() > 0);
 	
 	switch (op) {
-	case List:		return listString;
-	case Average:	return aggregate / currentRowIndexSet.size();
-	case Sum:		return aggregate;
-	case Max:		return aggregate;
-	default:		assert(false);
+	case ListString:	return listString;
+	case Average:		return aggregate / currentRowIndexSet.size();
+	case Sum:			return aggregate;
+	case Max:			return aggregate;
+	default:			assert(false);
 	}
 	
 	return QVariant();

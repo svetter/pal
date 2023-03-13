@@ -38,6 +38,8 @@ public:
 	
 	bool compare(const QVariant& value1, const QVariant& value2) const;
 	
+	void applySingleFilter(QVariant value, QList<int>& orderBuffer) const;
+	
 	void announceChangedData() const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const = 0;
@@ -74,7 +76,8 @@ public:
 
 enum FoldOp {
 	Count,
-	List,
+	IntList,
+	ListString,
 	Average,
 	Sum,
 	Max

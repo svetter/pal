@@ -7,9 +7,11 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		baseTable(baseTable),
 		db(db),
 		columns(QList<const CompositeColumn*>()),
+		firstHiddenColumnIndex(-1),
 		buffer(QList<QList<QVariant>*>()),
 		bufferOrder(QList<int>()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
+		currentFilters(QList<QPair<const CompositeColumn*, QVariant>>()),
 		columnsToUpdate(QSet<const CompositeColumn*>()),
 		updateImmediately(false),
 		name(baseTable->name)
@@ -25,8 +27,14 @@ CompositeTable::~CompositeTable()
 
 
 
-void CompositeTable::addColumn(const CompositeColumn* column)
+void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 {
+	if (hidden) {
+		if (firstHiddenColumnIndex < 0) firstHiddenColumnIndex = columns.size();
+	} else {
+		assert(firstHiddenColumnIndex < 0);
+	}
+	
 	columns.append(column);
 	
 	// Register as change listener at all underlying columns
@@ -52,6 +60,11 @@ const NormalTable* CompositeTable::getBaseTable() const
 }
 
 
+
+int CompositeTable::getNumberOfCellsToInit() const
+{
+	return baseTable->getNumberOfRows() * columns.size();
+}
 
 void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 {
@@ -139,6 +152,46 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 
 
 
+void CompositeTable::applyFilters(QList<QPair<const CompositeColumn*, QVariant>> filters)
+{
+	beginResetModel();
+	
+	if (!currentFilters.isEmpty()) {
+		bufferOrder.clear();
+		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
+			bufferOrder.append(bufferRowIndex);
+		}
+	}
+	
+	for (const QPair<const CompositeColumn*, QVariant>& filter : filters) {
+		const CompositeColumn* column = filter.first;
+		QVariant value = filter.second;
+		column->applySingleFilter(value, bufferOrder);
+	}
+	currentFilters = filters;
+	
+	performSortByColumn(getCurrentSorting().first, getCurrentSorting().second, false);
+	
+	endResetModel();
+}
+
+void CompositeTable::clearFilters()
+{
+	applyFilters({});
+}
+
+QList<QPair<const CompositeColumn*, QVariant>> CompositeTable::getCurrentFilters() const
+{
+	return currentFilters;
+}
+
+bool CompositeTable::filterIsActive() const
+{
+	return !currentFilters.isEmpty();
+}
+
+
+
 void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialog* progress)
 {
 	this->updateImmediately = updateImmediately;
@@ -220,6 +273,7 @@ int CompositeTable::rowCount(const QModelIndex& parent) const
 int CompositeTable::columnCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
+	if (firstHiddenColumnIndex >= 0) return firstHiddenColumnIndex;
 	return columns.size();
 }
 

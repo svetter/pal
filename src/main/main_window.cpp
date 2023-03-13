@@ -1,5 +1,6 @@
 #include "main_window.h"
 
+#include "src/dialogs/parse_helper.h"
 #include "src/main/about_window.h"
 #include "src/main/item_types_handler.h"
 #include "src/main/project_settings_window.h"
@@ -59,7 +60,9 @@ MainWindow::MainWindow() :
 	setupTableViews();
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
-	updateFilterUIEnabled();
+	
+	setupFilterUI();
+	updateFilterUI();
 	handle_showFiltersChanged();
 	
 	// Open database
@@ -148,7 +151,7 @@ void MainWindow::connectUI()
 	connect(volcanoFilterBox,				&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
 	connect(rangeFilterBox,					&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
 	connect(hikeKindFilterBox,				&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
-	connect(difficultyFilterBox,			&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
+	connect(difficultyFilterBox,			&QGroupBox::clicked,				this,	&MainWindow::handle_difficultyFilterBoxChanged);
 	connect(hikerFilterBox,					&QGroupBox::clicked,				this,	&MainWindow::handle_filtersChanged);
 	connect(dateFilterMinWidget,			&QDateEdit::dateChanged,			this,	&MainWindow::handle_filtersChanged);
 	connect(dateFilterMaxCheckbox,			&QCheckBox::stateChanged,			this,	&MainWindow::handle_filtersChanged);
@@ -160,7 +163,7 @@ void MainWindow::connectUI()
 	connect(volcanoFilterNoRadio,			&QRadioButton::clicked,				this,	&MainWindow::handle_filtersChanged);
 	connect(rangeFilterCombo,				&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
 	connect(hikeKindFilterCombo,			&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
-	connect(difficultyFilterSystemCombo,	&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
+	connect(difficultyFilterSystemCombo,	&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_difficultyFilterSystemChanged);
 	connect(difficultyFilterGradeCombo,		&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
 	connect(hikerFilterCombo,				&QComboBox::currentIndexChanged,	this,	&MainWindow::handle_filtersChanged);
 }
@@ -301,6 +304,29 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	
 }
 
+void MainWindow::setupFilterUI()
+{
+	rangeFilterCombo->setModel(db.rangesTable);
+	rangeFilterCombo->setRootModelIndex(db.rangesTable->getNullableRootModelIndex());
+	rangeFilterCombo->setModelColumn(db.rangesTable->nameColumn->getIndex());
+	
+	hikeKindFilterCombo->insertItems(1, Ascent::hikeKindNames);
+	
+	QStringList difficultySystemNames = QStringList();
+	std::transform(
+			Ascent::difficultyNames.constBegin(),
+			Ascent::difficultyNames.constEnd(),
+			std::back_inserter(difficultySystemNames),
+			[](QPair<QString, QStringList> qPair){ return qPair.first; }
+	);
+	difficultyFilterSystemCombo->insertItems(1, difficultySystemNames);
+	handle_difficultyFilterSystemChanged();
+	
+	hikerFilterCombo->setModel(db.hikersTable);
+	hikerFilterCombo->setRootModelIndex(db.hikersTable->getNullableRootModelIndex());
+	hikerFilterCombo->setModelColumn(db.hikersTable->nameColumn->getIndex());
+}
+
 
 
 // PROJECT SETUP
@@ -318,7 +344,7 @@ void MainWindow::initCompositeBuffers()
 	
 	int numCells = 0;
 	typesHandler->forEach([&numCells] (const ItemTypeMapper& mapper) {
-		numCells += mapper.compTable->getBaseTable()->getNumberOfRows() * mapper.compTable->columnCount();
+		numCells += mapper.compTable->getNumberOfCellsToInit();
 	});
 	progress.setMinimum(0);
 	progress.setMaximum(numCells);
@@ -381,11 +407,26 @@ void MainWindow::updateAscentCounter()
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 }
 
-void MainWindow::updateFilterUIEnabled()
+void MainWindow::updateFilterUI()
 {
-	dateFilterMaxWidget			->setEnabled(dateFilterMaxCheckbox->checkState());
-	peakHeightFilterMaxCombo	->setEnabled(peakHeightFilterMaxCheckbox->checkState());
-	difficultyFilterGradeCombo	->setEnabled(difficultyFilterSystemCombo->currentIndex() > 0);
+	bool anyFilterIsSet = dateFilterBox->isChecked()
+			|| peakHeightFilterBox->isChecked()
+			|| volcanoFilterBox->isChecked()
+			|| (rangeFilterBox->isChecked() && rangeFilterCombo->currentIndex() > 0)
+			|| hikeKindFilterBox->isChecked()
+			|| difficultyFilterBox->isChecked()
+			|| (hikerFilterBox->isChecked() && hikerFilterCombo->currentIndex() > 0);
+	applyFiltersButton->setEnabled(anyFilterIsSet);
+	
+	bool tableCurrentlyFiltered = typesHandler->get(Ascent)->compTable->filterIsActive();
+	clearFiltersButton->setEnabled(tableCurrentlyFiltered);
+	
+	if (dateFilterBox->isChecked()) {
+		dateFilterMaxWidget->setEnabled(dateFilterMaxCheckbox->checkState());
+	}
+	if (peakHeightFilterBox->isChecked()) {
+		peakHeightFilterMaxCombo->setEnabled(peakHeightFilterMaxCheckbox->checkState());
+	}
 	
 	if (!dateFilterMaxCheckbox->checkState()) {
 		dateFilterMaxWidget->setDate(dateFilterMinWidget->date());
@@ -572,24 +613,56 @@ void MainWindow::handle_deleteSelectedItem()
 
 void MainWindow::handle_filtersChanged()
 {
-	updateFilterUIEnabled();
-	applyFiltersButton->setEnabled(true);
+	updateFilterUI();
+}
+
+void MainWindow::handle_difficultyFilterBoxChanged()
+{
+	if (!difficultyFilterBox->isChecked()) return;
+	
+	int system = difficultyFilterSystemCombo->currentIndex();
+	bool systemSelected = system > 0;
+	difficultyFilterGradeCombo->setEnabled(systemSelected);
+	
+	updateFilterUI();
+}
+
+void MainWindow::handle_difficultyFilterSystemChanged()
+{
+	int system = difficultyFilterSystemCombo->currentIndex();
+	bool systemSelected = system > 0;
+	difficultyFilterGradeCombo->setEnabled(systemSelected && difficultyFilterBox->isChecked());
+	
+	difficultyFilterGradeCombo->clear();
+	if (systemSelected) {
+		difficultyFilterGradeCombo->setPlaceholderText(tr("Select grade"));
+		difficultyFilterGradeCombo->insertItems(1, Ascent::difficultyNames.at(system).second);
+	} else {
+		difficultyFilterGradeCombo->setPlaceholderText(tr("None"));
+	}
 }
 
 void MainWindow::handle_applyFilters()
 {
-	// TODO
 	applyFiltersButton->setEnabled(false);
 	clearFiltersButton->setEnabled(true);
-	qDebug() << "UNIMPLEMENTED: Apply filters";
+	
+	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
+	QList<QPair<const CompositeColumn*, QVariant>> filters = collectFilters();
+	// Apply filters
+	compAscents->applyFilters(filters);
+	
+	// Save filters to implicit settings
+	saveFilters(filters);
 }
 
 void MainWindow::handle_clearFilters()
 {
-	// TODO
 	clearFiltersButton->setEnabled(false);
-	applyFiltersButton->setEnabled(true);
-	qDebug() << "UNIMPLEMENTED: Clear filters";
+	updateFilterUI();
+	
+	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
+	compAscents->clearFilters();
 }
 
 
@@ -743,26 +816,39 @@ void MainWindow::saveImplicitSettings() const
 	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
 	Settings::mainWindow_showFilters.set(showFiltersAction->isChecked());
 	
-	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
-		// Save column widths
-		QStringList columnWidths;
-		for (int i = 0; i < mapper.compTable->columnCount(); i++) {
-			int currentColumnWidth = mapper.tableView->columnWidth(i);
-			if (currentColumnWidth == 0) {
-				qDebug() << "Couldn't read column width for column" << i << "in table" << mapper.compTable->name << "- skipping table";
-				return;
-			}
-			columnWidths.append(QString::number(currentColumnWidth));
-		}
-		mapper.columnWidthsSetting->set(columnWidths);
-		
-		// Save sorting
-		QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
-		int columnIndex = currentSorting.first->getIndex();
-		Qt::SortOrder order = currentSorting.second;
-		QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
-		mapper.sortingSetting->set({QString::number(columnIndex), orderString});
+	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+		saveColumnWidths(mapper);
+		saveSorting(mapper);
 	});
+}
+
+void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
+{
+	QStringList columnWidths;
+	for (int i = 0; i < mapper.compTable->columnCount(); i++) {
+		int currentColumnWidth = mapper.tableView->columnWidth(i);
+		if (currentColumnWidth == 0) {
+			qDebug() << "Couldn't read column width for column" << i << "in table" << mapper.compTable->name << "- skipping table";
+			return;
+		}
+		columnWidths.append(QString::number(currentColumnWidth));
+	}
+	mapper.columnWidthsSetting->set(columnWidths);
+}
+
+void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
+{
+	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
+	int columnIndex = currentSorting.first->getIndex();
+	Qt::SortOrder order = currentSorting.second;
+	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
+	mapper.sortingSetting->set({QString::number(columnIndex), orderString});
+}
+
+// Called on filter apply, not on close
+void MainWindow::saveFilters(QList<QPair<const CompositeColumn*, QVariant>> filters) const
+{
+	// TODO
 }
 
 
@@ -788,6 +874,67 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	
 	Settings::recentDatabaseFiles.set(recentFiles);
 	updateRecentFilesMenu();
+}
+
+QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectFilters() const
+{
+	CompositeAscentsTable* table = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
+	QList<QPair<const CompositeColumn*, QVariant>> result = QList<QPair<const CompositeColumn*, QVariant>>();
+	
+	if (dateFilterBox->isChecked()) {
+		QDate minDate = dateFilterMinWidget->date();
+		if (dateFilterMaxCheckbox->isChecked() && dateFilterMaxWidget->date() > minDate) {
+			QDate maxDate = dateFilterMaxWidget->date();
+			QList<QVariant> valueList = {minDate, maxDate};
+			result.append({table->dateColumn, valueList});
+		} else {
+			result.append({table->dateColumn, minDate});
+		}
+	}
+	
+	if (peakHeightFilterBox->isChecked()) {
+		QString minHeightString = peakHeightFilterMinCombo->currentText();
+		bool conversionOk = true;
+		int minHeight = (minHeightString == "<1000") ? 0 : minHeightString.toInt(&conversionOk);
+		assert(conversionOk);
+		int maxHeight = peakHeightFilterMaxCombo->currentText().toInt(&conversionOk);
+		assert(conversionOk);
+		QList<QVariant> valueList = {minHeight, maxHeight};
+		result.append({table->peakHeightColumn, valueList});
+	}
+	
+	if (volcanoFilterBox->isChecked()) {
+		bool value = !volcanoFilterNoRadio->isChecked();
+		result.append({table->volcanoColumn, value});
+	}
+	
+	if (rangeFilterBox->isChecked()) {
+		ValidItemID rangeID = parseIDCombo(rangeFilterCombo).forceValid();
+		result.append({table->rangeIDColumn, rangeID.asQVariant()});
+	}
+	
+	if (hikeKindFilterBox->isChecked()) {
+		int value = parseEnumCombo(hikeKindFilterCombo);
+		result.append({table->hikeKindColumn, value});
+	}
+	
+	if (difficultyFilterBox->isChecked()) {
+		int system	= parseEnumCombo(difficultyFilterSystemCombo);
+		int grade	= parseEnumCombo(difficultyFilterGradeCombo);
+		if (system <= 0) {
+			system = 0;
+			grade = 0;
+		}
+		QList<QVariant> valueList = {system, grade};
+		result.append({table->difficultyColumn, valueList});
+	}
+	
+	if (hikerFilterBox->isChecked()) {
+		ValidItemID hikerID = parseIDCombo(hikerFilterCombo).forceValid();
+		result.append({table->hikerIDsColumn, hikerID.asQVariant()});
+	}
+	
+	return result;
 }
 
 

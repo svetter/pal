@@ -41,6 +41,7 @@ private:
 	void setColumnWidths(const ItemTypeMapper& mapper);
 	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
+	void setupFilterUI();
 	
 	// Project setup (on load)
 	void initCompositeBuffers();
@@ -49,7 +50,7 @@ private:
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
 	void updateAscentCounter();
-	void updateFilterUIEnabled();
+	void updateFilterUI();
 	
 	// Execute user commands
 	void newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* tableView);
@@ -71,6 +72,8 @@ private slots:
 	
 	// Filter event handlers
 	void handle_filtersChanged();
+	void handle_difficultyFilterBoxChanged();
+	void handle_difficultyFilterSystemChanged();
 	void handle_applyFilters();
 	void handle_clearFilters();
 	
@@ -94,10 +97,14 @@ private:
 	// Closing behaviour
 	void closeEvent(QCloseEvent* event) override;
 	void saveImplicitSettings() const;
+	void saveColumnWidths(const ItemTypeMapper& mapper) const;
+	void saveSorting(const ItemTypeMapper& mapper) const;
+	void saveFilters(QList<QPair<const CompositeColumn*, QVariant>> filters) const;
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
+	QList<QPair<const CompositeColumn*, QVariant>> collectFilters() const;
 	
 public:
 	// Database callback

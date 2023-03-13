@@ -10,7 +10,7 @@ class CompositeColumn;
 
 
 enum DataType {
-	Integer, ID, Enum, DualEnum, Bit, String, Date, Time
+	Integer, ID, Enum, DualEnum, Bit, String, Date, Time, IDList
 };
 
 
