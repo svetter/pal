@@ -394,6 +394,7 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
 		for (const Column* column : columns) {
 			QVariant value = query.value(columnIndex);
 			assert(column->nullable || !value.isNull());
+			if (value.isNull()) value = QVariant();
 			result.at(rowIndex)->append(value);
 			columnIndex++;
 		}
