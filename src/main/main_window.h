@@ -99,12 +99,11 @@ private:
 	void saveImplicitSettings() const;
 	void saveColumnWidths(const ItemTypeMapper& mapper) const;
 	void saveSorting(const ItemTypeMapper& mapper) const;
-	void saveFilters(QList<QPair<const CompositeColumn*, QVariant>> filters) const;
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
-	QList<QPair<const CompositeColumn*, QVariant>> collectFilters() const;
+	QList<QPair<const CompositeColumn*, QVariant>> collectAndSaveFilters() const;
 	
 public:
 	// Database callback

@@ -648,12 +648,9 @@ void MainWindow::handle_applyFilters()
 	clearFiltersButton->setEnabled(true);
 	
 	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
-	QList<QPair<const CompositeColumn*, QVariant>> filters = collectFilters();
+	QList<QPair<const CompositeColumn*, QVariant>> filters = collectAndSaveFilters();
 	// Apply filters
 	compAscents->applyFilters(filters);
-	
-	// Save filters to implicit settings
-	saveFilters(filters);
 }
 
 void MainWindow::handle_clearFilters()
@@ -845,12 +842,6 @@ void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
 	mapper.sortingSetting->set({QString::number(columnIndex), orderString});
 }
 
-// Called on filter apply, not on close
-void MainWindow::saveFilters(QList<QPair<const CompositeColumn*, QVariant>> filters) const
-{
-	// TODO
-}
-
 
 
 // GENERAL HELPERS
@@ -876,20 +867,25 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	updateRecentFilesMenu();
 }
 
-QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectFilters() const
+QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters() const
 {
 	CompositeAscentsTable* table = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
-	QList<QPair<const CompositeColumn*, QVariant>> result = QList<QPair<const CompositeColumn*, QVariant>>();
+	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();
 	
 	if (dateFilterBox->isChecked()) {
 		QDate minDate = dateFilterMinWidget->date();
+		db.projectSettings->dateFilter->set(this, minDate);
 		if (dateFilterMaxCheckbox->isChecked() && dateFilterMaxWidget->date() > minDate) {
 			QDate maxDate = dateFilterMaxWidget->date();
 			QList<QVariant> valueList = {minDate, maxDate};
-			result.append({table->dateColumn, valueList});
+			filters.append({table->dateColumn, valueList});
+			db.projectSettings->dateFilter->setSecond(this, maxDate);
 		} else {
-			result.append({table->dateColumn, minDate});
+			filters.append({table->dateColumn, minDate});
+			db.projectSettings->dateFilter->setSecondToNull(this);
 		}
+	} else {
+		db.projectSettings->dateFilter->setBothToNull(this);
 	}
 	
 	if (peakHeightFilterBox->isChecked()) {
@@ -900,22 +896,38 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectFilters() cons
 		int maxHeight = peakHeightFilterMaxCombo->currentText().toInt(&conversionOk);
 		assert(conversionOk);
 		QList<QVariant> valueList = {minHeight, maxHeight};
-		result.append({table->peakHeightColumn, valueList});
+		filters.append({table->peakHeightColumn, valueList});
+		db.projectSettings->peakHeightFilter->set(this, minHeight);
+		db.projectSettings->peakHeightFilter->setSecond(this, maxHeight);
+	} else {
+		db.projectSettings->peakHeightFilter->setBothToNull(this);
 	}
 	
 	if (volcanoFilterBox->isChecked()) {
 		bool value = !volcanoFilterNoRadio->isChecked();
-		result.append({table->volcanoColumn, value});
+		filters.append({table->volcanoColumn, value});
+		db.projectSettings->volcanoFilter->set(this, value);
+		db.projectSettings->volcanoFilter->setSecondToNull(this);
+	} else {
+		db.projectSettings->volcanoFilter->setBothToNull(this);
 	}
 	
 	if (rangeFilterBox->isChecked()) {
 		ValidItemID rangeID = parseIDCombo(rangeFilterCombo).forceValid();
-		result.append({table->rangeIDColumn, rangeID.asQVariant()});
+		filters.append({table->rangeIDColumn, rangeID.asQVariant()});
+		db.projectSettings->rangeFilter->set(this, rangeID.asQVariant());
+		db.projectSettings->rangeFilter->setSecondToNull(this);
+	} else {
+		db.projectSettings->rangeFilter->setBothToNull(this);
 	}
 	
 	if (hikeKindFilterBox->isChecked()) {
 		int value = parseEnumCombo(hikeKindFilterCombo);
-		result.append({table->hikeKindColumn, value});
+		filters.append({table->hikeKindColumn, value});
+		db.projectSettings->hikeKindFilter->set(this, value);
+		db.projectSettings->hikeKindFilter->setSecondToNull(this);
+	} else {
+		db.projectSettings->hikeKindFilter->setBothToNull(this);
 	}
 	
 	if (difficultyFilterBox->isChecked()) {
@@ -926,15 +938,23 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectFilters() cons
 			grade = 0;
 		}
 		QList<QVariant> valueList = {system, grade};
-		result.append({table->difficultyColumn, valueList});
+		filters.append({table->difficultyColumn, valueList});
+		db.projectSettings->difficultyFilter->set(this, system);
+		db.projectSettings->difficultyFilter->set(this, grade);
+	} else {
+		db.projectSettings->difficultyFilter->setBothToNull(this);
 	}
 	
 	if (hikerFilterBox->isChecked()) {
 		ValidItemID hikerID = parseIDCombo(hikerFilterCombo).forceValid();
-		result.append({table->hikerIDsColumn, hikerID.asQVariant()});
+		filters.append({table->hikerIDsColumn, hikerID.asQVariant()});
+		db.projectSettings->hikerFilter->set(this, hikerID.asQVariant());
+		db.projectSettings->hikerFilter->setSecondToNull(this);
+	} else {
+		db.projectSettings->hikerFilter->setBothToNull(this);
 	}
 	
-	return result;
+	return filters;
 }
 
 

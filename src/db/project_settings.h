@@ -21,24 +21,43 @@ public:
 			defaultValue(defaultValue)
 	{}
 	
-	inline T get() const
-	{
-		return settingsTable->getBufferRow(0)->at(getIndex()).value<T>();
-	}
-	
 	inline T getDefault() const
 	{
 		return defaultValue.value<T>();
 	}
 	
-	inline void set(QWidget* parent, QVariant value) const
+	inline T get(int rowIndex = 0) const
 	{
-		settingsTable->updateSetting(parent, this, value);
+		assert(rowIndex >= 0 && rowIndex < 2);
+		return getValueAt(rowIndex).value<T>();
+	}
+	inline T getSecond() const
+	{
+		return get(1);
 	}
 	
-	inline void setToNull(QWidget* parent) const
+	inline void set(QWidget* parent, QVariant value, int rowIndex = 0) const
 	{
-		settingsTable->updateSetting(parent, this, QVariant());
+		assert(rowIndex >= 0 && rowIndex < 2);
+		settingsTable->updateSetting(parent, this, value, rowIndex);
+	}
+	inline void setSecond(QWidget* parent, QVariant value) const
+	{
+		return set(parent, value, 1);
+	}
+	
+	inline void setToNull(QWidget* parent, int rowIndex = 0) const
+	{
+		set(parent, QVariant(), rowIndex);
+	}
+	inline void setSecondToNull(QWidget* parent) const
+	{
+		setToNull(parent, 1);
+	}
+	inline void setBothToNull(QWidget* parent) const
+	{
+		setToNull(parent);
+		setSecondToNull(parent);
 	}
 };
 
@@ -56,8 +75,7 @@ public:
 	const ProjectSetting<bool>*		volcanoFilter;
 	const ProjectSetting<int>*		rangeFilter;
 	const ProjectSetting<int>*		hikeKindFilter;
-	const ProjectSetting<int>*		difficultyFilterSystem;
-	const ProjectSetting<int>*		difficultyFilterGrade;
+	const ProjectSetting<int>*		difficultyFilter;
 	const ProjectSetting<int>*		hikerFilter;
 	
 	template<typename T> inline void addSetting(const ProjectSetting<T>* setting)
@@ -68,17 +86,16 @@ public:
 	
 	inline ProjectSettings() :
 			SettingsTable(),
-			//													name						SQL type	nullable	table	default value
-			defaultHiker			(new ProjectSetting<int>	("defaultHiker",			ID,			true,		this)),
+			//												name					SQL type	nullable	table	default value
+			defaultHiker		(new ProjectSetting<int>	("defaultHiker",		ID,			true,		this)),
 			// Implicit settings
-			dateFilter				(new ProjectSetting<QDate>	("dateFilter",				Date,		true,		this)),
-			peakHeightFilter		(new ProjectSetting<int>	("peakHeightFilter",		Integer,	true,		this)),
-			volcanoFilter			(new ProjectSetting<bool>	("volcanoFilter",			Bit,		true,		this)),
-			rangeFilter				(new ProjectSetting<int>	("rangeFilter",				ID,			true,		this)),
-			hikeKindFilter			(new ProjectSetting<int>	("hikeKindFilter",			Enum,		true,		this)),
-			difficultyFilterSystem	(new ProjectSetting<int>	("difficultyFilterSystem",	DualEnum,	true,		this)),
-			difficultyFilterGrade	(new ProjectSetting<int>	("difficultyFilterGrade",	DualEnum,	true,		this)),
-			hikerFilter				(new ProjectSetting<int>	("hikerFilter",				ID,			true,		this))
+			dateFilter			(new ProjectSetting<QDate>	("dateFilter",			Date,		true,		this)),
+			peakHeightFilter	(new ProjectSetting<int>	("peakHeightFilter",	Integer,	true,		this)),
+			volcanoFilter		(new ProjectSetting<bool>	("volcanoFilter",		Bit,		true,		this)),
+			rangeFilter			(new ProjectSetting<int>	("rangeFilter",			ID,			true,		this)),
+			hikeKindFilter		(new ProjectSetting<int>	("hikeKindFilter",		Enum,		true,		this)),
+			difficultyFilter	(new ProjectSetting<int>	("difficultyFilter",	DualEnum,	true,		this)),
+			hikerFilter			(new ProjectSetting<int>	("hikerFilter",			ID,			true,		this))
 	{
 		addSetting(defaultHiker);
 		// Implicit settings
@@ -87,19 +104,21 @@ public:
 		addSetting(volcanoFilter);
 		addSetting(rangeFilter);
 		addSetting(hikeKindFilter);
-		addSetting(difficultyFilterSystem);
-		addSetting(difficultyFilterGrade);
+		addSetting(difficultyFilter);
 		addSetting(hikerFilter);
 	}
 	
 	inline void insertDefaults(QWidget* parent) {
 		QList<const Column*> columns = QList<const Column*>();
 		QList<QVariant> values = QList<QVariant>();
+		QList<QVariant> secondRowValues = QList<QVariant>();
 		for (const QPair<Column*, QVariant> &columnDefaultPair : defaults) {
 			columns.append(columnDefaultPair.first);
 			values.append(columnDefaultPair.second);
+			secondRowValues.append(QVariant());
 		}
 		addRow(parent, columns, values);
+		addRow(parent, columns, secondRowValues);
 	}
 };
 
