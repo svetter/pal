@@ -22,15 +22,16 @@ public:
 			defaultValue(defaultValue)
 	{}
 	
-	inline T getDefault() const
+	inline QVariant getDefault() const
 	{
-		return defaultValue.value<T>();
+		return defaultValue;
 	}
 	
 	inline bool isNotNull(int rowIndex = 0) const
 	{
 		assert(rowIndex >= 0 && rowIndex < 2);
-		return getValueAt(rowIndex).isValid();
+		QVariant value = getValueAt(rowIndex);
+		return value.isValid() && !value.isNull();
 	}
 	inline bool secondIsNotNull() const
 	{
@@ -40,7 +41,7 @@ public:
 	inline T get(int rowIndex = 0) const
 	{
 		assert(rowIndex >= 0 && rowIndex < 2);
-		return getValueAt(rowIndex).value<T>();
+		return getValueAt(rowIndex).template value<T>();
 	}
 	inline T getSecond() const
 	{

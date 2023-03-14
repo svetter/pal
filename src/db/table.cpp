@@ -391,7 +391,7 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
 	while (query.next()) {
 		result.append(new QList<QVariant>());
 		int columnIndex = 0;
-		for (auto columnIter = columns.constBegin(); columnIter!= columns.constEnd(); columnIter++) {
+		for (const Column* column : columns) {
 			QVariant value = query.value(columnIndex);
 			const Column* column = *columnIter;
 			assert(column->nullable || !value.isNull());
