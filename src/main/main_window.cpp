@@ -350,9 +350,18 @@ void MainWindow::initCompositeBuffers()
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
+	QList<QPair<const CompositeColumn*, QVariant>> ascentFilters = QList<QPair<const CompositeColumn*, QVariant>>();
+	CompositeAscentsTable* compAscents = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
+	ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
+	
 	typesHandler->forEach([&progress] (const ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
-		mapper.compTable->initBuffer(&progress);
+		
+		if (mapper.type == Ascent) {
+			mapper.compTable->initBuffer(&progress, ascentFilters);
+		} else {
+			mapper.compTable->initBuffer(&progress);
+		}
 	});
 }
 

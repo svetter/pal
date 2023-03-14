@@ -465,6 +465,62 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 
 
 
+QList<QPair<const CompositeColumn*, QVariant>> parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
+{
+	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();
+	
+	if (projectSettings->dateFilter->isNotNull()) {
+		QDate date1 = projectSettings->dateFilter->get();
+		if (projectSettings->dateFilter->secondIsNotNull()) {
+			QDate date2 = projectSettings->dateFilter->getSecond();
+			filters.append({compAscents->dateColumn, date1});
+		} else {
+			QList<QVariant> list = {date1, date2};
+			filters.append({compAscents->dateColumn, list});
+		}
+	}
+	
+	if (projectSettings->peakHeightFilter->isNotNull();) {
+		int minHeight = projectSettings->peakHeightFilter->get();
+		assert(projectSettings->peakHeightFilter->secondIsNotNull());
+		int maxHeight = projectSettings->peakHeightFilter->getSecond();
+		QList<QVariant> list = {minHeight, maxHeight};
+		filters.append({compAscents->peakHeightColumn, list});
+	}
+	
+	if (projectSettings->volcanoFilter->isNotNull()) {
+		bool volcano = projectSettings->volcanoFilter->get();
+		filters.append({compAscents->volcanoColumn, volcano});
+	}
+	
+	if (projectSettings->rangeFilter->isNotNull()) {
+		ValidItemID rangeID = projectSettings->rangeFilter->get();
+		filters.append({compAscents->rangeIDColumn, rangeID.asQVariant()})
+	}
+	
+	if (projectSettings->hikeKindFilter->isNotNull()) {
+		int hikeKind = projectSettings->hikeKindFilter->get();
+		filters.append({compAscents->hikeKindColumn, hikeKind});
+	}
+	
+	if (projectSettings->difficultyFilter->isNotNull()) {
+		assert(projectSettings->difficultyFilter->secondIsNotNull());
+		int difficultySystem = projectSettings->difficultyFilter->get();
+		int difficultyGrade = projectSettings->difficultyFilter->getSecond();
+		QList<QVariant> list = {difficultySystem, difficultyGrade};
+		filters.append({compAscents->difficultyColumn, list});
+	}
+	
+	if (projectSettings->hikerFilter->isNotNull()) {
+		ValidItemID hikerID = projectSettings->hikerFilter->get();
+		filters.append({compAscents->hikerIDColumn, hikerID});
+	}
+	
+	return filters;
+}
+
+
+
 void Database::insertTestData(QWidget* parent)
 {	
 	assert(databaseLoaded);

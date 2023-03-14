@@ -40,7 +40,8 @@ public:
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
-	void initBuffer(QProgressDialog* progressDialog);
+	void initBuffer(QProgressDialog* progressDialog, QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>());
+	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();

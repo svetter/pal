@@ -66,12 +66,13 @@ int CompositeTable::getNumberOfCellsToInit() const
 	return baseTable->getNumberOfRows() * columns.size();
 }
 
-void CompositeTable::initBuffer(QProgressDialog* progressDialog)
+void CompositeTable::initBuffer(QProgressDialog* progressDialog, QList<QPair<const CompositeColumn*, QVariant>> filters)
 {
 	assert(buffer.isEmpty() && bufferOrder.isEmpty());
 	
+	currentFilters = filters;
+	
 	int numberOfRows = baseTable->getNumberOfRows();
-	beginResetModel();
 	
 	for (int bufferRowIndex = 0; bufferRowIndex < numberOfRows; bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
@@ -81,13 +82,37 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog)
 			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
 		buffer.append(newRow);
-		
-		int viewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
-		bufferOrder.insert(viewRowIndex, bufferRowIndex);
 	}
 	
-	endResetModel();
+	rebuildOrderBuffer();
+	
 	columnsToUpdate.clear();
+}
+
+void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
+{
+	beginResetModel();
+	
+	// Fill order buffer
+	if (!skipRepopulate) {
+		bufferOrder.clear();
+		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
+			bufferOrder.append(bufferRowIndex);
+		}
+	}
+	
+	// Filter order buffer
+	for (const QPair<const CompositeColumn*, QVariant>& filter : currentFilters) {
+		const CompositeColumn* column = filter.first;
+		QVariant value = filter.second;
+		column->applySingleFilter(value, bufferOrder);
+	}
+	currentFilters = filters;
+	
+	// Sort order buffer
+	performSortByColumn(getCurrentSorting().first, getCurrentSorting().second, false);
+	
+	endResetModel();
 }
 
 int CompositeTable::getNumberOfCellsToUpdate() const
@@ -154,25 +179,9 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 
 void CompositeTable::applyFilters(QList<QPair<const CompositeColumn*, QVariant>> filters)
 {
-	beginResetModel();
-	
-	if (!currentFilters.isEmpty()) {
-		bufferOrder.clear();
-		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
-			bufferOrder.append(bufferRowIndex);
-		}
-	}
-	
-	for (const QPair<const CompositeColumn*, QVariant>& filter : filters) {
-		const CompositeColumn* column = filter.first;
-		QVariant value = filter.second;
-		column->applySingleFilter(value, bufferOrder);
-	}
+	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
-	
-	performSortByColumn(getCurrentSorting().first, getCurrentSorting().second, false);
-	
-	endResetModel();
+	rebuildOrderBuffer();
 }
 
 void CompositeTable::clearFilters()

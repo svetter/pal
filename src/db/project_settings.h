@@ -26,6 +26,16 @@ public:
 		return defaultValue.value<T>();
 	}
 	
+	inline bool isNotNull(int rowIndex = 0) const
+	{
+		assert(rowIndex >= 0 && rowIndex < 2);
+		return getValueAt(rowIndex).isValid();
+	}
+	inline bool secondIsNotNull() const
+	{
+		return isNotNull(1);
+	}
+	
 	inline T get(int rowIndex = 0) const
 	{
 		assert(rowIndex >= 0 && rowIndex < 2);
