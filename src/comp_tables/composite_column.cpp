@@ -316,10 +316,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 
 QVariant DirectCompositeColumn::getValueAt(int rowIndex) const
 {
-	QVariant content = contentColumn->getValueAt(rowIndex);
-	content = replaceEnumIfApplicable(content);
-	
-	return content;
+	return contentColumn->getValueAt(rowIndex);
 }
 
 
@@ -373,7 +370,6 @@ QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
 	// Finally, look up content column at last row index
 	assert(contentColumn->table == currentTable);
 	QVariant content = contentColumn->getValueAt(currentRowIndex);
-	content = replaceEnumIfApplicable(content);
 	
 	return content;
 }
