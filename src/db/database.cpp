@@ -1,5 +1,6 @@
 #include "database.h"
 
+#include "src/comp_tables/comp_ascents_table.h"
 #include "src/db/db_error.h"
 #include "src/tools/test_data.h"
 
@@ -465,7 +466,7 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 
 
 
-QList<QPair<const CompositeColumn*, QVariant>> parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
+QList<QPair<const CompositeColumn*, QVariant>> Database::parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
 {
 	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();
 	
@@ -473,14 +474,14 @@ QList<QPair<const CompositeColumn*, QVariant>> parseFiltersFromProjectSettings(c
 		QDate date1 = projectSettings->dateFilter->get();
 		if (projectSettings->dateFilter->secondIsNotNull()) {
 			QDate date2 = projectSettings->dateFilter->getSecond();
-			filters.append({compAscents->dateColumn, date1});
-		} else {
 			QList<QVariant> list = {date1, date2};
 			filters.append({compAscents->dateColumn, list});
+		} else {
+			filters.append({compAscents->dateColumn, date1});
 		}
 	}
 	
-	if (projectSettings->peakHeightFilter->isNotNull();) {
+	if (projectSettings->peakHeightFilter->isNotNull()) {
 		int minHeight = projectSettings->peakHeightFilter->get();
 		assert(projectSettings->peakHeightFilter->secondIsNotNull());
 		int maxHeight = projectSettings->peakHeightFilter->getSecond();
@@ -495,7 +496,7 @@ QList<QPair<const CompositeColumn*, QVariant>> parseFiltersFromProjectSettings(c
 	
 	if (projectSettings->rangeFilter->isNotNull()) {
 		ValidItemID rangeID = projectSettings->rangeFilter->get();
-		filters.append({compAscents->rangeIDColumn, rangeID.asQVariant()})
+		filters.append({compAscents->rangeIDColumn, rangeID.asQVariant()});
 	}
 	
 	if (projectSettings->hikeKindFilter->isNotNull()) {
@@ -513,7 +514,7 @@ QList<QPair<const CompositeColumn*, QVariant>> parseFiltersFromProjectSettings(c
 	
 	if (projectSettings->hikerFilter->isNotNull()) {
 		ValidItemID hikerID = projectSettings->hikerFilter->get();
-		filters.append({compAscents->hikerIDColumn, hikerID});
+		filters.append({compAscents->hikerIDsColumn, hikerID.asQVariant()});
 	}
 	
 	return filters;

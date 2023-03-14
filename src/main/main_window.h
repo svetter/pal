@@ -103,7 +103,7 @@ private:
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
-	QList<QPair<const CompositeColumn*, QVariant>> collectAndSaveFilters() const;
+	QList<QPair<const CompositeColumn*, QVariant>> collectAndSaveFilters();
 	
 public:
 	// Database callback

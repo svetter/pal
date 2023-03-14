@@ -354,7 +354,7 @@ void MainWindow::initCompositeBuffers()
 	CompositeAscentsTable* compAscents = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
 	ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
 	
-	typesHandler->forEach([&progress] (const ItemTypeMapper& mapper) {
+	typesHandler->forEach([&progress, &ascentFilters] (const ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
 		
 		if (mapper.type == Ascent) {
@@ -876,7 +876,7 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	updateRecentFilesMenu();
 }
 
-QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters() const
+QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters()
 {
 	CompositeAscentsTable* table = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
 	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();

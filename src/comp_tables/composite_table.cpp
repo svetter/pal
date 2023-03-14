@@ -107,7 +107,6 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 		QVariant value = filter.second;
 		column->applySingleFilter(value, bufferOrder);
 	}
-	currentFilters = filters;
 	
 	// Sort order buffer
 	performSortByColumn(getCurrentSorting().first, getCurrentSorting().second, false);
@@ -181,7 +180,7 @@ void CompositeTable::applyFilters(QList<QPair<const CompositeColumn*, QVariant>>
 {
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
-	rebuildOrderBuffer();
+	rebuildOrderBuffer(skipRepopulate);
 }
 
 void CompositeTable::clearFilters()

@@ -30,6 +30,8 @@ protected:
 		ValidItemID primaryKey = primaryKeyColumn->getValueAt(rowIndex);
 		updateCellInNormalTable(parent, primaryKey, setting, value);
 	}
+	
+	template<typename T> friend class ProjectSetting;
 };
 
 

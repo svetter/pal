@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QVariant>
+#include <QDate>
 
 
 
