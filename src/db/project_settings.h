@@ -49,7 +49,16 @@ class ProjectSettings : public SettingsTable {
 	QList<QPair<Column*, QVariant>> defaults;
 	
 public:
-	const ProjectSetting<int>*	defaultHiker;
+	const ProjectSetting<int>*		defaultHiker;
+	// Implicit settings
+	const ProjectSetting<QDate>*	dateFilter;
+	const ProjectSetting<int>*		peakHeightFilter;
+	const ProjectSetting<bool>*		volcanoFilter;
+	const ProjectSetting<int>*		rangeFilter;
+	const ProjectSetting<int>*		hikeKindFilter;
+	const ProjectSetting<int>*		difficultyFilterSystem;
+	const ProjectSetting<int>*		difficultyFilterGrade;
+	const ProjectSetting<int>*		hikerFilter;
 	
 	template<typename T> inline void addSetting(const ProjectSetting<T>* setting)
 	{
@@ -59,10 +68,28 @@ public:
 	
 	inline ProjectSettings() :
 			SettingsTable(),
-			//											name				SQL type	nullable	table	default value
-			defaultHiker	(new ProjectSetting<int>	("defaultHiker",	ID,			true,		this))
+			//													name						SQL type	nullable	table	default value
+			defaultHiker			(new ProjectSetting<int>	("defaultHiker",			ID,			true,		this)),
+			// Implicit settings
+			dateFilter				(new ProjectSetting<QDate>	("dateFilter",				Date,		true,		this)),
+			peakHeightFilter		(new ProjectSetting<int>	("peakHeightFilter",		Integer,	true,		this)),
+			volcanoFilter			(new ProjectSetting<bool>	("volcanoFilter",			Bit,		true,		this)),
+			rangeFilter				(new ProjectSetting<int>	("rangeFilter",				ID,			true,		this)),
+			hikeKindFilter			(new ProjectSetting<int>	("hikeKindFilter",			Enum,		true,		this)),
+			difficultyFilterSystem	(new ProjectSetting<int>	("difficultyFilterSystem",	DualEnum,	true,		this)),
+			difficultyFilterGrade	(new ProjectSetting<int>	("difficultyFilterGrade",	DualEnum,	true,		this)),
+			hikerFilter				(new ProjectSetting<int>	("hikerFilter",				ID,			true,		this))
 	{
 		addSetting(defaultHiker);
+		// Implicit settings
+		addSetting(dateFilter);
+		addSetting(peakHeightFilter);
+		addSetting(volcanoFilter);
+		addSetting(rangeFilter);
+		addSetting(hikeKindFilter);
+		addSetting(difficultyFilterSystem);
+		addSetting(difficultyFilterGrade);
+		addSetting(hikerFilter);
 	}
 	
 	inline void insertDefaults(QWidget* parent) {
