@@ -1,7 +1,7 @@
 #ifndef COMPOSITE_TABLE_H
 #define COMPOSITE_TABLE_H
 
-#include "src/comp_tables/composite_column.h"
+#include "composite_column.h"
 #include "src/db/database.h"
 
 #include <QAbstractTableModel>
@@ -19,7 +19,7 @@ class CompositeTable : public QAbstractTableModel {
 	QList<QList<QVariant>*> buffer;
 	QList<int> bufferOrder;
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
-	QList<QPair<const CompositeColumn*, QVariant>> currentFilters;
+	QSet<Filter> currentFilters;
 	
 	QSet<const CompositeColumn*> columnsToUpdate;
 	bool updateImmediately;
@@ -40,7 +40,7 @@ public:
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
-	void initBuffer(QProgressDialog* progressDialog, QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>());
+	void initBuffer(QProgressDialog* progressDialog, QSet<Filter> filters = QSet<Filter>());
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
@@ -51,9 +51,9 @@ public:
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
 	
-	void applyFilters(QList<QPair<const CompositeColumn*, QVariant>> filters);
+	void applyFilters(QSet<Filter> filters);
 	void clearFilters();
-	QList<QPair<const CompositeColumn*, QVariant>> getCurrentFilters() const;
+	QSet<Filter> getCurrentFilters() const;
 	bool filterIsActive() const;
 	
 public:

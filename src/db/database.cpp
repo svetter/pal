@@ -466,18 +466,17 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 
 
 
-QList<QPair<const CompositeColumn*, QVariant>> Database::parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
+QSet<Filter> Database::parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
 {
-	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();
+	QSet<Filter> filters = QSet<Filter>();
 	
 	if (projectSettings->dateFilter->isNotNull()) {
 		QDate date1 = projectSettings->dateFilter->get();
 		if (projectSettings->dateFilter->secondIsNotNull()) {
 			QDate date2 = projectSettings->dateFilter->getSecond();
-			QList<QVariant> list = {date1, date2};
-			filters.append({compAscents->dateColumn, list});
+			filters.insert(Filter(compAscents->dateColumn, date1, date2));
 		} else {
-			filters.append({compAscents->dateColumn, date1});
+			filters.insert(Filter(compAscents->dateColumn, date1));
 		}
 	}
 	
@@ -485,36 +484,34 @@ QList<QPair<const CompositeColumn*, QVariant>> Database::parseFiltersFromProject
 		int minHeight = projectSettings->peakHeightFilter->get();
 		assert(projectSettings->peakHeightFilter->secondIsNotNull());
 		int maxHeight = projectSettings->peakHeightFilter->getSecond();
-		QList<QVariant> list = {minHeight, maxHeight};
-		filters.append({compAscents->peakHeightColumn, list});
+		filters.insert(Filter(compAscents->peakHeightColumn, minHeight, maxHeight));
 	}
 	
 	if (projectSettings->volcanoFilter->isNotNull()) {
 		bool volcano = projectSettings->volcanoFilter->get();
-		filters.append({compAscents->volcanoColumn, volcano});
+		filters.insert(Filter(compAscents->volcanoColumn, volcano));
 	}
 	
 	if (projectSettings->rangeFilter->isNotNull()) {
 		ValidItemID rangeID = projectSettings->rangeFilter->get();
-		filters.append({compAscents->rangeIDColumn, rangeID.asQVariant()});
+		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
 	}
 	
 	if (projectSettings->hikeKindFilter->isNotNull()) {
 		int hikeKind = projectSettings->hikeKindFilter->get();
-		filters.append({compAscents->hikeKindColumn, hikeKind});
+		filters.insert(Filter(compAscents->hikeKindColumn, hikeKind));
 	}
 	
 	if (projectSettings->difficultyFilter->isNotNull()) {
 		assert(projectSettings->difficultyFilter->secondIsNotNull());
 		int difficultySystem = projectSettings->difficultyFilter->get();
 		int difficultyGrade = projectSettings->difficultyFilter->getSecond();
-		QList<QVariant> list = {difficultySystem, difficultyGrade};
-		filters.append({compAscents->difficultyColumn, list});
+		filters.insert(Filter(compAscents->difficultyColumn, difficultySystem, difficultyGrade));
 	}
 	
 	if (projectSettings->hikerFilter->isNotNull()) {
 		ValidItemID hikerID = projectSettings->hikerFilter->get();
-		filters.append({compAscents->hikerIDsColumn, hikerID.asQVariant()});
+		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
 	}
 	
 	return filters;

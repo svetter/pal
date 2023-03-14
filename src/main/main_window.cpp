@@ -350,7 +350,7 @@ void MainWindow::initCompositeBuffers()
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
-	QList<QPair<const CompositeColumn*, QVariant>> ascentFilters = QList<QPair<const CompositeColumn*, QVariant>>();
+	QSet<Filter> ascentFilters = QSet<Filter>();
 	CompositeAscentsTable* compAscents = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
 	ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
 	
@@ -363,6 +363,106 @@ void MainWindow::initCompositeBuffers()
 			mapper.compTable->initBuffer(&progress);
 		}
 	});
+	
+	insertFiltersIntoUI(ascentFilters);
+}
+
+void MainWindow::insertFiltersIntoUI(QSet<Filter> filters)
+{
+	resetFilterUI();
+	
+	CompositeAscentsTable* table = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
+	
+	for (const Filter& filter : filters) {
+		const CompositeColumn* const column = filter.column;
+		const QVariant value		= filter.value;
+		const bool hasSecond		= filter.hasSecond;
+		const QVariant secondValue	= filter.secondValue;
+		
+		const bool isInt	= value.canConvert<int>();
+		const bool isBool	= value.canConvert<bool>();
+		const bool isDate	= value.canConvert<QDate>();
+		
+		if (column == table->dateColumn) {
+			assert(isDate);
+			QDate date = value.toDate();
+			dateFilterMinWidget->setDate(date);
+			if (hasSecond) date = secondValue.toDate();
+			dateFilterMaxWidget->setDate(date);
+			dateFilterMaxCheckbox->setChecked(hasSecond);	
+			dateFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->peakHeightColumn) {
+			assert(isInt);
+			int minHeight = value.toInt();
+			int minHeightComboIndex = minHeight == 0 ? 0 : peakHeightFilterMinCombo->findText(QString::number(minHeight));
+			peakHeightFilterMinCombo->setCurrentIndex(minHeightComboIndex);
+			if (hasSecond) {
+				int maxHeight = secondValue.toInt();
+				int maxHeightComboIndex = peakHeightFilterMaxCombo->findText(QString::number(maxHeight));
+				peakHeightFilterMaxCombo->setCurrentIndex(maxHeightComboIndex);
+				peakHeightFilterMaxCheckbox->setChecked(maxHeightComboIndex > minHeightComboIndex);
+			} else {
+				peakHeightFilterMaxCombo->setCurrentIndex(minHeightComboIndex);
+				peakHeightFilterMaxCheckbox->setChecked(false);
+			}
+			peakHeightFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->volcanoColumn) {
+			assert(isBool);
+			bool boolValue = value.toBool();
+			volcanoFilterYesRadio->setChecked(boolValue);
+			volcanoFilterNoRadio->setChecked(!boolValue);
+			volcanoFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->rangeColumn) {
+			assert(isInt);
+			ValidItemID rangeID = value.toInt();
+			int bufferRowIndex = db.rangesTable->getBufferIndexForPrimaryKey(rangeID);
+			rangeFilterCombo->setCurrentIndex(bufferRowIndex);
+			rangeFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->hikeKindColumn) {
+			assert(isInt);
+			int intValue = value.toInt();
+			hikeKindFilterCombo->setCurrentIndex(intValue);
+			hikeKindFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->difficultyColumn) {
+			assert(isInt);
+			if (hasSecond) {
+				int system = value.toInt();
+				int grade = secondValue.toInt();
+				difficultyFilterSystemCombo->setCurrentIndex(system);
+				difficultyFilterGradeCombo->setCurrentIndex(grade);
+			}
+			difficultyFilterBox->setChecked(true);
+			continue;
+		}
+		
+		if (column == table->hikerIDsColumn) {
+			assert(isInt);
+			ValidItemID hikerID = value.toInt();
+			int bufferRowIndex = db.hikersTable->getBufferIndexForPrimaryKey(hikerID);
+			hikerFilterCombo->setCurrentIndex(bufferRowIndex);
+			hikerFilterBox->setChecked(true);
+			continue;
+		}
+		
+		assert(false);
+	}
+	
+	updateFilterUI();
 }
 
 
@@ -421,10 +521,10 @@ void MainWindow::updateFilterUI()
 	bool anyFilterIsSet = dateFilterBox->isChecked()
 			|| peakHeightFilterBox->isChecked()
 			|| volcanoFilterBox->isChecked()
-			|| (rangeFilterBox->isChecked() && rangeFilterCombo->currentIndex() > 0)
+			|| rangeFilterBox->isChecked()
 			|| hikeKindFilterBox->isChecked()
 			|| difficultyFilterBox->isChecked()
-			|| (hikerFilterBox->isChecked() && hikerFilterCombo->currentIndex() > 0);
+			|| hikerFilterBox->isChecked();
 	applyFiltersButton->setEnabled(anyFilterIsSet);
 	
 	bool tableCurrentlyFiltered = typesHandler->get(Ascent)->compTable->filterIsActive();
@@ -457,6 +557,10 @@ void MainWindow::updateFilterUI()
 		} else {
 			peakHeightFilterMaxCombo->setCurrentIndex(peakHeightFilterMinCombo->currentIndex());
 		}
+	}
+	
+	if (difficultyFilterBox->isChecked() && difficultyFilterSystemCombo->currentIndex() > 0) {
+		difficultyFilterGradeCombo->setEnabled(true);
 	}
 }
 
@@ -657,7 +761,7 @@ void MainWindow::handle_applyFilters()
 	clearFiltersButton->setEnabled(true);
 	
 	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
-	QList<QPair<const CompositeColumn*, QVariant>> filters = collectAndSaveFilters();
+	QSet<Filter> filters = collectAndSaveFilters();
 	// Apply filters
 	compAscents->applyFilters(filters);
 }
@@ -669,6 +773,8 @@ void MainWindow::handle_clearFilters()
 	
 	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
 	compAscents->clearFilters();
+	
+	clearSavedFilters();
 }
 
 
@@ -876,21 +982,20 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	updateRecentFilesMenu();
 }
 
-QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters()
+QSet<Filter> MainWindow::collectAndSaveFilters()
 {
 	CompositeAscentsTable* table = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
-	QList<QPair<const CompositeColumn*, QVariant>> filters = QList<QPair<const CompositeColumn*, QVariant>>();
+	QSet<Filter> filters = QSet<Filter>();
 	
 	if (dateFilterBox->isChecked()) {
 		QDate minDate = dateFilterMinWidget->date();
 		db.projectSettings->dateFilter->set(this, minDate);
 		if (dateFilterMaxCheckbox->isChecked() && dateFilterMaxWidget->date() > minDate) {
 			QDate maxDate = dateFilterMaxWidget->date();
-			QList<QVariant> valueList = {minDate, maxDate};
-			filters.append({table->dateColumn, valueList});
+			filters.insert(Filter(table->dateColumn, minDate, maxDate));
 			db.projectSettings->dateFilter->setSecond(this, maxDate);
 		} else {
-			filters.append({table->dateColumn, minDate});
+			filters.insert(Filter(table->dateColumn, minDate));
 			db.projectSettings->dateFilter->setSecondToNull(this);
 		}
 	} else {
@@ -904,8 +1009,7 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 		assert(conversionOk);
 		int maxHeight = peakHeightFilterMaxCombo->currentText().toInt(&conversionOk);
 		assert(conversionOk);
-		QList<QVariant> valueList = {minHeight, maxHeight};
-		filters.append({table->peakHeightColumn, valueList});
+		filters.insert(Filter(table->peakHeightColumn, minHeight, maxHeight));
 		db.projectSettings->peakHeightFilter->set(this, minHeight);
 		db.projectSettings->peakHeightFilter->setSecond(this, maxHeight);
 	} else {
@@ -914,7 +1018,7 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 	
 	if (volcanoFilterBox->isChecked()) {
 		bool value = !volcanoFilterNoRadio->isChecked();
-		filters.append({table->volcanoColumn, value});
+		filters.insert(Filter(table->volcanoColumn, value));
 		db.projectSettings->volcanoFilter->set(this, value);
 		db.projectSettings->volcanoFilter->setSecondToNull(this);
 	} else {
@@ -922,8 +1026,8 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 	}
 	
 	if (rangeFilterBox->isChecked()) {
-		ValidItemID rangeID = parseIDCombo(rangeFilterCombo).forceValid();
-		filters.append({table->rangeIDColumn, rangeID.asQVariant()});
+		ItemID rangeID = parseIDCombo(rangeFilterCombo);
+		filters.insert(Filter(table->rangeIDColumn, rangeID.asQVariant()));
 		db.projectSettings->rangeFilter->set(this, rangeID.asQVariant());
 		db.projectSettings->rangeFilter->setSecondToNull(this);
 	} else {
@@ -932,7 +1036,7 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 	
 	if (hikeKindFilterBox->isChecked()) {
 		int value = parseEnumCombo(hikeKindFilterCombo);
-		filters.append({table->hikeKindColumn, value});
+		filters.insert(Filter(table->hikeKindColumn, value));
 		db.projectSettings->hikeKindFilter->set(this, value);
 		db.projectSettings->hikeKindFilter->setSecondToNull(this);
 	} else {
@@ -946,17 +1050,16 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 			system = 0;
 			grade = 0;
 		}
-		QList<QVariant> valueList = {system, grade};
-		filters.append({table->difficultyColumn, valueList});
+		filters.insert(Filter(table->difficultyColumn, system, grade));
 		db.projectSettings->difficultyFilter->set(this, system);
-		db.projectSettings->difficultyFilter->set(this, grade);
+		db.projectSettings->difficultyFilter->setSecond(this, grade);
 	} else {
 		db.projectSettings->difficultyFilter->setBothToNull(this);
 	}
 	
 	if (hikerFilterBox->isChecked()) {
-		ValidItemID hikerID = parseIDCombo(hikerFilterCombo).forceValid();
-		filters.append({table->hikerIDsColumn, hikerID.asQVariant()});
+		ItemID hikerID = parseIDCombo(hikerFilterCombo);
+		filters.insert(Filter(table->hikerIDsColumn, hikerID.asQVariant()));
 		db.projectSettings->hikerFilter->set(this, hikerID.asQVariant());
 		db.projectSettings->hikerFilter->setSecondToNull(this);
 	} else {
@@ -964,6 +1067,43 @@ QList<QPair<const CompositeColumn*, QVariant>> MainWindow::collectAndSaveFilters
 	}
 	
 	return filters;
+}
+
+void MainWindow::clearSavedFilters()
+{
+	db.projectSettings->dateFilter			->setBothToNull(this);
+	db.projectSettings->peakHeightFilter	->setBothToNull(this);
+	db.projectSettings->volcanoFilter		->setBothToNull(this);
+	db.projectSettings->rangeFilter			->setBothToNull(this);
+	db.projectSettings->hikeKindFilter		->setBothToNull(this);
+	db.projectSettings->difficultyFilter	->setBothToNull(this);
+	db.projectSettings->hikerFilter			->setBothToNull(this);
+}
+
+void MainWindow::resetFilterUI()
+{
+	dateFilterBox		->setChecked(false);
+	peakHeightFilterBox	->setChecked(false);
+	volcanoFilterBox	->setChecked(false);
+	rangeFilterBox		->setChecked(false);
+	hikeKindFilterBox	->setChecked(false);
+	difficultyFilterBox	->setChecked(false);
+	hikerFilterBox		->setChecked(false);
+	
+	dateFilterMinWidget->setDate(QDate());
+	dateFilterMaxWidget->setDate(QDate());
+	dateFilterMaxCheckbox->setChecked(false);
+	peakHeightFilterMinCombo->setCurrentIndex(0);
+	peakHeightFilterMaxCombo->setCurrentIndex(0);
+	peakHeightFilterMaxCombo->setCurrentIndex(0);
+	peakHeightFilterMaxCheckbox->setChecked(false);
+	volcanoFilterYesRadio->setChecked(true);
+	volcanoFilterNoRadio->setChecked(false);
+	rangeFilterCombo->setCurrentIndex(0);
+	hikeKindFilterCombo->setCurrentIndex(0);
+	difficultyFilterSystemCombo->setCurrentIndex(0);
+	difficultyFilterGradeCombo->setCurrentIndex(0);
+	hikerFilterCombo->setCurrentIndex(0);
 }
 
 

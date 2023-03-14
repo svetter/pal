@@ -11,7 +11,7 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		buffer(QList<QList<QVariant>*>()),
 		bufferOrder(QList<int>()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
-		currentFilters(QList<QPair<const CompositeColumn*, QVariant>>()),
+		currentFilters(QSet<Filter>()),
 		columnsToUpdate(QSet<const CompositeColumn*>()),
 		updateImmediately(false),
 		name(baseTable->name)
@@ -66,7 +66,7 @@ int CompositeTable::getNumberOfCellsToInit() const
 	return baseTable->getNumberOfRows() * columns.size();
 }
 
-void CompositeTable::initBuffer(QProgressDialog* progressDialog, QList<QPair<const CompositeColumn*, QVariant>> filters)
+void CompositeTable::initBuffer(QProgressDialog* progressDialog, QSet<Filter> filters)
 {
 	assert(buffer.isEmpty() && bufferOrder.isEmpty());
 	
@@ -102,10 +102,8 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	}
 	
 	// Filter order buffer
-	for (const QPair<const CompositeColumn*, QVariant>& filter : currentFilters) {
-		const CompositeColumn* column = filter.first;
-		QVariant value = filter.second;
-		column->applySingleFilter(value, bufferOrder);
+	for (const Filter& filter : currentFilters) {
+		filter.column->applySingleFilter(filter, bufferOrder);
 	}
 	
 	// Sort order buffer
@@ -176,7 +174,7 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 
 
 
-void CompositeTable::applyFilters(QList<QPair<const CompositeColumn*, QVariant>> filters)
+void CompositeTable::applyFilters(QSet<Filter> filters)
 {
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
@@ -188,7 +186,7 @@ void CompositeTable::clearFilters()
 	applyFilters({});
 }
 
-QList<QPair<const CompositeColumn*, QVariant>> CompositeTable::getCurrentFilters() const
+QSet<Filter> CompositeTable::getCurrentFilters() const
 {
 	return currentFilters;
 }

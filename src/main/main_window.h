@@ -1,9 +1,9 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include "src/comp_tables/filter.h"
 #include "ui_main_window.h"
 #include "src/db/database.h"
-#include "src/main/settings.h"
 #include "src/main/item_types_handler.h"
 
 #include <QMainWindow>
@@ -45,6 +45,7 @@ private:
 	
 	// Project setup (on load)
 	void initCompositeBuffers();
+	void insertFiltersIntoUI(QSet<Filter> filters);
 	
 	// UI updates
 	void setUIEnabled(bool enabled);
@@ -103,7 +104,9 @@ private:
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
-	QList<QPair<const CompositeColumn*, QVariant>> collectAndSaveFilters();
+	QSet<Filter> collectAndSaveFilters();
+	void clearSavedFilters();
+	void resetFilterUI();
 	
 public:
 	// Database callback

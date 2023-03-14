@@ -70,6 +70,7 @@ HEADERS += \
 	src/comp_tables/comp_trips_table.h \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
+	src/comp_tables/filter.h \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/hiker.h \

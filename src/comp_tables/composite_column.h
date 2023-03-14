@@ -1,6 +1,7 @@
 #ifndef COMPOSITE_COLUMN_H
 #define COMPOSITE_COLUMN_H
 
+#include "src/comp_tables/filter.h"
 #include "src/db/column.h"
 
 #include <QString>
@@ -38,7 +39,7 @@ public:
 	
 	bool compare(const QVariant& value1, const QVariant& value2) const;
 	
-	void applySingleFilter(QVariant value, QList<int>& orderBuffer) const;
+	void applySingleFilter(const Filter& filter, QList<int>& orderBuffer) const;
 	
 	void announceChangedData() const;
 	
