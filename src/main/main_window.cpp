@@ -527,20 +527,20 @@ void MainWindow::updateTableSize(bool reset)
 		return;
 	}
 	
-	typesHandler->forMatchingTableView(getCurrentTableView(), [] (const ItemTypeMapper& mapper) {
+	typesHandler->forMatchingTableView(getCurrentTableView(), [this] (const ItemTypeMapper& mapper, bool debugTable) {
 		int total = mapper.baseTable->getNumberOfRows();
 		if (total == 0) {
 			statusBarTableSizeLabel->setText(tr("Table is empty"));
 		}
-		else if (mapper.type == Ascent) {
+		else if (mapper.type == Ascent && !debugTable) {
 			int displayed = mapper.compTable->rowCount();
 			int filtered = total - displayed;
-			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered)") : tr("%2/%1 entry shown (%3 filtered)")).arg(total).arg(displayed).arg(filtered));
+			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered)") : tr("%2/%1 entry shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered));
 		} else {
 			statusBarTableSizeLabel->setText((total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total));
 		}
 		
-		if (mapper.type == Ascent) {
+		if (mapper.type == Ascent && !debugTable) {
 			bool filtersApplied = !mapper.compTable->getCurrentFilters().isEmpty();
 			statusBarFiltersLabel->setText(filtersApplied ? tr("Filters applied") : tr("No filters applied"));
 		} else {
@@ -675,6 +675,8 @@ void MainWindow::handle_tabChanged()
 			compTable->setUpdateImmediately(false);
 		}
 	});
+	
+	updateTableSize();
 }
 
 void MainWindow::handle_rightClick(QPoint pos)
