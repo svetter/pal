@@ -22,9 +22,13 @@ MainWindow::MainWindow() :
 		openRecentActions(QList<QAction*>()),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
 		shortcuts(QList<QShortcut*>()),
+		statusBarTableSizeLabel(new QLabel(statusbar)),
+		statusBarFiltersLabel(new QLabel(statusbar)),
 		typesHandler(nullptr)
 {
 	setupUi(this);
+	statusbar->addPermanentWidget(statusBarTableSizeLabel);
+	statusbar->addPermanentWidget(statusBarFiltersLabel);
 	setUIEnabled(false);
 	
 	if (Settings::rememberWindowPositions.get()) {
@@ -71,7 +75,7 @@ MainWindow::MainWindow() :
 		db.openExisting(this, lastOpen);
 		setVisible(true);
 		initCompositeBuffers();
-		updateAscentCounter();
+		updateTableSize();
 		setUIEnabled(true);
 	}
 	
@@ -81,7 +85,7 @@ MainWindow::MainWindow() :
 	
 	// Temporary: Add menu item to insert test data into current database
 	toolsMenu->addSeparator();
-	toolsMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateAscentCounter(); });
+	toolsMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateTableSize(); });
 }
 
 MainWindow::~MainWindow()
@@ -112,7 +116,6 @@ void MainWindow::connectUI()
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
 			newItem(mapper.openNewItemDialogAndStoreMethod, mapper.compTable, mapper.tableView);
-			if (mapper.type == Ascent) updateAscentCounter();
 		};
 		
 		connect(mapper.newItemAction,		&QAction::triggered,			this,	newFunction);
@@ -516,8 +519,35 @@ void MainWindow::updateRecentFilesMenu()
 	openRecentMenu->setEnabled(true);
 }
 
-void MainWindow::updateAscentCounter()
+void MainWindow::updateTableSize(bool reset)
 {
+	if (reset) {
+		statusBarTableSizeLabel->setText("");
+		statusBarFiltersLabel->setText("");
+		return;
+	}
+	
+	typesHandler->forMatchingTableView(getCurrentTableView(), [] (const ItemTypeMapper& mapper) {
+		int total = mapper.baseTable->getNumberOfRows();
+		if (total == 0) {
+			statusBarTableSizeLabel->setText(tr("Table is empty"));
+		}
+		else if (mapper.type == Ascent) {
+			int displayed = mapper.compTable->rowCount();
+			int filtered = total - displayed;
+			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered)") : tr("%2/%1 entry shown (%3 filtered)")).arg(total).arg(displayed).arg(filtered));
+		} else {
+			statusBarTableSizeLabel->setText((total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total));
+		}
+		
+		if (mapper.type == Ascent) {
+			bool filtersApplied = !mapper.compTable->getCurrentFilters().isEmpty();
+			statusBarFiltersLabel->setText(filtersApplied ? tr("Filters applied") : tr("No filters applied"));
+		} else {
+			statusBarFiltersLabel->setText("");
+		}
+	});
+	
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 }
 
@@ -580,6 +610,7 @@ void MainWindow::newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Datab
 	
 	int viewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
 	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
+	updateTableSize();
 }
 
 void MainWindow::duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, int viewRowIndex)
@@ -590,6 +621,7 @@ void MainWindow::duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMetho
 	
 	int newViewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
 	updateSelectionAfterUserAction(tableView, compTable, newViewRowIndex);
+	updateTableSize();
 }
 
 void MainWindow::editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index)
@@ -597,7 +629,7 @@ void MainWindow::editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Da
 	int bufferRowIndex = compTable->getBufferRowForViewRow(index.row());
 	openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
-	int viewRowIndex = compTable->updateSortingAfterItemEdit(index.row());
+	int viewRowIndex = compTable->updateSortingAfterItemEdit(index.row());	// TODO also update filtering
 	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
 }
 
@@ -605,6 +637,7 @@ void MainWindow::deleteItem(void (*openDeleteItemDialogAndStoreMethod) (QWidget*
 {
 	int bufferRowIndex = compTable->getBufferRowForViewRow(viewRowIndex);
 	openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	updateTableSize();
 }
 
 
@@ -702,7 +735,6 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 		} else {
 			duplicateAndEditItem(mapper.openDuplicateItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, viewRowIndex);
 		}
-		if (mapper.type == Ascent) updateAscentCounter();
 	});
 	assert(done);
 }
@@ -720,7 +752,6 @@ void MainWindow::handle_deleteSelectedItem()
 		} else {
 			deleteItem(mapper.openDeleteItemDialogAndStoreMethod, mapper.compTable, viewRowIndex);
 		}
-		if (mapper.type == Ascent) updateAscentCounter();
 	});
 	assert(done);
 }
@@ -765,21 +796,20 @@ void MainWindow::handle_applyFilters()
 	applyFiltersButton->setEnabled(false);
 	clearFiltersButton->setEnabled(true);
 	
-	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
-	QSet<Filter> filters = collectAndSaveFilters();
-	// Apply filters
-	compAscents->applyFilters(filters);
+	typesHandler->get(Ascent)->compTable->applyFilters(collectAndSaveFilters());
+	
+	updateTableSize();
 }
 
 void MainWindow::handle_clearFilters()
 {
 	clearFiltersButton->setEnabled(false);
-	updateFilterUI();
+	updateFilterUI();	// Potentially enable apply button
 	
-	CompositeTable* compAscents = typesHandler->get(Ascent)->compTable;
-	compAscents->clearFilters();
-	
+	typesHandler->get(Ascent)->compTable->clearFilters();
 	clearSavedFilters();
+	
+	updateTableSize();
 }
 
 
@@ -798,7 +828,7 @@ void MainWindow::handle_newDatabase()
 	
 	handle_closeDatabase();
 	db.createNew(this, filepath);
-	updateAscentCounter();
+	updateTableSize();
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
@@ -820,7 +850,7 @@ void MainWindow::handle_openDatabase()
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
 	initCompositeBuffers();
-	updateAscentCounter();
+	updateTableSize();
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
@@ -836,7 +866,7 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
 	initCompositeBuffers();
-	updateAscentCounter();
+	updateTableSize();
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
@@ -866,11 +896,12 @@ void MainWindow::handle_saveDatabaseAs()
 void MainWindow::handle_closeDatabase()
 {
 	setUIEnabled(false);
+	resetFilterUI();
 	db.reset();
 	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
 		mapper.compTable->resetBuffer();
 	});
-	updateAscentCounter();
+	updateTableSize(true);
 }
 
 
@@ -1117,5 +1148,5 @@ void MainWindow::resetFilterUI()
 
 void MainWindow::setStatusLine(QString content)
 {
-	statusbar->showMessage(content);
+	statusbar->showMessage(content, 5000);
 }

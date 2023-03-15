@@ -26,6 +26,8 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	QAction* tableContextMenuOpenAction;
 	QAction* tableContextMenuDuplicateAction;
 	QList<QShortcut*> shortcuts;
+	QLabel* statusBarTableSizeLabel;
+	QLabel* statusBarFiltersLabel;
 	
 	const ItemTypesHandler* typesHandler;
 	
@@ -50,7 +52,7 @@ private:
 	// UI updates
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
-	void updateAscentCounter();
+	void updateTableSize(bool reset = false);
 	void updateFilterUI();
 	
 	// Execute user commands
