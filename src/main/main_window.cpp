@@ -112,6 +112,7 @@ void MainWindow::connectUI()
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
 	// Menu "View"
 	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
+	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	// Menu "New"
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
@@ -930,6 +931,21 @@ void MainWindow::handle_showFiltersChanged()
 	bool showFilters = showFiltersAction->isChecked();
 	filtersLayoutWidget->setVisible(showFilters);
 	if (!showFilters) handle_clearFilters();
+}
+
+void MainWindow::handle_autoResizeColumns()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	bool done = typesHandler->forMatchingTableView(currentTableView, [] (const ItemTypeMapper& mapper, bool debugTable) {
+		QTableView* tableView = debugTable ? mapper.debugTableView : mapper.tableView;
+		int numColumns = debugTable ? mapper.baseTable->getNumberOfColumns() : mapper.compTable->columnCount();
+		
+		tableView->resizeColumnsToContents();
+		for (int i = 0; i < numColumns; i++) {
+			if (tableView->columnWidth(i) > 400) tableView->setColumnWidth(i, 400);
+		}
+	});
+	assert(done);
 }
 
 

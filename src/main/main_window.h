@@ -91,6 +91,7 @@ private slots:
 	void handle_openSettings();
 	// View menu action handlers
 	void handle_showFiltersChanged();
+	void handle_autoResizeColumns();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
 	// Help menu action handlers

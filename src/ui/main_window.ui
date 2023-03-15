@@ -1563,6 +1563,8 @@
      <string>View</string>
     </property>
     <addaction name="showFiltersAction"/>
+    <addaction name="separator"/>
+    <addaction name="autoResizeColumnsAction"/>
    </widget>
    <widget class="QMenu" name="newMenu">
     <property name="title">
@@ -1651,6 +1653,11 @@
    </property>
    <property name="text">
     <string>Show filters</string>
+   </property>
+  </action>
+  <action name="autoResizeColumnsAction">
+   <property name="text">
+    <string>Auto-resize columns</string>
    </property>
   </action>
   <action name="newAscentAction">
