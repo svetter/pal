@@ -107,7 +107,7 @@ void MainWindow::connectUI()
 	connect(projectSettingsAction,			&QAction::triggered,			this,	&MainWindow::handle_openProjectSettings);
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
 	// Menu "View"
-	connect(showFiltersAction,				&QAction::triggered,			this,	&MainWindow::handle_showFiltersChanged);
+	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
 	// Menu "New"
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
@@ -356,6 +356,9 @@ void MainWindow::initCompositeBuffers()
 	if (Settings::rememberFilters.get()) {
 		ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
 		insertFiltersIntoUI(ascentFilters);
+		if (!ascentFilters.isEmpty()) {
+			showFiltersAction->setChecked(true);
+		}
 	}
 	
 	typesHandler->forEach([&progress, &ascentFilters] (const ItemTypeMapper& mapper) {
