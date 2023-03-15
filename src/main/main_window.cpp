@@ -115,7 +115,7 @@ void MainWindow::connectUI()
 	// Menu "New"
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
-			newItem(mapper.openNewItemDialogAndStoreMethod, mapper.compTable, mapper.tableView);
+			newItem(mapper);
 		};
 		
 		connect(mapper.newItemAction,		&QAction::triggered,			this,	newFunction);
@@ -137,7 +137,7 @@ void MainWindow::connectUI()
 	// Double clicks on table
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto editFunction = [this, &mapper] (const QModelIndex& index) {
-			editItem(mapper.openEditItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, index);
+			editItem(mapper, index);
 		};
 		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	editFunction);
 		
@@ -535,7 +535,7 @@ void MainWindow::updateTableSize(bool reset)
 		else if (mapper.type == Ascent && !debugTable) {
 			int displayed = mapper.compTable->rowCount();
 			int filtered = total - displayed;
-			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered)") : tr("%2/%1 entry shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered));
+			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered out)") : tr("%2/%1 entry shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered));
 		} else {
 			statusBarTableSizeLabel->setText((total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total));
 		}
@@ -603,49 +603,53 @@ void MainWindow::updateFilterUI()
 
 // EXECUTE USER COMMANDS
 
-void MainWindow::newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* compTable, QTableView* tableView)
+void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
-	int newBufferRowIndex = openNewItemDialogAndStoreMethod(this, &db);
+	int newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
 	if (newBufferRowIndex == -1) return;
 	
-	int viewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
-	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
+	int viewRowIndex = mapper.compTable->findCurrentViewRowIndex(newBufferRowIndex);
+	updateSelectionAfterUserAction(mapper, viewRowIndex);
 	updateTableSize();
+	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
-void MainWindow::duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, int viewRowIndex)
+void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
-	int bufferRowIndex = compTable->getBufferRowForViewRow(viewRowIndex);
-	int newBufferRowIndex = openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(viewRowIndex);
+	int newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
-	int newViewRowIndex = compTable->findCurrentViewRowIndex(newBufferRowIndex);
-	updateSelectionAfterUserAction(tableView, compTable, newViewRowIndex);
+	int newViewRowIndex = mapper.compTable->findCurrentViewRowIndex(newBufferRowIndex);
+	updateSelectionAfterUserAction(mapper, newViewRowIndex);
 	updateTableSize();
+	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
-void MainWindow::editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index)
+void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
 {
-	int bufferRowIndex = compTable->getBufferRowForViewRow(index.row());
-	openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(index.row());
+	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
-	int viewRowIndex = compTable->updateSortingAfterItemEdit(index.row());	// TODO also update filtering
-	updateSelectionAfterUserAction(tableView, compTable, viewRowIndex);
+	int viewRowIndex = mapper.compTable->updateSortingAfterItemEdit(index.row());	// TODO also update filtering
+	updateSelectionAfterUserAction(mapper, viewRowIndex);
+	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
-void MainWindow::deleteItem(void (*openDeleteItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, int viewRowIndex)
+void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
-	int bufferRowIndex = compTable->getBufferRowForViewRow(viewRowIndex);
-	openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(viewRowIndex);
+	mapper.openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	updateTableSize();
+	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
 
-void MainWindow::updateSelectionAfterUserAction(QTableView* tableView, CompositeTable* compTable, int viewRowIndex)
+void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex)
 {
-	QModelIndex modelIndex = compTable->index(viewRowIndex, 0);
-	tableView->setCurrentIndex(modelIndex);
-	tableView->scrollTo(modelIndex);
+	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex, 0);
+	mapper.tableView->setCurrentIndex(modelIndex);
+	mapper.tableView->scrollTo(modelIndex);
 }
 
 

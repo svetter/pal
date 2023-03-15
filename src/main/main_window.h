@@ -56,11 +56,11 @@ private:
 	void updateFilterUI();
 	
 	// Execute user commands
-	void newItem(int (*openNewItemDialogAndStoreMethod) (QWidget*, Database*), CompositeTable* table, QTableView* tableView);
-	void duplicateAndEditItem(int (*openDuplicateItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, int viewRowIndex);
-	void editItem(void (*openEditItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, QTableView* tableView, const QModelIndex& index);
-	void deleteItem(void (*openDeleteItemDialogAndStoreMethod) (QWidget*, Database*, int), CompositeTable* compTable, int viewRowIndex);
-	void updateSelectionAfterUserAction(QTableView* tableView, CompositeTable* compTable, int viewRowIndex);
+	void newItem(const ItemTypeMapper& mapper);
+	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
+	void deleteItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex);
 	
 private slots:
 	// UI event handlers
