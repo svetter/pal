@@ -722,7 +722,7 @@ void MainWindow::handle_editSelectedItem()
 		if (debugTable) {
 			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
 		} else {
-			editItem(mapper.openEditItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, selectedIndex);
+			editItem(mapper, selectedIndex);
 		}
 	});
 	assert(done);
@@ -739,7 +739,7 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 		if (debugTable) {
 			mapper.openDuplicateItemDialogAndStoreMethod(this, &db, viewRowIndex);
 		} else {
-			duplicateAndEditItem(mapper.openDuplicateItemDialogAndStoreMethod, mapper.compTable, mapper.tableView, viewRowIndex);
+			duplicateAndEditItem(mapper, viewRowIndex);
 		}
 	});
 	assert(done);
@@ -756,7 +756,7 @@ void MainWindow::handle_deleteSelectedItem()
 		if (debugTable) {
 			mapper.openDeleteItemDialogAndStoreMethod(this, &db, viewRowIndex);
 		} else {
-			deleteItem(mapper.openDeleteItemDialogAndStoreMethod, mapper.compTable, viewRowIndex);
+			deleteItem(mapper, viewRowIndex);
 		}
 	});
 	assert(done);
