@@ -9,6 +9,7 @@
 #include "ui_main_window.h"
 
 #include <QList>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QCalendarWidget>
@@ -893,7 +894,21 @@ void MainWindow::handle_saveDatabaseAs()
 	QString filepath = QFileDialog::getSaveFileName(this, caption, preSelectedDir);
 	if (filepath.isEmpty()) return;
 	
-	if (!filepath.endsWith(".db")) filepath.append(".db");
+	if (!filepath.endsWith(".db")) {
+		filepath.append(".db");
+	}
+	if (filepath.compare(db.getCurrentFilepath(), Qt::CaseInsensitive) == 0) {
+		QString title = tr("Save database as");
+		QString message = tr("You cannot Save As to the same file.") + "\n\n"
+				+ tr("Hint:") + "\n" + tr("PAL auto-saves every change you make immediately, there is no need to save manually.");
+		auto ok = QMessageBox::Ok;
+		QMessageBox::information(this, title, message, ok, ok);
+		return;
+	}
+	if (QFile(filepath).exists()) {
+		qDebug() << "Existing file needs to be removed";
+		QFile(filepath).remove();
+	}
 	
 	db.saveAs(this, filepath);
 	

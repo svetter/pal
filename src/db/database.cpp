@@ -4,7 +4,6 @@
 #include "src/db/db_error.h"
 #include "src/tools/test_data.h"
 
-#include <QMessageBox>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QFile>
@@ -114,14 +113,11 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 	assert(databaseLoaded);
 	qDebug() << "Saving database file as" << filepath;
 	
-	QSqlDatabase sql = QSqlDatabase::database();
-	QString oldFilepath = sql.databaseName();
-	sql.close();
+	QString oldFilepath = getCurrentFilepath();
+	assert(QFile(filepath).exists() && oldFilepath.compare(filepath, Qt:: CaseInsensitive) != 0);
 	
-	if (QFile(filepath).exists()) {
-		qDebug() << "Existing file needs to be removed";
-		QFile(filepath).remove();
-	}
+	QSqlDatabase sql = QSqlDatabase::database();
+	sql.close();
 	
 	// Copy file
 	if (!QFile(oldFilepath).copy(filepath)) {
@@ -141,6 +137,15 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 		displayError(parent, sql.lastError());
 	
 	return true;
+}
+
+
+QString Database::getCurrentFilepath() const
+{
+	assert(databaseLoaded);
+	QSqlDatabase sql = QSqlDatabase::database();
+	QString filepath = sql.databaseName();
+	return filepath;
 }
 
 

@@ -56,6 +56,7 @@ public:
 	void createNew(QWidget* parent, const QString& filepath);
 	void openExisting(QWidget* parent, const QString& filepath);
 	bool saveAs(QWidget* parent, const QString& filepath);
+	QString getCurrentFilepath() const;
 	
 	void setStatusBar(QStatusBar* mainWindowStatusBar);
 	
