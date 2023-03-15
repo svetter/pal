@@ -352,7 +352,11 @@ void MainWindow::initCompositeBuffers()
 	
 	QSet<Filter> ascentFilters = QSet<Filter>();
 	CompositeAscentsTable* compAscents = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
-	ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
+	
+	if (Settings::rememberFilters.get()) {
+		ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
+		insertFiltersIntoUI(ascentFilters);
+	}
 	
 	typesHandler->forEach([&progress, &ascentFilters] (const ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
@@ -363,8 +367,6 @@ void MainWindow::initCompositeBuffers()
 			mapper.compTable->initBuffer(&progress);
 		}
 	});
-	
-	insertFiltersIntoUI(ascentFilters);
 }
 
 void MainWindow::insertFiltersIntoUI(QSet<Filter> filters)
