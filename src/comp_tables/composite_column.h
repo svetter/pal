@@ -14,17 +14,18 @@ class CompositeTable;
 class CompositeColumn {
 	CompositeTable* const table;
 	
-protected:
-	const QStringList* const enumNames;
-	const QList<QPair<QString, QStringList>>* const enumNameLists;
-	
 public:
 	const QString uiName;
 	const Qt::AlignmentFlag alignment;
 	const DataType contentType;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* = nullptr);
+	const QString suffix;
+	const QStringList* const enumNames;
+	const QList<QPair<QString, QStringList>>* const enumNameLists;
+	
+protected:
+	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
@@ -35,7 +36,7 @@ public:
 protected:
 	QVariant replaceEnumIfApplicable(QVariant content) const;
 public:
-	QVariant toFormattedTableContent(QVariant rawCellContent) const;
+	QString toFormattedTableContent(QVariant rawCellContent) const;
 	
 	bool compare(const QVariant& value1, const QVariant& value2) const;
 	
@@ -52,7 +53,7 @@ class DirectCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
 	
 public:
-	DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames = nullptr);
+	DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant getValueAt(int rowIndex) const override;
 	
@@ -66,7 +67,7 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames = nullptr);
+	ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant getValueAt(int rowIndex) const override;
 	
@@ -90,7 +91,7 @@ class FoldCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	virtual QVariant getValueAt(int rowIndex) const override;
 	
@@ -102,10 +103,9 @@ public:
 class DifferenceCompositeColumn : public CompositeColumn {
 	Column* const minuendColumn;
 	Column* const subtrahendColumn;
-	const QString suffix;
 	
 public:
-	DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix);
+	DifferenceCompositeColumn(CompositeTable* table, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn);
 	
 	virtual QVariant getValueAt(int rowIndex) const override;
 	

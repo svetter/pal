@@ -28,6 +28,9 @@ public:
 	const QString name;
 	
 protected:
+	static inline QString noSuffix = QString();
+	static inline QString mSuffix = " m";
+	
 	CompositeTable(Database* db, NormalTable* baseTable);
 public:
 	~CompositeTable();

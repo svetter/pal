@@ -6,13 +6,14 @@
 
 
 
-CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		table(table),
-		enumNames(enumNames),
-		enumNameLists(enumNameLists),
 		uiName(uiName),
 		alignment(alignment),
-		contentType(contentType)
+		contentType(contentType),
+		suffix(suffix),
+		enumNames(enumNames),
+		enumNameLists(enumNameLists)
 {}
 
 CompositeColumn::~CompositeColumn()
@@ -20,28 +21,30 @@ CompositeColumn::~CompositeColumn()
 
 
 
-QVariant CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
+QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 {
-	if (!rawCellContent.isValid()) return QVariant();
+	if (!rawCellContent.isValid()) return QString();
+	
+	QString result = rawCellContent.toString();
 	
 	if (contentType == Date) {
 		assert(rawCellContent.canConvert<QDate>());
-		return rawCellContent.toDate().toString("dd.MM.yyyy");
+		result = rawCellContent.toDate().toString("dd.MM.yyyy");
 	}
 	
-	if (contentType == Time) {
+	else if (contentType == Time) {
 		assert(rawCellContent.canConvert<QTime>());
-		return rawCellContent.toTime().toString("HH:mm");
+		result = rawCellContent.toTime().toString("HH:mm");
 	}
 	
-	if (contentType == Enum) {
+	else if (contentType == Enum) {
 		assert(enumNames);
 		assert(rawCellContent.canConvert<int>());
 		int enumIndex = rawCellContent.toInt();
 		assert(enumIndex >= 0 && enumIndex < enumNames->size());
-		return enumNames->at(enumIndex);
+		result = enumNames->at(enumIndex);
 	}
-	if (contentType == DualEnum) {
+	else if (contentType == DualEnum) {
 		assert(enumNameLists);
 		assert(rawCellContent.canConvert<QList<QVariant>>());
 		QList<QVariant> intList = rawCellContent.toList();
@@ -52,10 +55,10 @@ QVariant CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 		assert(discerningEnumIndex >= 0 && discerningEnumIndex <= enumNameLists->size());
 		QList<QString> specifiedEnumNames = enumNameLists->at(discerningEnumIndex).second;
 		assert(displayedEnumIndex >= 0 && displayedEnumIndex <= specifiedEnumNames.size());
-		return specifiedEnumNames.at(displayedEnumIndex);
+		result = specifiedEnumNames.at(displayedEnumIndex);
 	}
 	
-	return rawCellContent;
+	return result + suffix;
 }
 
 
@@ -283,8 +286,8 @@ void CompositeColumn::announceChangedData() const
 
 
 
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, enumNames),
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, alignment, contentColumn->type, suffix, enumNames),
 		contentColumn(contentColumn)
 {
 	assert(contentColumn);
@@ -308,8 +311,8 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, enumNames),
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, alignment, contentColumn->type, suffix, enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn)
 {
@@ -368,8 +371,8 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 
-FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), enumNames),
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), suffix, enumNames),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn)
@@ -509,11 +512,10 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 
 
 
-DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, Column* minuendColumn, Column* subtrahendColumn, const QString suffix) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer),
+DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer, suffix),
 		minuendColumn(minuendColumn),
-		subtrahendColumn(subtrahendColumn),
-		suffix(suffix)
+		subtrahendColumn(subtrahendColumn)
 {
 	assert(minuendColumn && subtrahendColumn);
 	assert(minuendColumn->table == subtrahendColumn->table);
@@ -538,16 +540,14 @@ QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 		int minuend = minuendContent.toInt();
 		int subtrahend = subtrahendContent.toInt();
 		
-		int difference = minuend - subtrahend;
-		return QString::number(difference) + suffix;
+		return minuend - subtrahend;
 	}
 	case Date: {
 		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
 		QDate minuend = minuendContent.toDate();
 		QDate subtrahend = subtrahendContent.toDate();
 		
-		int difference = subtrahend.daysTo(minuend);
-		return QString::number(difference) + suffix;
+		return subtrahend.daysTo(minuend);
 	}
 	default:
 		assert(false);
@@ -567,7 +567,7 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, nullptr, enumNameLists),
+		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, QString(), nullptr, enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn)
 {

@@ -17,13 +17,13 @@ public:
 public:
 	inline CompositeCountriesTable(Database* db) :
 			CompositeTable(db, db->countriesTable),
-			//																	uiName				align/fold op	breadcrumbs (column reference chain) + content column [+ enum names]
-			nameColumn			(new const DirectCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,	db->countriesTable->nameColumn)),
-			numRegionsColumn	(new const FoldCompositeColumn		(this,	tr("Num. regions"),		Count,			{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn} })),
-			numPeaksColumn		(new const FoldCompositeColumn		(this,	tr("Num. peaks"),		Count,			{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
-			avgPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Avg. peak height"),	Average,		{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
-			maxPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Max. peak height"),	Max,			{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
-			numAscentsColumn	(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,			{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} }))
+			//																	uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
+			nameColumn			(new const DirectCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,	noSuffix,	db->countriesTable->nameColumn)),
+			numRegionsColumn	(new const FoldCompositeColumn		(this,	tr("Num. regions"),		Count,			noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn} })),
+			numPeaksColumn		(new const FoldCompositeColumn		(this,	tr("Num. peaks"),		Count,			noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
+			avgPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Avg. peak height"),	Average,		mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
+			maxPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Max. peak height"),	Max,			mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
+			numAscentsColumn	(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,			noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} }))
 	{
 		addColumn(nameColumn);
 		addColumn(numRegionsColumn);
