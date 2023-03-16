@@ -43,7 +43,6 @@ private:
 	void setColumnWidths(const ItemTypeMapper& mapper);
 	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
-	void setupFilterUI();
 	
 	// Project setup (on load)
 	void initCompositeBuffers();
@@ -52,9 +51,10 @@ private:
 	// UI updates
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
+public:
 	void updateTableSize(bool reset = false);
-	void updateFilterUI();
 	
+private:
 	// Execute user commands
 	void newItem(const ItemTypeMapper& mapper);
 	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
@@ -72,13 +72,6 @@ private slots:
 	void handle_editSelectedItem();
 	void handle_duplicateAndEditSelectedItem();
 	void handle_deleteSelectedItem();
-	
-	// Filter event handlers
-	void handle_filtersChanged();
-	void handle_difficultyFilterBoxChanged();
-	void handle_difficultyFilterSystemChanged();
-	void handle_applyFilters();
-	void handle_clearFilters();
 	
 	// File menu action handlers
 	void handle_newDatabase();
@@ -107,9 +100,6 @@ private:
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
-	QSet<Filter> collectAndSaveFilters();
-	void clearSavedFilters();
-	void resetFilterUI();
 	
 public:
 	// Database callback

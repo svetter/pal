@@ -53,6 +53,7 @@ SOURCES += \
 	src/dialogs/region_dialog.cpp \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
+	src/main/ascent_filter_bar.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/main/project_settings_window.cpp \
@@ -110,6 +111,7 @@ HEADERS += \
 	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
+	src/main/ascent_filter_bar.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
 	src/main/project_settings_window.h \
@@ -121,6 +123,7 @@ HEADERS += \
 
 FORMS += \
 	src/ui/about_window.ui \
+	src/ui/ascent_filter_bar.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \
