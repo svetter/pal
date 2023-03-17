@@ -113,7 +113,7 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 	qDebug() << "Saving database file as" << filepath;
 	
 	QString oldFilepath = getCurrentFilepath();
-	assert(QFile(filepath).exists() && oldFilepath.compare(filepath, Qt:: CaseInsensitive) != 0);
+	assert(!QFile(filepath).exists() && oldFilepath.compare(filepath, Qt:: CaseInsensitive) != 0);
 	
 	QSqlDatabase sql = QSqlDatabase::database();
 	sql.close();
@@ -121,8 +121,8 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 	// Copy file
 	if (!QFile(oldFilepath).copy(filepath)) {
 		qDebug() << "File copy failed:" << oldFilepath << "to" << filepath;
+		
 		// reopen old connection
-		// TODO warning message
 		if (!sql.open())
 			displayError(parent, sql.lastError());
 		return false;

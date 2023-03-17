@@ -670,7 +670,15 @@ void MainWindow::handle_saveDatabaseAs()
 		QFile(filepath).remove();
 	}
 	
-	db.saveAs(this, filepath);
+	bool success = db.saveAs(this, filepath);
+	if (!success) {
+		QString title = tr("Save database as");
+		QString message = tr("Writing database file failed:")
+				+ "\n" + filepath + "\n"
+				+ tr("Reverting to previously opened file:")
+				+ "\n" + db.getCurrentFilepath();
+		QMessageBox::warning(this, title, message);
+	}
 	
 	addToRecentFilesList(filepath);
 }
