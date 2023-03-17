@@ -1,6 +1,5 @@
 #include "database.h"
 
-#include "src/comp_tables/comp_ascents_table.h"
 #include "src/db/db_error.h"
 #include "src/tools/test_data.h"
 
@@ -467,59 +466,6 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 		displayError(parent, "Received invalid QVariant from query", queryString);
 	QString stringValue = variantValue.toString();
 	return stringValue;
-}
-
-
-
-QSet<Filter> Database::parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents)
-{
-	QSet<Filter> filters = QSet<Filter>();
-	
-	if (projectSettings->dateFilter->isNotNull()) {
-		QDate date1 = projectSettings->dateFilter->get();
-		if (projectSettings->dateFilter->secondIsNotNull()) {
-			QDate date2 = projectSettings->dateFilter->getSecond();
-			filters.insert(Filter(compAscents->dateColumn, date1, date2));
-		} else {
-			filters.insert(Filter(compAscents->dateColumn, date1));
-		}
-	}
-	
-	if (projectSettings->peakHeightFilter->isNotNull()) {
-		int minHeight = projectSettings->peakHeightFilter->get();
-		assert(projectSettings->peakHeightFilter->secondIsNotNull());
-		int maxHeight = projectSettings->peakHeightFilter->getSecond();
-		filters.insert(Filter(compAscents->peakHeightColumn, minHeight, maxHeight));
-	}
-	
-	if (projectSettings->volcanoFilter->isNotNull()) {
-		bool volcano = projectSettings->volcanoFilter->get();
-		filters.insert(Filter(compAscents->volcanoColumn, volcano));
-	}
-	
-	if (projectSettings->rangeFilter->isNotNull()) {
-		ValidItemID rangeID = projectSettings->rangeFilter->get();
-		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
-	}
-	
-	if (projectSettings->hikeKindFilter->isNotNull()) {
-		int hikeKind = projectSettings->hikeKindFilter->get();
-		filters.insert(Filter(compAscents->hikeKindColumn, hikeKind));
-	}
-	
-	if (projectSettings->difficultyFilter->isNotNull()) {
-		assert(projectSettings->difficultyFilter->secondIsNotNull());
-		int difficultySystem = projectSettings->difficultyFilter->get();
-		int difficultyGrade = projectSettings->difficultyFilter->getSecond();
-		filters.insert(Filter(compAscents->difficultyColumn, difficultySystem, difficultyGrade));
-	}
-	
-	if (projectSettings->hikerFilter->isNotNull()) {
-		ValidItemID hikerID = projectSettings->hikerFilter->get();
-		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
-	}
-	
-	return filters;
 }
 
 

@@ -2,8 +2,8 @@
 #define ASCENT_FILTER_BAR_H
 
 #include "src/comp_tables/filter.h"
+#include "src/db/database.h"
 #include "ui_ascent_filter_bar.h"
-#include "src/main/item_types_handler.h"
 
 #include <QMainWindow>
 #include <QTableView>
@@ -22,39 +22,43 @@ class AscentFilterBar : public QWidget, public Ui_AscentFilterBar
 	
 public:
 	AscentFilterBar(QWidget* parent);
-	
-	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents);
-	
-private:
 	// Initial setup
+	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents);
+private:
 	void connectUI();
 	void setupUI();
-	void updateUI();
-public:
-	void insertFiltersIntoUI(QSet<Filter> filters);
-	void resetUI();
 	
-private:
-	// Execute user commands
-	void newItem(const ItemTypeMapper& mapper);
-	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
-	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
-	void deleteItem(const ItemTypeMapper& mapper, int viewRowIndex);
-	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex);
+public:
+	// Project setup
+	void resetUI();
+	void insertFiltersIntoUI(QSet<Filter> filters);
 	
 private slots:
-	// Filter event handlers
+	// UI change handlers
 	void handle_filtersChanged();
 	void handle_difficultyFilterBoxChanged();
+	void handle_minDateChanged();
+	void handle_maxDateChanged();
+	void handle_minHeightChanged();
+	void handle_maxHeightChanged();
 	void handle_difficultyFilterSystemChanged();
-	void handle_applyFilters();
+	
 public:
+	// Execute filter actions
+	void handle_applyFilters();
 	void handle_clearFilters();
 	
 private:
-	// General helpers
-	QSet<Filter> collectAndSaveFilters();
+	// Parsing filters from UI
+	QSet<Filter> collectFilters();
+	
+	// Saving filters
 	void clearSavedFilters();
+	void saveFilters(const QSet<Filter> filters);
+	
+public:
+	// Retrieving filters from project settings
+	QSet<Filter> parseFiltersFromProjectSettings();
 };
 
 

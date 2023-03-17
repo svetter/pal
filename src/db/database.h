@@ -1,7 +1,6 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include "src/comp_tables/filter.h"
 #include "src/data/ascent.h"
 #include "src/data/peak.h"
 #include "src/data/trip.h"
@@ -91,8 +90,6 @@ private:
 	QString getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 	
 public:
-	QSet<Filter> parseFiltersFromProjectSettings(const CompositeAscentsTable* compAscents);
-	
 	void insertTestData(QWidget* parent);
 };
 

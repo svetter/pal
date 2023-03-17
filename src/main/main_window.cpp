@@ -311,10 +311,9 @@ void MainWindow::initCompositeBuffers()
 	progress.setValue(0);
 	
 	QSet<Filter> ascentFilters = QSet<Filter>();
-	CompositeAscentsTable* compAscents = (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable;
 	
 	if (Settings::rememberFilters.get()) {
-		ascentFilters = db.parseFiltersFromProjectSettings(compAscents);
+		ascentFilters = ascentFilterBar->parseFiltersFromProjectSettings();
 		ascentFilterBar->insertFiltersIntoUI(ascentFilters);
 		if (!ascentFilters.isEmpty()) {
 			showFiltersAction->setChecked(true);
@@ -387,24 +386,30 @@ void MainWindow::updateTableSize(bool reset)
 	}
 	
 	typesHandler->forMatchingTableView(getCurrentTableView(), [this] (const ItemTypeMapper& mapper, bool debugTable) {
+		QString countText = QString();
 		int total = mapper.baseTable->getNumberOfRows();
 		if (total == 0) {
-			statusBarTableSizeLabel->setText(tr("Table is empty"));
+			countText = tr("Table is empty");
 		}
 		else if (mapper.type == Ascent && !debugTable) {
 			int displayed = mapper.compTable->rowCount();
 			int filtered = total - displayed;
-			statusBarTableSizeLabel->setText((total == 1 ? tr("%2/%1 entries shown (%3 filtered out)") : tr("%2/%1 entry shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered));
+			countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
 		} else {
-			statusBarTableSizeLabel->setText((total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total));
+			countText = (total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total);
 		}
+		statusBarTableSizeLabel->setText(countText);
 		
+		QString filterText = QString();
 		if (mapper.type == Ascent && !debugTable) {
-			bool filtersApplied = !mapper.compTable->getCurrentFilters().isEmpty();
-			statusBarFiltersLabel->setText(filtersApplied ? tr("Filters applied") : tr("No filters applied"));
-		} else {
-			statusBarFiltersLabel->setText("");
+			int filtersApplied = mapper.compTable->getCurrentFilters().size();
+			if (filtersApplied) {
+				filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
+			} else {
+				filterText = tr("No filters applied");
+			}
 		}
+		statusBarFiltersLabel->setText(filterText);
 	});
 	
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
