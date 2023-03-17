@@ -1,6 +1,5 @@
 #include "main_window.h"
 
-#include "src/dialogs/parse_helper.h"
 #include "src/main/about_window.h"
 #include "src/main/item_types_handler.h"
 #include "src/main/project_settings_window.h"
@@ -449,7 +448,7 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(index.row());
 	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
-	int viewRowIndex = mapper.compTable->updateSortingAfterItemEdit(index.row());	// TODO also update filtering
+	int viewRowIndex = mapper.compTable->findCurrentViewRowIndex(bufferRowIndex);
 	updateSelectionAfterUserAction(mapper, viewRowIndex);
 	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }

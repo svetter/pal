@@ -135,9 +135,7 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	}
 	
-	if (columnsToUpdate.contains(currentSorting.first)) {
-		performSortByColumn(currentSorting.first, currentSorting.second, false);
-	}
+	rebuildOrderBuffer(false);
 	
 	columnsToUpdate.clear();
 }
@@ -212,18 +210,7 @@ void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
 	}
 	buffer.insert(bufferRowIndex, newRow);
 	
-	// Update order buffer
-	for (int i = 0; i < bufferOrder.size(); i++) {
-		int currentBufferRowIndex = bufferOrder.at(i);
-		if (currentBufferRowIndex > bufferRowIndex) {
-			bufferOrder.replace(i, currentBufferRowIndex + 1);
-		}
-	}
-	
-	int viewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
-	beginInsertRows(QModelIndex(), viewRowIndex, viewRowIndex);
-	bufferOrder.insert(viewRowIndex, bufferRowIndex);
-	endInsertRows();
+	rebuildOrderBuffer(false);
 }
 
 void CompositeTable::removeRowAndAnnounce(int bufferRowIndex)
@@ -250,22 +237,6 @@ void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
 	columnsToUpdate.insert(columns.at(columnIndex));
 	if (updateImmediately) updateBuffer(nullptr);
-}
-
-int CompositeTable::updateSortingAfterItemEdit(int viewRowIndex)
-{
-	int bufferRowIndex = bufferOrder.at(viewRowIndex);
-	
-	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
-	bufferOrder.removeAt(viewRowIndex);
-	endRemoveRows();
-	
-	int newViewRowIndex = findOrderIndexForInsertedItem(bufferRowIndex);
-	beginInsertRows(QModelIndex(), newViewRowIndex, newViewRowIndex);
-	bufferOrder.insert(newViewRowIndex, bufferRowIndex);
-	endInsertRows();
-	
-	return newViewRowIndex;
 }
 
 
@@ -386,31 +357,4 @@ QVariant CompositeTable::computeCellContent(int bufferRowIndex, int columnIndex)
 	if (!result.isValid()) return QVariant();
 	
 	return result;
-}
-
-
-
-int CompositeTable::findOrderIndexForInsertedItem(int insertedItemBufferRowIndex)
-{
-	if (!currentSorting.first) {
-		qDebug() << "Warning: Inserting into unsorted composite table" << name;
-		return bufferOrder.size();
-	}
-	
-	const CompositeColumn* currentSortColumn = currentSorting.first;
-	const QVariant ownCompareValue = currentSortColumn->getValueAt(insertedItemBufferRowIndex);
-	for (int i = 0; i < bufferOrder.size(); i++) {
-		const QVariant compareTo = currentSortColumn->getValueAt(bufferOrder.at(i));
-		bool insertHere;
-		if (currentSorting.second == Qt::AscendingOrder) {
-			insertHere = currentSortColumn->compare(ownCompareValue, /* < */ compareTo);
-		} else {
-			insertHere = currentSortColumn->compare(compareTo, /* < */ ownCompareValue);
-		}
-		
-		if (insertHere) {
-			return i;
-		}
-	}
-	return bufferOrder.size();
 }
