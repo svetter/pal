@@ -348,7 +348,9 @@ void MainWindow::setUIEnabled(bool enabled)
 	closeDatabaseAction			->setEnabled(enabled);
 	projectSettingsAction		->setEnabled(enabled);
 	
+	viewMenu					->setEnabled(enabled);
 	newMenu						->setEnabled(enabled);
+	toolsMenu					->setEnabled(enabled);
 }
 
 void MainWindow::updateRecentFilesMenu()
