@@ -5,6 +5,7 @@
 #include "src/main/project_settings_window.h"
 #include "src/main/settings_window.h"
 #include "src/tools/relocate_photos_dialog.h"
+#include "src/viewer/ascent_viewer.h"
 #include "ui_main_window.h"
 
 #include <QList>
@@ -524,6 +525,7 @@ void MainWindow::handle_openSelectedItem()
 	
 	if (currentTableView == ascentsTableView) {
 		qDebug() << "UNIMPLEMENTED: MainWindow::handle_openAscent(), row" << selectedIndex.row();
+		AscentViewer(this).exec();
 		return;
 	}
 	qDebug() << "Missing implementation in MainWindow::handle_openSelectedItem() for" << currentTableView->objectName();

@@ -119,11 +119,14 @@ HEADERS += \
 	src/main/settings_window.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
-	src/tools/test_data.h
+	src/tools/test_data.h \
+	src/viewer/ascent_viewer.h \
+	src/viewer/image_display.h
 
 FORMS += \
 	src/ui/about_window.ui \
 	src/ui/ascent_filter_bar.ui \
+	src/ui/ascent_viewer.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \
