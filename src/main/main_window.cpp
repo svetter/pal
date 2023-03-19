@@ -136,10 +136,14 @@ void MainWindow::connectUI()
 	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	// Double clicks on table
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
-		auto editFunction = [this, &mapper] (const QModelIndex& index) {
-			editItem(mapper, index);
+		auto openFunction = [this, &mapper] (const QModelIndex& index) {
+			if (mapper.type == Ascent) {
+				openItem(mapper, index.row());
+			} else {
+				editItem(mapper, index);
+			}
 		};
-		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	editFunction);
+		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	openFunction);
 		
 		auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
 			mapper.openEditItemDialogAndStoreMethod(this, &db, index.row());
@@ -418,6 +422,17 @@ void MainWindow::updateTableSize(bool reset)
 
 // EXECUTE USER COMMANDS
 
+void MainWindow::openItem(const ItemTypeMapper& mapper, int viewRowIndex)
+{
+	switch (mapper.type) {
+	case Ascent:
+		AscentViewer(this, &db, (CompositeAscentsTable*) mapper.compTable, viewRowIndex).exec();
+		return;
+	default:
+		assert(false);
+	}
+}
+
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
 	int newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
@@ -520,12 +535,16 @@ void MainWindow::handle_openSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	if (currentTableView == ascentsTableView) {
-		qDebug() << "UNIMPLEMENTED: MainWindow::handle_openAscent(), row" << selectedIndex.row();
-		AscentViewer(this).exec();
-		return;
-	}
-	qDebug() << "Missing implementation in MainWindow::handle_openSelectedItem() for" << currentTableView->objectName();
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+		if (debugTable) {
+			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
+		} else if (mapper.type == Ascent) {
+			openItem(mapper, selectedIndex.row());
+		} else {
+			editItem(mapper, selectedIndex);
+		}
+	});
+	assert(done);
 }
 
 void MainWindow::handle_editSelectedItem()

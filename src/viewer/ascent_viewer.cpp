@@ -9,8 +9,12 @@
 
 
 
-AscentViewer::AscentViewer(QWidget* parent) :
-		QDialog(parent)
+AscentViewer::AscentViewer(MainWindow* parent, Database* db, CompositeAscentsTable* compAscents, int viewRowIndex) :
+		QDialog(parent),
+		mainWindow(parent),
+		db(db),
+		compAscents(compAscents),
+		viewRowIndex(viewRowIndex)
 {
 	setupUi(this);
 	
