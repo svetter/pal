@@ -70,6 +70,18 @@ int CompositeColumn::getIndex() const
 
 
 
+QVariant CompositeColumn::getRawValueAt(int rowIndex) const
+{
+	return table->getRawValue(rowIndex, this);
+}
+
+QVariant CompositeColumn::getFormattedValueAt(int rowIndex) const
+{
+	return table->getFormattedValue(rowIndex, this);
+}
+
+
+
 QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 {
 	if (!enumNames) return content;
@@ -268,7 +280,7 @@ void CompositeColumn::applySingleFilter(const Filter& filter, QList<int>& orderB
 	if (!valuePasses) return;
 	// Do the actual filter pass
 	for (int i = orderBuffer.size() - 1; i >= 0; i--) {
-		bool letThrough = valuePasses(getValueAt(orderBuffer.at(i)));
+		bool letThrough = valuePasses(getRawValueAt(orderBuffer.at(i)));
 		if (letThrough) continue;
 		orderBuffer.removeAt(i);
 	}
@@ -295,7 +307,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 
 
 
-QVariant DirectCompositeColumn::getValueAt(int rowIndex) const
+QVariant DirectCompositeColumn::computeValueAt(int rowIndex) const
 {
 	return contentColumn->getValueAt(rowIndex);
 }
@@ -321,7 +333,7 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QStrin
 
 
 
-QVariant ReferenceCompositeColumn::getValueAt(int rowIndex) const
+QVariant ReferenceCompositeColumn::computeValueAt(int rowIndex) const
 {
 	assert(foreignKeyColumnSequence.first()->isForeignKey());
 	
@@ -382,7 +394,7 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, 
 
 
 
-QVariant FoldCompositeColumn::getValueAt(int rowIndex) const
+QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
 {
 	QSet<int> currentRowIndexSet = { rowIndex };
 	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
@@ -527,7 +539,7 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 
 
 
-QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
+QVariant DifferenceCompositeColumn::computeValueAt(int rowIndex) const
 {
 	QVariant minuendContent = minuendColumn->getValueAt(rowIndex);
 	QVariant subtrahendContent = subtrahendColumn->getValueAt(rowIndex);
@@ -580,7 +592,7 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
 
 
 
-QVariant DependentEnumCompositeColumn::getValueAt(int rowIndex) const
+QVariant DependentEnumCompositeColumn::computeValueAt(int rowIndex) const
 {
 	QVariant discerningContent = discerningEnumColumn->getValueAt(rowIndex);
 	QVariant displayedContent = displayedEnumColumn->getValueAt(rowIndex);

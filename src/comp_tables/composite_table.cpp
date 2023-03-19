@@ -150,7 +150,7 @@ void CompositeTable::resetBuffer()
 	buffer.clear();
 }
 
-int CompositeTable::getBufferRowForViewRow(int viewRowIndex) const
+int CompositeTable::getBufferRowIndexForViewRow(int viewRowIndex) const
 {
 	return bufferOrder.at(viewRowIndex);
 }
@@ -161,6 +161,33 @@ int CompositeTable::findCurrentViewRowIndex(int bufferRowIndex) const
 		if (bufferOrder.at(i) == bufferRowIndex) return i;
 	}
 	return -1;
+}
+
+
+
+QVariant CompositeTable::getRawValue(int bufferRowIndex, int columnIndex) const
+{
+	assert(bufferRowIndex >= 0 && bufferRowIndex < buffer.size());
+	assert(columnIndex >= 0 && columnIndex < columns.size());
+	QVariant result = buffer.at(bufferRowIndex)->at(columnIndex);
+	return result.isNull() ? QVariant() : result;
+}
+
+QVariant CompositeTable::getRawValue(int bufferRowIndex, const CompositeColumn* column) const
+{
+	assert(columns.contains(column));
+	return getRawValue(bufferRowIndex, column->getIndex());
+}
+
+QVariant CompositeTable::getFormattedValue(int bufferRowIndex, int columnIndex) const
+{
+	const CompositeColumn* column = getColumnAt(columnIndex);
+	return column->toFormattedTableContent(getRawValue(bufferRowIndex, columnIndex));
+}
+
+QVariant CompositeTable::getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const
+{
+	return column->toFormattedTableContent(getRawValue(bufferRowIndex, column));
 }
 
 
@@ -322,8 +349,8 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 	}
 	else {
 		auto comparator = [&column, order](int i1, int i2) {
-			QVariant value1 = column->getValueAt(i1);
-			QVariant value2 = column->getValueAt(i2);
+			QVariant value1 = column->getRawValueAt(i1);
+			QVariant value2 = column->getRawValueAt(i2);
 			
 			if (order == Qt::AscendingOrder) {
 				return column->compare(value1, value2);
@@ -352,7 +379,7 @@ QVariant CompositeTable::computeCellContent(int bufferRowIndex, int columnIndex)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
 	const CompositeColumn* column = columns.at(columnIndex);
-	QVariant result = column->getValueAt(bufferRowIndex);
+	QVariant result = column->computeValueAt(bufferRowIndex);
 	
 	if (!result.isValid()) return QVariant();
 	

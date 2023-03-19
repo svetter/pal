@@ -1,6 +1,7 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
+#include "src/data/item_id.h"
 #include <QSet>
 
 class Table;
@@ -36,6 +37,7 @@ public:
 	int		getIndex() const;
 	
 	QVariant getValueAt(int bufferRowIndex) const;
+	QVariant getValueFor(ValidItemID itemID) const;
 	
 	QString getSqlSpecificationString() const;
 	

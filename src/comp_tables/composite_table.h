@@ -48,8 +48,13 @@ public:
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();
-	int getBufferRowForViewRow(int viewRowIndex) const;
+	int getBufferRowIndexForViewRow(int viewRowIndex) const;
 	int findCurrentViewRowIndex(int bufferRowIndex) const;
+	
+	QVariant getRawValue(int bufferRowIndex, int columnIndex) const;
+	QVariant getRawValue(int bufferRowIndex, const CompositeColumn* column) const;
+	QVariant getFormattedValue(int bufferRowIndex, int columnIndex) const;
+	QVariant getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const;
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;

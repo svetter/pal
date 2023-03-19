@@ -446,7 +446,7 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 
 void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(viewRowIndex);
+	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	int newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
@@ -458,7 +458,7 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowI
 
 void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(index.row());
+	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(index.row());
 	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
 	int viewRowIndex = mapper.compTable->findCurrentViewRowIndex(bufferRowIndex);
@@ -468,7 +468,7 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 
 void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowForViewRow(viewRowIndex);
+	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	mapper.openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	updateTableSize();
 	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));

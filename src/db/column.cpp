@@ -59,6 +59,12 @@ QVariant Column::getValueAt(int bufferRowIndex) const
 	return table->getBufferRow(bufferRowIndex)->at(getIndex());
 }
 
+QVariant Column::getValueFor(ValidItemID itemID) const
+{
+	assert(!table->isAssociative);
+	return getValueAt(((NormalTable*) table)->getBufferIndexForPrimaryKey(itemID));
+}
+
 
 
 QString Column::getSqlSpecificationString() const
