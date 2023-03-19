@@ -242,8 +242,8 @@ void MainWindow::setSorting(const ItemTypeMapper& mapper)
 
 void MainWindow::initTableContextMenuAndShortcuts()
 {
-	QKeySequence openKeySequence		= QKeySequence(Qt::Key_Enter);
-	QKeySequence editKeySequence		= QKeySequence(Qt::CTRL | Qt::Key_Enter);
+	QKeySequence openKeySequence		= QKeySequence(Qt::Key_Return);
+	QKeySequence editKeySequence		= QKeySequence(Qt::CTRL | Qt::Key_Return);
 	QKeySequence duplicateKeySequence	= QKeySequence::Copy;
 	QKeySequence deleteKeySequence		= QKeySequence::Delete;
 	
