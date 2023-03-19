@@ -59,7 +59,8 @@ SOURCES += \
 	src/main/project_settings_window.cpp \
 	src/main/settings_window.cpp \
 	src/tools/photo_relocation_thread.cpp \
-	src/tools/relocate_photos_dialog.cpp
+	src/tools/relocate_photos_dialog.cpp \
+	src/viewer/ascent_viewer.cpp
 
 HEADERS += \
 	src/comp_tables/comp_ascents_table.h \
