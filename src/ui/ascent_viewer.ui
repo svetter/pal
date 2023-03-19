@@ -41,6 +41,9 @@
          <pointsize>10</pointsize>
         </font>
        </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
        <property name="title">
         <string>Trip</string>
        </property>
@@ -96,6 +99,9 @@
         <font>
          <pointsize>10</pointsize>
         </font>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
        </property>
        <property name="title">
         <string>Peak</string>
@@ -387,6 +393,9 @@
         <font>
          <pointsize>10</pointsize>
         </font>
+       </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
        </property>
        <property name="title">
         <string>Ascent</string>
@@ -956,6 +965,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
            <property name="text">
             <string notr="true">&lt;PhotoDescription&gt;</string>
