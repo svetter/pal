@@ -9,11 +9,13 @@
 
 
 
-AscentViewer::AscentViewer(MainWindow* parent, Database* db, CompositeAscentsTable* compAscents, int viewRowIndex) :
+AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex) :
 		QDialog(parent),
 		mainWindow(parent),
 		db(db),
-		compAscents(compAscents),
+		compAscents((CompositeAscentsTable*) typesHandler->get(Ascent)->compTable),
+		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
+		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
 		viewRowIndex(viewRowIndex)
 {
 	setupUi(this);
@@ -36,6 +38,9 @@ AscentViewer::~AscentViewer()
 
 void AscentViewer::additionalUISetup()
 {
+	peakVolcanoCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
+	ascentTraverseCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
+	
 	centralSplitter->setStretchFactor(0, 1);
 	centralSplitter->setStretchFactor(1, 2);
 	centralSplitter->setSizes({ centralSplitter->size().width() / 2, centralSplitter->size().width() / 2 });
@@ -96,10 +101,108 @@ void AscentViewer::initContextMenusAndShortcuts()
 
 // ASCENT CHANGE
 
+void AscentViewer::resetInfoLabels()
+{
+	tripNameLabel				->setText		(QString());
+	tripDatesLabel				->setText		(QString());
+	
+	peakNameLabel				->setText		(QString());
+	peakHeightLabel				->setText		(QString());
+	peakVolcanoCheckbox			->setChecked	(false);
+	peakRegionLabel				->setText		(QString());
+	peakRangeLabel				->setText		(QString());
+	peakCountryLabel			->setText		(QString());
+	peakContinentLabel			->setText		(QString());
+	peakMapsLinkLabel			->setText		(QString());
+	peakEarthLinkLabel			->setText		(QString());
+	peakWikipediaLinkLabel		->setText		(QString());
+	
+	ascentTitleLabel			->setText		(QString());
+	ascentDateLabel				->setText		(QString());
+	ascentTimeLabel				->setText		(QString());
+	ascentPeakOnDayLabel		->setText		(QString());
+	ascentElevationGainLabel	->setText		(QString());
+	ascentHikeKindLabel			->setText		(QString());
+	ascentTraverseCheckbox		->setChecked	(false);
+	ascentDifficultyLabel		->setText		(QString());
+	ascentParticipantsLabel		->setText		(QString());
+	
+	peakLinksBox				->setVisible	(false);
+	peakMapsLinkLabel			->setVisible	(false);
+	peakEarthLinkLabel			->setVisible	(false);
+	peakWikipediaLinkLabel		->setVisible	(false);
+	ascentTitleLabel			->setVisible	(false);
+	ascentParticipantsBox		->setVisible	(false);
+}
+
 void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::insertInfoIntoUI()" << viewRowIndex;
+	resetInfoLabels();
+	
+	qDebug() << compAscents->name;
+	int ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	
+	ItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(ascentBufferRowIndex);
+	if (tripID.isValid()) {
+		int tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID.forceValid());
+		tripNameLabel			->setText	(compAscents->tripColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		QString startDate					= compTrips->startDateColumn		->getFormattedValueAt(tripBufferRowIndex).toString();
+		QString endDate						= compTrips->endDateColumn			->getFormattedValueAt(tripBufferRowIndex).toString();
+		QString dateRange = startDate;
+		if (startDate != endDate) {
+			QString length = compTrips->lengthColumn->getFormattedValueAt(tripBufferRowIndex).toString();
+			dateRange = startDate + " – " + endDate + " (" + length + (")");
+		}
+		tripDatesLabel			->setText	(dateRange);
+	}
+	
+	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferRowIndex);
+	if (peakID.isValid()) {
+		int peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID.forceValid());
+		peakNameLabel			->setText	(compAscents->peakColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakHeightLabel			->setText	(compAscents->peakHeightColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakVolcanoCheckbox		->setChecked(compAscents->volcanoColumn			->getRawValueAt(ascentBufferRowIndex).toBool());
+		peakRegionLabel			->setText	(compAscents->regionColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakRangeLabel			->setText	(compAscents->rangeColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakCountryLabel		->setText	(compAscents->countryColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakContinentLabel		->setText	(compAscents->continentColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
+		QString mapsLink					= db->peaksTable->mapsLinkColumn	->getValueAt(peakBufferRowIndex).toString();
+		QString earthLink					= db->peaksTable->earthLinkColumn	->getValueAt(peakBufferRowIndex).toString();
+		QString wikiLink					= db->peaksTable->wikiLinkColumn	->getValueAt(peakBufferRowIndex).toString();
+		if (!mapsLink.isEmpty() || !earthLink.isEmpty() || !wikiLink.isEmpty()) peakLinksBox->setVisible(true);
+		if (!mapsLink.isEmpty()) {
+			peakMapsLinkLabel		->setText("[" + tr("Google Maps") + "](" + mapsLink + ")");
+			peakMapsLinkLabel		->setVisible(true);
+		}
+		if (!earthLink.isEmpty()) {
+			peakEarthLinkLabel		->setText("[" + tr("Google Earth") + "](" + earthLink + ")");
+			peakEarthLinkLabel		->setVisible(true);
+		}
+		if (!wikiLink.isEmpty()) {
+			peakWikipediaLinkLabel	->setText("[" + tr("Wikipedia") + "](" + wikiLink + ")");
+			peakWikipediaLinkLabel	->setVisible(true);
+		}
+	}
+	
+	QString ascentTitle						= compAscents->titleColumn			->getFormattedValueAt(ascentBufferRowIndex).toString();
+	if (!ascentTitle.isEmpty()) {
+		ascentTitleLabel		->setText	(compAscents->titleColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+		ascentTitleLabel		->setVisible(true);
+	}
+	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
+	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt(ascentBufferRowIndex).toString());
+	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt(ascentBufferRowIndex).toString());
+	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	->getFormattedValueAt(ascentBufferRowIndex).toString());
+	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
+	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		->getRawValueAt(ascentBufferRowIndex).toBool());
+	ascentDifficultyLabel		->setText	(compAscents->difficultyColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
+	QString hikersList = compAscents->hikersColumn->getFormattedValueAt(ascentBufferRowIndex).toString();
+	if (!hikersList.isEmpty()) {
+		ascentParticipantsLabel	->setText	(hikersList);
+		ascentParticipantsBox->setVisible(true);
+	}
+	
+	descriptionTextBrowser		->setText	(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
 

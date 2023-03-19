@@ -10,16 +10,18 @@
 class AscentViewer : public QDialog, public Ui_AscentViewer {
 	Q_OBJECT
 	
-	MainWindow* mainWindow;
-	Database* db;
-	CompositeAscentsTable* compAscents;
+	MainWindow* const mainWindow;
+	Database* const db;
+	CompositeAscentsTable* const compAscents;
+	CompositePeaksTable* const compPeaks;
+	CompositeTripsTable* const compTrips;
 	int viewRowIndex;
 	
 	ImageDisplay* imageDisplay;
 	QImage image;
 	
 public:
-	AscentViewer(MainWindow* parent, Database* db, CompositeAscentsTable* compAscents, int viewRowIndex);
+	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex);
 	virtual ~AscentViewer();
 	
 private:
@@ -29,6 +31,7 @@ private:
 	void initContextMenusAndShortcuts();
 	
 	// Ascent change
+	void resetInfoLabels();
 	void insertInfoIntoUI(int viewRowIndex);
 	
 private slots:

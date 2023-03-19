@@ -426,7 +426,7 @@ void MainWindow::openItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	switch (mapper.type) {
 	case Ascent:
-		AscentViewer(this, &db, (CompositeAscentsTable*) mapper.compTable, viewRowIndex).exec();
+		AscentViewer(this, &db, typesHandler, viewRowIndex).exec();
 		return;
 	default:
 		assert(false);

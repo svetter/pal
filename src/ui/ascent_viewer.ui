@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>904</height>
+    <height>929</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -189,14 +189,14 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="peakVolcanoLabel">
+           <widget class="QCheckBox" name="peakVolcanoCheckbox">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
              </font>
             </property>
-            <property name="text">
-             <string notr="true">&lt;PeakVolcano&gt;</string>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
            </widget>
           </item>
@@ -317,7 +317,7 @@
           <property name="title">
            <string>Links</string>
           </property>
-          <layout class="QGridLayout" name="peakLinksBoxLayout" columnstretch="1,1">
+          <layout class="QVBoxLayout" name="peakLinksBoxLayout">
            <property name="leftMargin">
             <number>10</number>
            </property>
@@ -330,13 +330,7 @@
            <property name="bottomMargin">
             <number>10</number>
            </property>
-           <property name="horizontalSpacing">
-            <number>10</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>5</number>
-           </property>
-           <item row="0" column="0">
+           <item>
             <widget class="QLabel" name="peakMapsLinkLabel">
              <property name="font">
               <font>
@@ -346,12 +340,33 @@
              <property name="text">
               <string>Google Maps</string>
              </property>
+             <property name="textFormat">
+              <enum>Qt::MarkdownText</enum>
+             </property>
              <property name="openExternalLinks">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item>
+            <widget class="QLabel" name="peakEarthLinkLabel">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Google Earth</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::MarkdownText</enum>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="peakWikipediaLinkLabel">
              <property name="font">
               <font>
@@ -361,20 +376,8 @@
              <property name="text">
               <string>Wikipedia</string>
              </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="peakEarthLinkLabel">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Google Earth</string>
+             <property name="textFormat">
+              <enum>Qt::MarkdownText</enum>
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
@@ -579,14 +582,17 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLabel" name="ascentTraverseLabel">
+           <widget class="QCheckBox" name="ascentTraverseCheckbox">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
              </font>
             </property>
-            <property name="text">
-             <string notr="true">&lt;AscentTraverse&gt;</string>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
