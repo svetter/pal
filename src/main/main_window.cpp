@@ -47,9 +47,6 @@ MainWindow::MainWindow() :
 	showFiltersAction->setChecked(Settings::mainWindow_showFilters.get());
 	
 	
-	db.setStatusBar(statusbar);
-	
-	
 	typesHandler = new ItemTypesHandler(
 		new AscentTypeMapper	(&db, ascentsTab,	ascentsTableView,	ascentsDebugTableView,		newAscentAction,	newAscentButton),
 		new PeakTypeMapper		(&db, peaksTab,		peaksTableView,		peaksDebugTableView,		newPeakAction,		newPeakButton),
@@ -823,10 +820,6 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	Settings::recentDatabaseFiles.set(recentFiles);
 	updateRecentFilesMenu();
 }
-
-
-
-// DATABASE CALLBACK
 
 void MainWindow::setStatusLine(QString content)
 {

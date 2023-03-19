@@ -57,8 +57,6 @@ public:
 	bool saveAs(QWidget* parent, const QString& filepath);
 	QString getCurrentFilepath() const;
 	
-	void setStatusBar(QStatusBar* mainWindowStatusBar);
-	
 	QList<Table*> getTableList() const;
 	
 	Ascent*		getAscent	(ValidItemID ascentID)	const;
@@ -83,8 +81,6 @@ private:
 	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
 	
 	void populateBuffers(QWidget* parent, bool expectEmpty = false);
-	
-	void setStatusBarMessage(QString content) const;
 	
 	int getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 	QString getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;

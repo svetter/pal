@@ -100,9 +100,6 @@ private:
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
-	
-public:
-	// Database callback
 	void setStatusLine(QString content);
 };
 
