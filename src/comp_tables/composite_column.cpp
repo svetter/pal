@@ -547,7 +547,7 @@ QVariant DifferenceCompositeColumn::getValueAt(int rowIndex) const
 		QDate minuend = minuendContent.toDate();
 		QDate subtrahend = subtrahendContent.toDate();
 		
-		return subtrahend.daysTo(minuend);
+		return subtrahend.daysTo(minuend) + 1;
 	}
 	default:
 		assert(false);
