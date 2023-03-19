@@ -22,7 +22,47 @@ public:
 	AscentViewer(MainWindow* parent, Database* db, CompositeAscentsTable* compAscents, int viewRowIndex);
 	virtual ~AscentViewer();
 	
-	inline void displayTestImage();
+private:
+	// Initial setup
+	void additionalUISetup();
+	void connectUI();
+	void initContextMenusAndShortcuts();
+	
+	// Ascent change
+	void insertInfoIntoUI(int viewRowIndex);
+	
+private slots:
+	// Ascent navigation
+	void handle_firstAscent();
+	void handle_previousAscent();
+	void handle_nextAscent();
+	void handle_lastAscent();
+	void handle_firstAscentOfPeak();
+	void handle_previousAscentOfPeak();
+	void handle_nextAscentOfPeak();
+	void handle_lastAscentOfPeak();
+	// Photo navigation
+	void handle_firstPhoto();
+	void handle_previousPhoto();
+	void handle_nextPhoto();
+	void handle_lastPhoto();
+	// Changing photos
+	void handle_movePhotoLeft();
+	void handle_movePhotoRight();
+	void handle_addPhoto();
+	void handle_removePhoto();
+	// Right click
+	void handle_rightClickOnTrip(QPoint pos);
+	void handle_rightClickOnAscent(QPoint pos);
+	void handle_rightClickOnPeak(QPoint pos);
+	void handle_rightClickOnPhotoDescription(QPoint pos);
+	// Edit actions
+	void handle_editAscent();
+	void handle_editPeak();
+	void handle_editPhotoDescription();
+	
+private:
+	void displayTestImage();
 };
 
 

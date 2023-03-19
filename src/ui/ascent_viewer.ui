@@ -712,7 +712,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="nextAscent">
+           <widget class="QToolButton" name="nextAscentButton">
             <property name="minimumSize">
              <size>
               <width>30</width>
