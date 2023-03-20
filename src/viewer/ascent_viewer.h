@@ -17,6 +17,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	CompositeTripsTable* const compTrips;
 	
 	int currentViewRowIndex;
+	ItemID currentAscentID;
 	
 	int firstAscentViewRowIndex;
 	int previousAscentViewRowIndex;
@@ -47,15 +48,19 @@ private:
 	// Ascent change
 	void changeToAscent(int viewRowIndex);
 	void resetInfoLabels();
-	void insertInfoIntoUI(int viewRowIndex);
-	void updateAscentNavigationTargets(int viewRowIndex);
+	void updateAscentInfo();
+	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
-	void setupPhotos(int viewRowIndex);
+	void setupPhotos();
 	
 	// Photo change
 	void changeToPhoto(int photoIndex);
 	void updatePhoto();
-	void updatePhotoNavigationButtonsEnabled();
+	void updatePhotoIndexLabel();
+	void updatePhotoButtonsEnabled();
+	
+	// Editing
+	void changePhotoOrder(bool moveLeftNotRight);
 	
 private slots:
 	// Ascent navigation

@@ -17,6 +17,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
 		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
 		currentViewRowIndex(viewRowIndex),
+		currentAscentID(ItemID()),
 		photos(QList<Photo>())
 {
 	setupUi(this);
@@ -45,7 +46,6 @@ void AscentViewer::additionalUISetup()
 	centralSplitter->setSizes({ centralSplitter->size().width() / 2, centralSplitter->size().width() / 2 });
 	
 	imageDisplay = new ImageDisplay(imageFrame);
-	imageDisplay->setText(tr("No photos"));
 	imageFrameLayout->addWidget(imageDisplay);
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -102,9 +102,13 @@ void AscentViewer::initContextMenusAndShortcuts()
 
 void AscentViewer::changeToAscent(int viewRowIndex)
 {
-	insertInfoIntoUI(viewRowIndex);
-	setupPhotos(viewRowIndex);
-	updateAscentNavigationTargets(viewRowIndex);
+	currentViewRowIndex	= viewRowIndex;
+	int bufferRowIndex	= compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	currentAscentID		= db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
+	
+	updateAscentInfo();
+	setupPhotos();
+	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 }
 
@@ -143,11 +147,11 @@ void AscentViewer::resetInfoLabels()
 	ascentParticipantsBox		->setVisible	(false);
 }
 
-void AscentViewer::insertInfoIntoUI(int viewRowIndex)
+void AscentViewer::updateAscentInfo()
 {
 	resetInfoLabels();
 	
-	int ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	int ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	
 	ItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(ascentBufferRowIndex);
 	if (tripID.isValid()) {
@@ -213,24 +217,22 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 	descriptionTextBrowser		->setText	(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
-void AscentViewer::updateAscentNavigationTargets(int viewRowIndex)
+void AscentViewer::updateAscentNavigationTargets()
 {
-	currentViewRowIndex		= viewRowIndex;
-	
 	int minViewRowIndex	= 0;
 	int maxViewRowIndex	= compAscents->rowCount() - 1;
 	
-	firstAscentViewRowIndex		= viewRowIndex == minViewRowIndex ? -1 : minViewRowIndex;
-	previousAscentViewRowIndex	= viewRowIndex == minViewRowIndex ? -1 : (viewRowIndex - 1);
-	nextAscentViewRowIndex		= viewRowIndex == maxViewRowIndex ? -1 : (viewRowIndex + 1);
-	lastAscentViewRowIndex		= viewRowIndex == maxViewRowIndex ? -1 : maxViewRowIndex;
+	firstAscentViewRowIndex		= currentViewRowIndex == minViewRowIndex ? -1 : minViewRowIndex;
+	previousAscentViewRowIndex	= currentViewRowIndex == minViewRowIndex ? -1 : (currentViewRowIndex - 1);
+	nextAscentViewRowIndex		= currentViewRowIndex == maxViewRowIndex ? -1 : (currentViewRowIndex + 1);
+	lastAscentViewRowIndex		= currentViewRowIndex == maxViewRowIndex ? -1 : maxViewRowIndex;
 	
 	firstAscentOfPeakViewRowIndex		= -1;
 	previousAscentOfPeakViewRowIndex	= -1;
 	nextAscentOfPeakViewRowIndex		= -1;
 	lastAscentOfPeakViewRowIndex		= -1;
 	
-	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
 		QList<int> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
@@ -245,12 +247,12 @@ void AscentViewer::updateAscentNavigationTargets(int viewRowIndex)
 		int minAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.first();
 		int maxAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.last();
 		
-		if (viewRowIndex > minAscentOfPeakViewRowIndex) {
+		if (currentViewRowIndex > minAscentOfPeakViewRowIndex) {
 			firstAscentOfPeakViewRowIndex		= minAscentOfPeakViewRowIndex;
-			previousAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(viewRowIndex) - 1);
+			previousAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(currentViewRowIndex) - 1);
 		}
-		if (viewRowIndex < maxAscentOfPeakViewRowIndex) {
-			nextAscentOfPeakViewRowIndex		= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(viewRowIndex) + 1);
+		if (currentViewRowIndex < maxAscentOfPeakViewRowIndex) {
+			nextAscentOfPeakViewRowIndex		= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(currentViewRowIndex) + 1);
 			lastAscentOfPeakViewRowIndex		= maxAscentOfPeakViewRowIndex;
 		}
 	}
@@ -269,14 +271,12 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
 	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
 }
 
-void AscentViewer::setupPhotos(int viewRowIndex)
+void AscentViewer::setupPhotos()
 {
 	photos.clear();
 	currentPhotoIndex = -1;
 	
-	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
-	ValidItemID ascentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
-	QList<Photo> savedPhotos = db->photosTable->getPhotosForAscent(ascentID);
+	QList<Photo> savedPhotos = db->photosTable->getPhotosForAscent(currentAscentID.forceValid());
 	if (!savedPhotos.isEmpty()) {
 		photos = savedPhotos;
 		currentPhotoIndex = 0;
@@ -291,21 +291,20 @@ void AscentViewer::changeToPhoto(int photoIndex)
 {
 	currentPhotoIndex = photoIndex;
 	updatePhoto();
-	updatePhotoNavigationButtonsEnabled();
+	updatePhotoButtonsEnabled();
 }
 
 void AscentViewer::updatePhoto()
 {
 	imageDisplay->clear();
 	photoDescriptionLabel->setText(QString());
-	photoIndexLabel->setText(QString());
+	
+	updatePhotoIndexLabel();
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
 		imageDisplay->clear();
 		return;
 	}
-	
-	photoIndexLabel->setText(tr("Photo %1 of %2").arg(currentPhotoIndex + 1).arg(photos.size()));
 	
 	QString filepath = photos.at(currentPhotoIndex).filepath;
 	QImageReader reader(filepath);
@@ -322,12 +321,10 @@ void AscentViewer::updatePhoto()
 		
 		if (result == QMessageBox::Yes) {
 			photos.removeAt(currentPhotoIndex);
-			int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-			ValidItemID ascentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
-			db->photosTable->updateRows(this, ascentID, photos);
+			db->photosTable->updateRows(this, currentAscentID.forceValid(), photos);
 			
 			if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
-			updatePhotoNavigationButtonsEnabled();
+			updatePhotoButtonsEnabled();
 			updatePhoto();
 		}
 		return;
@@ -341,12 +338,45 @@ void AscentViewer::updatePhoto()
 	photoDescriptionLabel->setText(photos.at(currentPhotoIndex).description);
 }
 
-void AscentViewer::updatePhotoNavigationButtonsEnabled()
+void AscentViewer::updatePhotoIndexLabel()
 {
-	firstPhotoButton	->setEnabled(currentPhotoIndex > 0);
-	previousPhotoButton	->setEnabled(currentPhotoIndex > 0);
-	nextPhotoButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
-	lastPhotoButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
+	if (currentPhotoIndex < 0) {
+		photoIndexLabel->setText(tr("No photos"));
+	} else {
+		photoIndexLabel->setText(tr("Photo %1 of %2").arg(currentPhotoIndex + 1).arg(photos.size()));
+	}
+}
+
+void AscentViewer::updatePhotoButtonsEnabled()
+{
+	firstPhotoButton		->setEnabled(currentPhotoIndex > 0);
+	previousPhotoButton		->setEnabled(currentPhotoIndex > 0);
+	nextPhotoButton			->setEnabled(currentPhotoIndex < photos.size() - 1);
+	lastPhotoButton			->setEnabled(currentPhotoIndex < photos.size() - 1);
+	
+	movePhotoLeftButton		->setEnabled(currentPhotoIndex > 0);
+	movePhotoRightButton	->setEnabled(currentPhotoIndex < photos.size() - 1);
+	
+	removePhotoButton		->setEnabled(!photos.isEmpty());
+}
+
+
+
+// EDITING
+
+void AscentViewer::changePhotoOrder(bool moveLeftNotRight)
+{
+	assert(photos.size() > 1);
+	assert((moveLeftNotRight && currentPhotoIndex > 0) || (!moveLeftNotRight && currentPhotoIndex < photos.size() - 1));
+	
+	int newPhotoIndex = currentPhotoIndex + (moveLeftNotRight ? -1 : 1);
+	photos.move(currentPhotoIndex, newPhotoIndex);
+	currentPhotoIndex = newPhotoIndex;
+	
+	updatePhotoIndexLabel();
+	updatePhotoButtonsEnabled();
+	
+	db->photosTable->updateRows(this, currentAscentID.forceValid(), photos);
 }
 
 
@@ -423,14 +453,12 @@ void AscentViewer::handle_lastPhoto()
 
 void AscentViewer::handle_movePhotoLeft()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_movePhotoLeft()";
+	changePhotoOrder(true);
 }
 
 void AscentViewer::handle_movePhotoRight()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_movePhotoRight()";
+	changePhotoOrder(false);
 }
 
 void AscentViewer::handle_addPhoto()
