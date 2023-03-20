@@ -15,7 +15,18 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	CompositeAscentsTable* const compAscents;
 	CompositePeaksTable* const compPeaks;
 	CompositeTripsTable* const compTrips;
-	int viewRowIndex;
+	
+	int currentViewRowIndex;
+	
+	int firstAscentViewRowIndex;
+	int previousAscentViewRowIndex;
+	int nextAscentViewRowIndex;
+	int lastAscentViewRowIndex;
+	
+	int firstAscentOfPeakViewRowIndex;
+	int previousAscentOfPeakViewRowIndex;
+	int nextAscentOfPeakViewRowIndex;
+	int lastAscentOfPeakViewRowIndex;
 	
 	ImageDisplay* imageDisplay;
 	QImage image;
@@ -33,6 +44,9 @@ private:
 	// Ascent change
 	void resetInfoLabels();
 	void insertInfoIntoUI(int viewRowIndex);
+	void updateNavigationTargets(int viewRowIndex);
+	void updateNavigationButtonsEnabled();
+	void changeToEntry(int viewRowIndex);
 	
 private slots:
 	// Ascent navigation

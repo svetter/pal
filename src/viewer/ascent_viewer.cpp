@@ -16,7 +16,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		compAscents((CompositeAscentsTable*) typesHandler->get(Ascent)->compTable),
 		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
 		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
-		viewRowIndex(viewRowIndex)
+		currentViewRowIndex(viewRowIndex)
 {
 	setupUi(this);
 	additionalUISetup();
@@ -24,7 +24,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	connectUI();
 	initContextMenusAndShortcuts();
 	
-	insertInfoIntoUI(viewRowIndex);
+	changeToEntry(viewRowIndex);
 	
 	displayTestImage();
 }
@@ -49,18 +49,18 @@ void AscentViewer::additionalUISetup()
 	imageDisplay->setText(tr("No photos"));
 	imageFrameLayout->addWidget(imageDisplay);
 	
-	firstPhotoButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	lastPhotoButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-	addPhotoButton->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
-	removePhotoButton->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
+	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	lastPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+	addPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	removePhotoButton		->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
-	firstAscentButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	lastAscentButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-	firstAscentOfPeakButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	lastAscentOfPeakButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+	firstAscentButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	lastAscentButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+	firstAscentOfPeakButton	->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	lastAscentOfPeakButton	->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 	
-	movePhotoLeftButton->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
-	movePhotoRightButton->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
+	movePhotoLeftButton		->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
+	movePhotoRightButton	->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
 }
 
 void AscentViewer::connectUI()
@@ -206,6 +206,69 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 	descriptionTextBrowser		->setText	(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
+void AscentViewer::updateNavigationTargets(int viewRowIndex)
+{
+	currentViewRowIndex		= viewRowIndex;
+	
+	int minViewRowIndex	= 0;
+	int maxViewRowIndex	= compAscents->rowCount() - 1;
+	
+	firstAscentViewRowIndex		= viewRowIndex == minViewRowIndex ? -1 : minViewRowIndex;
+	previousAscentViewRowIndex	= viewRowIndex == minViewRowIndex ? -1 : (viewRowIndex - 1);
+	nextAscentViewRowIndex		= viewRowIndex == maxViewRowIndex ? -1 : (viewRowIndex + 1);
+	lastAscentViewRowIndex		= viewRowIndex == maxViewRowIndex ? -1 : maxViewRowIndex;
+	
+	firstAscentOfPeakViewRowIndex		= -1;
+	previousAscentOfPeakViewRowIndex	= -1;
+	nextAscentOfPeakViewRowIndex		= -1;
+	lastAscentOfPeakViewRowIndex		= -1;
+	
+	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
+	if (peakID.isValid()) {
+		QList<int> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
+		QList<int> ascentOfPeakViewRowIndices = QList<int>();
+		for (int matchingBufferRowIndex : matchingBufferRowIndices) {
+			int matchingViewRowIndex = compAscents->findCurrentViewRowIndex(matchingBufferRowIndex);
+			if (matchingViewRowIndex < 0) continue;
+			ascentOfPeakViewRowIndices.append(matchingViewRowIndex);
+		}
+		assert(!ascentOfPeakViewRowIndices.isEmpty());
+		
+		int minAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.first();
+		int maxAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.last();
+		
+		if (viewRowIndex > minAscentOfPeakViewRowIndex) {
+			firstAscentOfPeakViewRowIndex		= minAscentOfPeakViewRowIndex;
+			previousAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(viewRowIndex) - 1);
+		}
+		if (viewRowIndex < maxAscentOfPeakViewRowIndex) {
+			nextAscentOfPeakViewRowIndex		= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(viewRowIndex) + 1);
+			lastAscentOfPeakViewRowIndex		= maxAscentOfPeakViewRowIndex;
+		}
+	}
+}
+
+void AscentViewer::updateNavigationButtonsEnabled()
+{
+	firstAscentButton			->setEnabled(firstAscentViewRowIndex			>= 0);
+	previousAscentButton		->setEnabled(previousAscentViewRowIndex			>= 0);
+	nextAscentButton			->setEnabled(nextAscentViewRowIndex				>= 0);
+	lastAscentButton			->setEnabled(lastAscentViewRowIndex				>= 0);
+	
+	firstAscentOfPeakButton		->setEnabled(firstAscentOfPeakViewRowIndex		>= 0);
+	previousAscentOfPeakButton	->setEnabled(previousAscentOfPeakViewRowIndex	>= 0);
+	nextAscentOfPeakButton		->setEnabled(nextAscentOfPeakViewRowIndex		>= 0);
+	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
+}
+
+void AscentViewer::changeToEntry(int viewRowIndex)
+{
+	insertInfoIntoUI(viewRowIndex);
+	updateNavigationTargets(viewRowIndex);
+	updateNavigationButtonsEnabled();
+}
+
 
 
 // === UI EVENT HANDLERS ===
@@ -214,50 +277,42 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 
 void AscentViewer::handle_firstAscent()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_firstAscent()";
+	changeToEntry(firstAscentViewRowIndex);
 }
 
 void AscentViewer::handle_previousAscent()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_previousAscent()";
+	changeToEntry(previousAscentViewRowIndex);
 }
 
 void AscentViewer::handle_nextAscent()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_nextAscent()";
+	changeToEntry(nextAscentViewRowIndex);
 }
 
 void AscentViewer::handle_lastAscent()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_lastAscent()";
+	changeToEntry(lastAscentViewRowIndex);
 }
 
 void AscentViewer::handle_firstAscentOfPeak()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_firstAscentOfPeak()";
+	changeToEntry(firstAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_previousAscentOfPeak()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_previousAscentOfPeak()";
+	changeToEntry(previousAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_nextAscentOfPeak()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_nextAscentOfPeak()";
+	changeToEntry(nextAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_lastAscentOfPeak()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_lastAscentOfPeak()";
+	changeToEntry(lastAscentOfPeakViewRowIndex);
 }
 
 
