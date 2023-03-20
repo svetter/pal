@@ -62,6 +62,8 @@ int openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db, int buffer
 void openEditAscentDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
 void openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
 
+QStringList openFileDialogForPhotosSelection(QWidget* parent);
+
 
 
 #endif // ASCENT_DIALOG_H

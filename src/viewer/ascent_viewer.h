@@ -59,7 +59,7 @@ private:
 	void updatePhotoIndexLabel();
 	void updatePhotoButtonsEnabled();
 	
-	// Editing
+	// Editing photos
 	void moveCurrentPhoto(bool moveLeftNotRight);
 	void addPhotos();
 	void removeCurrentPhoto();

@@ -296,11 +296,7 @@ void AscentDialog::handle_removeHikers()
 
 void AscentDialog::handle_addPhotos()
 {
-	QString caption = tr("Select photos of ascent");
-	QString preSelectedDir = QString();
-	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
-			+ tr("All files") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	QStringList filepaths = openFileDialogForPhotosSelection(this);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();
@@ -472,4 +468,16 @@ static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose
 	}
 	
 	return newAscentIndex;
+}
+
+
+
+QStringList openFileDialogForPhotosSelection(QWidget* parent)
+{
+	QString caption = AscentDialog::tr("Select photos of ascent");
+	QString preSelectedDir = QString();
+	QString filter = AscentDialog::tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
+			+ AscentDialog::tr("All files") + " (*.*)";
+	QStringList filepaths = QFileDialog::getOpenFileNames(parent, caption, preSelectedDir, filter);
+	return filepaths;
 }

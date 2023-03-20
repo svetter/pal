@@ -358,7 +358,7 @@ void AscentViewer::updatePhotoButtonsEnabled()
 
 
 
-// EDITING
+// EDITING PHOTOS
 
 void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
 {
@@ -377,11 +377,7 @@ void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
 
 void AscentViewer::addPhotos()
 {
-	QString caption = tr("Add photos of ascent");
-	QString preSelectedDir = QString();
-	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
-			+ tr("All files") + " (*.*)";
-	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	QStringList filepaths = openFileDialogForPhotosSelection(this);
 	if (filepaths.isEmpty()) return;
 	
 	if (currentPhotoIndex < 0) currentPhotoIndex = -1;
