@@ -22,7 +22,9 @@ public:
 	
 	QList<Photo> getPhotosForAscent(ValidItemID ascentID) const;
 	
+	void addRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos);
 	void addRows(QWidget* parent, const Ascent* ascent);
+	void updateRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos);
 	void updateRows(QWidget* parent, const Ascent* ascent);
 	void updateFilepathAt(QWidget* parent, int bufferRowIndex, QString newFilepath);
 	void removeRowsForAscent(QWidget* parent, ValidItemID ascentID);

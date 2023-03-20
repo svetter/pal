@@ -42,23 +42,32 @@ QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 
 
-void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
+void PhotosTable::addRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos)
 {
-	const QList<Photo>& photos = ascent->photos;
 	for (int i = 0; i < photos.size(); i++) {
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), i, ascent->photos.at(i).filepath, ascent->photos.at(i).description);
+		QList<QVariant> data = mapDataToQVariantList(columns, ascentID, i, photos.at(i).filepath, photos.at(i).description);
 		
 		NormalTable::addRow(parent, columns, data);
 	}
 }
 
-void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
+void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
+{
+	return addRows(parent, ascent->ascentID.forceValid(), ascent->photos);
+}
+
+void PhotosTable::updateRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos)
 {
 	// delete pre-existing rows
-	removeMatchingRows(parent, ascentIDColumn, ascent->ascentID.forceValid());
+	removeMatchingRows(parent, ascentIDColumn, ascentID);
 	// add back all current rows
-	addRows(parent, ascent);
+	addRows(parent, ascentID, photos);
+}
+
+void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
+{
+	return updateRows(parent, ascent->ascentID.forceValid(), ascent->photos);
 }
 
 void PhotosTable::updateFilepathAt(QWidget* parent, int bufferRowIndex, QString newFilepath)
