@@ -20,6 +20,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		currentViewRowIndex(viewRowIndex),
 		currentAscentID(ItemID()),
 		photos(QList<Photo>()),
+		photoDescriptionEditable(false),
 		infoContextMenu(QMenu(this)),
 		photoDescriptionContextMenu(QMenu(this))
 {
@@ -64,6 +65,8 @@ void AscentViewer::additionalUISetup()
 	
 	movePhotoLeftButton		->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
 	movePhotoRightButton	->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
+	
+	handle_photoDescriptionEditableChanged(photoDescriptionEditable);
 }
 
 void AscentViewer::connectUI()
@@ -91,7 +94,8 @@ void AscentViewer::connectUI()
 	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
 	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
 	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
-	connect(photoDescriptionLabel,		&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescription);
+	connect(photoDescriptionLabel,		&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescriptionLabel);
+	connect(photoDescriptionLineEdit,	&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescriptionLineEdit);
 }
 
 void AscentViewer::setupContextMenus()
@@ -100,7 +104,8 @@ void AscentViewer::setupContextMenus()
 	infoContextMenu.addAction(tr("Edit peak..."),	this,	&AscentViewer::handle_editPeak);
 	infoContextMenu.addAction(tr("Edit trip..."),	this,	&AscentViewer::handle_editTrip);
 	
-	photoDescriptionContextMenu.addAction(tr("Edit description"),	this,	&AscentViewer::handle_editPhotoDescription);
+	QAction* editDescriptionAction = photoDescriptionContextMenu.addAction(tr("Edit description"),	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
+	editDescriptionAction->setCheckable(true);
 }
 
 void AscentViewer::setupShortcuts()
@@ -130,6 +135,8 @@ void AscentViewer::setupShortcuts()
 
 void AscentViewer::changeToAscent(int viewRowIndex)
 {
+	savePhotoDescription();
+	
 	currentViewRowIndex	= viewRowIndex;
 	int bufferRowIndex	= compAscents->getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID		= db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
@@ -231,7 +238,7 @@ void AscentViewer::updateAscentInfo()
 	}
 	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
 	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt(ascentBufferRowIndex).toString());
-	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt(ascentBufferRowIndex).toString());
+	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt(ascentBufferRowIndex).toString() + ".");
 	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	->getFormattedValueAt(ascentBufferRowIndex).toString());
 	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
 	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		->getRawValueAt(ascentBufferRowIndex).toBool());
@@ -302,21 +309,23 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
 void AscentViewer::setupPhotos()
 {
 	photos.clear();
-	currentPhotoIndex = -1;
+	int newPhotoIndex = -1;
 	
 	QList<Photo> savedPhotos = db->photosTable->getPhotosForAscent(currentAscentID.forceValid());
 	if (!savedPhotos.isEmpty()) {
 		photos = savedPhotos;
-		currentPhotoIndex = 0;
+		newPhotoIndex = 0;
 	}
 	
-	changeToPhoto(currentPhotoIndex);
+	changeToPhoto(newPhotoIndex);
 }
 
 
 
 void AscentViewer::changeToPhoto(int photoIndex)
 {
+	savePhotoDescription();
+	
 	currentPhotoIndex = photoIndex;
 	updatePhoto();
 	updatePhotoButtonsEnabled();
@@ -324,13 +333,15 @@ void AscentViewer::changeToPhoto(int photoIndex)
 
 void AscentViewer::updatePhoto()
 {
-	imageDisplay->clear();
-	photoDescriptionLabel->setText(QString());
+	photoDescriptionLabel	->setText(QString());
+	photoDescriptionLineEdit->setText(QString());
+	photoDescriptionLabel	->setVisible(false);
+	photoDescriptionLineEdit->setVisible(false);
 	
 	updatePhotoIndexLabel();
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
-		imageDisplay->clear();
+		imageDisplay->setVisible(false);
 		return;
 	}
 	
@@ -340,6 +351,8 @@ void AscentViewer::updatePhoto()
 	const QImage newImage = reader.read();
 	if (newImage.isNull()) {
 		qDebug() << "Error reading" << filepath << reader.errorString();
+		imageDisplay->setVisible(false);
+		
 		QString title = tr("File error");
 		QString message = tr("Photo could not be loaded:")
 				+ "\n" + filepath
@@ -349,16 +362,20 @@ void AscentViewer::updatePhoto()
 		
 		if (result == QMessageBox::Yes) {
 			removeCurrentPhoto();
+			updatePhoto();
 		}
 		return;
 	}
 	
 	image = newImage;
-	if (image.colorSpace().isValid())
-		image.convertToColorSpace(QColorSpace::SRgb);
+	if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 	imageDisplay->setPixmap(QPixmap::fromImage(image));
+	imageDisplay->setVisible(true);
 	
-	photoDescriptionLabel->setText(photos.at(currentPhotoIndex).description);
+	photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
+	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
+	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
+	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
 }
 
 void AscentViewer::updatePhotoIndexLabel()
@@ -426,6 +443,18 @@ void AscentViewer::removeCurrentPhoto()
 	if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
 	updatePhotoButtonsEnabled();
 	updatePhoto();
+}
+
+void AscentViewer::savePhotoDescription()
+{
+	if (currentPhotoIndex < 0 || photos.empty() || !photoDescriptionEditable) return;
+	
+	QString newDescription = photoDescriptionLineEdit->text();
+	bool descriptionChanged = photos.at(currentPhotoIndex).description != newDescription;
+	if (descriptionChanged) {
+		photos[currentPhotoIndex].description = newDescription;
+		savePhotosList();
+	}
 }
 
 void AscentViewer::savePhotosList()
@@ -546,9 +575,14 @@ void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 	infoContextMenu.popup(tripInfoBox->mapToGlobal(pos));
 }
 
-void AscentViewer::handle_rightClickOnPhotoDescription(QPoint pos)
+void AscentViewer::handle_rightClickOnPhotoDescriptionLabel(QPoint pos)
 {
 	photoDescriptionContextMenu.popup(photoDescriptionLabel->mapToGlobal(pos));
+}
+
+void AscentViewer::handle_rightClickOnPhotoDescriptionLineEdit(QPoint pos)
+{
+	photoDescriptionContextMenu.popup(photoDescriptionLineEdit->mapToGlobal(pos));
 }
 
 
@@ -572,8 +606,25 @@ void AscentViewer::handle_editTrip()
 	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editTrip()";
 }
 
-void AscentViewer::handle_editPhotoDescription()
+void AscentViewer::handle_photoDescriptionEditableChanged(bool checked)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editPhotoDescription()";
+	if (photoDescriptionEditable) {
+		savePhotoDescription();
+		photoDescriptionLabel->setText(photoDescriptionLineEdit->text());
+	} else {
+		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
+	}
+	
+	photoDescriptionLabel	->setVisible(!checked);
+	photoDescriptionLineEdit->setVisible(checked);
+	
+	photoDescriptionEditable = checked;
+}
+
+
+
+void AscentViewer::reject()
+{
+	savePhotoDescription();
+	QDialog::reject();
 }
