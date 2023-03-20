@@ -140,7 +140,6 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 {
 	resetInfoLabels();
 	
-	qDebug() << compAscents->name;
 	int ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
 	
 	ItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(ascentBufferRowIndex);
