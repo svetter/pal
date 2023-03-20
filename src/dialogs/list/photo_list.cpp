@@ -204,7 +204,7 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 	
 	QByteArray encodedData = data->data(MimeType);
 	QDataStream stream(&encodedData, QIODevice::ReadOnly);
-	QList<Photo*> newPhotos = QList<Photo*>();
+	QList<Photo> newPhotos = QList<Photo>();
 	
 	int currentColumn = 0;
 	while (!stream.atEnd()) {
@@ -213,10 +213,11 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 		
 		switch (currentColumn) {
 		case 0:
-			newPhotos.last()->filepath = text;
+			newPhotos.append(Photo());
+			newPhotos.last().filepath = text;
 			break;
 		case 1:
-			newPhotos.last()->description = text;
+			newPhotos.last().description = text;
 			break;
 		default:
 			assert(false);
@@ -228,8 +229,8 @@ bool PhotosOfAscent::dropMimeData(const QMimeData* data, Qt::DropAction action, 
 	
 	insertRows(row, newPhotos.size(), QModelIndex());
 	for (int i = 0; i < newPhotos.size(); i++) {
-		setData(index(row + i, 1, QModelIndex()), newPhotos.at(i)->filepath, Qt::DisplayRole);
-		setData(index(row + i, 2, QModelIndex()), newPhotos.at(i)->description, Qt::DisplayRole);
+		setData(index(row + i, 0, QModelIndex()), newPhotos.at(i).filepath, Qt::DisplayRole);
+		setData(index(row + i, 1, QModelIndex()), newPhotos.at(i).description, Qt::DisplayRole);
 	}
 	
 	return true;
