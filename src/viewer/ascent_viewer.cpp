@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QColorSpace>
+#include <QFileDialog>
 
 
 
@@ -50,7 +51,7 @@ void AscentViewer::additionalUISetup()
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	lastPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-	addPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	addPhotosButton			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
 	removePhotoButton		->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
 	firstAscentButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -81,7 +82,7 @@ void AscentViewer::connectUI()
 	// Changing photos
 	connect(movePhotoLeftButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoLeft);
 	connect(movePhotoRightButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoRight);
-	connect(addPhotoButton,				&QToolButton::clicked,	this,	&AscentViewer::handle_addPhoto);
+	connect(addPhotosButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_addPhotos);
 	connect(removePhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_removePhoto);
 	// Context menus
 	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTrip);
@@ -320,12 +321,7 @@ void AscentViewer::updatePhoto()
 		QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
 		
 		if (result == QMessageBox::Yes) {
-			photos.removeAt(currentPhotoIndex);
-			db->photosTable->updateRows(this, currentAscentID.forceValid(), photos);
-			
-			if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
-			updatePhotoButtonsEnabled();
-			updatePhoto();
+			removeCurrentPhoto();
 		}
 		return;
 	}
@@ -364,7 +360,7 @@ void AscentViewer::updatePhotoButtonsEnabled()
 
 // EDITING
 
-void AscentViewer::changePhotoOrder(bool moveLeftNotRight)
+void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
 {
 	assert(photos.size() > 1);
 	assert((moveLeftNotRight && currentPhotoIndex > 0) || (!moveLeftNotRight && currentPhotoIndex < photos.size() - 1));
@@ -376,6 +372,44 @@ void AscentViewer::changePhotoOrder(bool moveLeftNotRight)
 	updatePhotoIndexLabel();
 	updatePhotoButtonsEnabled();
 	
+	savePhotosList();
+}
+
+void AscentViewer::addPhotos()
+{
+	QString caption = tr("Add photos of ascent");
+	QString preSelectedDir = QString();
+	QString filter = tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
+			+ tr("All files") + " (*.*)";
+	QStringList filepaths = QFileDialog::getOpenFileNames(this, caption, preSelectedDir, filter);
+	if (filepaths.isEmpty()) return;
+	
+	if (currentPhotoIndex < 0) currentPhotoIndex = -1;
+	currentPhotoIndex++;	// Set to index of first inserted photo
+	for (int i = 0; i < filepaths.size(); i++) {
+		photos.insert(currentPhotoIndex + i, Photo(currentAscentID, ItemID(), -1, filepaths.at(i), QString()));
+	}
+	
+	savePhotosList();
+	
+	updatePhoto();
+}
+
+void AscentViewer::removeCurrentPhoto()
+{
+	photos.removeAt(currentPhotoIndex);
+	savePhotosList();
+	
+	if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
+	updatePhotoButtonsEnabled();
+	updatePhoto();
+}
+
+void AscentViewer::savePhotosList()
+{
+	for (int i = 0; i < photos.size(); i++) {
+		photos[0].sortIndex = i;
+	}
 	db->photosTable->updateRows(this, currentAscentID.forceValid(), photos);
 }
 
@@ -453,24 +487,22 @@ void AscentViewer::handle_lastPhoto()
 
 void AscentViewer::handle_movePhotoLeft()
 {
-	changePhotoOrder(true);
+	moveCurrentPhoto(true);
 }
 
 void AscentViewer::handle_movePhotoRight()
 {
-	changePhotoOrder(false);
+	moveCurrentPhoto(false);
 }
 
-void AscentViewer::handle_addPhoto()
+void AscentViewer::handle_addPhotos()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_addPhoto()";
+	addPhotos();
 }
 
 void AscentViewer::handle_removePhoto()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_removePhoto()";
+	removeCurrentPhoto();
 }
 
 

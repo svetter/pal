@@ -1224,7 +1224,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QToolButton" name="addPhotoButton">
+            <widget class="QToolButton" name="addPhotosButton">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -1237,7 +1237,7 @@
               </font>
              </property>
              <property name="toolTip">
-              <string>Add photo</string>
+              <string>Add one or multiple photos</string>
              </property>
              <property name="text">
               <string>+</string>

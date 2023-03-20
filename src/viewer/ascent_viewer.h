@@ -60,7 +60,10 @@ private:
 	void updatePhotoButtonsEnabled();
 	
 	// Editing
-	void changePhotoOrder(bool moveLeftNotRight);
+	void moveCurrentPhoto(bool moveLeftNotRight);
+	void addPhotos();
+	void removeCurrentPhoto();
+	void savePhotosList();
 	
 private slots:
 	// Ascent navigation
@@ -80,7 +83,7 @@ private slots:
 	// Changing photos
 	void handle_movePhotoLeft();
 	void handle_movePhotoRight();
-	void handle_addPhoto();
+	void handle_addPhotos();
 	void handle_removePhoto();
 	// Right click
 	void handle_rightClickOnTrip(QPoint pos);
