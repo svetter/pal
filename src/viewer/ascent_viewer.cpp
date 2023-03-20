@@ -14,6 +14,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		QDialog(parent),
 		mainWindow(parent),
 		db(db),
+		typesHandler(typesHandler),
 		compAscents((CompositeAscentsTable*) typesHandler->get(Ascent)->compTable),
 		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
 		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
@@ -100,9 +101,9 @@ void AscentViewer::connectUI()
 
 void AscentViewer::setupContextMenus()
 {
-	infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
-	infoContextMenu.addAction(tr("Edit peak..."),	this,	&AscentViewer::handle_editPeak);
-	infoContextMenu.addAction(tr("Edit trip..."),	this,	&AscentViewer::handle_editTrip);
+	editAscentAction	= infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
+	editPeakAction		= infoContextMenu.addAction(tr("Edit peak..."),		this,	&AscentViewer::handle_editPeak);
+	editTripAction		= infoContextMenu.addAction(tr("Edit trip..."),		this,	&AscentViewer::handle_editTrip);
 	
 	QAction* editDescriptionAction = photoDescriptionContextMenu.addAction(tr("Edit description"),	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
 	editDescriptionAction->setCheckable(true);
@@ -140,6 +141,8 @@ void AscentViewer::changeToAscent(int viewRowIndex)
 	currentViewRowIndex	= viewRowIndex;
 	int bufferRowIndex	= compAscents->getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID		= db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
+	// Update main window selection
+	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(Ascent), currentViewRowIndex);
 	
 	updateAscentInfo();
 	setupPhotos();
@@ -562,17 +565,17 @@ void AscentViewer::handle_removePhoto()
 
 void AscentViewer::handle_rightClickOnAscentInfo(QPoint pos)
 {
-	infoContextMenu.popup(ascentInfoBox->mapToGlobal(pos));
+	popupInfoContextMenu(ascentInfoBox->mapToGlobal(pos));
 }
 
 void AscentViewer::handle_rightClickOnPeakInfo(QPoint pos)
 {
-	infoContextMenu.popup(peakInfoBox->mapToGlobal(pos));
+	popupInfoContextMenu(peakInfoBox->mapToGlobal(pos));
 }
 
 void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 {
-	infoContextMenu.popup(tripInfoBox->mapToGlobal(pos));
+	popupInfoContextMenu(tripInfoBox->mapToGlobal(pos));
 }
 
 void AscentViewer::handle_rightClickOnPhotoDescriptionLabel(QPoint pos)
@@ -587,24 +590,6 @@ void AscentViewer::handle_rightClickOnPhotoDescriptionLineEdit(QPoint pos)
 
 
 // EDIT ACTIONS
-
-void AscentViewer::handle_editAscent()
-{
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editAscent()";
-}
-
-void AscentViewer::handle_editPeak()
-{
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editPeak()";
-}
-
-void AscentViewer::handle_editTrip()
-{
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editTrip()";
-}
 
 void AscentViewer::handle_photoDescriptionEditableChanged(bool checked)
 {
@@ -622,6 +607,72 @@ void AscentViewer::handle_photoDescriptionEditableChanged(bool checked)
 }
 
 
+void AscentViewer::handle_editAscent()
+{
+	int oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	openEditAscentDialogAndStore(this, db, oldBufferRowIndex);
+	handleChangesToUnderlyingData(oldBufferRowIndex);
+}
+
+void AscentViewer::handle_editPeak()
+{
+	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	ValidItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(oldAscentBufferRowIndex).toInt();
+	int peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID);
+	openEditPeakDialogAndStore(this, db, peakBufferRowIndex);
+	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
+}
+
+void AscentViewer::handle_editTrip()
+{
+	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	ValidItemID tripID = db->ascentsTable->tripIDColumn->getValueFor(oldAscentBufferRowIndex).toInt();
+	int tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
+	openEditTripDialogAndStore(this, db, tripBufferRowIndex);
+	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
+}
+
+
+
+void AscentViewer::popupInfoContextMenu(QPoint pos)
+{
+	ItemID peakID = db->ascentsTable->peakIDColumn->getValueFor(currentAscentID.forceValid()).toInt();
+	editPeakAction->setEnabled(peakID.isValid());
+	ItemID tripID = db->ascentsTable->tripIDColumn->getValueFor(currentAscentID.forceValid()).toInt();
+	editTripAction->setEnabled(tripID.isValid());
+	
+	infoContextMenu.popup(pos);
+}
+
+void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
+{
+	// Filtering and sorting may have changed, update view row index
+	int newViewRowIndex = compAscents->findCurrentViewRowIndex(currentBufferRowIndex);
+	
+	if (newViewRowIndex >= 0) {	// Current ascent still in table
+		changeToAscent(newViewRowIndex);
+		return;
+	}
+	
+	// Open ascent was filtered out
+	QString title = tr("Ascent filtered");
+	QString message = tr("As a result of these changes, the ascent is now filtered out of the table.")
+			+ "\n" + tr("Clear or modify the active filters to see it again.");
+	QMessageBox::information(this, title, message);
+	
+	int numberOfVisibleRows = compAscents->rowCount();
+	if (numberOfVisibleRows < 1) {	// Filtered table now empty
+		return reject();
+	}
+	
+	newViewRowIndex = currentViewRowIndex;
+	if (newViewRowIndex >= numberOfVisibleRows) newViewRowIndex = numberOfVisibleRows - 1;
+	changeToAscent(newViewRowIndex);
+}
+
+
+
+// EXIT BEHAVIOUR
 
 void AscentViewer::reject()
 {

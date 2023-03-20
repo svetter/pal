@@ -12,6 +12,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	
 	MainWindow* const mainWindow;
 	Database* const db;
+	const ItemTypesHandler* typesHandler;
 	CompositeAscentsTable* const compAscents;
 	CompositePeaksTable* const compPeaks;
 	CompositeTripsTable* const compTrips;
@@ -39,6 +40,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	
 	QMenu infoContextMenu;
 	QMenu photoDescriptionContextMenu;
+	QAction* editAscentAction;
+	QAction* editPeakAction;
+	QAction* editTripAction;
 	
 public:
 	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex);
@@ -99,12 +103,16 @@ private slots:
 	void handle_rightClickOnPhotoDescriptionLabel(QPoint pos);
 	void handle_rightClickOnPhotoDescriptionLineEdit(QPoint pos);
 	// Edit actions
+	void handle_photoDescriptionEditableChanged(bool checked);
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editTrip();
-	void handle_photoDescriptionEditableChanged(bool checked);
 	
 private:
+	// Helpers
+	void popupInfoContextMenu(QPoint pos);
+	void handleChangesToUnderlyingData(int currentBufferRowIndex);
+	
 	// Exit behaviour
 	void reject() override;
 };
