@@ -132,6 +132,7 @@ void AscentViewer::resetInfoLabels()
 	peakEarthLinkLabel			->setVisible	(false);
 	peakWikipediaLinkLabel		->setVisible	(false);
 	ascentTitleLabel			->setVisible	(false);
+	ascentInfoLine				->setVisible	(false);
 	ascentParticipantsBox		->setVisible	(false);
 }
 
@@ -188,6 +189,7 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 	if (!ascentTitle.isEmpty()) {
 		ascentTitleLabel		->setText	(compAscents->titleColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
 		ascentTitleLabel		->setVisible(true);
+		ascentInfoLine			->setVisible(true);
 	}
 	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
 	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt(ascentBufferRowIndex).toString());
