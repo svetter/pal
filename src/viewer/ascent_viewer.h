@@ -43,7 +43,8 @@ private:
 	// Initial setup
 	void additionalUISetup();
 	void connectUI();
-	void initContextMenusAndShortcuts();
+	void setupContextMenus();
+	void setupShortcuts();
 	
 	// Ascent change
 	void changeToAscent(int viewRowIndex);

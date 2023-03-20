@@ -25,7 +25,8 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	additionalUISetup();
 	
 	connectUI();
-	initContextMenusAndShortcuts();
+	setupContextMenus();
+	setupShortcuts();
 	
 	changeToAscent(viewRowIndex);
 }
@@ -91,10 +92,31 @@ void AscentViewer::connectUI()
 	connect(photoDescriptionLabel,		&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescription);
 }
 
-void AscentViewer::initContextMenusAndShortcuts()
+void AscentViewer::setupContextMenus()
 {
 	// TODO
 	qDebug() << "UNIMPLEMENTED: AscentViewer::initContextMenusAndShortcuts()";
+}
+
+void AscentViewer::setupShortcuts()
+{
+	firstAscentButton			->setShortcut(QKeySequence(Qt::Key_8));
+	previousAscentButton		->setShortcut(QKeySequence(Qt::Key_4));
+	nextAscentButton			->setShortcut(QKeySequence(Qt::Key_6));
+	lastAscentButton			->setShortcut(QKeySequence(Qt::Key_2));
+	
+	firstAscentOfPeakButton		->setShortcut(QKeySequence(Qt::ALT | Qt::Key_8));
+	previousAscentOfPeakButton	->setShortcut(QKeySequence(Qt::ALT | Qt::Key_4));
+	nextAscentOfPeakButton		->setShortcut(QKeySequence(Qt::ALT | Qt::Key_6));
+	lastAscentOfPeakButton		->setShortcut(QKeySequence(Qt::ALT | Qt::Key_2));
+	
+	firstPhotoButton			->setShortcut(QKeySequence(Qt::Key_Up));
+	previousPhotoButton			->setShortcut(QKeySequence(Qt::Key_Left));
+	nextPhotoButton				->setShortcut(QKeySequence(Qt::Key_Right));
+	lastPhotoButton				->setShortcut(QKeySequence(Qt::Key_Down));
+	
+	movePhotoLeftButton			->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_Left));
+	movePhotoRightButton		->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_Right));
 }
 
 

@@ -285,7 +285,6 @@ void MainWindow::initTableContextMenuAndShortcuts()
 		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
 		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItem);
 	}
-	
 }
 
 
