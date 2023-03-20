@@ -115,6 +115,8 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 {
 	resetUI();
 	
+	if (filters.isEmpty()) return;
+	
 	for (const Filter& filter : filters) {
 		const CompositeColumn* const column = filter.column;
 		const QVariant value		= filter.value;
@@ -235,6 +237,7 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 	
 	handle_filtersChanged();
 	applyFiltersButton->setEnabled(false);
+	clearFiltersButton->setEnabled(true);
 }
 
 
