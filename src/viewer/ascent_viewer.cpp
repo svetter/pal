@@ -16,7 +16,8 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		compAscents((CompositeAscentsTable*) typesHandler->get(Ascent)->compTable),
 		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
 		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
-		currentViewRowIndex(viewRowIndex)
+		currentViewRowIndex(viewRowIndex),
+		photos(QList<Photo>())
 {
 	setupUi(this);
 	additionalUISetup();
@@ -24,9 +25,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	connectUI();
 	initContextMenusAndShortcuts();
 	
-	changeToEntry(viewRowIndex);
-	
-	displayTestImage();
+	changeToAscent(viewRowIndex);
 }
 
 AscentViewer::~AscentViewer()
@@ -100,6 +99,14 @@ void AscentViewer::initContextMenusAndShortcuts()
 
 
 // ASCENT CHANGE
+
+void AscentViewer::changeToAscent(int viewRowIndex)
+{
+	insertInfoIntoUI(viewRowIndex);
+	setupPhotos(viewRowIndex);
+	updateAscentNavigationTargets(viewRowIndex);
+	updateAscentNavigationButtonsEnabled();
+}
 
 void AscentViewer::resetInfoLabels()
 {
@@ -206,7 +213,7 @@ void AscentViewer::insertInfoIntoUI(int viewRowIndex)
 	descriptionTextBrowser		->setText	(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
-void AscentViewer::updateNavigationTargets(int viewRowIndex)
+void AscentViewer::updateAscentNavigationTargets(int viewRowIndex)
 {
 	currentViewRowIndex		= viewRowIndex;
 	
@@ -249,7 +256,7 @@ void AscentViewer::updateNavigationTargets(int viewRowIndex)
 	}
 }
 
-void AscentViewer::updateNavigationButtonsEnabled()
+void AscentViewer::updateAscentNavigationButtonsEnabled()
 {
 	firstAscentButton			->setEnabled(firstAscentViewRowIndex			>= 0);
 	previousAscentButton		->setEnabled(previousAscentViewRowIndex			>= 0);
@@ -262,11 +269,84 @@ void AscentViewer::updateNavigationButtonsEnabled()
 	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
 }
 
-void AscentViewer::changeToEntry(int viewRowIndex)
+void AscentViewer::setupPhotos(int viewRowIndex)
 {
-	insertInfoIntoUI(viewRowIndex);
-	updateNavigationTargets(viewRowIndex);
-	updateNavigationButtonsEnabled();
+	photos.clear();
+	currentPhotoIndex = -1;
+	
+	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	ValidItemID ascentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
+	QList<Photo> savedPhotos = db->photosTable->getPhotosForAscent(ascentID);
+	if (!savedPhotos.isEmpty()) {
+		photos = savedPhotos;
+		currentPhotoIndex = 0;
+	}
+	
+	changeToPhoto(currentPhotoIndex);
+}
+
+
+
+void AscentViewer::changeToPhoto(int photoIndex)
+{
+	currentPhotoIndex = photoIndex;
+	updatePhoto();
+	updatePhotoNavigationButtonsEnabled();
+}
+
+void AscentViewer::updatePhoto()
+{
+	imageDisplay->clear();
+	photoDescriptionLabel->setText(QString());
+	photoIndexLabel->setText(QString());
+	
+	if (currentPhotoIndex < 0 || photos.isEmpty()) {
+		imageDisplay->clear();
+		return;
+	}
+	
+	photoIndexLabel->setText(tr("Photo %1 of %2").arg(currentPhotoIndex + 1).arg(photos.size()));
+	
+	QString filepath = photos.at(currentPhotoIndex).filepath;
+	QImageReader reader(filepath);
+	reader.setAutoTransform(true);
+	const QImage newImage = reader.read();
+	if (newImage.isNull()) {
+		qDebug() << "Error reading" << filepath << reader.errorString();
+		QString title = tr("File error");
+		QString message = tr("Photo could not be loaded:")
+				+ "\n" + filepath
+				+ "\n\n" + tr("Do you want to remove it from this ascent?");
+		QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+		QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
+		
+		if (result == QMessageBox::Yes) {
+			photos.removeAt(currentPhotoIndex);
+			int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+			ValidItemID ascentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
+			db->photosTable->updateRows(this, ascentID, photos);
+			
+			if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
+			updatePhotoNavigationButtonsEnabled();
+			updatePhoto();
+		}
+		return;
+	}
+	
+	image = newImage;
+	if (image.colorSpace().isValid())
+		image.convertToColorSpace(QColorSpace::SRgb);
+	imageDisplay->setPixmap(QPixmap::fromImage(image));
+	
+	photoDescriptionLabel->setText(photos.at(currentPhotoIndex).description);
+}
+
+void AscentViewer::updatePhotoNavigationButtonsEnabled()
+{
+	firstPhotoButton	->setEnabled(currentPhotoIndex > 0);
+	previousPhotoButton	->setEnabled(currentPhotoIndex > 0);
+	nextPhotoButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
+	lastPhotoButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
 }
 
 
@@ -277,42 +357,42 @@ void AscentViewer::changeToEntry(int viewRowIndex)
 
 void AscentViewer::handle_firstAscent()
 {
-	changeToEntry(firstAscentViewRowIndex);
+	changeToAscent(firstAscentViewRowIndex);
 }
 
 void AscentViewer::handle_previousAscent()
 {
-	changeToEntry(previousAscentViewRowIndex);
+	changeToAscent(previousAscentViewRowIndex);
 }
 
 void AscentViewer::handle_nextAscent()
 {
-	changeToEntry(nextAscentViewRowIndex);
+	changeToAscent(nextAscentViewRowIndex);
 }
 
 void AscentViewer::handle_lastAscent()
 {
-	changeToEntry(lastAscentViewRowIndex);
+	changeToAscent(lastAscentViewRowIndex);
 }
 
 void AscentViewer::handle_firstAscentOfPeak()
 {
-	changeToEntry(firstAscentOfPeakViewRowIndex);
+	changeToAscent(firstAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_previousAscentOfPeak()
 {
-	changeToEntry(previousAscentOfPeakViewRowIndex);
+	changeToAscent(previousAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_nextAscentOfPeak()
 {
-	changeToEntry(nextAscentOfPeakViewRowIndex);
+	changeToAscent(nextAscentOfPeakViewRowIndex);
 }
 
 void AscentViewer::handle_lastAscentOfPeak()
 {
-	changeToEntry(lastAscentOfPeakViewRowIndex);
+	changeToAscent(lastAscentOfPeakViewRowIndex);
 }
 
 
@@ -320,26 +400,22 @@ void AscentViewer::handle_lastAscentOfPeak()
 
 void AscentViewer::handle_firstPhoto()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_firstPhoto()";
+	changeToPhoto(0);
 }
 
 void AscentViewer::handle_previousPhoto()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_previousPhoto()";
+	changeToPhoto(currentPhotoIndex - 1);
 }
 
 void AscentViewer::handle_nextPhoto()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_nextPhoto()";
+	changeToPhoto(currentPhotoIndex + 1);
 }
 
 void AscentViewer::handle_lastPhoto()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_lastPhoto()";
+	changeToPhoto(photos.size() - 1);
 }
 
 
@@ -415,23 +491,4 @@ void AscentViewer::handle_editPhotoDescription()
 {
 	// TODO
 	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editPhotoDescription()";
-}
-
-
-
-void AscentViewer::displayTestImage()
-{
-	QString filepath = "../testimage.jpg";
-	QImageReader reader(filepath);
-	reader.setAutoTransform(true);
-	const QImage newImage = reader.read();
-	if (newImage.isNull()) {
-		QString message = tr("Cannot load %1: %2").arg(QDir::toNativeSeparators(filepath), reader.errorString());
-		QMessageBox::information(this, QGuiApplication::applicationDisplayName(), message);
-	}
-	
-	image = newImage;
-	if (image.colorSpace().isValid())
-		image.convertToColorSpace(QColorSpace::SRgb);
-	imageDisplay->setPixmap(QPixmap::fromImage(image));
 }

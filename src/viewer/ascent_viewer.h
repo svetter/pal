@@ -28,6 +28,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	int nextAscentOfPeakViewRowIndex;
 	int lastAscentOfPeakViewRowIndex;
 	
+	QList<Photo> photos;
+	int currentPhotoIndex;
+	
 	ImageDisplay* imageDisplay;
 	QImage image;
 	
@@ -42,11 +45,17 @@ private:
 	void initContextMenusAndShortcuts();
 	
 	// Ascent change
+	void changeToAscent(int viewRowIndex);
 	void resetInfoLabels();
 	void insertInfoIntoUI(int viewRowIndex);
-	void updateNavigationTargets(int viewRowIndex);
-	void updateNavigationButtonsEnabled();
-	void changeToEntry(int viewRowIndex);
+	void updateAscentNavigationTargets(int viewRowIndex);
+	void updateAscentNavigationButtonsEnabled();
+	void setupPhotos(int viewRowIndex);
+	
+	// Photo change
+	void changeToPhoto(int photoIndex);
+	void updatePhoto();
+	void updatePhotoNavigationButtonsEnabled();
 	
 private slots:
 	// Ascent navigation
@@ -77,9 +86,6 @@ private slots:
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editPhotoDescription();
-	
-private:
-	void displayTestImage();
 };
 
 
