@@ -19,7 +19,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
 		currentViewRowIndex(viewRowIndex),
 		currentAscentID(ItemID()),
-		photos(QList<Photo>())
+		photos(QList<Photo>()),
+		infoContextMenu(QMenu(this)),
+		photoDescriptionContextMenu(QMenu(this))
 {
 	setupUi(this);
 	additionalUISetup();
@@ -86,16 +88,19 @@ void AscentViewer::connectUI()
 	connect(addPhotosButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_addPhotos);
 	connect(removePhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_removePhoto);
 	// Context menus
-	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTrip);
-	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscent);
-	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeak);
+	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
+	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
+	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
 	connect(photoDescriptionLabel,		&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescription);
 }
 
 void AscentViewer::setupContextMenus()
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::initContextMenusAndShortcuts()";
+	infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
+	infoContextMenu.addAction(tr("Edit peak..."),	this,	&AscentViewer::handle_editPeak);
+	infoContextMenu.addAction(tr("Edit trip..."),	this,	&AscentViewer::handle_editTrip);
+	
+	photoDescriptionContextMenu.addAction(tr("Edit description"),	this,	&AscentViewer::handle_editPhotoDescription);
 }
 
 void AscentViewer::setupShortcuts()
@@ -526,28 +531,24 @@ void AscentViewer::handle_removePhoto()
 
 // RIGHT CLICK
 
-void AscentViewer::handle_rightClickOnTrip(QPoint pos)
+void AscentViewer::handle_rightClickOnAscentInfo(QPoint pos)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_rightClickOnTrip()" << pos;
+	infoContextMenu.popup(ascentInfoBox->mapToGlobal(pos));
 }
 
-void AscentViewer::handle_rightClickOnAscent(QPoint pos)
+void AscentViewer::handle_rightClickOnPeakInfo(QPoint pos)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_rightClickOnAscent()" << pos;
+	infoContextMenu.popup(peakInfoBox->mapToGlobal(pos));
 }
 
-void AscentViewer::handle_rightClickOnPeak(QPoint pos)
+void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_rightClickOnPeak()" << pos;
+	infoContextMenu.popup(tripInfoBox->mapToGlobal(pos));
 }
 
 void AscentViewer::handle_rightClickOnPhotoDescription(QPoint pos)
 {
-	// TODO
-	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_rightClickOnPhotoDescription()" << pos;
+	photoDescriptionContextMenu.popup(photoDescriptionLabel->mapToGlobal(pos));
 }
 
 
@@ -563,6 +564,12 @@ void AscentViewer::handle_editPeak()
 {
 	// TODO
 	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editPeak()";
+}
+
+void AscentViewer::handle_editTrip()
+{
+	// TODO
+	qDebug() << "UNIMPLEMENTED: AscentViewer::handle_editTrip()";
 }
 
 void AscentViewer::handle_editPhotoDescription()

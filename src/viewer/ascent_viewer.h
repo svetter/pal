@@ -35,6 +35,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	ImageDisplay* imageDisplay;
 	QImage image;
 	
+	QMenu infoContextMenu;
+	QMenu photoDescriptionContextMenu;
+	
 public:
 	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex);
 	virtual ~AscentViewer();
@@ -87,13 +90,14 @@ private slots:
 	void handle_addPhotos();
 	void handle_removePhoto();
 	// Right click
-	void handle_rightClickOnTrip(QPoint pos);
-	void handle_rightClickOnAscent(QPoint pos);
-	void handle_rightClickOnPeak(QPoint pos);
+	void handle_rightClickOnAscentInfo(QPoint pos);
+	void handle_rightClickOnPeakInfo(QPoint pos);
+	void handle_rightClickOnTripInfo(QPoint pos);
 	void handle_rightClickOnPhotoDescription(QPoint pos);
 	// Edit actions
 	void handle_editAscent();
 	void handle_editPeak();
+	void handle_editTrip();
 	void handle_editPhotoDescription();
 };
 
