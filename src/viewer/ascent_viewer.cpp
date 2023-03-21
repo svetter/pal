@@ -44,12 +44,18 @@ AscentViewer::~AscentViewer()
 
 void AscentViewer::additionalUISetup()
 {
-	peakVolcanoCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
-	ascentTraverseCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
-	
 	centralSplitter->setStretchFactor(0, 1);
 	centralSplitter->setStretchFactor(1, 2);
 	centralSplitter->setSizes({ centralSplitter->size().width() / 2, centralSplitter->size().width() / 2 });
+	
+	if (Settings::rememberWindowPositions.get()) {
+		restoreDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+		restoreSplitterSizes();
+	}
+	
+	
+	peakVolcanoCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
+	ascentTraverseCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
 	
 	imageDisplay = new ImageDisplay(imageFrame);
 	imageFrameLayout->addWidget(imageDisplay);
@@ -677,5 +683,46 @@ void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 void AscentViewer::reject()
 {
 	savePhotoDescription();
+	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+	saveSplitterSizes();
 	QDialog::reject();
+}
+
+void AscentViewer::saveSplitterSizes()
+{
+	QList<int> splitterSizes = centralSplitter->sizes();
+	QStringList stringList;
+	for (int size : splitterSizes) {
+		stringList.append(QString::number(size));
+	}
+	Settings::ascentViewer_splitterSizes.set(stringList);
+}
+
+
+void AscentViewer::restoreSplitterSizes()
+{
+	QStringList splitterSizeStrings = Settings::ascentViewer_splitterSizes.get();
+	if (splitterSizeStrings.size() != centralSplitter->sizes().size()) {
+		// Can't restore splitter sizes from settings
+		if (!splitterSizeStrings.isEmpty()) {
+			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Expected %1 numbers, but got %2")
+					.arg(centralSplitter->sizes().size()).arg(splitterSizeStrings.size());
+		}
+		Settings::ascentViewer_splitterSizes.clear();
+		return;
+	}
+	
+	QList<int> splitterSizes = QList<int>();
+	for (const QString& sizeString : splitterSizeStrings) {
+		bool conversionOk = false;
+		int size = sizeString.toInt(&conversionOk);
+		if (!conversionOk) {
+			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Value(s) couldn't be converted to int");
+			Settings::ascentViewer_splitterSizes.clear();
+			return;
+		}
+		splitterSizes.append(size);
+	}
+	
+	centralSplitter->setSizes(splitterSizes);
 }

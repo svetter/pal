@@ -108,6 +108,7 @@ public:
 	// Window geometry
 	inline static const Setting<bool>			mainWindow_maximized					= Setting<bool>			("implicit/mainWindow/maximized",		false);
 	inline static const Setting<QRect>			mainWindow_geometry						= Setting<QRect>		("implicit/mainWindow/geometry");
+	inline static const Setting<QRect>			ascentViewer_geometry					= Setting<QRect>		("implicit/ascentViewer/geometry");
 	inline static const Setting<QRect>			settingsWindow_geometry					= Setting<QRect>		("implicit/settingsWindow/geometry");
 	inline static const Setting<QRect>			projectSettingsWindow_geometry			= Setting<QRect>		("implicit/projectSettingsWindow/geometry");
 	inline static const Setting<QRect>			ascentDialog_geometry					= Setting<QRect>		("implicit/ascentDialog/geometry");
@@ -120,29 +121,30 @@ public:
 	
 	// View state
 	inline static const Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
+	inline static const Setting<QStringList>	ascentViewer_splitterSizes				= Setting<QStringList>	("implicit/ascentViewer/splitterSizes");
 	// Open tab
 	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
 	
 	// Column widths
-	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_hikersTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/hikersTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_regionsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/regionsTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_rangesTable			= Setting<QStringList>	("implicit/mainWindow/columnWidths/rangesTable");
-	inline static const Setting<QStringList>	mainWindow_columnWidths_countriesTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/countriesTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_hikersTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/hikersTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_regionsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/regionsTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_rangesTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/rangesTable");
+	inline static const Setting<QStringList>	mainWindow_columnWidths_countriesTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/countriesTable");
 	
 	// Sorting
-	inline static const Setting<QStringList>	mainWindow_sorting_ascentsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_peaksTable				= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_tripsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_hikersTable				= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_regionsTable				= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_rangesTable				= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
-	inline static const Setting<QStringList>	mainWindow_sorting_countriesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_ascentsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_peaksTable			= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_tripsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_hikersTable			= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_regionsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_rangesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
+	inline static const Setting<QStringList>	mainWindow_sorting_countriesTable		= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
 	
 	// Ascent filters
-	inline static const Setting<QStringList>	mainWindow_ascentFilters					= Setting<QStringList>	("implicit/mainWindow/filters");
+	inline static const Setting<QStringList>	mainWindow_ascentFilters				= Setting<QStringList>	("implicit/mainWindow/filters");
 	
 	
 	
@@ -155,6 +157,7 @@ public:
 	{
 		mainWindow_maximized			.clear();
 		mainWindow_geometry				.clear();
+		ascentViewer_geometry			.clear();
 		settingsWindow_geometry			.clear();
 		projectSettingsWindow_geometry	.clear();
 		ascentDialog_geometry			.clear();
@@ -180,7 +183,7 @@ inline void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<Q
 
 inline void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
 {
-	if (!Settings::rememberWindowPositions.get()) return;
+	if (!Settings::rememberWindowPositions.present()) return;
 	
 	QRect savedGeometry = geometrySetting->get();
 	if (savedGeometry.isEmpty()) return;

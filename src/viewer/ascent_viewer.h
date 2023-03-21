@@ -115,6 +115,9 @@ private:
 	
 	// Exit behaviour
 	void reject() override;
+	void saveSplitterSizes();
+	
+	void restoreSplitterSizes();
 };
 
 
