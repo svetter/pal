@@ -56,7 +56,7 @@ public:
 	
 private:
 	// Execute user commands
-	void openItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void viewItem(const ItemTypeMapper& mapper, int viewRowIndex);
 	void newItem(const ItemTypeMapper& mapper);
 	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
 	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
@@ -70,7 +70,7 @@ private slots:
 	void handle_rightClick(QPoint pos);
 	
 	// Context menu action handlers
-	void handle_openSelectedItem();
+	void handle_viewSelectedItem();
 	void handle_editSelectedItem();
 	void handle_duplicateAndEditSelectedItem();
 	void handle_deleteSelectedItem();

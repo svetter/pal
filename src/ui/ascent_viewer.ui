@@ -427,7 +427,7 @@
            </font>
           </property>
           <property name="text">
-           <string>&lt;AscentTitle&gt;</string>
+           <string notr="true">&lt;AscentTitle&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -481,7 +481,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Time</string>
+             <string>Local time</string>
             </property>
            </widget>
           </item>
@@ -692,7 +692,7 @@
              <string>Go to first ascent in current table order</string>
             </property>
             <property name="text">
-             <string>&lt;&lt;</string>
+             <string notr="true">&lt;&lt;</string>
             </property>
            </widget>
           </item>
@@ -744,7 +744,7 @@
              <string>Go to last ascent in current table order</string>
             </property>
             <property name="text">
-             <string>&gt;&gt;</string>
+             <string notr="true">&gt;&gt;</string>
             </property>
            </widget>
           </item>
@@ -781,7 +781,7 @@
              <string>Go to first ascent of the same peak in table order</string>
             </property>
             <property name="text">
-             <string>&lt;&lt;</string>
+             <string notr="true">&lt;&lt;</string>
             </property>
            </widget>
           </item>
@@ -821,7 +821,7 @@
              <string>Go to last ascent of the same peak in table order</string>
             </property>
             <property name="text">
-             <string>&gt;&gt;</string>
+             <string notr="true">&gt;&gt;</string>
             </property>
            </widget>
           </item>
@@ -1086,7 +1086,7 @@
                  <string>Move current photo towards the front</string>
                 </property>
                 <property name="text">
-                 <string>&lt;</string>
+                 <string notr="true">&lt;</string>
                 </property>
                </widget>
               </item>
@@ -1096,7 +1096,7 @@
                  <string>Move current photo towards the back</string>
                 </property>
                 <property name="text">
-                 <string>&gt;</string>
+                 <string notr="true">&gt;</string>
                 </property>
                </widget>
               </item>
@@ -1150,10 +1150,10 @@
               </font>
              </property>
              <property name="toolTip">
-              <string>First photo</string>
+              <string>Go to first photo</string>
              </property>
              <property name="text">
-              <string>&lt;&lt;</string>
+              <string notr="true">&lt;&lt;</string>
              </property>
             </widget>
            </item>
@@ -1171,10 +1171,7 @@
               </font>
              </property>
              <property name="toolTip">
-              <string>Previous photo</string>
-             </property>
-             <property name="text">
-              <string>&lt;</string>
+              <string>Go to previous photo</string>
              </property>
              <property name="arrowType">
               <enum>Qt::LeftArrow</enum>
@@ -1195,10 +1192,7 @@
               </font>
              </property>
              <property name="toolTip">
-              <string>Next photo</string>
-             </property>
-             <property name="text">
-              <string>&gt;</string>
+              <string>Go to next photo</string>
              </property>
              <property name="arrowType">
               <enum>Qt::RightArrow</enum>
@@ -1219,10 +1213,10 @@
               </font>
              </property>
              <property name="toolTip">
-              <string>Last photo</string>
+              <string>Go to last photo</string>
              </property>
              <property name="text">
-              <string>&gt;&gt;</string>
+              <string notr="true">&gt;&gt;</string>
              </property>
             </widget>
            </item>
@@ -1263,7 +1257,7 @@
               <string>Add one or multiple photos</string>
              </property>
              <property name="text">
-              <string>+</string>
+              <string notr="true">+</string>
              </property>
             </widget>
            </item>
@@ -1284,7 +1278,7 @@
               <string>Remove photo</string>
              </property>
              <property name="text">
-              <string>-</string>
+              <string notr="true">-</string>
              </property>
             </widget>
            </item>

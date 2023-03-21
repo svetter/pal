@@ -118,17 +118,17 @@ const QList<QPair<QString, QStringList>> Ascent::difficultyNames = {
 			tr("VII- (Extremely difficult)"),
 			tr("VII (Extremely difficult)"),
 			tr("VII+ (Extremely difficult)"),
-			tr("VIII-"),
-			tr("VIII"),
-			tr("VIII+"),
-			tr("IX-"),
-			tr("IX"),
-			tr("IX+"),
-			tr("X-"),
-			tr("X"),
-			tr("X+"),
-			tr("XI-"),
-			tr("XI")
+			"VIII-",
+			"VIII",
+			"VIII+",
+			"IX-",
+			"IX",
+			"IX+",
+			"X-",
+			"X",
+			"X+",
+			"XI-",
+			"XI"
 		}
 	)
 };

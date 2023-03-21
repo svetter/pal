@@ -65,7 +65,7 @@
       <item>
        <widget class="QLabel" name="defaultHikerExplanationLabel">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A hiker you select here will be added you every new ascent.&lt;/p&gt;&lt;p&gt;Of course, you can still remove them manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A hiker you select here will be automatically added to every new ascent.&lt;/p&gt;&lt;p&gt;Of course, you can still remove them manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -141,4 +141,5 @@
   </layout>
  </widget>
  <resources/>
+ <connections/>
 </ui>

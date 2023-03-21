@@ -115,7 +115,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>New range...</string>
+          <string>New mountain range...</string>
          </property>
         </widget>
        </item>

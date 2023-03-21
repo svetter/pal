@@ -42,14 +42,14 @@ public:
 			continentColumn		(new const ReferenceCompositeColumn		(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->continentColumn,		&Range::continentNames)),
 			volcanoColumn		(new const ReferenceCompositeColumn		(this,	tr("Volcano"),			Qt::AlignCenter,	noSuffix,	{ db->ascentsTable->peakIDColumn },			db->peaksTable->volcanoColumn)),
 			elevationGainColumn	(new const DirectCompositeColumn		(this,	tr("Elev. gain"),		Qt::AlignRight,		mSuffix,	db->ascentsTable->elevationGainColumn)),
-			hikeKindColumn		(new const DirectCompositeColumn		(this,	tr("Hike kind"),		Qt::AlignLeft,		noSuffix,	db->ascentsTable->hikeKindColumn,			&Ascent::hikeKindNames)),
+			hikeKindColumn		(new const DirectCompositeColumn		(this,	tr("Kind of hike"),		Qt::AlignLeft,		noSuffix,	db->ascentsTable->hikeKindColumn,			&Ascent::hikeKindNames)),
 			traverseColumn		(new const DirectCompositeColumn		(this,	tr("Traverse"),			Qt::AlignCenter,	noSuffix,	db->ascentsTable->traverseColumn)),
 			difficultyColumn	(new const DependentEnumCompositeColumn	(this,	tr("Difficulty"),										db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn,	&Ascent::difficultyNames)),
-			hikersColumn		(new const FoldCompositeColumn			(this,	tr("Hikers"),			ListString,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},		{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
+			hikersColumn		(new const FoldCompositeColumn			(this,	tr("Participants"),		ListString,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},		{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
 			tripColumn			(new const ReferenceCompositeColumn		(this,	tr("Trip"),				Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->tripIDColumn },			db->tripsTable->nameColumn)),
 			// Hidden (for filters)
-			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	tr("Range ID"),			Qt::AlignRight,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
-			hikerIDsColumn		(new const FoldCompositeColumn			(this,	tr("Hiker IDs"),		IntList,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
+			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	"Range ID",				Qt::AlignRight,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
+			hikerIDsColumn		(new const FoldCompositeColumn			(this,	"Hiker IDs",			IntList,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
 	{
 		addColumn(dateColumn);
 		addColumn(titleColumn);

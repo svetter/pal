@@ -123,6 +123,12 @@
           <property name="sizeType">
            <enum>QSizePolicy::Expanding</enum>
           </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
          </spacer>
         </item>
         <item>
@@ -206,8 +212,7 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="AscentFilterBar" name="ascentFilterBar" native="true">
-           </widget>
+           <widget class="AscentFilterBar" name="ascentFilterBar" native="true"/>
           </item>
           <item>
            <widget class="QTableView" name="ascentsTableView">
@@ -562,7 +567,7 @@
         </widget>
         <widget class="QWidget" name="ascentsDebugTab">
          <attribute name="title">
-          <string>Ascents.D</string>
+          <string notr="true">Ascents.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="ascentsDebugTabLayout">
           <property name="spacing">
@@ -618,7 +623,7 @@
           <string/>
          </property>
          <attribute name="title">
-          <string>Peaks.D</string>
+          <string notr="true">Peaks.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="peaksDebugTabLayout">
           <property name="spacing">
@@ -671,7 +676,7 @@
         </widget>
         <widget class="QWidget" name="tripsDebugTab">
          <attribute name="title">
-          <string>Trips.D</string>
+          <string notr="true">Trips.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="tripsDebugTabLayout">
           <property name="spacing">
@@ -724,7 +729,7 @@
         </widget>
         <widget class="QWidget" name="hikersDebugTab">
          <attribute name="title">
-          <string>Hikers.D</string>
+          <string notr="true">Hikers.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="hikersDebugTabLayout">
           <property name="spacing">
@@ -777,7 +782,7 @@
         </widget>
         <widget class="QWidget" name="regionsDebugTab">
          <attribute name="title">
-          <string>Regions.D</string>
+          <string notr="true">Regions.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="regionsDebugTabLayout">
           <property name="spacing">
@@ -830,7 +835,7 @@
         </widget>
         <widget class="QWidget" name="rangesDebugTab">
          <attribute name="title">
-          <string>Ranges.D</string>
+          <string notr="true">Ranges.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="rangesDebugTabLayout">
           <property name="spacing">
@@ -883,7 +888,7 @@
         </widget>
         <widget class="QWidget" name="countriesDebugTab">
          <attribute name="title">
-          <string>Countries.D</string>
+          <string notr="true">Countries.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="countriesDebugTabLayout">
           <property name="spacing">
@@ -936,7 +941,7 @@
         </widget>
         <widget class="QWidget" name="photosDebugTab">
          <attribute name="title">
-          <string>Photos</string>
+          <string notr="true">Photos</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -989,7 +994,7 @@
         </widget>
         <widget class="QWidget" name="participatedDebugTab">
          <attribute name="title">
-          <string>Participated.D</string>
+          <string notr="true">Participated.D</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="spacing">

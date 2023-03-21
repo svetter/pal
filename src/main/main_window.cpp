@@ -138,7 +138,7 @@ void MainWindow::connectUI()
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto openFunction = [this, &mapper] (const QModelIndex& index) {
 			if (mapper.type == Ascent) {
-				openItem(mapper, index.row());
+				viewItem(mapper, index.row());
 			} else {
 				editItem(mapper, index);
 			}
@@ -252,7 +252,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	QKeySequence deleteKeySequence		= QKeySequence::Delete;
 	
 	// Context menu
-	QAction* openAction			= tableContextMenu.addAction(tr("Open..."),						openKeySequence);
+	QAction* openAction			= tableContextMenu.addAction(tr("View..."),						openKeySequence);
 	tableContextMenu.addSeparator();
 	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						editKeySequence);
 	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
@@ -262,7 +262,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	tableContextMenuOpenAction		= openAction;
 	tableContextMenuDuplicateAction	= duplicateAction;
 	
-	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_openSelectedItem);
+	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_viewSelectedItem);
 	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
 	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_duplicateAndEditSelectedItem);
 	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_deleteSelectedItem);
@@ -280,7 +280,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
 		shortcuts.append(duplicateShortcut);
 		shortcuts.append(deleteShortcut);
 		
-		connect(openShortcut,		&QShortcut::activated, this, &MainWindow::handle_openSelectedItem);
+		connect(openShortcut,		&QShortcut::activated, this, &MainWindow::handle_viewSelectedItem);
 		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::handle_editSelectedItem);
 		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
 		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItem);
@@ -421,7 +421,7 @@ void MainWindow::updateTableSize(bool reset)
 
 // EXECUTE USER COMMANDS
 
-void MainWindow::openItem(const ItemTypeMapper& mapper, int viewRowIndex)
+void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	switch (mapper.type) {
 	case Ascent:
@@ -528,7 +528,7 @@ void MainWindow::handle_rightClick(QPoint pos)
 
 // CONTEXT MENU ACTION HANDLERS
 
-void MainWindow::handle_openSelectedItem()
+void MainWindow::handle_viewSelectedItem()
 {
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex selectedIndex = currentTableView->currentIndex();
@@ -538,7 +538,7 @@ void MainWindow::handle_openSelectedItem()
 		if (debugTable) {
 			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
 		} else if (mapper.type == Ascent) {
-			openItem(mapper, selectedIndex.row());
+			viewItem(mapper, selectedIndex.row());
 		} else {
 			editItem(mapper, selectedIndex);
 		}

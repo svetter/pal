@@ -12,7 +12,7 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDCo
 		peakIDColumn			(new Column("peakID",			QString(),			ID,			true,		false,		foreignPeakIDColumn,	this)),
 		dateColumn				(new Column("date",				tr("Date"),			Date,		true,		false,		nullptr,				this)),
 		peakOnDayColumn			(new Column("peakOnDay",		tr("Peak/day"),		Integer,	false,		false,		nullptr,				this)),
-		timeColumn				(new Column("time",				tr("Time"),			Time,		true,		false,		nullptr,				this)),
+		timeColumn				(new Column("time",				tr("Local time"),	Time,		true,		false,		nullptr,				this)),
 		elevationGainColumn		(new Column("elevationGain",	tr("Elev. gain"),	Integer,	true,		false,		nullptr,				this)),
 		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	Enum,		false,		false,		nullptr,				this)),
 		traverseColumn			(new Column("traverse",			tr("Traverse"),		Bit,		false,		false,		nullptr,				this)),

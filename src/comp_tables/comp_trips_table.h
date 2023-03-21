@@ -23,7 +23,7 @@ public:
 	inline CompositeTripsTable(Database* db) :
 			CompositeTable(db, db->tripsTable),
 			//																			uiName				align/fold op	suffix			breadcrumbs (column reference chain) + content column [+ enum names]
-			nameColumn				(new const DirectCompositeColumn		(this,	tr("Trip name"),		Qt::AlignLeft,	noSuffix,		db->tripsTable->nameColumn)),
+			nameColumn				(new const DirectCompositeColumn		(this,	tr("Name"),				Qt::AlignLeft,	noSuffix,		db->tripsTable->nameColumn)),
 			startDateColumn			(new const DirectCompositeColumn		(this,	tr("Start date"),		Qt::AlignLeft,	noSuffix,		db->tripsTable->startDateColumn)),
 			endDateColumn			(new const DirectCompositeColumn		(this,	tr("End date"),			Qt::AlignLeft,	noSuffix,		db->tripsTable->endDateColumn)),
 			lengthColumn			(new const DifferenceCompositeColumn	(this,	tr("Length"),							tr(" days"),	db->tripsTable->endDateColumn,			db->tripsTable->startDateColumn)),

@@ -137,7 +137,7 @@ QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& wha
 	}
 	/*: This will be part of a listing of consequences of deleting an item.
 	 *  An example would be: "Hiker will be removed from 42 ascents."
-	 *  Here, the string "255 ascents" would have been the result of using the base string "%1 %2"
+	 *  Here, the string "42 ascents" would have been the result of using the base string "%1 %2"
 	 *  and replacing "%1" with "42" and "%2% with "ascents".
 	 *  A translation for %2 is retrieved from elsewhere.
 	 */

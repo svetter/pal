@@ -20,7 +20,7 @@ public:
 	inline CompositeHikersTable(Database* db) :
 			CompositeTable(db, db->hikersTable),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
-			nameColumn				(new const DirectCompositeColumn	(this,	tr("Hiker name"),		Qt::AlignLeft,	noSuffix,	db->hikersTable->nameColumn)),
+			nameColumn				(new const DirectCompositeColumn	(this,	tr("Name"),				Qt::AlignLeft,	noSuffix,	db->hikersTable->nameColumn)),
 			numAscentsColumn		(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,			noSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn} })),
 			numTripsColumn			(new const FoldCompositeColumn		(this,	tr("Num. trips"),		Count,			noSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn},	{db->ascentsTable->tripIDColumn,		db->tripsTable->primaryKeyColumn} })),
 			avgElevationGainColumn	(new const FoldCompositeColumn		(this,	tr("Avg. elev. gain"),	Average,		mSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn)),

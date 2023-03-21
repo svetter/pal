@@ -258,7 +258,7 @@
          <item row="1" column="0">
           <widget class="QCheckBox" name="ascentTimeCheckbox">
            <property name="text">
-            <string>Time</string>
+            <string>Local time</string>
            </property>
           </widget>
          </item>
@@ -493,7 +493,7 @@
            <item row="0" column="0">
             <widget class="QCheckBox" name="tripDatesCheckbox">
              <property name="text">
-              <string>Dates</string>
+              <string>Specify dates</string>
              </property>
             </widget>
            </item>
