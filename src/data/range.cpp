@@ -10,6 +10,9 @@ Range::Range(ItemID rangeID, QString& name, int continent) :
 		continent(continent)
 {}
 
+Range::~Range()
+{}
+
 
 
 bool Range::equalTo(const Range* const other) const
@@ -18,11 +21,4 @@ bool Range::equalTo(const Range* const other) const
 	if (name		!= other->name)			return false;
 	if (continent	!= other->continent)	return false;
 	return true;
-}
-
-
-
-QString Range::tr(const char* string)
-{
-	return QCoreApplication::translate("Range", string);
 }

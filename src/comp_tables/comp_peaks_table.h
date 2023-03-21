@@ -6,6 +6,8 @@
 
 
 class CompositePeaksTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*	nameColumn;
 	const DirectCompositeColumn*	heightColumn;

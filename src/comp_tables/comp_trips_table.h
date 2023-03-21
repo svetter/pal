@@ -6,6 +6,8 @@
 
 
 class CompositeTripsTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*		nameColumn;
 	const DirectCompositeColumn*		startDateColumn;

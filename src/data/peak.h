@@ -7,8 +7,10 @@
 
 
 
-class Peak
+class Peak : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	peakID;
 	QString	name;
@@ -20,6 +22,7 @@ public:
 	QString	wikiLink;
 	
 	Peak(ItemID peakID, QString& name, int height, bool volcano, ItemID regionID, QString& mapsLink, QString& earthLink, QString& wikiLink);
+	virtual ~Peak();
 	
 	bool equalTo(const Peak* const other) const;
 	

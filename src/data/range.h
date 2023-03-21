@@ -8,8 +8,10 @@
 
 
 
-class Range
+class Range : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	rangeID;
 	QString	name;
@@ -18,11 +20,9 @@ public:
 	static const QStringList continentNames;
 	
 	Range(ItemID rangeID, QString& name, int continent);
+	virtual ~Range();
 	
 	bool equalTo(const Range* const other) const;
-	
-private:
-	static QString tr(const char* string);
 };
 
 

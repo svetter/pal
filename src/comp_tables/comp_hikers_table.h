@@ -6,6 +6,8 @@
 
 
 class CompositeHikersTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*	nameColumn;
 	const FoldCompositeColumn*		numAscentsColumn;

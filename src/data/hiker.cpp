@@ -7,6 +7,9 @@ Hiker::Hiker(ItemID hikerID, QString& name) :
 		name(name)
 {}
 
+Hiker::~Hiker()
+{}
+
 
 
 bool Hiker::equalTo(const Hiker* const other) const

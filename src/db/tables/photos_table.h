@@ -12,6 +12,8 @@
 
 
 class PhotosTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* const ascentIDColumn;
 	Column* const sortIndexColumn;

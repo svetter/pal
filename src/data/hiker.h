@@ -7,13 +7,16 @@
 
 
 
-class Hiker
+class Hiker : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	hikerID;
 	QString	name;
 	
 	Hiker(ItemID hikerID, QString& name);
+	virtual ~Hiker();
 	
 	bool equalTo(const Hiker* const other) const;
 };

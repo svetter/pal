@@ -7,8 +7,10 @@
 
 
 
-class Region
+class Region : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	regionID;
 	QString	name;
@@ -16,6 +18,7 @@ public:
 	ItemID	countryID;
 	
 	Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID);
+	virtual ~Region();
 	
 	bool equalTo(const Region* const other) const;
 };

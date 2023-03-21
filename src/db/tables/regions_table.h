@@ -7,6 +7,8 @@
 
 
 class RegionsTable : public NormalTable {
+	Q_OBJECT
+	
 public:
 	Column* const nameColumn;
 	Column* const rangeIDColumn;

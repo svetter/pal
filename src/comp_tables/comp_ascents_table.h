@@ -6,6 +6,8 @@
 
 
 class CompositeAscentsTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*		dateColumn;
 	const DirectCompositeColumn*		titleColumn;

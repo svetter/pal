@@ -8,8 +8,10 @@
 
 
 
-class Trip
+class Trip : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	tripID;
 	QString	name;
@@ -18,6 +20,7 @@ public:
 	QString	description;
 	
 	Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QString& description);
+	virtual ~Trip();
 	
 	bool equalTo(const Trip* const other) const;
 	

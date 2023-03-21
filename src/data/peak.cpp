@@ -13,6 +13,9 @@ Peak::Peak(ItemID peakID, QString& name, int height, bool volcano, ItemID region
 		wikiLink(wikiLink)
 {}
 
+Peak::~Peak()
+{}
+
 
 
 bool Peak::equalTo(const Peak* const other) const

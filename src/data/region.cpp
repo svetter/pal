@@ -9,6 +9,9 @@ Region::Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID)
 		countryID(countryID)
 {}
 
+Region::~Region()
+{}
+
 
 
 bool Region::equalTo(const Region* const other) const

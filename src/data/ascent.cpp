@@ -22,6 +22,9 @@ Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int 
 		description(description)
 {}
 
+Ascent::~Ascent()
+{}
+
 
 
 bool Ascent::equalTo(const Ascent* const other) const
@@ -67,12 +70,4 @@ QVariant Ascent::getElevationGainAsQVariant() const
 {
 	if (!elevationGainSpecified()) return QVariant();
 	return elevationGain;
-}
-
-
-
-
-QString Ascent::tr(const char* string)
-{
-	return QCoreApplication::translate("Ascent", string);
 }

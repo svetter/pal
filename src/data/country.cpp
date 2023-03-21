@@ -7,6 +7,9 @@ Country::Country(ItemID countryID, QString& name) :
 		name(name)
 {}
 
+Country::~Country()
+{}
+
 
 
 bool Country::equalTo(const Country* const other) const

@@ -7,13 +7,16 @@
 
 
 
-class Country
+class Country : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	countryID;
 	QString	name;
 	
 	Country(ItemID countryID, QString& name);
+	virtual ~Country();
 	
 	bool equalTo(const Country* const other) const;
 };

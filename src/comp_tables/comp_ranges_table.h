@@ -6,6 +6,8 @@
 
 
 class CompositeRangesTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*	nameColumn;
 	const FoldCompositeColumn*		numRegionsColumn;

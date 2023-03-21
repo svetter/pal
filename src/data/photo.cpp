@@ -19,11 +19,15 @@ Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, Q
 {}
 
 Photo::Photo(const Photo& originalPhoto) :
+		QObject(),
 		photoID(originalPhoto.photoID),
 		ascentID(originalPhoto.ascentID),
 		sortIndex(originalPhoto.sortIndex),
 		filepath(originalPhoto.filepath),
 		description(originalPhoto.description)
+{}
+
+Photo::~Photo()
 {}
 
 

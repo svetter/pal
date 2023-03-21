@@ -6,6 +6,8 @@
 
 
 class CompositeRegionsTable : public CompositeTable {
+	Q_OBJECT
+	
 public:
 	const DirectCompositeColumn*	nameColumn;
 	const ReferenceCompositeColumn*	rangeColumn;

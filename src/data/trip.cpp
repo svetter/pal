@@ -10,6 +10,9 @@ Trip::Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QStri
 		description(description)
 {}
 
+Trip::~Trip()
+{}
+
 
 
 bool Trip::equalTo(const Trip* const other) const

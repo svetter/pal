@@ -7,8 +7,10 @@
 
 
 
-class Photo
+class Photo : private QObject
 {
+	Q_OBJECT
+	
 public:
 	ItemID	photoID;
 	ItemID	ascentID;
@@ -19,6 +21,7 @@ public:
 	Photo();
 	Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, QString description);
 	Photo(const Photo& originalPhoto);
+	virtual ~Photo();
 	
 	Photo& operator=(const Photo& other);
 	
