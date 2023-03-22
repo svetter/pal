@@ -21,9 +21,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		currentViewRowIndex(viewRowIndex),
 		currentAscentID(ItemID()),
 		photos(QList<Photo>()),
+		descriptionEditable(false),
 		photoDescriptionEditable(false),
-		infoContextMenu(QMenu(this)),
-		photoDescriptionContextMenu(QMenu(this))
+		infoContextMenu(QMenu(this))
 {
 	setupUi(this);
 	additionalUISetup();
@@ -73,7 +73,10 @@ void AscentViewer::additionalUISetup()
 	movePhotoLeftButton		->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
 	movePhotoRightButton	->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
 	
-	handle_photoDescriptionEditableChanged(photoDescriptionEditable);
+	descriptionEditable = editDescriptionButton->isChecked();
+	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
+	handle_descriptionEditableChanged();
+	handle_photoDescriptionEditableChanged();
 }
 
 void AscentViewer::connectUI()
@@ -97,12 +100,13 @@ void AscentViewer::connectUI()
 	connect(movePhotoRightButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoRight);
 	connect(addPhotosButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_addPhotos);
 	connect(removePhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_removePhoto);
+	// Edit buttons
+	connect(editDescriptionButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_descriptionEditableChanged);
+	connect(editPhotoDescriptionButton,	&QToolButton::clicked,	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
 	// Context menus
 	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
 	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
 	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
-	connect(photoDescriptionLabel,		&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescriptionLabel);
-	connect(photoDescriptionLineEdit,	&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPhotoDescriptionLineEdit);
 }
 
 void AscentViewer::setupContextMenus()
@@ -110,9 +114,6 @@ void AscentViewer::setupContextMenus()
 	editAscentAction	= infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
 	editPeakAction		= infoContextMenu.addAction(tr("Edit peak..."),		this,	&AscentViewer::handle_editPeak);
 	editTripAction		= infoContextMenu.addAction(tr("Edit trip..."),		this,	&AscentViewer::handle_editTrip);
-	
-	QAction* editDescriptionAction = photoDescriptionContextMenu.addAction(tr("Edit description"),	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
-	editDescriptionAction->setCheckable(true);
 }
 
 void AscentViewer::setupShortcuts()
@@ -142,6 +143,7 @@ void AscentViewer::setupShortcuts()
 
 void AscentViewer::changeToAscent(int viewRowIndex)
 {
+	saveDescription();
 	savePhotoDescription();
 	
 	currentViewRowIndex	= viewRowIndex;
@@ -476,6 +478,21 @@ void AscentViewer::savePhotosList()
 
 
 
+// EDITING DESCRIPTION
+
+void AscentViewer::saveDescription()
+{
+	if (currentAscentID.isInvalid() || !descriptionEditable) return;
+	
+	QString newDescription = descriptionTextBrowser->toPlainText();
+	bool descriptionChanged = db->ascentsTable->descriptionColumn->getValueFor(currentAscentID.forceValid()) != newDescription;
+	if (descriptionChanged) {
+		db->ascentsTable->updateCell(this, currentAscentID.forceValid(), db->ascentsTable->descriptionColumn, newDescription);
+	}
+}
+
+
+
 // === UI EVENT HANDLERS ===
 
 // ASCENT NAVIGATION
@@ -584,20 +601,19 @@ void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 	popupInfoContextMenu(tripInfoBox->mapToGlobal(pos));
 }
 
-void AscentViewer::handle_rightClickOnPhotoDescriptionLabel(QPoint pos)
-{
-	photoDescriptionContextMenu.popup(photoDescriptionLabel->mapToGlobal(pos));
-}
-
-void AscentViewer::handle_rightClickOnPhotoDescriptionLineEdit(QPoint pos)
-{
-	photoDescriptionContextMenu.popup(photoDescriptionLineEdit->mapToGlobal(pos));
-}
-
 
 // EDIT ACTIONS
 
-void AscentViewer::handle_photoDescriptionEditableChanged(bool checked)
+void AscentViewer::handle_descriptionEditableChanged()
+{
+	if (descriptionEditable) saveDescription();
+	
+	bool descriptionEditable = editDescriptionButton->isChecked();
+
+	descriptionTextBrowser->setReadOnly(!descriptionEditable);
+}
+
+void AscentViewer::handle_photoDescriptionEditableChanged()
 {
 	if (photoDescriptionEditable) {
 		savePhotoDescription();
@@ -606,10 +622,10 @@ void AscentViewer::handle_photoDescriptionEditableChanged(bool checked)
 		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
 	}
 	
-	photoDescriptionLabel	->setVisible(!checked);
-	photoDescriptionLineEdit->setVisible(checked);
-	
-	photoDescriptionEditable = checked;
+	bool photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
+
+	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
+	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
 }
 
 
@@ -682,6 +698,7 @@ void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 
 void AscentViewer::reject()
 {
+	saveDescription();
 	savePhotoDescription();
 	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
 	saveSplitterSizes();

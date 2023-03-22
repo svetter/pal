@@ -36,10 +36,10 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	ImageDisplay* imageDisplay;
 	QImage image;
 	
+	bool descriptionEditable;
 	bool photoDescriptionEditable;
 	
 	QMenu infoContextMenu;
-	QMenu photoDescriptionContextMenu;
 	QAction* editAscentAction;
 	QAction* editPeakAction;
 	QAction* editTripAction;
@@ -76,6 +76,9 @@ private:
 	void savePhotoDescription();
 	void savePhotosList();
 	
+	// Editing description
+	void saveDescription();
+	
 private slots:
 	// Ascent navigation
 	void handle_firstAscent();
@@ -100,10 +103,9 @@ private slots:
 	void handle_rightClickOnAscentInfo(QPoint pos);
 	void handle_rightClickOnPeakInfo(QPoint pos);
 	void handle_rightClickOnTripInfo(QPoint pos);
-	void handle_rightClickOnPhotoDescriptionLabel(QPoint pos);
-	void handle_rightClickOnPhotoDescriptionLineEdit(QPoint pos);
 	// Edit actions
-	void handle_photoDescriptionEditableChanged(bool checked);
+	void handle_descriptionEditableChanged();
+	void handle_photoDescriptionEditableChanged();
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editTrip();

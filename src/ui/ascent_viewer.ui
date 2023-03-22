@@ -854,16 +854,49 @@
           <number>10</number>
          </property>
          <item>
-          <widget class="QLabel" name="descriptionLabel">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
+          <layout class="QHBoxLayout" name="descriptionLabelLayout">
+           <property name="spacing">
+            <number>10</number>
            </property>
-           <property name="text">
-            <string>Description</string>
-           </property>
-          </widget>
+           <item>
+            <widget class="QLabel" name="descriptionLabel">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Description</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="descriptionLabelSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="editDescriptionButton">
+             <property name="toolTip">
+              <string>Edit ascent description</string>
+             </property>
+             <property name="text">
+              <string>Edit</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QTextBrowser" name="descriptionTextBrowser">
@@ -878,6 +911,9 @@
              <width>200</width>
              <height>200</height>
             </size>
+           </property>
+           <property name="acceptRichText">
+            <bool>false</bool>
            </property>
            <property name="openExternalLinks">
             <bool>true</bool>
@@ -977,9 +1013,6 @@
                <pointsize>10</pointsize>
               </font>
              </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
              <property name="text">
               <string notr="true">&lt;PhotoDescription&gt;</string>
              </property>
@@ -1008,9 +1041,6 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
              <property name="placeholderText">
               <string>Photo description</string>
              </property>
@@ -1019,17 +1049,37 @@
           </layout>
          </item>
          <item>
-          <spacer name="photoInfoSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <layout class="QHBoxLayout" name="photoDescriptionEditButtonLayout" stretch="1,0">
+           <property name="spacing">
+            <number>10</number>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
+           <item>
+            <spacer name="photoInfoSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QToolButton" name="editPhotoDescriptionButton">
+             <property name="toolTip">
+              <string>Edit photo description</string>
+             </property>
+             <property name="text">
+              <string>Edit</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
