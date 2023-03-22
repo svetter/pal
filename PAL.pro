@@ -150,10 +150,10 @@ DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
 
 TRANSLATIONS += \
-	translation/PAL_de.ts
+	translation/de.ts
 
 DISTFILES += \
-	translation/PAL_de.ts
+	translation/de.ts
 
 
 

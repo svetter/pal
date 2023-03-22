@@ -12,10 +12,14 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	
 	QWidget* parent;
 	
+	QPair<QStringList, QStringList> languages;
+	
 public:
 	SettingsWindow(QWidget* parent);
 	
 private:
+	void setupLanguages();
+	
 	void loadSettings();
 	void saveSettings();
 	void loadDefaults();

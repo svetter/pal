@@ -2,12 +2,14 @@
 
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <QMessageBox>
 
 
 
 SettingsWindow::SettingsWindow(QWidget* parent) :
 		QDialog(parent),
-		parent(parent)
+		parent(parent),
+		languages(getSupportedLanguages())
 {
 	setupUi(this);
 	
@@ -26,6 +28,9 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 	connect(bottomButtonBox->button(QDialogButtonBox::RestoreDefaults),	&QPushButton::clicked,	this,	&SettingsWindow::handle_loadDefaults);
 	
 	
+	languageCombo->addItems(languages.second);
+	
+	
 	loadSettings();
 }
 
@@ -33,6 +38,13 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 
 void SettingsWindow::loadSettings()
 {
+	int languageIndex = languages.first.indexOf(language.get());
+	if (languageIndex < 0) {
+		qDebug() << "Couldn't parse language setting, reverting to default";
+		languageIndex = languages.first.indexOf(language.getDefault());
+	}
+	languageCombo->setCurrentIndex(languageIndex);
+	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.get());
@@ -61,6 +73,9 @@ void SettingsWindow::loadSettings()
 
 void SettingsWindow::loadDefaults()
 {
+	int languageIndex = languages.first.indexOf(language.getDefault());
+	languageCombo->setCurrentIndex(languageIndex);
+	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.getDefault());
@@ -89,7 +104,13 @@ void SettingsWindow::loadDefaults()
 
 void SettingsWindow::saveSettings()
 {
+	QString languageBefore = language.get();
 	bool rememberWindowPositionsRelativeBefore = rememberWindowPositionsRelative.get();
+	
+	int selectedLanguageIndex = languageCombo->currentIndex();
+	if (selectedLanguageIndex >= 0) {
+		language.set(languages.first.at(selectedLanguageIndex));
+	}
 	
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
 	confirmCancel								.set(confirmCancelCheckbox						->isChecked());
@@ -113,6 +134,12 @@ void SettingsWindow::saveSettings()
 	peakDialog_initialHeight					.set(peakHeightSpinner							->value());
 	
 	tripDialog_datesEnabledInitially			.set(tripDatesCheckbox							->isChecked());
+	
+	if (languageBefore != language.get()) {
+		QString title = tr("Language setting changed");
+		QString message = tr("Changing the language requires a restart.");
+		QMessageBox::information(this, title, message);
+	}
 	
 	if (rememberWindowPositionsRelativeBefore != rememberWindowPositionsRelative.get()) {
 		Settings::resetGeometrySettings();

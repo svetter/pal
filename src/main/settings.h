@@ -6,6 +6,9 @@
 #include <QSettings>
 #include <QRect>
 #include <QWidget>
+#include <QDirIterator>
+
+QString getDefaultLanguage();
 
 
 
@@ -69,6 +72,9 @@ public:
 class Settings {
 public:
 	// === EXPLICIT ===
+	
+	// Language
+	inline static const Setting<QString>	language								= Setting<QString>	("language",									getDefaultLanguage());
 	
 	// General/global
 	inline static const Setting<bool>	confirmDelete								= Setting<bool>		("confirmDelete",								true);
@@ -170,6 +176,39 @@ public:
 	}
 };
 
+
+
+inline QPair<QStringList, QStringList> getSupportedLanguages()
+{
+	QStringList codes = QStringList("en");
+	QDirIterator it = QDirIterator(":/i18n/", QDirIterator::Subdirectories);
+	while (it.hasNext()) {
+		codes.append(it.next().split(".").at(0).split("/").at(2));
+	}
+	
+	QStringList names = QStringList();
+	for (QString& code : codes) {
+		names.append(QLocale(code).nativeLanguageName());
+	}
+	
+	return {codes, names};
+}
+
+inline QString getDefaultLanguage()
+{
+	QString language = "en";
+	QStringList uiLanguages = QLocale::system().uiLanguages();
+	QStringList supportedLanguages = getSupportedLanguages().first;
+	
+	for (const QString& locale : uiLanguages) {
+		const QString preferredLanguage = QLocale(locale).name();
+		if (supportedLanguages.contains(preferredLanguage)) {
+			language = preferredLanguage;
+			break;
+		}
+	}
+	return language;
+}
 
 
 inline void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)

@@ -14,32 +14,23 @@ int main(int argc, char *argv[])
 	
 	// Configure translation
 	
-	QString defaultLanguage = "en";
-	bool useTranslator = true;
-	bool forceTranslation = false;
-	
+	QString languageSetting = Settings::language.get();
+	bool useTranslator = languageSetting != "en";
 	QTranslator translator;
-	const QStringList uiLanguages = QLocale::system().uiLanguages();
-	if (uiLanguages.contains(defaultLanguage)) {
-		useTranslator = false;
-		qDebug() << "No need for translation, system lists default language" << defaultLanguage;
-	}
-	useTranslator |= forceTranslation;
 	
-	for (const QString &locale : uiLanguages) {
-		const QString baseName = "PAL_" + QLocale(locale).name();
-		if (translator.load(baseName, ":/i18n/")) {
-			qDebug() << "Found translation for" << locale;
+	if (useTranslator) {
+		if (translator.load(QLocale(languageSetting).name(), ":/i18n/")) {
 			if (translator.isEmpty()) {
-				qDebug() << "Translator empty!";
+				qDebug() << "Translator" << translator.filePath() << "is empty";
+			} else {
+				qDebug() << "Loaded translator from" << translator.filePath();
 			}
-			if (useTranslator) {
-				application.installTranslator(&translator);
+			
+			if (!application.installTranslator(&translator)) {
+				qDebug() << "Installing translator for" << languageSetting << "failed";
 			}
-			break;
-		}
-		else {
-			qDebug() << "Found NO translation for system language " << locale;
+		} else {
+			qDebug() << "Translator for configured language" << languageSetting << "not found";
 		}
 	}
 	

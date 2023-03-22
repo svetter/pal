@@ -2355,124 +2355,139 @@
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="50"/>
+        <location filename="../src/ui/settings_window.ui" line="58"/>
+        <source>Language</source>
+        <translation>Sprache</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="97"/>
         <source>General settings</source>
         <translation>Generelle Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="71"/>
+        <location filename="../src/ui/settings_window.ui" line="118"/>
         <source>Ask for confirmation before deleting entries</source>
         <translation>Vor dem Löschen von Einträgen nachfragen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="78"/>
+        <location filename="../src/ui/settings_window.ui" line="125"/>
         <source>Ask for confirmation before discarding unsaved changes</source>
         <translation>Vor dem Verwerfen ungesicherter Änderungen nachfragen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="85"/>
+        <location filename="../src/ui/settings_window.ui" line="132"/>
         <source>Allow saving when item name is empty</source>
         <translation>Speichern von Einträgen ohne Name erlauben</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="92"/>
+        <location filename="../src/ui/settings_window.ui" line="139"/>
         <source>Open project settings window when creating a new database</source>
         <translation>Beim Erstellen einer neuen Datenbank Projekteinstellungen öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="102"/>
+        <location filename="../src/ui/settings_window.ui" line="149"/>
         <source>Remember after restart</source>
         <translation>Merken und wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="123"/>
+        <location filename="../src/ui/settings_window.ui" line="170"/>
         <source>Windows</source>
         <translation>Fenster</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="141"/>
+        <location filename="../src/ui/settings_window.ui" line="188"/>
         <source>Positions</source>
         <translation>Positionen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="148"/>
+        <location filename="../src/ui/settings_window.ui" line="195"/>
         <source>Relative to main window</source>
         <translation>Relativ zu Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="158"/>
+        <location filename="../src/ui/settings_window.ui" line="205"/>
         <source>Tables</source>
         <translation>Tabellen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="182"/>
+        <location filename="../src/ui/settings_window.ui" line="229"/>
         <source>Sorting</source>
         <translation>Sortierung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="189"/>
+        <location filename="../src/ui/settings_window.ui" line="236"/>
         <source>Active filters</source>
         <translation>Aktive Filter</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="196"/>
+        <location filename="../src/ui/settings_window.ui" line="243"/>
         <source>Open table</source>
         <translation>Angezeigte Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="203"/>
+        <location filename="../src/ui/settings_window.ui" line="250"/>
         <source>Column widths</source>
         <translation>Spaltenbreiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="216"/>
+        <location filename="../src/ui/settings_window.ui" line="263"/>
         <source>Default values for new items</source>
         <translation>Standardwerte für neue Einträge</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="237"/>
+        <location filename="../src/ui/settings_window.ui" line="284"/>
         <source>Ascent</source>
         <translation>Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="261"/>
+        <location filename="../src/ui/settings_window.ui" line="308"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="268"/>
+        <location filename="../src/ui/settings_window.ui" line="315"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="296"/>
+        <location filename="../src/ui/settings_window.ui" line="343"/>
         <source>days in the past</source>
         <translation>Tage vor aktuellem Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="318"/>
+        <location filename="../src/ui/settings_window.ui" line="365"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="399"/>
+        <location filename="../src/ui/settings_window.ui" line="446"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="423"/>
+        <location filename="../src/ui/settings_window.ui" line="470"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="472"/>
+        <location filename="../src/ui/settings_window.ui" line="519"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="496"/>
+        <location filename="../src/ui/settings_window.ui" line="543"/>
         <source>Specify dates</source>
         <translation>Start- und Enddatum angeben</translation>
+    </message>
+    <message>
+        <location filename="../src/main/settings_window.cpp" line="139"/>
+        <source>Language setting changed</source>
+        <translation>Spracheinstellung geändert</translation>
+    </message>
+    <message>
+        <location filename="../src/main/settings_window.cpp" line="140"/>
+        <source>Changing the language requires a restart.</source>
+        <translation>Die Änderung der Sprache erfordert einen Neustart.</translation>
     </message>
 </context>
 <context>
