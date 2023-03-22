@@ -48,6 +48,7 @@ void SettingsWindow::loadSettings()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.get());
+	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.get());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
@@ -79,6 +80,7 @@ void SettingsWindow::loadDefaults()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.getDefault());
+	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.getDefault());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
@@ -115,6 +117,7 @@ void SettingsWindow::saveSettings()
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
 	confirmCancel								.set(confirmCancelCheckbox						->isChecked());
 	allowEmptyNames								.set(allowEmptyNamesCheckbox					->isChecked());
+	onlyPrepareActiveTableOnStartup				.set(onlyPrepareActiveTableCheckbox				->isChecked());
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());
 	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());

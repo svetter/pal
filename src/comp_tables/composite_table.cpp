@@ -66,18 +66,20 @@ int CompositeTable::getNumberOfCellsToInit() const
 	return baseTable->getNumberOfRows() * columns.size();
 }
 
-void CompositeTable::initBuffer(QProgressDialog* progressDialog, QSet<Filter> filters)
+void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompute)
 {
 	assert(buffer.isEmpty() && bufferOrder.isEmpty());
-	
-	currentFilters = filters;
 	
 	int numberOfRows = baseTable->getNumberOfRows();
 	
 	for (int bufferRowIndex = 0; bufferRowIndex < numberOfRows; bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-			newRow->append(computeCellContent(bufferRowIndex, columnIndex));
+			QVariant newCell = QVariant();
+			if (!deferCompute) {
+				newCell = computeCellContent(bufferRowIndex, columnIndex);
+			}
+			newRow->append(newCell);
 			
 			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
@@ -87,6 +89,9 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, QSet<Filter> fi
 	rebuildOrderBuffer();
 	
 	columnsToUpdate.clear();
+	if (deferCompute) {
+		for (const CompositeColumn* column : columns) columnsToUpdate.insert(column);
+	}
 }
 
 void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
@@ -198,6 +203,12 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 }
 
 
+
+void CompositeTable::setInitialFilters(QSet<Filter> filters)
+{
+	assert(buffer.isEmpty() && bufferOrder.isEmpty());
+	currentFilters = filters;
+}
 
 void CompositeTable::applyFilters(QSet<Filter> filters)
 {

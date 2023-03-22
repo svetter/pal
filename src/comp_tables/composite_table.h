@@ -43,7 +43,7 @@ public:
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
-	void initBuffer(QProgressDialog* progressDialog, QSet<Filter> filters = QSet<Filter>());
+	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false);
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
@@ -59,6 +59,7 @@ public:
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
 	
+	void setInitialFilters(QSet<Filter> filters);
 	void applyFilters(QSet<Filter> filters);
 	void clearFilters();
 	QSet<Filter> getCurrentFilters() const;

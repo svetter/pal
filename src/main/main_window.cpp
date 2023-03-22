@@ -302,16 +302,25 @@ void MainWindow::initCompositeBuffers()
 	progress.setMinimumDuration(250);
 	progress.setLabel(new QLabel(tr("Preparing tables..."), &progress));
 	
+	bool prepareAll = !Settings::onlyPrepareActiveTableOnStartup.get();
+	QTableView* currentTableView = getCurrentTableView();
+	
 	int numCells = 0;
-	typesHandler->forEach([&numCells] (const ItemTypeMapper& mapper) {
-		numCells += mapper.compTable->getNumberOfCellsToInit();
-	});
+	if (prepareAll) {
+		typesHandler->forEach([&numCells] (const ItemTypeMapper& mapper) {
+			numCells += mapper.compTable->getNumberOfCellsToInit();
+		});
+	} else {
+		typesHandler->forMatchingTableView(currentTableView, [&numCells] (const ItemTypeMapper& mapper, bool debug) {
+			Q_UNUSED(debug);
+			numCells += mapper.compTable->getNumberOfCellsToInit();
+		});
+	}
 	progress.setMinimum(0);
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
 	QSet<Filter> ascentFilters = QSet<Filter>();
-	
 	if (Settings::rememberFilters.get()) {
 		ascentFilters = ascentFilterBar->parseFiltersFromProjectSettings();
 		ascentFilterBar->insertFiltersIntoUI(ascentFilters);
@@ -319,14 +328,16 @@ void MainWindow::initCompositeBuffers()
 			showFiltersAction->setChecked(true);
 		}
 	}
+	typesHandler->get(Ascent)->compTable->setInitialFilters(ascentFilters);
 	
-	typesHandler->forEach([&progress, &ascentFilters] (const ItemTypeMapper& mapper) {
+	typesHandler->forEach([&progress, prepareAll, currentTableView] (const ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
 		
-		if (mapper.type == Ascent) {
-			mapper.compTable->initBuffer(&progress, ascentFilters);
-		} else {
+		bool prepareThisTable = prepareAll || mapper.tableView == currentTableView;
+		if (prepareThisTable) {
 			mapper.compTable->initBuffer(&progress);
+		} else {
+			mapper.compTable->initBuffer(nullptr, true);
 		}
 	});
 }

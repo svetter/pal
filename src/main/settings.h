@@ -81,6 +81,8 @@ public:
 	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
 	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
 	
+	inline static const Setting<bool>	onlyPrepareActiveTableOnStartup				= Setting<bool>		("onlyPrepareActiveTableOnStartup",				true);
+	
 	inline static const Setting<bool>	openProjectSettingsOnNewDatabase			= Setting<bool>		("openProjectSettingsOnNewDatabase",			true);
 	
 	// Remember UI

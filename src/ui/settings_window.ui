@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>706</height>
+    <height>733</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -130,6 +130,13 @@
        <widget class="QCheckBox" name="allowEmptyNamesCheckbox">
         <property name="text">
          <string>Allow saving when item name is empty</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="onlyPrepareActiveTableCheckbox">
+        <property name="text">
+         <string>Only prepare active table on startup</string>
         </property>
        </widget>
       </item>
