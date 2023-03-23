@@ -40,7 +40,7 @@ private:
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
-	void setColumnWidths(const ItemTypeMapper& mapper);
+	void restoreColumnWidths(const ItemTypeMapper& mapper);
 	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
 	

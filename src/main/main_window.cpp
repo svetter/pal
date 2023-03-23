@@ -158,7 +158,9 @@ void MainWindow::setupTableViews()
 		// Set model
 		mapper.tableView->setModel(mapper.compTable);
 		
-		setColumnWidths(mapper);
+		if (Settings::rememberColumnWidths.get()) {
+			restoreColumnWidths(mapper);
+		}
 		
 		// Enable context menu
 		connect(mapper.tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
@@ -192,12 +194,8 @@ void MainWindow::setupDebugTableViews()
 	setupFunction(participatedDebugTableView,	db.participatedTable);
 }
 
-void MainWindow::setColumnWidths(const ItemTypeMapper& mapper)
+void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 {
-	if (!Settings::rememberColumnWidths.get()) {
-		return mapper.tableView->resizeColumnsToContents();
-	}
-	
 	QStringList columnWidths = mapper.columnWidthsSetting->get();
 	if (columnWidths.size() != mapper.compTable->columnCount()) {
 		// Can't restore column widths from settings
@@ -334,11 +332,12 @@ void MainWindow::initCompositeBuffers()
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
 		
 		bool prepareThisTable = prepareAll || mapper.tableView == currentTableView;
-		if (prepareThisTable) {
-			mapper.compTable->initBuffer(&progress);
-		} else {
-			mapper.compTable->initBuffer(nullptr, true);
-		}
+		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || !mapper.columnWidthsSetting->present();
+		QProgressDialog* updateProgress = prepareThisTable ? &progress : nullptr;
+		bool deferCompute = !prepareThisTable;
+		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper.tableView : nullptr;
+		
+		mapper.compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
 	});
 }
 

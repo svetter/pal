@@ -14,6 +14,7 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
 		currentFilters(QSet<Filter>()),
 		columnsToUpdate(QSet<const CompositeColumn*>()),
 		updateImmediately(false),
+		tableToAutoResizeAfterCompute(nullptr),
 		name(baseTable->name)
 {
 	baseTable->setRowChangeListener(this);
@@ -66,7 +67,7 @@ int CompositeTable::getNumberOfCellsToInit() const
 	return baseTable->getNumberOfRows() * columns.size();
 }
 
-void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompute)
+void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompute, QTableView* autoResizeAfterCompute)
 {
 	assert(buffer.isEmpty() && bufferOrder.isEmpty());
 	
@@ -91,6 +92,9 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	columnsToUpdate.clear();
 	if (deferCompute) {
 		for (const CompositeColumn* column : columns) columnsToUpdate.insert(column);
+		tableToAutoResizeAfterCompute = autoResizeAfterCompute;
+	} else {
+		if (autoResizeAfterCompute) autoResizeAfterCompute->resizeColumnsToContents();
 	}
 }
 
@@ -143,6 +147,11 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 	rebuildOrderBuffer(false);
 	
 	columnsToUpdate.clear();
+	
+	if (tableToAutoResizeAfterCompute) {
+		tableToAutoResizeAfterCompute->resizeColumnsToContents();
+		tableToAutoResizeAfterCompute = nullptr;
+	}
 }
 
 void CompositeTable::resetBuffer()

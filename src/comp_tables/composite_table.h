@@ -6,6 +6,7 @@
 
 #include <QAbstractTableModel>
 #include <QProgressDialog>
+#include <QTableView>
 
 
 
@@ -23,6 +24,7 @@ class CompositeTable : public QAbstractTableModel {
 	
 	QSet<const CompositeColumn*> columnsToUpdate;
 	bool updateImmediately;
+	QTableView* tableToAutoResizeAfterCompute;
 	
 public:
 	const QString name;
@@ -43,7 +45,7 @@ public:
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
-	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false);
+	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
