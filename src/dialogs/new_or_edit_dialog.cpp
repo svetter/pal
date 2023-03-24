@@ -75,3 +75,27 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 	resultButton = QMessageBox::question(parent, windowTitle, question, options, selected);
 	return resultButton == QMessageBox::Yes;
 }
+
+
+
+void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList)
+{
+	combo->clear();
+	idList.clear();
+	combo->addItem(table->getNoneString());
+	
+	// Get pairs of ID and display/sort field
+	QList<QPair<ValidItemID, QVariant>> selectableRanges = table->pairIDWith(displayAndSortColumn);
+	
+	// Sort entries according to sort field
+	auto comparator = [] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
+		return QVariant::compare(p1.second, p2.second) == QPartialOrdering::Less;
+	};
+	std::sort(selectableRanges.begin(), selectableRanges.end(), comparator);
+	
+	// Save IDs and populate combo box
+	for (const QPair<ValidItemID, QVariant>& pair : selectableRanges) {
+		idList.append(pair.first);
+		combo->addItem(pair.second.toString());
+	}
+}

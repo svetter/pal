@@ -13,6 +13,9 @@ class RegionDialog : public NewOrEditDialog, public Ui_RegionDialog
 	
 	const Region* init;
 	
+	QList<ValidItemID> selectableRangeIDs;
+	QList<ValidItemID> selectableCountryIDs;
+	
 public:
 	RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init);
 	~RegionDialog();

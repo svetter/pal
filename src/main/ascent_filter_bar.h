@@ -20,18 +20,26 @@ class AscentFilterBar : public QWidget, public Ui_AscentFilterBar
 	Database* db;
 	CompositeAscentsTable* compAscents;
 	
+	QList<ValidItemID> selectableRangeIDs;
+	QList<ValidItemID> selectableHikerIDs;
+	
 public:
 	AscentFilterBar(QWidget* parent);
 	// Initial setup
 	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents);
 private:
 	void connectUI();
-	void setupUI();
+	void additionalUISetup();
 	
 public:
 	// Project setup
 	void resetUI();
 	void insertFiltersIntoUI(QSet<Filter> filters);
+	
+public:
+	// Update UI
+	void updateRangeCombo();
+	void updateHikerCombo();
 	
 private slots:
 	// UI change handlers

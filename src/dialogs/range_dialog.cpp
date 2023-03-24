@@ -52,7 +52,7 @@ QString RangeDialog::getEditWindowTitle()
 
 void RangeDialog::populateComboBoxes()
 {
-	continentCombo->insertItems(1, Range::continentNames);
+	continentCombo->insertItems(0, Range::continentNames);
 }
 
 
@@ -69,7 +69,7 @@ void RangeDialog::insertInitData()
 Range* RangeDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
-	int		continent	= parseEnumCombo	(continentCombo);
+	int		continent	= parseEnumCombo	(continentCombo, true);
 	
 	Range* range = new Range(ItemID(), name, continent);
 	return range;

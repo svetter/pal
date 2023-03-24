@@ -61,6 +61,9 @@ private:
 	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
 	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
 	void deleteItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	// Helpers
+	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, int bufferRowToSelectIndex = -1);
+	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex);
 	

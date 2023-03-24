@@ -17,6 +17,8 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	Database* db;
 	bool firstOpen;
 	
+	QList<ValidItemID> selectableHikerIDs;
+	
 public:
 	ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen = false);
 	

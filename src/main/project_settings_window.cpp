@@ -14,7 +14,8 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 		QDialog(parent),
 		parent(parent),
 		db(db),
-		firstOpen(firstOpen)
+		firstOpen(firstOpen),
+		selectableHikerIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setFixedSize(sizeHint());
@@ -30,9 +31,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	restoreDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	
 	
-	defaultHikerCombo->setModel(db->hikersTable);
-	defaultHikerCombo->setRootModelIndex(db->hikersTable->getNullableRootModelIndex());
-	defaultHikerCombo->setModelColumn(db->hikersTable->nameColumn->getIndex());
+	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, defaultHikerCombo, selectableHikerIDs);
 	
 	
 	connect(newHikerButton,										&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_newHiker);
@@ -63,8 +62,7 @@ void ProjectSettingsWindow::loadSettings()
 {
 	ItemID hikerID = db->projectSettings->defaultHiker->get();
 	if (hikerID.isValid()) {
-		int bufferRowIndex = db->hikersTable->getBufferIndexForPrimaryKey(hikerID.get());
-		defaultHikerCombo->setCurrentIndex(bufferRowIndex + 1);	// 0 is None
+		defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 	} else {
 		defaultHikerCombo->setCurrentIndex(0);
 	}
@@ -78,7 +76,7 @@ void ProjectSettingsWindow::saveSettings()
 		int newHikerIndex = db->hikersTable->addRow(this, newDefaultHiker);
 		defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
 	}
-	db->projectSettings->defaultHiker->set(this, parseIDCombo(defaultHikerCombo).asQVariant());
+	db->projectSettings->defaultHiker->set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
 }
 
 
@@ -87,7 +85,8 @@ void ProjectSettingsWindow::handle_newHiker()
 {
 	int newHikerIndex = openNewHikerDialogAndStore(this, db);
 	if (newHikerIndex < 0) return;
-	defaultHikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
+	ValidItemID hikerID = db->rangesTable->getPrimaryKeyAt(newHikerIndex);
+	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 }
 
 

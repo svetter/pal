@@ -51,7 +51,7 @@ public:
 	void updateBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();
 	int getBufferRowIndexForViewRow(int viewRowIndex) const;
-	int findCurrentViewRowIndex(int bufferRowIndex) const;
+	int findViewRowIndexForBufferRow(int bufferRowIndex) const;
 	
 	QVariant getRawValue(int bufferRowIndex, int columnIndex) const;
 	QVariant getRawValue(int bufferRowIndex, const CompositeColumn* column) const;

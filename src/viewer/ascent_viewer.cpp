@@ -284,7 +284,7 @@ void AscentViewer::updateAscentNavigationTargets()
 		QList<int> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
 		QList<int> ascentOfPeakViewRowIndices = QList<int>();
 		for (int matchingBufferRowIndex : matchingBufferRowIndices) {
-			int matchingViewRowIndex = compAscents->findCurrentViewRowIndex(matchingBufferRowIndex);
+			int matchingViewRowIndex = compAscents->findViewRowIndexForBufferRow(matchingBufferRowIndex);
 			if (matchingViewRowIndex < 0) continue;
 			ascentOfPeakViewRowIndices.append(matchingViewRowIndex);
 		}
@@ -669,7 +669,7 @@ void AscentViewer::popupInfoContextMenu(QPoint pos)
 void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 {
 	// Filtering and sorting may have changed, update view row index
-	int newViewRowIndex = compAscents->findCurrentViewRowIndex(currentBufferRowIndex);
+	int newViewRowIndex = compAscents->findViewRowIndexForBufferRow(currentBufferRowIndex);
 	
 	if (newViewRowIndex >= 0) {	// Current ascent still in table
 		changeToAscent(newViewRowIndex);

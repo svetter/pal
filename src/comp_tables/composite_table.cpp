@@ -169,7 +169,7 @@ int CompositeTable::getBufferRowIndexForViewRow(int viewRowIndex) const
 	return bufferOrder.at(viewRowIndex);
 }
 
-int CompositeTable::findCurrentViewRowIndex(int bufferRowIndex) const
+int CompositeTable::findViewRowIndexForBufferRow(int bufferRowIndex) const
 {
 	for (int i = 0; i < bufferOrder.size(); i++) {
 		if (bufferOrder.at(i) == bufferRowIndex) return i;
@@ -262,7 +262,7 @@ void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
 
 void CompositeTable::removeRowAndAnnounce(int bufferRowIndex)
 {
-	int viewRowIndex = findCurrentViewRowIndex(bufferRowIndex);
+	int viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
 	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
 	bufferOrder.removeAt(viewRowIndex);
 	endRemoveRows();

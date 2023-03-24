@@ -72,6 +72,7 @@ MainWindow::MainWindow() :
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
 	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
 		db.openExisting(this, lastOpen);
+		updateFilters();
 		setVisible(true);
 		initCompositeBuffers();
 		updateTableSize();
@@ -394,6 +395,7 @@ void MainWindow::updateTableSize(bool reset)
 	if (reset) {
 		statusBarTableSizeLabel->setText("");
 		statusBarFiltersLabel->setText("");
+		ascentCounterSegmentNumber->setProperty("value", QVariant());
 		return;
 	}
 	
@@ -447,9 +449,7 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 	int newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
 	if (newBufferRowIndex == -1) return;
 	
-	int viewRowIndex = mapper.compTable->findCurrentViewRowIndex(newBufferRowIndex);
-	updateSelectionAfterUserAction(mapper, viewRowIndex);
-	updateTableSize();
+	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
@@ -459,9 +459,7 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowI
 	int newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
-	int newViewRowIndex = mapper.compTable->findCurrentViewRowIndex(newBufferRowIndex);
-	updateSelectionAfterUserAction(mapper, newViewRowIndex);
-	updateTableSize();
+	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
@@ -470,8 +468,7 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(index.row());
 	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
-	int viewRowIndex = mapper.compTable->findCurrentViewRowIndex(bufferRowIndex);
-	updateSelectionAfterUserAction(mapper, viewRowIndex);
+	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
 	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
@@ -479,10 +476,30 @@ void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	mapper.openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
-	updateTableSize();
+	
+	performUpdatesAfterUserAction(mapper, true);
 	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
+
+void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, int bufferRowToSelectIndex)
+{
+	// Update selection in table
+	if (bufferRowToSelectIndex >= 0) {
+		int viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
+		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
+	}
+	// Update table size info
+	if (numberOfEntriesChanged)	updateTableSize();
+	// Update filters
+	updateFilters();
+}
+
+void MainWindow::updateFilters(const ItemTypeMapper* mapper)
+{
+	if (!mapper || mapper->type == Range)	ascentFilterBar->updateRangeCombo();
+	if (!mapper || mapper->type == Hiker)	ascentFilterBar->updateHikerCombo();
+}
 
 void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex)
 {
@@ -622,6 +639,7 @@ void MainWindow::handle_newDatabase()
 	
 	handle_closeDatabase();
 	db.createNew(this, filepath);
+	updateFilters();
 	updateTableSize();
 	setUIEnabled(true);
 	
@@ -643,6 +661,7 @@ void MainWindow::handle_openDatabase()
 	
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
+	updateFilters();
 	initCompositeBuffers();
 	updateTableSize();
 	setUIEnabled(true);
@@ -659,6 +678,7 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	
 	handle_closeDatabase();
 	db.openExisting(this, filepath);
+	updateFilters();
 	initCompositeBuffers();
 	updateTableSize();
 	setUIEnabled(true);
@@ -714,6 +734,7 @@ void MainWindow::handle_closeDatabase()
 	setUIEnabled(false);
 	ascentFilterBar->resetUI();
 	db.reset();
+	updateFilters();
 	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
 		mapper.compTable->resetBuffer();
 	});

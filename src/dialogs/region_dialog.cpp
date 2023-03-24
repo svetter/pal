@@ -11,7 +11,8 @@
 
 RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
 		NewOrEditDialog(parent, db, purpose),
-		init(init)
+		init(init),
+		selectableRangeIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	
@@ -57,13 +58,9 @@ QString RegionDialog::getEditWindowTitle()
 
 void RegionDialog::populateComboBoxes()
 {
-	rangeCombo->setModel(db->rangesTable);
-	rangeCombo->setRootModelIndex(db->rangesTable->getNullableRootModelIndex());
-	rangeCombo->setModelColumn(db->rangesTable->nameColumn->getIndex());
+	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, rangeCombo, selectableRangeIDs);
 	
-	countryCombo->setModel(db->countriesTable);
-	countryCombo->setRootModelIndex(db->countriesTable->getNullableRootModelIndex());
-	countryCombo->setModelColumn(db->countriesTable->nameColumn->getIndex());
+	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, countryCombo, selectableCountryIDs);
 }
 
 
@@ -74,13 +71,13 @@ void RegionDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	// Range
 	if (init->rangeID.isValid()) {
-		rangeCombo->setCurrentIndex(db->rangesTable->getBufferIndexForPrimaryKey(init->rangeID.get()) + 1);	// 0 is None
+		rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(init->rangeID.get()) + 1);	// 0 is None
 	} else {
 		rangeCombo->setCurrentIndex(0);
 	}
 	// Country
 	if (init->countryID.isValid()) {
-		countryCombo->setCurrentIndex(db->countriesTable->getBufferIndexForPrimaryKey(init->countryID.get()) + 1);	// 0 is None
+		countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(init->countryID.get()) + 1);	// 0 is None
 	} else {
 		countryCombo->setCurrentIndex(0);
 	}
@@ -89,9 +86,9 @@ void RegionDialog::insertInitData()
 
 Region* RegionDialog::extractData()
 {
-	QString	name		= parseLineEdit	(nameLineEdit);
-	ItemID	rangeID		= parseIDCombo	(rangeCombo);
-	ItemID	countryID	= parseIDCombo	(countryCombo);
+	QString	name		= parseLineEdit		(nameLineEdit);
+	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs);
+	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs);
 	
 	Region* region = new Region(ItemID(), name, rangeID, countryID);
 	return region;
@@ -110,14 +107,22 @@ bool RegionDialog::changesMade()
 
 void RegionDialog::handle_newRange()
 {
-	int newRegionIndex = openNewRangeDialogAndStore(this, db);
-	rangeCombo->setCurrentIndex(newRegionIndex + 1);	// 0 is None
+	int newRangeIndex = openNewRangeDialogAndStore(this, db);
+	if (newRangeIndex < 0) return;
+	
+	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, rangeCombo, selectableRangeIDs);
+	ValidItemID rangeID = db->rangesTable->getPrimaryKeyAt(newRangeIndex);
+	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(rangeID) + 1);	// 0 is None
 }
 
 void RegionDialog::handle_newCountry()
 {
 	int newCountryIndex = openNewCountryDialogAndStore(this, db);
-	countryCombo->setCurrentIndex(newCountryIndex + 1);	// 0 is None
+	if (newCountryIndex < 0) return;
+	
+	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, countryCombo, selectableCountryIDs);
+	ValidItemID countryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
+	countryCombo->setCurrentIndex(selectableRangeIDs.indexOf(countryID) + 1);	// 0 is None
 }
 
 

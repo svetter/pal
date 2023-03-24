@@ -41,6 +41,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 		assert(enumNames);
 		assert(rawCellContent.canConvert<int>());
 		int enumIndex = rawCellContent.toInt();
+		if (!(enumIndex >= 0 && enumIndex < enumNames->size()))
 		assert(enumIndex >= 0 && enumIndex < enumNames->size());
 		result = enumNames->at(enumIndex);
 	}

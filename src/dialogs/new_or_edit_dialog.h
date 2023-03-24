@@ -2,9 +2,9 @@
 #define NEW_OR_EDIT_DIALOG_H
 
 #include "src/db/database.h"
-#include "src/main/settings.h"
 
 #include <QDialog>
+#include <QComboBox>
 
 
 
@@ -44,6 +44,8 @@ public:
 
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+
+void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList);
 
 
 

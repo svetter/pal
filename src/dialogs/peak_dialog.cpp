@@ -10,7 +10,8 @@
 
 PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init) :
 		NewOrEditDialog(parent, db, purpose),
-		init(init)
+		init(init),
+		selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	
@@ -65,9 +66,7 @@ QString PeakDialog::getEditWindowTitle()
 
 void PeakDialog::populateComboBoxes()
 {
-	regionCombo->setModel(db->regionsTable);
-	regionCombo->setRootModelIndex(db->regionsTable->getNullableRootModelIndex());
-	regionCombo->setModelColumn(db->regionsTable->nameColumn->getIndex());
+	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, regionCombo, selectableRegionIDs);
 }
 
 
@@ -87,7 +86,7 @@ void PeakDialog::insertInitData()
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
 	if (init->regionID.isValid()) {
-		regionCombo->setCurrentIndex(db->regionsTable->getBufferIndexForPrimaryKey(init->regionID.get()) + 1);	// 0 is None
+		regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(init->regionID.get()) + 1);	// 0 is None
 	} else {
 		regionCombo->setCurrentIndex(0);
 	}
@@ -100,13 +99,13 @@ void PeakDialog::insertInitData()
 
 Peak* PeakDialog::extractData()
 {
-	QString	name		= parseLineEdit	(nameLineEdit);
-	int		height		= parseSpinner	(heightSpinner);
-	bool	volcano		= parseCheckbox	(volcanoCheckbox);
-	ItemID	regionID	= parseIDCombo	(regionCombo);
-	QString	mapsLink	= parseLineEdit	(googleMapsLineEdit);
-	QString	earthLink	= parseLineEdit	(googleEarthLineEdit);
-	QString	wikiLink	= parseLineEdit	(wikipediaLineEdit);
+	QString	name		= parseLineEdit		(nameLineEdit);
+	int		height		= parseSpinner		(heightSpinner);
+	bool	volcano		= parseCheckbox		(volcanoCheckbox);
+	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs);
+	QString	mapsLink	= parseLineEdit		(googleMapsLineEdit);
+	QString	earthLink	= parseLineEdit		(googleEarthLineEdit);
+	QString	wikiLink	= parseLineEdit		(wikipediaLineEdit);
 	
 	if (!heightCheckbox->isChecked())	height = -1;
 	
@@ -134,7 +133,11 @@ void PeakDialog::handle_heightSpecifiedChanged()
 void PeakDialog::handle_newRegion()
 {
 	int newRegionIndex = openNewRegionDialogAndStore(this, db);
-	regionCombo->setCurrentIndex(newRegionIndex + 1);	// 0 is None
+	if (newRegionIndex < 0) return;
+	
+	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, regionCombo, selectableRegionIDs);
+	ValidItemID regionID = db->rangesTable->getPrimaryKeyAt(newRegionIndex);
+	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(regionID) + 1);	// 0 is None
 }
 
 

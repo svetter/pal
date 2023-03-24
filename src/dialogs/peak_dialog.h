@@ -13,6 +13,8 @@ class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
 	
 	const Peak* init;
 	
+	QList<ValidItemID> selectableRegionIDs;
+	
 public:
 	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init);
 	~PeakDialog();

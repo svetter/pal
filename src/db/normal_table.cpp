@@ -33,6 +33,17 @@ ValidItemID NormalTable::getPrimaryKeyAt(int bufferRowIndex) const
 	return buffer.at(bufferRowIndex)->at(primaryKeyColumn->getIndex());
 }
 
+QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column) const
+{
+	int primaryKeyColumnIndex = primaryKeyColumn->getIndex();
+	int columnIndex = column->getIndex();
+	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
+	for (const QList<QVariant>* const bufferRow : buffer) {
+		pairs.append({ValidItemID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
+	}
+	return pairs;
+}
+
 
 
 // MODIFICATIONS (PASSTHROUGH)

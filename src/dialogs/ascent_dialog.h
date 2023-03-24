@@ -18,6 +18,9 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 	
 	const Ascent* init;
 	
+	QList<ValidItemID> selectablePeakIDs;
+	QList<ValidItemID> selectableTripIDs;
+	
 	HikersOnAscent hikersModel;
 	PhotosOfAscent photosModel;
 	

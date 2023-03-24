@@ -1,7 +1,5 @@
 #include "parse_helper.h"
 
-#include "src/db/normal_table.h"
-
 
 
 QString parseLineEdit(const QLineEdit* lineEdit) {
@@ -27,14 +25,17 @@ int parseSpinner(const QSpinBox* spinBox)
 	return spinBox->value();
 }
 
-ItemID parseIDCombo(const QComboBox* combo)
+ItemID parseItemCombo(const QComboBox* combo, const QList<ValidItemID>& itemIDs)
 {
-	int primaryKey = combo->currentData(NormalTable::PrimaryKeyRole).toInt();
-	return ItemID(primaryKey);
+	if (combo->currentIndex() < 1) {
+		return ItemID();
+	}
+	return itemIDs.at(combo->currentIndex() - 1);
 }
 
-int parseEnumCombo(const QComboBox* combo)
+int parseEnumCombo(const QComboBox* combo, bool defaultToZero)
 {
+	if (defaultToZero && combo->currentIndex() < 0) return 0;
 	return combo->currentIndex();
 }
 
