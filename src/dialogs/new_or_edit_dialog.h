@@ -45,7 +45,7 @@ public:
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
-void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList);
+void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList);
 
 
 

@@ -66,7 +66,7 @@ QString PeakDialog::getEditWindowTitle()
 
 void PeakDialog::populateComboBoxes()
 {
-	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, regionCombo, selectableRegionIDs);
+	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
 }
 
 
@@ -135,7 +135,7 @@ void PeakDialog::handle_newRegion()
 	int newRegionIndex = openNewRegionDialogAndStore(this, db);
 	if (newRegionIndex < 0) return;
 	
-	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, regionCombo, selectableRegionIDs);
+	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
 	ValidItemID regionID = db->rangesTable->getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(regionID) + 1);	// 0 is None
 }

@@ -78,7 +78,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 
 
 
-void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList)
+void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList)
 {
 	combo->clear();
 	idList.clear();
@@ -88,7 +88,8 @@ void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, Q
 	QList<QPair<ValidItemID, QVariant>> selectableRanges = table->pairIDWith(displayAndSortColumn);
 	
 	// Sort entries according to sort field
-	auto comparator = [] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
+	auto comparator = [sortAsString] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
+		if (sortAsString) return QString::localeAwareCompare(p1.second.toString(), p2.second.toString()) < 0;
 		return QVariant::compare(p1.second, p2.second) == QPartialOrdering::Less;
 	};
 	std::sort(selectableRanges.begin(), selectableRanges.end(), comparator);

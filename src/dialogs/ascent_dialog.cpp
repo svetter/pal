@@ -105,7 +105,7 @@ QString AscentDialog::getEditWindowTitle()
 
 void AscentDialog::populateComboBoxes()
 {
-	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, peakCombo, selectablePeakIDs);
+	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, Ascent::hikeKindNames);
 	
@@ -120,7 +120,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, tripCombo, selectableTripIDs);
+	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
 }
 
 
@@ -229,7 +229,7 @@ void AscentDialog::handle_newPeak()
 	int newPeakIndex = openNewPeakDialogAndStore(this, db);
 	if (newPeakIndex < 0) return;
 	
-	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, peakCombo, selectablePeakIDs);
+	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	ValidItemID peakID = db->rangesTable->getPrimaryKeyAt(newPeakIndex);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(peakID) + 1);	// 0 is None
 }
@@ -272,7 +272,7 @@ void AscentDialog::handle_newTrip()
 	int newTripIndex = openNewTripDialogAndStore(this, db);
 	if (newTripIndex < 0) return;
 	
-	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, tripCombo, selectableTripIDs);
+	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
 	ValidItemID tripID = db->rangesTable->getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(tripID) + 1);	// 0 is None
 }

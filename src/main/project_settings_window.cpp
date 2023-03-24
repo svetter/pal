@@ -31,7 +31,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	restoreDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	
 	
-	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, defaultHikerCombo, selectableHikerIDs);
+	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, defaultHikerCombo, selectableHikerIDs);
 	
 	
 	connect(newHikerButton,										&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_newHiker);
