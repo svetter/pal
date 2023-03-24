@@ -279,10 +279,10 @@ void AscentDialog::handle_newTrip()
 
 void AscentDialog::handle_addHiker()
 {
-	int hikerID = openAddHikerDialog(this, db);
-	if (hikerID < 0) return;
-	if (hikersModel.containsHiker(hikerID)) return;
-	Hiker* hiker = db->getHiker(hikerID);
+	ItemID hikerID = openAddHikerDialog(this, db);
+	if (hikerID.isInvalid()) return;
+	if (hikersModel.containsHiker(hikerID.forceValid())) return;
+	Hiker* hiker = db->getHiker(hikerID.forceValid());
 	hikersModel.addHiker(hiker);
 	delete hiker;
 }

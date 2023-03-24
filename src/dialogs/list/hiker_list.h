@@ -12,7 +12,7 @@
 
 
 class HikersOnAscent : public QAbstractTableModel {
-	QList<QPair<int, QString>> list;
+	QList<QPair<ValidItemID, QString>> list;
 	
 public:
 	HikersOnAscent();
@@ -21,7 +21,7 @@ public:
 	void removeHikerAt(int rowIndex);
 	void clear();
 	
-	bool containsHiker(int hikerID) const;
+	bool containsHiker(ValidItemID hikerID) const;
 	QSet<ValidItemID> getHikerIDSet() const;
 	
 	// QAbstractTableModel implementation

@@ -12,14 +12,17 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 	
 	Database* db;
 	
+	QList<ValidItemID> selectableHikerIDs;
+	
 public:
 	AddHikerDialog(QWidget* parent, Database* db);
-	
-	int extractHikerIndex();
 	
 private:
 	void populateComboBoxes();
 	
+public:
+	ValidItemID extractHikerID();
+private:
 	bool hikerSelected();
 	
 	void handle_newHiker();
@@ -30,7 +33,7 @@ private:
 
 
 
-int openAddHikerDialog(QWidget* parent, Database* db);
+ItemID openAddHikerDialog(QWidget* parent, Database* db);
 
 
 

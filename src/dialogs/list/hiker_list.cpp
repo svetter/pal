@@ -4,7 +4,7 @@
 
 HikersOnAscent::HikersOnAscent() :
 		QAbstractTableModel(),
-		list(QList<QPair<int, QString>>())
+		list(QList<QPair<ValidItemID, QString>>())
 {}
 
 
@@ -13,8 +13,7 @@ void HikersOnAscent::addHiker(Hiker* hiker)
 {
 	int currentNumHikers = list.size();
 	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
-	QPair<int, QString> pair{ hiker->hikerID.get(), hiker->name };
-	list.append(pair);
+	list.append({hiker->hikerID.forceValid(), hiker->name});
 	endInsertRows();
 }
 
@@ -32,7 +31,7 @@ void HikersOnAscent::clear()
 
 
 
-bool HikersOnAscent::containsHiker(int hikerID) const
+bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 {
 	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
 		if ((*iter).first == hikerID) return true;
@@ -68,7 +67,7 @@ QVariant HikersOnAscent::data(const QModelIndex& index, int role) const
 	if (role != Qt::DisplayRole) return QVariant();
 	switch (index.column()) {
 	case 0:
-		return list.at(index.row()).first;
+		return list.at(index.row()).first.asQVariant();
 	case 1:
 		return list.at(index.row()).second;
 	}

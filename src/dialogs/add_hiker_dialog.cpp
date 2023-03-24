@@ -8,7 +8,8 @@
 
 AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 		QDialog(parent),
-		db(db)
+		db(db),
+		selectableHikerIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());
@@ -26,22 +27,21 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 
 void AddHikerDialog::populateComboBoxes()
 {
-	hikerCombo->setModel(db->hikersTable);
-	hikerCombo->setRootModelIndex(db->hikersTable->getNullableRootModelIndex());
-	hikerCombo->setModelColumn(db->hikersTable->nameColumn->getIndex());
+	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerCombo, selectableHikerIDs);
 }
 
 
 
-int AddHikerDialog::extractHikerIndex()
+ValidItemID AddHikerDialog::extractHikerID()
 {
-	return hikerCombo->currentIndex();
+	assert(hikerSelected());
+	return selectableHikerIDs.at(hikerCombo->currentIndex() - 1);
 }
 
 
 bool AddHikerDialog::hikerSelected()
 {
-	return extractHikerIndex() >= 0;
+	return hikerCombo->currentIndex() > 0;
 }
 
 
@@ -74,11 +74,11 @@ void AddHikerDialog::handle_cancel()
 
 
 
-int openAddHikerDialog(QWidget* parent, Database* db)
+ItemID openAddHikerDialog(QWidget* parent, Database* db)
 {
 	AddHikerDialog dialog(parent, db);
 	if (dialog.exec() == QDialog::Accepted) {
-		return dialog.extractHikerIndex();
+		return dialog.extractHikerID();
 	} else {
 		return -1;
 	}
