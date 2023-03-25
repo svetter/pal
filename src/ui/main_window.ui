@@ -228,6 +228,9 @@
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
@@ -280,6 +283,9 @@
             </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <property name="sortingEnabled">
              <bool>true</bool>
@@ -334,6 +340,9 @@
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
@@ -386,6 +395,9 @@
             </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <property name="sortingEnabled">
              <bool>true</bool>
@@ -440,6 +452,9 @@
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
@@ -493,6 +508,9 @@
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
             </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
             <property name="sortingEnabled">
              <bool>true</bool>
             </property>
@@ -545,6 +563,9 @@
             </property>
             <property name="selectionBehavior">
              <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
             </property>
             <property name="sortingEnabled">
              <bool>true</bool>
@@ -1228,7 +1249,7 @@
   </action>
   <action name="aboutAction">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../build-debug/debug/qmake_resources.qrc">
      <normaloff>:/logo/logo_multisize_square.ico</normaloff>:/logo/logo_multisize_square.ico</iconset>
    </property>
    <property name="text">
@@ -1253,5 +1274,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <resources>
+  <include location="../../../build-debug/debug/qmake_resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
