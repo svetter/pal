@@ -82,10 +82,6 @@ MainWindow::MainWindow() :
 	
 	// Temporary
 	setupDebugTableViews();
-	
-	// Temporary: Add menu item to insert test data into current database
-	toolsMenu->addSeparator();
-	toolsMenu->addAction("Insert test data", this, [=](){ db.insertTestData(this); updateTableSize(); });
 }
 
 MainWindow::~MainWindow()

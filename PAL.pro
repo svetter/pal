@@ -118,7 +118,6 @@ HEADERS += \
 	src/main/settings_window.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
-	src/tools/test_data.h \
 	src/viewer/ascent_viewer.h \
 	src/viewer/image_display.h
 
