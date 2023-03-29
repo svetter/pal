@@ -366,7 +366,7 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 {
 	assert(databaseLoaded);
 	
-	const Column* primaryKeyColumn = table->primaryKeyColumn;
+	const Column* const primaryKeyColumn = table->primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (Table* candidateTable : tables) {
 		if (candidateTable == table) continue;
@@ -418,16 +418,16 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			}
 			// EXECUTE
 			else {
-				for (auto iter = affectedCells.constBegin(); iter != affectedCells.constEnd(); iter++) {
-					const Column* column = (*iter).first;
-					QList<int> rowIndices = (*iter).second;
-					NormalTable* table = (NormalTable*) column->table;
-					primaryKeyColumn = table->primaryKeyColumn;
+				for (const QPair<const Column*, QList<int>>& pair : affectedCells) {
+					const Column* affectedColumn = pair.first;
+					QList<int> rowIndices = pair.second;
+					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
+					const Column* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
 					
 					for (int rowIndex : rowIndices) {
-						ValidItemID primaryKey = primaryKeyColumn->getValueAt(rowIndex);
+						ValidItemID primaryKey = affectedPrimaryKeyColumn->getValueAt(rowIndex);
 						// Remove single instance of reference to the key about to be removed
-						candidateNormalTable->updateCell(parent, primaryKey, column, ItemID().asQVariant());
+						candidateNormalTable->updateCell(parent, primaryKey, affectedColumn, ItemID().asQVariant());
 					}
 				}
 			}
