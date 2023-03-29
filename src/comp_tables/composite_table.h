@@ -87,8 +87,8 @@ public:
 public:
 	// Change annunciation
 	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
-	void insertRowAndAnnounce(int bufferRowIndex);
-	void removeRowAndAnnounce(int bufferRowIndex);
+	void bufferRowJustInserted(int bufferRowIndex);
+	void bufferRowAboutToBeRemoved(int bufferRowIndex);
 	void announceChangesUnderColumn(int columnIndex);
 	
 	// QAbstractTableModel implementation

@@ -188,10 +188,7 @@ int CompositeTable::getBufferRowIndexForViewRow(int viewRowIndex) const
 
 int CompositeTable::findViewRowIndexForBufferRow(int bufferRowIndex) const
 {
-	for (int i = 0; i < bufferOrder.size(); i++) {
-		if (bufferOrder.at(i) == bufferRowIndex) return i;
-	}
-	return -1;
+	return bufferOrder.indexOf(bufferRowIndex);
 }
 
 
@@ -266,7 +263,7 @@ void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialo
 	if (updateImmediately) updateBuffer(progress);
 }
 
-void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
+void CompositeTable::bufferRowJustInserted(int bufferRowIndex)
 {
 	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
@@ -277,9 +274,10 @@ void CompositeTable::insertRowAndAnnounce(int bufferRowIndex)
 	rebuildOrderBuffer(false);
 }
 
-void CompositeTable::removeRowAndAnnounce(int bufferRowIndex)
+void CompositeTable::bufferRowAboutToBeRemoved(int bufferRowIndex)
 {
 	int viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
+	if (viewRowIndex < 0) return;	// Row was already removed by filter
 	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
 	bufferOrder.removeAt(viewRowIndex);
 	endRemoveRows();
