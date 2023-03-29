@@ -200,13 +200,12 @@ public:
 inline QPair<QStringList, QStringList> getSupportedLanguages()
 {
 	QStringList codes = QStringList("en");
+	QStringList names = QStringList("English");
+	
 	QDirIterator it = QDirIterator(":/i18n/", QDirIterator::Subdirectories);
 	while (it.hasNext()) {
-		codes.append(it.next().split(".").at(0).split("/").at(2));
-	}
-	
-	QStringList names = QStringList();
-	for (QString& code : codes) {
+		QString code = it.next().split(".").at(0).split("/").at(2);
+		codes.append(code);
 		names.append(QLocale(code).nativeLanguageName());
 	}
 	
