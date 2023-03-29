@@ -18,7 +18,6 @@
 #include "database.h"
 
 #include "src/db/db_error.h"
-#include "src/tools/test_data.h"
 
 #include <QSqlError>
 #include <QSqlQuery>
@@ -462,24 +461,6 @@ QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString
 		displayError(parent, "Received invalid QVariant from query", queryString);
 	QString stringValue = variantValue.toString();
 	return stringValue;
-}
-
-
-
-void Database::insertTestData(QWidget* parent)
-{	
-	assert(databaseLoaded);
-	
-	for (Table* table : tables) {
-		table->resetBuffer();
-	}
-	
-	QSqlError initError = insertTestDataIntoSql();
-	if (initError.type() != QSqlError::NoError) {
-		displayError(parent, initError);
-	}
-	
-	populateBuffers(parent);
 }
 
 

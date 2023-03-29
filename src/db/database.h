@@ -101,9 +101,6 @@ private:
 	
 	int getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
 	QString getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const;
-	
-public:
-	void insertTestData(QWidget* parent);
 };
 
 
