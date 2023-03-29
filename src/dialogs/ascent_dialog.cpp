@@ -440,10 +440,6 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, int bufferR
 		if (!proceed) return;
 	}
 	
-	// Remove all photos and participation associated with this ascent
-	db->photosTable->removeRowsForAscent(parent, ascentID);
-	db->participatedTable->removeMatchingRows(parent, db->participatedTable->ascentIDColumn, ascentID);
-	
 	// Remove ascent itself
 	db->removeRow(parent, db->ascentsTable, ascentID);
 }
