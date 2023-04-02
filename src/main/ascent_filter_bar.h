@@ -40,6 +40,8 @@ class AscentFilterBar : public QWidget, public Ui_AscentFilterBar
 	QList<ValidItemID> selectableRangeIDs;
 	QList<ValidItemID> selectableHikerIDs;
 	
+	bool temporarilyIgnoreChangeEvents;
+	
 public:
 	AscentFilterBar(QWidget* parent);
 	// Initial setup

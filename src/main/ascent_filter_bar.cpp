@@ -30,7 +30,8 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 		db(nullptr),
 		compAscents(nullptr),
 		selectableRangeIDs(QList<ValidItemID>()),
-		selectableHikerIDs(QList<ValidItemID>())
+		selectableHikerIDs(QList<ValidItemID>()),
+		temporarilyIgnoreChangeEvents(false)
 {
 	setupUi(this);
 	
@@ -90,6 +91,7 @@ void AscentFilterBar::additionalUISetup()
 			[](QPair<QString, QStringList> qPair){ return qPair.first; }
 	);
 	difficultyFilterSystemCombo->insertItems(0, difficultySystemNames);
+	
 	handle_difficultyFilterSystemChanged();
 }
 
@@ -255,32 +257,54 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 
 void AscentFilterBar::updateRangeCombo()
 {
+	temporarilyIgnoreChangeEvents = true;
+	
 	ItemID previouslySelectedRangeID = ItemID();
 	int rangeComboIndex = rangeFilterCombo->currentIndex();
 	if (rangeComboIndex > 0) {
 		previouslySelectedRangeID = selectableRangeIDs.at(rangeComboIndex - 1);	// 0 is None
 	}
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeFilterCombo, selectableRangeIDs);
+	
 	int newRangeComboIndex = 0;
+	ItemID newlySelectedRangeID = ItemID();
 	if (selectableRangeIDs.contains(previouslySelectedRangeID)) {
 		newRangeComboIndex = selectableRangeIDs.indexOf(previouslySelectedRangeID) + 1;	// 0 is None
+		newlySelectedRangeID = previouslySelectedRangeID;
 	}
 	rangeFilterCombo->setCurrentIndex(newRangeComboIndex);
+	
+	temporarilyIgnoreChangeEvents = false;
+	
+	if (newlySelectedRangeID != previouslySelectedRangeID) {
+		handle_filtersChanged();
+	}
 }
 
 void AscentFilterBar::updateHikerCombo()
 {
+	temporarilyIgnoreChangeEvents = true;
+	
 	ItemID previouslySelectedHikerID = ItemID();
 	int hikerComboIndex = hikerFilterCombo->currentIndex();
 	if (hikerComboIndex > 0) {
 		previouslySelectedHikerID = selectableHikerIDs.at(hikerComboIndex - 1);	// 0 is None
 	}
 	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerFilterCombo, selectableHikerIDs);
+	
 	int newHikerComboIndex = 0;
+	ItemID newlySelectedHikerID = ItemID();
 	if (selectableHikerIDs.contains(previouslySelectedHikerID)) {
 		newHikerComboIndex = selectableHikerIDs.indexOf(previouslySelectedHikerID) + 1;	// 0 is None
+		newlySelectedHikerID = previouslySelectedHikerID;
 	}
 	hikerFilterCombo->setCurrentIndex(newHikerComboIndex);
+	
+	temporarilyIgnoreChangeEvents = false;
+	
+	if (newlySelectedHikerID != previouslySelectedHikerID) {
+		handle_filtersChanged();
+	}
 }
 
 
@@ -289,6 +313,8 @@ void AscentFilterBar::updateHikerCombo()
 
 void AscentFilterBar::handle_filtersChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	bool anyFilterIsSet = dateFilterBox->isChecked()
 			|| peakHeightFilterBox->isChecked()
 			|| volcanoFilterBox->isChecked()
@@ -316,6 +342,7 @@ void AscentFilterBar::handle_filtersChanged()
 
 void AscentFilterBar::handle_difficultyFilterBoxChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
 	if (!difficultyFilterBox->isChecked()) return;
 	
 	int system = difficultyFilterSystemCombo->currentIndex();
@@ -327,6 +354,8 @@ void AscentFilterBar::handle_difficultyFilterBoxChanged()
 
 void AscentFilterBar::handle_minDateChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	if (!dateFilterMaxCheckbox->checkState()) {
 		dateFilterMaxWidget->setDate(dateFilterMinWidget->date());
 	}
@@ -339,6 +368,8 @@ void AscentFilterBar::handle_minDateChanged()
 
 void AscentFilterBar::handle_maxDateChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	if (dateFilterMinWidget->date() > dateFilterMaxWidget->date()) {
 		dateFilterMinWidget->setDate(dateFilterMaxWidget->date());
 	}
@@ -348,6 +379,8 @@ void AscentFilterBar::handle_maxDateChanged()
 
 void AscentFilterBar::handle_minHeightChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	if (!peakHeightFilterMaxCheckbox->checkState()) {
 		peakHeightFilterMaxCombo->setCurrentIndex(peakHeightFilterMinCombo->currentIndex());
 	}
@@ -360,6 +393,8 @@ void AscentFilterBar::handle_minHeightChanged()
 
 void AscentFilterBar::handle_maxHeightChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	if (peakHeightFilterMinCombo->currentIndex() > peakHeightFilterMaxCombo->currentIndex()) {
 		peakHeightFilterMinCombo->setCurrentIndex(peakHeightFilterMaxCombo->currentIndex());
 	}
@@ -369,6 +404,8 @@ void AscentFilterBar::handle_maxHeightChanged()
 
 void AscentFilterBar::handle_difficultyFilterSystemChanged()
 {
+	if (temporarilyIgnoreChangeEvents) return;
+	
 	int system = difficultyFilterSystemCombo->currentIndex();
 	bool systemSelected = system > 0;
 	difficultyFilterGradeCombo->setEnabled(systemSelected && difficultyFilterBox->isChecked());
