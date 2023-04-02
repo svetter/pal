@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License along with PeakAscentLogger.
 # If not, see <https://www.gnu.org/licenses/>.
 
+
+
 QT += core gui
 QT += sql
 QT += svg svgwidgets
@@ -154,8 +156,10 @@ FORMS += \
 
 
 VERSION = 0.1.0
+DEFINES += APP_VERSION_MAJOR=0
+DEFINES += APP_VERSION_MINOR=1
+DEFINES += APP_VERSION_PATCH=0
 
-DEFINES += APP_VERSION='"\\\"0.1\\\""'
 DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 

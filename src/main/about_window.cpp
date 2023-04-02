@@ -27,8 +27,10 @@ AboutWindow::AboutWindow(QWidget* parent) :
 {
 	setupUi(this);
 	
-	QString qtVersion = QString::number(QT_VERSION_MAJOR) + "." + QString::number(QT_VERSION_MINOR) + "." + QString::number(QT_VERSION_PATCH);
-	appNameLabel	->setText(appNameLabel	->text().replace("$APP_VERSION$",	QStringLiteral(APP_VERSION	).toHtmlEscaped()));
+	QString appVersion	= QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_PATCH);
+	QString qtVersion	= QString("%1.%2.%3").arg( QT_VERSION_MAJOR).arg( QT_VERSION_MINOR).arg( QT_VERSION_PATCH);
+	
+	appNameLabel	->setText(appNameLabel	->text().replace("$APP_VERSION$",	appVersion));
 	copyrightLabel	->setText(copyrightLabel->text().replace("$APP_COPYRIGHT$",	QStringLiteral(APP_COPYRIGHT).toHtmlEscaped()));
 	codeLabel		->setText(codeLabel		->text().replace("$CODE_LINK$",		QStringLiteral(CODE_LINK	).toHtmlEscaped()));
 	qtInfoLabel		->setText(qtInfoLabel	->text().replace("$QT_VERSION$",	qtVersion));
