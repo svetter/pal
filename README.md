@@ -58,6 +58,7 @@ Each peak itself has the following associated fields:
 
 Other features:
 
+- Filtering the ascents table by date, peak height, difficulty and more
 - Automatically created statistics about peaks, hikers, trips, regions and countries
 - Setting a default hiker which gets added to every new ascent automatically
 - Changing paths of referenced photos in bulk
