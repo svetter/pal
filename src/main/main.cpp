@@ -27,6 +27,10 @@ int main(int argc, char *argv[])
 {
 	QApplication application(argc, argv);
 	
+	if (argc >= 2) {
+		application.setStyle(argv[1]);
+	}
+	
 	
 	
 	// Configure translation
