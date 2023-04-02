@@ -49,6 +49,8 @@ MainWindow::MainWindow() :
 	statusbar->addPermanentWidget(statusBarFiltersLabel);
 	setUIEnabled(false);
 	
+	setWindowTitleFilename();
+	
 	if (Settings::rememberWindowPositions.get()) {
 		setWindowState(Settings::mainWindow_maximized.get() ? Qt::WindowMaximized : Qt::WindowNoState);
 		const QRect savedGeometry = Settings::mainWindow_geometry.get();
@@ -88,6 +90,7 @@ MainWindow::MainWindow() :
 	// Open database
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
 	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
+		setWindowTitleFilename(lastOpen);
 		db.openExisting(this, lastOpen);
 		updateFilters();
 		setVisible(true);
@@ -651,6 +654,8 @@ void MainWindow::handle_newDatabase()
 	if (!filepath.endsWith(".db")) filepath.append(".db");
 	
 	handle_closeDatabase();
+	
+	setWindowTitleFilename(filepath);
 	db.createNew(this, filepath);
 	updateFilters();
 	updateTableSize();
@@ -673,6 +678,8 @@ void MainWindow::handle_openDatabase()
 	if (filepath.isEmpty() || !QFile(filepath).exists()) return;
 	
 	handle_closeDatabase();
+	
+	setWindowTitleFilename(filepath);
 	db.openExisting(this, filepath);
 	updateFilters();
 	initCompositeBuffers();
@@ -690,6 +697,8 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	}
 	
 	handle_closeDatabase();
+	
+	setWindowTitleFilename(filepath);
 	db.openExisting(this, filepath);
 	updateFilters();
 	initCompositeBuffers();
@@ -737,13 +746,16 @@ void MainWindow::handle_saveDatabaseAs()
 				+ tr("Reverting to previously opened file:")
 				+ "\n" + db.getCurrentFilepath();
 		QMessageBox::warning(this, title, message);
+		return;
 	}
 	
+	setWindowTitleFilename(filepath);
 	addToRecentFilesList(filepath);
 }
 
 void MainWindow::handle_closeDatabase()
 {
+	setWindowTitleFilename();
 	setUIEnabled(false);
 	ascentFilterBar->resetUI();
 	db.reset();
@@ -881,6 +893,16 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	
 	Settings::recentDatabaseFiles.set(recentFiles);
 	updateRecentFilesMenu();
+}
+
+void MainWindow::setWindowTitleFilename(QString filepath)
+{
+	QString windowTitle = "PeakAscentLogger";
+	if (!filepath.isEmpty()) {
+		QString filename = QFileInfo(filepath).fileName();
+		windowTitle += "   –   " + filename;
+	}
+	setWindowTitle(windowTitle);
 }
 
 void MainWindow::setStatusLine(QString content)

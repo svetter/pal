@@ -122,6 +122,7 @@ private:
 	// General helpers
 	QTableView* getCurrentTableView() const;
 	void addToRecentFilesList(const QString& filepath);
+	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);
 };
 
