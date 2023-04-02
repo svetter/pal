@@ -277,16 +277,17 @@ void CompositeTable::bufferRowJustInserted(int bufferRowIndex)
 void CompositeTable::bufferRowAboutToBeRemoved(int bufferRowIndex)
 {
 	int viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
-	if (viewRowIndex < 0) return;	// Row was already removed by filter
-	beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
-	bufferOrder.removeAt(viewRowIndex);
-	endRemoveRows();
-	
-	// Update order buffer
-	for (int i = 0; i < bufferOrder.size(); i++) {
-		int currentBufferRowIndex = bufferOrder.at(i);
-		if (currentBufferRowIndex > bufferRowIndex) {
-			bufferOrder.replace(i, currentBufferRowIndex - 1);
+	if (viewRowIndex >= 0) {
+		beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
+		bufferOrder.removeAt(viewRowIndex);
+		endRemoveRows();
+		
+		// Update order buffer
+		for (int i = 0; i < bufferOrder.size(); i++) {
+			int currentBufferRowIndex = bufferOrder.at(i);
+			if (currentBufferRowIndex > bufferRowIndex) {
+				bufferOrder.replace(i, currentBufferRowIndex - 1);
+			}
 		}
 	}
 	
