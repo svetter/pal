@@ -258,12 +258,12 @@ void AscentFilterBar::updateRangeCombo()
 	ItemID previouslySelectedRangeID = ItemID();
 	int rangeComboIndex = rangeFilterCombo->currentIndex();
 	if (rangeComboIndex > 0) {
-		previouslySelectedRangeID = selectableRangeIDs.at(rangeComboIndex - 1);
+		previouslySelectedRangeID = selectableRangeIDs.at(rangeComboIndex - 1);	// 0 is None
 	}
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeFilterCombo, selectableRangeIDs);
 	int newRangeComboIndex = 0;
 	if (selectableRangeIDs.contains(previouslySelectedRangeID)) {
-		newRangeComboIndex = selectableRangeIDs.indexOf(previouslySelectedRangeID);
+		newRangeComboIndex = selectableRangeIDs.indexOf(previouslySelectedRangeID) + 1;	// 0 is None
 	}
 	rangeFilterCombo->setCurrentIndex(newRangeComboIndex);
 }
@@ -273,12 +273,12 @@ void AscentFilterBar::updateHikerCombo()
 	ItemID previouslySelectedHikerID = ItemID();
 	int hikerComboIndex = hikerFilterCombo->currentIndex();
 	if (hikerComboIndex > 0) {
-		previouslySelectedHikerID = selectableHikerIDs.at(hikerComboIndex - 1);
+		previouslySelectedHikerID = selectableHikerIDs.at(hikerComboIndex - 1);	// 0 is None
 	}
 	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerFilterCombo, selectableHikerIDs);
 	int newHikerComboIndex = 0;
 	if (selectableHikerIDs.contains(previouslySelectedHikerID)) {
-		newHikerComboIndex = selectableHikerIDs.indexOf(previouslySelectedHikerID);
+		newHikerComboIndex = selectableHikerIDs.indexOf(previouslySelectedHikerID) + 1;	// 0 is None
 	}
 	hikerFilterCombo->setCurrentIndex(newHikerComboIndex);
 }
