@@ -42,7 +42,10 @@ MainWindow::MainWindow() :
 		shortcuts(QList<QShortcut*>()),
 		statusBarTableSizeLabel(new QLabel(statusbar)),
 		statusBarFiltersLabel(new QLabel(statusbar)),
-		typesHandler(nullptr)
+		typesHandler(nullptr),
+		showDebugTableViews(DEBUG_TABLE_TABS),
+		photosDebugTableView(nullptr),
+		participatedDebugTableView(nullptr)
 {
 	setupUi(this);
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
@@ -66,15 +69,7 @@ MainWindow::MainWindow() :
 	showFiltersAction->setChecked(Settings::mainWindow_showFilters.get());
 	
 	
-	typesHandler = new ItemTypesHandler(
-		new AscentTypeMapper	(&db, ascentsTab,	ascentsTableView,	ascentsDebugTableView,		newAscentAction,	newAscentButton),
-		new PeakTypeMapper		(&db, peaksTab,		peaksTableView,		peaksDebugTableView,		newPeakAction,		newPeakButton),
-		new TripTypeMapper		(&db, tripsTab,		tripsTableView,		tripsDebugTableView,		newTripAction,		newTripButton),
-		new HikerTypeMapper		(&db, hikersTab,	hikersTableView,	hikersDebugTableView,		newHikerAction,		nullptr),
-		new RegionTypeMapper	(&db, regionsTab,	regionsTableView,	regionsDebugTableView,		newRegionAction,	nullptr),
-		new RangeTypeMapper		(&db, rangesTab,	rangesTableView,	rangesDebugTableView,		newRangeAction,		nullptr),
-		new CountryTypeMapper	(&db, countriesTab,	countriesTableView,	countriesDebugTableView,	newCountryAction,	nullptr)
-	);
+	createTypesHandler();
 	
 	
 	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable);
@@ -100,8 +95,7 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	// Temporary
-	setupDebugTableViews();
+	if (showDebugTableViews) setupDebugTableViews();	// After opening database so that auto-sizing columns works correctly
 }
 
 MainWindow::~MainWindow()
@@ -113,6 +107,69 @@ MainWindow::~MainWindow()
 
 
 // INITIAL SETUP
+
+void MainWindow::createTypesHandler()
+{
+	QList<QTableView*> debugTableViews = QList<QTableView*>(9, nullptr);
+	
+	if (showDebugTableViews) {
+		QStringList debugTableNames = {
+			"ascents",
+			"peaks",
+			"trips",
+			"hikers",
+			"regions",
+			"ranges",
+			"countries",
+			"photos",
+			"participated"
+		};
+		
+		for (int i = 0; i < debugTableViews.size(); i++) {
+			QWidget*		debugTab;
+			QHBoxLayout*	debugTabLayout;
+			QTableView*		debugTableView;
+			
+			debugTab = new QWidget();
+			debugTab->setObjectName(debugTableNames.at(i) + "DebugTab" + QString::number(i));
+			debugTabLayout = new QHBoxLayout(debugTab);
+			debugTabLayout->setSpacing(10);
+			debugTabLayout->setObjectName(debugTableNames.at(i) + "DebugTabLayout" + QString::number(i));
+			debugTabLayout->setContentsMargins(10, 10, 10, 10);
+			
+			debugTableView = new QTableView(debugTab);
+			debugTableView->setObjectName(debugTableNames.at(i) + "DebugTableView" + QString::number(i));
+			debugTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+			debugTableView->setAlternatingRowColors(true);
+			debugTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+			debugTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+			debugTableView->setCornerButtonEnabled(false);
+			debugTableView->horizontalHeader()->setHighlightSections(false);
+			debugTableView->verticalHeader()->setDefaultSectionSize(20);
+			debugTableView->verticalHeader()->setHighlightSections(false);
+			
+			debugTabLayout->addWidget(debugTableView);
+			mainAreaTabs->addTab(debugTab, "DBG_" + debugTableNames.at(i));
+			
+			debugTableViews.replace(i, debugTableView);
+		}
+	}
+	
+	typesHandler = new ItemTypesHandler(showDebugTableViews,
+		new AscentTypeMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton),
+		new PeakTypeMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton),
+		new TripTypeMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton),
+		new HikerTypeMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		nullptr),
+		new RegionTypeMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	nullptr),
+		new RangeTypeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		nullptr),
+		new CountryTypeMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	nullptr)
+	);
+	
+	if (showDebugTableViews) {
+		photosDebugTableView		= debugTableViews.at(7);
+		participatedDebugTableView	= debugTableViews.at(8);
+	}
+}
 
 void MainWindow::connectUI()
 {
@@ -162,10 +219,12 @@ void MainWindow::connectUI()
 		};
 		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	openFunction);
 		
-		auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
-			mapper.openEditItemDialogAndStoreMethod(this, &db, index.row());
-		};
-		connect(mapper.debugTableView,		&QTableView::doubleClicked,		this,	editFunctionDebug);
+		if (showDebugTableViews) {
+			auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
+				mapper.openEditItemDialogAndStoreMethod(this, &db, index.row());
+			};
+			connect(mapper.debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
+		}
 	});
 }
 
@@ -190,13 +249,16 @@ void MainWindow::setupTableViews()
 
 void MainWindow::setupDebugTableViews()
 {
+	assert(showDebugTableViews);
+	qDebug() << "Showing debugging table tabs in main window";
+	
 	auto setupFunction = [this] (QTableView* view, Table* table) {
 		// Set model
 		view->setModel(table);
 		view->setRootIndex(table->getNormalRootModelIndex());
 		view->resizeColumnsToContents();
-		if (view == ascentsDebugTableView && view->columnWidth(db.ascentsTable->descriptionColumn->getIndex()) > 400) {
-			view->setColumnWidth(db.ascentsTable->descriptionColumn->getIndex(), 400);
+		for (int i = 0; i < table->columnCount(); i++) {
+			if (view->columnWidth(i) > 400) view->setColumnWidth(i, 400);
 		}
 		
 		// Enable context menu

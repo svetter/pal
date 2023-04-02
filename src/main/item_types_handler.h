@@ -247,9 +247,10 @@ public:
 
 class ItemTypesHandler {
 public:
+	const bool showDebugTableViews;
 	const QMap<PALItemType, const ItemTypeMapper*> mappers;
 	
-	inline ItemTypesHandler(
+	inline ItemTypesHandler(bool showDebugTableViews,
 			const AscentTypeMapper*		ascentMapper,
 			const PeakTypeMapper*		peakMapper,
 			const TripTypeMapper*		tripMapper,
@@ -258,6 +259,7 @@ public:
 			const RangeTypeMapper*		rangeMapper,
 			const CountryTypeMapper*	countryMapper
 			) :
+			showDebugTableViews(showDebugTableViews),
 			mappers({
 				{Ascent,	ascentMapper},
 				{Peak,		peakMapper},

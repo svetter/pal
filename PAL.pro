@@ -161,6 +161,10 @@ DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
 
 
+DEFINES += DEBUG_TABLE_TABS=false
+
+
+
 TRANSLATIONS += \
 	translation/de.ts
 

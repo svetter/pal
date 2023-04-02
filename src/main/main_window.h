@@ -48,12 +48,18 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	
 	const ItemTypesHandler* typesHandler;
 	
+	// Debugging table views
+	bool showDebugTableViews;
+	QTableView* photosDebugTableView;
+	QTableView* participatedDebugTableView;
+	
 public:
 	MainWindow();
 	~MainWindow();
 	
 private:
 	// Initial setup
+	void createTypesHandler();
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
