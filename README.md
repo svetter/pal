@@ -85,6 +85,19 @@ If you want to contribute by creating a translation and don't know where to star
 
 
 
+Stability
+---------
+
+At the moment, PAL is not tested systematically or comprehensively.
+Changes to the database file are considered safe, so you don't need to worry a lot about data corruption.
+Any problems with wrong or missing data due to bugs should be resolved after restarting the app.
+Nevertheless, it is recommended to create frequent backups of the database file if it contains important data.
+
+If you found a bug, please [create an issue](https://github.com/svetter/pal/issues/new) describing the problem and how to reproduce it.
+You can attach your database file if it doesn't contain sensitive private data.
+
+
+
 More screenshots <a name="more_screens">
 ----------------
 
