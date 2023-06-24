@@ -424,7 +424,7 @@
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="49"/>
         <source>Ascent title</source>
-        <translation>Besteigungstitel</translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="68"/>
@@ -549,17 +549,17 @@
         <translation>Besteigung löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="497"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="493"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="499"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="495"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="500"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="496"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -632,12 +632,12 @@
         <translation>Dabei</translation>
     </message>
     <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="378"/>
+        <location filename="../src/main/ascent_filter_bar.cpp" line="415"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="381"/>
+        <location filename="../src/main/ascent_filter_bar.cpp" line="418"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -919,17 +919,17 @@
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="697"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="698"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="698"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="699"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="699"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="700"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -944,7 +944,7 @@
     <message>
         <location filename="../src/db/tables/ascents_table.cpp" line="28"/>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <location filename="../src/db/tables/ascents_table.cpp" line="30"/>
@@ -1015,12 +1015,12 @@
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="53"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="54"/>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="54"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="53"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
@@ -1489,19 +1489,19 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/ui/main_window.ui" line="88"/>
-        <location filename="../src/ui/main_window.ui" line="1209"/>
+        <location filename="../src/ui/main_window.ui" line="729"/>
         <source>New ascent...</source>
         <translation>Neue Besteigung...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="101"/>
-        <location filename="../src/ui/main_window.ui" line="1217"/>
+        <location filename="../src/ui/main_window.ui" line="737"/>
         <source>New peak...</source>
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="114"/>
-        <location filename="../src/ui/main_window.ui" line="1222"/>
+        <location filename="../src/ui/main_window.ui" line="742"/>
         <source>New trip...</source>
         <translation>Neuer Urlaub...</translation>
     </message>
@@ -1546,265 +1546,265 @@
         <translation>Länder</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1086"/>
+        <location filename="../src/ui/main_window.ui" line="606"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1090"/>
+        <location filename="../src/ui/main_window.ui" line="610"/>
         <source>Open recent database</source>
         <translation>Zuletzt geöffnet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1107"/>
+        <location filename="../src/ui/main_window.ui" line="627"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1115"/>
+        <location filename="../src/ui/main_window.ui" line="635"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1127"/>
+        <location filename="../src/ui/main_window.ui" line="647"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1133"/>
+        <location filename="../src/ui/main_window.ui" line="653"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1151"/>
+        <location filename="../src/ui/main_window.ui" line="671"/>
         <source>New database...</source>
         <translation>Neue Datenbank...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1156"/>
+        <location filename="../src/ui/main_window.ui" line="676"/>
         <source>Open database...</source>
         <translation>Datenbank öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1161"/>
+        <location filename="../src/ui/main_window.ui" line="681"/>
         <source>Clear list</source>
         <translation>Liste leeren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1170"/>
+        <location filename="../src/ui/main_window.ui" line="690"/>
         <source>Save database as...</source>
         <translation>Datenbank speichern unter...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1178"/>
+        <location filename="../src/ui/main_window.ui" line="698"/>
         <source>Close database</source>
         <translation>Datenbank schließen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1183"/>
+        <location filename="../src/ui/main_window.ui" line="703"/>
         <source>Project settings...</source>
         <translation>Projekteinstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1188"/>
+        <location filename="../src/ui/main_window.ui" line="708"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1199"/>
+        <location filename="../src/ui/main_window.ui" line="719"/>
         <source>Show filters</source>
         <translation>Filter anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1204"/>
+        <location filename="../src/ui/main_window.ui" line="724"/>
         <source>Auto-resize columns</source>
         <translation>Spaltengrößen optimieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1227"/>
+        <location filename="../src/ui/main_window.ui" line="747"/>
         <source>New hiker...</source>
         <translation>Neuer Wanderer...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1232"/>
+        <location filename="../src/ui/main_window.ui" line="752"/>
         <source>New region...</source>
         <translation>Neue Region...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1237"/>
+        <location filename="../src/ui/main_window.ui" line="757"/>
         <source>New mountain range...</source>
         <translation>Neues Gebirge...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1242"/>
+        <location filename="../src/ui/main_window.ui" line="762"/>
         <source>New country...</source>
         <translation>Neues Land...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1247"/>
+        <location filename="../src/ui/main_window.ui" line="767"/>
         <source>Relocate photos...</source>
         <translation>Fotos umziehen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1256"/>
+        <location filename="../src/ui/main_window.ui" line="776"/>
         <source>About PAL</source>
         <translation>Über PAL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1265"/>
+        <location filename="../src/ui/main_window.ui" line="785"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="267"/>
+        <location filename="../src/main/main_window.cpp" line="332"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="269"/>
+        <location filename="../src/main/main_window.cpp" line="334"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="270"/>
+        <location filename="../src/main/main_window.cpp" line="335"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="272"/>
+        <location filename="../src/main/main_window.cpp" line="337"/>
         <source>Delete...</source>
         <translation>Löschen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="311"/>
+        <location filename="../src/main/main_window.cpp" line="376"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="315"/>
+        <location filename="../src/main/main_window.cpp" line="380"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="346"/>
+        <location filename="../src/main/main_window.cpp" line="411"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="419"/>
+        <location filename="../src/main/main_window.cpp" line="484"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="424"/>
+        <location filename="../src/main/main_window.cpp" line="489"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="424"/>
+        <location filename="../src/main/main_window.cpp" line="489"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="426"/>
+        <location filename="../src/main/main_window.cpp" line="491"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="426"/>
+        <location filename="../src/main/main_window.cpp" line="491"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="434"/>
+        <location filename="../src/main/main_window.cpp" line="499"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="434"/>
+        <location filename="../src/main/main_window.cpp" line="499"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="436"/>
+        <location filename="../src/main/main_window.cpp" line="501"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="466"/>
-        <location filename="../src/main/main_window.cpp" line="476"/>
+        <location filename="../src/main/main_window.cpp" line="531"/>
+        <location filename="../src/main/main_window.cpp" line="541"/>
         <source>Saved new %1.</source>
         <translation>%1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="485"/>
+        <location filename="../src/main/main_window.cpp" line="550"/>
         <source>Saved changes in %1.</source>
         <translation>Änderungen in %1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="494"/>
+        <location filename="../src/main/main_window.cpp" line="559"/>
         <source>Deleted %1.</source>
         <translation>%1 gelöscht.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="533"/>
+        <location filename="../src/main/main_window.cpp" line="598"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="534"/>
+        <location filename="../src/main/main_window.cpp" line="599"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="645"/>
+        <location filename="../src/main/main_window.cpp" line="710"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="668"/>
+        <location filename="../src/main/main_window.cpp" line="735"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="671"/>
+        <location filename="../src/main/main_window.cpp" line="738"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="671"/>
+        <location filename="../src/main/main_window.cpp" line="738"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="710"/>
-        <location filename="../src/main/main_window.cpp" line="720"/>
-        <location filename="../src/main/main_window.cpp" line="734"/>
+        <location filename="../src/main/main_window.cpp" line="781"/>
+        <location filename="../src/main/main_window.cpp" line="791"/>
+        <location filename="../src/main/main_window.cpp" line="805"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="721"/>
+        <location filename="../src/main/main_window.cpp" line="792"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="722"/>
+        <location filename="../src/main/main_window.cpp" line="793"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="722"/>
+        <location filename="../src/main/main_window.cpp" line="793"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="735"/>
+        <location filename="../src/main/main_window.cpp" line="806"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="737"/>
+        <location filename="../src/main/main_window.cpp" line="808"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
