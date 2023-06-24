@@ -27,8 +27,8 @@ class CompositeAscentsTable : public CompositeTable {
 	
 public:
 	const DirectCompositeColumn*		dateColumn;
-	const DirectCompositeColumn*		titleColumn;
 	const ReferenceCompositeColumn*		peakColumn;
+	const DirectCompositeColumn*		titleColumn;
 	const ReferenceCompositeColumn*		peakHeightColumn;
 	const ReferenceCompositeColumn*		regionColumn;
 	const ReferenceCompositeColumn*		rangeColumn;
@@ -50,8 +50,8 @@ public:
 			CompositeTable(db, db->ascentsTable),
 			//																		uiName				align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			dateColumn			(new const DirectCompositeColumn		(this,	tr("Date"),				Qt::AlignLeft,		noSuffix,	db->ascentsTable->dateColumn)),
-			titleColumn			(new const DirectCompositeColumn		(this,	tr("Title"),			Qt::AlignLeft,		noSuffix,	db->ascentsTable->titleColumn)),
 			peakColumn			(new const ReferenceCompositeColumn		(this,	tr("Peak"),				Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn },			db->peaksTable->nameColumn)),
+			titleColumn			(new const DirectCompositeColumn		(this,	tr("Title"),			Qt::AlignLeft,		noSuffix,	db->ascentsTable->titleColumn)),
 			peakHeightColumn	(new const ReferenceCompositeColumn		(this,	tr("Height"),			Qt::AlignRight,		mSuffix,	{ db->ascentsTable->peakIDColumn },			db->peaksTable->heightColumn)),
 			regionColumn		(new const ReferenceCompositeColumn		(this,	tr("Region"),			Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn},			db->regionsTable->nameColumn)),
 			rangeColumn			(new const ReferenceCompositeColumn		(this,	tr("Mountain range"),	Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->nameColumn)),
@@ -69,8 +69,8 @@ public:
 			hikerIDsColumn		(new const FoldCompositeColumn			(this,	"Hiker IDs",			IntList,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
 	{
 		addColumn(dateColumn);
-		addColumn(titleColumn);
 		addColumn(peakColumn);
+		addColumn(titleColumn);
 		addColumn(peakHeightColumn);
 		addColumn(regionColumn);
 		addColumn(rangeColumn);
