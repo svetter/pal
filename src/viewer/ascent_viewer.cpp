@@ -625,8 +625,8 @@ void AscentViewer::handle_descriptionEditableChanged()
 {
 	if (descriptionEditable) saveDescription();
 	
-	bool descriptionEditable = editDescriptionButton->isChecked();
-
+	descriptionEditable = editDescriptionButton->isChecked();
+	
 	descriptionTextBrowser->setReadOnly(!descriptionEditable);
 }
 
@@ -639,8 +639,8 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
 	}
 	
-	bool photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
-
+	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
+	
 	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
 	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
 }
