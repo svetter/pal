@@ -461,6 +461,7 @@ void AscentViewer::addPhotos()
 	savePhotosList();
 	
 	updatePhoto();
+	updatePhotoButtonsEnabled();
 }
 
 void AscentViewer::removeCurrentPhoto()
