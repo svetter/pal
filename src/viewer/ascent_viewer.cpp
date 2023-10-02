@@ -365,6 +365,7 @@ void AscentViewer::updatePhoto()
 	photoDescriptionLineEdit->setText(QString());
 	photoDescriptionLabel	->setVisible(false);
 	photoDescriptionLineEdit->setVisible(false);
+	imageFrame				->setToolTip(QString());
 	
 	updatePhotoIndexLabel();
 	
@@ -404,6 +405,7 @@ void AscentViewer::updatePhoto()
 	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
 	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
+	imageFrame				->setToolTip(filepath);
 }
 
 void AscentViewer::updatePhotoIndexLabel()
