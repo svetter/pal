@@ -247,7 +247,7 @@ void AscentDialog::handle_newPeak()
 	if (newPeakIndex < 0) return;
 	
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
-	ValidItemID peakID = db->rangesTable->getPrimaryKeyAt(newPeakIndex);
+	ValidItemID peakID = db->peaksTable->getPrimaryKeyAt(newPeakIndex);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(peakID) + 1);	// 0 is None
 }
 

@@ -47,6 +47,8 @@ int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 
 ValidItemID NormalTable::getPrimaryKeyAt(int bufferRowIndex) const
 {
+	assert(bufferRowIndex < buffer.size());
+	assert(primaryKeyColumn->getIndex() < buffer.at(bufferRowIndex)->size());
 	return buffer.at(bufferRowIndex)->at(primaryKeyColumn->getIndex());
 }
 
