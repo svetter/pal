@@ -48,6 +48,7 @@ MainWindow::MainWindow() :
 		participatedDebugTableView(nullptr)
 {
 	setupUi(this);
+	setupMenuIcons();
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
 	statusbar->addPermanentWidget(statusBarFiltersLabel);
 	setUIEnabled(false);
@@ -107,6 +108,24 @@ MainWindow::~MainWindow()
 
 
 // INITIAL SETUP
+
+void MainWindow::setupMenuIcons()
+{
+	newDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+	openDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	openRecentMenu			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	saveDatabaseAsAction	->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+	closeDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_TabCloseButton));
+	projectSettingsAction	->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+	settingsAction			->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+	// View menu
+	// showFiltersAction is checkable
+	autoResizeColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	// New menu: no fitting icons
+	// Tools menu
+	relocatePhotosAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	// Help menu: already has icons
+}
 
 void MainWindow::createTypesHandler()
 {
@@ -460,6 +479,7 @@ void MainWindow::updateRecentFilesMenu()
 	for (QString& filepath : recentFiles) {
 		auto handler = [=](){ handle_openRecentDatabase(filepath); };
 		QAction* newAction = openRecentMenu->addAction(filepath, this, handler);
+		newAction->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
 		openRecentActions.append(newAction);
 	}
 	

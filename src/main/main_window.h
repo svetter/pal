@@ -58,7 +58,8 @@ public:
 	~MainWindow();
 	
 private:
-	// Initial setup
+    // Initial setup
+    void setupMenuIcons();
 	void createTypesHandler();
 	void connectUI();
 	void setupTableViews();
