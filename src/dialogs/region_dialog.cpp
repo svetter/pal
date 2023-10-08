@@ -29,7 +29,8 @@
 RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
 		NewOrEditDialog(parent, db, purpose),
 		init(init),
-		selectableRangeIDs(QList<ValidItemID>())
+		selectableRangeIDs(QList<ValidItemID>()),
+		selectableCountryIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	
@@ -139,7 +140,7 @@ void RegionDialog::handle_newCountry()
 	
 	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, true, countryCombo, selectableCountryIDs);
 	ValidItemID countryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
-	countryCombo->setCurrentIndex(selectableRangeIDs.indexOf(countryID) + 1);	// 0 is None
+	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(countryID) + 1);	// 0 is None
 }
 
 
