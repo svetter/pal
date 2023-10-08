@@ -33,7 +33,6 @@ public:
 	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);
 	virtual ~NormalTable();
 	
-public:
 	// Buffer access
 	int getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
 	ValidItemID getPrimaryKeyAt(int bufferRowIndex) const;
