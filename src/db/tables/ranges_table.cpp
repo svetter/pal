@@ -45,12 +45,12 @@ int RangesTable::addRow(QWidget* parent, Range* range)
 	return newRangeIndex;
 }
 
-void RangesTable::updateRow(QWidget* parent, ValidItemID hikerID, const Range* range)
+void RangesTable::updateRow(QWidget* parent, ValidItemID rangeID, const Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
-	NormalTable::updateRow(parent, hikerID, columns, data);
+	NormalTable::updateRow(parent, rangeID, columns, data);
 }
 
 

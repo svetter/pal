@@ -55,12 +55,12 @@ int PeaksTable::addRow(QWidget* parent, Peak* peak)
 	return newPeakIndex;
 }
 
-void PeaksTable::updateRow(QWidget* parent, ValidItemID hikerID, const Peak* peak)
+void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
-	NormalTable::updateRow(parent, hikerID, columns, data);
+	NormalTable::updateRow(parent, peakID, columns, data);
 }
 
 

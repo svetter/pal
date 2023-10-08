@@ -43,12 +43,12 @@ int CountriesTable::addRow(QWidget* parent, Country* country)
 	return newCountryIndex;
 }
 
-void CountriesTable::updateRow(QWidget* parent, ValidItemID hikerID, const Country* country)
+void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, country);
 	
-	NormalTable::updateRow(parent, hikerID, columns, data);
+	NormalTable::updateRow(parent, countryID, columns, data);
 }
 
 

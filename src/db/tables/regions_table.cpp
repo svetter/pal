@@ -47,12 +47,12 @@ int RegionsTable::addRow(QWidget* parent, Region* region)
 	return newRegionIndex;
 }
 
-void RegionsTable::updateRow(QWidget* parent, ValidItemID hikerID, const Region* region)
+void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, region);
 	
-	NormalTable::updateRow(parent, hikerID, columns, data);
+	NormalTable::updateRow(parent, regionID, columns, data);
 }
 
 
