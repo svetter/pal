@@ -32,9 +32,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		mainWindow(parent),
 		db(db),
 		typesHandler(typesHandler),
-		compAscents((CompositeAscentsTable*) typesHandler->get(Ascent)->compTable),
-		compPeaks((CompositePeaksTable*) typesHandler->get(Peak)->compTable),
-		compTrips((CompositeTripsTable*) typesHandler->get(Trip)->compTable),
+		compAscents((CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable),
+		compPeaks((CompositePeaksTable*) typesHandler->get(ItemTypePeak)->compTable),
+		compTrips((CompositeTripsTable*) typesHandler->get(ItemTypeTrip)->compTable),
 		currentViewRowIndex(viewRowIndex),
 		currentAscentID(ItemID()),
 		photos(QList<Photo>()),
@@ -167,7 +167,7 @@ void AscentViewer::changeToAscent(int viewRowIndex)
 	int bufferRowIndex	= compAscents->getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID		= db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
 	// Update main window selection
-	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(Ascent), currentViewRowIndex);
+	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
 	updateAscentInfo();
 	setupPhotos();

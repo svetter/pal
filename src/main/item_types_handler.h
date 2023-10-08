@@ -41,13 +41,13 @@
 
 
 enum PALItemType {
-	Ascent,
-	Peak,
-	Trip,
-	Hiker,
-	Region,
-	Range,
-	Country
+	ItemTypeAscent,
+	ItemTypePeak,
+	ItemTypeTrip,
+	ItemTypeHiker,
+	ItemTypeRegion,
+	ItemTypeRange,
+	ItemTypeCountry
 };
 
 
@@ -139,7 +139,7 @@ public:
 class AscentTypeMapper : public ItemTypeMapper {
 public:
 	inline AscentTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Ascent, db->ascentsTable, new CompositeAscentsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeAscent, db->ascentsTable, new CompositeAscentsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::ascentDialog_geometry,
 				&Settings::mainWindow_columnWidths_ascentsTable,
 				&Settings::mainWindow_sorting_ascentsTable,
@@ -154,7 +154,7 @@ public:
 class PeakTypeMapper : public ItemTypeMapper {
 public:
 	inline PeakTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Peak, db->peaksTable, new CompositePeaksTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypePeak, db->peaksTable, new CompositePeaksTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::peakDialog_geometry,
 				&Settings::mainWindow_columnWidths_peaksTable,
 				&Settings::mainWindow_sorting_peaksTable,
@@ -169,7 +169,7 @@ public:
 class TripTypeMapper : public ItemTypeMapper {
 public:
 	inline TripTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Trip, db->tripsTable, new CompositeTripsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeTrip, db->tripsTable, new CompositeTripsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::tripDialog_geometry,
 				&Settings::mainWindow_columnWidths_tripsTable,
 				&Settings::mainWindow_sorting_tripsTable,
@@ -184,7 +184,7 @@ public:
 class HikerTypeMapper : public ItemTypeMapper {
 public:
 	inline HikerTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Hiker, db->hikersTable, new CompositeHikersTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeHiker, db->hikersTable, new CompositeHikersTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::hikerDialog_geometry,
 				&Settings::mainWindow_columnWidths_hikersTable,
 				&Settings::mainWindow_sorting_hikersTable,
@@ -199,7 +199,7 @@ public:
 class RegionTypeMapper : public ItemTypeMapper {
 public:
 	inline RegionTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Region, db->regionsTable, new CompositeRegionsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeRegion, db->regionsTable, new CompositeRegionsTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::regionDialog_geometry,
 				&Settings::mainWindow_columnWidths_regionsTable,
 				&Settings::mainWindow_sorting_regionsTable,
@@ -214,7 +214,7 @@ public:
 class RangeTypeMapper : public ItemTypeMapper {
 public:
 	inline RangeTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Range, db->rangesTable, new CompositeRangesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeRange, db->rangesTable, new CompositeRangesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::rangeDialog_geometry,
 				&Settings::mainWindow_columnWidths_rangesTable,
 				&Settings::mainWindow_sorting_rangesTable,
@@ -229,7 +229,7 @@ public:
 class CountryTypeMapper : public ItemTypeMapper {
 public:
 	inline CountryTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(Country, db->countriesTable, new CompositeCountriesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			ItemTypeMapper(ItemTypeCountry, db->countriesTable, new CompositeCountriesTable(db), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::countryDialog_geometry,
 				&Settings::mainWindow_columnWidths_countriesTable,
 				&Settings::mainWindow_sorting_countriesTable,
@@ -261,13 +261,13 @@ public:
 			) :
 			showDebugTableViews(showDebugTableViews),
 			mappers({
-				{Ascent,	ascentMapper},
-				{Peak,		peakMapper},
-				{Trip,		tripMapper},
-				{Hiker,		hikerMapper},
-				{Region,	regionMapper},
-				{Range,		rangeMapper},
-				{Country,	countryMapper},
+				{ItemTypeAscent,	ascentMapper},
+				{ItemTypePeak,		peakMapper},
+				{ItemTypeTrip,		tripMapper},
+				{ItemTypeHiker,		hikerMapper},
+				{ItemTypeRegion,	regionMapper},
+				{ItemTypeRange,		rangeMapper},
+				{ItemTypeCountry,	countryMapper},
 			})
 	{}
 	

@@ -73,7 +73,7 @@ MainWindow::MainWindow() :
 	createTypesHandler();
 	
 	
-	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(Ascent)->compTable);
+	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable);
 	
 	
 	connectUI();
@@ -230,7 +230,7 @@ void MainWindow::connectUI()
 	// Double clicks on table
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto openFunction = [this, &mapper] (const QModelIndex& index) {
-			if (mapper.type == Ascent) {
+			if (mapper.type == ItemTypeAscent) {
 				viewItem(mapper, index.row());
 			} else {
 				editItem(mapper, index);
@@ -424,7 +424,7 @@ void MainWindow::initCompositeBuffers()
 			showFiltersAction->setChecked(true);
 		}
 	}
-	typesHandler->get(Ascent)->compTable->setInitialFilters(ascentFilters);
+	typesHandler->get(ItemTypeAscent)->compTable->setInitialFilters(ascentFilters);
 	
 	typesHandler->forEach([&progress, prepareAll, currentTableView] (const ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
@@ -503,7 +503,7 @@ void MainWindow::updateTableSize(bool reset)
 		if (total == 0) {
 			countText = tr("Table is empty");
 		}
-		else if (mapper.type == Ascent && !debugTable) {
+		else if (mapper.type == ItemTypeAscent && !debugTable) {
 			int displayed = mapper.compTable->rowCount();
 			int filtered = total - displayed;
 			countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
@@ -513,7 +513,7 @@ void MainWindow::updateTableSize(bool reset)
 		statusBarTableSizeLabel->setText(countText);
 		
 		QString filterText = QString();
-		if (mapper.type == Ascent && !debugTable) {
+		if (mapper.type == ItemTypeAscent && !debugTable) {
 			int filtersApplied = mapper.compTable->getCurrentFilters().size();
 			if (filtersApplied) {
 				filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
@@ -534,7 +534,7 @@ void MainWindow::updateTableSize(bool reset)
 void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	switch (mapper.type) {
-	case Ascent:
+	case ItemTypeAscent:
 		AscentViewer(this, &db, typesHandler, viewRowIndex).exec();
 		return;
 	default:
@@ -595,8 +595,8 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 
 void MainWindow::updateFilters(const ItemTypeMapper* mapper)
 {
-	if (!mapper || mapper->type == Range)	ascentFilterBar->updateRangeCombo();
-	if (!mapper || mapper->type == Hiker)	ascentFilterBar->updateHikerCombo();
+	if (!mapper || mapper->type == ItemTypeRange)	ascentFilterBar->updateRangeCombo();
+	if (!mapper || mapper->type == ItemTypeHiker)	ascentFilterBar->updateHikerCombo();
 }
 
 void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex)
@@ -662,7 +662,7 @@ void MainWindow::handle_viewSelectedItem()
 	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
 			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
-		} else if (mapper.type == Ascent) {
+		} else if (mapper.type == ItemTypeAscent) {
 			viewItem(mapper, selectedIndex.row());
 		} else {
 			editItem(mapper, selectedIndex);
