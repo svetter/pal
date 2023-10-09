@@ -28,14 +28,14 @@ class CompositePeaksTable : public CompositeTable {
 public:
 	const DirectCompositeColumn*	nameColumn;
 	const DirectCompositeColumn*	heightColumn;
-	const DirectCompositeColumn*	volcanoColumn;
+	const ReferenceCompositeColumn*	countryColumn;
 	const ReferenceCompositeColumn*	regionColumn;
 	const ReferenceCompositeColumn*	rangeColumn;
-	const ReferenceCompositeColumn*	countryColumn;
 	const ReferenceCompositeColumn*	continentColumn;
 	const FoldCompositeColumn*		numAscentsColumn;
-	const FoldCompositeColumn*		sumElevationGainColumn;
 	const FoldCompositeColumn*		listHikersColumn;
+	const FoldCompositeColumn*		sumElevationGainColumn;
+	const DirectCompositeColumn*	volcanoColumn;
 	
 public:
 	inline CompositePeaksTable(Database* db) :
@@ -43,25 +43,25 @@ public:
 			//																		uiName				align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			nameColumn				(new const DirectCompositeColumn	(this,	tr("Peak"),				Qt::AlignLeft,		noSuffix,	db->peaksTable->nameColumn)),
 			heightColumn			(new const DirectCompositeColumn	(this,	tr("Height"),			Qt::AlignRight,		mSuffix,	db->peaksTable->heightColumn)),
-			volcanoColumn			(new const DirectCompositeColumn	(this,	tr("Volcano"),			Qt::AlignCenter,	noSuffix,	db->peaksTable->volcanoColumn)),
+			countryColumn			(new const ReferenceCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
 			regionColumn			(new const ReferenceCompositeColumn	(this,	tr("Region"),			Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn },		db->regionsTable->nameColumn)),
 			rangeColumn				(new const ReferenceCompositeColumn	(this,	tr("Mountain range"),	Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->nameColumn)),
-			countryColumn			(new const ReferenceCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
 			continentColumn			(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->continentColumn,			&Range::continentNames)),
 			numAscentsColumn		(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,				noSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
+			listHikersColumn		(new const FoldCompositeColumn		(this,	tr("Scaled by"),		ListString,			noSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
 			sumElevationGainColumn	(new const FoldCompositeColumn		(this,	tr("Sum elev. gain"),	Sum,				mSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			listHikersColumn		(new const FoldCompositeColumn		(this,	tr("Scaled by"),		ListString,			noSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
+			volcanoColumn			(new const DirectCompositeColumn	(this,	tr("Volcano"),			Qt::AlignCenter,	noSuffix,	db->peaksTable->volcanoColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(heightColumn);
-		addColumn(volcanoColumn);
+		addColumn(countryColumn);
 		addColumn(regionColumn);
 		addColumn(rangeColumn);
-		addColumn(countryColumn);
 		addColumn(continentColumn);
 		addColumn(numAscentsColumn);
-		addColumn(sumElevationGainColumn);
 		addColumn(listHikersColumn);
+		addColumn(sumElevationGainColumn);
+		addColumn(volcanoColumn);
 	}
 	
 	
