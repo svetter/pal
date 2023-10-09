@@ -70,7 +70,7 @@ Other features:
 Building PAL
 ------------
 
-PAL is built on [Qt 6.5.1](https://wiki.qt.io/Qt_6.5_Release).
+PAL is built on [Qt 6.6.0](https://wiki.qt.io/Qt_6.6_Release).
 
 If there is no release suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt Creator, open the top-level project file [PAL.pro], let Qt Creator configure the project and click build.
 
