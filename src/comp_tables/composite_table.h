@@ -100,8 +100,10 @@ public:
 private:
 	void performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse);
 	
-private:
 	QVariant computeCellContent(int bufferRowIndex, int columnIndex) const;
+	
+public:
+	ProjectSettings* getProjectSettings() const;
 };
 
 

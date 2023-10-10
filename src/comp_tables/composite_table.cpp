@@ -421,3 +421,10 @@ QVariant CompositeTable::computeCellContent(int bufferRowIndex, int columnIndex)
 	
 	return result;
 }
+
+
+
+ProjectSettings* CompositeTable::getProjectSettings() const
+{
+	return db->projectSettings;
+}

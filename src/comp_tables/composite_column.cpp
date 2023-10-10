@@ -314,6 +314,13 @@ void CompositeColumn::announceChangedData() const
 
 
 
+ProjectSettings* CompositeColumn::getProjectSettings() const
+{
+	return table->getProjectSettings();
+}
+
+
+
 
 
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
@@ -478,26 +485,63 @@ QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
 		return list;
 	}
 	
+	assert(currentTable == contentColumn->table);
+	assert(!currentTable->isAssociative);
+	
+	// RETURN IF LIST STRING
+	if (op == ListString) {
+		QList<QString> hikerNameList;
+		
+		// Special case if this is a list of hikers
+		if (contentColumn->name == contentColumn->name) {
+			QString defaultHikerString = QString();
+			const ProjectSetting<int>* defaultHiker = getProjectSettings()->defaultHiker;
+			const Column* hikerIDColumn = contentColumn->table->getPrimaryKeyColumnList().at(0);
+			int defaultHikerRowIndex = contentColumn->table->getMatchingBufferRowIndex({hikerIDColumn}, {defaultHiker->get()});
+			if (defaultHiker->isNotNull() && currentRowIndexSet.contains(defaultHikerRowIndex)) {
+				QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
+				assert(content.canConvert<QString>());
+				defaultHikerString = content.toString();
+			}
+			
+			for (int rowIndex : currentRowIndexSet) {
+				QVariant content = contentColumn->getValueAt(rowIndex);
+				assert(content.canConvert<QString>());
+				hikerNameList.append(content.toString());
+			}
+			std::sort(hikerNameList.begin(), hikerNameList.end());
+			
+			if (!defaultHikerString.isEmpty()) {
+				hikerNameList.insert(0, defaultHikerString);
+			}
+		}
+		else {
+			for (int rowIndex : currentRowIndexSet) {
+				QVariant content = contentColumn->getValueAt(rowIndex);
+				assert(content.canConvert<QString>());
+				content = replaceEnumIfApplicable(content);
+				hikerNameList.append(content.toString());
+			}
+		}
+		
+		QString listString = "";
+		for (QString& hikerNameString : hikerNameList) {
+			if (!listString.isEmpty()) listString.append(", ");
+			listString.append(hikerNameString);
+		}
+		return listString;
+	}
+	
 	
 	
 	// EXECUTE FOLD OPERATION
 	
-	assert(currentTable == contentColumn->table);
-	assert(!currentTable->isAssociative);
-	
 	int aggregate = 0;
-	QString listString = "";
 	
 	for (int rowIndex : currentRowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		
 		switch (op) {
-		case ListString:
-			assert(content.canConvert<QString>());
-			if (!listString.isEmpty()) listString.append(", ");
-			content = replaceEnumIfApplicable(content);
-			listString.append(content.toString());
-			break;
 		case Average:
 		case Sum:
 			assert(content.canConvert<int>());
@@ -515,11 +559,10 @@ QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
 	assert(currentRowIndexSet.size() > 0);
 	
 	switch (op) {
-	case ListString:	return listString;
-	case Average:		return aggregate / currentRowIndexSet.size();
-	case Sum:			return aggregate;
-	case Max:			return aggregate;
-	default:			assert(false);
+	case Average:	return aggregate / currentRowIndexSet.size();
+	case Sum:		return aggregate;
+	case Max:		return aggregate;
+	default:		assert(false);
 	}
 	
 	return QVariant();

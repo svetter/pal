@@ -20,6 +20,7 @@
 
 #include "src/comp_tables/filter.h"
 #include "src/db/column.h"
+#include "src/db/project_settings.h"
 
 #include <QString>
 #include <QVariant>
@@ -65,6 +66,9 @@ public:
 	void announceChangedData() const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const = 0;
+	
+protected:
+	ProjectSettings* getProjectSettings() const;
 };
 
 
