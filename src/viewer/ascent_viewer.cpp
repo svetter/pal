@@ -668,7 +668,7 @@ void AscentViewer::handle_editPeak()
 void AscentViewer::handle_editTrip()
 {
 	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	ValidItemID tripID = db->ascentsTable->tripIDColumn->getValueFor(oldAscentBufferRowIndex).toInt();
+	ValidItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(oldAscentBufferRowIndex).toInt();
 	int tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
 	openEditTripDialogAndStore(this, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
