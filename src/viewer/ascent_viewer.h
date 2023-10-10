@@ -47,6 +47,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	int nextAscentOfPeakViewRowIndex;
 	int lastAscentOfPeakViewRowIndex;
 	
+	int currentAscentOfPeakIndex;
+	int numAscentsOfPeak;
+	
 	QList<Photo> photos;
 	int currentPhotoIndex;
 	
@@ -78,6 +81,7 @@ private:
 	void updateAscentInfo();
 	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
+	void updateAscentNavigationNumbers();
 	void setupPhotos();
 	
 	// Photo change

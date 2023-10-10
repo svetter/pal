@@ -173,6 +173,7 @@ void AscentViewer::changeToAscent(int viewRowIndex)
 	setupPhotos();
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
+	updateAscentNavigationNumbers();
 }
 
 void AscentViewer::resetInfoLabels()
@@ -295,6 +296,9 @@ void AscentViewer::updateAscentNavigationTargets()
 	nextAscentOfPeakViewRowIndex		= -1;
 	lastAscentOfPeakViewRowIndex		= -1;
 	
+	currentAscentOfPeakIndex	= -1;
+	numAscentsOfPeak			= -1;
+	
 	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
@@ -318,6 +322,9 @@ void AscentViewer::updateAscentNavigationTargets()
 			nextAscentOfPeakViewRowIndex		= ascentOfPeakViewRowIndices.at(ascentOfPeakViewRowIndices.indexOf(currentViewRowIndex) + 1);
 			lastAscentOfPeakViewRowIndex		= maxAscentOfPeakViewRowIndex;
 		}
+		
+		currentAscentOfPeakIndex	= ascentOfPeakViewRowIndices.indexOf(currentViewRowIndex);
+		numAscentsOfPeak			= ascentOfPeakViewRowIndices.size();
 	}
 }
 
@@ -332,6 +339,17 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
 	previousAscentOfPeakButton	->setEnabled(previousAscentOfPeakViewRowIndex	>= 0);
 	nextAscentOfPeakButton		->setEnabled(nextAscentOfPeakViewRowIndex		>= 0);
 	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
+}
+
+void AscentViewer::updateAscentNavigationNumbers()
+{
+	QString allAscentsNewText = QString::number(currentViewRowIndex + 1) + " / " + QString::number(lastAscentViewRowIndex + 1);
+	allAscentsNumberLabel->setText(allAscentsNewText);
+	allAscentsNumberLabel->setEnabled(lastAscentViewRowIndex > 0);
+	
+	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
+	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
+	ascentOfPeakNumberLabel->setEnabled(numAscentsOfPeak > 1);
 }
 
 void AscentViewer::setupPhotos()

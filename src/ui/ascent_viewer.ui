@@ -658,7 +658,7 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="ascentNavigationLayout" stretch="1,1">
+      <layout class="QHBoxLayout" name="ascentNavigationLayout">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -670,7 +670,7 @@
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
-         <layout class="QHBoxLayout" name="allAscentsNavigationLayout">
+         <layout class="QVBoxLayout" name="allAscentsNagivationBoxLayout">
           <property name="spacing">
            <number>5</number>
           </property>
@@ -687,66 +687,115 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QToolButton" name="firstAscentButton">
-            <property name="toolTip">
-             <string>Go to first ascent in current table order</string>
+           <widget class="QLabel" name="allAscentsNumberLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="text">
-             <string notr="true">&lt;&lt;</string>
+             <string notr="true">&lt;n&gt; / &lt;N&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="previousAscentButton">
-            <property name="minimumSize">
-             <size>
-              <width>30</width>
-              <height>30</height>
-             </size>
+           <layout class="QHBoxLayout" name="allAscentsNavigationButtonLayout">
+            <property name="spacing">
+             <number>5</number>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Go to previous ascent in current table order</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::LeftArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="nextAscentButton">
-            <property name="minimumSize">
-             <size>
-              <width>30</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Go to next ascent in current table order</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::RightArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="lastAscentButton">
-            <property name="toolTip">
-             <string>Go to last ascent in current table order</string>
-            </property>
-            <property name="text">
-             <string notr="true">&gt;&gt;</string>
-            </property>
-           </widget>
+            <item>
+             <spacer name="allAscentsNavigationButtonLayoutLeftSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="firstAscentButton">
+              <property name="toolTip">
+               <string>Go to first ascent in current table order</string>
+              </property>
+              <property name="text">
+               <string notr="true">&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="previousAscentButton">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to previous ascent in current table order</string>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::LeftArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="nextAscentButton">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to next ascent in current table order</string>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::RightArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="lastAscentButton">
+              <property name="toolTip">
+               <string>Go to last ascent in current table order</string>
+              </property>
+              <property name="text">
+               <string notr="true">&gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="allAscentsNavigationButtonLayoutRightSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -759,7 +808,7 @@
          <property name="alignment">
           <set>Qt::AlignCenter</set>
          </property>
-         <layout class="QHBoxLayout" name="ascentsOfPeakNagivationLayout">
+         <layout class="QVBoxLayout" name="ascentsOfPeakNagivationBoxLayout">
           <property name="spacing">
            <number>5</number>
           </property>
@@ -776,54 +825,115 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QToolButton" name="firstAscentOfPeakButton">
-            <property name="toolTip">
-             <string>Go to first ascent of the same peak in table order</string>
+           <widget class="QLabel" name="ascentOfPeakNumberLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="text">
-             <string notr="true">&lt;&lt;</string>
+             <string notr="true">&lt;n&gt; / &lt;N&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="previousAscentOfPeakButton">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
+           <layout class="QHBoxLayout" name="ascentsOfPeakNavigationButtonLayout">
+            <property name="spacing">
+             <number>5</number>
             </property>
-            <property name="toolTip">
-             <string>Go to previous ascent of the same peak in table order</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::LeftArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="nextAscentOfPeakButton">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>Go to next ascent of the same peak in table order</string>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::RightArrow</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="lastAscentOfPeakButton">
-            <property name="toolTip">
-             <string>Go to last ascent of the same peak in table order</string>
-            </property>
-            <property name="text">
-             <string notr="true">&gt;&gt;</string>
-            </property>
-           </widget>
+            <item>
+             <spacer name="ascentsOfPeakNavigationButtonLayoutLeftSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="firstAscentOfPeakButton">
+              <property name="toolTip">
+               <string>Go to first ascent of the same peak in table order</string>
+              </property>
+              <property name="text">
+               <string notr="true">&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="previousAscentOfPeakButton">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to previous ascent of the same peak in table order</string>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::LeftArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="nextAscentOfPeakButton">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Go to next ascent of the same peak in table order</string>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::RightArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="lastAscentOfPeakButton">
+              <property name="toolTip">
+               <string>Go to last ascent of the same peak in table order</string>
+              </property>
+              <property name="text">
+               <string notr="true">&gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="ascentsOfPeakNavigationButtonLayoutRightSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
