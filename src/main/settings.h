@@ -97,6 +97,7 @@ public:
 	inline static const Setting<bool>	confirmDelete								= Setting<bool>		("confirmDelete",								true);
 	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
 	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
+	inline static const Setting<bool>	warnAboutDuplicateNames						= Setting<bool>		("warnAboutDuplicateNames",						true);
 	
 	inline static const Setting<bool>	onlyPrepareActiveTableOnStartup				= Setting<bool>		("onlyPrepareActiveTableOnStartup",				true);
 	

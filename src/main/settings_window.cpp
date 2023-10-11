@@ -65,6 +65,7 @@ void SettingsWindow::loadSettings()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.get());
+	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.get());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.get());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
@@ -97,6 +98,7 @@ void SettingsWindow::loadDefaults()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
 	allowEmptyNamesCheckbox						->setChecked	(allowEmptyNames							.getDefault());
+	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.getDefault());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.getDefault());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
@@ -134,6 +136,7 @@ void SettingsWindow::saveSettings()
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
 	confirmCancel								.set(confirmCancelCheckbox						->isChecked());
 	allowEmptyNames								.set(allowEmptyNamesCheckbox					->isChecked());
+	warnAboutDuplicateNames						.set(warnAboutDuplicateNamesCheckbox			->isChecked());
 	onlyPrepareActiveTableOnStartup				.set(onlyPrepareActiveTableCheckbox				->isChecked());
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());

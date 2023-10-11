@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>733</height>
+    <height>758</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -130,6 +130,13 @@
        <widget class="QCheckBox" name="allowEmptyNamesCheckbox">
         <property name="text">
          <string>Allow saving when item name is empty</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="warnAboutDuplicateNamesCheckbox">
+        <property name="text">
+         <string>Warn when saving an item with a duplicate name</string>
         </property>
        </widget>
       </item>
