@@ -93,16 +93,10 @@ bool HikerDialog::changesMade()
 
 void HikerDialog::handle_ok()
 {
-	aboutToClose();
-	
-	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
-		accept();
-	} else {
-		QString title = tr("Can't save hiker");
-		QString message = tr("The hiker needs a name.");
-		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, message, ok, ok);
-	}
+	QString emptyNameWindowTitle	= tr("Can't save hiker");
+	QString emptyNameWindowMessage	= tr("The hiker needs a name.");
+	const Column* nameColumn = db->hikersTable->nameColumn;
+	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void HikerDialog::aboutToClose()

@@ -55,6 +55,7 @@ public:
 	
 	QVariant getValueAt(int bufferRowIndex) const;
 	QVariant getValueFor(ValidItemID itemID) const;
+	bool anyCellMatches(QVariant value) const;
 	
 	QString getSqlSpecificationString() const;
 	

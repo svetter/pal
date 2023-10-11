@@ -161,16 +161,10 @@ void PeakDialog::handle_newRegion()
 
 void PeakDialog::handle_ok()
 {
-	aboutToClose();
-	
-	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
-		accept();
-	} else {
-		QString title = tr("Can't save peak");
-		QString message = tr("The peak needs a name.");
-		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, message, ok, ok);
-	}
+	QString emptyNameWindowTitle	= tr("Can't save peak");
+	QString emptyNameWindowMessage	= tr("The peak needs a name.");
+	const Column* nameColumn = db->peaksTable->nameColumn;
+	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void PeakDialog::aboutToClose()

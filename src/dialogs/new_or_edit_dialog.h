@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QComboBox>
+#include <QLineEdit>
 
 
 
@@ -49,10 +50,14 @@ protected:
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
+	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn);
+	virtual void handle_ok() = 0;
 	virtual void handle_cancel();
 	void reject() override;
 	
 	virtual void aboutToClose() = 0;
+	
+	bool checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn);
 	
 public:
 	virtual bool changesMade() = 0;

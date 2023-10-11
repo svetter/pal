@@ -42,6 +42,25 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 
 
 
+void NewOrEditDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn)
+{
+	aboutToClose();
+	
+	QString itemName = nameLineEdit->text();
+	if (itemName.isEmpty() && !Settings::allowEmptyNames.get()) {
+		QMessageBox::information(this, emptyNameWindowTitle, emptyNameMessage, QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+	
+	if (Settings::warnAboutDuplicateNames.get() && (purpose != editItem || itemName != initName)) {
+		// only check for duplicates if the name has changed
+		bool proceed = checkNameForDuplicatesAndWarn(itemName, nameColumn);
+		if (!proceed) return;	// abort saving
+	}
+	
+	accept();
+}
+
 void NewOrEditDialog::handle_cancel()
 {
 	aboutToClose();
@@ -70,6 +89,23 @@ void NewOrEditDialog::handle_cancel()
 void NewOrEditDialog::reject()
 {
 	handle_cancel();
+}
+
+
+
+bool NewOrEditDialog::checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn)
+{
+	if (!nameColumn->anyCellMatches(name)) {
+		return true;	// Item name is not a duplicate, proceed with save
+	}
+	
+	QString windowTitle = tr("Duplicate item name");
+	QString message = tr("There is already an item with this name.\nDo you want to save it anyway?");
+	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+	auto selected = QMessageBox::Cancel;
+	QMessageBox::StandardButton resultButton = QMessageBox::No;
+	resultButton = QMessageBox::warning(this, windowTitle, message, options, selected);
+	return resultButton == QMessageBox::Yes;
 }
 
 

@@ -93,16 +93,10 @@ bool CountryDialog::changesMade()
 
 void CountryDialog::handle_ok()
 {
-	aboutToClose();
-	
-	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
-		accept();
-	} else {
-		QString title = tr("Can't save country");
-		QString message = tr("The country needs a name.");
-		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, message, ok, ok);
-	}
+	QString emptyNameWindowTitle	= tr("Can't save country");
+	QString emptyNameWindowMessage	= tr("The country needs a name.");
+	const Column* nameColumn = db->countriesTable->nameColumn;
+	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void CountryDialog::aboutToClose()

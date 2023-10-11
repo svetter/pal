@@ -82,6 +82,14 @@ QVariant Column::getValueFor(ValidItemID itemID) const
 	return getValueAt(((NormalTable*) table)->getBufferIndexForPrimaryKey(itemID));
 }
 
+bool Column::anyCellMatches(QVariant value) const
+{
+	for (int i = 0; i < table->getNumberOfRows(); i++) {
+		if (getValueAt(i) == value) return true;
+	}
+	return false;
+}
+
 
 
 QString Column::getSqlSpecificationString() const

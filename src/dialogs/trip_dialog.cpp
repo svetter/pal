@@ -146,16 +146,10 @@ void TripDialog::handle_endDateChanged()
 
 void TripDialog::handle_ok()
 {
-	aboutToClose();
-	
-	if (!nameLineEdit->text().isEmpty() || Settings::allowEmptyNames.get()) {
-		accept();
-	} else {
-		QString title = tr("Can't save trip");
-		QString message = tr("The trip needs a name.");
-		auto ok = QMessageBox::Ok;
-		QMessageBox::information(this, title, message, ok, ok);
-	}
+	QString emptyNameWindowTitle	= tr("Can't save trip");
+	QString emptyNameWindowMessage	= tr("The trip needs a name.");
+	const Column* nameColumn = db->tripsTable->nameColumn;
+	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void TripDialog::aboutToClose()
