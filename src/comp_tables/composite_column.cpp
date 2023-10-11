@@ -496,8 +496,8 @@ QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
 		if (contentColumn->name == contentColumn->name) {
 			QString defaultHikerString = QString();
 			const ProjectSetting<int>* defaultHiker = getProjectSettings()->defaultHiker;
-			const Column* hikerIDColumn = contentColumn->table->getPrimaryKeyColumnList().at(0);
-			int defaultHikerRowIndex = contentColumn->table->getMatchingBufferRowIndex({hikerIDColumn}, {defaultHiker->get()});
+			const HikersTable* hikersTable = (HikersTable*)contentColumn->table;
+			int defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
 			if (defaultHiker->isNotNull() && currentRowIndexSet.contains(defaultHikerRowIndex)) {
 				QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
 				assert(content.canConvert<QString>());
