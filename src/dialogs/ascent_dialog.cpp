@@ -292,7 +292,7 @@ void AscentDialog::handle_newTrip()
 	if (newTripIndex < 0) return;
 	
 	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
-	ValidItemID tripID = db->rangesTable->getPrimaryKeyAt(newTripIndex);
+	ValidItemID tripID = db->tripsTable->getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(tripID) + 1);	// 0 is None
 }
 

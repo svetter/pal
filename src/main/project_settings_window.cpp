@@ -102,7 +102,7 @@ void ProjectSettingsWindow::handle_newHiker()
 {
 	int newHikerIndex = openNewHikerDialogAndStore(this, db);
 	if (newHikerIndex < 0) return;
-	ValidItemID hikerID = db->rangesTable->getPrimaryKeyAt(newHikerIndex);
+	ValidItemID hikerID = db->hikersTable->getPrimaryKeyAt(newHikerIndex);
 	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 }
 

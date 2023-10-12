@@ -138,17 +138,17 @@ void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, b
 	combo->addItem(table->getNoneString());
 	
 	// Get pairs of ID and display/sort field
-	QList<QPair<ValidItemID, QVariant>> selectableRanges = table->pairIDWith(displayAndSortColumn);
+	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(displayAndSortColumn);
 	
 	// Sort entries according to sort field
 	auto comparator = [sortAsString] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
 		if (sortAsString) return QString::localeAwareCompare(p1.second.toString(), p2.second.toString()) < 0;
 		return QVariant::compare(p1.second, p2.second) == QPartialOrdering::Less;
 	};
-	std::sort(selectableRanges.begin(), selectableRanges.end(), comparator);
+	std::sort(selectableItems.begin(), selectableItems.end(), comparator);
 	
 	// Save IDs and populate combo box
-	for (const QPair<ValidItemID, QVariant>& pair : selectableRanges) {
+	for (const QPair<ValidItemID, QVariant>& pair : selectableItems) {
 		idList.append(pair.first);
 		combo->addItem(pair.second.toString());
 	}

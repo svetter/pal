@@ -153,7 +153,7 @@ void PeakDialog::handle_newRegion()
 	if (newRegionIndex < 0) return;
 	
 	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
-	ValidItemID regionID = db->rangesTable->getPrimaryKeyAt(newRegionIndex);
+	ValidItemID regionID = db->regionsTable->getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(regionID) + 1);	// 0 is None
 }
 
