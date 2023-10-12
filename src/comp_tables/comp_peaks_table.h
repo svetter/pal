@@ -19,6 +19,7 @@
 #define COMP_PEAKS_TABLE_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/data/enum_names.h"
 
 
 
@@ -46,7 +47,7 @@ public:
 			countryColumn			(new const ReferenceCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
 			regionColumn			(new const ReferenceCompositeColumn	(this,	tr("Region"),			Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn },		db->regionsTable->nameColumn)),
 			rangeColumn				(new const ReferenceCompositeColumn	(this,	tr("Mountain range"),	Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->nameColumn)),
-			continentColumn			(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->continentColumn,			&Range::continentNames)),
+			continentColumn			(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->continentColumn,			&EnumNames::continentNames)),
 			numAscentsColumn		(new const FoldCompositeColumn		(this,	tr("Num. ascents"),		Count,				noSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
 			listHikersColumn		(new const FoldCompositeColumn		(this,	tr("Scaled by"),		ListString,			noSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
 			sumElevationGainColumn	(new const FoldCompositeColumn		(this,	tr("Sum elev. gain"),	Sum,				mSuffix,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} },		db->ascentsTable->elevationGainColumn)),

@@ -51,9 +51,6 @@ public:
 	QList<Photo>		photos;
 	QString				description;
 	
-	static const QStringList hikeKindNames;
-	static const QList<QPair<QString, QStringList>> difficultyNames;
-	
 	Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QList<Photo>& photos, QString& description);
 	virtual ~Ascent();
 	

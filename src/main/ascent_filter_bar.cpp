@@ -81,16 +81,16 @@ void AscentFilterBar::connectUI()
 
 void AscentFilterBar::additionalUISetup()
 {
-	hikeKindFilterCombo->insertItems(0, Ascent::hikeKindNames);
+	hikeKindFilterCombo->insertItems(0, EnumNames::translateList(EnumNames::hikeKindNames));
 	
 	QStringList difficultySystemNames = QStringList();
 	std::transform(
-			Ascent::difficultyNames.constBegin(),
-			Ascent::difficultyNames.constEnd(),
+			EnumNames::difficultyNames.constBegin(),
+			EnumNames::difficultyNames.constEnd(),
 			std::back_inserter(difficultySystemNames),
 			[](QPair<QString, QStringList> qPair){ return qPair.first; }
 	);
-	difficultyFilterSystemCombo->insertItems(0, difficultySystemNames);
+	difficultyFilterSystemCombo->insertItems(0, EnumNames::translateList(difficultySystemNames));
 	
 	handle_difficultyFilterSystemChanged();
 }
@@ -413,7 +413,8 @@ void AscentFilterBar::handle_difficultyFilterSystemChanged()
 	difficultyFilterGradeCombo->clear();
 	if (systemSelected) {
 		difficultyFilterGradeCombo->setPlaceholderText(tr("Select grade"));
-		difficultyFilterGradeCombo->insertItems(1, Ascent::difficultyNames.at(system).second);
+		QStringList translatedList = EnumNames::translateList(EnumNames::difficultyNames.at(system).second);
+		difficultyFilterGradeCombo->insertItems(1, translatedList);
 	} else {
 		difficultyFilterGradeCombo->setPlaceholderText(tr("None"));
 	}

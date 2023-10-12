@@ -19,6 +19,7 @@
 #define COMP_REGIONS_TABLE_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/data/enum_names.h"
 
 
 
@@ -42,7 +43,7 @@ public:
 			nameColumn			(new const DirectCompositeColumn	(this,	tr("Region"),			Qt::AlignLeft,	noSuffix,	db->regionsTable->nameColumn)),
 			rangeColumn			(new const ReferenceCompositeColumn	(this,	tr("Mountain range"),	Qt::AlignLeft,	noSuffix,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->nameColumn)),
 			countryColumn		(new const ReferenceCompositeColumn	(this,	tr("Country"),			Qt::AlignLeft,	noSuffix,	{ db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
-			continentColumn		(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,	noSuffix,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->continentColumn,	&Range::continentNames)),
+			continentColumn		(new const ReferenceCompositeColumn	(this,	tr("Continent"),		Qt::AlignLeft,	noSuffix,	{ db->regionsTable->rangeIDColumn },	db->rangesTable->continentColumn,	&EnumNames::continentNames)),
 			numPeaksColumn		(new const FoldCompositeColumn		(this,	tr("Num. peaks"),		Count,			noSuffix,	{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
 			avgPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Avg. peak height"),	Average,		mSuffix,	{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
 			maxPeakHeightColumn	(new const FoldCompositeColumn		(this,	tr("Max. peak height"),	Max,			mSuffix,	{ {db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),

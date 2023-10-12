@@ -23,6 +23,7 @@
 #include "src/dialogs/parse_helper.h"
 #include "src/db/column.h"
 #include "src/main/settings.h"
+#include "src/data/enum_names.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -124,16 +125,16 @@ void AscentDialog::populateComboBoxes()
 {
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	
-	hikeKindCombo->insertItems(1, Ascent::hikeKindNames);
+	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
 	QStringList difficultySystemNames = QStringList();
 	std::transform(
-			Ascent::difficultyNames.constBegin(),
-			Ascent::difficultyNames.constEnd(),
+			EnumNames::difficultyNames.constBegin(),
+			EnumNames::difficultyNames.constEnd(),
 			std::back_inserter(difficultySystemNames),
 			[](QPair<QString, QStringList> qPair){ return qPair.first; }
 	);
-	difficultySystemCombo->insertItems(1, difficultySystemNames);
+	difficultySystemCombo->insertItems(1, EnumNames::translateList(difficultySystemNames));
 	
 	handle_difficultySystemChanged();
 	
@@ -278,7 +279,8 @@ void AscentDialog::handle_difficultySystemChanged()
 	difficultyGradeCombo->clear();
 	if (systemSelected) {
 		difficultyGradeCombo->setPlaceholderText(tr("Select grade"));
-		difficultyGradeCombo->insertItems(1, Ascent::difficultyNames.at(system).second);
+		QStringList translatedList = EnumNames::translateList(EnumNames::difficultyNames.at(system).second);
+		difficultyGradeCombo->insertItems(1, translatedList);
 	} else {
 		difficultyGradeCombo->setPlaceholderText(tr("None"));
 	}

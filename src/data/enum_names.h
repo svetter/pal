@@ -15,31 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef RANGE_H
-#define RANGE_H
+#ifndef ENUM_NAMES_H
+#define ENUM_NAMES_H
 
-#include "item_id.h"
-
-#include <QStringList>
-#include <QTranslator>
+#include "qobject.h"
 
 
 
-class Range : private QObject
-{
+class EnumNames : private QObject {
 	Q_OBJECT
 	
 public:
-	ItemID	rangeID;
-	QString	name;
-	int		continent;
+	static QStringList translateList(QStringList list);
 	
-	Range(ItemID rangeID, QString& name, int continent);
-	virtual ~Range();
-	
-	bool equalTo(const Range* const other) const;
+	static const QStringList continentNames;
+	static const QStringList hikeKindNames;
+	static const QList<QPair<QString, QStringList>> difficultyNames;
 };
 
 
 
-#endif // RANGE_H
+#endif // ENUM_NAMES_H

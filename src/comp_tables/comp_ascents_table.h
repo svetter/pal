@@ -19,6 +19,7 @@
 #define COMP_ASCENTS_TABLE_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/data/enum_names.h"
 
 
 
@@ -56,13 +57,13 @@ public:
 			countryColumn		(new const ReferenceCompositeColumn		(this,	tr("Country"),			Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->countryIDColumn},		db->countriesTable->nameColumn)),
 			regionColumn		(new const ReferenceCompositeColumn		(this,	tr("Region"),			Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn},			db->regionsTable->nameColumn)),
 			rangeColumn			(new const ReferenceCompositeColumn		(this,	tr("Mountain range"),	Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->nameColumn)),
-			continentColumn		(new const ReferenceCompositeColumn		(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->continentColumn,		&Range::continentNames)),
+			continentColumn		(new const ReferenceCompositeColumn		(this,	tr("Continent"),		Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->continentColumn,		&EnumNames::continentNames)),
 			elevationGainColumn	(new const DirectCompositeColumn		(this,	tr("Elev. gain"),		Qt::AlignRight,		mSuffix,	db->ascentsTable->elevationGainColumn)),
 			hikersColumn		(new const FoldCompositeColumn			(this,	tr("Participants"),		ListString,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},		{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
 			tripColumn			(new const ReferenceCompositeColumn		(this,	tr("Trip"),				Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->tripIDColumn },			db->tripsTable->nameColumn)),
-			hikeKindColumn		(new const DirectCompositeColumn		(this,	tr("Kind of hike"),		Qt::AlignLeft,		noSuffix,	db->ascentsTable->hikeKindColumn,			&Ascent::hikeKindNames)),
+			hikeKindColumn		(new const DirectCompositeColumn		(this,	tr("Kind of hike"),		Qt::AlignLeft,		noSuffix,	db->ascentsTable->hikeKindColumn,			&EnumNames::hikeKindNames)),
 			traverseColumn		(new const DirectCompositeColumn		(this,	tr("Traverse"),			Qt::AlignCenter,	noSuffix,	db->ascentsTable->traverseColumn)),
-			difficultyColumn	(new const DependentEnumCompositeColumn	(this,	tr("Difficulty"),										db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn,	&Ascent::difficultyNames)),
+			difficultyColumn	(new const DependentEnumCompositeColumn	(this,	tr("Difficulty"),										db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn,	&EnumNames::difficultyNames)),
 			volcanoColumn		(new const ReferenceCompositeColumn		(this,	tr("Volcano"),			Qt::AlignCenter,	noSuffix,	{ db->ascentsTable->peakIDColumn },			db->peaksTable->volcanoColumn)),
 			// Hidden (for filters)
 			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	"Range ID",				Qt::AlignRight,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),

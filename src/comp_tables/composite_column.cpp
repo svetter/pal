@@ -20,6 +20,7 @@
 #include "src/db/normal_table.h"
 #include "src/db/table.h"
 #include "src/comp_tables/composite_table.h"
+#include "src/data/enum_names.h"
 
 
 
@@ -60,7 +61,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 		int enumIndex = rawCellContent.toInt();
 		if (!(enumIndex >= 0 && enumIndex < enumNames->size()))
 		assert(enumIndex >= 0 && enumIndex < enumNames->size());
-		result = enumNames->at(enumIndex);
+		result = EnumNames::tr(enumNames->at(enumIndex).toStdString().c_str());
 	}
 	else if (contentType == DualEnum) {
 		assert(enumNameLists);
@@ -71,7 +72,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 		int discerningEnumIndex	= intList.at(0).toInt();
 		int displayedEnumIndex	= intList.at(1).toInt();
 		assert(discerningEnumIndex >= 0 && discerningEnumIndex <= enumNameLists->size());
-		QList<QString> specifiedEnumNames = enumNameLists->at(discerningEnumIndex).second;
+		QList<QString> specifiedEnumNames = EnumNames::translateList(enumNameLists->at(discerningEnumIndex).second);
 		assert(displayedEnumIndex >= 0 && displayedEnumIndex <= specifiedEnumNames.size());
 		result = specifiedEnumNames.at(displayedEnumIndex);
 	}
@@ -108,7 +109,9 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 	assert(content.canConvert<int>());
 	int index = content.toInt();
 	assert(index >= 0 && index < enumNames->size());
-	return enumNames->at(index);
+	const char* originalName = enumNames->at(index).toStdString().c_str();
+	QString translatedName = EnumNames::tr(originalName);
+	return translatedName;
 }
 
 

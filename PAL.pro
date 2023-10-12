@@ -30,9 +30,9 @@ SOURCES += \
 	src/comp_tables/composite_table.cpp \
 	src/data/ascent.cpp \
 	src/data/country.cpp \
+	src/data/enum_names.cpp \
 	src/data/hiker.cpp \
 	src/data/item_id.cpp \
-	src/data/names.cpp \
 	src/data/peak.cpp \
 	src/data/photo.cpp \
 	src/data/range.cpp \
@@ -88,6 +88,7 @@ HEADERS += \
 	src/comp_tables/filter.h \
 	src/data/ascent.h \
 	src/data/country.h \
+	src/data/enum_names.h \
 	src/data/hiker.h \
 	src/data/item_id.h \
 	src/data/peak.h \

@@ -63,358 +63,6 @@
     </message>
 </context>
 <context>
-    <name>Ascent</name>
-    <message>
-        <location filename="../src/data/names.cpp" line="37"/>
-        <source>Normal</source>
-        <translation>Normal</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="38"/>
-        <source>Snow hike</source>
-        <translation>Schneetour</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="39"/>
-        <source>Snowshoe</source>
-        <translation>Schneeschuhe</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="40"/>
-        <source>Ski tour</source>
-        <translation>Skitour</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="47"/>
-        <location filename="../src/data/names.cpp" line="52"/>
-        <location filename="../src/data/names.cpp" line="64"/>
-        <location filename="../src/data/names.cpp" line="90"/>
-        <location filename="../src/data/names.cpp" line="104"/>
-        <location filename="../src/data/names.cpp" line="117"/>
-        <source>None</source>
-        <translation>Keine</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="49"/>
-        <source>SAC hiking scale</source>
-        <translatorcomment>https://de.wikipedia.org/wiki/SAC-Wanderskala</translatorcomment>
-        <translation>SAC-Wanderskala</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="53"/>
-        <source>T1 (Hiking)</source>
-        <translation>T1 (Wandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="54"/>
-        <source>T2 (Mountain hiking)</source>
-        <translation>T2 (Bergwandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="55"/>
-        <source>T3 (Difficult mountain hiking)</source>
-        <translation>T3 (Anspruchsvolles Bergwandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="56"/>
-        <source>T4 (Alpine hiking)</source>
-        <translation>T4 (Alpinwandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="57"/>
-        <source>T5 (Difficult alpine hiking)</source>
-        <translation>T5 (Anspruchsvolles Alpinwandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="58"/>
-        <source>T6 (Very difficult alpine hiking)</source>
-        <translation>T6 (Schwieriges Alpinwandern)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="62"/>
-        <source>SAC mountaneering scale</source>
-        <translatorcomment>https://de.wikipedia.org/wiki/SAC-Berg-_und_Hochtourenskala</translatorcomment>
-        <translation>SAC-Berg-und Hochtourenskala</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="65"/>
-        <source>F (Easy)</source>
-        <translation>F (Leicht)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="66"/>
-        <source>F+ (Easy)</source>
-        <translation>F+ (Leicht)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="67"/>
-        <source>PD- (Moderate)</source>
-        <translation>PD- (Wenig schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="68"/>
-        <source>PD (Moderate)</source>
-        <translation>PD (Wenig schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="69"/>
-        <source>PD+ (Moderate)</source>
-        <translation>PD+ (Wenig schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="70"/>
-        <source>AD- (Somewhat difficult)</source>
-        <translation>AD- (Ziemlich schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="71"/>
-        <source>AD (Somewhat difficult)</source>
-        <translation>AD (Ziemlich schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="72"/>
-        <source>AD+ (Somewhat difficult)</source>
-        <translation>AD+ (Ziemlich schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="73"/>
-        <source>D- (Difficult)</source>
-        <translation>D- (Schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="74"/>
-        <source>D (Difficult)</source>
-        <translation>D (Schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="75"/>
-        <source>D+ (Difficult)</source>
-        <translation>D+ (Schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="76"/>
-        <source>TD- (Very difficult)</source>
-        <translation>TD- (Sehr schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="77"/>
-        <source>TD (Very difficult)</source>
-        <translation>TD (Sehr schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="78"/>
-        <source>TD+ (Very difficult)</source>
-        <translation>TD+ (Sehr schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="79"/>
-        <source>ED- (Extremely difficult)</source>
-        <translation>ED- (Äußerst schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="80"/>
-        <source>ED (Extremely difficult)</source>
-        <translation>ED (Äußerst schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="81"/>
-        <source>ED+ (Extremely difficult)</source>
-        <translation>ED+ (Äußerst schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="82"/>
-        <source>ABO- (Abominably difficult)</source>
-        <translation>ABO- (Extrem schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="83"/>
-        <source>ABO (Abominably difficult)</source>
-        <translation>ABO (Extrem schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="87"/>
-        <source>SAC ski tours scale</source>
-        <translatorcomment>https://de.wikipedia.org/wiki/SAC-Skitourenskala</translatorcomment>
-        <translation>SAC-Skitourenskala</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="91"/>
-        <source>L (Easy)</source>
-        <translation>L (Leicht)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="92"/>
-        <source>WS (Moderate)</source>
-        <translation>WS (Wenig schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="93"/>
-        <source>ZS (Somewhat difficult)</source>
-        <translation>ZS (Ziemlich schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="94"/>
-        <source>S (Difficult)</source>
-        <translation>S (Schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="95"/>
-        <source>SS (Very difficult)</source>
-        <translation>SS (Sehr schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="96"/>
-        <source>AS (Exceptionally difficult)</source>
-        <translation>AS (Außerordentlich schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="97"/>
-        <source>EX (Extremely dificult)</source>
-        <translation>EX (Extrem schwierig)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="101"/>
-        <source>SAC snowshoe tours scale</source>
-        <translatorcomment>https://de.wikipedia.org/wiki/SAC-Schneeschuhtourenskala</translatorcomment>
-        <translation>SAC-Schneeschuhtourenskala</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="105"/>
-        <source>WT1 (Easy snowshoe hike)</source>
-        <translation>WT1 (Leichte Schneeschuhwanderung)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="106"/>
-        <source>WT2 (Moderate snowshoe hike)</source>
-        <translation>WT (Schneeschuhwanderung)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="107"/>
-        <source>WT3 (Difficult snowshoe hike)</source>
-        <translation>WT3 (Anspruchsvolle Schneeschuhwanderung)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="108"/>
-        <source>WT4 (Snowshoe tour)</source>
-        <translation>WT4 (Schneeschuhtour)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="109"/>
-        <source>WT5 (Alpine snowshoe tour)</source>
-        <translation>WT5 (Alpine Schneeschuhtour)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="110"/>
-        <source>WT6 (Difficult alpine snowshoe tour)</source>
-        <translation>WT6 (Anspruchsvolle alpine Schneeschuhtour)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="114"/>
-        <source>UIAA climbing scale</source>
-        <translation>UIAA-Kletterskala</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="118"/>
-        <source>I (Easy)</source>
-        <translation>I (Geringe Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="119"/>
-        <source>I+ (Easy)</source>
-        <translation>I+ (Geringe Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="120"/>
-        <source>II- (Moderate)</source>
-        <translation>II- (Mäßige Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="121"/>
-        <source>II (Moderate)</source>
-        <translation>II (Mäßige Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="122"/>
-        <source>II+ (Moderate)</source>
-        <translation>II+ (Mäßige Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="123"/>
-        <source>III- (Somewhat difficult)</source>
-        <translation>III- (Mittlere Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="124"/>
-        <source>III (Somewhat difficult)</source>
-        <translation>III (Mittlere Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="125"/>
-        <source>III+ (Somewhat difficult)</source>
-        <translation>III+ (Mittlere Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="126"/>
-        <source>IV- (Difficult)</source>
-        <translation>IV- (Große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="127"/>
-        <source>IV (Difficult)</source>
-        <translation>IV (Große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="128"/>
-        <source>IV+ (Difficult)</source>
-        <translation>IV+ (Große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="129"/>
-        <source>V- (Very difficult)</source>
-        <translation>V- (Sehr große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="130"/>
-        <source>V (Very difficult)</source>
-        <translation>V (Sehr große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="131"/>
-        <source>V+ (Very difficult)</source>
-        <translation>V+ (Sehr große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="132"/>
-        <source>VI- (Incredibly difficult)</source>
-        <translation>VI- (Überaus große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="133"/>
-        <source>VI (Incredibly difficult)</source>
-        <translation>VI (Überaus große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="134"/>
-        <source>VI+ (Incredibly difficult)</source>
-        <translation>VI+ (Überaus große Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="135"/>
-        <source>VII- (Extremely difficult)</source>
-        <translation>VII- (Außergewöhnliche Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="136"/>
-        <source>VII (Extremely difficult)</source>
-        <translation>VII (Außergewöhnliche Schwierigkeiten)</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="137"/>
-        <source>VII+ (Extremely difficult)</source>
-        <translation>VII+ (Außergewöhnliche Schwierigkeiten)</translation>
-    </message>
-</context>
-<context>
     <name>AscentDialog</name>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="20"/>
@@ -489,7 +137,7 @@
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="485"/>
         <location filename="../src/ui/ascent_dialog.ui" line="518"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="283"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="285"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -534,32 +182,32 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="118"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="119"/>
         <source>Edit ascent</source>
         <translation>Besteigung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="280"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="281"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="438"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="440"/>
         <source>Delete ascent</source>
         <translation>Besteigung löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="493"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="495"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="495"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="497"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="496"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="498"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
@@ -637,7 +285,7 @@
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="418"/>
+        <location filename="../src/main/ascent_filter_bar.cpp" line="419"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -1010,77 +658,77 @@
 <context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="52"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="53"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="54"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="55"/>
         <source>Title</source>
         <translation>Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="53"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="54"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="55"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="56"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="57"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="58"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="58"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="59"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="56"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="57"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="59"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="60"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="66"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="67"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="60"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="61"/>
         <source>Elev. gain</source>
         <translation>Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="63"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="64"/>
         <source>Kind of hike</source>
         <translation>Art der Wanderung</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="64"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="65"/>
         <source>Traverse</source>
         <translation>Überschreitung</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="65"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="66"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="61"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="62"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="62"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="63"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
@@ -1154,52 +802,52 @@
 <context>
     <name>CompositePeaksTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="45"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="46"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="53"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="54"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="47"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="48"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="48"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="49"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="47"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="49"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="50"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="50"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="51"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="52"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="53"/>
         <source>Sum elev. gain</source>
         <translation>Summe Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="51"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="52"/>
         <source>Scaled by</source>
         <translation>Bestiegen von</translation>
     </message>
@@ -1240,42 +888,42 @@
 <context>
     <name>CompositeRegionsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="42"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="43"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="44"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="45"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="46"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="47"/>
         <source>Num. peaks</source>
         <translation>Anzahl Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="47"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="48"/>
         <source>Avg. peak height</source>
         <translation>Mittl. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="48"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="49"/>
         <source>Max. peak height</source>
         <translation>Max. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="49"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="50"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
@@ -1407,6 +1055,390 @@
         <location filename="../src/dialogs/country_dialog.cpp" line="132"/>
         <source>Delete country</source>
         <translation>Land löschen</translation>
+    </message>
+</context>
+<context>
+    <name>EnumNames</name>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="35"/>
+        <location filename="../src/data/enum_names.cpp" line="58"/>
+        <location filename="../src/data/enum_names.cpp" line="63"/>
+        <location filename="../src/data/enum_names.cpp" line="75"/>
+        <location filename="../src/data/enum_names.cpp" line="101"/>
+        <location filename="../src/data/enum_names.cpp" line="115"/>
+        <location filename="../src/data/enum_names.cpp" line="128"/>
+        <source>None</source>
+        <translation>Keiner</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="36"/>
+        <source>North America</source>
+        <translation>Nordamerika</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="37"/>
+        <source>South America</source>
+        <translation>Südamerika</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="38"/>
+        <source>Europe</source>
+        <translation>Europa</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="39"/>
+        <source>Africa</source>
+        <translation>Afrika</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="40"/>
+        <source>Asia</source>
+        <translation>Asien</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="41"/>
+        <source>Australia</source>
+        <translation>Australien</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="42"/>
+        <source>Antarctica</source>
+        <translation>Antarktis</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="48"/>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="49"/>
+        <source>Snow hike</source>
+        <translation>Schneetour</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="50"/>
+        <source>Snowshoe</source>
+        <translation>Schneeschuhe</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="51"/>
+        <source>Ski tour</source>
+        <translation>Skitour</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="60"/>
+        <source>SAC hiking scale</source>
+        <translation>SAC-Wanderskala</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="64"/>
+        <source>T1 (Hiking)</source>
+        <translation>T1 (Wandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="65"/>
+        <source>T2 (Mountain hiking)</source>
+        <translation>T2 (Bergwandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="66"/>
+        <source>T3 (Difficult mountain hiking)</source>
+        <translation>T3 (Anspruchsvolles Bergwandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="67"/>
+        <source>T4 (Alpine hiking)</source>
+        <translation>T4 (Alpinwandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="68"/>
+        <source>T5 (Difficult alpine hiking)</source>
+        <translation>T5 (Anspruchsvolles Alpinwandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="69"/>
+        <source>T6 (Very difficult alpine hiking)</source>
+        <translation>T6 (Schwieriges Alpinwandern)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="73"/>
+        <source>SAC mountaneering scale</source>
+        <translation>SAC-Berg-und Hochtourenskala</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="76"/>
+        <source>F (Easy)</source>
+        <translation>F (Leicht)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="77"/>
+        <source>F+ (Easy)</source>
+        <translation>F+ (Leicht)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="78"/>
+        <source>PD- (Moderate)</source>
+        <translation>PD- (Wenig schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="79"/>
+        <source>PD (Moderate)</source>
+        <translation>PD (Wenig schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="80"/>
+        <source>PD+ (Moderate)</source>
+        <translation>PD+ (Wenig schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="81"/>
+        <source>AD- (Somewhat difficult)</source>
+        <translation>AD- (Ziemlich schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="82"/>
+        <source>AD (Somewhat difficult)</source>
+        <translation>AD (Ziemlich schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="83"/>
+        <source>AD+ (Somewhat difficult)</source>
+        <translation>AD+ (Ziemlich schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="84"/>
+        <source>D- (Difficult)</source>
+        <translation>D- (Schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="85"/>
+        <source>D (Difficult)</source>
+        <translation>D (Schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="86"/>
+        <source>D+ (Difficult)</source>
+        <translation>D+ (Schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="87"/>
+        <source>TD- (Very difficult)</source>
+        <translation>TD- (Sehr schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="88"/>
+        <source>TD (Very difficult)</source>
+        <translation>TD (Sehr schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="89"/>
+        <source>TD+ (Very difficult)</source>
+        <translation>TD+ (Sehr schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="90"/>
+        <source>ED- (Extremely difficult)</source>
+        <translation>ED- (Äußerst schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="91"/>
+        <source>ED (Extremely difficult)</source>
+        <translation>ED (Äußerst schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="92"/>
+        <source>ED+ (Extremely difficult)</source>
+        <translation>ED+ (Äußerst schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="93"/>
+        <source>ABO- (Abominably difficult)</source>
+        <translation>ABO- (Extrem schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="94"/>
+        <source>ABO (Abominably difficult)</source>
+        <translation>ABO (Extrem schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="98"/>
+        <source>SAC ski tours scale</source>
+        <translation>SAC-Skitourenskala</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="102"/>
+        <source>L (Easy)</source>
+        <translation>L (Leicht)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="103"/>
+        <source>WS (Moderate)</source>
+        <translation>WS (Wenig schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="104"/>
+        <source>ZS (Somewhat difficult)</source>
+        <translation>ZS (Ziemlich schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="105"/>
+        <source>S (Difficult)</source>
+        <translation>S (Schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="106"/>
+        <source>SS (Very difficult)</source>
+        <translation>SS (Sehr schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="107"/>
+        <source>AS (Exceptionally difficult)</source>
+        <translation>AS (Außerordentlich schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="108"/>
+        <source>EX (Extremely dificult)</source>
+        <translation>EX (Extrem schwierig)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="112"/>
+        <source>SAC snowshoe tours scale</source>
+        <translation>SAC-Schneeschuhtourenskala</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="116"/>
+        <source>WT1 (Easy snowshoe hike)</source>
+        <translation>WT1 (Leichte Schneeschuhwanderung)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="117"/>
+        <source>WT2 (Moderate snowshoe hike)</source>
+        <translation>WT (Schneeschuhwanderung)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="118"/>
+        <source>WT3 (Difficult snowshoe hike)</source>
+        <translation>WT3 (Anspruchsvolle Schneeschuhwanderung)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="119"/>
+        <source>WT4 (Snowshoe tour)</source>
+        <translation>WT4 (Schneeschuhtour)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="120"/>
+        <source>WT5 (Alpine snowshoe tour)</source>
+        <translation>WT5 (Alpine Schneeschuhtour)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="121"/>
+        <source>WT6 (Difficult alpine snowshoe tour)</source>
+        <translation>WT6 (Anspruchsvolle alpine Schneeschuhtour)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="125"/>
+        <source>UIAA climbing scale</source>
+        <translation>UIAA-Kletterskala</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="129"/>
+        <source>I (Easy)</source>
+        <translation>I (Geringe Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="130"/>
+        <source>I+ (Easy)</source>
+        <translation>I+ (Geringe Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="131"/>
+        <source>II- (Moderate)</source>
+        <translation>II- (Mäßige Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="132"/>
+        <source>II (Moderate)</source>
+        <translation>II (Mäßige Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="133"/>
+        <source>II+ (Moderate)</source>
+        <translation>II+ (Mäßige Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="134"/>
+        <source>III- (Somewhat difficult)</source>
+        <translation>III- (Mittlere Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="135"/>
+        <source>III (Somewhat difficult)</source>
+        <translation>III (Mittlere Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="136"/>
+        <source>III+ (Somewhat difficult)</source>
+        <translation>III+ (Mittlere Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="137"/>
+        <source>IV- (Difficult)</source>
+        <translation>IV- (Große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="138"/>
+        <source>IV (Difficult)</source>
+        <translation>IV (Große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="139"/>
+        <source>IV+ (Difficult)</source>
+        <translation>IV+ (Große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="140"/>
+        <source>V- (Very difficult)</source>
+        <translation>V- (Sehr große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="141"/>
+        <source>V (Very difficult)</source>
+        <translation>V (Sehr große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="142"/>
+        <source>V+ (Very difficult)</source>
+        <translation>V+ (Sehr große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="143"/>
+        <source>VI- (Incredibly difficult)</source>
+        <translation>VI- (Überaus große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="144"/>
+        <source>VI (Incredibly difficult)</source>
+        <translation>VI (Überaus große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="145"/>
+        <source>VI+ (Incredibly difficult)</source>
+        <translation>VI+ (Überaus große Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="146"/>
+        <source>VII- (Extremely difficult)</source>
+        <translation>VII- (Außergewöhnliche Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="147"/>
+        <source>VII (Extremely difficult)</source>
+        <translation>VII (Außergewöhnliche Schwierigkeiten)</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="148"/>
+        <source>VII+ (Extremely difficult)</source>
+        <translation>VII+ (Außergewöhnliche Schwierigkeiten)</translation>
     </message>
 </context>
 <context>
@@ -2060,49 +2092,6 @@ Trotzdem speichern?</translation>
     </message>
 </context>
 <context>
-    <name>Range</name>
-    <message>
-        <location filename="../src/data/names.cpp" line="24"/>
-        <source>None</source>
-        <translation>Keiner</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="25"/>
-        <source>North America</source>
-        <translation>Nordamerika</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="26"/>
-        <source>South America</source>
-        <translation>Südamerika</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="27"/>
-        <source>Europe</source>
-        <translation>Europa</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="28"/>
-        <source>Africa</source>
-        <translation>Afrika</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="29"/>
-        <source>Asia</source>
-        <translation>Asien</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="30"/>
-        <source>Australia</source>
-        <translation>Australien</translation>
-    </message>
-    <message>
-        <location filename="../src/data/names.cpp" line="31"/>
-        <source>Antarctica</source>
-        <translation>Antarktis</translation>
-    </message>
-</context>
-<context>
     <name>RangeDialog</name>
     <message>
         <location filename="../src/ui/range_dialog.ui" line="20"/>
@@ -2140,22 +2129,22 @@ Trotzdem speichern?</translation>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="65"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="66"/>
         <source>Edit mountain range</source>
         <translation>Gebirge bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="108"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="109"/>
         <source>Can&apos;t save mountain range</source>
         <translation>Gebirge kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="109"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="110"/>
         <source>The mountain range needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="144"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="145"/>
         <source>Delete mountain range</source>
         <translation>Gebirge löschen</translation>
     </message>

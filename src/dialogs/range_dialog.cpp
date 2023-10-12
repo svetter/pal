@@ -19,6 +19,7 @@
 
 #include "src/dialogs/parse_helper.h"
 #include "src/main/settings.h"
+#include "src/data/enum_names.h"
 
 #include <QMessageBox>
 
@@ -69,7 +70,7 @@ QString RangeDialog::getEditWindowTitle()
 
 void RangeDialog::populateComboBoxes()
 {
-	continentCombo->insertItems(0, Range::continentNames);
+	continentCombo->insertItems(0, EnumNames::translateList(EnumNames::continentNames));
 }
 
 
