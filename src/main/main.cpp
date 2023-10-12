@@ -20,6 +20,45 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <QLibraryInfo>
+
+
+
+void configureTranslation(QApplication& application)
+{
+	QString languageSetting = Settings::language.get();
+	bool useTranslator = languageSetting != "en";
+	
+	if (useTranslator) {
+		// Base translator: Translating strings from Qt framework
+		QTranslator* baseTranslator = new QTranslator();
+		if (baseTranslator->load("qtbase_" + QLocale(languageSetting).name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+			if (!application.installTranslator(baseTranslator)) {
+				qDebug() << "Installing base translator for" << languageSetting << "failed";
+			} else {
+				qDebug() << "Installed base translator from" << baseTranslator->filePath();
+			}
+		} else {
+			qDebug() << "Base translator for configured language" << languageSetting << "not found";
+		}
+		
+		// App translator: Translating this application's own strings
+		QTranslator* appTranslator = new QTranslator();
+		if (appTranslator->load(QLocale(languageSetting).name(), ":/i18n/")) {
+			if (appTranslator->isEmpty()) {
+				qDebug() << "Translator" << appTranslator->filePath() << "is empty";
+			}
+			
+			if (!application.installTranslator(appTranslator)) {
+				qDebug() << "Installing translator for" << languageSetting << "failed";
+			} else {
+				qDebug() << "Installed translator from" << appTranslator->filePath();
+			}
+		} else {
+			qDebug() << "Translator for configured language" << languageSetting << "not found";
+		}
+	}
+}
 
 
 
@@ -31,34 +70,9 @@ int main(int argc, char *argv[])
 		application.setStyle(argv[1]);
 	}
 	
-	
-	
-	// Configure translation
-	
-	QString languageSetting = Settings::language.get();
-	bool useTranslator = languageSetting != "en";
-	QTranslator translator;
-	
-	if (useTranslator) {
-		if (translator.load(QLocale(languageSetting).name(), ":/i18n/")) {
-			if (translator.isEmpty()) {
-				qDebug() << "Translator" << translator.filePath() << "is empty";
-			} else {
-				qDebug() << "Loaded translator from" << translator.filePath();
-			}
-			
-			if (!application.installTranslator(&translator)) {
-				qDebug() << "Installing translator for" << languageSetting << "failed";
-			}
-		} else {
-			qDebug() << "Translator for configured language" << languageSetting << "not found";
-		}
-	}
-	
-	
+	configureTranslation(application);
 	
 	MainWindow mainWindow = MainWindow();
-	
 	mainWindow.show();
 	return application.exec();
 }
