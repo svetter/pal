@@ -35,6 +35,7 @@ class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
 	
 	const Ascent* init;
 	
+	QList<ValidItemID> selectableRegionIDs;
 	QList<ValidItemID> selectablePeakIDs;
 	QList<ValidItemID> selectableTripIDs;
 	
@@ -55,6 +56,7 @@ private:
 	void insertInitData();
 	
 private slots:
+	void handle_regionFilterChanged();
 	void handle_newPeak();
 	void handle_dateSpecifiedChanged();
 	void handle_timeSpecifiedChanged();
@@ -67,7 +69,7 @@ private slots:
 	void handle_removePhotos();
 	void handle_photoSelectionChanged(const QItemSelection& selected = QItemSelection(), const QItemSelection& deselected = QItemSelection());
 	
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;

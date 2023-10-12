@@ -77,11 +77,14 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="peakSelectionLayout">
-       <property name="spacing">
+      <layout class="QGridLayout" name="peakLayout">
+       <property name="horizontalSpacing">
         <number>10</number>
        </property>
-       <item>
+       <property name="verticalSpacing">
+        <number>6</number>
+       </property>
+       <item row="2" column="0">
         <widget class="QComboBox" name="peakCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -100,7 +103,20 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="regionFilterCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="placeholderText">
+          <string>Filter peaks by region</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
         <widget class="QPushButton" name="newPeakButton">
          <property name="text">
           <string>New peak...</string>
@@ -635,7 +651,7 @@
      <item row="9" column="1">
       <layout class="QVBoxLayout" name="photosLayout">
        <property name="spacing">
-        <number>10</number>
+        <number>6</number>
        </property>
        <item>
         <layout class="QHBoxLayout" name="photosListLayout">

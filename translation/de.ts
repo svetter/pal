@@ -85,129 +85,139 @@
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="99"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="102"/>
         <source>Select</source>
         <translation>Auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="106"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="115"/>
+        <source>Filter peaks by region</source>
+        <translation>Gipfel nach Region filtern</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_dialog.ui" line="122"/>
         <source>New peak...</source>
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="115"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="131"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="216"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="232"/>
         <source>peak on that day</source>
         <translation>Gipfel des Tages</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="240"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="256"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="305"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="321"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="370"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="386"/>
         <source>Kind of hike</source>
         <translation>Art der Wanderung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="417"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="433"/>
         <source>Traverse</source>
         <translation>Überschreitung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="439"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="455"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="463"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="479"/>
         <source>Select system</source>
         <translation>System auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="485"/>
-        <location filename="../src/ui/ascent_dialog.ui" line="518"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="285"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="501"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="534"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="295"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="494"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="510"/>
         <source>During trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="531"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="547"/>
         <source>New trip...</source>
         <translation>Neuer Urlaub...</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="540"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="556"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="631"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="647"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="726"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="742"/>
         <source>Photo description</source>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="737"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="753"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="778"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="794"/>
         <source>Add ascent</source>
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="797"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="813"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="119"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="121"/>
         <source>Edit ascent</source>
         <translation>Besteigung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="281"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="128"/>
+        <source>All regions (no filter)</source>
+        <translation>Alle Regionen (kein Filter)</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="291"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="440"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="450"/>
         <source>Delete ascent</source>
         <translation>Besteigung löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="495"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="505"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="497"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="507"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="498"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="508"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>

@@ -35,6 +35,7 @@
 AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
 		NewOrEditDialog(parent, db, purpose),
 		init(init),
+		selectableRegionIDs(QList<ValidItemID>()),
 		selectablePeakIDs(QList<ValidItemID>()),
 		selectableTripIDs(QList<ValidItemID>()),
 		hikersModel(HikersOnAscent()),
@@ -53,6 +54,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	photosListView->setModelColumn(0);
 	
 	
+	connect(regionFilterCombo,					&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_regionFilterChanged);
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
 	connect(dateCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
 	connect(timeCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
@@ -123,6 +125,7 @@ QString AscentDialog::getEditWindowTitle()
 
 void AscentDialog::populateComboBoxes()
 {
+	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"));
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
@@ -242,6 +245,12 @@ bool AscentDialog::changesMade()
 
 
 
+void AscentDialog::handle_regionFilterChanged()
+{
+	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
+	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
+}
+
 void AscentDialog::handle_newPeak()
 {
 	int newPeakIndex = openNewPeakDialogAndStore(this, db);
@@ -249,6 +258,7 @@ void AscentDialog::handle_newPeak()
 	
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	ValidItemID peakID = db->peaksTable->getPrimaryKeyAt(newPeakIndex);
+	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(peakID) + 1);	// 0 is None
 }
 

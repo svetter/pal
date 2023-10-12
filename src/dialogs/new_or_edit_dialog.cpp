@@ -131,14 +131,28 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 
 
 
-void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList)
+void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const Column* filterColumn, ItemID filterID)
 {
 	combo->clear();
 	idList.clear();
-	combo->addItem(table->getNoneString());
+	QString noneString = table->getNoneString();
+	if (!overrideFirstLine.isEmpty()) noneString = overrideFirstLine;
+	combo->addItem(noneString);
 	
 	// Get pairs of ID and display/sort field
 	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(displayAndSortColumn);
+	
+	if (filterColumn && filterID.isValid()) {
+		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it
+		assert(filterColumn->table == table && filterColumn->type == ID);
+		for (int i = selectableItems.size() - 1; i >= 0; i--) {
+			const ValidItemID& itemID = selectableItems.at(i).first;
+			ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);
+			if (itemFilterColumnID != filterID) {
+				selectableItems.remove(i);
+			}
+		}
+	}
 	
 	// Sort entries according to sort field
 	auto comparator = [sortAsString] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
