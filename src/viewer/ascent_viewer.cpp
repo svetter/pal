@@ -391,7 +391,7 @@ void AscentViewer::updatePhoto()
 	updatePhotoIndexLabel();
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
-		imageLabel->setVisible(false);
+		imageLabel->clearImage();
 		return;
 	}
 	
@@ -401,7 +401,7 @@ void AscentViewer::updatePhoto()
 	const QImage newImage = reader.read();
 	if (newImage.isNull()) {
 		qDebug() << "Error reading" << filepath << reader.errorString();
-		imageLabel->setVisible(false);
+		imageLabel->clearImage();
 		
 		QString title = tr("File error");
 		QString message = tr("Photo could not be loaded:")
@@ -420,7 +420,6 @@ void AscentViewer::updatePhoto()
 	image = newImage;
 	if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 	imageLabel->setImage(image);
-	imageLabel->setVisible(true);
 	
 	photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);

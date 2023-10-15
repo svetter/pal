@@ -19,7 +19,7 @@
 
 
 
-ScalableImageLabel::ScalableImageLabel(QScrollArea* parent) : QLabel(parent), parent(parent), fillMode(true)
+ScalableImageLabel::ScalableImageLabel(QScrollArea* parent) : QLabel(parent), parent(parent), imageLoaded(false), fillMode(true), mousePressedAt(QPoint())
 {
 	setAlignment(Qt::AlignCenter);
 }
@@ -31,6 +31,16 @@ void ScalableImageLabel::setImage(const QImage& image)
 	fullSizePixmap = QPixmap::fromImage(image);
 	fillMode = true;
 	setPixmap(fullSizePixmap);
+	imageLoaded = true;
+	setHandCursor(true);
+}
+
+void ScalableImageLabel::clearImage()
+{
+	fullSizePixmap = QPixmap();
+	setPixmap(QPixmap());
+	imageLoaded = false;
+	setNormalCursor();
 }
 
 
@@ -38,22 +48,19 @@ void ScalableImageLabel::setImage(const QImage& image)
 void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 {
 	QSize availableArea = parent->maximumViewportSize();
-	int oldScrollX		= parent->horizontalScrollBar()->value();
-	int oldScrollY		= parent->  verticalScrollBar()->value();
+	QPoint oldScroll = getScroll();
 	// Mouse position here is measured from the top left corner of the available area in displayed pixels
-	int mousePositionX	= event->position().toPoint().x() - oldScrollX;
-	int mousePositionY	= event->position().toPoint().y() - oldScrollY;
-	int oldImageWidth	= pixmap().width();
-	int oldImageHeight	= pixmap().height();
+	QPoint mousePosition = event->position().toPoint() - oldScroll;
+	QSize oldImageSize = pixmap().size();
 	
 	// Zoom factor 1 means image is fit to screen
-	qreal currentZoomX	= (qreal) pixmap().width()  / availableArea.width();
-	qreal currentZoomY	= (qreal) pixmap().height() / availableArea.height();
+	qreal currentZoomX	= (qreal) oldImageSize.width()  / availableArea.width();
+	qreal currentZoomY	= (qreal) oldImageSize.height() / availableArea.height();
 	bool zoomInNotOut = event->angleDelta().y() > 0;
 	qreal factor = zoomInNotOut ? ZOOM_FACTOR : (1 / ZOOM_FACTOR);
 	
-	qreal newImageWidth		= fmin(fullSizePixmap.width(),  availableArea.width()  * currentZoomX * factor);
-	qreal newImageHeight	= fmin(fullSizePixmap.height(), availableArea.height() * currentZoomY * factor);
+	int newImageWidth	= fmin(fullSizePixmap.width(),  availableArea.width()  * currentZoomX * factor);
+	int newImageHeight	= fmin(fullSizePixmap.height(), availableArea.height() * currentZoomY * factor);
 	
 	if (newImageWidth <= availableArea.width() && newImageHeight <= availableArea.height()) {
 		newImageWidth	= availableArea.width();
@@ -68,31 +75,29 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 	
 	// Keep image centered around mouse position
 	if (!fillMode) {
-		qreal relMousePositionX = (qreal) (oldScrollX + mousePositionX) / oldImageWidth;
-		if (oldImageWidth < availableArea.width()) {
-			qreal halfWidthDiff = (qreal) (availableArea.width() - oldImageWidth) / 2;
-			relMousePositionX = (qreal) (oldScrollX + mousePositionX - halfWidthDiff) / oldImageWidth;
+		qreal relMousePositionX = (qreal) (oldScroll.x() + mousePosition.x()) / oldImageSize.width();
+		if (oldImageSize.width() < availableArea.width()) {
+			qreal halfWidthDiff = (qreal) (availableArea.width() - oldImageSize.width()) / 2;
+			relMousePositionX = (qreal) (oldScroll.x() + mousePosition.x() - halfWidthDiff) / oldImageSize.width();
 			relMousePositionX = fmax(0, fmin(1, relMousePositionX));
 		}
-		qreal relMousePositionY = (qreal) (oldScrollY + mousePositionY) / oldImageHeight;
-		if (oldImageHeight < availableArea.height()) {
-			qreal halfHeightDiff = (qreal) (availableArea.height() - oldImageHeight) / 2;
-			relMousePositionY = (qreal) (oldScrollY + mousePositionY - halfHeightDiff) / oldImageHeight;
+		qreal relMousePositionY = (qreal) (oldScroll.y() + mousePosition.y()) / oldImageSize.height();
+		if (oldImageSize.height() < availableArea.height()) {
+			qreal halfHeightDiff = (qreal) (availableArea.height() - oldImageSize.height()) / 2;
+			relMousePositionY = (qreal) (oldScroll.y() + mousePosition.y() - halfHeightDiff) / oldImageSize.height();
 			relMousePositionY = fmax(0, fmin(1, relMousePositionY));
 		}
 		assert(relMousePositionX >= 0 && relMousePositionX <= 1);
 		assert(relMousePositionY >= 0 && relMousePositionY <= 1);
 		
-		int newScrollX = (relMousePositionX * newImageWidth ) - mousePositionX;
-		int newScrollY = (relMousePositionY * newImageHeight) - mousePositionY;
+		int newScrollX = (relMousePositionX * newImageWidth ) - mousePosition.x();
+		int newScrollY = (relMousePositionY * newImageHeight) - mousePosition.y();
 		
 		// Set new scroll boundaries and values
 		int newMaxScrollX = newImageWidth  - availableArea.width();
 		int newMaxScrollY = newImageHeight - availableArea.height();
-		parent->horizontalScrollBar()->setMaximum(newMaxScrollX);
-		parent->  verticalScrollBar()->setMaximum(newMaxScrollY);
-		parent->horizontalScrollBar()->setValue(newScrollX);
-		parent->  verticalScrollBar()->setValue(newScrollY);
+		setMaxScroll(newMaxScrollX, newMaxScrollY);
+		setScroll(newScrollX, newScrollY);
 	}
 	
 	event->accept();
@@ -102,6 +107,7 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 
 void ScalableImageLabel::paintEvent(QPaintEvent* event)
 {
+	if (!imageLoaded) return;
 	QSize availableArea = parent->maximumViewportSize();
 	bool resize = false;
 
@@ -118,4 +124,71 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 	}
 	
 	QLabel::paintEvent(event);
+}
+
+
+
+void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
+{
+	if (!imageLoaded || fillMode) return;
+	setHandCursor(false);
+	mousePressedAt = event->globalPosition().toPoint();
+}
+
+void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
+{
+	if (!imageLoaded || fillMode || mousePressedAt.isNull()) return;
+	QPoint move = mousePressedAt - event->globalPosition().toPoint();
+	setScroll(getScrollX() + move.x(), getScrollY() + move.y());
+	mousePressedAt = event->globalPosition().toPoint();
+}
+
+void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
+{
+	Q_UNUSED(event);
+	if (!imageLoaded) return;
+	setHandCursor(true);
+	mousePressedAt = QPoint();
+}
+
+
+
+int ScalableImageLabel::getScrollX()
+{
+	return parent->horizontalScrollBar()->value();
+}
+
+int ScalableImageLabel::getScrollY()
+{
+	return parent->verticalScrollBar()->value();
+}
+
+QPoint ScalableImageLabel::getScroll()
+{
+	return QPoint(getScrollX(), getScrollY());
+}
+
+void ScalableImageLabel::setScroll(int scrollX, int scrollY)
+{
+	parent->horizontalScrollBar()->setValue(scrollX);
+	parent->verticalScrollBar()->setValue(scrollY);
+}
+
+void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
+{
+	parent->horizontalScrollBar()->setMaximum(maxScrollX);
+	parent->verticalScrollBar()->setMaximum(maxScrollY);
+}
+
+
+
+void ScalableImageLabel::setNormalCursor()
+{
+	parent->viewport()->setProperty("cursor", QVariant(QCursor(Qt::ArrowCursor)));
+}
+
+void ScalableImageLabel::setHandCursor(bool openNotClosed)
+{
+	Qt::CursorShape cursorShape = openNotClosed ? Qt::OpenHandCursor : Qt::ClosedHandCursor;
+	parent->viewport()->setProperty("cursor", QVariant(QCursor(cursorShape)));
 }
