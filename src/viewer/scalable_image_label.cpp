@@ -130,8 +130,9 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 
 void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
 {
-	if (!imageLoaded || fillMode) return;
+	if (!imageLoaded) return;
 	setHandCursor(false);
+	if (fillMode) return;
 	mousePressedAt = event->globalPosition().toPoint();
 }
 
@@ -148,6 +149,7 @@ void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 	Q_UNUSED(event);
 	if (!imageLoaded) return;
 	setHandCursor(true);
+	if (fillMode) return;
 	mousePressedAt = QPoint();
 }
 
