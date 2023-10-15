@@ -55,6 +55,7 @@ private:
 	int getScrollY();
 	QPoint getScroll();
 	void setScroll(int scrollX, int scrollY);
+	void scrollRelative(QPoint scrollRel);
 	void setMaxScroll(int maxScrollX, int maxScrollY);
 	
 	void setNormalCursor();

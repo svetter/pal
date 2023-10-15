@@ -139,8 +139,8 @@ void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
 void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 {
 	if (!imageLoaded || fillMode || mousePressedAt.isNull()) return;
-	QPoint move = mousePressedAt - event->globalPosition().toPoint();
-	setScroll(getScrollX() + move.x(), getScrollY() + move.y());
+	QPoint mouseMove = event->globalPosition().toPoint() - mousePressedAt;
+	scrollRelative(mouseMove);
 	mousePressedAt = event->globalPosition().toPoint();
 }
 
@@ -173,7 +173,12 @@ QPoint ScalableImageLabel::getScroll()
 void ScalableImageLabel::setScroll(int scrollX, int scrollY)
 {
 	parent->horizontalScrollBar()->setValue(scrollX);
-	parent->verticalScrollBar()->setValue(scrollY);
+	parent->  verticalScrollBar()->setValue(scrollY);
+}
+
+void ScalableImageLabel::scrollRelative(QPoint scrollRel)
+{
+	setScroll(getScrollX() - scrollRel.x(), getScrollY() - scrollRel.y());
 }
 
 void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
