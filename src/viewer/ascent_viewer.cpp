@@ -53,7 +53,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 }
 
 AscentViewer::~AscentViewer()
-{}
+{
+	delete imageLabel;
+}
 
 
 
@@ -74,8 +76,9 @@ void AscentViewer::additionalUISetup()
 	peakVolcanoCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
 	ascentTraverseCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
 	
-	imageDisplay = new ImageDisplay(imageFrame);
-	imageFrameLayout->addWidget(imageDisplay);
+	imageLabel = new ScalableImageLabel(imageScrollArea);
+	imageScrollArea->setBackgroundRole(QPalette::Dark);
+	imageScrollArea->setWidget(imageLabel);
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	lastPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
@@ -383,12 +386,12 @@ void AscentViewer::updatePhoto()
 	photoDescriptionLineEdit->setText(QString());
 	photoDescriptionLabel	->setVisible(false);
 	photoDescriptionLineEdit->setVisible(false);
-	imageFrame				->setToolTip(QString());
+	imageLabel				->setToolTip(QString());
 	
 	updatePhotoIndexLabel();
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
-		imageDisplay->setVisible(false);
+		imageLabel->setVisible(false);
 		return;
 	}
 	
@@ -398,7 +401,7 @@ void AscentViewer::updatePhoto()
 	const QImage newImage = reader.read();
 	if (newImage.isNull()) {
 		qDebug() << "Error reading" << filepath << reader.errorString();
-		imageDisplay->setVisible(false);
+		imageLabel->setVisible(false);
 		
 		QString title = tr("File error");
 		QString message = tr("Photo could not be loaded:")
@@ -416,14 +419,14 @@ void AscentViewer::updatePhoto()
 	
 	image = newImage;
 	if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
-	imageDisplay->setPixmap(QPixmap::fromImage(image));
-	imageDisplay->setVisible(true);
+	imageLabel->setImage(image);
+	imageLabel->setVisible(true);
 	
 	photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
 	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
-	imageFrame				->setToolTip(filepath);
+	imageLabel				->setToolTip(filepath);
 }
 
 void AscentViewer::updatePhotoIndexLabel()

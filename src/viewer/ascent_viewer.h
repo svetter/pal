@@ -20,6 +20,7 @@
 
 #include "src/main/main_window.h"
 #include "src/viewer/image_display.h"
+#include "src/viewer/scalable_image_label.h"
 #include "ui_ascent_viewer.h"
 
 
@@ -53,7 +54,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	QList<Photo> photos;
 	int currentPhotoIndex;
 	
-	ImageDisplay* imageDisplay;
+	ScalableImageLabel* imageLabel;
 	QImage image;
 	
 	bool descriptionEditable;

@@ -73,7 +73,8 @@ SOURCES += \
 	src/main/settings_window.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
-	src/viewer/ascent_viewer.cpp
+	src/viewer/ascent_viewer.cpp \
+	src/viewer/scalable_image_label.cpp
 
 HEADERS += \
 	src/comp_tables/comp_ascents_table.h \
@@ -135,7 +136,8 @@ HEADERS += \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \
-	src/viewer/image_display.h
+	src/viewer/image_display.h \
+	src/viewer/scalable_image_label.h
 
 FORMS += \
 	src/ui/about_window.ui \
