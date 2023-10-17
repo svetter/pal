@@ -110,7 +110,11 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="dateFilterMaxCheckbox"/>
+       <widget class="QCheckBox" name="dateFilterMaxCheckbox">
+        <property name="toolTip">
+         <string>Specify latest ascent date</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QDateEdit" name="dateFilterMaxWidget">
@@ -211,7 +215,27 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="peakHeightFilterMaxCheckbox"/>
+       <spacer name="peakHeightFilterSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>5</width>
+          <height>0</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="peakHeightFilterMaxCheckbox">
+        <property name="toolTip">
+         <string>Specify maximum height</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QComboBox" name="peakHeightFilterMaxCombo">
