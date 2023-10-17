@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * Copyright 2023 Simon Vetter
+ * 
+ * This file is part of PeakAscentLogger.
+ * 
+ * PeakAscentLogger is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * 
+ * PeakAscentLogger is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with PeakAscentLogger.
+ * If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<svg
+   width="7mm"
+   height="10mm"
+   viewBox="0 0 7 9.9999996"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="hiker.svg"
+   inkscape:export-filename="logo256.png"
+   inkscape:export-xdpi="452.96078"
+   inkscape:export-ydpi="452.96078"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs9" /><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="22.627417"
+     inkscape:cx="15.733126"
+     inkscape:cy="18.804621"
+     inkscape:current-layer="layer1"><inkscape:grid
+       type="xygrid"
+       id="grid561"
+       originx="-11.303075"
+       originy="0.31296096" /></sodipodi:namedview><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-11.303074,0.3129611)"><circle
+       style="fill:#000000;fill-opacity:1;stroke-width:0.353168;paint-order:stroke fill markers"
+       id="path353"
+       cx="15.895905"
+       cy="0.70222628"
+       r="1.0151874"
+       inkscape:label="head" /><path
+       style="fill:#229224;fill-opacity:1;stroke:none;stroke-width:0.300193px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 12.793857,1.9280737 -0.947483,2.1764006 c -0.107226,0.2463033 0.05991,0.5783754 0.197001,0.6285295 L 12.81262,5.014435 c 0.197243,0.072162 0.571098,-0.073242 0.637911,-0.2908121 l 0.73172,-2.3827836 C 14.267314,2.063854 14.046325,1.7778704 13.872677,1.7216908 L 13.553722,1.6184997 c -0.198607,-0.064254 -0.657275,0.07392 -0.759865,0.309574 z"
+       id="path409"
+       sodipodi:nodetypes="sssssssss"
+       inkscape:label="backpack" /><path
+       style="fill:#229224;fill-opacity:1;stroke:none;stroke-width:0.300193px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 17.639164,3.895746 17.179493,9.48919 c -0.0094,0.1148234 0.06273,0.1694449 0.147751,0.1782396 0.08502,0.0088 0.174314,-0.045765 0.180585,-0.1219535 l 0.46319,-5.6274499 c 0.007,-0.085442 -0.05529,-0.1584438 -0.154787,-0.1665134 -0.09951,-0.00806 -0.168963,0.04562 -0.177068,0.1442332 z"
+       id="path1065"
+       sodipodi:nodetypes="sszsszs"
+       inkscape:label="stick" /><path
+       id="path1061"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.300193px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 15.300941,1.8987578 c -0.212259,-0.00207 -0.688948,0.1501291 -0.816151,0.560517 l -0.732894,2.364608 c -0.03644,0.1175582 -0.02908,0.3066506 0.02346,0.408075 l 2.152362,4.1557997 c 0.218902,0.3648365 0.562494,0.3451923 0.799148,0.2087281 0.217798,-0.1255909 0.34193,-0.5138769 0.179412,-0.7792123 L 15.115083,5.3843997 15.589411,4.0077324 C 15.907815,4.880023 17.298766,5.235654 17.516629,5.3046609 17.995365,5.4563005 18.110003,5.1261483 18.119942,4.9798425 18.133136,4.7856288 17.982447,4.5822613 17.595776,4.485579 16.107397,4.113428 16.087309,3.2646079 16.053768,2.7008365 16.020227,2.1370651 15.765301,1.9033104 15.300941,1.8987578 Z M 13.536132,5.4670701 12.919329,7.5267942 11.665788,8.727567 c -0.265976,0.2547181 -0.203417,0.5686624 -0.03635,0.7592778 0.174769,0.1994046 0.563582,0.2856654 0.792698,0.066839 L 13.8246,8.2133681 c 0.08169,-0.07802 0.120124,-0.1904874 0.145994,-0.2784996 L 14.27606,6.8965053 Z"
+       inkscape:label="body" /></g></svg>

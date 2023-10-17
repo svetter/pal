@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * Copyright 2023 Simon Vetter
+ * 
+ * This file is part of PeakAscentLogger.
+ * 
+ * PeakAscentLogger is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * 
+ * PeakAscentLogger is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with PeakAscentLogger.
+ * If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<svg
+   width="10mm"
+   height="10mm"
+   viewBox="0 0 10 9.9999996"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="country.svg"
+   inkscape:export-filename="logo256.png"
+   inkscape:export-xdpi="452.96078"
+   inkscape:export-ydpi="452.96078"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs9" /><sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="22.627417"
+     inkscape:cx="19.202369"
+     inkscape:cy="18.097514"
+     inkscape:current-layer="layer1"><inkscape:grid
+       type="xygrid"
+       id="grid561"
+       originx="-11.303075"
+       originy="0.31296102" /></sodipodi:namedview><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-11.303074,0.3129611)"><path
+       id="path361"
+       style="display:inline;fill:#229224;fill-opacity:1;stroke:#000000;stroke-width:0.289381;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:label="italy"
+       d="m 15.857734,-0.12424432 -0.841423,0.17396718 -0.534363,0.0932145 -0.267182,0.29409925 V 0.83780913 L 13.573231,0.54370989 13.345927,1.278958 12.918736,0.59754501 12.451168,1.1987038 l -0.801545,0.1470496 0.307059,0.4541092 -0.44065,0.2936008 0.360396,0.4411488 -0.14705,0.3873138 0.481027,0.5881985 0.521403,-0.1605084 0.226805,-0.2671817 0.240763,-0.2003863 0.280142,0.066796 0.654994,0.3205182 0.173469,0.1605084 0.02692,0.3738551 0.226805,0.4007725 -0.05333,0.2273038 0.612625,0.3225122 -0.0324,0.2108542 0.399276,0.055829 0.186928,0.2577107 0.180946,0.3000809 0.514424,9.935e-4 0.01645,0.02293 0.255717,0.3289924 0.51243,-0.1460528 0.255717,0.420213 -0.127609,0.1465511 0.493488,0.3658795 0.365381,-0.073275 0.548321,1.5357962 -0.621097,0.8768145 0.05434,0.4571001 0.42121,-0.017447 0.09122,-0.2741603 0.402268,-0.3843229 V 8.4365361 l 0.493477,-0.2741604 0.18294,-0.1460526 -0.03639,-0.5308741 -0.640039,-0.3284939 -0.07328,-0.2377718 0.603651,-0.9505886 0.877313,0.365381 0.146552,0.4386565 0.401769,0.1829397 0.146552,-0.4571 L 20.57379,5.8399886 18.213021,4.6591054 18.207537,4.4283123 18.453284,4.1990146 18.169154,4.1267359 17.569491,4.219452 17.00173,4.0439894 16.886583,3.723471 16.071579,3.229484 15.89811,2.4010214 16.098496,2.2539718 15.817856,1.7998626 16.766451,1.4793442 17.07351,1.5860176 16.766451,0.78447249 17.020174,0.53074958 16.018242,0.3567824 Z" /></g></svg>

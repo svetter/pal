@@ -42,6 +42,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 		photosModel(PhotosOfAscent())
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
 	

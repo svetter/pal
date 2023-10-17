@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
 <!--
  * Copyright 2023 Simon Vetter
  * 
@@ -18,19 +17,18 @@
 -->
 
 <svg
-   width="14.355327mm"
-   height="12.432077mm"
-   viewBox="0 0 14.355327 12.432077"
+   width="10mm"
+   height="7.5mm"
+   viewBox="0 0 10 7.4999997"
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
-   sodipodi:docname="Logo.svg"
+   sodipodi:docname="trip.svg"
    inkscape:export-filename="logo256.png"
    inkscape:export-xdpi="452.96078"
    inkscape:export-ydpi="452.96078"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -44,60 +42,37 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="10.35098"
-     inkscape:cx="0.48304605"
-     inkscape:cy="35.600494"
+     inkscape:zoom="11.313709"
+     inkscape:cx="9.4133586"
+     inkscape:cy="15.688931"
      inkscape:current-layer="layer1">
     <inkscape:grid
        type="xygrid"
        id="grid561"
        originx="-11.303075"
-       originy="0.31296112" />
+       originy="0.31296104" />
   </sodipodi:namedview>
-  <defs
-     id="defs2">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3198">
-      <stop
-         style="stop-color:#229224;stop-opacity:1;"
-         offset="0.5"
-         id="stop3194" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0.5"
-         id="stop3196" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3198"
-       id="linearGradient3200"
-       x1="0"
-       y1="7.1530776"
-       x2="0"
-       y2="5.1530776"
-       gradientUnits="userSpaceOnUse" />
-  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-11.303074,0.3129611)">
     <path
-       sodipodi:type="star"
-       style="fill:url(#linearGradient3200);fill-opacity:1;stroke:#000000;stroke-width:2;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
-       id="path1207"
-       inkscape:flatsided="true"
-       sodipodi:sides="3"
-       sodipodi:cx="18.480738"
-       sodipodi:cy="7.9750905"
-       sodipodi:r1="6.2880516"
-       sodipodi:r2="3.1440258"
-       sodipodi:arg1="-1.5707963"
-       sodipodi:arg2="-0.52359878"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 18.480738,1.6870389 5.445612,9.4320771 -10.891225,0 z"
-       inkscape:transform-center-y="-1.5720131" />
+       id="path4605"
+       style="fill:#000000;fill-opacity:1;stroke:#ff0000;stroke-width:0.00121237;paint-order:stroke fill markers"
+       inkscape:label="handle"
+       d="M 14.55368,-0.31235491 V 1.4364327 h 0.749667 V 0.4370389 h 1.999454 v 0.9993938 h 0.749667 v -1.74878761 z"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       id="rect287"
+       style="fill:#000000;stroke:none;stroke-width:0.298845;paint-order:stroke fill markers;fill-opacity:1"
+       d="M 12.553127 1.4368029 L 12.553127 7.1868395 L 13.302952 7.1868395 L 13.302952 1.4368029 L 12.553127 1.4368029 z M 19.303102 1.4368029 L 19.303102 7.1868395 L 20.052928 7.1868395 L 20.052928 1.4368029 L 19.303102 1.4368029 z "
+       inkscape:label="straps" />
+    <path
+       id="path919"
+       style="fill:#229224;fill-opacity:1;stroke:#ff0000;stroke-width:0.00111719;paint-order:stroke fill markers"
+       d="m 13.303306,1.4371286 v 5.7499103 h 5.999536 V 1.4371286 Z m -2.000232,0 v 5.7499103 h 1.250484 V 1.4371286 Z m 8.749518,0 v 5.7499103 h 1.249924 l 5.58e-4,-5.7499103 z"
+       sodipodi:nodetypes="ccccccccccccccc"
+       inkscape:label="briefcase" />
   </g>
 </svg>

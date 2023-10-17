@@ -33,6 +33,7 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 		selectableCountryIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::regionDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

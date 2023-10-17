@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
 <!--
  * Copyright 2023 Simon Vetter
  * 
@@ -18,21 +17,22 @@
 -->
 
 <svg
-   width="14.355327mm"
-   height="12.432077mm"
-   viewBox="0 0 14.355327 12.432077"
+   width="10mm"
+   height="6.5mm"
+   viewBox="0 0 10 6.4999997"
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
-   sodipodi:docname="logo_path.svg"
+   sodipodi:docname="range.svg"
    inkscape:export-filename="logo256.png"
    inkscape:export-xdpi="452.96078"
    inkscape:export-ydpi="452.96078"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
   <sodipodi:namedview
      id="namedview7"
      pagecolor="#505050"
@@ -44,54 +44,35 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="10.35098"
-     inkscape:cx="-0.048304605"
-     inkscape:cy="35.793712"
+     inkscape:zoom="22.627417"
+     inkscape:cx="16.771689"
+     inkscape:cy="18.406873"
      inkscape:current-layer="layer1">
     <inkscape:grid
        type="xygrid"
        id="grid561"
        originx="-11.303075"
-       originy="0.31296112" />
+       originy="0.31296103" />
   </sodipodi:namedview>
-  <defs
-     id="defs2">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3198">
-      <stop
-         style="stop-color:#229224;stop-opacity:1;"
-         offset="0.5"
-         id="stop3194" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0.5"
-         id="stop3196" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3198"
-       id="linearGradient3200"
-       x1="0"
-       y1="7.1530776"
-       x2="0"
-       y2="5.1530776"
-       gradientUnits="userSpaceOnUse" />
-  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-11.303074,0.3129611)">
     <path
-       style="color:#000000;display:inline;fill:#000000;-inkscape-stroke:none;paint-order:stroke fill markers"
-       d="m 18.480469,-0.3125 -0.865235,1.5 -6.3125,10.931641 h 14.355469 z m 0,4 3.714843,6.431641 h -7.427734 z"
-       id="path318"
-       inkscape:label="border" />
+       id="path563"
+       style="color:#000000;display:inline;fill:#000000;stroke-width:0.487611;-inkscape-stroke:none;paint-order:stroke fill markers"
+       inkscape:label="border"
+       d="M 14.803119,-0.0789611 11.303074,5.9826844 H 21.30298 L 17.802936,-0.0789611 17.105821,1.1287171 16.552883,0.17115284 15.750348,1.5612488 Z m 0,0.9746175 1.500167,2.598291 1.500166,-2.598291 2.655136,4.5992025 h -8.310604 z m 1.749764,0.2501139 0.271301,0.4702555 -0.520898,0.9027873 -0.271818,-0.4702555 z" />
     <path
-       style="color:#000000;display:inline;fill:url(#linearGradient3200);stroke-width:2;-inkscape-stroke:none;paint-order:stroke fill markers"
-       d="M 18.480738,1.6870389 23.92635,11.119116 H 13.035125 Z"
-       id="path320"
-       inkscape:label="fill" />
+       id="path559"
+       style="color:#000000;display:inline;fill:#229224;fill-opacity:1;stroke-width:1.34939;-inkscape-stroke:none;paint-order:stroke fill markers"
+       inkscape:label="green"
+       d="m 13.547898,3.0707175 -1.399914,2.4241414 h 3.000333 2.310453 2.999817 L 19.059189,3.0707175 H 16.547715 L 16.303286,3.4934307 16.059373,3.0707175 Z" />
+    <path
+       id="path561"
+       style="color:#000000;display:inline;fill:#ffffff;fill-opacity:1;stroke-width:1.72638;-inkscape-stroke:none;paint-order:stroke fill markers"
+       inkscape:label="white"
+       d="m 14.803119,0.8956564 -1.255221,2.1750611 h 2.511475 z m 3.000333,0 -1.255737,2.1750611 h 2.511474 z m -1.250569,0.250114 -0.521416,0.9027873 0.271819,0.4702555 0.521414,-0.9027873 z" />
   </g>
 </svg>

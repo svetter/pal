@@ -30,6 +30,7 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, R
 		init(init)
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

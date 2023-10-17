@@ -43,6 +43,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 		infoContextMenu(QMenu(this))
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));
 	additionalUISetup();
 	
 	connectUI();
@@ -134,6 +135,10 @@ void AscentViewer::setupContextMenus()
 	editAscentAction	= infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
 	editPeakAction		= infoContextMenu.addAction(tr("Edit peak..."),		this,	&AscentViewer::handle_editPeak);
 	editTripAction		= infoContextMenu.addAction(tr("Edit trip..."),		this,	&AscentViewer::handle_editTrip);
+	
+	editAscentAction	->setIcon(QIcon(":/icons/ascent.svg"));
+	editPeakAction		->setIcon(QIcon(":/icons/peak.svg"));
+	editTripAction		->setIcon(QIcon(":/icons/trip.svg"));
 }
 
 void AscentViewer::setupShortcuts()

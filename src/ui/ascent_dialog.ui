@@ -121,6 +121,10 @@
          <property name="text">
           <string>New peak...</string>
          </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/peak.svg</normaloff>:/icons/peak.svg</iconset>
+         </property>
         </widget>
        </item>
       </layout>
@@ -545,6 +549,10 @@
          </property>
          <property name="text">
           <string>New trip...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/trip.svg</normaloff>:/icons/trip.svg</iconset>
          </property>
         </widget>
        </item>

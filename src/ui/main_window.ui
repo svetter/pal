@@ -80,12 +80,22 @@
          <widget class="QPushButton" name="newAscentButton">
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>30</height>
            </size>
           </property>
           <property name="text">
            <string>New ascent...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/ascent.svg</normaloff>:/icons/ascent.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -93,12 +103,22 @@
          <widget class="QPushButton" name="newPeakButton">
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>30</height>
            </size>
           </property>
           <property name="text">
            <string>New peak...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/peak.svg</normaloff>:/icons/peak.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -106,12 +126,114 @@
          <widget class="QPushButton" name="newTripButton">
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>30</height>
            </size>
           </property>
           <property name="text">
            <string>New trip...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/trip.svg</normaloff>:/icons/trip.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="newHikerButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>New hiker...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/hiker.svg</normaloff>:/icons/hiker.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="newRegionButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>New region...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/region.svg</normaloff>:/icons/region.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="newRangeButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>New mountain range...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/range.svg</normaloff>:/icons/range.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="newCountryButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>New country...</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/icons/country.svg</normaloff>:/icons/country.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>20</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -192,6 +314,10 @@
          <enum>Qt::ElideNone</enum>
         </property>
         <widget class="QWidget" name="ascentsTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/ascent.svg</normaloff>:/icons/ascent.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Ascents</string>
          </attribute>
@@ -251,6 +377,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="peaksTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/peak.svg</normaloff>:/icons/peak.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Peaks</string>
          </attribute>
@@ -307,6 +437,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="tripsTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/trip.svg</normaloff>:/icons/trip.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Trips</string>
          </attribute>
@@ -363,6 +497,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="hikersTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/hiker.svg</normaloff>:/icons/hiker.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Hikers</string>
          </attribute>
@@ -419,6 +557,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="regionsTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/region.svg</normaloff>:/icons/region.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Regions</string>
          </attribute>
@@ -475,6 +617,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="rangesTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/range.svg</normaloff>:/icons/range.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Mountain ranges</string>
          </attribute>
@@ -531,6 +677,10 @@
          </layout>
         </widget>
         <widget class="QWidget" name="countriesTab">
+         <attribute name="icon">
+          <iconset>
+           <normaloff>:/icons/country.svg</normaloff>:/icons/country.svg</iconset>
+         </attribute>
          <attribute name="title">
           <string>Countries</string>
          </attribute>
@@ -725,6 +875,10 @@
    </property>
   </action>
   <action name="newAscentAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/ascent.svg</normaloff>:/icons/ascent.svg</iconset>
+   </property>
    <property name="text">
     <string>New ascent...</string>
    </property>
@@ -733,31 +887,55 @@
    </property>
   </action>
   <action name="newPeakAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/peak.svg</normaloff>:/icons/peak.svg</iconset>
+   </property>
    <property name="text">
     <string>New peak...</string>
    </property>
   </action>
   <action name="newTripAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/trip.svg</normaloff>:/icons/trip.svg</iconset>
+   </property>
    <property name="text">
     <string>New trip...</string>
    </property>
   </action>
   <action name="newHikerAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/hiker.svg</normaloff>:/icons/hiker.svg</iconset>
+   </property>
    <property name="text">
     <string>New hiker...</string>
    </property>
   </action>
   <action name="newRegionAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/region.svg</normaloff>:/icons/region.svg</iconset>
+   </property>
    <property name="text">
     <string>New region...</string>
    </property>
   </action>
   <action name="newRangeAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/range.svg</normaloff>:/icons/range.svg</iconset>
+   </property>
    <property name="text">
     <string>New mountain range...</string>
    </property>
   </action>
   <action name="newCountryAction">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/country.svg</normaloff>:/icons/country.svg</iconset>
+   </property>
    <property name="text">
     <string>New country...</string>
    </property>
@@ -769,8 +947,8 @@
   </action>
   <action name="aboutAction">
    <property name="icon">
-    <iconset resource="../../../build-debug/debug/qmake_resources.qrc">
-     <normaloff>:/logo/logo_multisize_square.ico</normaloff>:/logo/logo_multisize_square.ico</iconset>
+    <iconset>
+     <normaloff>:/icons/logo.svg</normaloff>:/icons/logo.svg</iconset>
    </property>
    <property name="text">
     <string>About PAL</string>
@@ -795,7 +973,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../build-debug/debug/qmake_resources.qrc"/>
  </resources>
  <connections/>
 </ui>

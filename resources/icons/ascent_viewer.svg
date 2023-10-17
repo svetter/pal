@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * Copyright 2023 Simon Vetter
+ * 
+ * This file is part of PeakAscentLogger.
+ * 
+ * PeakAscentLogger is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * 
+ * PeakAscentLogger is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with PeakAscentLogger.
+ * If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<svg
+   width="10mm"
+   height="10mm"
+   viewBox="0 0 10 9.9999996"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="ascent_viewer.svg"
+   inkscape:export-filename="logo256.png"
+   inkscape:export-xdpi="452.96078"
+   inkscape:export-ydpi="452.96078"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="21.522562"
+     inkscape:cy="28.416853"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid561"
+       originx="-11.303075"
+       originy="0.31296106" />
+  </sodipodi:namedview>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-11.303074,0.3129611)">
+    <path
+       id="rect351"
+       style="fill:#000000;stroke:none;stroke-width:0.503065;paint-order:stroke fill markers"
+       d="M 11.303074 -0.3129611 L 11.303074 9.6869453 L 21.30298 9.6869453 L 21.30298 -0.3129611 L 11.303074 -0.3129611 z M 12.303013 0.68697786 L 20.303041 0.68697786 L 20.303041 8.6870063 L 12.303013 8.6870063 L 12.303013 0.68697786 z "
+       inkscape:label="frame" />
+    <g
+       id="g453"
+       inkscape:label="ascent"
+       transform="matrix(0.75000705,0,0,0.75000705,5.001793,-5.0082167)">
+      <path
+         id="path320"
+         style="color:#000000;display:inline;fill:#ffffff;fill-opacity:1;stroke-width:1.81775;-inkscape-stroke:none;paint-order:stroke fill markers"
+         inkscape:label="white"
+         d="m 15.068492,9.9862733 -1.793689,3.1073037 h 1.293461 v 3.462838 h 0.999939 v -3.462838 h 1.294494 z" />
+      <path
+         id="path1820"
+         style="color:#000000;display:inline;fill:#229224;fill-opacity:1;stroke-width:1.52432;-inkscape-stroke:none;paint-order:stroke fill markers"
+         inkscape:label="green"
+         d="m 12.985931,13.593805 -1.71049,2.96261 h 2.792595 v -2.96261 z m 3.0825,0 v 2.96261 h 2.793627 l -1.711006,-2.96261 z" />
+      <path
+         id="path2454"
+         style="color:#000000;display:inline;fill:#000000;stroke-width:0.696587;-inkscape-stroke:none;paint-order:stroke fill markers"
+         inkscape:label="border"
+         d="M 15.068492,8.5935934 14.465944,9.6384909 10.06828,17.25353 h 9.999906 z m 0,1.3926799 1.794205,3.1073037 h -0.794266 -0.500228 v 0.500228 2.96261 h -0.999939 v -3.462838 h -0.500228 -0.793233 z m -2.082561,3.6075317 h 1.082105 v 2.96261 h -2.792595 z m 3.0825,0 h 1.082621 l 1.711006,2.96261 h -2.793627 z" />
+    </g>
+  </g>
+</svg>

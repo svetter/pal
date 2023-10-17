@@ -31,6 +31,7 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 		selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

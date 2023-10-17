@@ -117,6 +117,10 @@
          <property name="text">
           <string>New region...</string>
          </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/region.svg</normaloff>:/icons/region.svg</iconset>
+         </property>
         </widget>
        </item>
       </layout>

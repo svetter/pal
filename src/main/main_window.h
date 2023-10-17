@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	QList<QAction*> openRecentActions;
 	QMenu tableContextMenu;
 	QAction* tableContextMenuOpenAction;
+	QAction* tableContextMenuEditAction;
 	QAction* tableContextMenuDuplicateAction;
 	QList<QShortcut*> shortcuts;
 	QLabel* statusBarTableSizeLabel;
@@ -67,6 +68,7 @@ private:
 	void restoreColumnWidths(const ItemTypeMapper& mapper);
 	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
+	void updateContextMenuEditIcon();
 	
 	// Project setup (on load)
 	void initCompositeBuffers();

@@ -29,6 +29,7 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, H
 		init(init)
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

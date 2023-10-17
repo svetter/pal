@@ -29,6 +29,7 @@ CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpos
 		init(init)
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::countryDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

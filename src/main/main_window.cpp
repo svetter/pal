@@ -96,6 +96,8 @@ MainWindow::MainWindow() :
 	}
 	
 	
+	updateContextMenuEditIcon();
+	
 	if (showDebugTableViews) setupDebugTableViews();	// After opening database so that auto-sizing columns works correctly
 }
 
@@ -178,10 +180,10 @@ void MainWindow::createTypesHandler()
 		new AscentTypeMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton),
 		new PeakTypeMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton),
 		new TripTypeMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton),
-		new HikerTypeMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		nullptr),
-		new RegionTypeMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	nullptr),
-		new RangeTypeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		nullptr),
-		new CountryTypeMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	nullptr)
+		new HikerTypeMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton),
+		new RegionTypeMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton),
+		new RangeTypeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton),
+		new CountryTypeMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton)
 	);
 	
 	if (showDebugTableViews) {
@@ -354,9 +356,14 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
 	tableContextMenu.addSeparator();
 	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					deleteKeySequence);
-	// store actions for open and duplicate (for disbling them where they're not needed)
+	// Store actions for open and duplicate (for disbling them where they're not needed)
 	tableContextMenuOpenAction		= openAction;
+	tableContextMenuEditAction		= editAction;
 	tableContextMenuDuplicateAction	= duplicateAction;
+	
+	// Set icons
+	openAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
+	deleteAction->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
 	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_viewSelectedItem);
 	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
@@ -381,6 +388,17 @@ void MainWindow::initTableContextMenuAndShortcuts()
 		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
 		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItem);
 	}
+}
+
+void MainWindow::updateContextMenuEditIcon()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	typesHandler->forMatchingTableView(currentTableView, [this] (const ItemTypeMapper& mapper, bool debug) {
+		Q_UNUSED(debug);
+		QIcon icon = QIcon(":/icons/" + mapper.name + ".svg");
+		tableContextMenuEditAction->setIcon(icon);
+		tableContextMenuDuplicateAction->setIcon(icon);
+	});
 }
 
 
@@ -635,6 +653,7 @@ void MainWindow::handle_tabChanged()
 	});
 	
 	updateTableSize();
+	updateContextMenuEditIcon();
 }
 
 void MainWindow::handle_rightClick(QPoint pos)

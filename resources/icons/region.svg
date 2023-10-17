@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ * Copyright 2023 Simon Vetter
+ * 
+ * This file is part of PeakAscentLogger.
+ * 
+ * PeakAscentLogger is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * 
+ * PeakAscentLogger is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with PeakAscentLogger.
+ * If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<svg
+   width="10mm"
+   height="8mm"
+   viewBox="0 0 10 7.9999997"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="region.svg"
+   inkscape:export-filename="logo256.png"
+   inkscape:export-xdpi="452.96078"
+   inkscape:export-ydpi="452.96078"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs13" />
+     <sodipodi:namedview
+   id="namedview7"
+   pagecolor="#505050"
+   bordercolor="#eeeeee"
+   borderopacity="1"
+   inkscape:showpageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#505050"
+   inkscape:document-units="mm"
+   showgrid="false"
+   inkscape:zoom="22.627418"
+   inkscape:cx="18.760426"
+   inkscape:cy="18.230096"
+   inkscape:current-layer="layer1"><inkscape:grid
+     type="xygrid"
+     id="grid561"
+     originx="-11.303075"
+     originy="0.31296092" /></sodipodi:namedview><g
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer"
+   id="layer1"
+   transform="translate(-11.303074,0.3129611)"><path
+     style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.997951"
+     d="M 12.288057,1.4460406 11.661888,7.15676 14.047417,5.7655031 15.938704,7.1434994 18.296264,5.6129152 20.963295,7.1795676 20.396458,1.2925845 18.150908,0.01027903 16.17025,1.2771308 14.538935,0.0242865 Z"
+     id="path362"
+     sodipodi:nodetypes="ccccccccccc"
+     inkscape:label="outline" /><path
+     style="display:inline;fill:#229224;fill-opacity:1;stroke:#229224;stroke-width:0.36492px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 18.651806,4.8892718 -0.101769,-3.7758438 1.122196,0.6586925 0.377603,3.984993 z"
+     id="path1020"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="segment4" /><path
+     style="display:inline;fill:#229224;fill-opacity:1;stroke:#229224;stroke-width:0.36492px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 16.351263,5.9251556 16.477895,2.01131 17.840729,1.1368144 17.896873,4.8775788 Z"
+     id="path1018"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="segment3" /><path
+     style="display:inline;fill:#229224;fill-opacity:1;stroke:#229224;stroke-width:0.36492px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 14.813204,1.2777095 14.472827,5.0778071 15.630225,5.9479631 15.7688,2.0001954 Z"
+     id="path1016"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="segment2" /><path
+     style="display:inline;fill:#229224;fill-opacity:1;stroke:#229224;stroke-width:0.36492px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 13.035666,1.9472267 12.562784,5.6784447 13.728692,5.0316135 14.10328,1.2566376 Z"
+     id="path1014"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="segment1" /><path
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:none"
+     d="m 11.875089,5.405044 2.380776,-1.6942869 1.786629,0.4168991 2.140601,-1.7595271 2.30269,0.5653903"
+     id="path1026"
+     sodipodi:nodetypes="ccccc"
+     inkscape:label="road" /></g></svg>

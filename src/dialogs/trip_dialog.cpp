@@ -29,6 +29,7 @@ TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Tri
 		init(init)
 {
 	setupUi(this);
+	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, parent, &Settings::tripDialog_geometry);
 	

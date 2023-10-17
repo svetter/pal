@@ -180,15 +180,30 @@ DISTFILES += \
 
 
 
-RC_ICONS = resources/logo/logo_multisize_square.ico
+RC_ICONS = resources/icons/ico/logo_peak_multisize_square.ico
 
 
 
 resources.files = \
-	resources/logo/logo_path.svg \
-	resources/logo/logo_128.png \
-	resources/logo/logo_multisize_square.ico \
-	resources/logo/gpl-v3-logo.svg
+	resources/icons/logo.svg \
+	resources/icons/ascent.svg \
+	resources/icons/peak.svg \
+	resources/icons/trip.svg \
+	resources/icons/hiker.svg \
+	resources/icons/region.svg \
+	resources/icons/range.svg \
+	resources/icons/country.svg \
+	resources/icons/ascent_viewer.svg \
+	resources/icons/png/logo_128.png \
+	resources/icons/ico/logo_peak_multisize_square.ico \
+	resources/icons/ico/ascent_multisize_square.ico \
+	resources/icons/ico/trip_multisize_square.ico \
+	resources/icons/ico/hiker_multisize_square.ico \
+	resources/icons/ico/region_multisize_square.ico \
+	resources/icons/ico/range_multisize_square.ico \
+	resources/icons/ico/country_multisize_square.ico \
+	resources/icons/ico/ascent_viewer_multisize_square.ico \
+	resources/gpl/gpl-v3-logo.svg
 resources.base = resources
 resources.prefix = /
 
@@ -199,7 +214,7 @@ RESOURCES = resources
 CONFIG += lrelease
 CONFIG += embed_translations
 
-# Default rules for deployment.
+# Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
