@@ -1,4 +1,4 @@
-![PAL logo](resources/logo/logo_multisize_square.ico)
+![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
 
 PeakAscentLogger (PAL)
 ======================
