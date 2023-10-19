@@ -18,7 +18,7 @@
 #ifndef ASCENT_DIALOG_H
 #define ASCENT_DIALOG_H
 
-#include "src/dialogs/new_or_edit_dialog.h"
+#include "src/dialogs/item_dialog.h"
 #include "src/data/ascent.h"
 #include "ui_ascent_dialog.h"
 
@@ -29,7 +29,7 @@
 
 
 
-class AscentDialog : public NewOrEditDialog, public Ui_AscentDialog
+class AscentDialog : public ItemDialog, public Ui_AscentDialog
 {
 	Q_OBJECT
 	

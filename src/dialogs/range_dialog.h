@@ -18,13 +18,13 @@
 #ifndef RANGE_DIALOG_H
 #define RANGE_DIALOG_H
 
-#include "src/dialogs/new_or_edit_dialog.h"
+#include "src/dialogs/item_dialog.h"
 #include "src/data/range.h"
 #include "ui_range_dialog.h"
 
 
 
-class RangeDialog : public NewOrEditDialog, public Ui_RangeDialog
+class RangeDialog : public ItemDialog, public Ui_RangeDialog
 {
 	Q_OBJECT
 	

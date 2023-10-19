@@ -27,7 +27,7 @@
 
 
 RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
-		NewOrEditDialog(parent, db, purpose),
+		ItemDialog(parent, db, purpose),
 		init(init),
 		selectableRangeIDs(QList<ValidItemID>()),
 		selectableCountryIDs(QList<ValidItemID>())
@@ -151,7 +151,7 @@ void RegionDialog::handle_ok()
 	QString emptyNameWindowTitle	= tr("Can't save region");
 	QString emptyNameWindowMessage	= tr("The region needs a name.");
 	const Column* nameColumn = db->regionsTable->nameColumn;
-	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
+	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void RegionDialog::aboutToClose()

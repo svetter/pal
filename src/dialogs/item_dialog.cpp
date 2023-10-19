@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "new_or_edit_dialog.h"
+#include "item_dialog.h"
 
 #include "src/main/settings.h"
 
@@ -24,7 +24,7 @@
 
 
 
-NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, DialogPurpose purpose):
+ItemDialog::ItemDialog(QWidget* parent, Database* db, DialogPurpose purpose):
 		QDialog(parent),
 		parent(parent),
 		db(db),
@@ -33,7 +33,7 @@ NewOrEditDialog::NewOrEditDialog(QWidget* parent, Database* db, DialogPurpose pu
 
 
 
-void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
+void ItemDialog::changeStringsForEdit(QPushButton* okButton)
 {
 	if (purpose != editItem) return;
 	setWindowTitle(getEditWindowTitle());
@@ -42,7 +42,7 @@ void NewOrEditDialog::changeStringsForEdit(QPushButton* okButton)
 
 
 
-void NewOrEditDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn)
+void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn)
 {
 	aboutToClose();
 	
@@ -61,7 +61,7 @@ void NewOrEditDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QStri
 	accept();
 }
 
-void NewOrEditDialog::handle_cancel()
+void ItemDialog::handle_cancel()
 {
 	aboutToClose();
 	
@@ -86,14 +86,14 @@ void NewOrEditDialog::handle_cancel()
 }
 
 
-void NewOrEditDialog::reject()
+void ItemDialog::reject()
 {
 	handle_cancel();
 }
 
 
 
-bool NewOrEditDialog::checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn)
+bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn)
 {
 	if (!nameColumn->anyCellMatches(name)) {
 		return true;	// Item name is not a duplicate, proceed with save
@@ -116,10 +116,10 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 {
 	QString question;
 	if (whatIfResults.isEmpty()) {
-		question = NewOrEditDialog::tr("Are you sure you want to delete this item?");
+		question = ItemDialog::tr("Are you sure you want to delete this item?");
 	} else {
 		QString whatIfResultString = getTranslatedWhatIfDeleteResultDescription(whatIfResults);
-		question = whatIfResultString + "\n" + NewOrEditDialog::tr("Are you sure?");
+		question = whatIfResultString + "\n" + ItemDialog::tr("Are you sure?");
 	}
 	
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;

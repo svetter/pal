@@ -15,8 +15,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef NEW_OR_EDIT_DIALOG_H
-#define NEW_OR_EDIT_DIALOG_H
+#ifndef ITEM_DIALOG_H
+#define ITEM_DIALOG_H
 
 #include "src/db/database.h"
 
@@ -34,7 +34,7 @@ enum DialogPurpose {
 
 
 
-class NewOrEditDialog : public QDialog
+class ItemDialog : public QDialog
 {
 	Q_OBJECT
 	
@@ -44,7 +44,7 @@ protected:
 	Database* db;
 	DialogPurpose purpose;
 	
-	NewOrEditDialog(QWidget* parent, Database* db, DialogPurpose purpose);
+	ItemDialog(QWidget* parent, Database* db, DialogPurpose purpose);
 	
 	virtual QString getEditWindowTitle() = 0;
 	
@@ -71,4 +71,4 @@ void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, b
 
 
 
-#endif // NEW_OR_EDIT_DIALOG_H
+#endif // ITEM_DIALOG_H

@@ -19,13 +19,13 @@
 #define HIKER_DIALOG_H
 
 #include "src/db/database.h"
-#include "src/dialogs/new_or_edit_dialog.h"
+#include "src/dialogs/item_dialog.h"
 #include "src/data/hiker.h"
 #include "ui_hiker_dialog.h"
 
 
 
-class HikerDialog : public NewOrEditDialog, public Ui_HikerDialog
+class HikerDialog : public ItemDialog, public Ui_HikerDialog
 {
 	Q_OBJECT
 	

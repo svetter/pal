@@ -18,13 +18,13 @@
 #ifndef COUNTRY_DIALOG_H
 #define COUNTRY_DIALOG_H
 
-#include "src/dialogs/new_or_edit_dialog.h"
+#include "src/dialogs/item_dialog.h"
 #include "src/data/country.h"
 #include "ui_country_dialog.h"
 
 
 
-class CountryDialog : public NewOrEditDialog, public Ui_CountryDialog
+class CountryDialog : public ItemDialog, public Ui_CountryDialog
 {
 	Q_OBJECT
 	

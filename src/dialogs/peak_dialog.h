@@ -18,13 +18,13 @@
 #ifndef PEAK_DIALOG_H
 #define PEAK_DIALOG_H
 
-#include "src/dialogs/new_or_edit_dialog.h"
+#include "src/dialogs/item_dialog.h"
 #include "src/data/peak.h"
 #include "ui_peak_dialog.h"
 
 
 
-class PeakDialog : public NewOrEditDialog, public Ui_PeakDialog
+class PeakDialog : public ItemDialog, public Ui_PeakDialog
 {
 	Q_OBJECT
 	

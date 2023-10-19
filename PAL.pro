@@ -56,9 +56,9 @@ SOURCES += \
 	src/dialogs/add_hiker_dialog.cpp \
 	src/dialogs/country_dialog.cpp \
 	src/dialogs/hiker_dialog.cpp \
+	src/dialogs/item_dialog.cpp \
 	src/dialogs/list/hiker_list.cpp \
 	src/dialogs/list/photo_list.cpp \
-	src/dialogs/new_or_edit_dialog.cpp \
 	src/dialogs/parse_helper.cpp \
 	src/dialogs/range_dialog.cpp \
 	src/dialogs/ascent_dialog.cpp \
@@ -118,9 +118,9 @@ HEADERS += \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
 	src/dialogs/hiker_dialog.h \
+	src/dialogs/item_dialog.h \
 	src/dialogs/list/hiker_list.h \
 	src/dialogs/list/photo_list.h \
-	src/dialogs/new_or_edit_dialog.h \
 	src/dialogs/peak_dialog.h \
 	src/dialogs/range_dialog.h \
 	src/dialogs/region_dialog.h \

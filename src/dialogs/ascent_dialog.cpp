@@ -33,7 +33,7 @@
 
 
 AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
-		NewOrEditDialog(parent, db, purpose),
+		ItemDialog(parent, db, purpose),
 		init(init),
 		selectableRegionIDs(QList<ValidItemID>()),
 		selectablePeakIDs(QList<ValidItemID>()),

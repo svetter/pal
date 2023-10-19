@@ -26,7 +26,7 @@
 
 
 RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init) :
-		NewOrEditDialog(parent, db, purpose),
+		ItemDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -110,7 +110,7 @@ void RangeDialog::handle_ok()
 	QString emptyNameWindowTitle	= tr("Can't save mountain range");
 	QString emptyNameWindowMessage	= tr("The mountain range needs a name.");
 	const Column* nameColumn = db->rangesTable->nameColumn;
-	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
+	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void RangeDialog::aboutToClose()

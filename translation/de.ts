@@ -1866,42 +1866,42 @@
     </message>
 </context>
 <context>
-    <name>NewOrEditDialog</name>
+    <name>ItemDialog</name>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="40"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="40"/>
         <source>Save changes</source>
         <translation>Änderungen speichern</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="73"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="73"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="75"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="75"/>
         <source>Discard unsaved data</source>
         <translation>Ungesicherte Daten verwerfen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="77"/>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="122"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="77"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="122"/>
         <source>Are you sure?</source>
         <translation>Sollen die Daten wirklich verworfen werden?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="102"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="102"/>
         <source>Duplicate item name</source>
         <translation>Name bereits vorhanden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="103"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="103"/>
         <source>There is already an item with this name.
 Do you want to save it anyway?</source>
         <translation>Ein Eintrag mit diesem Namen ist bereits vorhanden.
 Trotzdem speichern?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/new_or_edit_dialog.cpp" line="119"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="119"/>
         <source>Are you sure you want to delete this item?</source>
         <translation>Soll dieser Eintrag wirklich gelöscht werden?</translation>
     </message>

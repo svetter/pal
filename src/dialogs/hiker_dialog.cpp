@@ -25,7 +25,7 @@
 
 
 HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init) :
-		NewOrEditDialog(parent, db, purpose),
+		ItemDialog(parent, db, purpose),
 		init(init)
 {
 	setupUi(this);
@@ -97,7 +97,7 @@ void HikerDialog::handle_ok()
 	QString emptyNameWindowTitle	= tr("Can't save hiker");
 	QString emptyNameWindowMessage	= tr("The hiker needs a name.");
 	const Column* nameColumn = db->hikersTable->nameColumn;
-	NewOrEditDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
+	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
 void HikerDialog::aboutToClose()
