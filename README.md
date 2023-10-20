@@ -1,12 +1,12 @@
-![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
+              ![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
 
 PeakAscentLogger (PAL)
 ======================
 
 ### A hiking database for logging and viewing scaled summits
 
-PAL offers logging of each individual peak scaled during hikes.
-It is focused on scaled peaks as opposed to whole hikes.
+PAL offers logging of peak ascents during hikes.
+It is focused on individual peaks as opposed to whole hikes.
 
 PAL consists of a main window, where stored information is shown in tables (for ascents, peaks and so on).
 Additionally, there is an ascent viewing window to browse logged ascents one by one, showing details about each one as well as a description and photos.
