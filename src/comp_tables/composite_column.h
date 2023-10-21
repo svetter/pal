@@ -152,4 +152,17 @@ public:
 
 
 
+class IndexCompositeColumn : public CompositeColumn {
+	const QList<QPair<Column* const, Qt::SortOrder>> sorting;
+	
+public:
+	IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
+	
+	virtual QVariant computeValueAt(int rowIndex) const override;
+	
+	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+};
+
+
+
 #endif // COMPOSITE_COLUMN_H

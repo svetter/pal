@@ -27,6 +27,7 @@ class CompositeAscentsTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	const IndexCompositeColumn*			indexColumn;
 	const DirectCompositeColumn*		dateColumn;
 	const ReferenceCompositeColumn*		peakColumn;
 	const DirectCompositeColumn*		titleColumn;
@@ -50,6 +51,7 @@ public:
 	inline CompositeAscentsTable(Database* db) :
 			CompositeTable(db, db->ascentsTable),
 			//																		uiName				align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
+			indexColumn			(new const IndexCompositeColumn			(this,	tr("Index"),											{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},					{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
 			dateColumn			(new const DirectCompositeColumn		(this,	tr("Date"),				Qt::AlignLeft,		noSuffix,	db->ascentsTable->dateColumn)),
 			peakColumn			(new const ReferenceCompositeColumn		(this,	tr("Peak"),				Qt::AlignLeft,		noSuffix,	{ db->ascentsTable->peakIDColumn },			db->peaksTable->nameColumn)),
 			titleColumn			(new const DirectCompositeColumn		(this,	tr("Title"),			Qt::AlignLeft,		noSuffix,	db->ascentsTable->titleColumn)),
@@ -69,6 +71,7 @@ public:
 			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	"Range ID",				Qt::AlignRight,		noSuffix,	{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
 			hikerIDsColumn		(new const FoldCompositeColumn			(this,	"Hiker IDs",			IntList,			noSuffix,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
 	{
+		addColumn(indexColumn);
 		addColumn(dateColumn);
 		addColumn(peakColumn);
 		addColumn(titleColumn);
@@ -93,7 +96,7 @@ public:
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
-		return {dateColumn, Qt::AscendingOrder};
+		return {indexColumn, Qt::AscendingOrder};
 	}
 };
 

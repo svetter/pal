@@ -624,3 +624,60 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
 {
 	return { discerningEnumColumn, displayedEnumColumn };
 }
+
+
+
+
+
+IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer, QString()),
+		sorting(sorting)
+{
+	assert(!sorting.isEmpty());
+	for (QPair<Column* const, Qt::SortOrder> sortPair : sorting) {
+		assert(sortPair.first->table == table->getBaseTable());
+		assert(sortPair.second == Qt::AscendingOrder || sortPair.second == Qt::DescendingOrder);
+	}
+}
+
+
+
+QVariant IndexCompositeColumn::computeValueAt(int rowIndex) const
+{
+	// Local order buffer which represents the ordered list of row indices
+	QList<int> order = QList<int>();
+	for (int i = 0; i < sorting.at(0).first->table->getNumberOfRows(); i++) {
+		order += i;
+	}
+	
+	for (int i = sorting.size() - 1; i >= 0; i--) {
+		Column* const sortColumn	= sorting.at(i).first;
+		Qt::SortOrder sortOrder		= sorting.at(i).second;
+		
+		auto comparator = [&sortColumn, sortOrder](int i1, int i2) {
+			QVariant value1 = sortColumn->getValueAt(i1);
+			QVariant value2 = sortColumn->getValueAt(i2);
+			
+			if (sortOrder == Qt::AscendingOrder) {
+				return compareCells(sortColumn->type, value1, value2);
+			} else {
+				return compareCells(sortColumn->type, value2, value1);
+			}
+		};
+		
+		std::stable_sort(order.begin(), order.end(), comparator);
+	}
+	
+	return order.indexOf(rowIndex) + 1;
+}
+
+
+
+const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
+{
+	QSet<Column* const> columns = QSet<Column* const>();
+	for (QPair<Column* const, Qt::SortOrder> sortPair : sorting) {
+		columns += sortPair.first;
+	}
+	return columns;
+}
