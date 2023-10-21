@@ -109,9 +109,7 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 	assert(content.canConvert<int>());
 	int index = content.toInt();
 	assert(index >= 0 && index < enumNames->size());
-	const char* originalName = enumNames->at(index).toStdString().c_str();
-	QString translatedName = EnumNames::tr(originalName);
-	return translatedName;
+	return EnumNames::tr(enumNames->at(index).toStdString().c_str());
 }
 
 
