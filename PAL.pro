@@ -84,6 +84,7 @@ SOURCES += \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/main/project_settings_window.cpp \
+	src/main/settings.cpp \
 	src/main/settings_window.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \

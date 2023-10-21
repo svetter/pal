@@ -25,11 +25,15 @@
 #include <QWidget>
 #include <QDirIterator>
 
+
+
+inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScope, "PeakAscentLogger", "PeakAscentLogger");
+
+
+
+
+QPair<QStringList, QStringList> getSupportedLanguages();
 QString getDefaultLanguage();
-
-
-
-inline static QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScope, "PeakAscentLogger", "PeakAscentLogger");
 
 
 
@@ -43,6 +47,11 @@ public:
 			key(key),
 			defaultValue(defaultValue)
 	{}
+	
+	inline bool present() const
+	{
+		return qSettings.contains(key);
+	}
 	
 	inline T get() const
 	{
@@ -71,11 +80,6 @@ public:
 	inline void set(T value) const
 	{
 		qSettings.setValue(key, QVariant::fromValue(value));
-	}
-	
-	inline bool present() const
-	{
-		return qSettings.contains(key);
 	}
 	
 	inline void clear() const
@@ -174,12 +178,12 @@ public:
 	
 	
 	
-	inline void resetAll()
+	inline void resetAll() const
 	{
 		qSettings.clear();
 	}
 	
-	inline void resetGeometrySettings()
+	inline void resetGeometrySettings() const
 	{
 		mainWindow_maximized			.clear();
 		mainWindow_geometry				.clear();
@@ -194,64 +198,23 @@ public:
 		rangeDialog_geometry			.clear();
 		countryDialog_geometry			.clear();
 	}
+	
+	inline void resetColumnWidths() const
+	{
+		mainWindow_columnWidths_ascentsTable	.clear();
+		mainWindow_columnWidths_peaksTable		.clear();
+		mainWindow_columnWidths_tripsTable		.clear();
+		mainWindow_columnWidths_hikersTable		.clear();
+		mainWindow_columnWidths_regionsTable	.clear();
+		mainWindow_columnWidths_rangesTable		.clear();
+		mainWindow_columnWidths_countriesTable	.clear();
+	}
 };
 
 
 
-inline QPair<QStringList, QStringList> getSupportedLanguages()
-{
-	QStringList codes = QStringList("en");
-	QStringList names = QStringList("English");
-	
-	QDirIterator it = QDirIterator(":/i18n/", QDirIterator::Subdirectories);
-	while (it.hasNext()) {
-		QString code = it.next().split(".").at(0).split("/").at(2);
-		codes.append(code);
-		names.append(QLocale(code).nativeLanguageName());
-	}
-	
-	return {codes, names};
-}
-
-inline QString getDefaultLanguage()
-{
-	QString language = "en";
-	QStringList uiLanguages = QLocale::system().uiLanguages();
-	QStringList supportedLanguages = getSupportedLanguages().first;
-	
-	for (const QString& locale : uiLanguages) {
-		const QString preferredLanguage = QLocale(locale).name();
-		if (supportedLanguages.contains(preferredLanguage)) {
-			language = preferredLanguage;
-			break;
-		}
-	}
-	return language;
-}
-
-
-inline void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
-{
-	QRect absoluteGeometry = dialog->geometry();
-	if (Settings::rememberWindowPositionsRelative.get()) {
-		absoluteGeometry.adjust(- parent->x(), - parent->y(), 0, 0);
-	}
-	geometrySetting->set(absoluteGeometry);
-}
-
-inline void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
-{
-	if (!Settings::rememberWindowPositions.present()) return;
-	
-	QRect savedGeometry = geometrySetting->get();
-	if (savedGeometry.isEmpty()) return;
-	
-	if (Settings::rememberWindowPositionsRelative.get()) {
-		savedGeometry.adjust(parent->x(), parent->y(), 0, 0);
-	}
-	
-	dialog->setGeometry(savedGeometry);
-}
+void saveDialogGeometry   (QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
+void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
 
 
 
