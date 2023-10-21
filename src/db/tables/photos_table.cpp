@@ -93,11 +93,6 @@ void PhotosTable::updateFilepathAt(QWidget* parent, int bufferRowIndex, QString 
 	updateCellInNormalTable(parent, primaryKey, filepathColumn, newFilepath);
 }
 
-void PhotosTable::removeRowsForAscent(QWidget* parent, ValidItemID ascentID)
-{
-	removeMatchingRows(parent, ascentIDColumn, ascentID);
-}
-
 
 QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const
 {

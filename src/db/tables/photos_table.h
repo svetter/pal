@@ -46,7 +46,6 @@ public:
 	void updateRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos);
 	void updateRows(QWidget* parent, const Ascent* ascent);
 	void updateFilepathAt(QWidget* parent, int bufferRowIndex, QString newFilepath);
-	void removeRowsForAscent(QWidget* parent, ValidItemID ascentID);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const;
 	

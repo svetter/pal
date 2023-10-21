@@ -53,7 +53,6 @@ public:
 	// Column info
 	int getNumberOfColumns() const;
 	int getNumberOfPrimaryKeyColumns() const;
-	int getNumberOfNonPrimaryKeyColumns() const;
 	QList<const Column*> getColumnList() const;
 	QList<const Column*> getPrimaryKeyColumnList() const;
 	QList<const Column*> getNonPrimaryKeyColumnList() const;

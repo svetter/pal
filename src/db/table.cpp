@@ -63,11 +63,6 @@ int Table::getNumberOfPrimaryKeyColumns() const
 	return numberOfPrimaryKeyColumns;
 }
 
-int Table::getNumberOfNonPrimaryKeyColumns() const
-{
-	return getNumberOfColumns() - getNumberOfPrimaryKeyColumns();
-}
-
 QList<const Column*> Table::getColumnList() const
 {
 	return QList<const Column*>(columns);

@@ -70,9 +70,7 @@ public:
 	int getBufferRowIndexForViewRow(int viewRowIndex) const;
 	int findViewRowIndexForBufferRow(int bufferRowIndex) const;
 	
-	QVariant getRawValue(int bufferRowIndex, int columnIndex) const;
 	QVariant getRawValue(int bufferRowIndex, const CompositeColumn* column) const;
-	QVariant getFormattedValue(int bufferRowIndex, int columnIndex) const;
 	QVariant getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const;
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;

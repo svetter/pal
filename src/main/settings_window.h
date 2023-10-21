@@ -35,8 +35,6 @@ public:
 	SettingsWindow(QWidget* parent);
 	
 private:
-	void setupLanguages();
-	
 	void loadSettings();
 	void saveSettings();
 	void loadDefaults();

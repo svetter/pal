@@ -439,32 +439,6 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 
 
 
-int Database::getIntFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
-{
-	assert(databaseLoaded);
-	assert(entryInd >= 0);
-	QVariant variantValue = query.value(entryInd);
-	if (!variantValue.isValid())
-		displayError(parent, "Received invalid QVariant from query", queryString);
-	bool conversionOk;
-	int intValue = variantValue.toInt(&conversionOk);
-	if (!conversionOk)
-		displayError(parent, "Conversion to int failed for result from query", queryString);
-	return intValue;
-}
-
-QString Database::getStringFromRecord(QWidget* parent, QSqlQuery& query, QString& queryString, int entryInd) const
-{
-	assert(databaseLoaded);
-	QVariant variantValue = query.value(entryInd);
-	if (!variantValue.isValid())
-		displayError(parent, "Received invalid QVariant from query", queryString);
-	QString stringValue = variantValue.toString();
-	return stringValue;
-}
-
-
-
 
 
 WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices) :

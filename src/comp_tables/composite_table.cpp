@@ -193,24 +193,12 @@ int CompositeTable::findViewRowIndexForBufferRow(int bufferRowIndex) const
 
 
 
-QVariant CompositeTable::getRawValue(int bufferRowIndex, int columnIndex) const
-{
-	assert(bufferRowIndex >= 0 && bufferRowIndex < buffer.size());
-	assert(columnIndex >= 0 && columnIndex < columns.size());
-	QVariant result = buffer.at(bufferRowIndex)->at(columnIndex);
-	return result.isNull() ? QVariant() : result;
-}
-
 QVariant CompositeTable::getRawValue(int bufferRowIndex, const CompositeColumn* column) const
 {
 	assert(columns.contains(column));
-	return getRawValue(bufferRowIndex, column->getIndex());
-}
-
-QVariant CompositeTable::getFormattedValue(int bufferRowIndex, int columnIndex) const
-{
-	const CompositeColumn* column = getColumnAt(columnIndex);
-	return column->toFormattedTableContent(getRawValue(bufferRowIndex, columnIndex));
+	assert(bufferRowIndex >= 0 && bufferRowIndex < buffer.size());
+	QVariant result = buffer.at(bufferRowIndex)->at(column->getIndex());
+	return result.isNull() ? QVariant() : result;
 }
 
 QVariant CompositeTable::getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const
