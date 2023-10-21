@@ -20,8 +20,22 @@ QT += sql
 QT += svg svgwidgets
 
 CONFIG += c++17
+CONFIG += lrelease
+CONFIG += embed_translations
 
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs deprecated before Qt 6.0.0
+
+
+
+VERSION = 1.0.3
+DEFINES += APP_VERSION_MAJOR=1
+DEFINES += APP_VERSION_MINOR=0
+DEFINES += APP_VERSION_PATCH=3
+
+DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
+DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
+
+DEFINES += DEBUG_TABLE_TABS=false
 
 
 
@@ -158,32 +172,6 @@ FORMS += \
 
 
 
-VERSION = 1.0.3
-DEFINES += APP_VERSION_MAJOR=1
-DEFINES += APP_VERSION_MINOR=0
-DEFINES += APP_VERSION_PATCH=3
-
-DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
-DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
-
-
-
-DEFINES += DEBUG_TABLE_TABS=false
-
-
-
-TRANSLATIONS += \
-	translation/de.ts
-
-DISTFILES += \
-	translation/de.ts
-
-
-
-RC_ICONS = resources/icons/ico/logo_peak_multisize_square.ico
-
-
-
 resources.files = \
 	resources/icons/logo.svg \
 	resources/icons/ascent.svg \
@@ -211,8 +199,17 @@ RESOURCES = resources
 
 
 
-CONFIG += lrelease
-CONFIG += embed_translations
+RC_ICONS = resources/icons/ico/logo_peak_multisize_square.ico
+
+
+
+TRANSLATIONS += \
+	translation/de.ts
+
+DISTFILES += \
+	translation/de.ts
+
+
 
 # Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
