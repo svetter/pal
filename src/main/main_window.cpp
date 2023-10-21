@@ -1008,5 +1008,5 @@ void MainWindow::setWindowTitleFilename(QString filepath)
 
 void MainWindow::setStatusLine(QString content)
 {
-	statusbar->showMessage(content, 5000);
+	statusbar->showMessage(content, DYNAMIC_STATUS_MESSAGE_DURATION_SEC * 1000);
 }

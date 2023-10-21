@@ -37,6 +37,8 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 	
+	static const int DYNAMIC_STATUS_MESSAGE_DURATION_SEC = 10;
+	
 	Database db;
 	QList<QAction*> openRecentActions;
 	QMenu tableContextMenu;
