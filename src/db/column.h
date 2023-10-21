@@ -65,6 +65,10 @@ public:
 
 
 
+bool compareCells(DataType type, const QVariant& value1, const QVariant& value2);
+
+
+
 QString getColumnListStringOf(QList<const Column*> columns);
 
 
