@@ -72,7 +72,6 @@ private:
 	
 	// Project setup (on load)
 	void initCompositeBuffers();
-	void insertFiltersIntoUI(QSet<Filter> filters);
 	
 	// UI updates
 	void setUIEnabled(bool enabled);
