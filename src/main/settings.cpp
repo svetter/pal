@@ -54,6 +54,56 @@ QString getDefaultLanguage()
 
 
 
+QString Settings::getAppVersion()
+{
+	return QString("%1.%2.%3")
+		.arg(APP_VERSION_MAJOR)
+		.arg(APP_VERSION_MINOR)
+		.arg(APP_VERSION_PATCH);
+}
+
+bool Settings::isBelowVersion(QString settingsVersion, QString minimalVersion)
+{
+	QStringList settingsSplit	= settingsVersion.split('.');
+	QStringList minimalSplit	= minimalVersion.split('.');
+	assert(settingsSplit.size() == 3 && minimalSplit.size() == 3);
+	for (int i = 0; i < 3; i++) {
+		bool conversionOk = false;
+		int settingsNumber = settingsSplit.at(i).toInt(&conversionOk);
+		assert(conversionOk);
+		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
+		assert(conversionOk);
+		if (settingsNumber < minimalNumber) return true;
+	}
+	return false;
+}
+
+bool Settings::settingsOlderThan(QString version)
+{
+	return isBelowVersion(appVersion.get(), version);
+}
+
+
+
+void Settings::checkForVersionChange()
+{
+	// 1.1.0: New columns => reset column widths
+	if (settingsOlderThan("1.1.0")) {
+		resetColumnWidths();
+	}
+	
+	// Update settings version
+	QString currentAppVersion = getAppVersion();
+	if (settingsOlderThan(currentAppVersion)) {
+		qDebug().noquote().nospace() << "Updating settings from v" << appVersion.get() << " to v" << currentAppVersion;
+		appVersion.set(currentAppVersion);
+	}
+}
+
+
+
+
+
 void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
 {
 	QRect absoluteGeometry = dialog->geometry();

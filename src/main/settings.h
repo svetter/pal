@@ -31,7 +31,6 @@ inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScop
 
 
 
-
 QPair<QStringList, QStringList> getSupportedLanguages();
 QString getDefaultLanguage();
 
@@ -92,6 +91,10 @@ public:
 
 class Settings {
 public:
+	// === APP VERSION ===
+	inline static const Setting<QString>	appVersion								= Setting<QString>	("appVersion",									"0.0.0");
+	
+	
 	// === EXPLICIT ===
 	
 	// Language
@@ -178,12 +181,12 @@ public:
 	
 	
 	
-	inline void resetAll() const
+	static inline void resetAll()
 	{
 		qSettings.clear();
 	}
 	
-	inline void resetGeometrySettings() const
+	static inline void resetGeometrySettings()
 	{
 		mainWindow_maximized			.clear();
 		mainWindow_geometry				.clear();
@@ -199,7 +202,7 @@ public:
 		countryDialog_geometry			.clear();
 	}
 	
-	inline void resetColumnWidths() const
+	static inline void resetColumnWidths()
 	{
 		mainWindow_columnWidths_ascentsTable	.clear();
 		mainWindow_columnWidths_peaksTable		.clear();
@@ -209,6 +212,13 @@ public:
 		mainWindow_columnWidths_rangesTable		.clear();
 		mainWindow_columnWidths_countriesTable	.clear();
 	}
+	
+private:
+	static bool isBelowVersion(QString settingsVersion, QString minimalVersion);
+	static bool settingsOlderThan(QString version);
+public:
+	static QString getAppVersion();
+	static void checkForVersionChange();
 };
 
 

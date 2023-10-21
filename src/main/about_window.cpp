@@ -17,6 +17,8 @@
 
 #include "about_window.h"
 
+#include "settings.h"
+
 #include <QtSvg>
 #include <QSvgWidget>
 
@@ -27,8 +29,8 @@ AboutWindow::AboutWindow(QWidget* parent) :
 {
 	setupUi(this);
 	
-	QString appVersion	= QString("%1.%2.%3").arg(APP_VERSION_MAJOR).arg(APP_VERSION_MINOR).arg(APP_VERSION_PATCH);
-	QString qtVersion	= QString("%1.%2.%3").arg( QT_VERSION_MAJOR).arg( QT_VERSION_MINOR).arg( QT_VERSION_PATCH);
+	QString appVersion	= Settings::getAppVersion();
+	QString qtVersion	= QString("%1.%2.%3").arg(QT_VERSION_MAJOR).arg(QT_VERSION_MINOR).arg(QT_VERSION_PATCH);
 	
 	appNameLabel	->setText(appNameLabel	->text().replace("$APP_VERSION$",	appVersion));
 	copyrightLabel	->setText(copyrightLabel->text().replace("$APP_COPYRIGHT$",	QStringLiteral(APP_COPYRIGHT).toHtmlEscaped()));

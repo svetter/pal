@@ -70,6 +70,9 @@ int main(int argc, char *argv[])
 		application.setStyle(argv[1]);
 	}
 	
+	// Update settings if necessary
+	Settings::checkForVersionChange();
+	
 	configureTranslation(application);
 	
 	MainWindow mainWindow = MainWindow();
