@@ -163,11 +163,21 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 	
 	for (const CompositeColumn* column : qAsConst(columnsToUpdate)) {
 		int columnIndex = column->getIndex();
-		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
-			QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
-			buffer.at(bufferRowIndex)->replace(columnIndex, newContent);
-			
-			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+		bool computeWholeColumn = column->cellsAreInterdependent;
+		if (!computeWholeColumn) {
+			for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
+				QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
+				buffer.at(bufferRowIndex)->replace(columnIndex, newContent);
+				
+				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+			}
+		}
+		else {
+			QList<QVariant> cells = computeWholeColumnContent(columnIndex);
+			for (int bufferRowIndex = 0; bufferRowIndex < baseTable->getNumberOfRows(); bufferRowIndex++) {
+				buffer.at(bufferRowIndex)->replace(columnIndex, cells.at(bufferRowIndex));
+				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+			}
 		}
 		
 		QModelIndex topLeftIndex		= index(0, columnIndex);
