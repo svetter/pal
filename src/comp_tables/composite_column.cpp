@@ -371,18 +371,17 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 
-FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), false, suffix, enumNames),
-		op(op),
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, uiName, alignment, contentType, false, suffix, enumNames),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn)
-{
-	assert((op == Count) == (contentColumn == nullptr));
-}
+{}
 
 
 
-QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
+
+
+QSet<int> FoldCompositeColumn::evaluateBreadcrumbTrail(int rowIndex) const
 {
 	QSet<int> currentRowIndexSet = { rowIndex };
 	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
@@ -433,102 +432,11 @@ QVariant FoldCompositeColumn::computeValueAt(int rowIndex) const
 		else assert(false);
 		
 		if (currentRowIndexSet.isEmpty()) {
-			if (op == Count) return 0;
-			return QVariant();
+			return QSet<int>();
 		}
 	}
 	
-	// RETURN IF COUNT OR INT LIST
-	if (op == Count) return currentRowIndexSet.size();
-	if (op == IntList) {
-		QList<QVariant> list = QList<QVariant>();
-		for (int rowIndex : currentRowIndexSet) {
-			list.append(contentColumn->getValueAt(rowIndex));
-		}
-		return list;
-	}
-	
-	assert(currentTable == contentColumn->table);
-	assert(!currentTable->isAssociative);
-	
-	// RETURN IF LIST STRING
-	if (op == ListString) {
-		QList<QString> hikerNameList;
-		
-		// Special case if this is a list of hikers
-		if (contentColumn->name == contentColumn->name) {
-			QString defaultHikerString = QString();
-			const ProjectSetting<int>* defaultHiker = getProjectSettings()->defaultHiker;
-			const HikersTable* hikersTable = (HikersTable*)contentColumn->table;
-			int defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
-			if (defaultHiker->isNotNull() && currentRowIndexSet.contains(defaultHikerRowIndex)) {
-				QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
-				assert(content.canConvert<QString>());
-				defaultHikerString = content.toString();
-			}
-			
-			for (int rowIndex : currentRowIndexSet) {
-				QVariant content = contentColumn->getValueAt(rowIndex);
-				assert(content.canConvert<QString>());
-				hikerNameList.append(content.toString());
-			}
-			std::sort(hikerNameList.begin(), hikerNameList.end());
-			
-			if (!defaultHikerString.isEmpty()) {
-				hikerNameList.insert(0, defaultHikerString);
-			}
-		}
-		else {
-			for (int rowIndex : currentRowIndexSet) {
-				QVariant content = contentColumn->getValueAt(rowIndex);
-				assert(content.canConvert<QString>());
-				content = replaceEnumIfApplicable(content);
-				hikerNameList.append(content.toString());
-			}
-		}
-		
-		QString listString = "";
-		for (QString& hikerNameString : hikerNameList) {
-			if (!listString.isEmpty()) listString.append(", ");
-			listString.append(hikerNameString);
-		}
-		return listString;
-	}
-	
-	
-	
-	// EXECUTE FOLD OPERATION
-	
-	int aggregate = 0;
-	
-	for (int rowIndex : currentRowIndexSet) {
-		QVariant content = contentColumn->getValueAt(rowIndex);
-		
-		switch (op) {
-		case Average:
-		case Sum:
-			assert(content.canConvert<int>());
-			aggregate += content.toInt();
-			break;
-		case Max:
-			assert(content.canConvert<int>());
-			if (content.toInt() > aggregate) aggregate = content.toInt();
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	assert(currentRowIndexSet.size() > 0);
-	
-	switch (op) {
-	case Average:	return aggregate / currentRowIndexSet.size();
-	case Sum:		return aggregate;
-	case Max:		return aggregate;
-	default:		assert(false);
-	}
-	
-	return QVariant();
+	return currentRowIndexSet;
 }
 
 
@@ -542,6 +450,174 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 		result.insert(pair.second);
 	}
 	return result;
+}
+
+
+
+
+
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString uiName, NumericFoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
+		FoldCompositeColumn(table, uiName, Qt::AlignRight, op == CountFold ? Integer : op == IDListFold ? IDList : contentColumn->type, suffix, breadcrumbs, contentColumn),
+		op(op)
+{
+	assert((op == CountFold) == (contentColumn == nullptr));
+}
+
+QVariant NumericFoldCompositeColumn::computeValueAt(int rowIndex) const
+{
+	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	
+	// Shortcuts for empty set
+	if (rowIndexSet.isEmpty()) {
+		switch (op) {
+		case CountFold:
+			return 0;
+		case IDListFold:
+			return QList<QVariant>();
+		case AverageFold:
+		case SumFold:
+		case MaxFold:
+			return QVariant();
+		default: assert(false);
+		}
+	}
+	
+	// COUNT / ID LIST
+	
+	if (op == CountFold) {
+		return rowIndexSet.size();
+	}
+	if (op == IDListFold) {
+		QList<QVariant> list = QList<QVariant>();
+		for (int rowIndex : rowIndexSet) {
+			list.append(contentColumn->getValueAt(rowIndex));
+		}
+		return list;
+	}
+	
+	// AVERAGE / SUM / MAX
+	
+	int aggregate = 0;
+	
+	for (int rowIndex : rowIndexSet) {
+		QVariant content = contentColumn->getValueAt(rowIndex);
+		
+		switch (op) {
+		case AverageFold:
+		case SumFold:
+			assert(content.canConvert<int>());
+			aggregate += content.toInt();
+			break;
+		case MaxFold:
+			assert(content.canConvert<int>());
+			if (content.toInt() > aggregate) aggregate = content.toInt();
+			break;
+		default:
+			assert(false);
+		}
+	}
+	
+	assert(!rowIndexSet.isEmpty());
+	
+	switch (op) {
+	case AverageFold:	return std::round((qreal) aggregate / rowIndexSet.size());
+	case SumFold:		return aggregate;
+	case MaxFold:		return aggregate;
+	default:			assert(false);
+	}
+	return QVariant();
+}
+
+
+
+
+
+ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
+		FoldCompositeColumn(table, uiName, Qt::AlignLeft, String, QString(), breadcrumbs, contentColumn)
+{}
+
+QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<int>& rowIndexSet) const
+{
+	QStringList stringList;
+	
+	for (int rowIndex : rowIndexSet) {
+		QVariant content = contentColumn->getValueAt(rowIndex);
+		assert(content.canConvert<QString>());
+		content = replaceEnumIfApplicable(content);
+		stringList.append(content.toString());
+	}
+	
+	return stringList;
+}
+
+QVariant ListStringFoldCompositeColumn::computeValueAt(int rowIndex) const
+{
+	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	
+	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
+	
+	// Combine list into comma separated string
+	QString listString = "";
+	for (QString& string : stringList) {
+		if (!listString.isEmpty()) listString.append(", ");
+		listString.append(string);
+	}
+	return listString;
+}
+
+
+
+
+
+HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
+		ListStringFoldCompositeColumn(table, uiName, breadcrumbs, contentColumn)
+{}
+
+QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<int>& rowIndexSet) const
+{
+	QStringList stringList;
+	
+	QString defaultHikerString = QString();
+	const ProjectSetting<int>* defaultHiker = getProjectSettings()->defaultHiker;
+	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
+	
+	// Check whether default hiker is set and get name if so
+	int defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
+	if (defaultHiker->isNotNull() && rowIndexSet.contains(defaultHikerRowIndex)) {
+		QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
+		assert(content.canConvert<QString>());
+		defaultHikerString = content.toString();
+		// Remove default hiker from row index set
+		rowIndexSet.remove(defaultHikerRowIndex);
+	}
+	
+	for (int rowIndex : rowIndexSet) {
+		QVariant content = contentColumn->getValueAt(rowIndex);
+		assert(content.canConvert<QString>());
+		stringList.append(content.toString());
+	}
+	std::sort(stringList.begin(), stringList.end());
+	
+	if (!defaultHikerString.isEmpty()) {
+		stringList.insert(0, defaultHikerString);
+	}
+	
+	return stringList;
+}
+
+QVariant HikerListCompositeColumn::computeValueAt(int rowIndex) const
+{
+	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	
+	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
+	
+	// Combine list into comma separated string
+	QString listString = "";
+	for (QString& string : stringList) {
+		if (!listString.isEmpty()) listString.append(", ");
+		listString.append(string);
+	}
+	return listString;
 }
 
 

@@ -44,11 +44,11 @@ public:
 			startDateColumn			(new const DirectCompositeColumn		(this,	tr("Start date"),		Qt::AlignLeft,	noSuffix,		db->tripsTable->startDateColumn)),
 			endDateColumn			(new const DirectCompositeColumn		(this,	tr("End date"),			Qt::AlignLeft,	noSuffix,		db->tripsTable->endDateColumn)),
 			lengthColumn			(new const DifferenceCompositeColumn	(this,	tr("Length"),							tr(" days"),	db->tripsTable->endDateColumn,			db->tripsTable->startDateColumn)),
-			numAscentsColumn		(new const FoldCompositeColumn			(this,	tr("Num. ascents"),		Count,			noSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} })),
-			avgElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Avg. elev. gain"),	Average,		mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			maxElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Max. elev. gain"),	Max,			mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			sumElevationGainColumn	(new const FoldCompositeColumn			(this,	tr("Sum elev. gain"),	Sum,			mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			listHikersColumn		(new const FoldCompositeColumn			(this,	tr("Participants"),		ListString,		noSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
+			numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	tr("Num. ascents"),		CountFold,		noSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} })),
+			avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	tr("Avg. elev. gain"),	AverageFold,	mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+			maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	tr("Max. elev. gain"),	MaxFold,		mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+			sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	tr("Sum elev. gain"),	SumFold,		mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+			listHikersColumn		(new const HikerListCompositeColumn		(this,	tr("Participants"),										{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(startDateColumn);

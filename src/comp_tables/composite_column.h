@@ -102,26 +102,49 @@ public:
 
 
 
-enum FoldOp {
-	Count,
-	IntList,
-	ListString,
-	Average,
-	Sum,
-	Max
-};
-
 class FoldCompositeColumn : public CompositeColumn {
-	const FoldOp op;
 	const QList<QPair<Column*, Column*>> breadcrumbs;
+protected:
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
-	virtual QVariant computeValueAt(int rowIndex) const override;
+	QSet<int> evaluateBreadcrumbTrail(int rowIndex) const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+};
+
+enum NumericFoldOp {
+	CountFold,
+	IDListFold,
+	AverageFold,
+	SumFold,
+	MaxFold
+};
+
+class NumericFoldCompositeColumn : public FoldCompositeColumn {
+	const NumericFoldOp op;
+public:
+	NumericFoldCompositeColumn(CompositeTable* table, QString uiName, NumericFoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr);
+	
+	virtual QVariant computeValueAt(int rowIndex) const override;
+};
+
+class ListStringFoldCompositeColumn : public FoldCompositeColumn {
+public:
+	ListStringFoldCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn);
+	
+	virtual QStringList formatAndSortIntoStringList(QSet<int>& rowIndexSet) const;
+	virtual QVariant computeValueAt(int rowIndex) const override;
+};
+
+class HikerListCompositeColumn : public ListStringFoldCompositeColumn {
+public:
+	HikerListCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn);
+	
+	virtual QStringList formatAndSortIntoStringList(QSet<int>& rowIndexSet) const override;
+	virtual QVariant computeValueAt(int rowIndex) const override;
 };
 
 
