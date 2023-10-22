@@ -90,18 +90,32 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	
 	int numberOfRows = baseTable->getNumberOfRows();
 	
+	// Initialize cells and compute their contents for most columns
 	for (int bufferRowIndex = 0; bufferRowIndex < numberOfRows; bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+			bool computeWholeColumn = getColumnAt(columnIndex)->cellsAreInterdependent;
 			QVariant newCell = QVariant();
-			if (!deferCompute) {
+			if (!deferCompute && !computeWholeColumn) {
 				newCell = computeCellContent(bufferRowIndex, columnIndex);
 			}
 			newRow->append(newCell);
 			
-			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+			if (progressDialog && !computeWholeColumn) progressDialog->setValue(progressDialog->value() + 1);
 		}
 		buffer.append(newRow);
+	}
+	
+	// For columns which have to be computed as a whole, do that now
+	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+		bool computeWholeColumn = getColumnAt(columnIndex)->cellsAreInterdependent;
+		if (!computeWholeColumn) continue;
+		
+		QList<QVariant> cells = computeWholeColumnContent(columnIndex);
+		for (int bufferRowIndex = 0; bufferRowIndex < baseTable->getNumberOfRows(); bufferRowIndex++) {
+			buffer.at(bufferRowIndex)->replace(columnIndex, cells.at(bufferRowIndex));
+			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+		}
 	}
 	
 	rebuildOrderBuffer();
@@ -128,7 +142,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	}
 	
 	// Filter order buffer
-	for (const Filter& filter : currentFilters) {
+	for (const Filter& filter : qAsConst(currentFilters)) {
 		filter.column->applySingleFilter(filter, bufferOrder);
 	}
 	
@@ -147,7 +161,7 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 {
 	if (columnsToUpdate.isEmpty()) return;
 	
-	for (const CompositeColumn* column : columnsToUpdate) {
+	for (const CompositeColumn* column : qAsConst(columnsToUpdate)) {
 		int columnIndex = column->getIndex();
 		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
 			QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
@@ -408,6 +422,14 @@ QVariant CompositeTable::computeCellContent(int bufferRowIndex, int columnIndex)
 	if (!result.isValid()) return QVariant();
 	
 	return result;
+}
+
+QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
+{
+	const CompositeColumn* column = columns.at(columnIndex);
+	QList<QVariant> cells = column->computeWholeColumn();
+	assert(cells.size() == buffer.size());
+	return cells;
 }
 
 

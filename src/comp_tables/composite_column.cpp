@@ -24,11 +24,12 @@
 
 
 
-CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		table(table),
 		uiName(uiName),
 		alignment(alignment),
 		contentType(contentType),
+		cellsAreInterdependent(cellsAreInterdependent),
 		suffix(suffix),
 		enumNames(enumNames),
 		enumNameLists(enumNameLists)
@@ -85,6 +86,17 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 int CompositeColumn::getIndex() const
 {
 	return table->getIndexOf(this);
+}
+
+
+
+QList<QVariant> CompositeColumn::computeWholeColumn() const
+{
+	QList<QVariant> cells = QList<QVariant>();
+	for (int rowIndex = 0; rowIndex < table->getBaseTable()->getNumberOfRows(); rowIndex++) {
+		cells.append(computeValueAt(rowIndex));
+	}
+	return cells;
 }
 
 
@@ -275,7 +287,7 @@ ProjectSettings* CompositeColumn::getProjectSettings() const
 
 
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, suffix, enumNames),
+		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		contentColumn(contentColumn)
 {
 	assert(contentColumn);
@@ -300,7 +312,7 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, suffix, enumNames),
+		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn)
 {
@@ -360,7 +372,7 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, FoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), suffix, enumNames),
+		CompositeColumn(table, uiName, op == ListString ? Qt::AlignLeft : Qt::AlignRight, op == ListString ? String : (op == Count ? Integer : op == IntList ? IDList : contentColumn->type), false, suffix, enumNames),
 		op(op),
 		breadcrumbs(breadcrumbs),
 		contentColumn(contentColumn)
@@ -537,7 +549,7 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 
 
 DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer, suffix),
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer, false, suffix),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn)
 {
@@ -591,7 +603,7 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, QString(), nullptr, enumNameLists),
+		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, false, QString(), nullptr, enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn)
 {
@@ -630,7 +642,7 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
 
 
 IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer, QString()),
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer, true, QString()),
 		sorting(sorting)
 {
 	assert(!sorting.isEmpty());
@@ -644,9 +656,28 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName
 
 QVariant IndexCompositeColumn::computeValueAt(int rowIndex) const
 {
+	QList<int> order = getRowIndexOrderList();
+	return order.indexOf(rowIndex) + 1;
+}
+
+QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
+{
+	QList<int> order = getRowIndexOrderList();
+	
+	QList<QVariant> cells = QList<QVariant>();
+	for (int rowIndex = 0; rowIndex < order.size(); rowIndex++) {
+		cells.append(order.indexOf(rowIndex) + 1);
+	}
+	
+	return cells;
+}
+
+QList<int> IndexCompositeColumn::getRowIndexOrderList() const
+{
+	int numberOfRows = sorting.at(0).first->table->getNumberOfRows();
 	// Local order buffer which represents the ordered list of row indices
 	QList<int> order = QList<int>();
-	for (int i = 0; i < sorting.at(0).first->table->getNumberOfRows(); i++) {
+	for (int i = 0; i < numberOfRows; i++) {
 		order += i;
 	}
 	
@@ -668,7 +699,7 @@ QVariant IndexCompositeColumn::computeValueAt(int rowIndex) const
 		std::stable_sort(order.begin(), order.end(), comparator);
 	}
 	
-	return order.indexOf(rowIndex) + 1;
+	return order;
 }
 
 

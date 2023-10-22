@@ -99,6 +99,7 @@ private:
 	void performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse);
 	
 	QVariant computeCellContent(int bufferRowIndex, int columnIndex) const;
+	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
 public:
 	ProjectSettings* getProjectSettings() const;

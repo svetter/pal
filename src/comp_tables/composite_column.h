@@ -36,6 +36,7 @@ public:
 	const QString uiName;
 	const Qt::AlignmentFlag alignment;
 	const DataType contentType;
+	const bool cellsAreInterdependent;
 	
 protected:
 	const QString suffix;
@@ -43,7 +44,7 @@ protected:
 	const QList<QPair<QString, QStringList>>* const enumNameLists;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
@@ -51,6 +52,7 @@ public:
 	int getIndex() const;
 	
 	virtual QVariant computeValueAt(int rowIndex) const = 0;
+	virtual QList<QVariant> computeWholeColumn() const;
 	
 	QVariant getRawValueAt(int rowIndex) const;
 	QVariant getFormattedValueAt(int rowIndex) const;
@@ -159,6 +161,8 @@ public:
 	IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
 	
 	virtual QVariant computeValueAt(int rowIndex) const override;
+	QList<QVariant> computeWholeColumn() const override;
+	QList<int> getRowIndexOrderList() const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
