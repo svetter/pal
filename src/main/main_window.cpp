@@ -255,7 +255,7 @@ void MainWindow::setupTableViews()
 		// Set model
 		mapper.tableView->setModel(mapper.compTable);
 		
-		if (Settings::rememberColumnWidths.get()) {
+		if (Settings::rememberColumnWidths.get() && mapper.columnWidthsSetting->present()) {
 			restoreColumnWidths(mapper);
 		}
 		
