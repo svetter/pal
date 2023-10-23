@@ -181,13 +181,23 @@ class IndexCompositeColumn : public CompositeColumn {
 	const QList<QPair<Column* const, Qt::SortOrder>> sorting;
 	
 public:
-	IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
+	IndexCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
 	
 	virtual QVariant computeValueAt(int rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
 	QList<int> getRowIndexOrderList() const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+};
+
+class OrdinalCompositeColumn : public IndexCompositeColumn {
+	const Column* const separatingColumn;
+	
+public:
+	OrdinalCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
+	
+	virtual QVariant computeValueAt(int rowIndex) const override;
+	QList<QVariant> computeWholeColumn() const override;
 };
 
 

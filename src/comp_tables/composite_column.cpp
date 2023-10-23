@@ -717,8 +717,8 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
 
 
 
-IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer, true, QString()),
+IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+		CompositeColumn(table, uiName, Qt::AlignRight, Integer, true, suffix),
 		sorting(sorting)
 {
 	assert(!sorting.isEmpty());
@@ -787,4 +787,53 @@ const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
 		columns += sortPair.first;
 	}
 	return columns;
+}
+
+
+
+
+
+OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+	IndexCompositeColumn(table, uiName, suffix, sorting),
+	separatingColumn(sorting.first().first)
+{
+	assert(sorting.first().first->isForeignKey());
+}
+
+
+
+QVariant OrdinalCompositeColumn::computeValueAt(int rowIndex) const
+{
+	qDebug() << "CAUTION: Using extremely inefficient OrdinalCompositeColumn::computeValueAt(int)";
+	return computeWholeColumn().at(rowIndex);
+}
+
+QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
+{
+	QList<int> order = getRowIndexOrderList();
+	
+	QList<QVariant> ordinals = QList<QVariant>(order.size());
+	
+	ItemID lastKey = ItemID();
+	int ordinal = 1;
+	for (int rowIndex : order) {
+		ItemID currentKey = separatingColumn->getValueAt(rowIndex);
+		if (!currentKey.isValid()) {
+			// No key, reset ordinal and append empty
+			ordinal = 1;
+			lastKey = currentKey;
+			ordinals.replace(rowIndex, QVariant());
+		} else if (currentKey == lastKey) {
+			// Same key, increase ordinal
+			ordinal++;
+			ordinals.replace(rowIndex, ordinal);
+		} else {
+			// Next key, reset ordinal
+			ordinal = 1;
+			lastKey = currentKey;
+			ordinals.replace(rowIndex, ordinal);
+		}
+	}
+	
+	return ordinals;
 }

@@ -148,6 +148,7 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 	
 	switch (type) {
 	case Integer:
+	case ID:
 		if (!value1Valid && value2Valid)	return true;
 		if (value1Valid && !value2Valid)	return false;
 		return value1.toInt() < value2.toInt();
