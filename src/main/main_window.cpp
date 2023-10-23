@@ -973,6 +973,28 @@ void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
 
 
 
+// LAYOUT CHANGES
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+	Q_UNUSED(event);
+	if (!isVisible()) {		// Window is still being initialized
+		event->ignore();
+		return;
+	}
+	
+	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+		QPushButton* button = mapper.newItemButton;
+		bool buttonVisible = button->x() + button->width() < ascentCounterLabel->x() - 40;
+		button->setVisible(buttonVisible);
+	});
+	event->accept();
+}
+
+
+
+
+
 // GENERAL HELPERS
 
 QTableView* MainWindow::getCurrentTableView() const

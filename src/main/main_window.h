@@ -61,8 +61,8 @@ public:
 	~MainWindow();
 	
 private:
-    // Initial setup
-    void setupMenuIcons();
+	// Initial setup
+	void setupMenuIcons();
 	void createTypesHandler();
 	void connectUI();
 	void setupTableViews();
@@ -95,6 +95,7 @@ public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex);
 	
 private slots:
+	
 	// UI event handlers
 	void handle_tabChanged();
 	void handle_rightClick(QPoint pos);
@@ -128,6 +129,8 @@ private:
 	void saveImplicitSettings() const;
 	void saveColumnWidths(const ItemTypeMapper& mapper) const;
 	void saveSorting(const ItemTypeMapper& mapper) const;
+	// Layout changes
+	virtual void resizeEvent(QResizeEvent* event) override;
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
