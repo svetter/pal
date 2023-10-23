@@ -19,6 +19,7 @@
 #define COMP_HIKERS_TABLE_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/comp_tables/fold_composite_column.h"
 
 
 

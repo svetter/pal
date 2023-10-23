@@ -19,6 +19,7 @@
 #define COMP_REGIONS_TABLE_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/comp_tables/fold_composite_column.h"
 #include "src/data/enum_names.h"
 
 
