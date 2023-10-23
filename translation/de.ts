@@ -678,77 +678,87 @@
 <context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="53"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="57"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="55"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="59"/>
         <source>Title</source>
         <translation>Kommentar</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="54"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="58"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
         <location filename="../src/comp_tables/comp_ascents_table.h" line="56"/>
+        <source>Index</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="60"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="58"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="62"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="59"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="63"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="57"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="72"/>
+        <source>Nth ascent of peak</source>
+        <translation>Nte Besteigung des Gipfels</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="61"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="60"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="64"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="67"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="71"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="61"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="65"/>
         <source>Elev. gain</source>
         <translation>Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="64"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="68"/>
         <source>Kind of hike</source>
         <translation>Art der Wanderung</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="65"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="69"/>
         <source>Traverse</source>
         <translation>Überschreitung</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="66"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="70"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="62"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="66"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="63"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="67"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
@@ -756,32 +766,32 @@
 <context>
     <name>CompositeCountriesTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="40"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="41"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="42"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="43"/>
         <source>Num. regions</source>
         <translation>Anzahl Regionen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="44"/>
         <source>Num. peaks</source>
         <translation>Anzahl Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="45"/>
         <source>Avg. peak height</source>
         <translation>Mittl. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="46"/>
         <source>Max. peak height</source>
         <translation>Max. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="41"/>
+        <location filename="../src/comp_tables/comp_countries_table.h" line="42"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
@@ -789,32 +799,32 @@
 <context>
     <name>CompositeHikersTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="40"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="41"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="41"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="42"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="42"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="43"/>
         <source>Num. trips</source>
         <translation>Anzahl Urlaube</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="44"/>
         <source>Avg. elev. gain</source>
         <translation>Mittl. Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="45"/>
         <source>Max. elev. gain</source>
         <translation>Max. Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_hikers_table.h" line="46"/>
         <source>Sum elev. gain</source>
         <translation>Summe Höhenm.</translation>
     </message>
@@ -822,52 +832,52 @@
 <context>
     <name>CompositePeaksTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="46"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="47"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="54"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="55"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="48"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="49"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="49"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="50"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="47"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="48"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="50"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="51"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="51"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="52"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="53"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="54"/>
         <source>Sum elev. gain</source>
         <translation>Summe Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="52"/>
+        <location filename="../src/comp_tables/comp_peaks_table.h" line="53"/>
         <source>Scaled by</source>
         <translation>Bestiegen von</translation>
     </message>
@@ -875,32 +885,32 @@
 <context>
     <name>CompositeRangesTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="40"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="41"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="41"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="42"/>
         <source>Num. regions</source>
         <translation>Anzahl Regionen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="42"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="43"/>
         <source>Num. peaks</source>
         <translation>Anzahl Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="44"/>
         <source>Avg. peak height</source>
         <translation>Mittl. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="45"/>
         <source>Max. peak height</source>
         <translation>Max. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_ranges_table.h" line="46"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
@@ -908,42 +918,42 @@
 <context>
     <name>CompositeRegionsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="44"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="45"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="46"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="47"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="47"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="48"/>
         <source>Num. peaks</source>
         <translation>Anzahl Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="48"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="49"/>
         <source>Avg. peak height</source>
         <translation>Mittl. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="49"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="50"/>
         <source>Max. peak height</source>
         <translation>Max. Gipfelhöhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="50"/>
+        <location filename="../src/comp_tables/comp_regions_table.h" line="51"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
@@ -951,52 +961,57 @@
 <context>
     <name>CompositeTripsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="43"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="45"/>
+        <source>Index</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="46"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="44"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="47"/>
         <source>Start date</source>
         <translation>Datum Beginn</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="45"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="48"/>
         <source>End date</source>
         <translation>Datum Ende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="49"/>
         <source>Length</source>
         <translation>Länge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="46"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="49"/>
         <source> days</source>
         <translation> Tage</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="47"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="50"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="48"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="51"/>
         <source>Avg. elev. gain</source>
         <translation>Mittl. Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="49"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="52"/>
         <source>Max. elev. gain</source>
         <translation>Max. Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="50"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="53"/>
         <source>Sum elev. gain</source>
         <translation>Summe Höhenm.</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="51"/>
+        <location filename="../src/comp_tables/comp_trips_table.h" line="54"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
@@ -1538,22 +1553,63 @@
     </message>
 </context>
 <context>
+    <name>ItemDialog</name>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="40"/>
+        <source>Save changes</source>
+        <translation>Änderungen speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="73"/>
+        <source>Discard changes</source>
+        <translation>Änderungen verwerfen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="75"/>
+        <source>Discard unsaved data</source>
+        <translation>Ungesicherte Daten verwerfen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="77"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="122"/>
+        <source>Are you sure?</source>
+        <translation>Sollen die Daten wirklich verworfen werden?</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="102"/>
+        <source>Duplicate item name</source>
+        <translation>Name bereits vorhanden</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="103"/>
+        <source>There is already an item with this name.
+Do you want to save it anyway?</source>
+        <translation>Ein Eintrag mit diesem Namen ist bereits vorhanden.
+Trotzdem speichern?</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/item_dialog.cpp" line="119"/>
+        <source>Are you sure you want to delete this item?</source>
+        <translation>Soll dieser Eintrag wirklich gelöscht werden?</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../src/ui/main_window.ui" line="88"/>
-        <location filename="../src/ui/main_window.ui" line="883"/>
+        <location filename="../src/ui/main_window.ui" line="889"/>
         <source>New ascent...</source>
         <translation>Neue Besteigung...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="111"/>
-        <location filename="../src/ui/main_window.ui" line="895"/>
+        <location filename="../src/ui/main_window.ui" line="901"/>
         <source>New peak...</source>
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="134"/>
-        <location filename="../src/ui/main_window.ui" line="904"/>
+        <location filename="../src/ui/main_window.ui" line="910"/>
         <source>New trip...</source>
         <translation>Neuer Urlaub...</translation>
     </message>
@@ -1568,146 +1624,146 @@
         <translation>Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="385"/>
+        <location filename="../src/ui/main_window.ui" line="388"/>
         <source>Peaks</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="445"/>
+        <location filename="../src/ui/main_window.ui" line="448"/>
         <source>Trips</source>
         <translation>Urlaube</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="505"/>
+        <location filename="../src/ui/main_window.ui" line="511"/>
         <source>Hikers</source>
         <translation>Wanderer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="565"/>
+        <location filename="../src/ui/main_window.ui" line="571"/>
         <source>Regions</source>
         <translation>Regionen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="625"/>
+        <location filename="../src/ui/main_window.ui" line="631"/>
         <source>Mountain ranges</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="685"/>
+        <location filename="../src/ui/main_window.ui" line="691"/>
         <source>Countries</source>
         <translation>Länder</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="756"/>
+        <location filename="../src/ui/main_window.ui" line="762"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="760"/>
+        <location filename="../src/ui/main_window.ui" line="766"/>
         <source>Open recent database</source>
         <translation>Zuletzt geöffnet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="777"/>
+        <location filename="../src/ui/main_window.ui" line="783"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="785"/>
+        <location filename="../src/ui/main_window.ui" line="791"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="797"/>
+        <location filename="../src/ui/main_window.ui" line="803"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="803"/>
+        <location filename="../src/ui/main_window.ui" line="809"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="821"/>
+        <location filename="../src/ui/main_window.ui" line="827"/>
         <source>New database...</source>
         <translation>Neue Datenbank...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="826"/>
+        <location filename="../src/ui/main_window.ui" line="832"/>
         <source>Open database...</source>
         <translation>Datenbank öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="831"/>
+        <location filename="../src/ui/main_window.ui" line="837"/>
         <source>Clear list</source>
         <translation>Liste leeren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="840"/>
+        <location filename="../src/ui/main_window.ui" line="846"/>
         <source>Save database as...</source>
         <translation>Datenbank speichern unter...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="848"/>
+        <location filename="../src/ui/main_window.ui" line="854"/>
         <source>Close database</source>
         <translation>Datenbank schließen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="853"/>
+        <location filename="../src/ui/main_window.ui" line="859"/>
         <source>Project settings...</source>
         <translation>Projekteinstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="858"/>
+        <location filename="../src/ui/main_window.ui" line="864"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="869"/>
+        <location filename="../src/ui/main_window.ui" line="875"/>
         <source>Show filters</source>
         <translation>Filter anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="874"/>
+        <location filename="../src/ui/main_window.ui" line="880"/>
         <source>Auto-resize columns</source>
         <translation>Spaltengrößen optimieren</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="157"/>
-        <location filename="../src/ui/main_window.ui" line="913"/>
+        <location filename="../src/ui/main_window.ui" line="919"/>
         <source>New hiker...</source>
         <translation>Neuer Wanderer...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="180"/>
-        <location filename="../src/ui/main_window.ui" line="922"/>
+        <location filename="../src/ui/main_window.ui" line="928"/>
         <source>New region...</source>
         <translation>Neue Region...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="203"/>
-        <location filename="../src/ui/main_window.ui" line="931"/>
+        <location filename="../src/ui/main_window.ui" line="937"/>
         <source>New mountain range...</source>
         <translation>Neues Gebirge...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="226"/>
-        <location filename="../src/ui/main_window.ui" line="940"/>
+        <location filename="../src/ui/main_window.ui" line="946"/>
         <source>New country...</source>
         <translation>Neues Land...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="945"/>
+        <location filename="../src/ui/main_window.ui" line="951"/>
         <source>Relocate photos...</source>
         <translation>Fotos umziehen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="954"/>
+        <location filename="../src/ui/main_window.ui" line="960"/>
         <source>About PAL</source>
         <translation>Über PAL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="963"/>
+        <location filename="../src/ui/main_window.ui" line="969"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
@@ -1863,47 +1919,6 @@
         <location filename="../src/main/main_window.cpp" line="847"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
-    </message>
-</context>
-<context>
-    <name>ItemDialog</name>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="40"/>
-        <source>Save changes</source>
-        <translation>Änderungen speichern</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="73"/>
-        <source>Discard changes</source>
-        <translation>Änderungen verwerfen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="75"/>
-        <source>Discard unsaved data</source>
-        <translation>Ungesicherte Daten verwerfen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="77"/>
-        <location filename="../src/dialogs/item_dialog.cpp" line="122"/>
-        <source>Are you sure?</source>
-        <translation>Sollen die Daten wirklich verworfen werden?</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="102"/>
-        <source>Duplicate item name</source>
-        <translation>Name bereits vorhanden</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="103"/>
-        <source>There is already an item with this name.
-Do you want to save it anyway?</source>
-        <translation>Ein Eintrag mit diesem Namen ist bereits vorhanden.
-Trotzdem speichern?</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="119"/>
-        <source>Are you sure you want to delete this item?</source>
-        <translation>Soll dieser Eintrag wirklich gelöscht werden?</translation>
     </message>
 </context>
 <context>
@@ -2072,17 +2087,17 @@ Trotzdem speichern?</translation>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="119"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="114"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="124"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="119"/>
         <source>photo</source>
         <translation>Foto</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="129"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="124"/>
         <source>photos</source>
         <translation>Fotos</translation>
     </message>
@@ -2644,24 +2659,24 @@ Trotzdem speichern?</translation>
 <context>
     <name>WhatIfDeleteResult</name>
     <message>
-        <location filename="../src/db/column.cpp" line="169"/>
+        <location filename="../src/db/column.cpp" line="229"/>
         <source>%1 %2</source>
         <extracomment>This will be part of a listing of consequences of deleting an item. * An example would be: &quot;Hiker will be removed from 42 ascents.&quot; * Here, the string &quot;42 ascents&quot; would have been the result of using the base string &quot;%1 %2&quot; * and replacing &quot;%1&quot; with &quot;42&quot; and &quot;%2% with &quot;ascents&quot;. * A translation for %2 is retrieved from elsewhere.</extracomment>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="../src/db/column.cpp" line="175"/>
+        <location filename="../src/db/column.cpp" line="235"/>
         <source>The item will be removed from %1.</source>
         <translation>Referenzen in folgenden Einträge sind betroffen: %1.</translation>
     </message>
     <message>
-        <location filename="../src/db/column.cpp" line="177"/>
+        <location filename="../src/db/column.cpp" line="237"/>
         <source>, </source>
         <extracomment>This goes in between any two entries in a list, but not before the last entry</extracomment>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="../src/db/column.cpp" line="179"/>
+        <location filename="../src/db/column.cpp" line="239"/>
         <source>, and </source>
         <extracomment>This goes in between the last and second-to-last entries in a list</extracomment>
         <translation> und </translation>

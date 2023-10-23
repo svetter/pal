@@ -366,6 +366,9 @@
             <attribute name="horizontalHeaderHighlightSections">
              <bool>false</bool>
             </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
             <attribute name="verticalHeaderDefaultSectionSize">
              <number>20</number>
             </attribute>
@@ -484,6 +487,9 @@
              <bool>false</bool>
             </property>
             <attribute name="horizontalHeaderHighlightSections">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
              <bool>false</bool>
             </attribute>
             <attribute name="verticalHeaderDefaultSectionSize">

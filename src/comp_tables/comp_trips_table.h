@@ -27,6 +27,7 @@ class CompositeTripsTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	const IndexCompositeColumn*			indexColumn;
 	const DirectCompositeColumn*		nameColumn;
 	const DirectCompositeColumn*		startDateColumn;
 	const DirectCompositeColumn*		endDateColumn;
@@ -41,6 +42,7 @@ public:
 	inline CompositeTripsTable(Database* db) :
 			CompositeTable(db, db->tripsTable),
 			//																			uiName				align/fold op	suffix			breadcrumbs (column reference chain) + content column [+ enum names]
+			indexColumn				(new const IndexCompositeColumn			(this,	tr("Index"),							noSuffix,		{ {db->tripsTable->startDateColumn,		Qt::AscendingOrder},					{db->tripsTable->endDateColumn,				Qt::AscendingOrder} })),
 			nameColumn				(new const DirectCompositeColumn		(this,	tr("Name"),				Qt::AlignLeft,	noSuffix,		db->tripsTable->nameColumn)),
 			startDateColumn			(new const DirectCompositeColumn		(this,	tr("Start date"),		Qt::AlignLeft,	noSuffix,		db->tripsTable->startDateColumn)),
 			endDateColumn			(new const DirectCompositeColumn		(this,	tr("End date"),			Qt::AlignLeft,	noSuffix,		db->tripsTable->endDateColumn)),
@@ -51,6 +53,7 @@ public:
 			sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	tr("Sum elev. gain"),	SumFold,		mSuffix,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
 			listHikersColumn		(new const HikerListCompositeColumn		(this,	tr("Participants"),										{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
+		addColumn(indexColumn);
 		addColumn(nameColumn);
 		addColumn(startDateColumn);
 		addColumn(endDateColumn);
@@ -66,7 +69,7 @@ public:
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
-		return {startDateColumn, Qt::AscendingOrder};
+		return {indexColumn, Qt::AscendingOrder};
 	}
 };
 
