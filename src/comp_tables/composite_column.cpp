@@ -44,7 +44,15 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	
 	QString result = rawCellContent.toString();
 	
-	if (contentType == Date) {
+	if (contentType == Integer) {
+		assert(rawCellContent.canConvert<int>());
+		int number = rawCellContent.toInt();
+		if (abs(number) > 9999) {
+			result = QLocale().toString(number);
+		}
+	}
+	
+	else if (contentType == Date) {
 		assert(rawCellContent.canConvert<QDate>());
 		result = rawCellContent.toDate().toString("dd.MM.yyyy");
 	}
