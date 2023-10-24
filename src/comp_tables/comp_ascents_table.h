@@ -50,8 +50,8 @@ public:
 	const FoldCompositeColumn*			hikerIDsColumn;
 	
 public:
-	inline CompositeAscentsTable(Database* db) :
-			CompositeTable(db, db->ascentsTable),
+	inline CompositeAscentsTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->ascentsTable, tableView),
 			//																		uiName					align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			indexColumn			(new const IndexCompositeColumn			(this,	tr("Index"),									noSuffix,	{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},					{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
 			dateColumn			(new const DirectCompositeColumn		(this,	tr("Date"),					Qt::AlignLeft,		noSuffix,	db->ascentsTable->dateColumn)),

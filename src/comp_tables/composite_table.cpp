@@ -19,10 +19,11 @@
 
 
 
-CompositeTable::CompositeTable(Database* db, NormalTable* baseTable) :
+CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView) :
 		QAbstractTableModel(),
-		baseTable(baseTable),
 		db(db),
+		baseTable(baseTable),
+		tableView(tableView),
 		columns(QList<const CompositeColumn*>()),
 		firstHiddenColumnIndex(-1),
 		buffer(QList<QList<QVariant>*>()),
@@ -207,11 +208,13 @@ void CompositeTable::resetBuffer()
 
 int CompositeTable::getBufferRowIndexForViewRow(int viewRowIndex) const
 {
+	if (viewRowIndex < 0 || viewRowIndex >= bufferOrder.size()) return -1;
 	return bufferOrder.at(viewRowIndex);
 }
 
 int CompositeTable::findViewRowIndexForBufferRow(int bufferRowIndex) const
 {
+	if (bufferRowIndex < 0 || bufferRowIndex >= buffer.size()) return -1;
 	return bufferOrder.indexOf(bufferRowIndex);
 }
 
@@ -389,6 +392,10 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse)
 {
 	assert(column);
+	assert(tableView);
+	
+	int previouslySelectedViewRowIndex = tableView->currentIndex().row();
+	int previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
 	if (allowPassAndReverse && column == currentSorting.first) {
 		if (order == currentSorting.second) return;
@@ -408,6 +415,14 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 		};
 		
 		std::stable_sort(bufferOrder.begin(), bufferOrder.end(), comparator);
+	}
+	
+	// Restore selection
+	if (previouslySelectedBufferRowIndex >= 0) {
+		int newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
+		QModelIndex modelIndex = index(newViewRowIndex, 0);
+		tableView->setCurrentIndex(modelIndex);
+		tableView->scrollTo(modelIndex);
 	}
 	
 	// Notify model users (views)

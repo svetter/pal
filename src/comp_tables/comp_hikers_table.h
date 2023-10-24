@@ -35,8 +35,8 @@ public:
 	const FoldCompositeColumn*		sumElevationGainColumn;
 	
 public:
-	inline CompositeHikersTable(Database* db) :
-			CompositeTable(db, db->hikersTable),
+	inline CompositeHikersTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->hikersTable, tableView),
 			//																			uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			nameColumn				(new const DirectCompositeColumn		(this,	tr("Name"),				Qt::AlignLeft,	noSuffix,	db->hikersTable->nameColumn)),
 			numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn} })),

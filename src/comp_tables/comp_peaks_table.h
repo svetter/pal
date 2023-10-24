@@ -40,8 +40,8 @@ public:
 	const DirectCompositeColumn*	volcanoColumn;
 	
 public:
-	inline CompositePeaksTable(Database* db) :
-			CompositeTable(db, db->peaksTable),
+	inline CompositePeaksTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->peaksTable, tableView),
 			//																			uiName				align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			nameColumn				(new const DirectCompositeColumn		(this,	tr("Peak"),				Qt::AlignLeft,		noSuffix,	db->peaksTable->nameColumn)),
 			heightColumn			(new const DirectCompositeColumn		(this,	tr("Height"),			Qt::AlignRight,		mSuffix,	db->peaksTable->heightColumn)),

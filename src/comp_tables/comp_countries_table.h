@@ -35,8 +35,8 @@ public:
 	const FoldCompositeColumn*		maxPeakHeightColumn;
 	
 public:
-	inline CompositeCountriesTable(Database* db) :
-			CompositeTable(db, db->countriesTable),
+	inline CompositeCountriesTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->countriesTable, tableView),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			nameColumn			(new const DirectCompositeColumn		(this,	tr("Country"),			Qt::AlignLeft,	noSuffix,	db->countriesTable->nameColumn)),
 			numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),

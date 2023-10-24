@@ -39,8 +39,8 @@ public:
 	const FoldCompositeColumn*			listHikersColumn;
 	
 public:
-	inline CompositeTripsTable(Database* db) :
-			CompositeTable(db, db->tripsTable),
+	inline CompositeTripsTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->tripsTable, tableView),
 			//																			uiName				align/fold op	suffix			breadcrumbs (column reference chain) + content column [+ enum names]
 			indexColumn				(new const IndexCompositeColumn			(this,	tr("Index"),							noSuffix,		{ {db->tripsTable->startDateColumn,		Qt::AscendingOrder},					{db->tripsTable->endDateColumn,				Qt::AscendingOrder} })),
 			nameColumn				(new const DirectCompositeColumn		(this,	tr("Name"),				Qt::AlignLeft,	noSuffix,		db->tripsTable->nameColumn)),

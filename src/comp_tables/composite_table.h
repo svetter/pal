@@ -28,8 +28,9 @@
 
 
 class CompositeTable : public QAbstractTableModel {
-	const NormalTable* baseTable;
-	Database* db;
+	Database* const db;
+	const NormalTable* const baseTable;
+	QTableView* const tableView;
 	
 	QList<const CompositeColumn*> columns;
 	int firstHiddenColumnIndex;
@@ -50,7 +51,7 @@ protected:
 	static inline QString noSuffix = QString();
 	static inline QString mSuffix = " m";
 	
-	CompositeTable(Database* db, NormalTable* baseTable);
+	CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView);
 public:
 	~CompositeTable();
 	

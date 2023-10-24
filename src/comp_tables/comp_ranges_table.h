@@ -35,8 +35,8 @@ public:
 	const FoldCompositeColumn*		numAscentsColumn;
 	
 public:
-	inline CompositeRangesTable(Database* db) :
-			CompositeTable(db, db->rangesTable),
+	inline CompositeRangesTable(Database* db, QTableView* tableView) :
+			CompositeTable(db, db->rangesTable, tableView),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
 			nameColumn			(new const DirectCompositeColumn		(this,	tr("Mountain range"),	Qt::AlignLeft,	noSuffix,	db->rangesTable->nameColumn)),
 			numRegionsColumn	(new const NumericFoldCompositeColumn	(this,	tr("Num. regions"),		CountFold,		noSuffix,	{ {db->rangesTable->primaryKeyColumn,	db->regionsTable->rangeIDColumn} })),
