@@ -250,9 +250,20 @@ void CompositeTable::setInitialFilters(QSet<Filter> filters)
 
 void CompositeTable::applyFilters(QSet<Filter> filters)
 {
+	int previouslySelectedViewRowIndex = tableView->currentIndex().row();
+	int previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
+	
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
 	rebuildOrderBuffer(skipRepopulate);
+	
+	// Restore selection
+	if (previouslySelectedBufferRowIndex >= 0) {
+		int newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
+		QModelIndex modelIndex = index(newViewRowIndex, 0);
+		tableView->setCurrentIndex(modelIndex);
+		tableView->scrollTo(modelIndex);
+	}
 }
 
 void CompositeTable::clearFilters()
