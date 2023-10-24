@@ -177,7 +177,7 @@ void AscentViewer::changeToAscent(int viewRowIndex)
 	// Update main window selection
 	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
-	updateAscentInfo();
+	updateInfoArea();
 	setupPhotos();
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
@@ -219,7 +219,7 @@ void AscentViewer::resetInfoLabels()
 	ascentParticipantsBox		->setVisible	(false);
 }
 
-void AscentViewer::updateAscentInfo()
+void AscentViewer::updateInfoArea()
 {
 	resetInfoLabels();
 	
@@ -273,20 +273,22 @@ void AscentViewer::updateAscentInfo()
 		ascentTitleLabel		->setVisible(true);
 		ascentInfoLine			->setVisible(true);
 	}
-	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
-	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt(ascentBufferRowIndex).toString());
-	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt(ascentBufferRowIndex).toString() + ".");
-	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	->getFormattedValueAt(ascentBufferRowIndex).toString());
-	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
-	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		->getRawValueAt(ascentBufferRowIndex).toBool());
-	ascentDifficultyLabel		->setText	(compAscents->difficultyColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
+	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt			(ascentBufferRowIndex).toString());
+	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt			(ascentBufferRowIndex).toString() + ".");
+	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	->getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		->getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		->getRawValueAt			(ascentBufferRowIndex).toBool());
+	ascentDifficultyLabel		->setText	(compAscents->difficultyColumn		->getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentPeakOrdinalLabel		->setText	(compAscents->peakOrdinalColumn		->getFormattedValueAt	(ascentBufferRowIndex).toString());
+	
 	QString hikersList = compAscents->hikersColumn->getFormattedValueAt(ascentBufferRowIndex).toString();
 	if (!hikersList.isEmpty()) {
 		ascentParticipantsLabel	->setText	(hikersList);
 		ascentParticipantsBox->setVisible(true);
 	}
 	
-	descriptionTextBrowser		->setText	(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
+	descriptionTextBrowser->setText(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
 void AscentViewer::updateAscentNavigationTargets()

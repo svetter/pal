@@ -79,7 +79,7 @@ private:
 	// Ascent change
 	void changeToAscent(int viewRowIndex);
 	void resetInfoLabels();
-	void updateAscentInfo();
+	void updateInfoArea();
 	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
 	void updateAscentNavigationNumbers();
