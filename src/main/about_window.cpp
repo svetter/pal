@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file about_window.cpp
+ * 
+ * This file defines the class controlling the About window.
+ */
+
 #include "about_window.h"
 
 #include "settings.h"
@@ -24,6 +30,11 @@
 
 
 
+/**
+ * Creates a new About window.
+ * 
+ * @param parent	Parent widget.
+ */
 AboutWindow::AboutWindow(QWidget* parent) :
 		QDialog(parent)
 {

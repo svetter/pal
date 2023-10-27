@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file about_window.h
+ * 
+ * This file declares the class controlling the About window.
+ */
+
 #ifndef ABOUT_WINDOW_H
 #define ABOUT_WINDOW_H
 
@@ -24,6 +30,11 @@
 
 
 
+/**
+ * Control class for About window.
+ * 
+ * This class controls the About window.
+ */
 class AboutWindow : public QDialog, public Ui_AboutWindow
 {
 	Q_OBJECT
