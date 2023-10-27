@@ -15,12 +15,37 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent.cpp
+ * 
+ * This file defines the internal representation of an ascent item.
+ */
+
 #include "ascent.h"
 
 #include <QCoreApplication>
 
 
 
+/**
+ * Creates a new ascent object with the given properties.
+ * 
+ * @param ascentID			The ID of the ascent item, if it already has one. Invalid ItemID otherwise.
+ * @param title				The title of the ascent, if specified. Empty QString otherwise.
+ * @param peakID			The ID of the scaled peak, if specified. Invalid ItemID otherwise.
+ * @param date				The date of the ascent, if specified. Invalid QDate otherwise.
+ * @param perDayIndex		The index of the ascent in the day it was made on, if specified. -1 otherwise.
+ * @param time				The time the ascent was made at, if specified. Invalid QTime otherwise.
+ * @param elevationGain		The elevation gain of the ascent, if specified. -1 otherwise.
+ * @param hikeKind			The kind of hike the ascent was made on, if specified. -1 otherwise.
+ * @param traverse			Whether the ascent was a traverse. Cannot be unspecified.
+ * @param difficultySystem	The difficulty system used to grade the ascent, if specified. -1 otherwise.
+ * @param difficultyGrade	The difficulty grade of the ascent, if specified. -1 otherwise.
+ * @param tripID			The ID of the trip which the ascent was a part of, if specified. Invalid ItemID otherwise.
+ * @param hikerIDs			The IDs of the hikers that participated, if specified. Empty QSet otherwise.
+ * @param photos			The photos of the ascent, if any. Empty QList otherwise.
+ * @param description		The description of the ascent, if specified. Empty QString otherwise.
+ */
 Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QList<Photo>& photos, QString& description) :
 		ascentID(ascentID),
 		title(title),
@@ -39,11 +64,20 @@ Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int 
 		description(description)
 {}
 
+/**
+ * Destroys the ascent object.
+ */
 Ascent::~Ascent()
 {}
 
 
 
+/**
+ * Checks the given ascent object for equality with this one.
+ * 
+ * @param other	The other ascent.
+ * @return		True if the other ascent is equal to this one, false otherwise.
+ */
 bool Ascent::equalTo(const Ascent* const other) const
 {
 	assert(other);
@@ -66,16 +100,31 @@ bool Ascent::equalTo(const Ascent* const other) const
 
 
 
+/**
+ * Checks whether the ascent's date is specified.
+ * 
+ * @return	True if the ascent's date is specified, false otherwise.
+ */
 bool Ascent::dateSpecified() const
 {
 	return date.isValid();
 }
 
+/**
+ * Checks whether the ascent's time is specified.
+ * 
+ * @return	True if the ascent's time is specified, false otherwise.
+ */
 bool Ascent::timeSpecified() const
 {
 	return time.isValid();
 }
 
+/**
+ * Checks whether the ascent's elevation gain is specified.
+ * 
+ * @return	True if the ascent's elevation gain is specified, false otherwise.
+ */
 bool Ascent::elevationGainSpecified() const
 {
 	return elevationGain >= 0;
@@ -83,6 +132,13 @@ bool Ascent::elevationGainSpecified() const
 
 
 
+/**
+ * Returns the ascent's elevation gain as a QVariant.
+ * 
+ * If the ascent's elevation gain is not specified, an invalid QVariant is returned.
+ * 
+ * @return	A QVariant containing the ascent's elevation gain, or an invalid QVariant.
+ */
 QVariant Ascent::getElevationGainAsQVariant() const
 {
 	if (!elevationGainSpecified()) return QVariant();
