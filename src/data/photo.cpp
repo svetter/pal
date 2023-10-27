@@ -15,10 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photo.cpp
+ * 
+ * This file defines the internal representation of a photo item.
+ */
+
 #include "photo.h"
 
 
 
+/**
+ * Creates a new empty photo object with invalid values.
+ */
 Photo::Photo() :
 		photoID(ItemID()),
 		ascentID(ItemID()),
@@ -27,6 +36,15 @@ Photo::Photo() :
 		description(QString())
 {}
 
+/**
+ * Creates a new empty photo object with the given properties.
+ * 
+ * @param photoID		The ID of the photo, if it already has one. Invalid ItemID otherwise.
+ * @param ascentID		The ID of the ascent this photo belongs to, if specified. Invalid ItemID otherwise.
+ * @param sortIndex		The sort index of this photo, if specified. -1 otherwise.
+ * @param filepath		The path (including filename) of the photo, if specified. Empty QString otherwise.
+ * @param description	The description of the photo, if specified. Empty QString otherwise.
+ */
 Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, QString description) :
 		photoID(photoID),
 		ascentID(ascentID),
@@ -35,6 +53,11 @@ Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, Q
 		description(description)
 {}
 
+/**
+ * Creates a new photo object that is a copy of the given photo object.
+ * 
+ * @param originalPhoto	The photo object to copy.
+ */
 Photo::Photo(const Photo& originalPhoto) :
 		QObject(),
 		photoID(originalPhoto.photoID),
@@ -44,11 +67,20 @@ Photo::Photo(const Photo& originalPhoto) :
 		description(originalPhoto.description)
 {}
 
+/**
+ * Destroys the photo object.
+ */
 Photo::~Photo()
 {}
 
 
 
+/**
+ * Assigns the given photo object to this one.
+ * 
+ * @param other	The photo object to assign to this one.
+ * @return		A reference to this photo object.
+ */
 Photo& Photo::operator=(const Photo& other)
 {
 	ascentID	= other.ascentID;
@@ -57,6 +89,12 @@ Photo& Photo::operator=(const Photo& other)
 	return *this;
 }
 
+/**
+ * Checks the given photo object for equality with this one.
+ * 
+ * @param other	The other photo object to compare this photo object with.
+ * @return		True if the other photo object is equal to this one, false otherwise.
+ */
 bool Photo::operator==(const Photo& other) const
 {
 	if (ascentID	!= other.ascentID)		return false;

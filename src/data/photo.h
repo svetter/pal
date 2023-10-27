@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photo.h
+ * 
+ * This file declares the internal representation of a photo item.
+ */
+
 #ifndef PHOTO_H
 #define PHOTO_H
 
@@ -24,15 +30,23 @@
 
 
 
+/**
+ * A class representing a photo item.
+ */
 class Photo : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The photo's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	photoID;
+	/** The ID of the ascent this photo belongs to. Invalid ItemID if the ascent is a new item. */
 	ItemID	ascentID;
+	/** The sort index of this photo in the ascent's photo list. -1 if not specified. */
 	int		sortIndex;
+	/** The path (including filename) to the image file, if specified. Empty QString otherwise. */
 	QString	filepath;
+	/** The description of the photo, if specified. Empty QString otherwise. */
 	QString	description;
 	
 	Photo();
