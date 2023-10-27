@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent_viewer.h
+ * 
+ * This file defines the AscentViewer class.
+ */
+
 #include "ascent_viewer.h"
 
 #include <QDialog>
@@ -27,6 +33,14 @@
 
 
 
+/**
+ * Creates a new AscentViewer.
+ * 
+ * @param parent		The application's main window.
+ * @param db			The project's database.
+ * @param typesHandler	The application's ItemTypesHandler.
+ * @param viewRowIndex	The view row index of the ascent to open in the viewer.
+ */
 AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex) :
 		QDialog(parent),
 		mainWindow(parent),
@@ -53,6 +67,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	changeToAscent(viewRowIndex);
 }
 
+/**
+ * Destroys the AscentViewer.
+ */
 AscentViewer::~AscentViewer()
 {
 	delete imageLabel;
@@ -62,6 +79,9 @@ AscentViewer::~AscentViewer()
 
 // INITIAL SETUP
 
+/**
+ * Configures stretch, restores geometry, sets button icons, and more UI setup.
+ */
 void AscentViewer::additionalUISetup()
 {
 	centralSplitter->setStretchFactor(0, 1);
@@ -100,6 +120,9 @@ void AscentViewer::additionalUISetup()
 	handle_photoDescriptionEditableChanged();
 }
 
+/**
+ * Connects interactive UI elements to event handler functions.
+ */
 void AscentViewer::connectUI()
 {
 	// Ascent navigation
@@ -130,6 +153,9 @@ void AscentViewer::connectUI()
 	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
 }
 
+/**
+ * Populates the info area context menu.
+ */
 void AscentViewer::setupContextMenus()
 {
 	editAscentAction	= infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
@@ -141,6 +167,9 @@ void AscentViewer::setupContextMenus()
 	editTripAction		->setIcon(QIcon(":/icons/trip.svg"));
 }
 
+/**
+* Creates keyboard shortcuts for UI buttons.
+*/
 void AscentViewer::setupShortcuts()
 {
 	firstAscentButton			->setShortcut(QKeySequence(Qt::Key_8));
@@ -166,6 +195,11 @@ void AscentViewer::setupShortcuts()
 
 // ASCENT CHANGE
 
+/**
+ * Navigates to the ascent with the given view row index.
+ * 
+ * @param viewRowIndex	The view row index of the ascent to load.
+ */
 void AscentViewer::changeToAscent(int viewRowIndex)
 {
 	saveDescription();
@@ -184,6 +218,9 @@ void AscentViewer::changeToAscent(int viewRowIndex)
 	updateAscentNavigationNumbers();
 }
 
+/**
+ * Clears all ascent-specific contents from the info area and leaves the labels empty or hidden.
+ */
 void AscentViewer::resetInfoLabels()
 {
 	tripNameLabel				->setText		(QString());
@@ -219,6 +256,10 @@ void AscentViewer::resetInfoLabels()
 	ascentParticipantsBox		->setVisible	(false);
 }
 
+/**
+ * Collects information about the current ascent, its peak and trip and displays it in the info
+ * area.
+ */
 void AscentViewer::updateInfoArea()
 {
 	resetInfoLabels();
@@ -291,6 +332,18 @@ void AscentViewer::updateInfoArea()
 	descriptionTextBrowser->setText(db->ascentsTable->descriptionColumn->getValueAt(ascentBufferRowIndex).toString());
 }
 
+/**
+ * Updates view row indices which serve as jump targets for the ascent navigation buttons.
+ * 
+ * Invalid jump targets (disabled buttons) are set to -1, e.g., when the current ascent is the
+ * first one in the list as currently sorted and filtered, which will disable the 'first ascent'
+ * and 'previous ascent' buttons.
+ * 
+ * For ascents of the same peak, the sorting and filtering of the ascents table apply as well.
+ * 
+ * @see updateAscentNavigationButtonsEnabled()
+ * @see updateAscentNavigationNumbers()
+ */
 void AscentViewer::updateAscentNavigationTargets()
 {
 	int minViewRowIndex	= 0;
@@ -313,13 +366,14 @@ void AscentViewer::updateAscentNavigationTargets()
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
 		QList<int> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
+		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
 		QList<int> ascentOfPeakViewRowIndices = QList<int>();
 		for (int matchingBufferRowIndex : matchingBufferRowIndices) {
 			int matchingViewRowIndex = compAscents->findViewRowIndexForBufferRow(matchingBufferRowIndex);
 			if (matchingViewRowIndex < 0) continue;
 			ascentOfPeakViewRowIndices.append(matchingViewRowIndex);
 		}
-		assert(!ascentOfPeakViewRowIndices.isEmpty());
+		assert(!ascentOfPeakViewRowIndices.isEmpty());	// The current ascent has to be in the list
 		
 		int minAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.first();
 		int maxAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.last();
@@ -338,6 +392,11 @@ void AscentViewer::updateAscentNavigationTargets()
 	}
 }
 
+/**
+ * Updates the enabled state of the ascent navigation buttons.
+ * 
+ * @pre updateAscentNavigationTargets() should be called first.
+ */
 void AscentViewer::updateAscentNavigationButtonsEnabled()
 {
 	firstAscentButton			->setEnabled(firstAscentViewRowIndex			>= 0);
@@ -351,6 +410,11 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
 	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
 }
 
+/**
+ * Updates the "n / N" style UI labels next to the ascent navigation buttons.
+ * 
+ * @pre updateAscentNavigationTargets() should be called first.
+ */
 void AscentViewer::updateAscentNavigationNumbers()
 {
 	QString allAscentsNewText = QString::number(currentViewRowIndex + 1) + " / " + QString::number(lastAscentViewRowIndex + 1);
@@ -362,6 +426,9 @@ void AscentViewer::updateAscentNavigationNumbers()
 	ascentOfPeakNumberLabel->setEnabled(numAscentsOfPeak > 1);
 }
 
+/**
+ * Updates the current photo list for the current ascent and displays the first one, if present.
+ */
 void AscentViewer::setupPhotos()
 {
 	photos.clear();
@@ -378,6 +445,11 @@ void AscentViewer::setupPhotos()
 
 
 
+/**
+ * Navigates to the photo with the given index.
+ * 
+ * @param photoIndex	The index of the photo to load.
+ */
 void AscentViewer::changeToPhoto(int photoIndex)
 {
 	savePhotoDescription();
@@ -387,6 +459,12 @@ void AscentViewer::changeToPhoto(int photoIndex)
 	updatePhotoButtonsEnabled();
 }
 
+/**
+ * Loads the photo with the given index and displays it, along with its description.
+ * 
+ * If the photo cannot be loaded from disk, the user is asked whether to remove it from the ascent.
+ * The next photo is then loaded.
+ */
 void AscentViewer::updatePhoto()
 {
 	photoDescriptionLabel	->setText(QString());
@@ -435,6 +513,9 @@ void AscentViewer::updatePhoto()
 	imageLabel				->setToolTip(filepath);
 }
 
+/**
+ * Updates the "n / N" style UI label next to the photo navigation buttons.
+ */
 void AscentViewer::updatePhotoIndexLabel()
 {
 	if (currentPhotoIndex < 0) {
@@ -444,6 +525,9 @@ void AscentViewer::updatePhotoIndexLabel()
 	}
 }
 
+/**
+ * Updates the enabled state of the photo navigation, move and remove buttons.
+ */
 void AscentViewer::updatePhotoButtonsEnabled()
 {
 	firstPhotoButton		->setEnabled(currentPhotoIndex > 0);
@@ -461,6 +545,11 @@ void AscentViewer::updatePhotoButtonsEnabled()
 
 // EDITING PHOTOS
 
+/**
+ * Moves the current photo towards the beginning or end of the photo list.
+ * 
+ * @param moveLeftNotRight	Whether to move the photo towards the beginning (true) or end (false) of the list.
+ */
 void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
 {
 	assert(photos.size() > 1);
@@ -476,6 +565,12 @@ void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
 	savePhotosList();
 }
 
+/**
+ * Adds user-selected photos from a file dialog to the current ascent.
+ * 
+ * Phots are inserted after the current photo, or at the beginning of the list if it is empty.
+ * The first added photo is then displayed.
+ */
 void AscentViewer::addPhotos()
 {
 	QStringList filepaths = openFileDialogForPhotosSelection(this);
@@ -493,6 +588,9 @@ void AscentViewer::addPhotos()
 	updatePhotoButtonsEnabled();
 }
 
+/**
+ * Removes the current photo from the current ascent and displays the next one, if present.
+ */
 void AscentViewer::removeCurrentPhoto()
 {
 	photos.removeAt(currentPhotoIndex);
@@ -503,6 +601,9 @@ void AscentViewer::removeCurrentPhoto()
 	updatePhoto();
 }
 
+/**
+ * Saves the description for the current photo from the UI to the database.
+ */
 void AscentViewer::savePhotoDescription()
 {
 	if (currentPhotoIndex < 0 || photos.empty() || !photoDescriptionEditable) return;
@@ -515,6 +616,9 @@ void AscentViewer::savePhotoDescription()
 	}
 }
 
+/**
+ * Saves the current state of the photo list to the database.
+ */
 void AscentViewer::savePhotosList()
 {
 	for (int i = 0; i < photos.size(); i++) {
@@ -527,6 +631,9 @@ void AscentViewer::savePhotosList()
 
 // EDITING DESCRIPTION
 
+/**
+ * Saves the description for the current ascent from the UI to the database.
+ */
 void AscentViewer::saveDescription()
 {
 	if (currentAscentID.isInvalid() || !descriptionEditable) return;
@@ -544,41 +651,65 @@ void AscentViewer::saveDescription()
 
 // ASCENT NAVIGATION
 
+/**
+ * Event handler for the "Go to first ascent" button.
+ */
 void AscentViewer::handle_firstAscent()
 {
 	changeToAscent(firstAscentViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to previous ascent" button.
+ */
 void AscentViewer::handle_previousAscent()
 {
 	changeToAscent(previousAscentViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to next ascent" button.
+ */
 void AscentViewer::handle_nextAscent()
 {
 	changeToAscent(nextAscentViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to last ascent" button.
+ */
 void AscentViewer::handle_lastAscent()
 {
 	changeToAscent(lastAscentViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to first ascent of same peak" button.
+ */
 void AscentViewer::handle_firstAscentOfPeak()
 {
 	changeToAscent(firstAscentOfPeakViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to previous ascent of same peak" button.
+ */
 void AscentViewer::handle_previousAscentOfPeak()
 {
 	changeToAscent(previousAscentOfPeakViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to next ascent of same peak" button.
+ */
 void AscentViewer::handle_nextAscentOfPeak()
 {
 	changeToAscent(nextAscentOfPeakViewRowIndex);
 }
 
+/**
+ * Event handler for the "Go to last ascent of same peak" button.
+ */
 void AscentViewer::handle_lastAscentOfPeak()
 {
 	changeToAscent(lastAscentOfPeakViewRowIndex);
@@ -587,21 +718,33 @@ void AscentViewer::handle_lastAscentOfPeak()
 
 // PHOTO NAVIGATION
 
+/**
+ * Event handler for the "Go to first photo" button.
+ */
 void AscentViewer::handle_firstPhoto()
 {
 	changeToPhoto(0);
 }
 
+/**
+ * Event handler for the "Go to previous photo" button.
+ */
 void AscentViewer::handle_previousPhoto()
 {
 	changeToPhoto(currentPhotoIndex - 1);
 }
 
+/**
+ * Event handler for the "Go to next photo" button.
+ */
 void AscentViewer::handle_nextPhoto()
 {
 	changeToPhoto(currentPhotoIndex + 1);
 }
 
+/**
+ * Event handler for the "Go to last photo" button.
+ */
 void AscentViewer::handle_lastPhoto()
 {
 	changeToPhoto(photos.size() - 1);
@@ -610,21 +753,33 @@ void AscentViewer::handle_lastPhoto()
 
 // CHANGING PHOTOS
 
+/**
+ * Event handler for the "Move photo left" button.
+ */
 void AscentViewer::handle_movePhotoLeft()
 {
 	moveCurrentPhoto(true);
 }
 
+/**
+ * Event handler for the "Move photo right" button.
+ */
 void AscentViewer::handle_movePhotoRight()
 {
 	moveCurrentPhoto(false);
 }
 
+/**
+ * Event handler for the "Add photos" button.
+ */
 void AscentViewer::handle_addPhotos()
 {
 	addPhotos();
 }
 
+/**
+ * Event handler for the "Remove photo" button.
+ */
 void AscentViewer::handle_removePhoto()
 {
 	removeCurrentPhoto();
@@ -633,16 +788,25 @@ void AscentViewer::handle_removePhoto()
 
 // RIGHT CLICK
 
+/**
+ * Event handler for right clicks on the ascent info area.
+ */
 void AscentViewer::handle_rightClickOnAscentInfo(QPoint pos)
 {
 	popupInfoContextMenu(ascentInfoBox->mapToGlobal(pos));
 }
 
+/**
+ * Event handler for right clicks on the peak info area.
+ */
 void AscentViewer::handle_rightClickOnPeakInfo(QPoint pos)
 {
 	popupInfoContextMenu(peakInfoBox->mapToGlobal(pos));
 }
 
+/**
+ * Event handler for right clicks on the trip info area.
+ */
 void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 {
 	popupInfoContextMenu(tripInfoBox->mapToGlobal(pos));
@@ -651,6 +815,9 @@ void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 
 // EDIT ACTIONS
 
+/**
+ * Event handler for the button controlling ascent description editability.
+ */
 void AscentViewer::handle_descriptionEditableChanged()
 {
 	if (descriptionEditable) saveDescription();
@@ -660,6 +827,9 @@ void AscentViewer::handle_descriptionEditableChanged()
 	descriptionTextBrowser->setReadOnly(!descriptionEditable);
 }
 
+/**
+ * Event handler for the button controlling photo description editability.
+ */
 void AscentViewer::handle_photoDescriptionEditableChanged()
 {
 	if (photoDescriptionEditable) {
@@ -676,6 +846,9 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 }
 
 
+/**
+ * Event handler for the context menu action for editing the current ascent.
+ */
 void AscentViewer::handle_editAscent()
 {
 	int oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
@@ -683,6 +856,9 @@ void AscentViewer::handle_editAscent()
 	handleChangesToUnderlyingData(oldBufferRowIndex);
 }
 
+/**
+ * Event handler for the context menu action for editing the current ascent's peak.
+ */
 void AscentViewer::handle_editPeak()
 {
 	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
@@ -692,6 +868,9 @@ void AscentViewer::handle_editPeak()
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
 
+/**
+ * Event handler for the context menu action for editing the current ascent's trip.
+ */
 void AscentViewer::handle_editTrip()
 {
 	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
@@ -703,6 +882,12 @@ void AscentViewer::handle_editTrip()
 
 
 
+/**
+ * Spawns the info area context menu at the given position and controls the enabled state of its
+ * actions.
+ * 
+ * @param pos	The position to spawn the context menu at.
+ */
 void AscentViewer::popupInfoContextMenu(QPoint pos)
 {
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueFor(currentAscentID.forceValid()).toInt();
@@ -713,6 +898,14 @@ void AscentViewer::popupInfoContextMenu(QPoint pos)
 	infoContextMenu.popup(pos);
 }
 
+/**
+ * Handles changes in the composite ascents table, i.e. changes in data, filtering or sorting.
+ * 
+ * If the current ascent is no longer in the table, the user is informed and the ascent viewer
+ * navigates to the next ascent in the table or closes if the table is now empty.
+ * 
+ * @param currentBufferRowIndex	The buffer row index of the current ascent.
+ */
 void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 {
 	// Filtering and sorting may have changed, update view row index
@@ -743,6 +936,9 @@ void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 
 // EXIT BEHAVIOUR
 
+/**
+ * Prepares the ascent viewer for closing by saving data and implicit settings.
+ */
 void AscentViewer::reject()
 {
 	saveDescription();
@@ -752,6 +948,9 @@ void AscentViewer::reject()
 	QDialog::reject();
 }
 
+/**
+ * Saves the current splitter sizes to settings.
+ */
 void AscentViewer::saveSplitterSizes()
 {
 	QList<int> splitterSizes = centralSplitter->sizes();
@@ -763,6 +962,9 @@ void AscentViewer::saveSplitterSizes()
 }
 
 
+/**
+ * Restores the splitter sizes from settings.
+ */
 void AscentViewer::restoreSplitterSizes()
 {
 	QStringList splitterSizeStrings = Settings::ascentViewer_splitterSizes.get();

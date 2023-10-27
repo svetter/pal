@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent_viewer.h
+ * 
+ * This file declares the AscentViewer class.
+ */
+
 #ifndef ASCENT_VIEWER_H
 #define ASCENT_VIEWER_H
 
@@ -24,44 +30,75 @@
 
 
 
+/**
+ * Control class for the ascent viewer window.
+ */
 class AscentViewer : public QDialog, public Ui_AscentViewer {
 	Q_OBJECT
 	
+	/** The application's main window. */
 	MainWindow* const mainWindow;
+	/** The project's database. */
 	Database* const db;
+	/** The application's item types handler. */
 	const ItemTypesHandler* typesHandler;
+	/** The composite ascents table. */
 	CompositeAscentsTable* const compAscents;
+	/** The composite peaks table. */
 	CompositePeaksTable* const compPeaks;
+/** The composite trips table. */
 	CompositeTripsTable* const compTrips;
 	
+	/** The current view row index. */
 	int currentViewRowIndex;
+	/** The ID of the currently displayed ascent, or an invalid ID if no ascent is displayed. */
 	ItemID currentAscentID;
 	
+	/** The view row index of the first ascent in the composite ascents table. */
 	int firstAscentViewRowIndex;
+	/** The view row index of the ascent before the current one in the composite ascents table. */
 	int previousAscentViewRowIndex;
+	/** The view row index of the ascent after the current one in the composite ascents table. */
 	int nextAscentViewRowIndex;
+	/** The view row index of the last ascent in the composite ascents table. */
 	int lastAscentViewRowIndex;
 	
+	/** The view row index of the first ascent of the current ascent's peak in the composite ascents table. */
 	int firstAscentOfPeakViewRowIndex;
+	/** The view row index of the ascent before the current one of the current ascent's peak in the composite ascents table. */
 	int previousAscentOfPeakViewRowIndex;
+	/** The view row index of the ascent after the current one of the current ascent's peak in the composite ascents table. */
 	int nextAscentOfPeakViewRowIndex;
+	/** The view row index of the last ascent of the current ascent's peak in the composite ascents table. */
 	int lastAscentOfPeakViewRowIndex;
 	
+	/** Indicates that the current ascent is the n-th ascent of its peak. */
 	int currentAscentOfPeakIndex;
+	/** The number of ascents of the current ascent's peak. */
 	int numAscentsOfPeak;
 	
+	/** List of all photos of the current ascent. */
 	QList<Photo> photos;
+	/** The index of the currently displayed photo in the photos list. -1 if no photo is displayed. */
 	int currentPhotoIndex;
 	
+	/** The widget for displaying the image. */
 	ScalableImageLabel* imageLabel;
+	/** The image currently displayed in the image label. */
 	QImage image;
 	
+	/** Indicates whether the ascent description is currently set to be editable. */
 	bool descriptionEditable;
+	/** Indicates whether the photo description is currently set to be editable. */
 	bool photoDescriptionEditable;
 	
+	/** Context menu for the info area. */
 	QMenu infoContextMenu;
+	/** Context menu action for editing the current ascent. */
 	QAction* editAscentAction;
+	/** Context menu action for editing the current ascent's peak. */
 	QAction* editPeakAction;
+	/** Context menu action for editing the current ascent's trip. */
 	QAction* editTripAction;
 	
 public:
