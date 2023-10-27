@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file trip.h
+ * 
+ * This file declares the internal representation of a trip item.
+ */
+
 #ifndef TRIP_H
 #define TRIP_H
 
@@ -25,15 +31,23 @@
 
 
 
+/**
+ * A class representing a trip item.
+ */
 class Trip : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The trip's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	tripID;
+	/** The trip's name. Empty QString if not specified. */
 	QString	name;
+	/** The trip's start date. Invalid QDate if not specified. */
 	QDate	startDate;
+	/** The trip's end date. Invalid QDate if not specified. */
 	QDate	endDate;
+	/** The trip's description. Empty QString if not specified. */
 	QString	description;
 	
 	Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QString& description);
