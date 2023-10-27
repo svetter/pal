@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent_filter_bar.cpp
+ * 
+ * This file implements the AscentFilterBar class.
+ */
+
 #include "ascent_filter_bar.h"
 
 #include "main_window.h"
@@ -24,6 +30,11 @@
 
 
 
+/**
+ * Creates a new ascent filter bar.
+ * 
+ * @param parent The parent widget.
+ */
 AscentFilterBar::AscentFilterBar(QWidget* parent) :
 		QWidget(parent),
 		mainWindow(nullptr),
@@ -40,6 +51,17 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 
 // INITIAL SETUP
 
+/**
+ * Supplies pointers to the main window, the database and the ascent table.
+ * 
+ * This function is called only once from the MainWindow constructor.
+ * It exists so that the AscentFilterBar can be placed in the UI form file, which means that its
+ * constructor can't take any custom arguments like these pointers.
+ * 
+ * @param mainWindow	The main window.
+ * @param db			The database.
+ * @param compAscents	The ascent table.
+ */
 void AscentFilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents)
 {
 	this->mainWindow	= mainWindow;
@@ -51,6 +73,9 @@ void AscentFilterBar::supplyPointers(MainWindow* mainWindow, Database* db, Compo
 }
 
 
+/**
+ * Connects interactive UI elements to event handler functions.
+ */
 void AscentFilterBar::connectUI()
 {
 	connect(applyFiltersButton,				&QPushButton::clicked,				this,	&AscentFilterBar::handle_applyFilters);
@@ -79,6 +104,12 @@ void AscentFilterBar::connectUI()
 	connect(hikerFilterCombo,				&QComboBox::currentIndexChanged,	this,	&AscentFilterBar::handle_filtersChanged);
 }
 
+/**
+ * Populates item combo boxes.
+ * 
+ * In this class, this function is not called from the constructor but when pointers to the main
+ * window and the database are supplied via supplyPointers().
+ */
 void AscentFilterBar::additionalUISetup()
 {
 	hikeKindFilterCombo->insertItems(0, EnumNames::translateList(EnumNames::hikeKindNames));
@@ -99,6 +130,11 @@ void AscentFilterBar::additionalUISetup()
 
 // PROJECT SETUP
 
+/**
+ * Resets all UI elements to their default state.
+ * 
+ * Project-specific combo boxes stay populated.
+ */
 void AscentFilterBar::resetUI()
 {
 	dateFilterBox		->setChecked(false);
@@ -124,6 +160,11 @@ void AscentFilterBar::resetUI()
 	hikerFilterCombo			->setCurrentIndex(0);
 }
 
+/**
+ * Sets UI up to represent the given set of active filters.
+ * 
+ * @param filters	The set of active filters to represent in the UI.
+ */
 void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 {
 	resetUI();
@@ -255,6 +296,14 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 
 // UPDATE UI
 
+/**
+ * Repopulates range combo box, maintaining selection if possible.
+ * 
+ * By setting temporarilyIgnoreChangeEvents, the function makes sure that the combo box event
+ * handlers which are normally called when the user changes the selection don't fire when called
+ * from here. If the selection is different after repopulating, handle_filtersChanged() is called
+ * manually.
+ */
 void AscentFilterBar::updateRangeCombo()
 {
 	temporarilyIgnoreChangeEvents = true;
@@ -281,6 +330,14 @@ void AscentFilterBar::updateRangeCombo()
 	}
 }
 
+/**
+ * Repopulates hiker combo box, maintaining selection if possible.
+ * 
+ * By setting temporarilyIgnoreChangeEvents, the function makes sure that the combo box event
+ * handlers which are normally called when the user changes the selection don't fire when called
+ * from here. If the selection is different after repopulating, handle_filtersChanged() is called
+ * manually.
+ */
 void AscentFilterBar::updateHikerCombo()
 {
 	temporarilyIgnoreChangeEvents = true;
@@ -311,6 +368,14 @@ void AscentFilterBar::updateHikerCombo()
 
 // UI CHANGE HANDLERS
 
+/**
+ * Collective event handler for any changes to filter UI elements.
+ * 
+ * Sets 'Apply filters' button to enabled if any filter is enabled in the UI and to disabled
+ * otherwise.
+ * Sets 'Clear filters' button to enabled if any filters are currently applied to the table (Note
+ * that this is completely independent of the filter UI).
+ */
 void AscentFilterBar::handle_filtersChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -340,6 +405,13 @@ void AscentFilterBar::handle_filtersChanged()
 }
 
 
+/**
+ * Event handler for changes to the difficulty filter system combo box.
+ * 
+ * **Note**: This handler only handles the difficulty filter system combo box, **not** the
+ * difficulty *system* combo box next to and functionally connected to it (that is handled in
+ * handle_difficultyFilterSystemChanged()).
+ */
 void AscentFilterBar::handle_difficultyFilterBoxChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -352,6 +424,11 @@ void AscentFilterBar::handle_difficultyFilterBoxChanged()
 }
 
 
+/**
+ * Event handler for changes to the minimum date widget.
+ * 
+ * Enforces that the minimum date is never later than the maximum date (if set).
+ */
 void AscentFilterBar::handle_minDateChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -366,6 +443,11 @@ void AscentFilterBar::handle_minDateChanged()
 	handle_filtersChanged();
 }
 
+/**
+ * Event handler for changes to the maximum date widget.
+ * 
+ * Enforces that the minimum date is never later than the maximum date.
+ */
 void AscentFilterBar::handle_maxDateChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -377,6 +459,11 @@ void AscentFilterBar::handle_maxDateChanged()
 	handle_filtersChanged();
 }
 
+/**
+ * Event handler for changes to the minimum peak height combo box.
+ * 
+ * Enforces that the minimum peak height is never higher than the maximum peak height (if set).
+ */
 void AscentFilterBar::handle_minHeightChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -391,6 +478,11 @@ void AscentFilterBar::handle_minHeightChanged()
 	handle_filtersChanged();
 }
 
+/**
+ * Event handler for changes to the maximum peak height combo box.
+ * 
+ * Enforces that the minimum peak height is never higher than the maximum peak height.
+ */
 void AscentFilterBar::handle_maxHeightChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -402,6 +494,11 @@ void AscentFilterBar::handle_maxHeightChanged()
 	handle_filtersChanged();
 }
 
+/**
+ * Event handler for changes to the difficulty filter system combo box.
+ * 
+ * Repopulates the difficulty grade combo box according to the selected difficulty system.
+ */
 void AscentFilterBar::handle_difficultyFilterSystemChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
@@ -424,6 +521,13 @@ void AscentFilterBar::handle_difficultyFilterSystemChanged()
 
 // EXECUTE FILTER ACTIONS
 
+/**
+ * Event handler for the 'Apply filters' button.
+ * 
+ * Updates enabled status of 'Apply filters' and 'Clear filters' buttons, collects, saves and
+ * applies the filters specified in the UI, and prompts the main window to update the table size
+ * information.
+ */
 void AscentFilterBar::handle_applyFilters()
 {
 	applyFiltersButton->setEnabled(false);
@@ -436,6 +540,12 @@ void AscentFilterBar::handle_applyFilters()
 	mainWindow->updateTableSize();
 }
 
+/**
+ * Event handler for the 'Clear filters' button.
+ * 
+ * Sets the 'Clear filters' button to disabled, and performs the steps necessary to clear the
+ * filters from the table and update the table size information.
+ */
 void AscentFilterBar::handle_clearFilters()
 {
 	clearFiltersButton->setEnabled(false);
@@ -451,6 +561,13 @@ void AscentFilterBar::handle_clearFilters()
 
 // PARSING FILTERS FROM UI
 
+/**
+ * Assembles the set of active filters specified in the UI.
+ * 
+ * Any filter whose checkbox is enabled is included in the set, and vice versa.
+ * 
+ * @return	A set representing the active filters currently specified in the UI.
+ */
 QSet<Filter> AscentFilterBar::collectFilters()
 {
 	QSet<Filter> filters = QSet<Filter>();
@@ -512,6 +629,9 @@ QSet<Filter> AscentFilterBar::collectFilters()
 
 // SAVING FILTERS
 
+/**
+ * Clears all filters previously saved in the project settings.
+ */
 void AscentFilterBar::clearSavedFilters()
 {
 	db->projectSettings->dateFilter			->setBothToNull(this);
@@ -523,6 +643,13 @@ void AscentFilterBar::clearSavedFilters()
 	db->projectSettings->hikerFilter		->setBothToNull(this);
 }
 
+/**
+ * Saves the given set of filters to the project settings.
+ * 
+ * Any filter not included in the set will be cleared from the project settings.
+ * 
+ * @param filters	The set of filters to save.
+ */
 void AscentFilterBar::saveFilters(const QSet<Filter> filters)
 {
 	clearSavedFilters();
@@ -590,6 +717,13 @@ void AscentFilterBar::saveFilters(const QSet<Filter> filters)
 
 // RETRIEVING FILTERS FROM PROJECT SETTINGS
 
+/**
+ * Retrieves the set of filters saved in the project settings.
+ * 
+ * Filters not set in the project settings will not be included in the set.
+ * 
+ * @return	A set of filters representing the ones saved in the project settings.
+ */
 QSet<Filter> AscentFilterBar::parseFiltersFromProjectSettings()
 {
 	QSet<Filter> filters = QSet<Filter>();
