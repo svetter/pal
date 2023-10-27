@@ -15,10 +15,21 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file scalable_image_label.cpp
+ *
+ * This file defines the ScalableImageLabel class.
+ */
+
 #include "scalable_image_label.h"
 
 
 
+/**
+ * Creates a new ScalableImageLabel.
+ * 
+ * @param parent	The QScrollArea this ScalableImageLabel is contained in.
+ */
 ScalableImageLabel::ScalableImageLabel(QScrollArea* parent) : QLabel(parent), parent(parent), imageLoaded(false), fillMode(true), mousePressedAt(QPoint())
 {
 	setAlignment(Qt::AlignCenter);
@@ -26,6 +37,11 @@ ScalableImageLabel::ScalableImageLabel(QScrollArea* parent) : QLabel(parent), pa
 
 
 
+/**
+ * Sets the image to be displayed.
+ * 
+ * @param image	The image to be displayed, in full resolution.
+ */
 void ScalableImageLabel::setImage(const QImage& image)
 {
 	fullSizePixmap = QPixmap::fromImage(image);
@@ -35,6 +51,9 @@ void ScalableImageLabel::setImage(const QImage& image)
 	setHandCursor(true);
 }
 
+/**
+ * Clears the image and fully resets the ScalableImageLabel.
+ */
 void ScalableImageLabel::clearImage()
 {
 	fullSizePixmap = QPixmap();
@@ -45,6 +64,21 @@ void ScalableImageLabel::clearImage()
 
 
 
+/**
+ * Event handler for mouse wheel events, which are interpreted as zooming in or out.
+ * 
+ * Zooming is done by scaling the image without cropping it. The image is then moved so that the
+ * mouse points to the same position in the image as before (except when there is a letter- or
+ * pillarbox).
+ * 
+ * Zooming is always constrained first by the available area: the image is never smaller than the
+ * available area. Second, zooming is constrained by the image's resolution: the image is only
+ * allowed to be scaled up (over 100% of its original size) if the original size is smaller than
+ * the available area in both dimensions. If the image is larger than the available area in either
+ * dimension, the user can zoom in until the image reaches 100% scaling.
+ * 
+ * @param event	The mouse wheel event.
+ */
 void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 {
 	QSize availableArea = parent->maximumViewportSize();
@@ -105,6 +139,15 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 
 
 
+/**
+ * Event handler for paint events, which are interpreted as resizing events.
+ * 
+ * When the available area is resized, the image is also rescaled **iff* fill mode is active.
+ * If the resize event causes the image to be smaller than the available area, fill mode is
+ * activated.
+ * 
+ * @param event	The paint event.
+ */
 void ScalableImageLabel::paintEvent(QPaintEvent* event)
 {
 	if (!imageLoaded) return;
@@ -128,6 +171,14 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 
 
 
+/**
+ * Event handler for mouse press events, which are interpreted as the start of a drag event.
+ * 
+ * If an image is loaded, the cursor is changed to a closed hand cursor. Unless fill mode is
+ * active, the mouse position is saved.
+ * 
+ * @param event	The mouse press event.
+ */
 void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
 {
 	if (!imageLoaded) return;
@@ -136,6 +187,15 @@ void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
 	mousePressedAt = event->globalPosition().toPoint();
 }
 
+/**
+ * Event handler for mouse press events, which are interpreted as a step in a drag event.
+ * 
+ * Event is ignored if no image is loaded or if fill mode is active. Otherwise, the image is
+ * scrolled by the distance the mouse has moved since the last mouse move event. Then, the saved
+ * mouse position is updated.
+ *
+ * @param event	The mouse move event.
+ */
 void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 {
 	if (!imageLoaded || fillMode || mousePressedAt.isNull()) return;
@@ -144,6 +204,14 @@ void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 	mousePressedAt = event->globalPosition().toPoint();
 }
 
+/**
+ * Event handler for mouse release events, which are interpreted as the end of a drag event.
+ * 
+ * If an image is loaded, the cursor is changed back to an open hand cursor. Unless fill mode is
+ * active, the saved mouse position is cleared.
+ * 
+ * @param event	The mouse release event.
+ */
 void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 {
 	Q_UNUSED(event);
@@ -155,32 +223,64 @@ void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 
 
 
+/**
+ * Returns the current horizontal scroll value of the surrounding QScrollArea.
+ * 
+ * @return	The current horizontal scroll value.
+ */
 int ScalableImageLabel::getScrollX()
 {
 	return parent->horizontalScrollBar()->value();
 }
 
+/**
+ * Returns the current vertical scroll value of the surrounding QScrollArea.
+ * 
+ * @return	The current vertical scroll value.
+ */
 int ScalableImageLabel::getScrollY()
 {
 	return parent->verticalScrollBar()->value();
 }
 
+/**
+ * Returns the current scroll value of the surrounding QScrollArea.
+ * 
+ * @return	The current scroll value.
+ */
 QPoint ScalableImageLabel::getScroll()
 {
 	return QPoint(getScrollX(), getScrollY());
 }
 
+/**
+ * Sets the scroll value of the surrounding QScrollArea.
+ * 
+ * @param scrollX	The new horizontal scroll value.
+ * @param scrollY	The new vertical scroll value.
+ */
 void ScalableImageLabel::setScroll(int scrollX, int scrollY)
 {
 	parent->horizontalScrollBar()->setValue(scrollX);
 	parent->  verticalScrollBar()->setValue(scrollY);
 }
 
+/**
+ * Scrolls the surrounding QScrollArea by the given amounts.
+ * 
+ * @param scrollRel	The scroll vector.
+ */
 void ScalableImageLabel::scrollRelative(QPoint scrollRel)
 {
 	setScroll(getScrollX() - scrollRel.x(), getScrollY() - scrollRel.y());
 }
 
+/**
+ * Sets the maximum scroll values of the surrounding QScrollArea.
+ * 
+ * @param maxScrollX	The new maximum horizontal scroll value.
+ * @param maxScrollY	The new maximum vertical scroll value.
+ */
 void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
 {
 	parent->horizontalScrollBar()->setMaximum(maxScrollX);
@@ -189,11 +289,19 @@ void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
 
 
 
+/**
+ * Sets the cursor to the normal arrow cursor for the surrounding QScrollArea (content area only).
+ */
 void ScalableImageLabel::setNormalCursor()
 {
 	parent->viewport()->setProperty("cursor", QVariant(QCursor(Qt::ArrowCursor)));
 }
 
+/**
+ * Sets the cursor to a hand cursor for the surrounding QScrollArea (content area only).
+ * 
+ * @param openNotClosed	Whether to set an open (true) or closed (false) hand cursor.
+ */
 void ScalableImageLabel::setHandCursor(bool openNotClosed)
 {
 	Qt::CursorShape cursorShape = openNotClosed ? Qt::OpenHandCursor : Qt::ClosedHandCursor;

@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file scalable_image_label.cpp
+ *
+ * This file declares the ScalableImageLabel class.
+ */
+
 #ifndef SCALABLE_IMAGE_LABEL_H
 #define SCALABLE_IMAGE_LABEL_H
 
@@ -22,17 +28,36 @@
 
 
 
+/**
+ * A QLabel that displays an image and allows to zoom and move it using the mouse.
+ * 
+ * Must be used inside a QScrollArea.
+ * 
+ * Images are set using setImage() and cleared using clearImage().
+ * No further work is required from the outside to enable zooming
+ * and moving.
+ */
 class ScalableImageLabel : public QLabel
 {
 	Q_OBJECT
 	
+	/** The parent QScrollArea. */
 	QScrollArea* parent;
+	/** The image to display in full available resolution. */
 	QPixmap fullSizePixmap;
+	/** Indicates whether an image is currently loaded and displayed. */
 	bool imageLoaded;
+	/**
+	 * Indicates whether the image should be scaled to fill the available space.
+	 * This mode is enabled by default, whenever the full-size image is smaller than the available
+	 * space and when the user has zoomed all the way back out.
+	 */
 	bool fillMode;
 	
+	/** The location where the mouse was last registered after being pressed over the image. Used for dragging. */
 	QPoint mousePressedAt;
 	
+	/** The factor by which to zoom in or out when the mouse wheel is rotated. */
 	constexpr static const qreal ZOOM_FACTOR = 1.2;
 	
 public:
