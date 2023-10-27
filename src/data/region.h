@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file region.h
+ * 
+ * This file declares the internal representation of a region item.
+ */
+
 #ifndef REGION_H
 #define REGION_H
 
@@ -24,14 +30,21 @@
 
 
 
+/**
+ * A class representing a region item.
+ */
 class Region : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The region's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	regionID;
+	/** The regions's name. Empty QString if not specified. */
 	QString	name;
+	/** The ID of the range this region belongs to. Invalid ItemID if not specified. */
 	ItemID	rangeID;
+	/** The ID of the country this region belongs to. Invalid ItemID if not specified. */
 	ItemID	countryID;
 	
 	Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID);

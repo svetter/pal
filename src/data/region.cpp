@@ -15,10 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file region.cpp
+ * 
+ * This file defines the internal representation of a region item.
+ */
+
 #include "region.h"
 
 
 
+/**
+ * Creates a new region object with the given properties.
+ *
+ * @param regionID		The ID of the region, if it already has one. Invalid ItemID otherwise.
+ * @param name			The name of the region, if specified. Empty QString otherwise.
+ * @param rangeID		The ID of the mountain range the region belongs to, if specified. Invalid ItemID otherwise.
+ * @param countryID	The ID of the country the region belongs to, if specified. Invalid ItemID otherwise.
+ */
 Region::Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID) :
 		regionID(regionID),
 		name(name),
@@ -26,11 +40,20 @@ Region::Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID)
 		countryID(countryID)
 {}
 
+/**
+ * Destroys the region object.
+ */
 Region::~Region()
 {}
 
 
 
+/**
+ * Checks the given region object for equality with this one.
+ *
+ * @param other	The other region.
+ * @return		True if the other region is equal to this one, false otherwise.
+ */
 bool Region::equalTo(const Region* const other) const
 {
 	assert(other);
