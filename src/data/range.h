@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file range.h
+ * 
+ * This file declares the internal representation of a mountain range item.
+ */
+
 #ifndef RANGE_H
 #define RANGE_H
 
@@ -25,13 +31,19 @@
 
 
 
+/**
+ * A class representing a mountain range item.
+ */
 class Range : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The mountain range's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	rangeID;
+	/** The mountain range's name. Empty QString if not specified. */
 	QString	name;
+	/** The continent this mountain range is located on. -1 if not specified. */
 	int		continent;
 	
 	Range(ItemID rangeID, QString& name, int continent);

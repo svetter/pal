@@ -15,23 +15,45 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file range.cpp
+ * 
+ * This file defines the internal representation of a mountain range item.
+ */
+
 #include "range.h"
 
 #include <QCoreApplication>
 
 
 
+/**
+ * Creates a new mountain range object with the given properties.
+ *
+ * @param rangeID	The ID of the mountain range, if it already has one. Invalid ItemID otherwise.
+ * @param name		The name of the mountain range, if specified. Empty QString otherwise.
+ * @param continent	The continent the mountain range is located on, if specified. -1 otherwise.
+ */
 Range::Range(ItemID rangeID, QString& name, int continent) :
 		rangeID(rangeID),
 		name(name),
 		continent(continent)
 {}
 
+/**
+ * Destroys the mountain range object.
+ */
 Range::~Range()
 {}
 
 
 
+/**
+ * Checks the given mountain range object for equality with this one.
+ *
+ * @param other	The other mountain range.
+ * @return		True if the other mountain range is equal to this one, false otherwise.
+ */
 bool Range::equalTo(const Range* const other) const
 {
 	assert(other);
