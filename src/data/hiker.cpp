@@ -15,20 +15,41 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker.cpp
+ * 
+ * This file defines the internal representation of a hiker item.
+ */
+
 #include "hiker.h"
 
 
 
+/**
+ * Creates a new hiker object with the given properties.
+ *
+ * @param hikerID	The ID of the hiker item, if it already has one. Invalid ItemID otherwise.
+ * @param name		The name of the hiker, if specified. Empty QString otherwise.
+ */
 Hiker::Hiker(ItemID hikerID, QString& name) :
 		hikerID(hikerID),
 		name(name)
 {}
 
+/**
+ * Destroys the hiker object.
+ */
 Hiker::~Hiker()
 {}
 
 
 
+/**
+ * Checks the given hiker object for equality with this one.
+ *
+ * @param other	The other hiker.
+ * @return		True if the other hiker is equal to this one, false otherwise.
+ */
 bool Hiker::equalTo(const Hiker* const other) const
 {
 	assert(other);

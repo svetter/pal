@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker.h
+ * 
+ * This file declares the internal representation of a hiker item.
+ */
+
 #ifndef HIKER_H
 #define HIKER_H
 
@@ -24,12 +30,17 @@
 
 
 
+/**
+ * A class representing a hiker item.
+ */
 class Hiker : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The hiker's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	hikerID;
+	/** The hiker's name. Empty QString if not specified. */
 	QString	name;
 	
 	Hiker(ItemID hikerID, QString& name);
