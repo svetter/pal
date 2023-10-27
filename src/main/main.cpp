@@ -15,6 +15,15 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main.cpp
+ * 
+ * Main entry point of the application and top level configuration.
+ * 
+ * This file contains the main entry point of the application as well as configuration
+ * for Qt style, translation and setting version checking.
+ */
+
 #include "main_window.h"
 
 #include <QApplication>
@@ -24,6 +33,11 @@
 
 
 
+/**
+ * Configures the translation of the application.
+ * 
+ * @param application	Initialized QApplication to configure the translation for.
+ */
 void configureTranslation(QApplication& application)
 {
 	QString languageSetting = Settings::language.get();
@@ -62,6 +76,13 @@ void configureTranslation(QApplication& application)
 
 
 
+/**
+ * Main entry point of the application.
+ * 
+ * @param argc	Number of command line arguments.
+ * @param argv	Command line arguments.
+ * @return		Exit code.
+ */
 int main(int argc, char *argv[])
 {
 	QApplication application(argc, argv);
