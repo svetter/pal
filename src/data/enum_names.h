@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file enum_names.h
+ * 
+ * This file declares the EnumNames class containing names for enumerative fields in items.
+ */
+
 #ifndef ENUM_NAMES_H
 #define ENUM_NAMES_H
 
@@ -22,6 +28,11 @@
 
 
 
+/**
+ * A class containing name strings for enumerative fields in items.
+ * 
+ * The names are translated dynamically at runtime using translateList().
+ */
 class EnumNames : private QObject {
 	Q_OBJECT
 	

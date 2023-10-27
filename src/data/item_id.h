@@ -82,7 +82,7 @@ public:
  * Checks whether the given ItemIDs are equal to each other in validity and potentially value.
  * 
  * If both ItemIDs are invalid, they are considered equal.
- Otherwise, they are considered equal if both are valid and have the same value.
+ * Otherwise, they are considered equal if both are valid and have the same value.
  * 
  * @param id1	The first ItemID to compare.
  * @param id2	The second ItemID to compare.

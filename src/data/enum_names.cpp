@@ -15,10 +15,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file enum_names.h
+ * 
+ * This file defines the EnumNames class containing names for enumerative fields in items.
+ */
+
 #include "enum_names.h"
 
 
 
+/**
+ * Translates one-dimensional list of enum name strings.
+ * 
+ * @param list	List of enum name strings.
+ * @return		Translated list of enum name strings.
+ */
 QStringList EnumNames::translateList(QStringList list)
 {
 	QStringList translatedList = QStringList();
@@ -31,6 +43,9 @@ QStringList EnumNames::translateList(QStringList list)
 
 
 
+/**
+ * List of continent names in English, including a "None" entry at the beginning.
+ */
 const QStringList EnumNames::continentNames = {
 	QT_TR_NOOP("None"),
 	QT_TR_NOOP("North America"),
@@ -44,6 +59,9 @@ const QStringList EnumNames::continentNames = {
 
 
 
+/**
+ * List of English descriptions for different kinds of hikes, the first of which is "Normal".
+ */
 const QStringList EnumNames::hikeKindNames = {
 	QT_TR_NOOP("Normal"),
 	QT_TR_NOOP("Snow hike"),
@@ -53,7 +71,17 @@ const QStringList EnumNames::hikeKindNames = {
 
 
 
-// https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
+/**
+ * Two-dimensional list of English names for hike difficulty systems and their difficulty grades.
+ * 
+ * The first dimension is the difficulty system, the second dimension is the difficulty grade.
+ * The first entry in the system dimension is "None" with an empty list of difficulty levels.
+ * The first entry in the grade dimension is also "None" for every difficulty system except at
+ * index 0.
+ * 
+ * The systems and their grades are taken from this source:
+ * https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
+ */
 const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
 	qMakePair<QString, QStringList>(QT_TR_NOOP("None"), {}),
 	qMakePair<QString, QStringList>(
