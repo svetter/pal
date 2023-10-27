@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file country.h
+ * 
+ * This file declares the internal representation of a country item.
+ */
+
 #ifndef COUNTRY_H
 #define COUNTRY_H
 
@@ -24,12 +30,17 @@
 
 
 
+/**
+ * A class representing a country item.
+ */
 class Country : private QObject
 {
 	Q_OBJECT
 	
 public:
+	/** The country's internal ID. Invalid ItemID if this is a new item. */
 	ItemID	countryID;
+	/** The country's name. Empty QString if not specified. */
 	QString	name;
 	
 	Country(ItemID countryID, QString& name);

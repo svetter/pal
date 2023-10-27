@@ -15,20 +15,41 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file country.cpp
+ * 
+ * This file defines the internal representation of an country item.
+ */
+
 #include "country.h"
 
 
 
+/**
+ * Creates a new country object with the given properties.
+ * 
+ * @param countryID	The ID of the country item, if it already has one. Invalid ItemID otherwise.
+ * @param name		The name of the country, if specified. Empty QString otherwise.
+ */
 Country::Country(ItemID countryID, QString& name) :
 		countryID(countryID),
 		name(name)
 {}
 
+/**
+ * Destroys the country object.
+ */
 Country::~Country()
 {}
 
 
 
+/**
+ * Checks the given country object for equality with this one.
+ *
+ * @param other	The other country.
+ * @return		True if the other country is equal to this one, false otherwise.
+ */
 bool Country::equalTo(const Country* const other) const
 {
 	assert(other);
