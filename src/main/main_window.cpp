@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main_window.h
+ * 
+ * This file defines the MainWindow class.
+ */
+
 #include "main_window.h"
 
 #include "src/main/about_window.h"
@@ -33,6 +39,12 @@
 
 
 
+/**
+ * Creates a new MainWindow.
+ * 
+ * Initializes the Database instance and the UI and creates an ItemTypesHandler. Then opens the
+ * most recently opened database file, if present.
+ */
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
 		Ui_MainWindow(),
@@ -101,6 +113,9 @@ MainWindow::MainWindow() :
 	if (showDebugTableViews) setupDebugTableViews();	// After opening database so that auto-sizing columns works correctly
 }
 
+/**
+ * Destroys the MainWindow.
+ */
 MainWindow::~MainWindow()
 {
 	qDeleteAll(shortcuts);
@@ -111,6 +126,9 @@ MainWindow::~MainWindow()
 
 // INITIAL SETUP
 
+/**
+ * Adds standard icons to some menu items.
+ */
 void MainWindow::setupMenuIcons()
 {
 	newDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
@@ -129,6 +147,11 @@ void MainWindow::setupMenuIcons()
 	// Help menu: already has icons
 }
 
+/**
+ * Creates the ItemTypesHandler singleton.
+ * 
+ * If debug table views are enabled, also creates the debug tabs and table views.
+ */
 void MainWindow::createTypesHandler()
 {
 	QList<QTableView*> debugTableViews = QList<QTableView*>(9, nullptr);
@@ -192,6 +215,9 @@ void MainWindow::createTypesHandler()
 	}
 }
 
+/**
+ * Connects all UI elements to their respective handlers.
+ */
 void MainWindow::connectUI()
 {
 	// === MENU ITEMS AND BUTTONS ===
@@ -249,6 +275,9 @@ void MainWindow::connectUI()
 	});
 }
 
+/**
+ * Connects each table view to the underlying CompositeTable and to the table context menu.
+ */
 void MainWindow::setupTableViews()
 {
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
@@ -268,6 +297,9 @@ void MainWindow::setupTableViews()
 	});
 }
 
+/**
+ * Connects each debug table view to the underlying Table and to the table context menu.
+ */
 void MainWindow::setupDebugTableViews()
 {
 	assert(showDebugTableViews);
@@ -294,6 +326,11 @@ void MainWindow::setupDebugTableViews()
 	setupFunction(participatedDebugTableView,	db.participatedTable);
 }
 
+/**
+ * Restores the column widths for the table view specified by the given ItemTypeMapper.
+ * 
+ * @param mapper	The ItemTypeMapper for the table view whose column widths should be restored.
+ */
 void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 {
 	QStringList columnWidths = mapper.columnWidthsSetting->get();
@@ -313,6 +350,12 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 	}
 }
 
+/**
+ * Sets the sorting for the table view specified by the given ItemTypeMapper to either the
+ * remembered sorting or, if that is not present or disabled, to the default sorting.
+ * 
+ * @param mapper	The ItemTypeMapper for the table view whose sorting should be set.
+ */
 void MainWindow::setSorting(const ItemTypeMapper& mapper)
 {
 	QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper.compTable->getDefaultSorting();
@@ -342,6 +385,9 @@ void MainWindow::setSorting(const ItemTypeMapper& mapper)
 }
 
 
+/**
+ * Initializes the table context menu and the keyboard shortcuts for the table views.
+ */
 void MainWindow::initTableContextMenuAndShortcuts()
 {
 	QKeySequence openKeySequence		= QKeySequence(Qt::Key_Return);
@@ -390,6 +436,12 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	}
 }
 
+/**
+ * Sets the icons for the table context menu actions to the icon of the currently selected table.
+ * 
+ * This method has to be called whenever the currently selected table changes because the context
+ * menu actions are shared between all tables.
+ */
 void MainWindow::updateContextMenuEditIcon()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -405,6 +457,13 @@ void MainWindow::updateContextMenuEditIcon()
 
 // PROJECT SETUP
 
+/**
+ * Prepares the composite tables and fills either all of them or only the one currently being
+ * shown, with a status bar progress dialog.
+ * 
+ * If the user setting is to *not* prepare all tables on startup, all tables are still being
+ * initialized (so as not to produce null pointer exceptions), but not filled with data.
+ */
 void MainWindow::initCompositeBuffers()
 {
 	QProgressDialog progress(this);
@@ -461,6 +520,11 @@ void MainWindow::initCompositeBuffers()
 
 // UI UPDATES
 
+/**
+ * Sets the enabled state of all UI elements except the project-independent parts of the menu bar.
+ * 
+ * @param enabled	The new enabled state.
+ */
 void MainWindow::setUIEnabled(bool enabled)
 {
 	mainAreaTabs				->setEnabled(enabled);
@@ -479,6 +543,9 @@ void MainWindow::setUIEnabled(bool enabled)
 	toolsMenu					->setEnabled(enabled);
 }
 
+/**
+ * Updates the list of recently opened database files in the "File" menu.
+ */
 void MainWindow::updateRecentFilesMenu()
 {
 	openRecentMenu->clear();
@@ -506,6 +573,14 @@ void MainWindow::updateRecentFilesMenu()
 	openRecentMenu->setEnabled(true);
 }
 
+/**
+ * Updates or clears the status bar indicator for the number of entries in the currently selected
+ * table.
+ * 
+ * For the ascent table, also updates the status bar indicator for the number of applied filters.
+ * 
+ * @param reset	Clear the status bar indicator completely.
+ */
 void MainWindow::updateTableSize(bool reset)
 {
 	if (reset) {
@@ -549,6 +624,12 @@ void MainWindow::updateTableSize(bool reset)
 
 // EXECUTE USER COMMANDS
 
+/**
+ * Opens the item specified by the given ItemTypeMapper and view row index for viewing.
+ * 
+ * @param mapper		The ItemTypeMapper for the type of item to open.
+ * @param viewRowIndex	The view row index of the item to open.
+ */
 void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	switch (mapper.type) {
@@ -560,6 +641,13 @@ void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
 	}
 }
 
+/**
+ * Opens a dialog for creating a new item of the type specified by the given ItemTypeMapper.
+ * 
+ * If a new item was created, performs the necessary updates to the UI.
+ * 
+ * @param mapper	The ItemTypeMapper for the type of item to create.
+ */
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
 	int newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
@@ -569,6 +657,15 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
+/**
+ * Opens a dialog for creating a new item of the type specified by the given ItemTypeMapper as a
+ * duplicate of the item specified by the given view row index.
+ * 
+ * If a new item was created, performs the necessary updates to the UI.
+ * 
+ * @param mapper		The ItemTypeMapper for the type of item to duplicate.
+ * @param viewRowIndex	The view row index of the item to duplicate.
+ */
 void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
@@ -579,6 +676,14 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowI
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
+/**
+ * Opens a dialog for editing the item specified by the given ItemTypeMapper and view row index.
+ * 
+ * If the item was edited, performs the necessary updates to the UI.
+ * 
+ * @param mapper		The ItemTypeMapper for the type of item to edit.
+ * @param viewRowIndex	The view row index of the item to edit.
+ */
 void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
 {
 	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(index.row());
@@ -588,6 +693,14 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
+/**
+ * Opens a dialog for deleting the item specified by the given ItemTypeMapper and view row index.
+ * 
+ * If the item was deleted, performs the necessary updates to the UI.
+ * 
+ * @param mapper		The ItemTypeMapper for the type of item to delete.
+ * @param viewRowIndex	The view row index of the item to delete.
+ */
 void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
@@ -598,6 +711,13 @@ void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 }
 
 
+/**
+ * Updates selection, table size info and filters after an item was added, edited or removed.
+ * 
+ * @param mapper					The ItemTypeMapper for the table that was changed.
+ * @param numberOfEntriesChanged	Whether the number of entries in the table changed.
+ * @param bufferRowToSelectIndex	The buffer row index of the item to select after the update.
+ */
 void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, int bufferRowToSelectIndex)
 {
 	// Update selection in table
@@ -611,12 +731,24 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 	updateFilters();
 }
 
+/**
+ * Updates elements of the ascent filter bar which depend on contents of the composite tables.
+ * 
+ * @param mapper The ItemTypeMapper for the table that was changed.
+ */
 void MainWindow::updateFilters(const ItemTypeMapper* mapper)
 {
 	if (!mapper || mapper->type == ItemTypeRange)	ascentFilterBar->updateRangeCombo();
 	if (!mapper || mapper->type == ItemTypeHiker)	ascentFilterBar->updateHikerCombo();
 }
 
+/**
+ * Updates the selection in the table view specified by the given ItemTypeMapper to the item at the
+ * given view row index.
+ * 
+ * @param mapper		The ItemTypeMapper containing the table view whose selection should be updated.
+ * @param viewRowIndex	The view row index of the item to select.
+ */
 void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex)
 {
 	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex, 0);
@@ -628,6 +760,12 @@ void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, in
 
 // UI EVENT HANDLERS
 
+/**
+ * Event handler for changes in which tab is selected in the main tab widget.
+ * 
+ * Prepares the newly active table if necessary (with a progress dialog) and updates the table size
+ * info and the enabled state of the table context menu actions.
+ */
 void MainWindow::handle_tabChanged()
 {
 	QProgressDialog progress(this);
@@ -656,6 +794,13 @@ void MainWindow::handle_tabChanged()
 	updateContextMenuEditIcon();
 }
 
+/**
+ * Event handler for right clicks in the table views.
+ * 
+ * Prepares and opens the table context menu at the given position.
+ * 
+ * @param pos	The position of the right click in the viewport of the table view.
+ */
 void MainWindow::handle_rightClick(QPoint pos)
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -672,6 +817,11 @@ void MainWindow::handle_rightClick(QPoint pos)
 
 // CONTEXT MENU ACTION HANDLERS
 
+/**
+ * Event handler for the view action in the table context menu.
+ * 
+ * Opens the currently selected item in the active table for viewing.
+ */
 void MainWindow::handle_viewSelectedItem()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -690,6 +840,11 @@ void MainWindow::handle_viewSelectedItem()
 	assert(done);
 }
 
+/**
+ * Event handler for the edit action in the table context menu.
+ * 
+ * Opens the currently selected item in the active table for editing.
+ */
 void MainWindow::handle_editSelectedItem()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -706,6 +861,11 @@ void MainWindow::handle_editSelectedItem()
 	assert(done);
 }
 
+/**
+ * Event handler for the duplicate action in the table context menu.
+ * 
+ * Opens the currently selected item in the active table for editing as a new duplicate.
+ */
 void MainWindow::handle_duplicateAndEditSelectedItem()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -723,6 +883,11 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	assert(done);
 }
 
+/**
+ * Event handler for the delete action in the table context menu.
+ * 
+ * Opens a dialog for deleting the currently selected item in the active table.
+ */
 void MainWindow::handle_deleteSelectedItem()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -744,6 +909,14 @@ void MainWindow::handle_deleteSelectedItem()
 
 // FILE MENU ACTION HANDLERS
 
+/**
+ * Event handler for the "new database" action in the file menu.
+ * 
+ * Prompts the user for a filepath, closes the currently open database (if any), creates a new
+ * database at the given filepath and opens it.
+ * The filepath is added to the top of the list of recently opened databases.
+ * If the corresponding user setting is enabled, the project settings dialog is opened.
+ */
 void MainWindow::handle_newDatabase()
 {
 	QString caption = tr("Save new database as");
@@ -769,6 +942,13 @@ void MainWindow::handle_newDatabase()
 	}
 }
 
+/**
+ * Event handler for the "open database" action in the file menu.
+ * 
+ * Prompts the user for a filepath, closes the currently open database (if any) and opens the
+ * database at the given filepath.
+ * The filepath is added to the top of the list of recently opened databases.
+ */
 void MainWindow::handle_openDatabase()
 {
 	QString caption = tr("Open database");
@@ -790,6 +970,14 @@ void MainWindow::handle_openDatabase()
 	addToRecentFilesList(filepath);
 }
 
+/**
+ * Event handler for the "open recent database" actions in the file menu.
+ * 
+ * Closes the currently open database (if any) and opens the database at the given filepath.
+ * The filepath is added to the top of the list of recently opened databases.
+ * 
+ * @param filepath	The filepath of the database to open.
+ */
 void MainWindow::handle_openRecentDatabase(QString filepath)
 {
 	if (!QFile(filepath).exists()) {
@@ -809,12 +997,26 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	addToRecentFilesList(filepath);
 }
 
+/**
+ * Event handler for the "clear recent databases list" action in the file menu.
+ * 
+ * Clears the list of recently opened databases in settings as well as the menu bar, leaving only
+ * the currently open database.
+ */
 void MainWindow::handle_clearRecentDatabasesList()
 {
 	Settings::recentDatabaseFiles.set({ Settings::lastOpenDatabaseFile.get() });
 	updateRecentFilesMenu();
 }
 
+/**
+ * Event handler for the "save database as" action in the file menu.
+ * 
+ * Prompts the user for a filepath, performs necessary checks and saves the currently open database
+ * to the given filepath.
+ * The window title is updated and the filepath is added to the top of the list of recently opened
+ * databases.
+ */
 void MainWindow::handle_saveDatabaseAs()
 {
 	QString caption = tr("Save database as");
@@ -854,6 +1056,12 @@ void MainWindow::handle_saveDatabaseAs()
 	addToRecentFilesList(filepath);
 }
 
+/**
+ * Event handler for the "close database" action in the file menu.
+ * 
+ * Resets window title, database and tables and disables all UI elements except for the project-
+ * independent parts of the menu bar.
+ */
 void MainWindow::handle_closeDatabase()
 {
 	setWindowTitleFilename();
@@ -868,11 +1076,21 @@ void MainWindow::handle_closeDatabase()
 }
 
 
+/**
+ * Event handler for the "project settings" action in the file menu.
+ * 
+ * Opens the project settings dialog.
+ */
 void MainWindow::handle_openProjectSettings()
 {
 	ProjectSettingsWindow(this, &db).exec();
 }
 
+/**
+ * Event handler for the "settings" action in the file menu.
+ * 
+ * Opens the settings dialog.
+ */
 void MainWindow::handle_openSettings()
 {
 	SettingsWindow(this).exec();
@@ -882,6 +1100,11 @@ void MainWindow::handle_openSettings()
 
 // VIEW MENU ACTION HANDLERS
 
+/**
+ * Event handler for the "show filters" action in the view menu.
+ * 
+ * Shows or hides the ascent filter bar.
+ */
 void MainWindow::handle_showFiltersChanged()
 {
 	bool showFilters = showFiltersAction->isChecked();
@@ -889,6 +1112,11 @@ void MainWindow::handle_showFiltersChanged()
 	if (!showFilters) ascentFilterBar->handle_clearFilters();
 }
 
+/**
+ * Event handler for the "auto-resize columns" action in the view menu.
+ * 
+ * Resizes all columns in the currently active table to fit their contents.
+ */
 void MainWindow::handle_autoResizeColumns()
 {
 	QTableView* currentTableView = getCurrentTableView();
@@ -908,6 +1136,11 @@ void MainWindow::handle_autoResizeColumns()
 
 // TOOLS MENU ACTION HANDLERS
 
+/**
+ * Event handler for the "relocate photos" action in the tools menu.
+ * 
+ * Opens the photo relocation dialog.
+ */
 void MainWindow::handle_relocatePhotos()
 {
 	RelocatePhotosDialog(this, &db).exec();
@@ -917,6 +1150,11 @@ void MainWindow::handle_relocatePhotos()
 
 // HELP MANU ACTION HANDLERS
 
+/**
+ * Event handler for the "about PAL" action in the help menu.
+ * 
+ * Opens the about dialog.
+ */
 void MainWindow::handle_about()
 {
 	AboutWindow(this).exec();
@@ -926,6 +1164,13 @@ void MainWindow::handle_about()
 
 // CLOSING BEHAVIOUR
 
+/**
+ * Event handler for the close event of the main window.
+ * 
+ * Saves all implicit settings before closing the window.
+ * 
+ * @param event	The close event.
+ */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
 	saveImplicitSettings();
@@ -933,6 +1178,10 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	QMainWindow::closeEvent(event);
 }
 
+/**
+ * Saves window position and size, current tab index, column widths, sorting and filter bar
+ * visiblity.
+ */
 void MainWindow::saveImplicitSettings() const
 {
 	bool maximized = windowState() == Qt::WindowMaximized;
@@ -948,6 +1197,11 @@ void MainWindow::saveImplicitSettings() const
 	});
 }
 
+/**
+ * Saves the column widths of the table for the given item type.
+ * 
+ * @param mapper	The ItemTypeMapper containing the table whose column widths should be saved.
+ */
 void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
 {
 	QStringList columnWidths;
@@ -962,6 +1216,11 @@ void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
 	mapper.columnWidthsSetting->set(columnWidths);
 }
 
+/**
+ * Saves the sorting of the table for the given item type.
+ * 
+ * @param mapper	The ItemTypeMapper containing the table whose sorting should be saved.
+ */
 void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
 {
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
@@ -975,6 +1234,13 @@ void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
 
 // LAYOUT CHANGES
 
+/**
+ * Event handler for resize events of the main window.
+ * 
+ * Updates the visibility of the new item buttons in the toolbar, disabling any that don't fit.
+ * 
+ * @param event	The resize event.
+ */
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
 	Q_UNUSED(event);
@@ -997,11 +1263,22 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
 // GENERAL HELPERS
 
+/**
+ * Returns the view of the table in the currently active tab.
+ * 
+ * @return	The active table view.
+ */
 QTableView* MainWindow::getCurrentTableView() const
 {
 	return mainAreaTabs->currentWidget()->findChild<QTableView*>();
 }
 
+/**
+ * Adds or moves the given filepath to the top of the list of recently opened databases in the
+ * settings and updates the recent files menu.
+ * 
+ * @param filepath	The filepath to add.
+ */
 void MainWindow::addToRecentFilesList(const QString& filepath)
 {
 	Settings::lastOpenDatabaseFile.set(filepath);
@@ -1018,6 +1295,11 @@ void MainWindow::addToRecentFilesList(const QString& filepath)
 	updateRecentFilesMenu();
 }
 
+/**
+ * Sets the window title to the given filepath, or to the default title if no filepath is given.
+ * 
+ * @param filepath	The filepath to use in the window title.
+ */
 void MainWindow::setWindowTitleFilename(QString filepath)
 {
 	QString windowTitle = "PeakAscentLogger";
@@ -1028,6 +1310,11 @@ void MainWindow::setWindowTitleFilename(QString filepath)
 	setWindowTitle(windowTitle);
 }
 
+/**
+ * Temporarily sets the status bar message to the given message.
+ * 
+ * @param content	The message to show.
+ */
 void MainWindow::setStatusLine(QString content)
 {
 	statusbar->showMessage(content, DYNAMIC_STATUS_MESSAGE_DURATION_SEC * 1000);

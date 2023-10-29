@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main_window.h
+ * 
+ * This file declares the MainWindow class.
+ */
+
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
@@ -33,27 +39,44 @@ QT_END_NAMESPACE
 
 
 
+/**
+ * Control class for the main window of the application.
+ */
 class MainWindow : public QMainWindow, public Ui_MainWindow
 {
 	Q_OBJECT
 	
+	/** The duration of temporary messages in the status bar in seconds. */
 	static const int DYNAMIC_STATUS_MESSAGE_DURATION_SEC = 10;
 	
+	/** The project database. */
 	Database db;
+	/** The list of menu items for opening the most recently opened database files. */
 	QList<QAction*> openRecentActions;
+	/** The context menu for the UI tables. */
 	QMenu tableContextMenu;
+	/** The context menu entry for opening the selected item. */
 	QAction* tableContextMenuOpenAction;
+	/** The context menu entry for editing the selected item. */
 	QAction* tableContextMenuEditAction;
+	/** The context menu entry for duplicating the selected item. */
 	QAction* tableContextMenuDuplicateAction;
+	/** List of keyboard shortcuts. */
 	QList<QShortcut*> shortcuts;
+	/** The status bar label for the current table size. */
 	QLabel* statusBarTableSizeLabel;
+	/** The status bar label for the current filter settings. */
 	QLabel* statusBarFiltersLabel;
 	
+	/** The ItemTypesHandler singleton. */
 	const ItemTypesHandler* typesHandler;
 	
 	// Debugging table views
+	/** Whether the debugging table views are enabled. */
 	bool showDebugTableViews;
+	/** The debugging table view for the photos table. */
 	QTableView* photosDebugTableView;
+	/** The debugging table view for the ascents table. */
 	QTableView* participatedDebugTableView;
 	
 public:
