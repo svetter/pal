@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file project_settings_window.h
+ * 
+ * Declares the ProjectSettingsWindow class.
+ */
+
 #ifndef PROJECT_SETTINGS_WINDOW_H
 #define PROJECT_SETTINGS_WINDOW_H
 
@@ -25,15 +31,25 @@
 
 
 
+/**
+ * The ProjectSettingsWindow class
+ * 
+ * This class represents the project settings window.
+ * It is used to change the project settings.
+ */
 class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 {
 	Q_OBJECT
 	
+	/** The parent window. */
 	QWidget* parent;
 	
+	/** The project database. */
 	Database* db;
+	/** Indicates whether the window is opened as part of the project creation process. */
 	bool firstOpen;
 	
+	/** List of IDs for all hikers selectable as default hiker. */
 	QList<ValidItemID> selectableHikerIDs;
 	
 public:

@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file project_settings_window.h
+ * 
+ * Defines the ProjectSettingsWindow class.
+ */
+
 #include "project_settings_window.h"
 
 #include "src/dialogs/hiker_dialog.h"
@@ -27,6 +33,13 @@
 
 
 
+/**
+ * Creates a new ProjectSettingsWindow.
+ * 
+ * @param parent	The parent widow.
+ * @param db		The project database.
+ * @param firstOpen	Indicates that the window is being opened as part of the project creation process.
+ */
 ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen) :
 		QDialog(parent),
 		parent(parent),
@@ -75,6 +88,9 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 
 
 
+/**
+ * Loads the project settings from the database into the UI.
+ */
 void ProjectSettingsWindow::loadSettings()
 {
 	ItemID hikerID = db->projectSettings->defaultHiker->get();
@@ -85,6 +101,9 @@ void ProjectSettingsWindow::loadSettings()
 	}
 }
 
+/**
+ * Saves the project settings from the UI into the database.
+ */
 void ProjectSettingsWindow::saveSettings()
 {
 	if (firstOpen && !newDefaultHikerLineEdit->text().isEmpty()) {
@@ -98,6 +117,11 @@ void ProjectSettingsWindow::saveSettings()
 
 
 
+/**
+ * Event handler for the new hiker button.
+ * 
+ * Opens a new hiker dialog, adds the new hiker to the database and selects it in the combo box.
+ */
 void ProjectSettingsWindow::handle_newHiker()
 {
 	int newHikerIndex = openNewHikerDialogAndStore(this, db);
@@ -108,6 +132,11 @@ void ProjectSettingsWindow::handle_newHiker()
 
 
 
+/**
+ * Event handler for the save button.
+ * 
+ * Saves the settings and window position and size and closes the window.
+ */
 void ProjectSettingsWindow::handle_save()
 {
 	saveSettings();
@@ -115,11 +144,21 @@ void ProjectSettingsWindow::handle_save()
 	accept();
 }
 
+/**
+ * Event handler for the apply button.
+ * 
+ * Saves the settings.
+ */
 void ProjectSettingsWindow::handle_apply()
 {
 	saveSettings();
 }
 
+/**
+ * Event handler for the cancel button.
+ * 
+ * Saves window position and size and closes the window.
+ */
 void ProjectSettingsWindow::handle_cancel()
 {
 	saveDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
@@ -128,6 +167,11 @@ void ProjectSettingsWindow::handle_cancel()
 
 
 
+/**
+ * Event handler for the close event.
+ *
+ * Forwarded to the cancel button event handler.
+ */
 void ProjectSettingsWindow::reject()
 {
 	handle_cancel();
