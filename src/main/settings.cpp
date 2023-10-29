@@ -15,10 +15,22 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file settings.h
+ * 
+ * This file defines part of the Settings class.
+ */
+
 #include "settings.h"
 
 
 
+/**
+ * Lists all languages supported by the application and returns a two lists of the language codes
+ * and the native language names, respectively.
+ * 
+ * @return A pair of two lists, the first containing the language codes and the second containing the native language names.
+ */
 QPair<QStringList, QStringList> getSupportedLanguages()
 {
 	QStringList codes = QStringList("en");
@@ -34,6 +46,12 @@ QPair<QStringList, QStringList> getSupportedLanguages()
 	return {codes, names};
 }
 
+/**
+ * Determines which language should be used by default for the application, based on the user's
+ * system language and the languages supported by the application.
+ * 
+ * @return The language code of the language that should be used by default on the current system.
+ */
 QString getDefaultLanguage()
 {
 	QString language = "en";
@@ -54,6 +72,11 @@ QString getDefaultLanguage()
 
 
 
+/**
+ * Returns a string containing the application's version number.
+ * 
+ * @return The application's version number in string form.
+ */
 QString Settings::getAppVersion()
 {
 	return QString("%1.%2.%3")
@@ -62,6 +85,13 @@ QString Settings::getAppVersion()
 		.arg(APP_VERSION_PATCH);
 }
 
+/**
+ * Compares two version strings and determines whether the first one is older than the second one.
+ * 
+ * @param settingsVersion The version of the application that saved the settings file.
+ * @param minimalVersion The version of the application with which to compare the settings file version.
+ * @return True if the settings file is older than the given version, false otherwise.
+ */
 bool Settings::isBelowVersion(QString settingsVersion, QString minimalVersion)
 {
 	QStringList settingsSplit	= settingsVersion.split('.');
@@ -78,6 +108,13 @@ bool Settings::isBelowVersion(QString settingsVersion, QString minimalVersion)
 	return false;
 }
 
+/**
+ * Determines whether the settings file was last saved by a version of the application that is
+ * older than the current version.
+ * 
+ * @param version The version of the application with which to compare the settings file version.
+ * @return True if the settings file is older than the current version, false otherwise.
+ */
 bool Settings::settingsOlderThan(QString version)
 {
 	return isBelowVersion(appVersion.get(), version);
@@ -85,6 +122,9 @@ bool Settings::settingsOlderThan(QString version)
 
 
 
+/**
+ * Updates the settings file to the current version of the application.
+ */
 void Settings::checkForVersionChange()
 {
 	// 1.1.0: New columns => reset column widths
@@ -104,6 +144,13 @@ void Settings::checkForVersionChange()
 
 
 
+/**
+ * Stores implicit settings about position and geometry for the given dialog.
+ * 
+ * @param dialog			The dialog for which to store the geometry.
+ * @param parent			The parent widget of the dialog (for determining relative position).
+ * @param geometrySetting	The geometry setting corresponding to the dialog.
+ */
 void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
 {
 	QRect absoluteGeometry = dialog->geometry();
@@ -113,6 +160,13 @@ void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* 
 	geometrySetting->set(absoluteGeometry);
 }
 
+/**
+ * Restores implicit settings about position and geometry for the given dialog.
+ * 
+ * @param dialog			The dialog for which to restore the geometry.
+ * @param parent			The parent widget of the dialog (for restoring relative position).
+ * @param geometrySetting	The geometry setting corresponding to the dialog.
+ */
 void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
 {
 	if (!Settings::rememberWindowPositions.present()) return;
