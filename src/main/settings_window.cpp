@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file settings_window.cpp
+ * 
+ * This file defines the SettingsWindow class.
+ */
+
 #include "settings_window.h"
 
 #include <QDialogButtonBox>
@@ -23,6 +29,14 @@
 
 
 
+/**
+ * Creates a new SettingsWindow.
+ * 
+ * Restores geometry if the setting is enabled, handles signal connections, populates the language
+ * combo box and loads the settings into the UI.
+ * 
+ * @param parent The parent window.
+ */
 SettingsWindow::SettingsWindow(QWidget* parent) :
 		QDialog(parent),
 		parent(parent),
@@ -53,6 +67,11 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 
 
 
+/**
+ * Loads all represented settings into their respective UI elements.
+ * 
+ * For items which are not present in the settings, the default value is loaded.
+ */
 void SettingsWindow::loadSettings()
 {
 	int languageIndex = languages.first.indexOf(language.get());
@@ -90,6 +109,9 @@ void SettingsWindow::loadSettings()
 	updateEnabled();
 }
 
+/**
+ * Loads the default values for all settings into their respective UI elements.
+ */
 void SettingsWindow::loadDefaults()
 {
 	int languageIndex = languages.first.indexOf(language.getDefault());
@@ -123,6 +145,9 @@ void SettingsWindow::loadDefaults()
 	updateEnabled();
 }
 
+/**
+ * Saves all represented settings from their respective UI elements.
+ */
 void SettingsWindow::saveSettings()
 {
 	QString languageBefore = language.get();
@@ -169,6 +194,9 @@ void SettingsWindow::saveSettings()
 	}
 }
 
+/**
+ * Updates the enabled state of all UI elements which depend on the state of other UI elements.
+ */
 void SettingsWindow::updateEnabled()
 {
 	handle_rememberWindowPositionsCheckboxChanged();
@@ -180,6 +208,11 @@ void SettingsWindow::updateEnabled()
 
 
 
+/**
+ * Event handler for rememberWindowPositionsCheckbox.
+ * 
+ * Enables or disables rememberWindowPositionsRelativeCheckbox.
+ */
 void SettingsWindow::handle_rememberWindowPositionsCheckboxChanged()
 {
 	bool enabled = rememberWindowPositionsCheckbox->checkState();
@@ -187,6 +220,11 @@ void SettingsWindow::handle_rememberWindowPositionsCheckboxChanged()
 }
 
 
+/**
+ * Event handler for ascentDateCheckbox.
+ * 
+ * Enables or disables ascentDateDaysInPastSpinner and ascentDateDaysInPastLabel.
+ */
 void SettingsWindow::handle_ascentDateCheckboxChanged()
 {
 	bool enabled = ascentDateCheckbox->checkState();
@@ -194,18 +232,33 @@ void SettingsWindow::handle_ascentDateCheckboxChanged()
 	ascentDateDaysInPastLabel->setEnabled(enabled);
 }
 
+/**
+ * Event handler for ascentTimeCheckbox.
+ * 
+ * Enables or disables ascentTimeWidget.
+ */
 void SettingsWindow::handle_ascentTimeCheckboxChanged()
 {
 	bool enabled = ascentTimeCheckbox->checkState();
 	ascentTimeWidget->setEnabled(enabled);
 }
 
+/**
+ * Event handler for ascentElevationGainCheckbox.
+ * 
+ * Enables or disables ascentElevationGainSpinner.
+ */
 void SettingsWindow::handle_ascentElevationGainCheckboxChanged()
 {
 	bool enabled = ascentElevationGainCheckbox->checkState();
 	ascentElevationGainSpinner->setEnabled(enabled);
 }
 
+/**
+ * Event handler for peakHeightCheckbox.
+ * 
+ * Enables or disables peakHeightSpinner.
+ */
 void SettingsWindow::handle_peakHeightCheckboxChanged()
 {
 	bool enabled = peakHeightCheckbox->checkState();
@@ -214,6 +267,11 @@ void SettingsWindow::handle_peakHeightCheckboxChanged()
 
 
 
+/**
+ * Event handler for the save button.
+ * 
+ * Saves the settings, window position and size and closes the window.
+ */
 void SettingsWindow::handle_save()
 {
 	saveSettings();
@@ -221,17 +279,32 @@ void SettingsWindow::handle_save()
 	accept();
 }
 
+/**
+ * Event handler for the apply button.
+ * 
+ * Saves the settings.
+ */
 void SettingsWindow::handle_apply()
 {
 	saveSettings();
 }
 
+/**
+ * Event handler for the cancel button.
+ * 
+ * Saves the window position and size and closes the window.
+ */
 void SettingsWindow::handle_cancel()
 {
 	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	QDialog::reject();
 }
 
+/**
+ * Event handler for the restore defaults button.
+ * 
+ * Loads the default settings.
+ */
 void SettingsWindow::handle_loadDefaults()
 {
 	loadDefaults();
@@ -239,6 +312,11 @@ void SettingsWindow::handle_loadDefaults()
 
 
 
+/**
+ * Event handler for the close event.
+ * 
+ * Forwarded to the cancel button event handler.
+ */
 void SettingsWindow::reject()
 {
 	handle_cancel();

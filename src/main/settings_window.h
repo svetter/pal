@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file settings_window.h
+ * 
+ * This file declares the SettingsWindow class.
+ */
+
 #ifndef SETTINGS_WINDOW_H
 #define SETTINGS_WINDOW_H
 
@@ -23,12 +29,17 @@
 
 
 
+/**
+ * Control class for the settings window.
+ */
 class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 {
 	Q_OBJECT
 	
+	/** The parent window. */
 	QWidget* parent;
 	
+	/** Lists of avalable languages, as codes and native names. */
 	QPair<QStringList, QStringList> languages;
 	
 public:
