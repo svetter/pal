@@ -15,6 +15,13 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file item_types_handler.h
+ * 
+ * This file defines and implements the ItemTypeMapper class with its item-specific subtypes and
+ * the ItemTypesHandler class.
+ */
+
 #ifndef ITEM_TYPES_HANDLER_H
 #define ITEM_TYPES_HANDLER_H
 
@@ -40,6 +47,9 @@
 
 
 
+/**
+ * Item type enumerator, encoding the type of an item (like ascent, peak...).
+ */
 enum PALItemType {
 	ItemTypeAscent,
 	ItemTypePeak,
@@ -51,34 +61,79 @@ enum PALItemType {
 };
 
 
-
+/**
+ * A helper class for storing pointers to different kinds of item-specific members, like dialogs,
+ * settings, buttons and other UI elements.
+ * 
+ * An instance of ItemTypeMapper is specific to one PALItemType (like ascent, peak...). One
+ * ItemTypeMapper instance is created for each PALItemType and stored in the ItemTypesHandler
+ * at program startup.
+ * 
+ * ItemTypeMapper subtypes should be treates as singletons.
+ */
 class ItemTypeMapper {
 public:
+	/** The type of item (like ascent, peak...) that this mapper contains pointers for. */
 	const PALItemType		type;
 	
+	/** The name of the item type (like "ascent", "peak"...). */
 	const QString			name;
 	
+	/** The SQL buffer (base) table containing data of this item type. */
 	NormalTable* const		baseTable;
+	/** The UI buffer (composite) table containing data of this item type. */
 	CompositeTable* const	compTable;
 	
+	/** The tab in the main window corresponding to this item type. */
 	QWidget* const			tab;
+	/** The table view in the main window showing the composite table of this item type. */
 	QTableView* const		tableView;
+	/** The table view in the main window showing the base table of this item type (usually disabled). */
 	QTableView* const		debugTableView;
 	
+	/** The action in the main window menu for creating a new item of this type. */
 	QAction* const			newItemAction;
+	/** The button in the main window for creating a new item of this type. */
 	QPushButton* const		newItemButton;
 	
+	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>* const			dialogGeometrySetting;
+	/** The setting storing the column widths for the UI table of this item type. */
 	const Setting<QStringList>* const	columnWidthsSetting;
+	/** The setting storing the sorting of the UI table of this item type. */
 	const Setting<QStringList>* const	sortingSetting;
 	
+	/** The method opening the dialog for creating a new item of this type. */
 	int  (* const openNewItemDialogAndStoreMethod)			(QWidget*, Database*);
+	/** The method opening the dialog for duplicating an item of this type. */
 	int  (* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, int);
+	/** The method opening the dialog for editing an item of this type. */
 	void (* const openEditItemDialogAndStoreMethod)			(QWidget*, Database*, int);
+	/** The method opening the dialog for deleting an item of this type. */
 	void (* const openDeleteItemDialogAndStoreMethod)		(QWidget*, Database*, int);
 	
 	
 	
+	/**
+	 * Creates a new ItemTypeMapper instance.
+	 * 
+	 * @param type									The type of item for this mapper.
+	 * @param name									The name of the item type for this mapper.
+	 * @param baseTable								The SQL buffer (base) table.
+	 * @param compTable								The UI buffer (composite) table.
+	 * @param tab									The tab in the main window.
+	 * @param tableView								The table view in the main window showing the composite table.
+	 * @param debugTableView						The table view in the main window showing the base table.
+	 * @param newItemAction							The action in the main window menu for creating a new iteme.
+	 * @param newItemButton							The button in the main window for creating a new item.
+	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
+	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
+	 * @param sortingSetting						The setting storing the sorting of the UI table.
+	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
+	 * @param openDuplicateItemDialogAndStoreMethod	The method opening the dialog for duplicating an item.
+	 * @param openEditItemDialogAndStoreMethod		The method opening the dialog for editing an item.
+	 * @param openDeleteItemDialogAndStoreMethod	The method opening the dialog for deleting an item.
+	 */
 	inline ItemTypeMapper(
 			PALItemType			type,
 			QString				name,
@@ -115,6 +170,9 @@ public:
 			openDeleteItemDialogAndStoreMethod		(openDeleteItemDialogAndStoreMethod)
 	{}
 	
+	/**
+	 * Destroys this ItemTypeMapper instance.
+	 */
 	inline ~ItemTypeMapper()
 	{
 		delete compTable;
@@ -123,6 +181,12 @@ public:
 
 
 
+/**
+ * The arguments passed to the constructor of each ItemTypeMapper subtype.
+ * 
+ * These arguments are dynamic, i.e. only known at runtime, so they have to be passed to the
+ * constructor by code with access to the dynamic elements.
+ */
 #define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
 	Database*			db, \
 	QWidget*			tab, \
@@ -131,6 +195,10 @@ public:
 	QAction* const		newItemAction, \
 	QPushButton* const	newItemButton
 
+/**
+ * The dynamic constructor arguments from all ItemTypeMapper subtypes which are passed on to the
+ * ItemTypeMapper constructor.
+ */
 #define TYPE_MAPPER_DYNAMIC_ARG_NAMES \
 	tab, \
 	tableView, \
@@ -140,8 +208,21 @@ public:
 
 
 
+/**
+ * An ItemTypeMapper for item type Ascent.
+ */
 class AscentTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new AscentTypeMapper instance.
+	 * 
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline AscentTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::ascentDialog_geometry,
@@ -155,8 +236,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Peak.
+ */
 class PeakTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new PeakTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline PeakTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::peakDialog_geometry,
@@ -170,8 +264,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Trip.
+ */
 class TripTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new TripTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline TripTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::tripDialog_geometry,
@@ -185,8 +292,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Hiker.
+ */
 class HikerTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new HikerTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline HikerTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::hikerDialog_geometry,
@@ -200,8 +320,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Region.
+ */
 class RegionTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new RegionTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline RegionTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::regionDialog_geometry,
@@ -215,8 +348,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Range.
+ */
 class RangeTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new RangeTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline RangeTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::rangeDialog_geometry,
@@ -230,8 +376,21 @@ public:
 	{}
 };
 
+/**
+ * An ItemTypeMapper for item type Country.
+ */
 class CountryTypeMapper : public ItemTypeMapper {
 public:
+	/**
+	 * Creates a new CountryTypeMapper instance.
+	 *
+	 * @param db				The database.
+	 * @param tab				The tab in the main window.
+	 * @param tableView			The table view in the main window showing the composite table.
+	 * @param debugTableView	The table view in the main window showing the base table.
+	 * @param newItemAction		The action in the main window menu for creating a new ascent.
+	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 */
 	inline CountryTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::countryDialog_geometry,
@@ -249,11 +408,22 @@ public:
 
 
 
+/**
+ * A helper class for storing all ItemTypeMapper instances and generalizing access to and
+ * operations on them.
+ * 
+ * Only one instance of ItemTypesHandler is needed, it should be treated as a singleton.
+ * All members and methods are const, so ItemTypesHandler instances can be passed around freely.
+ */
 class ItemTypesHandler {
 public:
+	/** Whether debug table views are shown in the main window for all item types. */
 	const bool showDebugTableViews;
+	
+	/** The ItemTypeMapper instances for all item types. */
 	const QMap<PALItemType, const ItemTypeMapper*> mappers;
 	
+	/** Creates a new ItemTypesHandler instance. */
 	inline ItemTypesHandler(bool showDebugTableViews,
 			const AscentTypeMapper*		ascentMapper,
 			const PeakTypeMapper*		peakMapper,
@@ -275,11 +445,22 @@ public:
 			})
 	{}
 	
+	/**
+	 * Returns the ItemTypeMapper instance for the given item type.
+	 * 
+	 * @param type	The item type.
+	 * @return		The ItemTypeMapper instance for the given item type.
+	 */
 	inline const ItemTypeMapper* get(PALItemType type) const
 	{
 		return mappers.value(type);
 	}
 	
+	/**
+	 * Runs the given lambda function with an ItemTypeMapper as input for each item type.
+	 * 
+	 * @param lambda	The lambda function to run.
+	 */
 	inline void forEach(std::function<void (const ItemTypeMapper&)> lambda) const
 	{
 		for (const ItemTypeMapper* mapper : mappers) {
@@ -287,6 +468,14 @@ public:
 		}
 	}
 	
+	/**
+	 * Runs the given lambda function with an ItemTypeMapper as input only for the item type to
+	 * which the given table view belongs.
+	 * 
+	 * @param tableView	The table view identifying the item type.
+	 * @param lambda	The lambda function to run for the specified item type.
+	 * @return			True if the function was run, false if the item type could not be identified.
+	 */
 	inline bool forMatchingTableView(QTableView* tableView, std::function<void (const ItemTypeMapper&, bool)> lambda) const
 	{
 		const ItemTypeMapper* matchingMapper = nullptr;
