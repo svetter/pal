@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main_window.h
+ * 
+ * This file declares the RelocatePhotosDialog class.
+ */
+
 #ifndef RELOCATE_PHOTOS_DIALOG_H
 #define RELOCATE_PHOTOS_DIALOG_H
 
@@ -27,13 +33,19 @@
 
 
 
+/**
+ * Control class for the photo relocation dialog.
+ */
 class RelocatePhotosDialog : public QDialog, public Ui_RelocatePhotosDialog
 {
 	Q_OBJECT
 	
+	/** The project database. */
 	Database* db;
 	
+	/** Indicates whether the worker thread is running. */
 	bool running;
+	/** The worker thread. */
 	PhotoRelocationThread* workerThread;
 	
 public:

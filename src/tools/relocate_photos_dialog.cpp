@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file main_window.h
+ * 
+ * This file defines the RelocatePhotosDialog class.
+ */
+
 #include "relocate_photos_dialog.h"
 
 #include <QDialogButtonBox>
@@ -24,6 +30,14 @@
 
 
 
+/**
+ * Creates a new RelocatePhotosDialog.
+ * 
+ * Prepares and connects the UI.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ */
 RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
 		QDialog(parent),
 		db(db),
@@ -48,6 +62,11 @@ RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
 
 
 
+/**
+ * Event handler for the "browse old path" button.
+ * 
+ * Opens a file dialog to select the old path and sets the path in the line edit if valid.
+ */
 void RelocatePhotosDialog::handle_browseOldPath()
 {
 	QString caption = tr("Select old location of photos");
@@ -58,6 +77,11 @@ void RelocatePhotosDialog::handle_browseOldPath()
 	if (!oldPath.isEmpty()) oldPathLineEdit->setText(oldPath);
 }
 
+/**
+ * Event handler for the "browse new path" button.
+ * 
+ * Opens a file dialog to select the new path and sets the path in the line edit if valid.
+ */
 void RelocatePhotosDialog::handle_browseNewPath()
 {
 	QString caption = tr("Select new location of photos");
@@ -70,6 +94,11 @@ void RelocatePhotosDialog::handle_browseNewPath()
 
 
 
+/**
+ * Event handler for the "start" button.
+ * 
+ * Starts the relocation process.
+ */
 void RelocatePhotosDialog::handle_start()
 {
 	assert(!running);
@@ -89,6 +118,11 @@ void RelocatePhotosDialog::handle_start()
 	workerThread->start();
 }
 
+/**
+ * Event handler for the worker thread's "finished" signal.
+ * 
+ * Cleans up the worker thread and updates the UI.
+ */
 void RelocatePhotosDialog::handle_finished()
 {
 	assert(running);
@@ -102,6 +136,11 @@ void RelocatePhotosDialog::handle_finished()
 	updateEnableUI();
 }
 
+/**
+ * Event handler for the "abort" button.
+ * 
+ * Aborts the relocation process.
+ */
 void RelocatePhotosDialog::handle_abort()
 {
 	assert(running);
@@ -109,6 +148,12 @@ void RelocatePhotosDialog::handle_abort()
 	workerThread->abort();
 }
 
+/**
+ * Event handler for the "close" button.
+ * 
+ * Closes the dialog.
+ * If the relocation process is running, asks the user if the process should be aborted.
+ */
 void RelocatePhotosDialog::handle_close()
 {
 	if (!running) return accept();
@@ -129,17 +174,34 @@ void RelocatePhotosDialog::handle_close()
 
 
 
+/**
+ * Callback function for the worker thread reporting back its workload size after starting.
+ * 
+ * @param workloadSize	The number of photos found that need to be relocated.
+ */
 void RelocatePhotosDialog::handle_workloadSize(int workloadSize)
 {
 	progressBar->setMaximum(workloadSize);
 }
 
+/**
+ * Callback function for the worker thread reporting back its progress.
+ * 
+ * @param processed	The number of photos processed so far.
+ * @param updated	The number of photos whose location has been updated so far.
+ */
 void RelocatePhotosDialog::handle_progressUpdate(int processed, int updated)
 {
 	progressBar->setValue(processed);
 	feedbackLabel->setText(tr("Photo locations updated: %1").arg(updated));
 }
 
+/**
+ * Callback function for the worker thread delegating a photo location update to the database.
+ * 
+ * @param bufferRowIndex	The index of the photo in the photos table buffer.
+ * @param newFilepath		The new filepath of the photo.
+ */
 void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath)
 {
 	return db->photosTable->updateFilepathAt(this, bufferRowIndex, newFilepath);
@@ -147,6 +209,9 @@ void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QS
 
 
 
+/**
+ * Updates the enabled state of the UI elements.
+ */
 void RelocatePhotosDialog::updateEnableUI()
 {
 	oldPathLineEdit->setEnabled(!running);
@@ -158,6 +223,9 @@ void RelocatePhotosDialog::updateEnableUI()
 
 
 
+/**
+ * Redirects the "close" event to handle_close().
+ */
 void RelocatePhotosDialog::reject()
 {
 	handle_close();
