@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photo_relocation_thread.h
+ * 
+ * This file declares the PhotoRelocationThread class.
+ */
+
 #ifndef PHOTO_RELOCATION_THREAD_H
 #define PHOTO_RELOCATION_THREAD_H
 
@@ -25,17 +31,26 @@
 
 
 
+/**
+ * A thread that relocates photos in the project database.
+ */
 class PhotoRelocationThread : public QThread
 {
 	Q_OBJECT
 	
+	/** The parent window. */
 	QDialog* parent;
 	
+	/** The project database. */
 	Database* db;
+	/** The old prefix to replace in the photo filepaths. */
 	QString oldPrefix;
+	/** The new prefix for the photo filepaths. */
 	QString newPrefix;
 	
+	/** The number of photos to relocate. */
 	int workloadSize;
+	/** Indicates whether an abort was requested. */
 	bool abortWasCalled;
 	
 public:
@@ -45,9 +60,26 @@ public:
 	void abort();
 	
 signals:
+	/**
+	 * Emitted when the thread has started and determined the number of photos to relocate.
+	 * 
+	 * @param workloadSize	The number of photos to relocate.
+	 */
 	int reportWorkloadSize(int workloadSize);
+	/**
+	 * Emitted whenever the thread has processed one photo.
+	 * 
+	 * @param processed	The number of photos processed so far.
+	 * @param updated	The number of photos whose filepath was updated so far.
+	 */
 	void reportProgress(int processed, int updated);
 	
+	/**
+	 * Emitted when the thread has found a photo whose filepath needs to be updated.
+	 * 
+	 * @param bufferRowIndex	The row index of the photo in the buffer.
+	 * @param newFilepath		The new filepath for the photo.
+	 */
 	void callback_updateFilepathAt(int bufferRowIndex, QString newFilepath);
 };
 

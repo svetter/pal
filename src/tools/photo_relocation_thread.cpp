@@ -15,10 +15,24 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photo_relocation_thread.h
+ * 
+ * This file defines the PhotoRelocationThread class.
+ */
+
 #include "photo_relocation_thread.h"
 
 
 
+/**
+ * Creates a new PhotoRelocationThread.
+ * 
+ * @param parent	The parent window of this thread.
+ * @param db		The database to work on.
+ * @param oldPrefix	The prefix which to replace in the paths.
+ * @param newPrefix	The new prefix to insert in the paths.
+ */
 PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QString oldPrefix, QString newPrefix) :
 		QThread(parent),
 		parent(parent),
@@ -31,6 +45,18 @@ PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QStr
 
 
 
+/**
+ * Starts the thread.
+ * 
+ * Determines workload size and reports it back via the callback signal reportWorkloadSize().
+ * Then iterates over all photos and replaces the old prefix with the new one, delegating the
+ * actual updates of the database to the callback signal callback_updateFilepathAt().
+ * 
+ * After each iteration, the progress is reported back via the callback signal reportProgress().
+ * 
+ * If abort() is called while the thread is running, the thread will stop after completing the
+ * current iteration.
+ */
 void PhotoRelocationThread::run()
 {
 	workloadSize = db->photosTable->getNumberOfRows();
@@ -55,6 +81,9 @@ void PhotoRelocationThread::run()
 
 
 
+/**
+ * Gracefully aborts the thread.
+ */
 void PhotoRelocationThread::abort() {
 	abortWasCalled = true;
 }
