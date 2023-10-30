@@ -85,8 +85,7 @@ private:
 	void setupPhotos();
 	
 	// Photo change
-	void changeToPhoto(int photoIndex);
-	void updatePhoto();
+	void changeToPhoto(int photoIndex, bool saveDescriptionFirst = false);
 	void updatePhotoIndexLabel();
 	void updatePhotoButtonsEnabled();
 	
