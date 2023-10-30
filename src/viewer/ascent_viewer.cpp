@@ -448,32 +448,22 @@ void AscentViewer::setupPhotos()
 /**
  * Navigates to the photo with the given index.
  * 
- * @param photoIndex	The index of the photo to load.
+ * @param photoIndex			The index of the photo to load.
+ * @param saveDescriptionFirst	Whether to save the description for the current photo before changing to the new one.
  */
-void AscentViewer::changeToPhoto(int photoIndex)
+void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 {
-	savePhotoDescription();
+	if (saveDescriptionFirst) {
+		savePhotoDescription();
+	}
 	
 	currentPhotoIndex = photoIndex;
-	updatePhoto();
-	updatePhotoButtonsEnabled();
-}
-
-/**
- * Loads the photo with the given index and displays it, along with its description.
- * 
- * If the photo cannot be loaded from disk, the user is asked whether to remove it from the ascent.
- * The next photo is then loaded.
- */
-void AscentViewer::updatePhoto()
-{
+	
 	photoDescriptionLabel	->setText(QString());
 	photoDescriptionLineEdit->setText(QString());
 	photoDescriptionLabel	->setVisible(false);
 	photoDescriptionLineEdit->setVisible(false);
 	imageLabel				->setToolTip(QString());
-	
-	updatePhotoIndexLabel();
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
 		imageLabel->clearImage();
@@ -496,21 +486,23 @@ void AscentViewer::updatePhoto()
 		QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
 		
 		if (result == QMessageBox::Yes) {
-			removeCurrentPhoto();
-			updatePhoto();
+			removeCurrentPhoto();	// calls changeToPhoto() back, recursing until valid image is found or all photos removed
 		}
-		return;
 	}
-	
-	image = newImage;
-	if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
-	imageLabel->setImage(image);
+	else {
+		image = newImage;
+		if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
+		imageLabel->setImage(image);
+	}
 	
 	photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
 	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
 	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
 	imageLabel				->setToolTip(filepath);
+	
+	updatePhotoIndexLabel();
+	updatePhotoButtonsEnabled();
 }
 
 /**
@@ -576,16 +568,16 @@ void AscentViewer::addPhotos()
 	QStringList filepaths = openFileDialogForPhotosSelection(this);
 	if (filepaths.isEmpty()) return;
 	
+	savePhotoDescription();
+	
 	if (currentPhotoIndex < 0) currentPhotoIndex = -1;
 	currentPhotoIndex++;	// Set to index of first inserted photo
 	for (int i = 0; i < filepaths.size(); i++) {
 		photos.insert(currentPhotoIndex + i, Photo(currentAscentID, ItemID(), -1, filepaths.at(i), QString()));
 	}
-	
 	savePhotosList();
 	
-	updatePhoto();
-	updatePhotoButtonsEnabled();
+	changeToPhoto(currentPhotoIndex);
 }
 
 /**
@@ -596,9 +588,8 @@ void AscentViewer::removeCurrentPhoto()
 	photos.removeAt(currentPhotoIndex);
 	savePhotosList();
 	
-	if (currentPhotoIndex >= photos.size()) currentPhotoIndex = photos.size() - 1;
-	updatePhotoButtonsEnabled();
-	updatePhoto();
+	int newPhotoIndex = std::min(currentPhotoIndex, (int) photos.size() - 1);
+	changeToPhoto(newPhotoIndex);
 }
 
 /**
@@ -723,7 +714,7 @@ void AscentViewer::handle_lastAscentOfPeak()
  */
 void AscentViewer::handle_firstPhoto()
 {
-	changeToPhoto(0);
+	changeToPhoto(0, true);
 }
 
 /**
@@ -731,7 +722,7 @@ void AscentViewer::handle_firstPhoto()
  */
 void AscentViewer::handle_previousPhoto()
 {
-	changeToPhoto(currentPhotoIndex - 1);
+	changeToPhoto(currentPhotoIndex - 1, true);
 }
 
 /**
@@ -739,7 +730,7 @@ void AscentViewer::handle_previousPhoto()
  */
 void AscentViewer::handle_nextPhoto()
 {
-	changeToPhoto(currentPhotoIndex + 1);
+	changeToPhoto(currentPhotoIndex + 1, true);
 }
 
 /**
@@ -747,7 +738,7 @@ void AscentViewer::handle_nextPhoto()
  */
 void AscentViewer::handle_lastPhoto()
 {
-	changeToPhoto(photos.size() - 1);
+	changeToPhoto(photos.size() - 1, true);
 }
 
 
