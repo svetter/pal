@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_trips_table.h
+ * 
+ * This file defines the CompositeTripsTable class.
+ */
+
 #ifndef COMP_TRIPS_TABLE_H
 #define COMP_TRIPS_TABLE_H
 
@@ -23,22 +29,43 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing trips table.
+ */
 class CompositeTripsTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The trip index numbers all trips chronologically and is always kept consistent with the data. */
 	const IndexCompositeColumn*			indexColumn;
+	/** The name of the trip. */
 	const DirectCompositeColumn*		nameColumn;
+	/** The start date of the trip. */
 	const DirectCompositeColumn*		startDateColumn;
+	/** The end date of the trip. */
 	const DirectCompositeColumn*		endDateColumn;
+	/** The length of the trip. */
 	const DifferenceCompositeColumn*	lengthColumn;
+	/** The number of ascents logged for this trip. */
 	const FoldCompositeColumn*			numAscentsColumn;
+	/** The average elevation gain of all ascents logged for this trip. */
 	const FoldCompositeColumn*			avgElevationGainColumn;
+	/** The maximum elevation gain of all ascents logged for this trip. */
 	const FoldCompositeColumn*			maxElevationGainColumn;
+	/** The sum of the elevation gains of all ascents logged for this trip. */
 	const FoldCompositeColumn*			sumElevationGainColumn;
+	/** The list of hikers who participated in any ascent logged for this trip. */
 	const FoldCompositeColumn*			listHikersColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeTripsTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The trips table view in the main window
+	 */
 	inline CompositeTripsTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->tripsTable, tableView),
 			//																			uiName				align/fold op	suffix			breadcrumbs (column reference chain) + content column [+ enum names]
@@ -66,7 +93,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {indexColumn, Qt::AscendingOrder};
