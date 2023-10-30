@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_hikers_table.h
+ * 
+ * This file defines the CompositeHikersTable class.
+ */
+
 #ifndef COMP_HIKERS_TABLE_H
 #define COMP_HIKERS_TABLE_H
 
@@ -23,18 +29,35 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing hikers table.
+ */
 class CompositeHikersTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The name of the hiker. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The number of ascents logged in which this hiker participated. */
 	const FoldCompositeColumn*		numAscentsColumn;
+	/** The number of trips logged in which this hiker participated. */
 	const FoldCompositeColumn*		numTripsColumn;
+	/** The average elevation gain of all ascents logged in which this hiker participated. */
 	const FoldCompositeColumn*		avgElevationGainColumn;
+	/** The maximum elevation gain of all ascents logged in which this hiker participated. */
 	const FoldCompositeColumn*		maxElevationGainColumn;
+	/** The sum of the elevation gains of all ascents logged in which this hiker participated. */
 	const FoldCompositeColumn*		sumElevationGainColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeHikersTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The hikers table view in the main window
+	 */
 	inline CompositeHikersTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->hikersTable, tableView),
 			//																			uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -54,7 +77,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {numAscentsColumn, Qt::DescendingOrder};
