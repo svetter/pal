@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_regionss_table.h
+ * 
+ * This file defines the CompositeRegionsTable class.
+ */
+
 #ifndef COMP_REGIONS_TABLE_H
 #define COMP_REGIONS_TABLE_H
 
@@ -24,20 +30,39 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing regions table.
+ */
 class CompositeRegionsTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The name of the region. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The name of the mountain range the region is assigned to. */
 	const ReferenceCompositeColumn*	rangeColumn;
+	/** The name of the country the region is assigned to. */
 	const ReferenceCompositeColumn*	countryColumn;
+	/** The continent the region is assigned to. */
 	const ReferenceCompositeColumn*	continentColumn;
+	/** The number of peaks assigned to this region. */
 	const FoldCompositeColumn*		numPeaksColumn;
+	/** The average height of all peaks assigned to this region. */
 	const FoldCompositeColumn*		avgPeakHeightColumn;
+	/** The height of the highest peak assigned to this region. */
 	const FoldCompositeColumn*		maxPeakHeightColumn;
+	/** The number of ascents assigned to this region. */
 	const FoldCompositeColumn*		numAscentsColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeRegionsTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The regions table view in the main window
+	 */
 	inline CompositeRegionsTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->regionsTable, tableView),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -61,7 +86,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {nameColumn, Qt::AscendingOrder};
