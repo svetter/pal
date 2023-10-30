@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_ascents_table.h
+ * 
+ * This file defines the CompositeAscentsTable class.
+ */
+
 #ifndef COMP_ASCENTS_TABLE_H
 #define COMP_ASCENTS_TABLE_H
 
@@ -24,32 +30,63 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing ascents table.
+ */
 class CompositeAscentsTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The ascent index numbers all ascents chronologically and is always kept consistent with the data. */
 	const IndexCompositeColumn*			indexColumn;
+	/** The date of the ascent. */
 	const DirectCompositeColumn*		dateColumn;
+	/** The name of the peak climbed. */
 	const ReferenceCompositeColumn*		peakColumn;
+	/** The title of the ascent. */
 	const DirectCompositeColumn*		titleColumn;
+	/** The height of the peak climbed. */
 	const ReferenceCompositeColumn*		peakHeightColumn;
+	/** The name of the country the peak is assigned to. */
 	const ReferenceCompositeColumn*		countryColumn;
+	/** The name of the region the peak is assigned to. */
 	const ReferenceCompositeColumn*		regionColumn;
+	/** The name of the mountain range the peak is assigned to. */
 	const ReferenceCompositeColumn*		rangeColumn;
+	/** The continent the peak is on. */
 	const ReferenceCompositeColumn*		continentColumn;
+	/** The elevation gain of the ascent. */
 	const DirectCompositeColumn*		elevationGainColumn;
+	/** The names of all hikers who participated in the ascent. */
 	const FoldCompositeColumn*			hikersColumn;
+	/** The name of the trip the ascent was part of. */
 	const ReferenceCompositeColumn*		tripColumn;
+	/** The kind of hike the ascent was. */
 	const DirectCompositeColumn*		hikeKindColumn;
+	/** Whether the ascent was a traverse. */
 	const DirectCompositeColumn*		traverseColumn;
+	/** The difficulty grade of the ascent. */
 	const DependentEnumCompositeColumn*	difficultyColumn;
+	/** Whether the peak climbed is a volcano. */
 	const ReferenceCompositeColumn*		volcanoColumn;
+	/** The peak ordinal indicates that this ascent was the nth one of the peak. */
 	const OrdinalCompositeColumn*		peakOrdinalColumn;
+
 	// Hidden (for filters)
+	/** The ID of the mountain range the peak is assigned to. */
 	const ReferenceCompositeColumn*		rangeIDColumn;
+	/** The IDs of all hikers who participated in the ascent. */
 	const FoldCompositeColumn*			hikerIDsColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeAscentsTable.
+	 * 
+	 * Creates its own composite columns and adds them to the table.
+	 * 
+	 * @param db		The project database
+	 * @param tableView	The ascents table view in the main window
+	 */
 	inline CompositeAscentsTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->ascentsTable, tableView),
 			//																		uiName					align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -97,7 +134,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {indexColumn, Qt::AscendingOrder};
