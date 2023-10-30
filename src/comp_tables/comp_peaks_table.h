@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_peaks_table.h
+ * 
+ * This file defines the CompositePeaksTable class.
+ */
+
 #ifndef COMP_PEAKS_TABLE_H
 #define COMP_PEAKS_TABLE_H
 
@@ -24,22 +30,43 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing peaks table.
+ */
 class CompositePeaksTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The name of the peak. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The height of the peak. */
 	const DirectCompositeColumn*	heightColumn;
+	/** The name of the country the peak is assigned to. */
 	const ReferenceCompositeColumn*	countryColumn;
+	/** The name of the region the peak is assigned to. */
 	const ReferenceCompositeColumn*	regionColumn;
+	/** The name of the mountain range the peak is assigned to. */
 	const ReferenceCompositeColumn*	rangeColumn;
+	/** The continent the peak is assigned to. */
 	const ReferenceCompositeColumn*	continentColumn;
+	/** The number of ascents logged for this peak. */
 	const FoldCompositeColumn*		numAscentsColumn;
+	/** The names of all hikers who have ascents logged for this peak. */
 	const FoldCompositeColumn*		listHikersColumn;
+	/** The sum of the elevation gains of all ascents logged for this peak. */
 	const FoldCompositeColumn*		sumElevationGainColumn;
+	/** Whether the peak is a volcano. */
 	const DirectCompositeColumn*	volcanoColumn;
 	
 public:
+	/**
+	 * Creates a new CompositePeaksTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The peaks table view in the main window
+	 */
 	inline CompositePeaksTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->peaksTable, tableView),
 			//																			uiName				align/fold op		suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -67,7 +94,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {nameColumn, Qt::AscendingOrder};
