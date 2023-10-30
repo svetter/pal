@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_ranges_table.h
+ * 
+ * This file defines the CompositeRangesTable class.
+ */
+
 #ifndef COMP_RANGES_TABLE_H
 #define COMP_RANGES_TABLE_H
 
@@ -23,18 +29,35 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing ranges table.
+ */
 class CompositeRangesTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The name of the mountain range. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The number of regions assigned to this mountain range. */
 	const FoldCompositeColumn*		numRegionsColumn;
+	/** The number of peaks assigned to this mountain range. */
 	const FoldCompositeColumn*		numPeaksColumn;
+	/** The average height of the peaks assigned to this mountain range. */
 	const FoldCompositeColumn*		avgPeakHeightColumn;
+	/** The maximum height of the peaks assigned to this mountain range. */
 	const FoldCompositeColumn*		maxPeakHeightColumn;
+	/** The number of ascents logged for this mountain range. */
 	const FoldCompositeColumn*		numAscentsColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeRangesTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The ranges table view in the main window
+	 */
 	inline CompositeRangesTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->rangesTable, tableView),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -54,7 +77,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {nameColumn, Qt::AscendingOrder};
