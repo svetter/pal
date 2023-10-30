@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file comp_countries_table.h
+ * 
+ * This file defines the CompositeCountriesTable class.
+ */
+
 #ifndef COMP_COUNTRIES_TABLE_H
 #define COMP_COUNTRIES_TABLE_H
 
@@ -23,18 +29,35 @@
 
 
 
+/**
+ * A subclass of CompositeTable for the user-facing countries table.
+ */
 class CompositeCountriesTable : public CompositeTable {
 	Q_OBJECT
 	
 public:
+	/** The name of the country. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The number of ascents logged for this country. */
 	const FoldCompositeColumn*		numAscentsColumn;
+	/** The number of regions assigned to this country. */
 	const FoldCompositeColumn*		numRegionsColumn;
+	/** The number of peaks assigned to this country. */
 	const FoldCompositeColumn*		numPeaksColumn;
+	/** The average height of peaks assigned to this country. */
 	const FoldCompositeColumn*		avgPeakHeightColumn;
+	/** The height of the highest peak assigned to this country. */
 	const FoldCompositeColumn*		maxPeakHeightColumn;
 	
 public:
+	/**
+	 * Creates a new CompositeCountriesTable.
+	 *
+	 * Creates its own composite columns and adds them to the table.
+	 *
+	 * @param db		The project database
+	 * @param tableView	The countries table view in the main window
+	 */
 	inline CompositeCountriesTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->countriesTable, tableView),
 			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
@@ -54,7 +77,12 @@ public:
 	}
 	
 	
-	
+
+	/**
+	 * Returns the default sorting for the table.
+	 *
+	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
+	 */
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
 	{
 		return {nameColumn, Qt::AscendingOrder};
