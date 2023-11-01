@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file composite_column.h
+ * 
+ * This file defines the CompositeColumn class and some of its subclasses.
+ */
+
 #include "composite_column.h"
 
 #include "src/comp_tables/composite_table.h"
@@ -22,6 +28,18 @@
 
 
 
+/**
+ * Creates a CompositeColumn.
+ * 
+ * @param table						The CompositeTable that this column belongs to.
+ * @param uiName					The name of this column as it should be displayed in the UI.
+ * @param alignment					The alignment of the column contents.
+ * @param contentType				The type of data the column contents.
+ * @param cellsAreInterdependent	Whether the contents of the cells in this column depend on each other.
+ * @param suffix					A suffix to append to the content of each cell.
+ * @param enumNames					An optional list of enum names with which to replace the raw cell content.
+ * @param enumNameLists				An optional list of enum name lists with which to replace the raw cell content.
+ */
 CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		table(table),
 		uiName(uiName),
@@ -33,11 +51,23 @@ CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::Alig
 		enumNameLists(enumNameLists)
 {}
 
+/**
+ * Destroys the CompositeColumn.
+ */
 CompositeColumn::~CompositeColumn()
 {}
 
 
 
+/**
+ * Formats the raw content of a cell for display in the UI.
+ * 
+ * Formats integers according to locale, dates and time, replaces enumerative indices with their
+ * corresponding strings, and appends the suffix.
+ * 
+ * @param rawCellContent	The raw cell content.
+ * @return					The cell content formatted to string.
+ */
 QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 {
 	if (!rawCellContent.isValid()) return QString();
@@ -89,6 +119,11 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 
 
 
+/**
+ * Returns the column's index in its table.
+ * 
+ * @return	The column's index.
+ */
 int CompositeColumn::getIndex() const
 {
 	return table->getIndexOf(this);
@@ -96,6 +131,13 @@ int CompositeColumn::getIndex() const
 
 
 
+/**
+ * Computes the value of all cells in the column together.
+ *
+ * This is used for columns with interdependent cells, such as the IndexCompositeColumn.
+ *
+ * @return	Computed values for all cells in the column.
+ */
 QList<QVariant> CompositeColumn::computeWholeColumn() const
 {
 	QList<QVariant> cells = QList<QVariant>();
@@ -107,11 +149,23 @@ QList<QVariant> CompositeColumn::computeWholeColumn() const
 
 
 
+/**
+ * Returns the raw computed value of the cell at the given row index.
+ * 
+ * @param rowIndex	The row index.
+ * @return			The raw computed value of the cell.
+ */
 QVariant CompositeColumn::getRawValueAt(BufferRowIndex rowIndex) const
 {
 	return table->getRawValue(rowIndex, this);
 }
 
+/**
+ * Returns the formatted computed value of the cell at the given row index.
+ * 
+ * @param rowIndex	The row index.
+ * @return			The formatted computed value of the cell.
+ */
 QVariant CompositeColumn::getFormattedValueAt(BufferRowIndex rowIndex) const
 {
 	return table->getFormattedValue(rowIndex, this);
@@ -119,6 +173,13 @@ QVariant CompositeColumn::getFormattedValueAt(BufferRowIndex rowIndex) const
 
 
 
+/**
+ * Replaced enumerative indices with their corresponding strings in columns which have enumNames
+ * specified.
+ * 
+ * @param content	The raw cell content.
+ * @return			The enum string corresponding to the index in the raw cell content.
+ */
 QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 {
 	if (!enumNames) return content;
@@ -132,6 +193,13 @@ QVariant CompositeColumn::replaceEnumIfApplicable(QVariant content) const
 
 
 
+/**
+ * Compares two cells of this column.
+ * 
+ * @param value1	The first cell's value.
+ * @param value2	The second cell's value.
+ * @return			True if the first cell's value is smaller than the second cell's value.
+ */
 bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) const
 {
 	return compareCells(contentType, value1, value2);
@@ -139,6 +207,12 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 
 
 
+/**
+ * Applies a filter to a given list of rows in this column.
+ * 
+ * @param filter		The filter to apply.
+ * @param orderBuffer	The list of rows to apply the filter to.
+ */
 void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const
 {
 	if (orderBuffer.isEmpty()) return;
@@ -276,6 +350,10 @@ void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& o
 
 
 
+/**
+ * This function can be called to announce that some data from which this column is computed has
+ * changed, and the column needs to be updated.
+ */
 void CompositeColumn::announceChangedData() const
 {
 	int thisColumnIndex = table->getIndexOf(this);
@@ -284,6 +362,11 @@ void CompositeColumn::announceChangedData() const
 
 
 
+/**
+ * Returns the project settings of the table this column belongs to.
+ * 
+ * @return	The project settings.
+ */
 ProjectSettings* CompositeColumn::getProjectSettings() const
 {
 	return table->getProjectSettings();
@@ -293,6 +376,16 @@ ProjectSettings* CompositeColumn::getProjectSettings() const
 
 
 
+/**
+ * Creates a DirectCompositeColumn.
+ * 
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param alignment		The alignment of the column contents.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param contentColumn	The column from which to take the actual cell content.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ */
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		contentColumn(contentColumn)
@@ -302,6 +395,12 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	return contentColumn->getValueAt(rowIndex);
@@ -309,6 +408,12 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { contentColumn };
@@ -318,6 +423,17 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 
+/**
+ * Creates a ReferenceCompositeColumn.
+ *
+ * @param table						The CompositeTable that this column belongs to.
+ * @param uiName					The name of this column as it should be displayed in the UI.
+ * @param alignment					The alignment of the column contents.
+ * @param suffix					A suffix to append to the content of each cell.
+ * @param foreignKeyColumnSequence	The sequence of foreign key columns to follow to get to the content column's table.
+ * @param contentColumn				The column from which to take the actual cell content.
+ * @param enumNames					An optional list of enum names with which to replace the raw cell content.
+ */
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
@@ -328,6 +444,12 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QStrin
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	assert(foreignKeyColumnSequence.first()->isForeignKey());
@@ -364,6 +486,12 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> result = { contentColumn };
@@ -378,6 +506,15 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 
+/**
+ * Creates a DifferenceCompositeColumn.
+ *
+ * @param table				The CompositeTable that this column belongs to.
+ * @param uiName			The name of this column as it should be displayed in the UI.
+ * @param suffix			A suffix to append to the content of each cell.
+ * @param minuendColumn		The column from which to take the minuends.
+ * @param subtrahendColumn	The column from which to take the subtrahends.
+ */
 DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
 		CompositeColumn(table, uiName, Qt::AlignRight, Integer, false, suffix),
 		minuendColumn(minuendColumn),
@@ -393,6 +530,12 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QVariant minuendContent = minuendColumn->getValueAt(rowIndex);
@@ -423,6 +566,12 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { minuendColumn, subtrahendColumn };
@@ -432,6 +581,15 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 
+/**
+ * Creates a DependentEnumCompositeColumn.
+ *
+ * @param table					The CompositeTable that this column belongs to.
+ * @param uiName				The name of this column as it should be displayed in the UI.
+ * @param discerningEnumColumn	The column from which to take the discerning enum.
+ * @param displayedEnumColumn	The column from which to take the displayed enum.
+ * @param enumNameLists			An optional list of enum name lists with which to replace the raw cell content.
+ */
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, false, QString(), nullptr, enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
@@ -446,6 +604,12 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QVariant discerningContent = discerningEnumColumn->getValueAt(rowIndex);
@@ -462,6 +626,12 @@ QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { discerningEnumColumn, displayedEnumColumn };
@@ -471,6 +641,14 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
 
 
 
+/**
+ * Creates a CompositeColumn.
+ *
+ * @param table		The CompositeTable that this column belongs to.
+ * @param uiName	The name of this column as it should be displayed in the UI.
+ * @param suffix	A suffix to append to the content of each cell.
+ * @param sorting	The list of columns to sort by and their sort order, in order of priority.
+ */
 IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
 		CompositeColumn(table, uiName, Qt::AlignRight, Integer, true, suffix),
 		sorting(sorting)
@@ -484,12 +662,25 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant IndexCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QList<BufferRowIndex> order = getRowIndexOrderList();
 	return order.indexOf(rowIndex) + 1;
 }
 
+/**
+ * Computes the value of all cells in the column together.
+ *
+ * This is used for columns with interdependent cells, such as the IndexCompositeColumn.
+ *
+ * @return	Computed values for all cells in the column.
+ */
 QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
 {
 	QList<BufferRowIndex> order = getRowIndexOrderList();
@@ -534,6 +725,12 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> columns = QSet<Column* const>();
@@ -547,6 +744,14 @@ const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
 
 
 
+/**
+ * Creates a CompositeColumn.
+ *
+ * @param table		The CompositeTable that this column belongs to.
+ * @param uiName	The name of this column as it should be displayed in the UI.
+ * @param suffix	A suffix to append to the content of each cell.
+ * @param sorting	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
+ */
 OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
 	IndexCompositeColumn(table, uiName, suffix, sorting),
 	separatingColumn(sorting.first().first)
@@ -556,12 +761,25 @@ OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString ui
 
 
 
+/**
+ * Computes the value of the cell at the given row index.
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant OrdinalCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	qDebug() << "CAUTION: Using extremely inefficient OrdinalCompositeColumn::computeValueAt(int)";
 	return computeWholeColumn().at(rowIndex.get());
 }
 
+/**
+ * Computes the value of all cells in the column together.
+ *
+ * This is used for columns with interdependent cells, such as the IndexCompositeColumn.
+ *
+ * @return	Computed values for all cells in the column.
+ */
 QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 {
 	QList<BufferRowIndex> order = getRowIndexOrderList();
