@@ -99,7 +99,7 @@ int CompositeColumn::getIndex() const
 QList<QVariant> CompositeColumn::computeWholeColumn() const
 {
 	QList<QVariant> cells = QList<QVariant>();
-	for (int rowIndex = 0; rowIndex < table->getBaseTable()->getNumberOfRows(); rowIndex++) {
+	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(table->getBaseTable()->getNumberOfRows()); rowIndex++) {
 		cells.append(computeValueAt(rowIndex));
 	}
 	return cells;
@@ -107,12 +107,12 @@ QList<QVariant> CompositeColumn::computeWholeColumn() const
 
 
 
-QVariant CompositeColumn::getRawValueAt(int rowIndex) const
+QVariant CompositeColumn::getRawValueAt(BufferRowIndex rowIndex) const
 {
 	return table->getRawValue(rowIndex, this);
 }
 
-QVariant CompositeColumn::getFormattedValueAt(int rowIndex) const
+QVariant CompositeColumn::getFormattedValueAt(BufferRowIndex rowIndex) const
 {
 	return table->getFormattedValue(rowIndex, this);
 }
@@ -139,7 +139,7 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 
 
 
-void CompositeColumn::applySingleFilter(const Filter& filter, QList<int>& orderBuffer) const
+void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const
 {
 	if (orderBuffer.isEmpty()) return;
 	assert(filter.column == this);
@@ -266,10 +266,11 @@ void CompositeColumn::applySingleFilter(const Filter& filter, QList<int>& orderB
 	
 	if (!valuePasses) return;
 	// Do the actual filter pass
-	for (int i = orderBuffer.size() - 1; i >= 0; i--) {
-		bool letThrough = valuePasses(getRawValueAt(orderBuffer.at(i)));
+	for (ViewRowIndex viewRow = ViewRowIndex(orderBuffer.numRows() - 1); viewRow.isValid(); viewRow--) {
+		BufferRowIndex bufferRow = orderBuffer.getBufferRowIndexForViewRow(viewRow);
+		bool letThrough = valuePasses(getRawValueAt(bufferRow));
 		if (letThrough) continue;
-		orderBuffer.removeAt(i);
+		orderBuffer.removeViewRow(viewRow);
 	}
 }
 
@@ -301,7 +302,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiNa
 
 
 
-QVariant DirectCompositeColumn::computeValueAt(int rowIndex) const
+QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	return contentColumn->getValueAt(rowIndex);
 }
@@ -327,11 +328,11 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QStrin
 
 
 
-QVariant ReferenceCompositeColumn::computeValueAt(int rowIndex) const
+QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	assert(foreignKeyColumnSequence.first()->isForeignKey());
 	
-	int currentRowIndex = rowIndex;
+	BufferRowIndex currentRowIndex = rowIndex;
 	assert(!foreignKeyColumnSequence.first()->table->isAssociative);
 	NormalTable* currentTable = (NormalTable*) foreignKeyColumnSequence.first()->table;
 	
@@ -351,7 +352,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(int rowIndex) const
 		
 		// Find row index that contains the current primary key
 		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(key.forceValid());
-		assert(currentRowIndex >= 0);
+		assert(currentRowIndex.isValid());
 	}
 	
 	// Finally, look up content column at last row index
@@ -392,7 +393,7 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
 
 
 
-QVariant DifferenceCompositeColumn::computeValueAt(int rowIndex) const
+QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QVariant minuendContent = minuendColumn->getValueAt(rowIndex);
 	QVariant subtrahendContent = subtrahendColumn->getValueAt(rowIndex);
@@ -445,7 +446,7 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
 
 
 
-QVariant DependentEnumCompositeColumn::computeValueAt(int rowIndex) const
+QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QVariant discerningContent = discerningEnumColumn->getValueAt(rowIndex);
 	QVariant displayedContent = displayedEnumColumn->getValueAt(rowIndex);
@@ -483,38 +484,38 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName
 
 
 
-QVariant IndexCompositeColumn::computeValueAt(int rowIndex) const
+QVariant IndexCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QList<int> order = getRowIndexOrderList();
+	QList<BufferRowIndex> order = getRowIndexOrderList();
 	return order.indexOf(rowIndex) + 1;
 }
 
 QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
 {
-	QList<int> order = getRowIndexOrderList();
+	QList<BufferRowIndex> order = getRowIndexOrderList();
 	
 	QList<QVariant> cells = QList<QVariant>();
-	for (int rowIndex = 0; rowIndex < order.size(); rowIndex++) {
+	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(order.size()); rowIndex++) {
 		cells.append(order.indexOf(rowIndex) + 1);
 	}
 	
 	return cells;
 }
 
-QList<int> IndexCompositeColumn::getRowIndexOrderList() const
+QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 {
 	int numberOfRows = sorting.at(0).first->table->getNumberOfRows();
 	// Local order buffer which represents the ordered list of row indices
-	QList<int> order = QList<int>();
-	for (int i = 0; i < numberOfRows; i++) {
-		order += i;
+	QList<BufferRowIndex> order = QList<BufferRowIndex>();
+	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(numberOfRows); index++) {
+		order.append(index);
 	}
 	
 	for (int i = sorting.size() - 1; i >= 0; i--) {
 		Column* const sortColumn	= sorting.at(i).first;
 		Qt::SortOrder sortOrder		= sorting.at(i).second;
 		
-		auto comparator = [&sortColumn, sortOrder](int i1, int i2) {
+		auto comparator = [&sortColumn, sortOrder](BufferRowIndex i1, BufferRowIndex i2) {
 			QVariant value1 = sortColumn->getValueAt(i1);
 			QVariant value2 = sortColumn->getValueAt(i2);
 			
@@ -555,36 +556,36 @@ OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString ui
 
 
 
-QVariant OrdinalCompositeColumn::computeValueAt(int rowIndex) const
+QVariant OrdinalCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	qDebug() << "CAUTION: Using extremely inefficient OrdinalCompositeColumn::computeValueAt(int)";
-	return computeWholeColumn().at(rowIndex);
+	return computeWholeColumn().at(rowIndex.get());
 }
 
 QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 {
-	QList<int> order = getRowIndexOrderList();
+	QList<BufferRowIndex> order = getRowIndexOrderList();
 	
 	QList<QVariant> ordinals = QList<QVariant>(order.size());
 	
 	ItemID lastKey = ItemID();
 	int ordinal = 1;
-	for (int rowIndex : order) {
+	for (const BufferRowIndex& rowIndex : order) {
 		ItemID currentKey = separatingColumn->getValueAt(rowIndex);
 		if (!currentKey.isValid()) {
 			// No key, reset ordinal and append empty
 			ordinal = 1;
 			lastKey = currentKey;
-			ordinals.replace(rowIndex, QVariant());
+			ordinals.replace(rowIndex.get(), QVariant());
 		} else if (currentKey == lastKey) {
 			// Same key, increase ordinal
 			ordinal++;
-			ordinals.replace(rowIndex, ordinal);
+			ordinals.replace(rowIndex.get(), ordinal);
 		} else {
 			// Next key, reset ordinal
 			ordinal = 1;
 			lastKey = currentKey;
-			ordinals.replace(rowIndex, ordinal);
+			ordinals.replace(rowIndex.get(), ordinal);
 		}
 	}
 	

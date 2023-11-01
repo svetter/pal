@@ -83,16 +83,16 @@ public:
 	
 private:
 	// Execute user commands
-	void viewItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	void newItem(const ItemTypeMapper& mapper);
-	void duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
-	void deleteItem(const ItemTypeMapper& mapper, int viewRowIndex);
+	void deleteItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	// Helpers
-	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, int bufferRowToSelectIndex = -1);
+	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
-	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex);
+	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	
 private slots:
 	

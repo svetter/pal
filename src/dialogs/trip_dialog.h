@@ -55,9 +55,9 @@ private:
 
 
 
-int openNewTripDialogAndStore		(QWidget* parent, Database* db);
-void openEditTripDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
-void openDeleteTripDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
+BufferRowIndex	openNewTripDialogAndStore		(QWidget* parent, Database* db);
+void			openEditTripDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteTripDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
 
 

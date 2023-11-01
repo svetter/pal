@@ -45,12 +45,12 @@ PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 
 
 
-int PeaksTable::addRow(QWidget* parent, Peak* peak)
+BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak* peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, peak);
 	
-	int newPeakIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newPeakIndex = NormalTable::addRow(parent, columns, data);
 	peak->peakID = getPrimaryKeyAt(newPeakIndex);
 	return newPeakIndex;
 }

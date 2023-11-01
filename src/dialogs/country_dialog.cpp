@@ -109,20 +109,20 @@ void CountryDialog::aboutToClose()
 
 
 
-static int openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry);
+static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry);
 
-int openNewCountryDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, Database* db)
 {
 	return openCountryDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditCountryDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditCountryDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Country* originalCountry = db->getCountryAt(bufferRowIndex);
 	openCountryDialogAndStore(parent, db, editItem, originalCountry);
 }
 
-void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Country* country = db->getCountryAt(bufferRowIndex);
 	ValidItemID countryID = country->countryID.forceValid();
@@ -140,9 +140,9 @@ void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, int buffer
 
 
 
-static int openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry)
+static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry)
 {
-	int newCountryIndex = -1;
+	BufferRowIndex newCountryIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalCountry);
 		originalCountry->countryID = ItemID();

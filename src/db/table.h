@@ -20,6 +20,7 @@
 
 #include "column.h"
 #include "src/data/item_id.h"
+#include "src/db/table_buffer.h"
 
 #include <QAbstractTableModel>
 #include <QString>
@@ -40,7 +41,7 @@ public:
 	const bool		isAssociative;
 	
 protected:
-	QList<QList<QVariant>*> buffer;
+	TableBuffer buffer;
 	
 	Table(QString name, QString uiName, bool isAssociative);
 public:
@@ -65,9 +66,9 @@ public:
 	void initBuffer(QWidget* parent, bool expectEmpty = false);
 	void resetBuffer();
 	int getNumberOfRows() const;
-	const QList<QVariant>* getBufferRow(int rowIndex) const;
-	QList<int> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
-	int getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
+	const QList<QVariant>* getBufferRow(BufferRowIndex bufferRowIndex) const;
+	QList<BufferRowIndex> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
+	BufferRowIndex getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
 	// Debugging
 	void printBuffer() const;
 	
@@ -78,7 +79,7 @@ private:
 	
 protected:
 	// Modifications
-	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	BufferRowIndex addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);

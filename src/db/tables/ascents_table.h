@@ -44,7 +44,7 @@ public:
 	
 	AscentsTable(Column* foreignPeakIDColumn, Column* foreignTripIDColumn);
 	
-	int addRow(QWidget* parent, Ascent* ascent);
+	BufferRowIndex addRow(QWidget* parent, Ascent* ascent);
 	void updateRow(QWidget* parent, const Ascent* ascent);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Ascent* ascent) const;

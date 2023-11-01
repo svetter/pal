@@ -34,18 +34,18 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	CompositePeaksTable* const compPeaks;
 	CompositeTripsTable* const compTrips;
 	
-	int currentViewRowIndex;
+	ViewRowIndex currentViewRowIndex;
 	ItemID currentAscentID;
 	
-	int firstAscentViewRowIndex;
-	int previousAscentViewRowIndex;
-	int nextAscentViewRowIndex;
-	int lastAscentViewRowIndex;
+	ViewRowIndex    firstAscentViewRowIndex;
+	ViewRowIndex previousAscentViewRowIndex;
+	ViewRowIndex     nextAscentViewRowIndex;
+	ViewRowIndex     lastAscentViewRowIndex;
 	
-	int firstAscentOfPeakViewRowIndex;
-	int previousAscentOfPeakViewRowIndex;
-	int nextAscentOfPeakViewRowIndex;
-	int lastAscentOfPeakViewRowIndex;
+	ViewRowIndex    firstAscentOfPeakViewRowIndex;
+	ViewRowIndex previousAscentOfPeakViewRowIndex;
+	ViewRowIndex     nextAscentOfPeakViewRowIndex;
+	ViewRowIndex     lastAscentOfPeakViewRowIndex;
 	
 	int currentAscentOfPeakIndex;
 	int numAscentsOfPeak;
@@ -65,7 +65,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	QAction* editTripAction;
 	
 public:
-	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex);
+	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
 	
 private:
@@ -76,7 +76,7 @@ private:
 	void setupShortcuts();
 	
 	// Ascent change
-	void changeToAscent(int viewRowIndex);
+	void changeToAscent(ViewRowIndex viewRowIndex);
 	void resetInfoLabels();
 	void updateInfoArea();
 	void updateAscentNavigationTargets();
@@ -133,7 +133,7 @@ private slots:
 private:
 	// Helpers
 	void popupInfoContextMenu(QPoint pos);
-	void handleChangesToUnderlyingData(int currentBufferRowIndex);
+	void handleChangesToUnderlyingData(BufferRowIndex currentBufferRowIndex);
 	
 	// Exit behaviour
 	void reject() override;

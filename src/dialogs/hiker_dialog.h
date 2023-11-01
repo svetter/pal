@@ -52,9 +52,9 @@ private:
 
 
 
-int openNewHikerDialogAndStore		(QWidget* parent, Database* db);
-void openEditHikerDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
-void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex);
+BufferRowIndex	openNewHikerDialogAndStore		(QWidget* parent, Database* db);
+void			openEditHikerDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteHikerDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
 
 

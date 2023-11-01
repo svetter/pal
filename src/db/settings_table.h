@@ -42,9 +42,9 @@ protected:
 	template<typename T>
 	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value, int rowIndex = 0)
 	{
-		assert(rowIndex >= 0 && rowIndex < 2);
+		assert(rowIndex < 2);
 		
-		ValidItemID primaryKey = primaryKeyColumn->getValueAt(rowIndex);
+		ValidItemID primaryKey = primaryKeyColumn->getValueAt(BufferRowIndex(rowIndex));
 		updateCellInNormalTable(parent, primaryKey, setting, value);
 	}
 	

@@ -39,7 +39,7 @@ public:
 	
 	PeaksTable(Column* foreignRegionIDColumn);
 	
-	int addRow(QWidget* parent, Peak* peak);
+	BufferRowIndex addRow(QWidget* parent, Peak* peak);
 	void updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Peak* peak) const;

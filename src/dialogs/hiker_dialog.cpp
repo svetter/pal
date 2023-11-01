@@ -109,20 +109,20 @@ void HikerDialog::aboutToClose()
 
 
 
-static int openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker);
+static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker);
 
-int openNewHikerDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
 	return openHikerDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditHikerDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* originalHiker = db->getHikerAt(bufferRowIndex);
 	openHikerDialogAndStore(parent, db, editItem, originalHiker);
 }
 
-void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* hiker = db->getHikerAt(bufferRowIndex);
 	ValidItemID hikerID = hiker->hikerID.forceValid();
@@ -144,9 +144,9 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, int bufferRo
 
 
 
-static int openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker)
+static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker)
 {
-	int newHikerIndex = -1;
+	BufferRowIndex newHikerIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalHiker);
 		originalHiker->hikerID = ItemID();

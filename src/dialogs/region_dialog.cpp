@@ -126,8 +126,8 @@ bool RegionDialog::changesMade()
 
 void RegionDialog::handle_newRange()
 {
-	int newRangeIndex = openNewRangeDialogAndStore(this, db);
-	if (newRangeIndex < 0) return;
+	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(this, db);
+	if (newRangeIndex.isInvalid()) return;
 	
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeCombo, selectableRangeIDs);
 	ValidItemID rangeID = db->rangesTable->getPrimaryKeyAt(newRangeIndex);
@@ -136,8 +136,8 @@ void RegionDialog::handle_newRange()
 
 void RegionDialog::handle_newCountry()
 {
-	int newCountryIndex = openNewCountryDialogAndStore(this, db);
-	if (newCountryIndex < 0) return;
+	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(this, db);
+	if (newCountryIndex.isInvalid()) return;
 	
 	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, true, countryCombo, selectableCountryIDs);
 	ValidItemID countryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
@@ -163,20 +163,20 @@ void RegionDialog::aboutToClose()
 
 
 
-static int openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion);
+static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion);
 
-int openNewRegionDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
 	return openRegionDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditRegionDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* originalRegion = db->getRegionAt(bufferRowIndex);
 	openRegionDialogAndStore(parent, db, editItem, originalRegion);
 }
 
-void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* region = db->getRegionAt(bufferRowIndex);
 	ValidItemID regionID = region->regionID.forceValid();
@@ -194,9 +194,9 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, int bufferR
 
 
 
-static int openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion)
+static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion)
 {
-	int newRegionIndex = -1;
+	BufferRowIndex newRegionIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRegion);
 		originalRegion->regionID = ItemID();

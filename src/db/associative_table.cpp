@@ -83,8 +83,8 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 {
 	assert(column == column1 || column == column2);
 	int numberOfMatches = 0;
-	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
+	for (const QList<QVariant>* const bufferRow : buffer) {
+		if (bufferRow->at(column->getIndex()) == primaryKey.get()) {
 			numberOfMatches++;
 		}
 	}
@@ -96,9 +96,9 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
 	assert(column == column1 || column == column2);
 	const Column* otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
-	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
-		if ((*iter)->at(column->getIndex()) == primaryKey.get()) {
-			filtered.insert((*iter)->at(otherColumn->getIndex()));
+	for (const QList<QVariant>* const bufferRow : buffer) {
+		if (bufferRow->at(column->getIndex()) == primaryKey.get()) {
+			filtered.insert(bufferRow->at(otherColumn->getIndex()));
 		}
 	}
 	return filtered;
@@ -138,7 +138,7 @@ void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan ro
 			continue;
 		}
 		if (role == Qt::DisplayRole) {
-			QVariant result = buffer.at(index.row())->at(index.column());
+			QVariant result = buffer.getCell(BufferRowIndex(index.row()), index.column());
 			roleData.setData(result);
 			continue;
 		}

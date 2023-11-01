@@ -233,7 +233,7 @@ void MainWindow::connectUI()
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto openFunction = [this, &mapper] (const QModelIndex& index) {
 			if (mapper.type == ItemTypeAscent) {
-				viewItem(mapper, index.row());
+				viewItem(mapper, ViewRowIndex(index.row()));
 			} else {
 				editItem(mapper, index);
 			}
@@ -242,7 +242,7 @@ void MainWindow::connectUI()
 		
 		if (showDebugTableViews) {
 			auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
-				mapper.openEditItemDialogAndStoreMethod(this, &db, index.row());
+				mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(index.row()));
 			};
 			connect(mapper.debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
 		}
@@ -549,7 +549,7 @@ void MainWindow::updateTableSize(bool reset)
 
 // EXECUTE USER COMMANDS
 
-void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
+void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
 	switch (mapper.type) {
 	case ItemTypeAscent:
@@ -562,17 +562,17 @@ void MainWindow::viewItem(const ItemTypeMapper& mapper, int viewRowIndex)
 
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
-	int newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
+	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
-void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowIndex)
+void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	int newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+	BufferRowIndex newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -581,16 +581,17 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, int viewRowI
 
 void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(index.row());
+	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
+	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
 	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
 }
 
-void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
+void MainWindow::deleteItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
-	int bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	mapper.openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
 	performUpdatesAfterUserAction(mapper, true);
@@ -598,11 +599,11 @@ void MainWindow::deleteItem(const ItemTypeMapper& mapper, int viewRowIndex)
 }
 
 
-void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, int bufferRowToSelectIndex)
+void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex)
 {
 	// Update selection in table
-	if (bufferRowToSelectIndex >= 0) {
-		int viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
+	if (bufferRowToSelectIndex.isValid()) {
+		ViewRowIndex viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
 	}
 	// Update table size info
@@ -617,9 +618,9 @@ void MainWindow::updateFilters(const ItemTypeMapper* mapper)
 	if (!mapper || mapper->type == ItemTypeHiker)	ascentFilterBar->updateHikerCombo();
 }
 
-void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, int viewRowIndex)
+void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
-	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex, 0);
+	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex.get(), 0);
 	mapper.tableView->setCurrentIndex(modelIndex);
 	mapper.tableView->scrollTo(modelIndex);
 }
@@ -680,9 +681,9 @@ void MainWindow::handle_viewSelectedItem()
 	
 	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
-			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
+			mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
 		} else if (mapper.type == ItemTypeAscent) {
-			viewItem(mapper, selectedIndex.row());
+			viewItem(mapper, ViewRowIndex(selectedIndex.row()));
 		} else {
 			editItem(mapper, selectedIndex);
 		}
@@ -698,7 +699,7 @@ void MainWindow::handle_editSelectedItem()
 	
 	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
-			mapper.openEditItemDialogAndStoreMethod(this, &db, selectedIndex.row());
+			mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
 		} else {
 			editItem(mapper, selectedIndex);
 		}
@@ -711,13 +712,12 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	int viewRowIndex = selectedIndex.row();
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
-			mapper.openDuplicateItemDialogAndStoreMethod(this, &db, viewRowIndex);
+			mapper.openDuplicateItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
 		} else {
-			duplicateAndEditItem(mapper, viewRowIndex);
+			duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
 		}
 	});
 	assert(done);
@@ -728,13 +728,12 @@ void MainWindow::handle_deleteSelectedItem()
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	int viewRowIndex = selectedIndex.row();
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, viewRowIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
-			mapper.openDeleteItemDialogAndStoreMethod(this, &db, viewRowIndex);
+			mapper.openDeleteItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
 		} else {
-			deleteItem(mapper, viewRowIndex);
+			deleteItem(mapper, ViewRowIndex(selectedIndex.row()));
 		}
 	});
 	assert(done);

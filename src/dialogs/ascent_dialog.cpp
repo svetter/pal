@@ -254,8 +254,8 @@ void AscentDialog::handle_regionFilterChanged()
 
 void AscentDialog::handle_newPeak()
 {
-	int newPeakIndex = openNewPeakDialogAndStore(this, db);
-	if (newPeakIndex < 0) return;
+	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, db);
+	if (newPeakIndex.isInvalid()) return;
 	
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	ValidItemID peakID = db->peaksTable->getPrimaryKeyAt(newPeakIndex);
@@ -299,8 +299,8 @@ void AscentDialog::handle_difficultySystemChanged()
 
 void AscentDialog::handle_newTrip()
 {
-	int newTripIndex = openNewTripDialogAndStore(this, db);
-	if (newTripIndex < 0) return;
+	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, db);
+	if (newTripIndex.isInvalid()) return;
 	
 	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
 	ValidItemID tripID = db->tripsTable->getPrimaryKeyAt(newTripIndex);
@@ -421,26 +421,26 @@ QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected
 
 
 
-static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent);
+static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent);
 
-int openNewAscentDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
 	return openAscentDialogAndStore(parent, db, newItem, nullptr);
 }
 
-int openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
 	return openAscentDialogAndStore(parent, db, duplicateItem, originalAscent);
 }
 
-void openEditAscentDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
 	openAscentDialogAndStore(parent, db, editItem, originalAscent);
 }
 
-void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* ascent = db->getAscentAt(bufferRowIndex);
 	ValidItemID ascentID = ascent->ascentID.forceValid();
@@ -459,9 +459,9 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, int bufferR
 
 
 
-static int openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
+static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
 {
-	int newAscentIndex = -1;
+	BufferRowIndex newAscentIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalAscent);
 		originalAscent->ascentID = ItemID();

@@ -140,7 +140,7 @@ void RelocatePhotosDialog::handle_progressUpdate(int processed, int updated)
 	feedbackLabel->setText(tr("Photo locations updated: %1").arg(updated));
 }
 
-void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath)
+void RelocatePhotosDialog::handle_callback_updateFilepath(BufferRowIndex bufferRowIndex, QString newFilepath)
 {
 	return db->photosTable->updateFilepathAt(this, bufferRowIndex, newFilepath);
 }

@@ -38,18 +38,18 @@ void PhotoRelocationThread::run()
 	
 	int updatedPaths = 0;
 	
-	for (int i = 0; i < workloadSize; i++) {
+	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(workloadSize); index++) {
 		if (abortWasCalled) break;
 		
-		QString currentPath = db->photosTable->filepathColumn->getValueAt(i).toString();
+		QString currentPath = db->photosTable->filepathColumn->getValueAt(index).toString();
 		
 		if (currentPath.startsWith(oldPrefix)) {
 			QString newPath = currentPath.replace(0, oldPrefix.size(), newPrefix);
-			callback_updateFilepathAt(i, newPath);
+			callback_updateFilepathAt(index, newPath);
 			updatedPaths++;
 		}
 		
-		emit reportProgress(i + 1, updatedPaths);
+		emit reportProgress(index.get() + 1, updatedPaths);
 	}
 }
 

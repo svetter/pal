@@ -72,10 +72,10 @@ public:
 	const Setting<QStringList>* const	columnWidthsSetting;
 	const Setting<QStringList>* const	sortingSetting;
 	
-	int  (* const openNewItemDialogAndStoreMethod)			(QWidget*, Database*);
-	int  (* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, int);
-	void (* const openEditItemDialogAndStoreMethod)			(QWidget*, Database*, int);
-	void (* const openDeleteItemDialogAndStoreMethod)		(QWidget*, Database*, int);
+	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*);
+	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex);
+	void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex);
+	void			(* const openDeleteItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex);
 	
 	
 	
@@ -92,10 +92,10 @@ public:
 			const Setting<QRect>*		dialogGeometrySetting,
 			const Setting<QStringList>*	columnWidthsSetting,
 			const Setting<QStringList>*	sortingSetting,
-			int  (* const openNewItemDialogAndStoreMethod)			(QWidget*, Database*),
-			int  (* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, int),
-			void (* const openEditItemDialogAndStoreMethod)			(QWidget*, Database*, int),
-			void (* const openDeleteItemDialogAndStoreMethod)		(QWidget*, Database*, int)
+			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
+			BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
+			void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
+			void			(* const openDeleteItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex)
 			) :
 			type									(type),
 			name									(name),

@@ -58,7 +58,9 @@ SOURCES += \
 	src/db/database.cpp \
 	src/db/db_error.cpp \
 	src/db/normal_table.cpp \
+	src/db/row_index.cpp \
 	src/db/table.cpp \
+	src/db/table_buffer.cpp \
 	src/db/tables/ascents_table.cpp \
 	src/db/tables/countries_table.cpp \
 	src/db/tables/hikers_table.cpp \
@@ -120,8 +122,10 @@ HEADERS += \
 	src/db/db_error.h \
 	src/db/normal_table.h \
 	src/db/project_settings.h \
+	src/db/row_index.h \
 	src/db/settings_table.h \
 	src/db/table.h \
+	src/db/table_buffer.h \
 	src/db/tables/ascents_table.h \
 	src/db/tables/countries_table.h \
 	src/db/tables/hikers_table.h \

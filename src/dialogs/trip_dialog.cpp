@@ -162,20 +162,20 @@ void TripDialog::aboutToClose()
 
 
 
-static int openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip);
+static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip);
 
-int openNewTripDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewTripDialogAndStore(QWidget* parent, Database* db)
 {
 	return openTripDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditTripDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditTripDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Trip* originalTrip = db->getTripAt(bufferRowIndex);
 	openTripDialogAndStore(parent, db, editItem, originalTrip);
 }
 
-void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Trip* trip = db->getTripAt(bufferRowIndex);
 	ValidItemID tripID = trip->tripID.forceValid();
@@ -193,9 +193,9 @@ void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, int bufferRow
 
 
 
-static int openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip)
+static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Trip* originalTrip)
 {
-	int newTripIndex = -1;
+	BufferRowIndex newTripIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalTrip);
 		originalTrip->tripID = ItemID();
