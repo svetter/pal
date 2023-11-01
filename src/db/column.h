@@ -18,6 +18,7 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
+#include "src/db/row_index.h"
 #include "src/data/item_id.h"
 #include <QSet>
 
@@ -53,7 +54,7 @@ public:
 	Column*	getReferencedForeignColumn() const;
 	int		getIndex() const;
 	
-	QVariant getValueAt(int bufferRowIndex) const;
+	QVariant getValueAt(BufferRowIndex bufferRowIndex) const;
 	QVariant getValueFor(ValidItemID itemID) const;
 	bool anyCellMatches(QVariant value) const;
 	

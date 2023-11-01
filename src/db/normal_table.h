@@ -34,12 +34,12 @@ public:
 	virtual ~NormalTable();
 	
 	// Buffer access
-	int getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
-	ValidItemID getPrimaryKeyAt(int bufferRowIndex) const;
+	BufferRowIndex getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
+	ValidItemID getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const;
 	QList<QPair<ValidItemID, QVariant>> pairIDWith(const Column* column) const;
 	
 	// Modifications (passthrough)
-	int addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	BufferRowIndex addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
 	void updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
 	// removeRow(...) doesn't exist to avoid row removal without reference search. Outside interface is Database::removeRow(...)

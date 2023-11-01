@@ -41,7 +41,7 @@
  * @param typesHandler	The application's ItemTypesHandler.
  * @param viewRowIndex	The view row index of the ascent to open in the viewer.
  */
-AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex) :
+AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex) :
 		QDialog(parent),
 		mainWindow(parent),
 		db(db),
@@ -200,14 +200,14 @@ void AscentViewer::setupShortcuts()
  * 
  * @param viewRowIndex	The view row index of the ascent to load.
  */
-void AscentViewer::changeToAscent(int viewRowIndex)
+void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
 	saveDescription();
 	savePhotoDescription();
 	
 	currentViewRowIndex	= viewRowIndex;
-	int bufferRowIndex	= compAscents->getBufferRowIndexForViewRow(viewRowIndex);
-	currentAscentID		= db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
+	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	currentAscentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
 	// Update main window selection
 	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
@@ -264,11 +264,11 @@ void AscentViewer::updateInfoArea()
 {
 	resetInfoLabels();
 	
-	int ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	
 	ItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(ascentBufferRowIndex);
 	if (tripID.isValid()) {
-		int tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID.forceValid());
+		BufferRowIndex tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID.forceValid());
 		tripNameLabel			->setText	(compAscents->tripColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
 		QString startDate					= compTrips->startDateColumn		->getFormattedValueAt(tripBufferRowIndex).toString();
 		QString endDate						= compTrips->endDateColumn			->getFormattedValueAt(tripBufferRowIndex).toString();
@@ -282,7 +282,7 @@ void AscentViewer::updateInfoArea()
 	
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferRowIndex);
 	if (peakID.isValid()) {
-		int peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID.forceValid());
+		BufferRowIndex peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID.forceValid());
 		peakNameLabel			->setText	(compAscents->peakColumn			->getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakHeightLabel			->setText	(compAscents->peakHeightColumn		->getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakVolcanoCheckbox		->setChecked(compAscents->volcanoColumn			->getRawValueAt(ascentBufferRowIndex).toBool());
@@ -346,37 +346,37 @@ void AscentViewer::updateInfoArea()
  */
 void AscentViewer::updateAscentNavigationTargets()
 {
-	int minViewRowIndex	= 0;
-	int maxViewRowIndex	= compAscents->rowCount() - 1;
+	ViewRowIndex minViewRowIndex	= ViewRowIndex(0);
+	ViewRowIndex maxViewRowIndex	= ViewRowIndex(compAscents->rowCount() - 1);
 	
-	firstAscentViewRowIndex		= currentViewRowIndex == minViewRowIndex ? -1 : minViewRowIndex;
-	previousAscentViewRowIndex	= currentViewRowIndex == minViewRowIndex ? -1 : (currentViewRowIndex - 1);
-	nextAscentViewRowIndex		= currentViewRowIndex == maxViewRowIndex ? -1 : (currentViewRowIndex + 1);
-	lastAscentViewRowIndex		= currentViewRowIndex == maxViewRowIndex ? -1 : maxViewRowIndex;
+	firstAscentViewRowIndex		= (currentViewRowIndex == minViewRowIndex) ? ViewRowIndex() : minViewRowIndex;
+	previousAscentViewRowIndex	= (currentViewRowIndex == minViewRowIndex) ? ViewRowIndex() : (currentViewRowIndex - 1);
+	nextAscentViewRowIndex		= (currentViewRowIndex == maxViewRowIndex) ? ViewRowIndex() : (currentViewRowIndex + 1);
+	lastAscentViewRowIndex		= (currentViewRowIndex == maxViewRowIndex) ? ViewRowIndex() : maxViewRowIndex;
 	
-	firstAscentOfPeakViewRowIndex		= -1;
-	previousAscentOfPeakViewRowIndex	= -1;
-	nextAscentOfPeakViewRowIndex		= -1;
-	lastAscentOfPeakViewRowIndex		= -1;
+	firstAscentOfPeakViewRowIndex		= ViewRowIndex();
+	previousAscentOfPeakViewRowIndex	= ViewRowIndex();
+	nextAscentOfPeakViewRowIndex		= ViewRowIndex();
+	lastAscentOfPeakViewRowIndex		= ViewRowIndex();
 	
 	currentAscentOfPeakIndex	= -1;
 	numAscentsOfPeak			= -1;
 	
-	int bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
-		QList<int> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
+		QList<BufferRowIndex> matchingBufferRowIndices = db->ascentsTable->getMatchingBufferRowIndices(db->ascentsTable->peakIDColumn, peakID.asQVariant());
 		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
-		QList<int> ascentOfPeakViewRowIndices = QList<int>();
-		for (int matchingBufferRowIndex : matchingBufferRowIndices) {
-			int matchingViewRowIndex = compAscents->findViewRowIndexForBufferRow(matchingBufferRowIndex);
-			if (matchingViewRowIndex < 0) continue;
+		QList<ViewRowIndex> ascentOfPeakViewRowIndices = QList<ViewRowIndex>();
+		for (const BufferRowIndex& matchingBufferRowIndex : matchingBufferRowIndices) {
+			ViewRowIndex matchingViewRowIndex = compAscents->findViewRowIndexForBufferRow(matchingBufferRowIndex);
+			if (matchingViewRowIndex.isInvalid()) continue;
 			ascentOfPeakViewRowIndices.append(matchingViewRowIndex);
 		}
 		assert(!ascentOfPeakViewRowIndices.isEmpty());	// The current ascent has to be in the list
 		
-		int minAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.first();
-		int maxAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.last();
+		ViewRowIndex minAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.first();
+		ViewRowIndex maxAscentOfPeakViewRowIndex	= ascentOfPeakViewRowIndices.last();
 		
 		if (currentViewRowIndex > minAscentOfPeakViewRowIndex) {
 			firstAscentOfPeakViewRowIndex		= minAscentOfPeakViewRowIndex;
@@ -399,15 +399,15 @@ void AscentViewer::updateAscentNavigationTargets()
  */
 void AscentViewer::updateAscentNavigationButtonsEnabled()
 {
-	firstAscentButton			->setEnabled(firstAscentViewRowIndex			>= 0);
-	previousAscentButton		->setEnabled(previousAscentViewRowIndex			>= 0);
-	nextAscentButton			->setEnabled(nextAscentViewRowIndex				>= 0);
-	lastAscentButton			->setEnabled(lastAscentViewRowIndex				>= 0);
+	firstAscentButton			->setEnabled(firstAscentViewRowIndex			.isValid());
+	previousAscentButton		->setEnabled(previousAscentViewRowIndex			.isValid());
+	nextAscentButton			->setEnabled(nextAscentViewRowIndex				.isValid());
+	lastAscentButton			->setEnabled(lastAscentViewRowIndex				.isValid());
 	
-	firstAscentOfPeakButton		->setEnabled(firstAscentOfPeakViewRowIndex		>= 0);
-	previousAscentOfPeakButton	->setEnabled(previousAscentOfPeakViewRowIndex	>= 0);
-	nextAscentOfPeakButton		->setEnabled(nextAscentOfPeakViewRowIndex		>= 0);
-	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		>= 0);
+	firstAscentOfPeakButton		->setEnabled(firstAscentOfPeakViewRowIndex		.isValid());
+	previousAscentOfPeakButton	->setEnabled(previousAscentOfPeakViewRowIndex	.isValid());
+	nextAscentOfPeakButton		->setEnabled(nextAscentOfPeakViewRowIndex		.isValid());
+	lastAscentOfPeakButton		->setEnabled(lastAscentOfPeakViewRowIndex		.isValid());
 }
 
 /**
@@ -417,9 +417,9 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
  */
 void AscentViewer::updateAscentNavigationNumbers()
 {
-	QString allAscentsNewText = QString::number(currentViewRowIndex + 1) + " / " + QString::number(lastAscentViewRowIndex + 1);
+	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(lastAscentViewRowIndex.get() + 1);
 	allAscentsNumberLabel->setText(allAscentsNewText);
-	allAscentsNumberLabel->setEnabled(lastAscentViewRowIndex > 0);
+	allAscentsNumberLabel->setEnabled(lastAscentViewRowIndex.get() > 0);
 	
 	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
 	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
@@ -842,7 +842,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
  */
 void AscentViewer::handle_editAscent()
 {
-	int oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	openEditAscentDialogAndStore(this, db, oldBufferRowIndex);
 	handleChangesToUnderlyingData(oldBufferRowIndex);
 }
@@ -852,9 +852,9 @@ void AscentViewer::handle_editAscent()
  */
 void AscentViewer::handle_editPeak()
 {
-	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(oldAscentBufferRowIndex).toInt();
-	int peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID);
+	BufferRowIndex peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID);
 	openEditPeakDialogAndStore(this, db, peakBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
@@ -864,9 +864,9 @@ void AscentViewer::handle_editPeak()
  */
 void AscentViewer::handle_editTrip()
 {
-	int oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID tripID = db->ascentsTable->tripIDColumn->getValueAt(oldAscentBufferRowIndex).toInt();
-	int tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
+	BufferRowIndex tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
 	openEditTripDialogAndStore(this, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
@@ -897,12 +897,12 @@ void AscentViewer::popupInfoContextMenu(QPoint pos)
  * 
  * @param currentBufferRowIndex	The buffer row index of the current ascent.
  */
-void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
+void AscentViewer::handleChangesToUnderlyingData(BufferRowIndex currentBufferRowIndex)
 {
 	// Filtering and sorting may have changed, update view row index
-	int newViewRowIndex = compAscents->findViewRowIndexForBufferRow(currentBufferRowIndex);
+	ViewRowIndex newViewRowIndex = compAscents->findViewRowIndexForBufferRow(currentBufferRowIndex);
 	
-	if (newViewRowIndex >= 0) {	// Current ascent still in table
+	if (newViewRowIndex.isValid()) {	// Current ascent still in table
 		changeToAscent(newViewRowIndex);
 		return;
 	}
@@ -919,7 +919,9 @@ void AscentViewer::handleChangesToUnderlyingData(int currentBufferRowIndex)
 	}
 	
 	newViewRowIndex = currentViewRowIndex;
-	if (newViewRowIndex >= numberOfVisibleRows) newViewRowIndex = numberOfVisibleRows - 1;
+	if (newViewRowIndex.isAboveRange(numberOfVisibleRows)) {
+		newViewRowIndex = ViewRowIndex(numberOfVisibleRows - 1);
+	}
 	changeToAscent(newViewRowIndex);
 }
 

@@ -65,9 +65,9 @@ bool AddHikerDialog::hikerSelected()
 
 void AddHikerDialog::handle_newHiker()
 {
-	int newHikerIndex = openNewHikerDialogAndStore(this, db);
-	if (newHikerIndex >= 0) {
-		hikerCombo->setCurrentIndex(newHikerIndex + 1);	// 0 is None
+	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
+	if (newHikerIndex.isValid()) {
+		hikerCombo->setCurrentIndex(newHikerIndex.get() + 1);	// 0 is None
 	}
 }
 

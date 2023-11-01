@@ -150,8 +150,8 @@ void PeakDialog::handle_heightSpecifiedChanged()
 
 void PeakDialog::handle_newRegion()
 {
-	int newRegionIndex = openNewRegionDialogAndStore(this, db);
-	if (newRegionIndex < 0) return;
+	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, db);
+	if (newRegionIndex.isInvalid()) return;
 	
 	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
 	ValidItemID regionID = db->regionsTable->getPrimaryKeyAt(newRegionIndex);
@@ -177,26 +177,26 @@ void PeakDialog::aboutToClose()
 
 
 
-static int openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak);
+static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak);
 
-int openNewPeakDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, Database* db)
 {
 	return openPeakDialogAndStore(parent, db, newItem, nullptr);
 }
 
-int openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
 	return openPeakDialogAndStore(parent, db, duplicateItem, originalPeak);
 }
 
-void openEditPeakDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
 	openPeakDialogAndStore(parent, db, editItem, originalPeak);
 }
 
-void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* peak = db->getPeakAt(bufferRowIndex);
 	ValidItemID peakID = peak->peakID.forceValid();
@@ -214,9 +214,9 @@ void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, int bufferRow
 
 
 
-static int openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak)
+static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak)
 {
-	int newPeakIndex = -1;
+	BufferRowIndex newPeakIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalPeak);
 		originalPeak->peakID = ItemID();

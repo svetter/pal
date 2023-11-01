@@ -17,6 +17,7 @@
 
 #include "column.h"
 
+#include "src/db/row_index.h"
 #include "table.h"
 #include "database.h"
 #include "src/comp_tables/composite_column.h"
@@ -71,7 +72,7 @@ int Column::getIndex() const
 
 
 
-QVariant Column::getValueAt(int bufferRowIndex) const
+QVariant Column::getValueAt(BufferRowIndex bufferRowIndex) const
 {
 	return table->getBufferRow(bufferRowIndex)->at(getIndex());
 }
@@ -84,8 +85,8 @@ QVariant Column::getValueFor(ValidItemID itemID) const
 
 bool Column::anyCellMatches(QVariant value) const
 {
-	for (int i = 0; i < table->getNumberOfRows(); i++) {
-		if (getValueAt(i) == value) return true;
+	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(table->getNumberOfRows()); index++) {
+		if (getValueAt(index) == value) return true;
 	}
 	return false;
 }

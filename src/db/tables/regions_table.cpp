@@ -37,12 +37,12 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 
 
 
-int RegionsTable::addRow(QWidget* parent, Region* region)
+BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, region);
 	
-	int newRegionIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newRegionIndex = NormalTable::addRow(parent, columns, data);
 	region->regionID = getPrimaryKeyAt(newRegionIndex);
 	return newRegionIndex;
 }

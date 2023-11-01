@@ -79,10 +79,10 @@ private:
 
 
 
-int openNewAscentDialogAndStore			(QWidget* parent, Database* db);
-int openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
-void openEditAscentDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
-void openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
+BufferRowIndex	openNewAscentDialogAndStore			(QWidget* parent, Database* db);
+BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openEditAscentDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
 QStringList openFileDialogForPhotosSelection(QWidget* parent);
 

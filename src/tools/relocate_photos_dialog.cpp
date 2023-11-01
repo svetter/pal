@@ -202,7 +202,7 @@ void RelocatePhotosDialog::handle_progressUpdate(int processed, int updated)
  * @param bufferRowIndex	The index of the photo in the photos table buffer.
  * @param newFilepath		The new filepath of the photo.
  */
-void RelocatePhotosDialog::handle_callback_updateFilepath(int bufferRowIndex, QString newFilepath)
+void RelocatePhotosDialog::handle_callback_updateFilepath(BufferRowIndex bufferRowIndex, QString newFilepath)
 {
 	return db->photosTable->updateFilepathAt(this, bufferRowIndex, newFilepath);
 }

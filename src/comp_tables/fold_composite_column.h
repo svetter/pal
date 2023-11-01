@@ -30,7 +30,7 @@ protected:
 public:
 	FoldCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
-	QSet<int> evaluateBreadcrumbTrail(int rowIndex) const;
+	QSet<BufferRowIndex> evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const;
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
@@ -48,23 +48,23 @@ class NumericFoldCompositeColumn : public FoldCompositeColumn {
 public:
 	NumericFoldCompositeColumn(CompositeTable* table, QString uiName, NumericFoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr);
 	
-	virtual QVariant computeValueAt(int rowIndex) const override;
+	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
 
 class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
 	ListStringFoldCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn);
 	
-	virtual QStringList formatAndSortIntoStringList(QSet<int>& rowIndexSet) const;
-	virtual QVariant computeValueAt(int rowIndex) const override;
+	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
+	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
 
 class HikerListCompositeColumn : public ListStringFoldCompositeColumn {
 public:
 	HikerListCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn);
 	
-	virtual QStringList formatAndSortIntoStringList(QSet<int>& rowIndexSet) const override;
-	virtual QVariant computeValueAt(int rowIndex) const override;
+	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
+	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
 
 

@@ -55,12 +55,12 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDCo
 
 
 
-int AscentsTable::addRow(QWidget* parent, Ascent* ascent)
+BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
 	
-	int newAscentIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newAscentIndex = NormalTable::addRow(parent, columns, data);
 	ascent->ascentID = getPrimaryKeyAt(newAscentIndex);
 	return newAscentIndex;
 }

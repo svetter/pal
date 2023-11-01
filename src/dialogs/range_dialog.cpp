@@ -122,20 +122,20 @@ void RangeDialog::aboutToClose()
 
 
 
-static int openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange);
+static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange);
 
-int openNewRangeDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, Database* db)
 {
 	return openRangeDialogAndStore(parent, db, newItem, nullptr);
 }
 
-void openEditRangeDialogAndStore(QWidget* parent, Database* db, int bufferRowIndex)
+void openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Range* originalRange = db->getRangeAt(bufferRowIndex);
 	openRangeDialogAndStore(parent, db, editItem, originalRange);
 }
 
-void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex)
+void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Range* range = db->getRangeAt(bufferRowIndex);
 	ValidItemID rangeID = range->rangeID.forceValid();
@@ -153,9 +153,9 @@ void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, int bufferRo
 
 
 
-static int openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange)
+static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange)
 {
-	int newRangeIndex = -1;
+	BufferRowIndex newRangeIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRange);
 		originalRange->rangeID = ItemID();

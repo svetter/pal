@@ -33,7 +33,7 @@ public:
 	
 	HikersTable();
 	
-	int addRow(QWidget* parent, Hiker* hiker);
+	BufferRowIndex addRow(QWidget* parent, Hiker* hiker);
 	void updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Hiker* hiker) const;

@@ -33,12 +33,12 @@ CountriesTable::CountriesTable() :
 
 
 
-int CountriesTable::addRow(QWidget* parent, Country* country)
+BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, country);
 	
-	int newCountryIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newCountryIndex = NormalTable::addRow(parent, columns, data);
 	country->countryID = getPrimaryKeyAt(newCountryIndex);
 	return newCountryIndex;
 }

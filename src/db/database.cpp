@@ -227,7 +227,7 @@ Country* Database::getCountry(ValidItemID countryID) const
 
 
 
-Ascent* Database::getAscentAt(int rowIndex) const
+Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -254,7 +254,7 @@ Ascent* Database::getAscentAt(int rowIndex) const
 	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
-Peak* Database::getPeakAt(int rowIndex) const
+Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -273,7 +273,7 @@ Peak* Database::getPeakAt(int rowIndex) const
 	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
-Trip* Database::getTripAt(int rowIndex) const
+Trip* Database::getTripAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -289,7 +289,7 @@ Trip* Database::getTripAt(int rowIndex) const
 	return new Trip(tripID, name, startDate, endDate, description);
 }
 
-Hiker* Database::getHikerAt(int rowIndex) const
+Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -302,7 +302,7 @@ Hiker* Database::getHikerAt(int rowIndex) const
 	return new Hiker(hikerID, name);
 }
 
-Region* Database::getRegionAt(int rowIndex) const
+Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -317,7 +317,7 @@ Region* Database::getRegionAt(int rowIndex) const
 	return new Region(regionID, name, rangeID, countryID);
 }
 
-Range* Database::getRangeAt(int rowIndex) const
+Range* Database::getRangeAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -331,7 +331,7 @@ Range* Database::getRangeAt(int rowIndex) const
 	return new Range(rangeID, name, continent);
 }
 
-Country* Database::getCountryAt(int rowIndex) const
+Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -397,14 +397,14 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 		else {
 			NormalTable* candidateNormalTable = (NormalTable*) candidateTable;
 			
-			QSet<int> affectedRowIndices = QSet<int>();
-			QList<QPair<const Column*, QList<int>>> affectedCells = QList<QPair<const Column*, QList<int>>>();
+			QSet<BufferRowIndex> affectedRowIndices = QSet<BufferRowIndex>();
+			QList<QPair<const Column*, QList<BufferRowIndex>>> affectedCells = QList<QPair<const Column*, QList<BufferRowIndex>>>();
 			
 			for (const Column* otherTableColumn : candidateNormalTable->getColumnList()) {
 				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
 				
-				QList<int> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey.get());
-				QSet<int> rowIndexSet = QSet<int>(rowIndexList.constBegin(), rowIndexList.constEnd());
+				QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(otherTableColumn, primaryKey.get());
+				QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
 				
 				affectedRowIndices.unite(rowIndexSet);
 				affectedCells.append({ otherTableColumn, rowIndexList });
@@ -418,13 +418,13 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			}
 			// EXECUTE
 			else {
-				for (const QPair<const Column*, QList<int>>& pair : affectedCells) {
+				for (const QPair<const Column*, QList<BufferRowIndex>>& pair : affectedCells) {
 					const Column* affectedColumn = pair.first;
-					QList<int> rowIndices = pair.second;
+					QList<BufferRowIndex> rowIndices = pair.second;
 					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
 					const Column* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
 					
-					for (int rowIndex : rowIndices) {
+					for (const BufferRowIndex& rowIndex : rowIndices) {
 						ValidItemID primaryKey = affectedPrimaryKeyColumn->getValueAt(rowIndex);
 						// Remove single instance of reference to the key about to be removed
 						candidateNormalTable->updateCell(parent, primaryKey, affectedColumn, ItemID().asQVariant());

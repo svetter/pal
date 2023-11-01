@@ -50,27 +50,27 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	CompositeTripsTable* const compTrips;
 	
 	/** The current view row index. */
-	int currentViewRowIndex;
+	ViewRowIndex currentViewRowIndex;
 	/** The ID of the currently displayed ascent, or an invalid ID if no ascent is displayed. */
 	ItemID currentAscentID;
-	
+
 	/** The view row index of the first ascent in the composite ascents table. */
-	int firstAscentViewRowIndex;
+	ViewRowIndex    firstAscentViewRowIndex;
 	/** The view row index of the ascent before the current one in the composite ascents table. */
-	int previousAscentViewRowIndex;
+	ViewRowIndex previousAscentViewRowIndex;
 	/** The view row index of the ascent after the current one in the composite ascents table. */
-	int nextAscentViewRowIndex;
+	ViewRowIndex     nextAscentViewRowIndex;
 	/** The view row index of the last ascent in the composite ascents table. */
-	int lastAscentViewRowIndex;
-	
+	ViewRowIndex     lastAscentViewRowIndex;
+
 	/** The view row index of the first ascent of the current ascent's peak in the composite ascents table. */
-	int firstAscentOfPeakViewRowIndex;
+	ViewRowIndex    firstAscentOfPeakViewRowIndex;
 	/** The view row index of the ascent before the current one of the current ascent's peak in the composite ascents table. */
-	int previousAscentOfPeakViewRowIndex;
+	ViewRowIndex previousAscentOfPeakViewRowIndex;
 	/** The view row index of the ascent after the current one of the current ascent's peak in the composite ascents table. */
-	int nextAscentOfPeakViewRowIndex;
+	ViewRowIndex     nextAscentOfPeakViewRowIndex;
 	/** The view row index of the last ascent of the current ascent's peak in the composite ascents table. */
-	int lastAscentOfPeakViewRowIndex;
+	ViewRowIndex     lastAscentOfPeakViewRowIndex;
 	
 	/** Indicates that the current ascent is the n-th ascent of its peak. */
 	int currentAscentOfPeakIndex;
@@ -102,7 +102,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	QAction* editTripAction;
 	
 public:
-	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, int viewRowIndex);
+	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
 	
 private:
@@ -113,7 +113,7 @@ private:
 	void setupShortcuts();
 	
 	// Ascent change
-	void changeToAscent(int viewRowIndex);
+	void changeToAscent(ViewRowIndex viewRowIndex);
 	void resetInfoLabels();
 	void updateInfoArea();
 	void updateAscentNavigationTargets();
@@ -170,7 +170,7 @@ private slots:
 private:
 	// Helpers
 	void popupInfoContextMenu(QPoint pos);
-	void handleChangesToUnderlyingData(int currentBufferRowIndex);
+	void handleChangesToUnderlyingData(BufferRowIndex currentBufferRowIndex);
 	
 	// Exit behaviour
 	void reject() override;

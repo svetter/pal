@@ -34,7 +34,7 @@ public:
 	
 	RangesTable();
 	
-	int addRow(QWidget* parent, Range* range);
+	BufferRowIndex addRow(QWidget* parent, Range* range);
 	void updateRow(QWidget* parent, ValidItemID rangeID, const Range* range);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Range* range) const;

@@ -29,13 +29,12 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
 		name(name),
 		uiName(uiName),
 		isAssociative(isAssociative),
-		buffer(QList<QList<QVariant>*>())
+		buffer(TableBuffer())
 {}
 
 Table::~Table()
 {
 	qDeleteAll(columns);
-	qDeleteAll(buffer);
 }
 
 
@@ -115,37 +114,36 @@ void Table::initBuffer(QWidget* parent, bool expectEmpty)
 {
 	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent, expectEmpty);
 	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
-	buffer.clear();
+	buffer.reset();
 	for (QList<QVariant>* newRow : newContents) {
-		buffer.append(newRow);
+		buffer.appendRow(newRow);
 	}
 	endInsertRows();
 }
 
 void Table::resetBuffer()
 {
-	beginRemoveRows(getNormalRootModelIndex(), 0, buffer.size() - 1);
-	qDeleteAll(buffer);
-	buffer.clear();
+	beginRemoveRows(getNormalRootModelIndex(), 0, buffer.numRows() - 1);
+	buffer.reset();
 	endRemoveRows();
 }
 
 int Table::getNumberOfRows() const
 {
-	return buffer.size();
+	return buffer.numRows();
 }
 
-const QList<QVariant>* Table::getBufferRow(int rowIndex) const
+const QList<QVariant>* Table::getBufferRow(BufferRowIndex bufferRowIndex) const
 {
-	return buffer.at(rowIndex);
+	return buffer.getRow(bufferRowIndex);
 }
 
-QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
+QList<BufferRowIndex> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
 {
 	assert(getColumnList().contains(column));
 	
-	QList<int> result = QList<int>();
-	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
+	QList<BufferRowIndex> result = QList<BufferRowIndex>();
+	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(buffer.numRows()); rowIndex++) {
 		if (column->getValueAt(rowIndex) == content) {
 			result.append(rowIndex);
 		}
@@ -153,24 +151,24 @@ QList<int> Table::getMatchingBufferRowIndices(const Column* column, const QVaria
 	return result;
 }
 
-int Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const
+BufferRowIndex Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const
 {
 	int numPrimaryKeys = getPrimaryKeyColumnList().size();
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
 	assert(primaryKeys.size() == numPrimaryKeys);
 	
-	for (int rowIndex = 0; rowIndex < buffer.size(); rowIndex++) {
+	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(buffer.numRows()); bufferRowIndex++) {
 		bool match = true;
 		for (int i = 0; i < numPrimaryKeys; i++) {
-			if (primaryKeyColumns.at(i)->getValueAt(rowIndex) != primaryKeys.at(i).get()) {
+			if (primaryKeyColumns.at(i)->getValueAt(bufferRowIndex) != primaryKeys.at(i).get()) {
 				match = false;
 				break;
 			}
 		}
-		if (match) return rowIndex;
+		if (match) return bufferRowIndex;
 	}
 	assert(false);
-	return -1;
+	return BufferRowIndex();
 }
 
 
@@ -182,7 +180,7 @@ void Table::printBuffer() const
 		header.append(column->name + "  ");
 	}
 	qDebug() << header;
-	for (QList<QVariant>* bufferRow : buffer) {
+	for (const QList<QVariant>* bufferRow : buffer) {
 		QString rowString = "";
 		for (int columnIndex = 0; columnIndex < getNumberOfColumns(); columnIndex++) {
 			rowString.append(bufferRow->at(columnIndex).toString()).append("        ");
@@ -216,24 +214,24 @@ void Table::notifyAllColumns()
 
 // MODIFICATIONS
 
-int Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+BufferRowIndex Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {	
 	assert(columns.size() == data.size());
 	
 	// Announce row insertion
-	int newItemBufferRowIndex = buffer.size();
-	beginInsertRows(getNormalRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
-	beginInsertRows(getNullableRootModelIndex(), newItemBufferRowIndex, newItemBufferRowIndex);
+	BufferRowIndex newItemBufferRowIndex = BufferRowIndex(buffer.numRows());
+	beginInsertRows(getNormalRootModelIndex(),		newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
+	beginInsertRows(getNullableRootModelIndex(),	newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
 	
 	// Add data to SQL database
-	int newRowID = addRowToSql(parent, columns, data);
+	ItemID newRowID = addRowToSql(parent, columns, data);
 	
 	// Update buffer
 	QList<QVariant>* newBufferRow = new QList<QVariant>(data);
 	if (!isAssociative) {
-		newBufferRow->insert(0, newRowID);
+		newBufferRow->insert(0, newRowID.asQVariant());
 	}
-	buffer.append(newBufferRow);
+	buffer.appendRow(newBufferRow);
 	
 	// Announce end of row insertion
 	endInsertRows();
@@ -256,12 +254,12 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	updateCellInSql(parent, primaryKey, column, data);
 	
 	// Update buffer
-	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	buffer.at(bufferRowIndex)->replace(column->getIndex(), data);
+	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	buffer.replaceCell(bufferRowIndex, column->getIndex(), data);
 	
 	// Announce changed data
-	QModelIndex updateIndexNormal	= index(bufferRowIndex, column->getIndex(), getNormalRootModelIndex());
-	QModelIndex updateIndexNullable	= index(bufferRowIndex, column->getIndex(), getNullableRootModelIndex());
+	QModelIndex updateIndexNormal	= index(bufferRowIndex.get(), column->getIndex(), getNormalRootModelIndex());
+	QModelIndex updateIndexNullable	= index(bufferRowIndex.get(), column->getIndex(), getNullableRootModelIndex());
 	const QList<int> updatedDatumRoles = { column->type == Bit ? Qt::CheckStateRole : Qt::DisplayRole };
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
@@ -282,14 +280,14 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	updateRowInSql(parent, primaryKey, columns, data);
 	
 	// Update buffer
-	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
 	for (int i = 0; i < columns.size(); i++) {
-		buffer.at(bufferRowIndex)->replace(columns.at(i)->getIndex(), data.at(i));
+		buffer.replaceCell(bufferRowIndex, columns.at(i)->getIndex(), data.at(i));
 	}
 	
 	// Announce changed data
-	QModelIndex updateIndexLeft = index(bufferRowIndex, 0, getNormalRootModelIndex());
-	QModelIndex updateIndexRight = index(bufferRowIndex, getNumberOfColumns(), getNormalRootModelIndex());
+	QModelIndex updateIndexLeft		= index(bufferRowIndex.get(), 0, getNormalRootModelIndex());
+	QModelIndex updateIndexRight	= index(bufferRowIndex.get(), getNumberOfColumns(), getNormalRootModelIndex());
 	const QList<int> updatedDatumRoles = { Qt::CheckStateRole, Qt::DisplayRole };
 	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, updatedDatumRoles);
 	// Whole row was updated, all columns affected => Notify all column-attached change listeners
@@ -302,20 +300,18 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
 	assert(primaryKeys.size() == numPrimaryKeys);
 	
-	int bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, primaryKeys);
-	assert(bufferRowIndex >= 0);
+	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, primaryKeys);
+	assert(bufferRowIndex.isValid());
 	
 	// Announce row removal
-	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
+	beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex.get(), bufferRowIndex.get());
 	if (rowChangeListener) rowChangeListener->bufferRowAboutToBeRemoved(bufferRowIndex);
 	
 	// Remove row from SQL database
 	removeRowFromSql(parent, primaryKeyColumns, primaryKeys);
 	
 	// Update buffer
-	const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
-	buffer.remove(bufferRowIndex);
-	delete rowToRemove;
+	buffer.removeRow(bufferRowIndex);
 	
 	// Announce end of row removal
 	endRemoveRows();
@@ -332,19 +328,17 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 	removeMatchingRowsFromSql(parent, column, key);
 	
 	// Update buffer
-	QList<int> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
 	if (bufferRowIndices.isEmpty()) return;
 	
 	auto iter = bufferRowIndices.constEnd();
 	while (iter-- != bufferRowIndices.constBegin()) {
 		// Announce row removal
-		int bufferRowIndex = *iter;
-		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex, bufferRowIndex);
+		BufferRowIndex bufferRowIndex = *iter;
+		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex.get(), bufferRowIndex.get());
 		if (rowChangeListener) rowChangeListener->bufferRowAboutToBeRemoved(bufferRowIndex);
 		
-		const QList<QVariant>* rowToRemove = getBufferRow(bufferRowIndex);
-		buffer.remove(bufferRowIndex);
-		delete rowToRemove;
+		buffer.removeRow(bufferRowIndex);
 		
 		// Announce end of row removal
 		endRemoveRows();
@@ -558,7 +552,7 @@ QModelIndex Table::parent(const QModelIndex& index) const
 int Table::rowCount(const QModelIndex& parent) const
 {
 	if (!parent.isValid()) return 2;
-	int numberActualRows = buffer.size();
+	int numberActualRows = buffer.numRows();
 	if (parent.row() == 0) {
 		return numberActualRows;
 	} else {

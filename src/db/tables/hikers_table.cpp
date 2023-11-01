@@ -33,12 +33,12 @@ HikersTable::HikersTable() :
 
 
 
-int HikersTable::addRow(QWidget* parent, Hiker* hiker)
+BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker* hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, hiker);
 	
-	int newHikerIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newHikerIndex = NormalTable::addRow(parent, columns, data);
 	hiker->hikerID = getPrimaryKeyAt(newHikerIndex);
 	return newHikerIndex;
 }

@@ -42,10 +42,10 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
 
 QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
-	QList<int> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ascentID.get());
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ascentID.get());
 	
 	QMap<int, Photo> photosMap = QMap<int, Photo>();
-	for (int bufferRowIndex : bufferRowIndices) {
+	for (BufferRowIndex& bufferRowIndex : bufferRowIndices) {
 		int sortIndex		= sortIndexColumn	->getValueAt(bufferRowIndex).toInt();
 		QString filepath	= filepathColumn	->getValueAt(bufferRowIndex).toString();
 		QString description	= descriptionColumn	->getValueAt(bufferRowIndex).toString();
@@ -87,7 +87,7 @@ void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 	return updateRows(parent, ascent->ascentID.forceValid(), ascent->photos);
 }
 
-void PhotosTable::updateFilepathAt(QWidget* parent, int bufferRowIndex, QString newFilepath)
+void PhotosTable::updateFilepathAt(QWidget* parent, BufferRowIndex bufferRowIndex, QString newFilepath)
 {
 	ValidItemID primaryKey = getPrimaryKeyAt(bufferRowIndex);
 	updateCellInNormalTable(parent, primaryKey, filepathColumn, newFilepath);

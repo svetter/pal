@@ -80,7 +80,7 @@ signals:
 	 * @param bufferRowIndex	The row index of the photo in the buffer.
 	 * @param newFilepath		The new filepath for the photo.
 	 */
-	void callback_updateFilepathAt(int bufferRowIndex, QString newFilepath);
+	void callback_updateFilepathAt(BufferRowIndex bufferRowIndex, QString newFilepath);
 };
 
 

@@ -35,12 +35,12 @@ RangesTable::RangesTable() :
 
 
 
-int RangesTable::addRow(QWidget* parent, Range* range)
+BufferRowIndex RangesTable::addRow(QWidget* parent, Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, range);
 	
-	int newRangeIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newRangeIndex = NormalTable::addRow(parent, columns, data);
 	range->rangeID = getPrimaryKeyAt(newRangeIndex);
 	return newRangeIndex;
 }

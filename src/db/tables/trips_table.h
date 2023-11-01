@@ -36,7 +36,7 @@ public:
 	
 	TripsTable();
 	
-	int addRow(QWidget* parent, Trip* trip);
+	BufferRowIndex addRow(QWidget* parent, Trip* trip);
 	void updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const;

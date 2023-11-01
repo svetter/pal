@@ -19,6 +19,7 @@
 #define COMPOSITE_TABLE_H
 
 #include "composite_column.h"
+#include "src/db/row_index.h"
 #include "src/db/database.h"
 
 #include <QAbstractTableModel>
@@ -35,8 +36,8 @@ class CompositeTable : public QAbstractTableModel {
 	QList<const CompositeColumn*> columns;
 	int firstHiddenColumnIndex;
 	
-	QList<QList<QVariant>*> buffer;
-	QList<int> bufferOrder;
+	TableBuffer buffer;
+	ViewOrderBuffer viewOrder;
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
 	QSet<Filter> currentFilters;
 	
@@ -68,11 +69,11 @@ public:
 	int getNumberOfCellsToUpdate() const;
 	void updateBuffer(QProgressDialog* progressDialog);
 	void resetBuffer();
-	int getBufferRowIndexForViewRow(int viewRowIndex) const;
-	int findViewRowIndexForBufferRow(int bufferRowIndex) const;
+	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
+	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;
 	
-	QVariant getRawValue(int bufferRowIndex, const CompositeColumn* column) const;
-	QVariant getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const;
+	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const;
+	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const;
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
@@ -86,8 +87,8 @@ public:
 public:
 	// Change annunciation
 	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
-	void bufferRowJustInserted(int bufferRowIndex);
-	void bufferRowAboutToBeRemoved(int bufferRowIndex);
+	void bufferRowJustInserted(BufferRowIndex bufferRowIndex);
+	void bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex);
 	void announceChangesUnderColumn(int columnIndex);
 	
 	// QAbstractTableModel implementation
@@ -99,7 +100,7 @@ public:
 private:
 	void performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse);
 	
-	QVariant computeCellContent(int bufferRowIndex, int columnIndex) const;
+	QVariant computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const;
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
 public:

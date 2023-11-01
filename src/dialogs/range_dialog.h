@@ -52,9 +52,9 @@ private:
 
 
 
-int openNewRangeDialogAndStore		(QWidget* parent, Database* db);
-void openEditRangeDialogAndStore	(QWidget* parent, Database* db, int bufferRowIndex);
-void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, int bufferRowIndex);
+BufferRowIndex	openNewRangeDialogAndStore		(QWidget* parent, Database* db);
+void			openEditRangeDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteRangeDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
 
 

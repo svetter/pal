@@ -51,9 +51,9 @@ private:
 
 
 
-int openNewCountryDialogAndStore		(QWidget* parent, Database* db);
-void openEditCountryDialogAndStore		(QWidget* parent, Database* db, int bufferRowIndex);
-void openDeleteCountryDialogAndExecute	(QWidget* parent, Database* db, int bufferRowIndex);
+BufferRowIndex	openNewCountryDialogAndStore		(QWidget* parent, Database* db);
+void			openEditCountryDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteCountryDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
 
 

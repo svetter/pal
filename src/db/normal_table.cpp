@@ -35,21 +35,19 @@ NormalTable::~NormalTable()
 
 // BUFFER ACCESS
 
-int NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
+BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
-	int index = 0;
-	for (auto iter = buffer.constBegin(); iter != buffer.constEnd(); iter++) {
-		if ((*iter)->at(0) == primaryKey.get()) return index;
+	BufferRowIndex index = BufferRowIndex(0);
+	for (const QList<QVariant>* const bufferRow : buffer) {
+		if (bufferRow->at(0) == primaryKey.get()) return index;
 		index++;
 	}
-	return -1;
+	return BufferRowIndex();
 }
 
-ValidItemID NormalTable::getPrimaryKeyAt(int bufferRowIndex) const
+ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
 {
-	assert(bufferRowIndex < buffer.size());
-	assert(primaryKeyColumn->getIndex() < buffer.at(bufferRowIndex)->size());
-	return buffer.at(bufferRowIndex)->at(primaryKeyColumn->getIndex());
+	return buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex());
 }
 
 QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column) const
@@ -67,7 +65,7 @@ QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column
 
 // MODIFICATIONS (PASSTHROUGH)
 
-int NormalTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+BufferRowIndex NormalTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	return Table::addRow(parent, columns, data);
 }
@@ -91,17 +89,17 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 	for (QModelRoleData& roleData : roleDataSpan) {
 		int role = roleData.role();
 		
-		int rowIndex;
+		BufferRowIndex rowIndex;
 		if (index.parent().row() == 0) {
-			rowIndex = index.row();
+			rowIndex = BufferRowIndex(index.row());
 		} else {
-			rowIndex = index.row() - 1;
+			rowIndex = BufferRowIndex(index.row() - 1);
 		}
 		int columnIndex = index.column();
 		
 		if (role == PrimaryKeyRole) {
-			if (rowIndex >= 0) {
-				roleData.setData(buffer.at(rowIndex)->at(primaryKeyColumn->getIndex()));
+			if (rowIndex.isValid()) {
+				roleData.setData(buffer.getCell(rowIndex, primaryKeyColumn->getIndex()));
 			} else {
 				roleData.setData(-1);
 			}
@@ -109,7 +107,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		}
 		const Column* column = getColumnByIndex(columnIndex);
 		
-		QVariant bufferValue = (rowIndex < 0) ? QVariant() : buffer.at(rowIndex)->at(columnIndex);
+		QVariant bufferValue = rowIndex.isInvalid() ? QVariant() : buffer.getCell(rowIndex, columnIndex);
 		QVariant result = QVariant();
 		
 		switch (column->type) {

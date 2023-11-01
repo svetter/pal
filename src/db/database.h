@@ -84,13 +84,13 @@ public:
 	Range*		getRange	(ValidItemID rangeID)	const;
 	Country*	getCountry	(ValidItemID countryID)	const;
 	
-	Ascent*		getAscentAt		(int rowIndex) const;
-	Peak*		getPeakAt		(int rowIndex) const;
-	Trip*		getTripAt		(int rowIndex) const;
-	Hiker*		getHikerAt		(int rowIndex) const;
-	Region*		getRegionAt		(int rowIndex) const;
-	Range*		getRangeAt		(int rowIndex) const;
-	Country*	getCountryAt	(int rowIndex) const;
+	Ascent*		getAscentAt		(BufferRowIndex rowIndex) const;
+	Peak*		getPeakAt		(BufferRowIndex rowIndex) const;
+	Trip*		getTripAt		(BufferRowIndex rowIndex) const;
+	Hiker*		getHikerAt		(BufferRowIndex rowIndex) const;
+	Region*		getRegionAt		(BufferRowIndex rowIndex) const;
+	Range*		getRangeAt		(BufferRowIndex rowIndex) const;
+	Country*	getCountryAt	(BufferRowIndex rowIndex) const;
 	
 	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, ValidItemID primaryKey);
 	void removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey);

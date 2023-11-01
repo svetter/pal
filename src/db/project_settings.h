@@ -46,8 +46,8 @@ public:
 	
 	inline bool isNotNull(int rowIndex = 0) const
 	{
-		assert(rowIndex >= 0 && rowIndex < 2);
-		QVariant value = getValueAt(rowIndex);
+		assert(rowIndex < 2);
+		QVariant value = getValueAt(BufferRowIndex(rowIndex));
 		return value.isValid() && !value.isNull();
 	}
 	inline bool secondIsNotNull() const
@@ -57,8 +57,8 @@ public:
 	
 	inline T get(int rowIndex = 0) const
 	{
-		assert(rowIndex >= 0 && rowIndex < 2);
-		return getValueAt(rowIndex).template value<T>();
+		assert(rowIndex < 2);
+		return getValueAt(BufferRowIndex(rowIndex)).template value<T>();
 	}
 	inline T getSecond() const
 	{

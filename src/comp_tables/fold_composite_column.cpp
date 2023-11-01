@@ -32,9 +32,9 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, 
 
 
 
-QSet<int> FoldCompositeColumn::evaluateBreadcrumbTrail(int rowIndex) const
+QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const
 {
-	QSet<int> currentRowIndexSet = { rowIndex };
+	QSet<BufferRowIndex> currentRowIndexSet = { initialBufferRowIndex };
 	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
 	
 	for (int round = 0; round < breadcrumbs.size(); round++) {
@@ -48,8 +48,8 @@ QSet<int> FoldCompositeColumn::evaluateBreadcrumbTrail(int rowIndex) const
 		
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
-		for (int rowIndex : currentRowIndexSet) {
-			ItemID key = firstColumn->getValueAt(rowIndex);
+		for (const BufferRowIndex& bufferRowIndex : currentRowIndexSet) {
+			ItemID key = firstColumn->getValueAt(bufferRowIndex);
 			if (key.isValid()) currentKeySet.insert(key.forceValid());
 		}
 		
@@ -64,8 +64,8 @@ QSet<int> FoldCompositeColumn::evaluateBreadcrumbTrail(int rowIndex) const
 			
 			// Find row matching each primary key
 			for (ValidItemID key : currentKeySet) {
-				int rowIndex = currentTable->getMatchingBufferRowIndex({ secondColumn }, { key });
-				currentRowIndexSet.insert(rowIndex);
+				BufferRowIndex bufferRowIndex = currentTable->getMatchingBufferRowIndex({ secondColumn }, { key });
+				currentRowIndexSet.insert(bufferRowIndex);
 			}
 		}
 		else if (secondColumn->isForeignKey()) {
@@ -75,15 +75,15 @@ QSet<int> FoldCompositeColumn::evaluateBreadcrumbTrail(int rowIndex) const
 			
 			// Find rows in new currentTable where key in secondColumn matches any key in current set
 			for (ValidItemID key : currentKeySet) {
-				const QList<int> indexList = currentTable->getMatchingBufferRowIndices(secondColumn, key.asQVariant());
-				const QSet<int> matchingBufferRowIndices = QSet<int>(indexList.constBegin(), indexList.constEnd());
+				const QList<BufferRowIndex> bufferRowIndexList = currentTable->getMatchingBufferRowIndices(secondColumn, key.asQVariant());
+				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				currentRowIndexSet.unite(matchingBufferRowIndices);
 			}
 		}
 		else assert(false);
 		
 		if (currentRowIndexSet.isEmpty()) {
-			return QSet<int>();
+			return QSet<BufferRowIndex>();
 		}
 	}
 	
@@ -114,9 +114,9 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QS
 	assert((op == CountFold) == (contentColumn == nullptr));
 }
 
-QVariant NumericFoldCompositeColumn::computeValueAt(int rowIndex) const
+QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
 	
 	// Shortcuts for empty set
 	if (rowIndexSet.isEmpty()) {
@@ -140,7 +140,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(int rowIndex) const
 	}
 	if (op == IDListFold) {
 		QList<QVariant> list = QList<QVariant>();
-		for (int rowIndex : rowIndexSet) {
+		for (const BufferRowIndex& rowIndex : rowIndexSet) {
 			list.append(contentColumn->getValueAt(rowIndex));
 		}
 		return list;
@@ -150,7 +150,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(int rowIndex) const
 	
 	int aggregate = 0;
 	
-	for (int rowIndex : rowIndexSet) {
+	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		
 		switch (op) {
@@ -187,11 +187,11 @@ ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* tab
 		FoldCompositeColumn(table, uiName, Qt::AlignLeft, String, QString(), breadcrumbs, contentColumn)
 {}
 
-QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<int>& rowIndexSet) const
+QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
 	QStringList stringList;
 	
-	for (int rowIndex : rowIndexSet) {
+	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		assert(content.canConvert<QString>());
 		content = replaceEnumIfApplicable(content);
@@ -201,9 +201,9 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<int>
 	return stringList;
 }
 
-QVariant ListStringFoldCompositeColumn::computeValueAt(int rowIndex) const
+QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	
@@ -224,7 +224,7 @@ HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QStrin
 		ListStringFoldCompositeColumn(table, uiName, breadcrumbs, contentColumn)
 {}
 
-QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<int>& rowIndexSet) const
+QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
 	QStringList stringList;
 	
@@ -233,7 +233,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<int>& row
 	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
-	int defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
+	BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
 	if (defaultHiker->isNotNull() && rowIndexSet.contains(defaultHikerRowIndex)) {
 		QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
 		assert(content.canConvert<QString>());
@@ -242,7 +242,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<int>& row
 		rowIndexSet.remove(defaultHikerRowIndex);
 	}
 	
-	for (int rowIndex : rowIndexSet) {
+	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		assert(content.canConvert<QString>());
 		stringList.append(content.toString());
@@ -256,9 +256,9 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<int>& row
 	return stringList;
 }
 
-QVariant HikerListCompositeColumn::computeValueAt(int rowIndex) const
+QVariant HikerListCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<int> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	

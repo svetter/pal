@@ -26,8 +26,8 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 		tableView(tableView),
 		columns(QList<const CompositeColumn*>()),
 		firstHiddenColumnIndex(-1),
-		buffer(QList<QList<QVariant>*>()),
-		bufferOrder(QList<int>()),
+		buffer(TableBuffer()),
+		viewOrder(ViewOrderBuffer()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
 		currentFilters(QSet<Filter>()),
 		columnsToUpdate(QSet<const CompositeColumn*>()),
@@ -87,12 +87,12 @@ int CompositeTable::getNumberOfCellsToInit() const
 
 void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompute, QTableView* autoResizeAfterCompute)
 {
-	assert(buffer.isEmpty() && bufferOrder.isEmpty());
+	assert(buffer.isEmpty() && viewOrder.isEmpty());
 	
 	int numberOfRows = baseTable->getNumberOfRows();
 	
 	// Initialize cells and compute their contents for most columns
-	for (int bufferRowIndex = 0; bufferRowIndex < numberOfRows; bufferRowIndex++) {
+	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(numberOfRows); bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 			bool computeWholeColumn = getColumnAt(columnIndex)->cellsAreInterdependent;
@@ -104,7 +104,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 			
 			if (progressDialog && !computeWholeColumn) progressDialog->setValue(progressDialog->value() + 1);
 		}
-		buffer.append(newRow);
+		buffer.appendRow(newRow);
 	}
 	
 	// For columns which have to be computed as a whole, do that now
@@ -113,8 +113,8 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 		if (!computeWholeColumn) continue;
 		
 		QList<QVariant> cells = computeWholeColumnContent(columnIndex);
-		for (int bufferRowIndex = 0; bufferRowIndex < baseTable->getNumberOfRows(); bufferRowIndex++) {
-			buffer.at(bufferRowIndex)->replace(columnIndex, cells.at(bufferRowIndex));
+		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
+			buffer.replaceCell(bufferRowIndex, columnIndex, cells.at(bufferRowIndex.get()));
 			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
 	}
@@ -136,15 +136,15 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	
 	// Fill order buffer
 	if (!skipRepopulate) {
-		bufferOrder.clear();
-		for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
-			bufferOrder.append(bufferRowIndex);
+		viewOrder.clear();
+		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(buffer.numRows()); bufferRowIndex++) {
+			viewOrder.append(bufferRowIndex);
 		}
 	}
 	
 	// Filter order buffer
 	for (const Filter& filter : qAsConst(currentFilters)) {
-		filter.column->applySingleFilter(filter, bufferOrder);
+		filter.column->applySingleFilter(filter, viewOrder);
 	}
 	
 	// Sort order buffer
@@ -155,7 +155,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 
 int CompositeTable::getNumberOfCellsToUpdate() const
 {
-	return columnsToUpdate.size() * buffer.size();
+	return columnsToUpdate.size() * buffer.numRows();
 }
 
 void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
@@ -166,23 +166,23 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 		int columnIndex = column->getIndex();
 		bool computeWholeColumn = column->cellsAreInterdependent;
 		if (!computeWholeColumn) {
-			for (int bufferRowIndex = 0; bufferRowIndex < buffer.size(); bufferRowIndex++) {
+			for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(buffer.numRows()); bufferRowIndex++) {
 				QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
-				buffer.at(bufferRowIndex)->replace(columnIndex, newContent);
+				buffer.replaceCell(bufferRowIndex, columnIndex, newContent);
 				
 				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 			}
 		}
 		else {
 			QList<QVariant> cells = computeWholeColumnContent(columnIndex);
-			for (int bufferRowIndex = 0; bufferRowIndex < baseTable->getNumberOfRows(); bufferRowIndex++) {
-				buffer.at(bufferRowIndex)->replace(columnIndex, cells.at(bufferRowIndex));
+			for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
+				buffer.replaceCell(bufferRowIndex, columnIndex, cells.at(bufferRowIndex.get()));
 				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 			}
 		}
 		
 		QModelIndex topLeftIndex		= index(0, columnIndex);
-		QModelIndex bottomRightIndex	= index(bufferOrder.size(), columnIndex);
+		QModelIndex bottomRightIndex	= index(viewOrder.numRows(), columnIndex);
 		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	}
 	
@@ -199,36 +199,34 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 void CompositeTable::resetBuffer()
 {
 	beginResetModel();
-	bufferOrder.clear();
+	viewOrder.clear();
 	endResetModel();
 	
-	qDeleteAll(buffer);
-	buffer.clear();
+	buffer.reset();
 }
 
-int CompositeTable::getBufferRowIndexForViewRow(int viewRowIndex) const
+BufferRowIndex CompositeTable::getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const
 {
-	if (viewRowIndex < 0 || viewRowIndex >= bufferOrder.size()) return -1;
-	return bufferOrder.at(viewRowIndex);
+	return viewOrder.getBufferRowIndexForViewRow(viewRowIndex);
 }
 
-int CompositeTable::findViewRowIndexForBufferRow(int bufferRowIndex) const
+ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const
 {
-	if (bufferRowIndex < 0 || bufferRowIndex >= buffer.size()) return -1;
-	return bufferOrder.indexOf(bufferRowIndex);
+	if (bufferRowIndex.isInvalid(buffer.numRows())) return ViewRowIndex();
+	return viewOrder.findViewRowIndexForBufferRow(bufferRowIndex);
 }
 
 
 
-QVariant CompositeTable::getRawValue(int bufferRowIndex, const CompositeColumn* column) const
+QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
 {
 	assert(columns.contains(column));
-	assert(bufferRowIndex >= 0 && bufferRowIndex < buffer.size());
-	QVariant result = buffer.at(bufferRowIndex)->at(column->getIndex());
+	assert(bufferRowIndex.isValid(buffer.numRows()));
+	QVariant result = buffer.getCell(bufferRowIndex, column->getIndex());
 	return result.isNull() ? QVariant() : result;
 }
 
-QVariant CompositeTable::getFormattedValue(int bufferRowIndex, const CompositeColumn* column) const
+QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
 {
 	return column->toFormattedTableContent(getRawValue(bufferRowIndex, column));
 }
@@ -244,23 +242,23 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 
 void CompositeTable::setInitialFilters(QSet<Filter> filters)
 {
-	assert(buffer.isEmpty() && bufferOrder.isEmpty());
+	assert(buffer.isEmpty() && viewOrder.isEmpty());
 	currentFilters = filters;
 }
 
 void CompositeTable::applyFilters(QSet<Filter> filters)
 {
-	int previouslySelectedViewRowIndex = tableView->currentIndex().row();
-	int previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
+	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
+	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
 	rebuildOrderBuffer(skipRepopulate);
 	
 	// Restore selection
-	if (previouslySelectedBufferRowIndex >= 0) {
-		int newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
-		QModelIndex modelIndex = index(newViewRowIndex, 0);
+	if (previouslySelectedBufferRowIndex.isValid()) {
+		ViewRowIndex newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
+		QModelIndex modelIndex = index(newViewRowIndex.get(), 0);
 		tableView->setCurrentIndex(modelIndex);
 		tableView->scrollTo(modelIndex);
 	}
@@ -289,37 +287,35 @@ void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialo
 	if (updateImmediately) updateBuffer(progress);
 }
 
-void CompositeTable::bufferRowJustInserted(int bufferRowIndex)
+void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
 {
 	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 		newRow->append(computeCellContent(bufferRowIndex, columnIndex));
 	}
-	buffer.insert(bufferRowIndex, newRow);
+	buffer.insertRow(bufferRowIndex, newRow);
 	
 	rebuildOrderBuffer(false);
 }
 
-void CompositeTable::bufferRowAboutToBeRemoved(int bufferRowIndex)
+void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
 {
-	int viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
-	if (viewRowIndex >= 0) {
-		beginRemoveRows(QModelIndex(), viewRowIndex, viewRowIndex);
-		bufferOrder.removeAt(viewRowIndex);
+	ViewRowIndex viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
+	if (viewRowIndex.isValid()) {
+		beginRemoveRows(QModelIndex(), viewRowIndex.get(), viewRowIndex.get());
+		viewOrder.removeViewRow(viewRowIndex);
 		endRemoveRows();
 		
 		// Update order buffer
-		for (int i = 0; i < bufferOrder.size(); i++) {
-			int currentBufferRowIndex = bufferOrder.at(i);
+		for (ViewRowIndex viewRow = ViewRowIndex(0); viewRow.isValid(viewOrder.numRows()); viewRow++) {
+			BufferRowIndex currentBufferRowIndex = viewOrder.getBufferRowIndexForViewRow(viewRow);
 			if (currentBufferRowIndex > bufferRowIndex) {
-				bufferOrder.replace(i, currentBufferRowIndex - 1);
+				viewOrder.replaceBufferRowIndexAtViewRowIndex(viewRow, currentBufferRowIndex - 1);
 			}
 		}
 	}
 	
-	QList<QVariant>* rowToRemove = buffer.at(bufferRowIndex);
-	buffer.removeAt(bufferRowIndex);
-	delete rowToRemove;
+	buffer.removeRow(bufferRowIndex);
 }
 
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
@@ -333,7 +329,7 @@ void CompositeTable::announceChangesUnderColumn(int columnIndex)
 int CompositeTable::rowCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
-	return bufferOrder.size();
+	return viewOrder.numRows();
 }
 
 int CompositeTable::columnCount(const QModelIndex& parent) const
@@ -346,7 +342,7 @@ int CompositeTable::columnCount(const QModelIndex& parent) const
 QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Orientation::Vertical) {
-		assert(section >= 0 && section < bufferOrder.size());
+		assert(section >= 0 && section < viewOrder.numRows());
 		switch (role) {
 		case Qt::TextAlignmentRole:	return Qt::AlignRight;
 		case Qt::DisplayRole:		return section + 1;
@@ -364,10 +360,10 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 {
 	assert(!index.parent().isValid());
 	
-	int viewRowIndex = index.row();
-	assert(viewRowIndex >= 0 && viewRowIndex < bufferOrder.size());
-	int bufferRowIndex = bufferOrder.at(viewRowIndex);
-	assert(bufferRowIndex >= 0 && bufferRowIndex < buffer.size());
+	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
+	assert(viewRowIndex.isValid(viewOrder.numRows()));
+	BufferRowIndex bufferRowIndex = viewOrder.getBufferRowIndexForViewRow(viewRowIndex);
+	assert(bufferRowIndex.isValid(buffer.numRows()));
 	
 	int columnIndex = index.column();
 	assert(columnIndex >= 0 && columnIndex < columns.size());
@@ -380,7 +376,7 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	int relevantRole = column->contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
 	if (role != relevantRole) return QVariant();
 	
-	QVariant result = buffer.at(bufferRowIndex)->at(columnIndex);
+	QVariant result = buffer.getCell(bufferRowIndex, columnIndex);
 	
 	if (result.isNull()) return QVariant();
 	
@@ -405,18 +401,18 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 	assert(column);
 	assert(tableView);
 	
-	int previouslySelectedViewRowIndex = tableView->currentIndex().row();
-	int previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
+	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
+	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
 	if (allowPassAndReverse && column == currentSorting.first) {
 		if (order == currentSorting.second) return;
 		
-		std::reverse(bufferOrder.begin(), bufferOrder.end());
+		viewOrder.reverse();
 	}
 	else {
-		auto comparator = [&column, order](int i1, int i2) {
-			QVariant value1 = column->getRawValueAt(i1);
-			QVariant value2 = column->getRawValueAt(i2);
+		auto comparator = [&column, order](const BufferRowIndex& index1, const BufferRowIndex& index2) {
+			QVariant value1 = column->getRawValueAt(index1);
+			QVariant value2 = column->getRawValueAt(index2);
 			
 			if (order == Qt::AscendingOrder) {
 				return column->compare(value1, value2);
@@ -425,20 +421,20 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 			}
 		};
 		
-		std::stable_sort(bufferOrder.begin(), bufferOrder.end(), comparator);
+		viewOrder.sortBy(comparator);
 	}
 	
 	// Restore selection
-	if (previouslySelectedBufferRowIndex >= 0) {
-		int newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
-		QModelIndex modelIndex = index(newViewRowIndex, 0);
+	if (previouslySelectedBufferRowIndex.isValid()) {
+		ViewRowIndex newViewRowIndex = findViewRowIndexForBufferRow(previouslySelectedBufferRowIndex);
+		QModelIndex modelIndex = index(newViewRowIndex.get(), 0);
 		tableView->setCurrentIndex(modelIndex);
 		tableView->scrollTo(modelIndex);
 	}
 	
 	// Notify model users (views)
 	QModelIndex topLeftIndex		= index(0, 0);
-	QModelIndex bottomRightIndex	= index(bufferOrder.size() - 1, columns.size() - 1);
+	QModelIndex bottomRightIndex	= index(viewOrder.numRows() - 1, columns.size() - 1);
 	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
 	
@@ -447,9 +443,9 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 
 
 
-QVariant CompositeTable::computeCellContent(int bufferRowIndex, int columnIndex) const
+QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const
 {
-	assert(bufferRowIndex >= 0 && bufferRowIndex < baseTable->getNumberOfRows());
+	assert(bufferRowIndex.isValid(baseTable->getNumberOfRows()));
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
 	const CompositeColumn* column = columns.at(columnIndex);
@@ -464,7 +460,7 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 {
 	const CompositeColumn* column = columns.at(columnIndex);
 	QList<QVariant> cells = column->computeWholeColumn();
-	assert(cells.size() == buffer.size());
+	assert(cells.size() == buffer.numRows());
 	return cells;
 }
 

@@ -39,12 +39,12 @@ TripsTable::TripsTable() :
 
 
 
-int TripsTable::addRow(QWidget* parent, Trip* trip)
+BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	QList<QVariant> data = mapDataToQVariantList(columns, trip);
 	
-	int newTripIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newTripIndex = NormalTable::addRow(parent, columns, data);
 	trip->tripID = getPrimaryKeyAt(newTripIndex);
 	return newTripIndex;
 }

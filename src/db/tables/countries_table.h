@@ -33,7 +33,7 @@ public:
 	
 	CountriesTable();
 	
-	int addRow(QWidget* parent, Country* country);
+	BufferRowIndex addRow(QWidget* parent, Country* country);
 	void updateRow(QWidget* parent, ValidItemID countryID, const Country* country);
 private:
 	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Country* country) const;
