@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file fold_composite_column.h
+ * 
+ * This file defines the FoldCompositeColumn class and its subclasses.
+ */
+
 #include "fold_composite_column.h"
 
 #include "src/db/normal_table.h"
@@ -22,6 +28,17 @@
 
 
 
+/**
+ * Constructs a new FoldCompositeColumn.
+ * 
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param alignment		The alignment of the column contents.
+ * @param contentType	The type of data the column contents.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ */
 FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
 		CompositeColumn(table, uiName, alignment, contentType, false, suffix, enumNames),
 		breadcrumbs(breadcrumbs),
@@ -32,6 +49,31 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString uiName, 
 
 
 
+/**
+ * @brief Evaluates the breadcrumb trail for a given row index.
+ * 
+ * The breadcrumb trail is evaluated from the given row index to the first breadcrumb.
+ * The result is a set of row indices in the table of the first breadcrumb.
+ * 
+ * Following the breadcrumbs involves alternating between sets of row indices and primary keys (as
+ * ItemID). The process starts with a single initial row index. From there, the first half of each
+ * iteration turns a set of row indices into a set of keys. The second half of each iteration then
+ * turns that set of keys into a new set of row indices.
+ * 
+ * This second half can work either in forward direction (lookup) or backward direction (reference
+ * search). A forward lookup means looking for the row in a different table that matches each key
+ * in the current key set. A backward reference search means looking for rows in a different table
+ * where the key in the given column matches any key in the current key set.
+ * 
+ * The first column in each pair is used to collect a set of keys (as ItemID) by looking up the
+ * value of that column for a set of buffer row indices. The second column in each pair is then
+ * used to find rows in a different table that match the previously collected keys. After all
+ * breadcrumbs have been followed, the content column is referenced to collect the values of the
+ * rows that were found in the last breadcrumb.
+ * 
+ * @param initialBufferRowIndex The row index to start from.
+ * @return The set of row indices in the table of the first breadcrumb.
+ */
 QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const
 {
 	QSet<BufferRowIndex> currentRowIndexSet = { initialBufferRowIndex };
@@ -92,6 +134,12 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
 
 
 
+/**
+ * Returns a set of all columns in the base tables which are used to compute the content of
+ * this column.
+ *
+ * @return	A set of all base table columns which are used to compute contents of this column.
+ */
 const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> result = QSet<Column* const>();
@@ -107,6 +155,16 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 
 
 
+/**
+ * Constructs a new NumericFoldCompositeColumn.
+ *
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param op			The operation to perform on the content column values.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param contentColumn	The column whose values to count, collect, or fold.
+ */
 NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString uiName, NumericFoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
 		FoldCompositeColumn(table, uiName, Qt::AlignRight, op == CountFold ? Integer : op == IDListFold ? IDList : contentColumn->type, suffix, breadcrumbs, contentColumn),
 		op(op)
@@ -114,6 +172,14 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QS
 	assert((op == CountFold) == (contentColumn == nullptr));
 }
 
+/**
+ * Computes the value of the cell at the given row index.
+ * 
+ * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail().
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
@@ -183,10 +249,22 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 
 
 
+/**
+ * Constructs a new ListStringFoldCompositeColumn.
+ *
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param contentColumn	The column whose values to list.
+ */
 ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
 		FoldCompositeColumn(table, uiName, Qt::AlignLeft, String, QString(), breadcrumbs, contentColumn)
 {}
 
+/**
+ * As the first step of computing a cell value, formats cells with the given row indices from the
+ * content column into a list of strings, then sorts the list alphabetically.
+ */
 QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
 	QStringList stringList;
@@ -201,6 +279,15 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buff
 	return stringList;
 }
 
+/**
+ * Computes the value of the cell at the given row index.
+ * 
+ * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail() and string
+ * formatting and sorting to formatAndSortIntoStringList().
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
@@ -220,10 +307,23 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
 
 
 
+/**
+ * Constructs a new HikerListCompositeColumn.
+ *
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param contentColumn	The hiker name column whose values to list.
+ */
 HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
 		ListStringFoldCompositeColumn(table, uiName, breadcrumbs, contentColumn)
 {}
 
+/**
+ * As the first step of computing a hiker list string, formats cells with the given row indices
+ * from the content column into a list of strings, then sorts the list while keeping the default
+ * hiker, if present, at the top of the list.
+ */
 QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
 	QStringList stringList;
@@ -256,6 +356,15 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	return stringList;
 }
 
+/**
+ * Computes the value of the cell at the given row index.
+ * 
+ * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail() and string
+ * formatting and sorting to formatAndSortIntoStringList().
+ *
+ * @param rowIndex	The row index.
+ * @return			The computed value of the cell.
+ */
 QVariant HikerListCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
