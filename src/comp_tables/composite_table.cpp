@@ -15,10 +15,23 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file composite_table.h
+ * 
+ * This file defines the CompositeTable class.
+ */
+
 #include "composite_table.h"
 
 
 
+/**
+ * Creates a new CompositeTable.
+ * 
+ * @param db		The project database.
+ * @param baseTable	The database table this table is based on.
+ * @param tableView	The view this table is displayed in.
+ */
 CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView) :
 		QAbstractTableModel(),
 		db(db),
@@ -38,6 +51,9 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 	baseTable->setRowChangeListener(this);
 }
 
+/**
+ * Destroys this CompositeTable.
+ */
 CompositeTable::~CompositeTable()
 {
 	qDeleteAll(columns);
@@ -46,6 +62,12 @@ CompositeTable::~CompositeTable()
 
 
 
+/**
+ * Adds a column to this table during initialization.
+ * 
+ * @param column	The composite column to add.
+ * @param hidden	Whether the column is hidden from the UI (only used for filtering).
+ */
 void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 {
 	if (hidden) {
@@ -63,16 +85,33 @@ void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 	}
 }
 
+/**
+ * Returns the composite column at the given index.
+ * 
+ * @param columnIndex	The index of the column to return.
+ * @return				The composite column at the given index.
+ */
 const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
 {
 	return columns.at(columnIndex);
 }
 
+/**
+ * Returns the index of the given composite column.
+ * 
+ * @param column	The composite column to return the index of.
+ * @return			The index of the given composite column.
+ */
 int CompositeTable::getIndexOf(const CompositeColumn* column) const
 {
 	return columns.indexOf(column);
 }
 
+/**
+ * Returns the database table this composite table is based on.
+ * 
+ * @return	The database table this composite table is based on.
+ */
 const NormalTable* CompositeTable::getBaseTable() const
 {
 	return baseTable;
@@ -80,11 +119,25 @@ const NormalTable* CompositeTable::getBaseTable() const
 
 
 
+/**
+ * Returns the number of cells the table will contain once it is initialized.
+ * 
+ * @return	The total number of cells which need to be initialized.
+ */
 int CompositeTable::getNumberOfCellsToInit() const
 {
 	return baseTable->getNumberOfRows() * columns.size();
 }
 
+/**
+ * Initializes the buffer and the order buffer.
+ * 
+ * Used to initialize the table when loading a project.
+ * 
+ * @param progressDialog			A progress dialog to update while initializing the buffer.
+ * @param deferCompute				Whether to defer computing the contents of the cells until further notice.
+ * @param autoResizeAfterCompute	The table view to automatically resize after the buffer is computed.
+ */
 void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompute, QTableView* autoResizeAfterCompute)
 {
 	assert(buffer.isEmpty() && viewOrder.isEmpty());
@@ -130,6 +183,19 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	}
 }
 
+/**
+ * Rebuilds the order buffer after changes which could affect the sorting or filtering.
+ * 
+ * Repopulates the order buffer from scratch, which means collecting all rows from the base table
+ * without restriction. Then, all filters are applied to the order buffer, and finally the order
+ * buffer is sorted according to the current sorting.
+ * 
+ * The repopulation step can be skipped if it is known that all rows which should be shown from
+ * here on are already in the order buffer, i.e., no previously applied filters have been removed
+ * or relaxed in any way. In practice, this should not be done if the filters have changed at all.
+ * 
+ * @param skipRepopulate	Whether to skip repopulating the order buffer.
+ */
 void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 {
 	beginResetModel();
@@ -153,11 +219,23 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	endResetModel();
 }
 
+/**
+ * Returns the number of cells which are currently marked dirty and need to be updated.
+ * 
+ * @return	The number of cells which need to be updated.
+ */
 int CompositeTable::getNumberOfCellsToUpdate() const
 {
 	return columnsToUpdate.size() * buffer.numRows();
 }
 
+/**
+ * Updates the contents of all columns which are marked dirty.
+ * 
+ * After updating the buffer, the order buffer is rebuilt and the model is notified of the changes.
+ * 
+ * @param progressDialog	A progress dialog to update while updating the buffer.
+ */
 void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 {
 	if (columnsToUpdate.isEmpty()) return;
@@ -196,6 +274,11 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 	}
 }
 
+/**
+ * Completely resets the buffer and the order buffer.
+ * 
+ * Used when closing a project.
+ */
 void CompositeTable::resetBuffer()
 {
 	beginResetModel();
@@ -205,11 +288,26 @@ void CompositeTable::resetBuffer()
 	buffer.reset();
 }
 
+/**
+ * Returns the index at which the item shown at the given view row is stored in the buffer.
+ * 
+ * @param viewRowIndex	The index of the view row to return the buffer index for.
+ * @return				The buffer index of the item shown at the given view row.
+ */
 BufferRowIndex CompositeTable::getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const
 {
 	return viewOrder.getBufferRowIndexForViewRow(viewRowIndex);
 }
 
+/**
+ * Returns the index of the view row which shows the item at the given buffer index, if any.
+ * 
+ * If the item at the given buffer index is not shown in the view (filtered out), an invalid
+ * ViewRowIndex is returned.
+ * 
+ * @param bufferRowIndex	The index in the buffer of the item to return the view index for.
+ * @return					The view index of the item, or an invalid ViewRowIndex if it is not shown.
+ */
 ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const
 {
 	if (bufferRowIndex.isInvalid(buffer.numRows())) return ViewRowIndex();
@@ -218,6 +316,14 @@ ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferR
 
 
 
+/**
+ * Returns the raw (unformatted, not for UI display) value of the cell at the given buffer row and
+ * column indices.
+ * 
+ * @param bufferRowIndex	The index of the buffer row to return the value for.
+ * @param column			The column to return the value for.
+ * @return					The raw value of the cell at the given buffer row and column index.
+ */
 QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
 {
 	assert(columns.contains(column));
@@ -226,6 +332,14 @@ QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const Compos
 	return result.isNull() ? QVariant() : result;
 }
 
+/**
+ * Returns the formatted (for UI display) value of the cell at the given buffer row and column
+ * indices.
+ * 
+ * @param bufferRowIndex	The index of the buffer row to return the value for.
+ * @param column			The column to return the value for.
+ * @return					The formatted value of the cell at the given buffer row and column index.
+ */
 QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
 {
 	return column->toFormattedTableContent(getRawValue(bufferRowIndex, column));
@@ -233,6 +347,11 @@ QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const 
 
 
 
+/**
+ * Returns the current sorting.
+ * 
+ * @return	The current sorting as a pair of the column to sort by and the sort order.
+ */
 QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting() const
 {
 	return currentSorting;
@@ -240,12 +359,23 @@ QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting()
 
 
 
+/**
+ * Sets filters without applying them, only to be used during initialization.
+ * 
+ * @param filters	The filters to apply once the table is populated.
+ */
 void CompositeTable::setInitialFilters(QSet<Filter> filters)
 {
 	assert(buffer.isEmpty() && viewOrder.isEmpty());
 	currentFilters = filters;
 }
 
+/**
+ * Applies the given filters to the table, updating the order buffer and attempting to restore the
+ * selection in the view.
+ * 
+ * @param filters	The filters to apply.
+ */
 void CompositeTable::applyFilters(QSet<Filter> filters)
 {
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
@@ -264,16 +394,29 @@ void CompositeTable::applyFilters(QSet<Filter> filters)
 	}
 }
 
+/**
+ * Removes all applied filters from the table and performs the necessary updates.
+ */
 void CompositeTable::clearFilters()
 {
 	applyFilters({});
 }
 
+/**
+ * Returns the currently applied filters.
+ * 
+ * @return	The set of currently applied filters.
+ */
 QSet<Filter> CompositeTable::getCurrentFilters() const
 {
 	return currentFilters;
 }
 
+/**
+ * Indicates whether any filters are currently applied to the table.
+ * 
+ * @return	True if any filters are currently applied, false otherwise.
+ */
 bool CompositeTable::filterIsActive() const
 {
 	return !currentFilters.isEmpty();
@@ -281,12 +424,27 @@ bool CompositeTable::filterIsActive() const
 
 
 
+/**
+ * Sets whether the table should update its columns immediately when notified of changes in the
+ * database, or defer the updates.
+ * 
+ * If the new setting is to update immediately, the buffer is then updated where necessary. A
+ * progress dialog can be passed to track progress during the update process.
+ * 
+ * @param updateImmediately	Whether to update columns immediately after changes.
+ * @param progress			A progress dialog to update while updating the buffer.
+ */
 void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialog* progress)
 {
 	this->updateImmediately = updateImmediately;
 	if (updateImmediately) updateBuffer(progress);
 }
 
+/**
+ * Notifies the composite table that a row has been inserted into its base table.
+ * 
+ * @param bufferRowIndex	The index in the buffer of the new row.
+ */
 void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
 {
 	QList<QVariant>* newRow = new QList<QVariant>();
@@ -298,6 +456,11 @@ void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
 	rebuildOrderBuffer(false);
 }
 
+/**
+ * Notifies the composite table that a row is about to be removed from its base table.
+ * 
+ * @param bufferRowIndex	The index in the buffer of the row which will be removed.
+ */
 void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
 {
 	ViewRowIndex viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
@@ -318,6 +481,11 @@ void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
 	buffer.removeRow(bufferRowIndex);
 }
 
+/**
+ * Notifies the composite table that data in a column it depends on has changed.
+ * 
+ * @param columnIndex	The index of the affected column among the composite table's columns.
+ */
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
 	columnsToUpdate.insert(columns.at(columnIndex));
@@ -326,12 +494,26 @@ void CompositeTable::announceChangesUnderColumn(int columnIndex)
 
 
 
+/**
+ * For the QAbstractItemModel implementation, returns the number of rows in the table under the
+ * given parent.
+ * 
+ * @param parent	The parent model index, assumed to be invalid.
+ * @return			The number of rows in the table.
+ */
 int CompositeTable::rowCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
 	return viewOrder.numRows();
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the number of visible columns in the table
+ * under the given parent.
+ * 
+ * @param parent	The parent model index, assumed to be invalid.
+ * @return			The number of columns in the table.
+ */
 int CompositeTable::columnCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
@@ -339,6 +521,18 @@ int CompositeTable::columnCount(const QModelIndex& parent) const
 	return columns.size();
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the data for the given role and section in
+ * the header with the specified orientation.
+ * 
+ * For horizontal headers, the section number corresponds to the column number. Similarly, for
+ * vertical headers, the section number corresponds to the row number.
+ * 
+ * @param section		The index of the section to return the data for.
+ * @param orientation	The orientation of the header (horizontal or vertical).
+ * @param role			The Qt::ItemDataRole for which to return the data.
+ * @return				The data for the given role and section in the header with the specified orientation.
+ */
 QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Orientation::Vertical) {
@@ -356,6 +550,18 @@ QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, in
 	return columns.at(section)->uiName;
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the data for the given role and index in the
+ * table.
+ * 
+ * This function defines the shape in which data is actually displayed in the table. For example,
+ * boolean values can be displayed as checkboxes using the Qt::CheckStateRole. Alignment is also
+ * defined here.
+ * 
+ * @param index	The model index to return the data for. Assumed to have no valid parent.
+ * @param role	The Qt::ItemDataRole for which to return the data.
+ * @return		The data for the given role and index in the table.
+ */
 QVariant CompositeTable::data(const QModelIndex& index, int role) const
 {
 	assert(!index.parent().isValid());
@@ -388,6 +594,16 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	return column->toFormattedTableContent(result);
 }
 
+/**
+ * For the QAbstractItemModel implementation, sorts the table by the given column and order.
+ * 
+ * This function is called by the view when the user clicks on a column header to sort by that
+ * column. It looks up the column which was clicked and delegates the sorting to
+ * performSortByColumn().
+ * 
+ * @param columnIndex	The index of the visible column to sort by.
+ * @param order			The order to sort by (ascending or descending).
+ */
 void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 {
 	assert(columnIndex >= 0 && columnIndex < columns.size());
@@ -396,6 +612,18 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	performSortByColumn(column, order, true);
 }
 
+/**
+ * Sorts the visible rows in the table by the given column and order.
+ * 
+ * Once the table is initialized, the table does not need to be resorted from scratch if the column
+ * to sort by does not change (i.e., it is the same as in the current sorting). Then, either
+ * nothing needs to be done if the order is *also* the same as in the current sorting, or the order
+ * can simply be reversed if the order is opposite to the current sorting.
+ * 
+ * @param column				The column to sort by.
+ * @param order					The order to sort by (ascending or descending).
+ * @param allowPassAndReverse	Whether to allow shortcuts in resorting. Do not use on initial sort.
+ */
 void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse)
 {
 	assert(column);
@@ -443,6 +671,13 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 
 
 
+/**
+ * Computes the value of the cell at the given buffer row and column indices.
+ * 
+ * @param bufferRowIndex	The index of the buffer row to compute the value for.
+ * @param columnIndex		The index of the column to compute the value for.
+ * @return					The computed raw value of the cell at the given buffer row and column indices.
+ */
 QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const
 {
 	assert(bufferRowIndex.isValid(baseTable->getNumberOfRows()));
@@ -456,6 +691,14 @@ QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int c
 	return result;
 }
 
+/**
+ * Computes the value of all cells in the column together.
+ * 
+ * Used for composite columns with interdependent cells, such as IndexCompositeColumn.
+ * 
+ * @param columnIndex	The index of the column to compute the values for.
+ * @return				The list of all computed raw values for the cells in the column.
+ */
 QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 {
 	const CompositeColumn* column = columns.at(columnIndex);
@@ -466,6 +709,11 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 
 
 
+/**
+ * Returns a pointer to the project settings object.
+ * 
+ * @return	The project settings object.
+ */
 ProjectSettings* CompositeTable::getProjectSettings() const
 {
 	return db->projectSettings;
