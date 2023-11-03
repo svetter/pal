@@ -16,7 +16,7 @@
  */
 
 /**
- * @file hiker_list.h
+ * @file hiker_list.cpp
  * 
  * This file defines the HikersOnAscent class.
  */

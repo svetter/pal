@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photos_table.h
+ * 
+ * This file declares the PhotosTable class.
+ */
+
 #ifndef PHOTOS_TABLE_H
 #define PHOTOS_TABLE_H
 

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file parse_helper.h
+ * @file parse_helper.cpp
  * 
  * This file defines functions to parse the values of widgets in item dialogs.
  */

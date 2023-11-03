@@ -18,8 +18,8 @@
 /**
  * @file item_types_handler.h
  * 
- * This file defines and implements the ItemTypeMapper class with its item-specific subtypes and
- * the ItemTypesHandler class.
+ * This file defines the ItemTypeMapper class with its item-specific subtypes and the
+ * ItemTypesHandler class.
  */
 
 #ifndef ITEM_TYPES_HANDLER_H

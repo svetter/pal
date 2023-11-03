@@ -16,7 +16,7 @@
  */
 
 /**
- * @file photo_relocation_thread.h
+ * @file photo_relocation_thread.cpp
  * 
  * This file defines the PhotoRelocationThread class.
  */

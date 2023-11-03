@@ -16,7 +16,7 @@
  */
 
 /**
- * @file item_dialog.h
+ * @file item_dialog.cpp
  * 
  * This file defines the ItemDialog class.
  */

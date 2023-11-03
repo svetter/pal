@@ -16,7 +16,7 @@
  */
 
 /**
- * @file enum_names.h
+ * @file enum_names.cpp
  * 
  * This file defines the EnumNames class containing names for enumerative fields in items.
  */

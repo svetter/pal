@@ -16,7 +16,7 @@
  */
 
 /**
- * @file ascent_dialog.h
+ * @file ascent_dialog.cpp
  * 
  * This file defines the AscentDialog class.
  */

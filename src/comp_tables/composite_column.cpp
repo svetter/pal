@@ -16,7 +16,7 @@
  */
 
 /**
- * @file composite_column.h
+ * @file composite_column.cpp
  * 
  * This file defines the CompositeColumn class and some of its subclasses.
  */

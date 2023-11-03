@@ -16,7 +16,7 @@
  */
 
 /**
- * @file ascent_viewer.h
+ * @file ascent_viewer.cpp
  * 
  * This file defines the AscentViewer class.
  */

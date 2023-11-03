@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file participated_table.h
+ * 
+ * This file defines the ParticipatedTable class.
+ */
+
 #include "participated_table.h"
 
 #include <QTranslator>

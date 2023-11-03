@@ -16,7 +16,7 @@
  */
 
 /**
- * @file settings.h
+ * @file settings.cpp
  * 
  * This file defines part of the Settings class.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file trip_dialog.h
+ * @file trip_dialog.cpp
  * 
  * This file defines the TripDialog class.
  */

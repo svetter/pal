@@ -16,7 +16,7 @@
  */
 
 /**
- * @file photo_list.h
+ * @file photo_list.cpp
  * 
  * This file defines the PhotosOfAscent class.
  */

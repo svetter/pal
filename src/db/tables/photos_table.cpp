@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photos_table.cpp
+ * 
+ * This file defines the PhotosTable class.
+ */
+
 #include "photos_table.h"
 
 #include <QString>

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file project_settings_window.h
+ * @file project_settings_window.cpp
  * 
  * Defines the ProjectSettingsWindow class.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file main_window.h
+ * @file relocate_photos_dialog.cpp
  * 
  * This file defines the RelocatePhotosDialog class.
  */

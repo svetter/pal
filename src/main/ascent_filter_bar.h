@@ -18,7 +18,7 @@
 /**
  * @file ascent_filter_bar.h
  * 
- * This file defines the AscentFilterBar class.
+ * This file declares the AscentFilterBar class.
  */
 
 #ifndef ASCENT_FILTER_BAR_H

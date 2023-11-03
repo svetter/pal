@@ -16,7 +16,7 @@
  */
 
 /**
- * @file ItemID.h
+ * @file ItemID.cpp
  * 
  * This file defines the ItemID class and its subclass ValidItemID.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file fold_composite_column.h
+ * @file fold_composite_column.cpp
  * 
  * This file defines the FoldCompositeColumn class and its subclasses.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file main_window.h
+ * @file main_window.cpp
  * 
  * This file defines the MainWindow class.
  */

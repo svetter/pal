@@ -16,7 +16,7 @@
  */
 
 /**
- * @file range_dialog.h
+ * @file range_dialog.cpp
  * 
  * This file defines the RangeDialog class.
  */

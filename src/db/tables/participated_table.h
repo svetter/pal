@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file participated_table.h
+ * 
+ * This file declares the ParticipatedTable class.
+ */
+
 #ifndef PARTICIPATED_TABLE_H
 #define PARTICIPATED_TABLE_H
 

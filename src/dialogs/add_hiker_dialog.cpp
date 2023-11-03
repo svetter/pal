@@ -16,7 +16,7 @@
  */
 
 /**
- * @file add_hiker_dialog.h
+ * @file add_hiker_dialog.cpp
  * 
  * This file defines the AddHikerDialog class.
  */

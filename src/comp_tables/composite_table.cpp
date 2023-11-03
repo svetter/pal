@@ -16,7 +16,7 @@
  */
 
 /**
- * @file composite_table.h
+ * @file composite_table.cpp
  * 
  * This file defines the CompositeTable class.
  */
