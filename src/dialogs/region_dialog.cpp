@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file region_dialog.h
+ * 
+ * This file declares the RegionDialog class.
+ */
+
 #include "region_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
@@ -26,6 +32,17 @@
 
 
 
+/**
+ * Creates a new region dialog.
+ * 
+ * Sets up the UI, restores geometry, populates combo boxes, connects interactive UI elements, and
+ * performs purpose-specific preparations.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @param purpose	The purpose of the dialog.
+ * @param init		The region data to initialize the dialog with and store as initial data. RegionDialog takes ownership of this pointer.
+ */
 RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
 		ItemDialog(parent, db, purpose),
 		init(init),
@@ -61,6 +78,9 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	}
 }
 
+/**
+ * Destroys the region dialog.
+ */
 RegionDialog::~RegionDialog()
 {
 	delete init;
@@ -68,6 +88,11 @@ RegionDialog::~RegionDialog()
 
 
 
+/**
+ * Returns the window title to use when the dialog is used to edit an item.
+ *
+ * @return	The window title for editing an item
+ */
 QString RegionDialog::getEditWindowTitle()
 {
 	return tr("Edit region");
@@ -75,6 +100,9 @@ QString RegionDialog::getEditWindowTitle()
 
 
 
+/**
+ * Populates the dialog's combo boxes with data from the database.
+ */
 void RegionDialog::populateComboBoxes()
 {
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeCombo, selectableRangeIDs);
@@ -84,6 +112,9 @@ void RegionDialog::populateComboBoxes()
 
 
 
+/**
+ * Inserts the data from the initial region object into the dialog's UI elements.
+ */
 void RegionDialog::insertInitData()
 {
 	// Name
@@ -103,6 +134,11 @@ void RegionDialog::insertInitData()
 }
 
 
+/**
+ * Extracts the data from the UI elements and returns it as a region object.
+ *
+ * @return	The region data as a region object. The caller takes ownership of the object.
+ */
 Region* RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
@@ -114,6 +150,12 @@ Region* RegionDialog::extractData()
 }
 
 
+/**
+ * Checks whether changes have been made to the region, compared to the initial region object, if
+ * set.
+ *
+ * @return	True if the current UI contents are different from their initial state, false otherwise.
+ */
 bool RegionDialog::changesMade()
 {
 	Region* currentState = extractData();
@@ -124,6 +166,11 @@ bool RegionDialog::changesMade()
 
 
 
+/**
+ * Event handler for the new range button.
+ *
+ * Opens a new range dialog, adds the new range to the range combo box and selects it.
+ */
 void RegionDialog::handle_newRange()
 {
 	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(this, db);
@@ -134,6 +181,11 @@ void RegionDialog::handle_newRange()
 	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(rangeID) + 1);	// 0 is None
 }
 
+/**
+ * Event handler for the new country button.
+ *
+ * Opens a new country dialog, adds the new country to the country combo box and selects it.
+ */
 void RegionDialog::handle_newCountry()
 {
 	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(this, db);
@@ -146,6 +198,12 @@ void RegionDialog::handle_newCountry()
 
 
 
+/**
+ * Event handler for the OK button.
+ *
+ * Checks whether the name is empty or a duplicate depending on settings, prepares the dialog for
+ * closing and then accepts it.
+ */
 void RegionDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save region");
@@ -154,6 +212,9 @@ void RegionDialog::handle_ok()
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
+/**
+ * Prepares the dialog for closing by saving its geometry.
+ */
 void RegionDialog::aboutToClose()
 {
 	saveDialogGeometry(this, parent, &Settings::regionDialog_geometry);
@@ -165,17 +226,38 @@ void RegionDialog::aboutToClose()
 
 static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion);
 
+/**
+ * Opens a new region dialog and saves the new region to the database.
+ *
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @return			The index of the new region in the database's region table buffer.
+ */
 BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, Database* db)
 {
 	return openRegionDialogAndStore(parent, db, newItem, nullptr);
 }
 
+/**
+ * Opens an edit region dialog and saves the changes to the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the region to edit in the database's region table buffer.
+ */
 void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* originalRegion = db->getRegionAt(bufferRowIndex);
 	openRegionDialogAndStore(parent, db, editItem, originalRegion);
 }
 
+/**
+ * Opens a delete region dialog and deletes the region from the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the region to delete in the database's region table buffer.
+ */
 void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* region = db->getRegionAt(bufferRowIndex);
@@ -194,6 +276,15 @@ void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, BufferRowIn
 
 
 
+/**
+ * Opens a purpose-generic region dialog and applies the resulting changes to the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param originalRegion	The region data to initialize the dialog with and store as initial data. Region takes ownership of this pointer.
+ * @return					The index of the new region in the database's region table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ */
 static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion)
 {
 	BufferRowIndex newRegionIndex = BufferRowIndex();

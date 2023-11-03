@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file region_dialog.h
+ * 
+ * This file declares the RegionDialog class.
+ */
+
 #ifndef REGION_DIALOG_H
 #define REGION_DIALOG_H
 
@@ -24,13 +30,19 @@
 
 
 
+/**
+ * Control class for the region dialog.
+ */
 class RegionDialog : public ItemDialog, public Ui_RegionDialog
 {
 	Q_OBJECT
 	
+	/** The region data before user interaction starts. */
 	const Region* init;
-	
+
+	/** The list of IDs corresponding to the ranges selectable in the range combo box. */
 	QList<ValidItemID> selectableRangeIDs;
+	/** The list of IDs corresponding to the countries selectable in the country combo box. */
 	QList<ValidItemID> selectableCountryIDs;
 	
 public:
