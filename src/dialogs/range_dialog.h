@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file range_dialog.h
+ * 
+ * This file declares the RangeDialog class.
+ */
+
 #ifndef RANGE_DIALOG_H
 #define RANGE_DIALOG_H
 
@@ -24,10 +30,14 @@
 
 
 
+/**
+ * Control class for the range dialog.
+ */
 class RangeDialog : public ItemDialog, public Ui_RangeDialog
 {
 	Q_OBJECT
 	
+	/** The range data before user interaction starts. */
 	const Range* init;
 	
 public:
