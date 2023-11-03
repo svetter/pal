@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file row_index.h
+ * 
+ * This file declares the RowIndex class and its subclasses.
+ */
+
 #ifndef ROW_INDEX_H
 #define ROW_INDEX_H
 
@@ -22,7 +28,14 @@
 
 
 
+/**
+ * An int wrapper class to represent a row index in either a buffer or a view.
+ * 
+ * The subclasses BufferRowIndex and ViewRowIndex are deliberately incompatible to prevent
+ * accidental casting or otherwise conflating the two.
+ */
 class RowIndex {
+	/** The index. Values below zero denote an invalid index. */
 	int index;
 	
 protected:
@@ -67,6 +80,9 @@ size_t qHash(const RowIndex& index, size_t seed);
 
 
 
+/**
+ * An int wrapper class to represent a row index in a buffer.
+ */
 class BufferRowIndex : public RowIndex {
 public:
 	BufferRowIndex();
@@ -86,6 +102,9 @@ bool operator==(int index1, const BufferRowIndex& index2);
 
 
 
+/**
+ * An int wrapper class to represent a row index in a view.
+ */
 class ViewRowIndex : public RowIndex {
 public:
 	ViewRowIndex();
