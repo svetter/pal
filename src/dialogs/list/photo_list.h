@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file photo_list.h
+ * 
+ * This file declares the PhotosOfAscent class.
+ */
+
 #ifndef PHOTO_LIST_H
 #define PHOTO_LIST_H
 
@@ -25,7 +31,14 @@
 
 
 
+/**
+ * A class encapsulating a list of photos associated with an ascent.
+ * 
+ * This class is a model for a QTableView. It is used in the ascent dialog to display the photos
+ * associated with the ascent. It supports drag and drop to enable reordering of the photos.
+ */
 class PhotosOfAscent : public QAbstractItemModel {
+	/** The list of photos. */
 	QList<Photo> list;
 	
 public:
