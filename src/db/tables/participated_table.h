@@ -31,9 +31,15 @@
 #include <QWidget>
 
 
+
+/**
+ * A class for accessing and manipulating the participated table in the database.
+ */
 class ParticipatedTable : public AssociativeTable {
 public:
+	/** The ascent ID column. */
 	Column* const ascentIDColumn;
+	/** The hiker ID column. */
 	Column* const hikerIDColumn;
 	
 	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn);

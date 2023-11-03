@@ -16,7 +16,7 @@
  */
 
 /**
- * @file participated_table.h
+ * @file participated_table.cpp
  * 
  * This file defines the ParticipatedTable class.
  */
@@ -27,6 +27,12 @@
 
 
 
+/**
+ * Creates a new ParticipatedTable.
+ * 
+ * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
+ * @param foreignHikerIDColumn	The primary key column of the HikersTable.
+ */
 ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
 		AssociativeTable(QString("Participated"), foreignAscentIDColumn, foreignHikerIDColumn),
 		ascentIDColumn(getColumn1()),
@@ -35,6 +41,12 @@ ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* fore
 
 
 
+/**
+ * Adds one or more rows associating one more more hikers with an ascent to the table.
+ * 
+ * @param parent	The parent widget.
+ * @param ascent	The ascent containing the hikers list to use.
+ */
 void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (ValidItemID hikerID : ascent->hikerIDs) {
@@ -45,6 +57,15 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 	}
 }
 
+/**
+ * Updates the table contents for a given ascent.
+ * 
+ * First removes all existing rows for the ascent, then adds rows for all hikers in the given
+ * ascent object.
+ * 
+ * @param parent	The parent widget.
+ * @param ascent	The ascent for which to update the table contents.
+ */
 void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
 {
 	// delete pre-existing rows
@@ -54,6 +75,14 @@ void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
 }
 
 
+/**
+ * Translates the data of a single participation to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param ascentID	The ascentID of the participation.
+ * @param hikerID	The hikerID of the participation.
+ * @return			The list of QVariants representing the participation.
+ */
 QList<QVariant> ParticipatedTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const
 {
 	QList<QVariant> data = QList<QVariant>();
