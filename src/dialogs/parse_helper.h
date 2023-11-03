@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file parse_helper.h
+ * 
+ * This file declares functions to parse the values of widgets in item dialogs.
+ */
+
 #ifndef PARSE_HELPER_H
 #define PARSE_HELPER_H
 
