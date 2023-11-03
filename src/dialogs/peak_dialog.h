@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file peak_dialog.h
+ * 
+ * This file declares the PeakDialog class.
+ */
+
 #ifndef PEAK_DIALOG_H
 #define PEAK_DIALOG_H
 
@@ -24,12 +30,17 @@
 
 
 
+/**
+ * Control class for the peak dialog.
+ */
 class PeakDialog : public ItemDialog, public Ui_PeakDialog
 {
 	Q_OBJECT
 	
+	/** The peak data before user interaction starts. */
 	const Peak* init;
 	
+	/** The list of IDs corresponding to the regions selectable in the region combo box. */
 	QList<ValidItemID> selectableRegionIDs;
 	
 public:
