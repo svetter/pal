@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file trip_dialog.h
+ * 
+ * This file declares the TripDialog class.
+ */
+
 #ifndef TRIP_DIALOG_H
 #define TRIP_DIALOG_H
 
@@ -24,10 +30,14 @@
 
 
 
+/**
+ * Control class for the trip dialog.
+ */
 class TripDialog : public ItemDialog, public Ui_TripDialog
 {
 	Q_OBJECT
 	
+	/** The trip data before user interaction starts. */
 	const Trip* init;
 	
 public:
