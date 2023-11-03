@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/ascents_table.h
+ * 
+ * This file defines the AscentsTable class.
+ */
+
 #include "ascents_table.h"
 
 #include <QString>
@@ -22,6 +28,12 @@
 
 
 
+/**
+ * Creates a new AscentsTable.
+ * 
+ * @param foreignPeakIDColumn	The primary key column of the PeaksTable.
+ * @param foreignTripIDColumn	The primary key column of the TripsTable.
+ */
 AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDColumn) :
 		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID"),
 		//									name				uiName				type		nullable	primaryKey	foreignKey				inTable
@@ -55,6 +67,13 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDCo
 
 
 
+/**
+ * Adds a new ascent to the table.
+ * 
+ * @param parent	The parent widget.
+ * @param ascent	The ascent to add.
+ * @return			The index of the new ascent in the table buffer.
+ */
 BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -65,6 +84,14 @@ BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 	return newAscentIndex;
 }
 
+/**
+ * Updates the contents of an existing ascent in the table.
+ * 
+ * @pre The given ascent's ItemID will be used to identify the ascent to update and thus must be valid.
+ * 
+ * @param parent	The parent widget.
+ * @param ascent	The ascent to update.
+ */
 void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -74,6 +101,13 @@ void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
 }
 
 
+/**
+ * Translates the data of an ascent to a list of QVariants.
+ * 
+ * @param columns	The column list specifying the order of the data.
+ * @param ascent	The ascent from which to get the data.
+ * @return			The list of QVariants representing the ascent's data.
+ */
 QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& columns, const Ascent* ascent) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -97,16 +131,32 @@ QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& column
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing ascents when none is
+ * selected.
+ *
+ * @return	The translated string representing absence of an ascent.
+ */
 QString AscentsTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "ascent" (singular) in lowercase.
+ *
+ * @return	The translation of "ascent" (singular) in lowercase.
+ */
 QString AscentsTable::getItemNameSingularLowercase() const
 {
 	return tr("ascent");
 }
 
+/**
+ * Returns the translation of "ascents" (plural) in lowercase.
+ *
+ * @return	The translation of "ascents" (plural) in lowercase.
+ */
 QString AscentsTable::getItemNamePluralLowercase() const
 {
 	return tr("ascents");
