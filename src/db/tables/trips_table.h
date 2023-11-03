@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/trips_table.h
+ * 
+ * This file declares the TripsTable class.
+ */
+
 #ifndef TRIPS_TABLE_H
 #define TRIPS_TABLE_H
 
@@ -25,13 +31,20 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class TripsTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
+	/** The start date column. */
 	Column* const startDateColumn;
+	/** The end date column. */
 	Column* const endDateColumn;
+	/** The description column. */
 	Column* const descriptionColumn;
 	
 	TripsTable();

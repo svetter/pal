@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/trips_table.h
+ * 
+ * This file defines the TripsTable class.
+ */
+
 #include "trips_table.h"
 
 #include <QString>
@@ -22,6 +28,9 @@
 
 
 
+/**
+ * Creates a new TripsTable.
+ */
 TripsTable::TripsTable() :
 		NormalTable(QString("Trips"), tr("Trips"), "tripID"),
 		//								name			uiName				type	nullable	primaryKey	foreignKey	inTable
@@ -39,6 +48,13 @@ TripsTable::TripsTable() :
 
 
 
+/**
+ * Adds a new trip to the table.
+ *
+ * @param parent	The parent widget.
+ * @param trip		The trip to add.
+ * @return			The index of the new trip in the table buffer.
+ */
 BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -49,6 +65,14 @@ BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
 	return newTripIndex;
 }
 
+/**
+ * Updates the contents of an existing trip in the table.
+ *
+ * @pre The given trip's ItemID will be used to identify the trip to update and thus must be valid.
+ *
+ * @param parent	The parent widget.
+ * @param trip		The trip to update.
+ */
 void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -58,6 +82,13 @@ void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip
 }
 
 
+/**
+ * Translates the data of a trip to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param trip		The trip from which to get the data.
+ * @return			The list of QVariants representing the trip's data.
+ */
 QList<QVariant> TripsTable::mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -73,16 +104,32 @@ QList<QVariant> TripsTable::mapDataToQVariantList(QList<const Column*>& columns,
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing trips when none is
+ * selected.
+ *
+ * @return	The translated string representing absence of a trip.
+ */
 QString TripsTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "trip" (singular) in lowercase.
+ *
+ * @return	The translation of "trip" (singular) in lowercase.
+ */
 QString TripsTable::getItemNameSingularLowercase() const
 {
 	return tr("trip");
 }
 
+/**
+ * Returns the translation of "trips" (plural) in lowercase.
+ *
+ * @return	The translation of "trips" (plural) in lowercase.
+ */
 QString TripsTable::getItemNamePluralLowercase() const
 {
 	return tr("trips");
