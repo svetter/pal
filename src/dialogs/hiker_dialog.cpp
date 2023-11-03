@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker_dialog.h
+ * 
+ * This file declares the HikerDialog class.
+ */
+
 #include "hiker_dialog.h"
 
 #include "src/dialogs/parse_helper.h"
@@ -24,6 +30,17 @@
 
 
 
+/**
+ * Creates a new hiker dialog.
+ * 
+ * Sets up the UI, restores geometry, connects interactive UI elements, and performs purpose-
+ * specific preparations.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @param purpose	The purpose of the dialog.
+ * @param init		The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
+ */
 HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init) :
 		ItemDialog(parent, db, purpose),
 		init(init)
@@ -52,6 +69,9 @@ HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, H
 	}
 }
 
+/**
+ * Destroys the hiker dialog.
+ */
 HikerDialog::~HikerDialog()
 {
 	delete init;
@@ -59,6 +79,11 @@ HikerDialog::~HikerDialog()
 
 
 
+/**
+ * Returns the window title to use when the dialog is used to edit an item.
+ *
+ * @return	The window title for editing an item
+ */
 QString HikerDialog::getEditWindowTitle()
 {
 	return tr("Edit hiker");
@@ -66,6 +91,9 @@ QString HikerDialog::getEditWindowTitle()
 
 
 
+/**
+ * Inserts the data from the initial hiker object into the dialog's UI elements.
+ */
 void HikerDialog::insertInitData()
 {
 	// Name
@@ -73,6 +101,11 @@ void HikerDialog::insertInitData()
 }
 
 
+/**
+ * Extracts the data from the UI elements and returns it as a hiker object.
+ *
+ * @return	The hiker data as a hiker object. The caller takes ownership of the object.
+ */
 Hiker* HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
@@ -82,6 +115,12 @@ Hiker* HikerDialog::extractData()
 }
 
 
+/**
+ * Checks whether changes have been made to the hiker, compared to the initial hiker object, if
+ * set.
+ *
+ * @return	True if the current UI contents are different from their initial state, false otherwise.
+ */
 bool HikerDialog::changesMade()
 {
 	Hiker* currentState = extractData();
@@ -92,6 +131,12 @@ bool HikerDialog::changesMade()
 
 
 
+/**
+ * Event handler for the OK button.
+ *
+ * Checks whether the name is empty or a duplicate depending on settings, prepares the dialog for
+ * closing and then accepts it.
+ */
 void HikerDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save hiker");
@@ -100,6 +145,9 @@ void HikerDialog::handle_ok()
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
+/**
+ * Prepares the dialog for closing by saving its geometry.
+ */
 void HikerDialog::aboutToClose()
 {
 	saveDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
@@ -111,17 +159,38 @@ void HikerDialog::aboutToClose()
 
 static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker);
 
+/**
+ * Opens a new hiker dialog and saves the new hiker to the database.
+ *
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @return			The index of the new hiker in the database's hiker table buffer.
+ */
 BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, Database* db)
 {
 	return openHikerDialogAndStore(parent, db, newItem, nullptr);
 }
 
+/**
+ * Opens an edit hiker dialog and saves the changes to the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the hiker to edit in the database's hiker table buffer.
+ */
 void openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* originalHiker = db->getHikerAt(bufferRowIndex);
 	openHikerDialogAndStore(parent, db, editItem, originalHiker);
 }
 
+/**
+ * Opens a delete hiker dialog and deletes the hiker from the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the hiker to delete in the database's hiker table buffer.
+ */
 void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* hiker = db->getHikerAt(bufferRowIndex);
@@ -144,6 +213,15 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowInd
 
 
 
+/**
+ * Opens a purpose-generic hiker dialog and applies the resulting changes to the database.
+ *
+ * @param parent		The parent window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param originalHiker	The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
+ * @return				The index of the new hiker in the database's hiker table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ */
 static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker)
 {
 	BufferRowIndex newHikerIndex = BufferRowIndex();

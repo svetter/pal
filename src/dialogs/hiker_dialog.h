@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker_dialog.h
+ * 
+ * This file declares the HikerDialog class.
+ */
+
 #ifndef HIKER_DIALOG_H
 #define HIKER_DIALOG_H
 
@@ -25,10 +31,14 @@
 
 
 
+/**
+ * Control class for the hiker dialog.
+ */
 class HikerDialog : public ItemDialog, public Ui_HikerDialog
 {
 	Q_OBJECT
 	
+	/** The hiker data before user interaction starts. */
 	const Hiker* init;
 	
 public:
