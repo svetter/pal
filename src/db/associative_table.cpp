@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ @file associative_table.cpp
+ * 
+ * This file defines the AssociativeTable class.
+ */
+
 #include "associative_table.h"
 
 #include <QSqlQuery>
@@ -23,6 +29,13 @@
 
 
 
+/**
+ * Creates a new AssociativeTable and automatically creates and adds its two columns.
+ * 
+ * @param name					The internal name of the table.
+ * @param foreignKeyColumn1		The first primary and foreign key column.
+ * @param foreignKeyColumn2		The second primary and foreign key column.
+ */
 AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
 		Table(name, QString(), true),
 		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::ID, false, true, foreignKeyColumn1, this)),
@@ -35,6 +48,9 @@ AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Colu
 	addColumn(column2);
 }
 
+/**
+ * Destroys the AssociativeTable.
+ */
 AssociativeTable::~AssociativeTable()
 {}
 
@@ -42,16 +58,32 @@ AssociativeTable::~AssociativeTable()
 
 // COLUMN INFO
 
+/**
+ * Returns the first primary and foreign key column of the table.
+ * 
+ * @return	The first primary and foreign key column of the table.
+ */
 Column* AssociativeTable::getColumn1() const
 {
 	return column1;
 }
 
+/**
+ * Returns the second primary and foreign key column of the table.
+ * 
+ * @return	The second primary and foreign key column of the table.
+ */
 Column* AssociativeTable::getColumn2() const
 {
 	return column2;
 }
 
+/**
+ * Given one column, returns the only other column of the table.
+ * 
+ * @param column	A column of the table.
+ * @return			The other column of the table.
+ */
 const Column* AssociativeTable::getOtherColumn(const Column* column) const
 {
 	if (column == column1) return column2;
@@ -59,6 +91,14 @@ const Column* AssociativeTable::getOtherColumn(const Column* column) const
 	return nullptr;
 }
 
+/**
+ * Given a foreign key column, returns the column of this table which references it.
+ * 
+ * If the given column is not referenced by this table, nullptr is returned.
+ * 
+ * @param foreignColumn	A key column in a foreign table.
+ * @return				The column of this table which references the given column, or nullptr.
+ */
 const Column* AssociativeTable::getOwnColumnReferencing(const Column* foreignColumn) const
 {
 	if (column1->foreignKey == foreignColumn)	return column1;
@@ -66,6 +106,17 @@ const Column* AssociativeTable::getOwnColumnReferencing(const Column* foreignCol
 	return nullptr;
 }
 
+/**
+ * Given a foreign key column, returns the table on the other side of the associative relation.
+ * 
+ * In other words, given a column which is referenced by one of this table's columns, returns the
+ * table which is referenced by this table's *other* column.
+ * 
+ * If the given column is not referenced by this table, nullptr is returned.
+ * 
+ * @param foreignColumn	A key column in a foreign table.
+ * @return				The table on the other side of the associative relation, or nullptr.
+ */
 const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* foreignColumn) const
 {
 	const Column* matchingOwnColumn = getOwnColumnReferencing(foreignColumn);
@@ -79,6 +130,13 @@ const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* f
 
 // BUFFER ACCESS
 
+/**
+ * Returns the number of rows in the buffer which match the given primary key in the given column.
+ * 
+ * @param column		The column to search in.
+ * @param primaryKey	The primary key to search for.
+ * @return				The number of rows in the buffer which match the given primary key in the given column.
+ */
 int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
@@ -91,6 +149,17 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 	return numberOfMatches;
 }
 
+/**
+ * Given a primary key and a column, returns the set of all primary keys in the other column which
+ * are associated with it.
+ * 
+ * In other words, a key is used to search in one column, and for all matching rows, the primary
+ * key from the other column is added to the set.
+ * 
+ * @param column		The column to search in.
+ * @param primaryKey	The primary key to search for.
+ * @return				The set of all primary keys in the other column which are associated with the given key.
+ */
 QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
@@ -108,16 +177,44 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
 
 // MODIFICATIONS (PASSTHROUGH)
 
+/**
+ * Adds a row to the table from a list of columns and a corresponding list of data.
+ * 
+ * Delegates to Table::addRow().
+ *
+ * @param parent	The parent window.
+ * @param columns	The columns for which to add data.
+ * @param data		The data to add, in the same order as the columns.
+ * @return			The index of the newly added row in the buffer.
+ */
 void AssociativeTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	Table::addRow(parent, columns, data);
 }
 
+/**
+ * Removes a row from the table, specified by primary keys.
+ * 
+ * Delegates to Table::removeRow(...).
+ *
+ * @param parent			The parent window.
+ * @param primaryKeyColumns	The primary key columns.
+ * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
+ */
 void AssociativeTable::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	return Table::removeRow(parent, primaryKeyColumns, primaryKeys);
 }
 
+/**
+ * Removes all rows from the table where the given column has the given value.
+ * 
+ * Delegates to Table::removeMatchingRows(...).
+ *
+ * @param parent	The parent window.
+ * @param column	The column to check.
+ * @param key		The value to check for.
+ */
 void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey)
 {
 	return Table::removeMatchingRows(parent, column, primaryKey);
@@ -127,6 +224,12 @@ void AssociativeTable::removeMatchingRows(QWidget* parent, const Column* column,
 
 // QABSTRACTIMTEMMODEL IMPLEMENTATION
 
+/**
+ * For the QAbstractItemModel implementation, fetches the data for the given span of roles and
+ * indices (in the form of a QModelRoleDataSpan).
+ *
+ * The data is not returned, but written back to the given QModelRoleDataSpan.
+ */
 void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
 	assert(getColumnByIndex(index.column())->type == ID);

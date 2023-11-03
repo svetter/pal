@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ @file associative_table.cpp
+ * 
+ * This file declares the AssociativeTable class.
+ */
+
 #ifndef ASSOCIATIVE_TABLE_H
 #define ASSOCIATIVE_TABLE_H
 
@@ -24,9 +30,15 @@
 #include "src/data/item_id.h"
 
 
-
+/**
+ * A class for accessing and manipulating an associative table in the database.
+ * 
+ * Only tables associating exactly two other tables are supported.
+ */
 class AssociativeTable : public Table {
+	/** The first primary and foreign key column of the table. */
 	Column* const column1;
+	/** The second primary and foreign key column of the table. */
 	Column* const column2;
 	
 public:
