@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/hikers_table.h
+ * 
+ * This file declares the HikersTable class.
+ */
+
 #ifndef HIKERS_TABLE_H
 #define HIKERS_TABLE_H
 
@@ -25,10 +31,14 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class HikersTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
 	
 	HikersTable();
