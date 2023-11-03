@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/hikers_table.h
+ * @file hikers_table.h
  * 
  * This file declares the HikersTable class.
  */

@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/trips_table.h
+ * @file trips_table.h
  * 
  * This file declares the TripsTable class.
  */

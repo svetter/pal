@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/ranges_table.h
+ * @file ranges_table.h
  * 
  * This file defines the RangesTable class.
  */

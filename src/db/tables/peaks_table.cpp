@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/peaks_table.h
+ * @file peaks_table.h
  * 
  * This file defines the PeaksTable class.
  */

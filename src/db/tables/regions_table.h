@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/regions_table.h
+ * @file regions_table.h
  * 
  * This file declares the RegionsTable class.
  */

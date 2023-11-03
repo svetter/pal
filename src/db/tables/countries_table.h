@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/countries_table.h
+ * @file countries_table.h
  * 
  * This file declares the CountriesTable class.
  */

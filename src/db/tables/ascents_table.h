@@ -16,7 +16,7 @@
  */
 
 /**
- * @file src/db/tables/ascents_table.h
+ * @file ascents_table.h
  * 
  * This file declares the AscentsTable class.
  */
