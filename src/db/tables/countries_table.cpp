@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/countries_table.h
+ * 
+ * This file defines the CountriesTable class.
+ */
+
 #include "countries_table.h"
 
 #include <QString>
@@ -22,6 +28,9 @@
 
 
 
+/**
+ * Creates a new CountriesTable.
+ */
 CountriesTable::CountriesTable() :
 		NormalTable(QString("Countries"), tr("Countries"), "countryID"),
 		//						name	uiName		type	nullable	primaryKey	foreignKey	inTable
@@ -33,6 +42,13 @@ CountriesTable::CountriesTable() :
 
 
 
+/**
+ * Adds a new country to the table.
+ *
+ * @param parent	The parent widget.
+ * @param country	The country to add.
+ * @return			The index of the new country in the table buffer.
+ */
 BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -43,6 +59,14 @@ BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
 	return newCountryIndex;
 }
 
+/**
+ * Updates the contents of an existing country in the table.
+ *
+ * @pre The given country's ItemID will be used to identify the country to update and thus must be valid.
+ *
+ * @param parent	The parent widget.
+ * @param country	The country to update.
+ */
 void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -52,6 +76,13 @@ void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Cou
 }
 
 
+/**
+ * Translates the data of a country to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param country	The country from which to get the data.
+ * @return			The list of QVariants representing the country's data.
+ */
 QList<QVariant> CountriesTable::mapDataToQVariantList(QList<const Column*>& columns, const Country* country) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -64,16 +95,32 @@ QList<QVariant> CountriesTable::mapDataToQVariantList(QList<const Column*>& colu
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing countries when none is
+ * selected.
+ *
+ * @return	The translated string representing absence of a country.
+ */
 QString CountriesTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "country" (singular) in lowercase.
+ *
+ * @return	The the translation of "country" (singular) in lowercase.
+ */
 QString CountriesTable::getItemNameSingularLowercase() const
 {
 	return tr("country");
 }
 
+/**
+ * Returns the translation of "countries" (plural) in lowercase.
+ *
+ * @return	The translation of "countries" (plural) in lowercase.
+ */
 QString CountriesTable::getItemNamePluralLowercase() const
 {
 	return tr("countries");

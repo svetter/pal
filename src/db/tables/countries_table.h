@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/countries_table.h
+ * 
+ * This file declares the CountriesTable class.
+ */
+
 #ifndef COUNTRIES_TABLE_H
 #define COUNTRIES_TABLE_H
 
@@ -25,10 +31,14 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class CountriesTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
 	
 	CountriesTable();
