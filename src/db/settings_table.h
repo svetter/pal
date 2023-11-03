@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file settings_table.h
+ * 
+ * This file defines the SettingsTable class.
+ */
+
 #ifndef SETTINGS_TABLE_H
 #define SETTINGS_TABLE_H
 
@@ -27,10 +33,17 @@ template<typename T> class ProjectSetting;
 
 
 
+/**
+ * A class for accessing and manipulating the project settings table in the database.
+ */
 class SettingsTable : public Table {
+	/** The primary key column. */
 	Column* primaryKeyColumn;
 	
 public:
+	/**
+	 * Creates a new SettingsTable.
+	 */
 	inline SettingsTable() :
 			Table("ProjectSettings", "Project settings", false),
 			primaryKeyColumn	(new Column("projectSettingsID", QString(), ID, false, true, nullptr, this))
@@ -39,6 +52,14 @@ public:
 	}
 	
 protected:
+	/**
+	 * Updates the given setting.
+	 * 
+	 * @param parent	The parent window.
+	 * @param setting	The setting to update.
+	 * @param value		The new value for the setting.
+	 * @param rowIndex	The row index of the setting to update.
+	 */
 	template<typename T>
 	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value, int rowIndex = 0)
 	{
