@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent_dialog.h
+ * 
+ * This file declares the AscentDialog class.
+ */
+
 #ifndef ASCENT_DIALOG_H
 #define ASCENT_DIALOG_H
 
@@ -29,17 +35,26 @@
 
 
 
+/**
+ * Control class for the ascent dialog.
+ */
 class AscentDialog : public ItemDialog, public Ui_AscentDialog
 {
 	Q_OBJECT
 	
+	/** The ascent data before user interaction starts. */
 	const Ascent* init;
 	
+	/** The list of IDs corresponding to the regions selectable in the region filter combo box. */
 	QList<ValidItemID> selectableRegionIDs;
+	/** The list of IDs corresponding to the peaks selectable in the peak combo box. */
 	QList<ValidItemID> selectablePeakIDs;
+	/** The list of IDs corresponding to the trips selectable in the trip combo box. */
 	QList<ValidItemID> selectableTripIDs;
 	
+	/** The encapsulation for the hikers list. */
 	HikersOnAscent hikersModel;
+	/** The encapsulation for the photos list which enables drag and drop. */
 	PhotosOfAscent photosModel;
 	
 public:

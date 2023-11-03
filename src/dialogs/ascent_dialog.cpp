@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file ascent_dialog.h
+ * 
+ * This file declares the AscentDialog class.
+ */
+
 #include "ascent_dialog.h"
 
 #include "src/dialogs/add_hiker_dialog.h"
@@ -32,6 +38,18 @@
 
 
 
+/**
+ * Creates a new ascent dialog.
+ * 
+ * Sets up the UI, restores geometry, populates combo boxes, initializes hiker and photo list
+ * models, connects interactive UI elements, sets initial values, and performs purpose-specific
+ * preparations.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @param purpose	The purpose of the dialog.
+ * @param init		The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
+ */
 AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
 		ItemDialog(parent, db, purpose),
 		init(init),
@@ -110,6 +128,9 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	}
 }
 
+/**
+ * Destroys the ascent dialog.
+ */
 AscentDialog::~AscentDialog()
 {
 	delete init;
@@ -117,6 +138,11 @@ AscentDialog::~AscentDialog()
 
 
 
+/**
+ * Returns the window title to use when the dialog is used to edit an item.
+ * 
+ * @return	The window title for editing an item
+ */
 QString AscentDialog::getEditWindowTitle()
 {
 	return tr("Edit ascent");
@@ -124,6 +150,9 @@ QString AscentDialog::getEditWindowTitle()
 
 
 
+/**
+ * Populates the dialog's combo boxes with data from the database.
+ */
 void AscentDialog::populateComboBoxes()
 {
 	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"));
@@ -147,6 +176,9 @@ void AscentDialog::populateComboBoxes()
 
 
 
+/**
+ * Inserts the data from the initial ascent object into the dialog's UI elements.
+ */
 void AscentDialog::insertInitData()
 {
 	// Title
@@ -206,6 +238,11 @@ void AscentDialog::insertInitData()
 }
 
 
+/**
+ * Extracts the data from the UI elements and returns it as an ascent object.
+ * 
+ * @return	The ascent data as an ascent object. The caller takes ownership of the object.
+ */
 Ascent* AscentDialog::extractData()
 {
 	QString				title				= parseLineEdit			(titleLineEdit);
@@ -236,6 +273,12 @@ Ascent* AscentDialog::extractData()
 }
 
 
+/**
+ * Checks whether changes have been made to the ascent, compared to the initial ascent object, if
+ * set.
+ *
+ * @return	True if the current UI contents are different from their initial state, false otherwise.
+ */
 bool AscentDialog::changesMade()
 {
 	Ascent* currentState = extractData();
@@ -246,12 +289,22 @@ bool AscentDialog::changesMade()
 
 
 
+/**
+ * Event handler for changes in the region filter combo box.
+ * 
+ * Updates the peak combo box according to the selected region filter.
+ */
 void AscentDialog::handle_regionFilterChanged()
 {
 	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
 }
 
+/**
+ * Event handler for the new peak button.
+ * 
+ * Opens a new peak dialog, adds the new peak to the peak combo box and selects it.
+ */
 void AscentDialog::handle_newPeak()
 {
 	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, db);
@@ -263,24 +316,45 @@ void AscentDialog::handle_newPeak()
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(peakID) + 1);	// 0 is None
 }
 
+/**
+ * Event handler for changes in the date specified checkbox.
+ * 
+ * Enables or disables the date widget according to the checkbox's state.
+ */
 void AscentDialog::handle_dateSpecifiedChanged()
 {
 	bool enabled = dateCheckbox->isChecked();
 	dateWidget->setEnabled(enabled);
 }
 
+/**
+ * Event handler for changes in the time specified checkbox.
+ * 
+ * Enables or disables the time widget according to the checkbox's state.
+ */
 void AscentDialog::handle_timeSpecifiedChanged()
 {
 	bool enabled = timeCheckbox->isChecked();
 	timeWidget->setEnabled(enabled);
 }
 
+/**
+ * Event handler for changes in the elevation gain specified checkbox.
+ * 
+ * Enables or disables the elevation gain spinner according to the checkbox's state.
+ */
 void AscentDialog::handle_elevationGainSpecifiedChanged()
 {
 	bool enabled = elevationGainCheckbox->isChecked();
 	elevationGainSpinner->setEnabled(enabled);
 }
 
+/**
+ * Event handler for changes in the difficulty system combo box.
+ * 
+ * Enables or disables and repopulates the difficulty grade combo box according to the selected
+ * difficulty system.
+ */
 void AscentDialog::handle_difficultySystemChanged()
 {
 	int system = difficultySystemCombo->currentIndex();
@@ -297,6 +371,11 @@ void AscentDialog::handle_difficultySystemChanged()
 	}
 }
 
+/**
+ * Event handler for the new trip button.
+ * 
+ * Opens a new trip dialog, adds the new trip to the trip combo box and selects it.
+ */
 void AscentDialog::handle_newTrip()
 {
 	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, db);
@@ -307,6 +386,11 @@ void AscentDialog::handle_newTrip()
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(tripID) + 1);	// 0 is None
 }
 
+/**
+ * Event handler for the add hiker button.
+ * 
+ * Opens an add hiker dialog and adds the new hiker to the hikers list.
+ */
 void AscentDialog::handle_addHiker()
 {
 	ItemID hikerID = openAddHikerDialog(this, db);
@@ -317,6 +401,11 @@ void AscentDialog::handle_addHiker()
 	delete hiker;
 }
 
+/**
+ * Event handler for the remove hikers button.
+ * 
+ * Removes the selected hikers from the hikers list.
+ */
 void AscentDialog::handle_removeHikers()
 {
 	QItemSelectionModel* selectionModel = hikersListView->selectionModel();
@@ -327,6 +416,11 @@ void AscentDialog::handle_removeHikers()
 	}
 }
 
+/**
+ * Event handler for the add photos button.
+ * 
+ * Opens a file dialog for selecting photos and appends the selected photos to the photos list.
+ */
 void AscentDialog::handle_addPhotos()
 {
 	QStringList filepaths = openFileDialogForPhotosSelection(this);
@@ -340,6 +434,11 @@ void AscentDialog::handle_addPhotos()
 	photosModel.addPhotos(photos);
 }
 
+/**
+ * Event handler for the remove photos button.
+ * 
+ * Removes the selected photos from the photos list.
+ */
 void AscentDialog::handle_removePhotos()
 {
 	QItemSelectionModel* selectionModel = photosListView->selectionModel();
@@ -350,6 +449,17 @@ void AscentDialog::handle_removePhotos()
 	}
 }
 
+/**
+ * Event handler for changes in the photo selection.
+ * 
+ * If exactly one photo was selected before, that photo's description is saved.
+ * If exactly one photo is now selected, that photo's description is loaded into the description
+ * line edit. If no photo is selected, the description line edit is cleared and disabled. If more
+ * than one photo is selected, the description line edit is cleared and disabled.
+ * 
+ * @param selected		The photos now selected.
+ * @param deselected	The photos which were selected before the change.
+ */
 void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
 	QSet<int> previouslySelectedRows = getPreviouslySelectedRows(selected, deselected);
@@ -378,6 +488,11 @@ void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, 
 
 
 
+/**
+ * Event handler for the OK button.
+ * 
+ * Prepares the dialog for closing and then accepts it.
+ */
 void AscentDialog::handle_ok()
 {
 	aboutToClose();
@@ -385,6 +500,9 @@ void AscentDialog::handle_ok()
 	accept();
 }
 
+/**
+ * Prepares the dialog for closing by saving its geometry and photo description.
+ */
 void AscentDialog::aboutToClose()
 {
 	saveDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
@@ -394,6 +512,14 @@ void AscentDialog::aboutToClose()
 
 
 
+/**
+ * From the sets of newly selected and deselected rows in a QItemSelection, returns the set of rows
+ * which were selected before the change.
+ * 
+ * @param selected		The indices of the rows which were newly selected.
+ * @param deselected	The indices of the rows which were deselected.
+ * @return				The rows which were selected before the change.
+ */
 QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const
 {
 	QSet<int> unselectedRows = QSet<int>();
@@ -423,23 +549,52 @@ QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected
 
 static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent);
 
+/**
+ * Opens a new ascent dialog and saves the new ascent to the database.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ * @return			The index of the new ascent in the database's ascent table buffer.
+ */
 BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, Database* db)
 {
 	return openAscentDialogAndStore(parent, db, newItem, nullptr);
 }
 
+/**
+ * Opens a duplicate ascent dialog and saves the new ascent to the database.
+ * 
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
+ * @return					The index of the new ascent in the database's ascent table buffer.
+ */
 BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
 	return openAscentDialogAndStore(parent, db, duplicateItem, originalAscent);
 }
 
+/**
+ * Opens an edit ascent dialog and saves the changes to the database.
+ * 
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
+ */
 void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
 	openAscentDialogAndStore(parent, db, editItem, originalAscent);
 }
 
+/**
+ * Opens a delete ascent dialog and deletes the ascent from the database.
+ * 
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param bufferRowIndex	The index of the ascent to delete in the database's ascent table buffer.
+ */
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* ascent = db->getAscentAt(bufferRowIndex);
@@ -453,12 +608,20 @@ void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, BufferRowIn
 		if (!proceed) return;
 	}
 	
-	// Remove ascent itself
 	db->removeRow(parent, db->ascentsTable, ascentID);
 }
 
 
 
+/**
+ * Opens a purpose-generic ascent dialog and applies the resulting changes to the database.
+ *
+ * @param parent			The parent window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
+ * @return					The index of the new ascent in the database's ascent table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ */
 static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
 {
 	BufferRowIndex newAscentIndex = BufferRowIndex();
@@ -501,6 +664,12 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 
 
 
+/**
+ * Opens a file dialog for selecting photos.
+ * 
+ * @param parent	The parent window.
+ * @return			The selected filepaths.
+ */
 QStringList openFileDialogForPhotosSelection(QWidget* parent)
 {
 	QString caption = AscentDialog::tr("Select photos of ascent");
