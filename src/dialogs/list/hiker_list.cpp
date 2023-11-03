@@ -15,10 +15,19 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker_list.h
+ * 
+ * This file defines the HikersOnAscent class.
+ */
+
 #include "hiker_list.h"
 
 
 
+/**
+ * Creates a new HikersOnAscent object with no hikers.
+ */
 HikersOnAscent::HikersOnAscent() :
 		QAbstractTableModel(),
 		list(QList<QPair<ValidItemID, QString>>())
@@ -26,6 +35,11 @@ HikersOnAscent::HikersOnAscent() :
 
 
 
+/**
+ * Adds a hiker to the list.
+ * 
+ * @param hiker	The hiker to add.
+ */
 void HikersOnAscent::addHiker(Hiker* hiker)
 {
 	int currentNumHikers = list.size();
@@ -34,6 +48,11 @@ void HikersOnAscent::addHiker(Hiker* hiker)
 	endInsertRows();
 }
 
+/**
+ * Removes the hiker at the given row index.
+ * 
+ * @param rowIndex	The row index of the hiker to remove.
+ */
 void HikersOnAscent::removeHikerAt(int rowIndex)
 {
 	beginRemoveRows(QModelIndex(), rowIndex, rowIndex);
@@ -41,6 +60,9 @@ void HikersOnAscent::removeHikerAt(int rowIndex)
 	endRemoveRows();
 }
 
+/**
+ * Removes all hikers from the list.
+ */
 void HikersOnAscent::clear()
 {
 	while (rowCount()) removeHikerAt(0);
@@ -48,6 +70,12 @@ void HikersOnAscent::clear()
 
 
 
+/**
+ * Returns whether the list contains the hiker with the given ID.
+ * 
+ * @param hikerID	The ID of the hiker to check for.
+ * @return			True if the list contains the hiker with the given ID, false otherwise.
+ */
 bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 {
 	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
@@ -56,6 +84,11 @@ bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 	return false;
 }
 
+/**
+ * Returns the set of IDs of the hikers in the list.
+ * 
+ * @return	The set of IDs of the hikers in the list.
+ */
 QSet<ValidItemID> HikersOnAscent::getHikerIDSet() const
 {
 	QSet<ValidItemID> result = QSet<ValidItemID>();
@@ -67,18 +100,37 @@ QSet<ValidItemID> HikersOnAscent::getHikerIDSet() const
 
 
 
+/**
+ * For the QAbstractTableModel implementation, returns the number of rows in the list.
+ * 
+ * @param parent	The parent model index, which is ignored.
+ * @return			The number of rows in the list.
+ */
 int HikersOnAscent::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	return list.size();
 }
 
+/**
+ * For the QAbstractTableModel implementation, returns 2 as the number of columns in the list.
+ * 
+ * @param parent	The parent model index, which is ignored.
+ * @return			The number of columns in the list, which is always 2.
+ */
 int HikersOnAscent::columnCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent);
 	return 2;
 }
 
+/**
+ * For the QAbstractTableModel implementation, returns the data for the given role and model index.
+ * 
+ * @param index	The model index of the data to return.
+ * @param role	The role of the data to return. Everyting except Qt::DisplayRole is ignored.
+ * @return		The data for the given role and model index.
+ */
 QVariant HikersOnAscent::data(const QModelIndex& index, int role) const
 {
 	if (role != Qt::DisplayRole) return QVariant();

@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file hiker_list.h
+ * 
+ * This file declares the HikersOnAscent class.
+ */
+
 #ifndef HIKER_LIST_H
 #define HIKER_LIST_H
 
@@ -28,7 +34,14 @@
 
 
 
+/**
+ * A class encapsulating a list of hikers associated with an ascent.
+ * 
+ * This class is a model for a QTableView. It is used in the ascent dialog to display the hikers
+ * associated with the ascent.
+ */
 class HikersOnAscent : public QAbstractTableModel {
+	/** The list of hikers, each represented by a pair of their ID and their name. */
 	QList<QPair<ValidItemID, QString>> list;
 	
 public:
