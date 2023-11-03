@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/ranges_table.h
+ * 
+ * This file defines the RangesTable class.
+ */
+
 #include "ranges_table.h"
 
 #include <QString>
@@ -22,6 +28,9 @@
 
 
 
+/**
+ * Creates a new RangesTable.
+ */
 RangesTable::RangesTable() :
 		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID"),
 		//							name			uiName				type	nullable	primaryKey	foreignKey	inTable
@@ -35,6 +44,13 @@ RangesTable::RangesTable() :
 
 
 
+/**
+ * Adds a new range to the table.
+ *
+ * @param parent	The parent widget.
+ * @param range		The range to add.
+ * @return			The index of the new range in the table buffer.
+ */
 BufferRowIndex RangesTable::addRow(QWidget* parent, Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -45,6 +61,14 @@ BufferRowIndex RangesTable::addRow(QWidget* parent, Range* range)
 	return newRangeIndex;
 }
 
+/**
+ * Updates the contents of an existing range in the table.
+ *
+ * @pre The given range's ItemID will be used to identify the range to update and thus must be valid.
+ *
+ * @param parent	The parent widget.
+ * @param range		The range to update.
+ */
 void RangesTable::updateRow(QWidget* parent, ValidItemID rangeID, const Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -54,6 +78,13 @@ void RangesTable::updateRow(QWidget* parent, ValidItemID rangeID, const Range* r
 }
 
 
+/**
+ * Translates the data of a range to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param range		The range from which to get the data.
+ * @return			The list of QVariants representing the range's data.
+ */
 QList<QVariant> RangesTable::mapDataToQVariantList(QList<const Column*>& columns, const Range* range) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -67,16 +98,32 @@ QList<QVariant> RangesTable::mapDataToQVariantList(QList<const Column*>& columns
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing mountain ranges when
+ * none is selected.
+ *
+ * @return	The translated string representing absence of a mountain range.
+ */
 QString RangesTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "mountain range" (singular) in lowercase.
+ *
+ * @return	The translation of "mountain range" (singular) in lowercase.
+ */
 QString RangesTable::getItemNameSingularLowercase() const
 {
 	return tr("mountain range");
 }
 
+/**
+ * Returns the translation of "mountain ranges" (plural) in lowercase.
+ *
+ * @return	The translation of "mountain ranges" (plural) in lowercase.
+ */
 QString RangesTable::getItemNamePluralLowercase() const
 {
 	return tr("mountain ranges");

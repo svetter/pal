@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/ranges_table.h
+ * 
+ * This file declares the RangesTable class.
+ */
+
 #ifndef RANGES_TABLE_H
 #define RANGES_TABLE_H
 
@@ -25,11 +31,16 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class RangesTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
+	/** The continent column. */
 	Column* const continentColumn;
 	
 	RangesTable();
