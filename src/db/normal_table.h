@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file normal_table.h
+ * 
+ * This file declares the NormalTable class.
+ */
+
 #ifndef NORMAL_TABLE_H
 #define NORMAL_TABLE_H
 
@@ -26,8 +32,12 @@
 
 
 
+/**
+ * A class for accessing and manipulating a normal (non-associative) table in the database.
+ */
 class NormalTable : public Table {
 public:
+	/** The primary key column of this table. */
 	Column* const primaryKeyColumn;
 	
 	NormalTable(QString name, QString uiName, QString primaryKeyColumnName);

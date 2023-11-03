@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file normal_table.cpp
+ * 
+ * This file defines the NormalTable class.
+ */
+
 #include "normal_table.h"
 
 #include <QDate>
@@ -23,11 +29,23 @@
 
 
 
+/**
+ * Creates a new NormalTable.
+ * 
+ * Immediately after construction, all columns should be created and added to the table.
+ * 
+ * @param name					The internal name of the table.
+ * @param uiName				The name of the table as it should be displayed in the UI.
+ * @param primaryKeyColumnName	The name of the primary key column.
+ */
 NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
 		Table(name, uiName, false),
 		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), ID, false, true, nullptr, this))
 {}
 
+/**
+ * Destroys the NormalTable.
+ */
 NormalTable::~NormalTable()
 {}
 
@@ -35,6 +53,14 @@ NormalTable::~NormalTable()
 
 // BUFFER ACCESS
 
+/**
+ * Returns the index of the buffer row which contains the given primary key.
+ * 
+ * If the primary key is not found, an invalid BufferRowIndex is returned.
+ * 
+ * @param primaryKey	The primary key to search for.
+ * @return				The index of the buffer row which contains the given primary key, or an invalid BufferRowIndex.
+ */
 BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) const
 {
 	BufferRowIndex index = BufferRowIndex(0);
@@ -45,11 +71,23 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
 	return BufferRowIndex();
 }
 
+/**
+ * Returns the primary key of the buffer row at the given index.
+ * 
+ * @param bufferRowIndex	The index of the buffer row.
+ * @return					The primary key of the buffer row at the given index.
+ */
 ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
 {
 	return buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex());
 }
 
+/**
+ * Returns a list of all pairs of primary keys and values of the given column.
+ * 
+ * @param column	The column to get the values of, aside from the primary keys.
+ * @return			A list of pairs of primary keys and values of the given column.
+ */
 QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column) const
 {
 	int primaryKeyColumnIndex = primaryKeyColumn->getIndex();
@@ -65,16 +103,46 @@ QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column
 
 // MODIFICATIONS (PASSTHROUGH)
 
+/**
+ * Adds a row to the table from a list of columns and a corresponding list of data.
+ * 
+ * Delegates to Table::addRow().
+ *
+ * @param parent	The parent window.
+ * @param columns	The columns for which to add data.
+ * @param data		The data to add, in the same order as the columns.
+ * @return			The index of the newly added row in the buffer.
+ */
 BufferRowIndex NormalTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	return Table::addRow(parent, columns, data);
 }
 
+/**
+ * Updates a cell in the table, specified by primary key and column.
+ *
+ * Delegates to Table::updateCellInNormalTable().
+ *
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param column		The column to update.
+ * @param data			The new data for the cell.
+ */
 void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
 	return Table::updateCellInNormalTable(parent, primaryKey, column, data);
 }
 
+/**
+ * Updates a row in the table, specified by primary key.
+ *
+ * Delegates to Table::updateRowInNormalTable().
+ *
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param columns		The columns to update.
+ * @param data			The new data for the cells, in the same order as the columns.
+ */
 void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	return Table::updateRowInNormalTable(parent, primaryKey, columns, data);
@@ -84,6 +152,14 @@ void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const
 
 // QABSTRACTIMTEMMODEL IMPLEMENTATION
 
+/**
+ * For the QAbstractItemModel implementation, fetches the formatted data for the given span of
+ * roles and indices (in the form of a QModelRoleDataSpan).
+ * 
+ * The data is not returned, but written back to the given QModelRoleDataSpan.
+ * 
+ * Cell contents are formatted and aligned according to the column type.
+ */
 void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
 	for (QModelRoleData& roleData : roleDataSpan) {
