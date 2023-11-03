@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file add_hiker_dialog.h
+ * 
+ * This file declates the AddHikerDialog class.
+ */
+
 #ifndef ADD_HIKER_DIALOG_H
 #define ADD_HIKER_DIALOG_H
 
@@ -23,12 +29,17 @@
 
 
 
+/**
+ * Control class for the add hiker dialog used in the ascent dialog to add a hiker to the ascent.
+ */
 class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 {
 	Q_OBJECT
 	
+	/** The project database. */
 	Database* db;
 	
+	/** The list of hiker IDs in the order they appear in the hiker combo box. */
 	QList<ValidItemID> selectableHikerIDs;
 	
 public:

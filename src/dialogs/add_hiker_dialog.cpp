@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file add_hiker_dialog.h
+ * 
+ * This file defines the AddHikerDialog class.
+ */
+
 #include "add_hiker_dialog.h"
 
 #include "src/dialogs/hiker_dialog.h"
@@ -23,6 +29,14 @@
 
 
 
+/**
+ * Creates a new add hiker dialog.
+ * 
+ * Sets up UI, populates combo boxes and connects interactive elements.
+ * 
+ * @param parent	The parent window.
+ * @param db		The project database.
+ */
 AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 		QDialog(parent),
 		db(db),
@@ -42,6 +56,9 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
 
 
 
+/**
+ * Populates the combo boxes with items from the database.
+ */
 void AddHikerDialog::populateComboBoxes()
 {
 	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerCombo, selectableHikerIDs);
@@ -49,6 +66,11 @@ void AddHikerDialog::populateComboBoxes()
 
 
 
+/**
+ * Extracts the ID of the hiker selected in the dialog.
+ * 
+ * @return	The selected hiker's ID.
+ */
 ValidItemID AddHikerDialog::extractHikerID()
 {
 	assert(hikerSelected());
@@ -56,6 +78,11 @@ ValidItemID AddHikerDialog::extractHikerID()
 }
 
 
+/**
+ * Checks whether a hiker is selected in the dialog.
+ * 
+ * @return	True if a hiker is selected, false otherwise.
+ */
 bool AddHikerDialog::hikerSelected()
 {
 	return hikerCombo->currentIndex() > 0;
@@ -63,6 +90,11 @@ bool AddHikerDialog::hikerSelected()
 
 
 
+/**
+ * Event handler for the new hiker button.
+ * 
+ * Opens a new hiker dialog and selects the new hiker in the combo box if one was created.
+ */
 void AddHikerDialog::handle_newHiker()
 {
 	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
@@ -72,6 +104,11 @@ void AddHikerDialog::handle_newHiker()
 }
 
 
+/**
+ * Event handler for the ok button.
+ * 
+ * Accepts the dialog if a hiker is selected, otherwise shows an error message.
+ */
 void AddHikerDialog::handle_ok()
 {
 	if (hikerSelected()) {
@@ -84,6 +121,11 @@ void AddHikerDialog::handle_ok()
 	}
 }
 
+/**
+ * Event handler for the cancel button.
+ * 
+ * Rejects the dialog without doing anything else.
+ */
 void AddHikerDialog::handle_cancel()
 {
 	reject();
@@ -91,6 +133,10 @@ void AddHikerDialog::handle_cancel()
 
 
 
+/**
+ * Opens a new add hiker dialog and returns the ID of the selected hiker or an invalid ItemID if
+ * the dialog was cancelled.
+ */
 ItemID openAddHikerDialog(QWidget* parent, Database* db)
 {
 	AddHikerDialog dialog(parent, db);
