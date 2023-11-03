@@ -18,7 +18,7 @@
 /**
  * @file trip_dialog.h
  * 
- * This file declares the TripDialog class.
+ * This file defines the TripDialog class.
  */
 
 #include "trip_dialog.h"

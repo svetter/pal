@@ -18,7 +18,7 @@
 /**
  * @file peak_dialog.h
  * 
- * This file declares the PeakDialog class.
+ * This file defines the PeakDialog class.
  */
 
 #include "peak_dialog.h"

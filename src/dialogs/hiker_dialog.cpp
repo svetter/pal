@@ -18,7 +18,7 @@
 /**
  * @file hiker_dialog.h
  * 
- * This file declares the HikerDialog class.
+ * This file defines the HikerDialog class.
  */
 
 #include "hiker_dialog.h"

@@ -18,7 +18,7 @@
 /**
  * @file region_dialog.h
  * 
- * This file declares the RegionDialog class.
+ * This file defines the RegionDialog class.
  */
 
 #include "region_dialog.h"

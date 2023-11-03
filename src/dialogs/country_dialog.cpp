@@ -18,7 +18,7 @@
 /**
  * @file country_dialog.h
  * 
- * This file declares the CountryDialog class.
+ * This file defines the CountryDialog class.
  */
 
 #include "country_dialog.h"
