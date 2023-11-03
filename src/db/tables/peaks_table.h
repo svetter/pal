@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/peaks_table.h
+ * 
+ * This file declares the PeaksTable class.
+ */
+
 #ifndef PEAKS_TABLE_H
 #define PEAKS_TABLE_H
 
@@ -25,16 +31,26 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class PeaksTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
+	/** The height column. */
 	Column* const heightColumn;
+	/** The volcano column. */
 	Column* const volcanoColumn;
+	/** The region ID column. */
 	Column* const regionIDColumn;
+	/** The Google Maps link column. */
 	Column* const mapsLinkColumn;
+	/** The Google Earth link column. */
 	Column* const earthLinkColumn;
+	/** The Wikipedia link column. */
 	Column* const wikiLinkColumn;
 	
 	PeaksTable(Column* foreignRegionIDColumn);

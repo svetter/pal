@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/peaks_table.h
+ * 
+ * This file defines the PeaksTable class.
+ */
+
 #include "peaks_table.h"
 
 #include <QString>
@@ -22,6 +28,11 @@
 
 
 
+/**
+ * Creates a new PeaksTable.
+ * 
+ * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
+ */
 PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 		NormalTable(QString("Peaks"), tr("Peaks"), "peakID"),
 		//							name			uiName						type		nullable	primaryKey	foreignKey				inTable
@@ -45,6 +56,13 @@ PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
 
 
 
+/**
+ * Adds a new peak to the table.
+ *
+ * @param parent	The parent widget.
+ * @param peak		The peak to add.
+ * @return			The index of the new peak in the table buffer.
+ */
 BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak* peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -55,6 +73,14 @@ BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak* peak)
 	return newPeakIndex;
 }
 
+/**
+ * Updates the contents of an existing peak in the table.
+ *
+ * @pre The given peak's ItemID will be used to identify the peak to update and thus must be valid.
+ *
+ * @param parent	The parent widget.
+ * @param peak		The peak to update.
+ */
 void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -64,6 +90,13 @@ void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak
 }
 
 
+/**
+ * Translates the data of a peak to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param peak		The peak from which to get the data.
+ * @return			The list of QVariants representing the peak's data.
+ */
 QList<QVariant> PeaksTable::mapDataToQVariantList(QList<const Column*>& columns, const Peak* peak) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -82,16 +115,32 @@ QList<QVariant> PeaksTable::mapDataToQVariantList(QList<const Column*>& columns,
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing peaks when none is
+ * selected.
+ *
+ * @return	The translated string representing absence of a peak.
+ */
 QString PeaksTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "peak" (singular) in lowercase.
+ *
+ * @return	The translation of "peak" (singular) in lowercase.
+ */
 QString PeaksTable::getItemNameSingularLowercase() const
 {
 	return tr("peak");
 }
 
+/**
+ * Returns the translation of "peaks" (plural) in lowercase.
+ *
+ * @return	The translation of "peaks" (plural) in lowercase.
+ */
 QString PeaksTable::getItemNamePluralLowercase() const
 {
 	return tr("peaks");
