@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file database.h
+ * 
+ * This file declares the Database class and the WhatIfDeleteResult struct.
+ */
+
 #ifndef DATABASE_H
 #define DATABASE_H
 
@@ -46,23 +52,39 @@ struct WhatIfDeleteResult;
 
 
 
+/**
+ * A singleton class for accessing and manipulating the database.
+ */
 class Database {
+	/** Whether a database is currently loaded. */
 	bool databaseLoaded;
+	/** The (functionally static) list of tables in any project database. */
 	QList<Table*> tables;
 	
+	/** A pointer to the status bar of the main window, used to display status messages. */
 	QStatusBar* mainWindowStatusBar;
 	
 public:
+	/** The ascents table. */
 	AscentsTable*		ascentsTable;
+	/** The peaks table. */
 	PeaksTable*			peaksTable;
+	/** The trips table. */
 	TripsTable*			tripsTable;
+	/** The hikers table. */
 	HikersTable*		hikersTable;
+	/** The regions table. */
 	RegionsTable*		regionsTable;
+	/** The ranges table. */
 	RangesTable*		rangesTable;
+	/** The countries table. */
 	CountriesTable*		countriesTable;
+	/** The photos table. */
 	PhotosTable*		photosTable;
+	/** The participated table. */
 	ParticipatedTable*	participatedTable;
 	
+	/** The project settings, based on a table. */
 	ProjectSettings*	projectSettings;
 	
 	Database();
@@ -102,6 +124,9 @@ private:
 
 
 
+/**
+ * A struct for storing a singular result of a what-if delete investigation.
+ */
 struct WhatIfDeleteResult {
 	const Table*		affectedTable;
 	const NormalTable*	itemTable;

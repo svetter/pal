@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file database.cpp
+ * 
+ * This file defines the Database class and the WhatIfDeleteResult struct.
+ */
+
 #include "database.h"
 
 #include "src/db/db_error.h"
@@ -25,6 +31,10 @@
 
 
 
+/**
+ * Creates a new Database object, immediately creates the table models and initializes the
+ * SQLite database driver.
+ */
 Database::Database() :
 		databaseLoaded(false),
 		tables(QList<Table*>()),
@@ -55,6 +65,9 @@ Database::Database() :
 	QSqlDatabase::addDatabase("QSQLITE");
 }
 
+/**
+ * Destroys the Database object.
+ */
 Database::~Database() {
 	qDeleteAll(getTableList());
 	delete projectSettings;
@@ -62,6 +75,11 @@ Database::~Database() {
 
 
 
+/**
+ * Resets the database object and closes the connection to the database.
+ * 
+ * Used when closing a project.
+ */
 void Database::reset()
 {
 	for (Table* table : tables) {
@@ -74,6 +92,12 @@ void Database::reset()
 	databaseLoaded = false;
 }
 
+/**
+ * Creates a new database file at the given filepath and initializes it.
+ * 
+ * @param parent	The parent window.
+ * @param filepath	The filepath of the new database file.
+ */
 void Database::createNew(QWidget* parent, const QString& filepath)
 {
 	assert(!databaseLoaded);
@@ -105,6 +129,12 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	populateBuffers(parent, true);
 }
 
+/**
+ * Opens an existing database file at the given filepath and loads the data into the buffers.
+ * 
+ * @param parent	The parent window.
+ * @param filepath	The filepath of the existing database file.
+ */
 void Database::openExisting(QWidget* parent, const QString& filepath)
 {
 	assert(!databaseLoaded);
@@ -123,6 +153,12 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	projectSettings->initBuffer(parent);
 }
 
+/**
+ * Copies the current database file to a new filepath and opens a connection to the new file.
+ * 
+ * @param parent	The parent window.
+ * @return			True if the save was successful and the new file is now opened, false otherwise.
+ */
 bool Database::saveAs(QWidget* parent, const QString& filepath)
 {
 	assert(databaseLoaded);
@@ -155,6 +191,13 @@ bool Database::saveAs(QWidget* parent, const QString& filepath)
 }
 
 
+/**
+ * Returns the filepath of the currently open database file.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @return	The filepath of the currently open database file.
+ */
 QString Database::getCurrentFilepath() const
 {
 	assert(databaseLoaded);
@@ -164,6 +207,15 @@ QString Database::getCurrentFilepath() const
 }
 
 
+/**
+ * Populates the buffers of all regular tables (not project settings) by loading the data from the
+ * SQL database.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param parent		The parent window.
+ * @param expectEmpty	Whether the tables are expected to be empty.
+ */
 void Database::populateBuffers(QWidget* parent, bool expectEmpty)
 {
 	assert(databaseLoaded);
@@ -176,6 +228,11 @@ void Database::populateBuffers(QWidget* parent, bool expectEmpty)
 
 
 
+/**
+ * Returns a list of all tables in the database (not including the project settings table).
+ * 
+ * @return	A list of all regular tables (not project settings) in the database.
+ */
 QList<Table*> Database::getTableList() const
 {
 	return QList<Table*>(tables);
@@ -183,42 +240,105 @@ QList<Table*> Database::getTableList() const
 
 
 
+/**
+ * Fetches the data for the ascent with the given ID from the database and returns it as an Ascent
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param ascentID	The ID of the ascent to fetch.
+ * @return			The ascent with the given ID.
+ */
 Ascent* Database::getAscent(ValidItemID ascentID) const
 {
 	assert(databaseLoaded);
 	return getAscentAt(ascentsTable->getBufferIndexForPrimaryKey(ascentID));
 }
 
+/**
+ * Fetches the data for the peak with the given ID from the database and returns it as a Peak
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param peakID	The ID of the peak to fetch.
+ * @return			The peak with the given ID.
+ */
 Peak* Database::getPeak(ValidItemID peakID) const
 {
 	assert(databaseLoaded);
 	return getPeakAt(peaksTable->getBufferIndexForPrimaryKey(peakID));
 }
 
+/**
+ * Fetches the data for the trip with the given ID from the database and returns it as a Trip
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param tripID	The ID of the trip to fetch.
+ * @return			The trip with the given ID.
+ */
 Trip* Database::getTrip(ValidItemID tripID) const
 {
 	assert(databaseLoaded);
 	return getTripAt(tripsTable->getBufferIndexForPrimaryKey(tripID));
 }
 
+/**
+ * Fetches the data for the hiker with the given ID from the database and returns it as a Hiker
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param hikerID	The ID of the hiker to fetch.
+ * @return			The hiker with the given ID.
+ */
 Hiker* Database::getHiker(ValidItemID hikerID) const
 {
 	assert(databaseLoaded);
 	return getHikerAt(hikersTable->getBufferIndexForPrimaryKey(hikerID));
 }
 
+/**
+ * Fetches the data for the region with the given ID from the database and returns it as a Region
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param regionID	The ID of the region to fetch.
+ * @return			The region with the given ID.
+ */
 Region* Database::getRegion(ValidItemID regionID) const
 {
 	assert(databaseLoaded);
 	return getRegionAt(regionsTable->getBufferIndexForPrimaryKey(regionID));
 }
 
+/**
+ * Fetches the data for the range with the given ID from the database and returns it as a Range
+ * object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rangeID	The ID of the range to fetch.
+ * @return			The range with the given ID.
+ */
 Range* Database::getRange(ValidItemID rangeID) const
 {
 	assert(databaseLoaded);
 	return getRangeAt(rangesTable->getBufferIndexForPrimaryKey(rangeID));
 }
 
+/**
+ * Fetches the data for the country with the given ID from the database and returns it as a
+ * Country object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param countryID	The ID of the country to fetch.
+ * @return			The country with the given ID.
+ */
 Country* Database::getCountry(ValidItemID countryID) const
 {
 	assert(databaseLoaded);
@@ -227,6 +347,15 @@ Country* Database::getCountry(ValidItemID countryID) const
 
 
 
+/**
+ * Fetches the data for the ascent at the given buffer row index from the database and returns it
+ * as an Ascent object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the ascent to fetch.
+ * @return			The ascent at the given buffer row index.
+ */
 Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -254,6 +383,15 @@ Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
 	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
+/**
+ * Fetches the data for the peak at the given buffer row index from the database and returns it as
+ * a Peak object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the peak to fetch.
+ * @return			The peak at the given buffer row index.
+ */
 Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -273,6 +411,15 @@ Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
+/**
+ * Fetches the data for the trip at the given buffer row index from the database and returns it as
+ * a Trip object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the trip to fetch.
+ * @return			The trip at the given buffer row index.
+ */
 Trip* Database::getTripAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -289,6 +436,15 @@ Trip* Database::getTripAt(BufferRowIndex rowIndex) const
 	return new Trip(tripID, name, startDate, endDate, description);
 }
 
+/**
+ * Fetches the data for the hiker at the given buffer row index from the database and returns it
+ * as a Hiker object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the hiker to fetch.
+ * @return			The hiker at the given buffer row index.
+ */
 Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -302,6 +458,15 @@ Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
 	return new Hiker(hikerID, name);
 }
 
+/**
+ * Fetches the data for the region at the given buffer row index from the database and returns it
+ * as a Region object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the region to fetch.
+ * @return			The region at the given buffer row index.
+ */
 Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -317,6 +482,15 @@ Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 	return new Region(regionID, name, rangeID, countryID);
 }
 
+/**
+ * Fetches the data for the range at the given buffer row index from the database and returns it
+ * as a Range object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the range to fetch.
+ * @return			The range at the given buffer row index.
+ */
 Range* Database::getRangeAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -331,6 +505,15 @@ Range* Database::getRangeAt(BufferRowIndex rowIndex) const
 	return new Range(rangeID, name, continent);
 }
 
+/**
+ * Fetches the data for the country at the given buffer row index from the database and returns it
+ * as a Country object.
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param rowIndex	The buffer row index of the country to fetch.
+ * @return			The country at the given buffer row index.
+ */
 Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
@@ -346,6 +529,26 @@ Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 
 
 
+/**
+ * Returns a list of consequences of removing the row with the given primary key from the given
+ * normal table.
+ * 
+ * A "consequence" of a deletion here is any instance where another item would have information
+ * associated with it change as a result of the deletion. For example, if a peak is deleted, all
+ * ascents of that peak would now be without a peak, so they would be counted as a consequence.
+ * All consequences of the same kind, i.e., affected items in the same table, are grouped together
+ * as one WhatIfDeleteResult with a count of how many items would be affected.
+ * 
+ * Delegates to removeRow_referenceSearch().
+ * 
+ * @see WhatIfDeleteResult
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param table			The table to search in.
+ * @param primaryKey	The primary key to search for.
+ * @return				A list of all rows in the given table that reference the given primary key.
+ */
 QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, ValidItemID primaryKey)
 {
 	assert(databaseLoaded);
@@ -353,6 +556,18 @@ QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, ValidIt
 	return Database::removeRow_referenceSearch(nullptr, true, table, primaryKey);
 }
 
+/**
+ * Removes the row with the given primary key from the given normal table.
+ * 
+ * Before removing the row, all references to the row have to be removed from other tables. This
+ * task is delegated to removeRow_referenceSearch().
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param parent		The parent window.
+ * @param table			The table to remove the row from.
+ * @param primaryKey	The primary key of the row to remove.
+ */
 void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey)
 {
 	assert(databaseLoaded);
@@ -362,6 +577,20 @@ void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primar
 	table->removeRow(parent, { table->primaryKeyColumn }, { primaryKey });
 }
 
+/**
+ * For the item with the given primary key in the given table, performs an exhaustive search for
+ * all references to it in other tables and either collects or removes them.
+ * 
+ * @see WhatIfDeleteResult
+ * 
+ * @pre A database file is currently open.
+ * 
+ * @param parent			The parent window.
+ * @param searchNotExecute	Whether to collect references (true) or remove them (false).
+ * @param table				The table from which a row is to be removed.
+ * @param primaryKey		The primary key of the row to be removed.
+ * @return					A list of WhatIfDeleteResults which lists the reference count for each affected table. Empty if searchNotExecute is false.
+ */
 QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey)
 {
 	assert(databaseLoaded);
@@ -441,6 +670,13 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 
 
 
+/**
+ * Creates a new WhatIfDeleteResult.
+ * 
+ * @param affectedTable			The table that would be affected by the deletion.
+ * @param itemTable				The table that contains the item that is to be deleted.
+ * @param numAffectedRowIndices	The number of rows in the affected table that would be affected by the deletion.
+ */
 WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices) :
 		affectedTable(affectedTable),
 		itemTable(itemTable),
