@@ -15,28 +15,60 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file db_error.h
+ * 
+ * This file defines functions for displaying database errors.
+ */
+
 #include "db_error.h"
 
 #include <QMessageBox>
 
 
 
+/**
+ * Displays an error message.
+ * 
+ * @param parent	The parent window.
+ * @param error		The error message.
+ */
 void displayError(QWidget* parent, QString error)
 {
 	QMessageBox::critical(parent, "Database error", error);
 	exit(1);
 }
 
+/**
+ * Displays an error message including the query that caused the error.
+ *
+ * @param parent		The parent window.
+ * @param error			The error message.
+ * @param queryString	The query that caused the error.
+ */
 void displayError(QWidget* parent, QString error, QString& queryString)
 {
 	return displayError(parent, error + "\n\nQuery:\n" + queryString);
 }
 
+/**
+ * Displays a QSqlError as an error message, along with the query that caused the error.
+ *
+ * @param parent		The parent window.
+ * @param error			The error.
+ * @param queryString	The query that caused the error.
+ */
 void displayError(QWidget* parent, QSqlError error, QString& queryString)
 {
 	return displayError(parent, error.text(), queryString);
 }
 
+/**
+ * Displays a QSqlError as an error message.
+ *
+ * @param parent	The parent window.
+ * @param error		The error.
+ */
 void displayError(QWidget* parent, QSqlError error)
 {
 	return displayError(parent, error.text());

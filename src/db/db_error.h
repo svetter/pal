@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file db_error.h
+ * 
+ * This file declares functions for displaying database errors.
+ */
+
 #ifndef DB_ERROR_H
 #define DB_ERROR_H
 
