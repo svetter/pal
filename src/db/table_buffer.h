@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file table_buffer.h
+ * 
+ * This file declares the TableBuffer and ViewOrderBuffer classes.
+ */
+
 #ifndef TABLE_BUFFER_H
 #define TABLE_BUFFER_H
 
@@ -25,8 +31,12 @@
 
 
 
+/**
+ * A class encapsulating a buffer for a Table or a CompositeTable.
+ */
 class TableBuffer {
 protected:
+	/** The buffer. */
 	QList<QList<QVariant>*> buffer;
 	
 public:
@@ -54,8 +64,12 @@ public:
 
 
 
+/**
+ * A class encapsulating an order buffer (a list of ViewOrderBuffer) for a CompositeTable.
+ */
 class ViewOrderBuffer {
 protected:
+	/** The order buffer. */
 	QList<BufferRowIndex> order;
 	
 public:
