@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/regions_table.h
+ * 
+ * This file defines the RegionsTable class.
+ */
+
 #include "regions_table.h"
 
 #include <QString>
@@ -22,6 +28,12 @@
 
 
 
+/**
+ * Creates a new RegionsTable.
+ * 
+ * @param foreignRangeIDColumn		The primary key column of the RangesTable.
+ * @param foreignCountryIDColumn	The primary key column of the CountriesTable.
+ */
 RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
 		NormalTable(QString("Regions"), tr("Regions"), "regionID"),
 		//							name			uiName		type	nullable	primaryKey	foreignKey				inTable
@@ -37,6 +49,13 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 
 
 
+/**
+ * Adds a new region to the table.
+ *
+ * @param parent	The parent widget.
+ * @param region	The region to add.
+ * @return			The index of the new region in the table buffer.
+ */
 BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -47,6 +66,14 @@ BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
 	return newRegionIndex;
 }
 
+/**
+ * Updates the contents of an existing region in the table.
+ *
+ * @pre The given region's ItemID will be used to identify the region to update and thus must be valid.
+ *
+ * @param parent	The parent widget.
+ * @param region	The region to update.
+ */
 void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
@@ -56,6 +83,13 @@ void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region
 }
 
 
+/**
+ * Translates the data of a region to a list of QVariants.
+ *
+ * @param columns	The column list specifying the order of the data.
+ * @param region	The region from which to get the data.
+ * @return			The list of QVariants representing the region's data.
+ */
 QList<QVariant> RegionsTable::mapDataToQVariantList(QList<const Column*>& columns, const Region* region) const
 {
 	QList<QVariant> data = QList<QVariant>();
@@ -70,16 +104,32 @@ QList<QVariant> RegionsTable::mapDataToQVariantList(QList<const Column*>& column
 
 
 
+/**
+ * Returns the translated string to be displayed in a combo box containing regions when none is
+ * selected.
+ *
+ * @return	The translated string representing absence of a region.
+ */
 QString RegionsTable::getNoneString() const
 {
 	return tr("None");
 }
 
+/**
+ * Returns the translation of "region" (singular) in lowercase.
+ *
+ * @return	The translation of "region" (singular) in lowercase.
+ */
 QString RegionsTable::getItemNameSingularLowercase() const
 {
 	return tr("region");
 }
 
+/**
+ * Returns the translation of "regions" (plural) in lowercase.
+ *
+ * @return	The translation of "regions" (plural) in lowercase.
+ */
 QString RegionsTable::getItemNamePluralLowercase() const
 {
 	return tr("regions");

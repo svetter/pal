@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file src/db/tables/regions_table.h
+ * 
+ * This file declares the RegionsTable class.
+ */
+
 #ifndef REGIONS_TABLE_H
 #define REGIONS_TABLE_H
 
@@ -23,12 +29,18 @@
 
 
 
+/**
+ * A class for accessing and manipulating the ascents table in the database.
+ */
 class RegionsTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The name column. */
 	Column* const nameColumn;
+	/** The range ID column. */
 	Column* const rangeIDColumn;
+	/** The country ID column. */
 	Column* const countryIDColumn;
 	
 	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn);
