@@ -16,7 +16,7 @@
  */
 
 /**
- @file associative_table.cpp
+ @file associative_table.h
  * 
  * This file declares the AssociativeTable class.
  */
