@@ -132,8 +132,7 @@ QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& column
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing ascents when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no ascent is selected.
  *
  * @return	The translated string representing absence of an ascent.
  */
@@ -143,9 +142,9 @@ QString AscentsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "ascent" (singular) in lowercase.
+ * Returns the translation of "ascent" (singular), not capitalized unless the language requires it.
  *
- * @return	The translation of "ascent" (singular) in lowercase.
+ * @return	The translation of "ascent" (singular) for use mid-sentence.
  */
 QString AscentsTable::getItemNameSingularLowercase() const
 {
@@ -153,9 +152,9 @@ QString AscentsTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "ascents" (plural) in lowercase.
+ * Returns the translation of "ascents" (plural), not capitalized unless the language requires it.
  *
- * @return	The translation of "ascents" (plural) in lowercase.
+ * @return	The translation of "ascents" (plural) for use mid-sentence.
  */
 QString AscentsTable::getItemNamePluralLowercase() const
 {

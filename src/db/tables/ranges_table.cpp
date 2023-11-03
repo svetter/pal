@@ -99,8 +99,7 @@ QList<QVariant> RangesTable::mapDataToQVariantList(QList<const Column*>& columns
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing mountain ranges when
- * none is selected.
+ * Returns the translated string to be displayed to indicate that no range is selected.
  *
  * @return	The translated string representing absence of a mountain range.
  */
@@ -110,9 +109,10 @@ QString RangesTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "mountain range" (singular) in lowercase.
+ * Returns the translation of "mountain range" (singular), not capitalized unless the language
+ * requires it.
  *
- * @return	The translation of "mountain range" (singular) in lowercase.
+ * @return	The translation of "mountain range" (singular) for use mid-sentence.
  */
 QString RangesTable::getItemNameSingularLowercase() const
 {
@@ -120,9 +120,10 @@ QString RangesTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "mountain ranges" (plural) in lowercase.
+ * Returns the translation of "mountain ranges" (plural), not capitalized unless the language
+ * requires it.
  *
- * @return	The translation of "mountain ranges" (plural) in lowercase.
+ * @return	The translation of "mountain ranges" (plural) for use mid-sentence.
  */
 QString RangesTable::getItemNamePluralLowercase() const
 {

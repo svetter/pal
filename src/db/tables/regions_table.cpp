@@ -105,8 +105,7 @@ QList<QVariant> RegionsTable::mapDataToQVariantList(QList<const Column*>& column
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing regions when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no region is selected.
  *
  * @return	The translated string representing absence of a region.
  */
@@ -116,9 +115,9 @@ QString RegionsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "region" (singular) in lowercase.
+ * Returns the translation of "region" (singular), not capitalized unless the language requires it.
  *
- * @return	The translation of "region" (singular) in lowercase.
+ * @return	The translation of "region" (singular) for use mid-sentence.
  */
 QString RegionsTable::getItemNameSingularLowercase() const
 {
@@ -126,9 +125,9 @@ QString RegionsTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "regions" (plural) in lowercase.
+ * Returns the translation of "regions" (plural), not capitalized unless the language requires it.
  *
- * @return	The translation of "regions" (plural) in lowercase.
+ * @return	The translation of "regions" (plural) for use mid-sentence.
  */
 QString RegionsTable::getItemNamePluralLowercase() const
 {

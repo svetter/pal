@@ -46,22 +46,23 @@ public:
 	
 	// Translation strings
 	/**
-	 * Returns the translated string to be displayed in a combo box containing items from this
-	 * table when no item is selected.
+	 * Returns the translated string to be displayed to indicate that no item is selected.
 	 * 
 	 * @return	The translated string representing absence of an item of the table's type.
 	 */
 	virtual QString getNoneString() const = 0;
 	/**
-	 * Returns the translated name of this table's item type in singular and lowercase.
+	 * Returns the translated name of this table's item type in singular, not capitalized unless
+	 * the language requires it.
 	 * 
-	 * @return	The translated name of the item type in singular and lowercase.
+	 * @return	The translated name of the item type in singular for use mid-sentence.
 	 */
 	virtual QString getItemNameSingularLowercase() const = 0;
 	/**
-	 * Returns the translated name of this table's item type in plural and lowercase.
+	 * Returns the translated name of this table's item type in plural, not capitalized unless the
+	 * language requires it.
 	 *
-	 * @return	The translated name of the item type in plural and lowercase.
+	 * @return	The translated name of the item type in plural for use mid-sentence.
 	 */
 	virtual QString getItemNamePluralLowercase() const = 0;
 	

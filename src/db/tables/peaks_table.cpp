@@ -116,8 +116,7 @@ QList<QVariant> PeaksTable::mapDataToQVariantList(QList<const Column*>& columns,
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing peaks when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no peak is selected.
  *
  * @return	The translated string representing absence of a peak.
  */
@@ -127,9 +126,9 @@ QString PeaksTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "peak" (singular) in lowercase.
+ * Returns the translation of "peak" (singular), not capitalized unless the language requires it.
  *
- * @return	The translation of "peak" (singular) in lowercase.
+ * @return	The translation of "peak" (singular) for use mid-sentence.
  */
 QString PeaksTable::getItemNameSingularLowercase() const
 {
@@ -137,9 +136,9 @@ QString PeaksTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "peaks" (plural) in lowercase.
+ * Returns the translation of "peaks" (plural), not capitalized unless the language requires it.
  *
- * @return	The translation of "peaks" (plural) in lowercase.
+ * @return	The translation of "peaks" (plural) for use mid-sentence.
  */
 QString PeaksTable::getItemNamePluralLowercase() const
 {

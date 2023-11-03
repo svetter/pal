@@ -96,8 +96,7 @@ QList<QVariant> CountriesTable::mapDataToQVariantList(QList<const Column*>& colu
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing countries when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no country is selected.
  *
  * @return	The translated string representing absence of a country.
  */
@@ -107,9 +106,10 @@ QString CountriesTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "country" (singular) in lowercase.
+ * Returns the translation of "country" (singular), not capitalized unless the language requires
+ * it.
  *
- * @return	The the translation of "country" (singular) in lowercase.
+ * @return	The the translation of "country" (singular) for use mid-sentence.
  */
 QString CountriesTable::getItemNameSingularLowercase() const
 {
@@ -117,9 +117,10 @@ QString CountriesTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "countries" (plural) in lowercase.
+ * Returns the translation of "countries" (plural), not capitalized unless the language requires
+ * it.
  *
- * @return	The translation of "countries" (plural) in lowercase.
+ * @return	The translation of "countries" (plural) for use mid-sentence.
  */
 QString CountriesTable::getItemNamePluralLowercase() const
 {

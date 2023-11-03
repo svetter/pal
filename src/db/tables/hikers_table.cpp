@@ -96,8 +96,7 @@ QList<QVariant> HikersTable::mapDataToQVariantList(QList<const Column*>& columns
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing hikers when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no hiker is selected.
  *
  * @return	The translated string representing absence of a hiker.
  */
@@ -107,9 +106,9 @@ QString HikersTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "hiker" (singular) in lowercase.
+ * Returns the translation of "hiker" (singular), not capitalized unless the language requires it.
  *
- * @return	The translation of "hiker" (singular) in lowercase.
+ * @return	The translation of "hiker" (singular) for use mid-sentence.
  */
 QString HikersTable::getItemNameSingularLowercase() const
 {
@@ -117,9 +116,9 @@ QString HikersTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "hikers" (plural) in lowercase.
+ * Returns the translation of "hikers" (plural), not capitalized unless the language requires it.
  *
- * @return	The translation of "hikers" (plural) in lowercase.
+ * @return	The translation of "hikers" (plural) for use mid-sentence.
  */
 QString HikersTable::getItemNamePluralLowercase() const
 {

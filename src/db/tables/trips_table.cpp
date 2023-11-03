@@ -105,8 +105,7 @@ QList<QVariant> TripsTable::mapDataToQVariantList(QList<const Column*>& columns,
 
 
 /**
- * Returns the translated string to be displayed in a combo box containing trips when none is
- * selected.
+ * Returns the translated string to be displayed to indicate that no trip is selected.
  *
  * @return	The translated string representing absence of a trip.
  */
@@ -116,9 +115,9 @@ QString TripsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "trip" (singular) in lowercase.
+ * Returns the translation of "trip" (singular), not capitalized unless the language requires it.
  *
- * @return	The translation of "trip" (singular) in lowercase.
+ * @return	The translation of "trip" (singular) for use mid-sentence.
  */
 QString TripsTable::getItemNameSingularLowercase() const
 {
@@ -126,9 +125,9 @@ QString TripsTable::getItemNameSingularLowercase() const
 }
 
 /**
- * Returns the translation of "trips" (plural) in lowercase.
+ * Returns the translation of "trips" (plural), not capitalized unless the language requires it.
  *
- * @return	The translation of "trips" (plural) in lowercase.
+ * @return	The translation of "trips" (plural) for use mid-sentence.
  */
 QString TripsTable::getItemNamePluralLowercase() const
 {
