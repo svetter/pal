@@ -34,13 +34,20 @@
 
 
 
+/**
+ * A class for accessing and manipulating the photos table in the database.
+ */
 class PhotosTable : public NormalTable {
 	Q_OBJECT
 	
 public:
+	/** The ascent ID column. */
 	Column* const ascentIDColumn;
+	/** The sort index column. */
 	Column* const sortIndexColumn;
+	/** The file path column. */
 	Column* const filepathColumn;
+	/** The description column. */
 	Column* const descriptionColumn;
 	
 	PhotosTable(Column* foreignAscentIDColumn);
