@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file column.h
+ * 
+ * This file declares the Column class.
+ */
+
 #ifndef COLUMN_H
 #define COLUMN_H
 
@@ -28,22 +34,37 @@ class CompositeColumn;
 
 
 
+/**
+ * Specifies the type of data contained in a database column.
+ * 
+ * Items correspond to SQL data types, except for the ID type.
+ */
 enum DataType {
 	Integer, ID, Enum, DualEnum, Bit, String, Date, Time, IDList
 };
 
 
-
+/**
+ * A class modelling a column in a database table.
+ */
 class Column {
+	/** The composite columnd which have registered to be notified when data in this column changes. */
 	QSet<const CompositeColumn*> changeListeners;
 	
 public:
+	/** The internal name of the column. */
 	const QString		name;
+	/** The name of the column as it should be displayed in the UI. */
 	const QString		uiName;
+	/** The type of data contained in the column. */
 	const DataType		type;
+	/** Whether the column contains primary keys. */
 	const bool			primaryKey;
+	/** The foreign column referenced by this column if it contains foreign keys. */
 	Column* const		foreignKey;
+	/** Whether the column can contain null values. */
 	const bool			nullable;
+	/** The table this column belongs to. */
 	const Table* const	table;
 	
 	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table);

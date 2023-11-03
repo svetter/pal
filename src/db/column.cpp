@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file column.cpp
+ * 
+ * This file defines the Column class.
+ */
+
 #include "column.h"
 
 #include "src/db/row_index.h"
@@ -26,6 +32,17 @@
 
 
 
+/**
+ * Creates a new Column.
+ * 
+ * @param name			The internal name of the column.
+ * @param uiName		The name of the column as it should be displayed in the UI.
+ * @param type			The type of data contained in the column.
+ * @param nullable		Whether the column may contain null values.
+ * @param primaryKey	Whether the column contains primary keys.
+ * @param foreignKey	The foreign column referenced by this column if it contains foreign keys.
+ * @param table			The table this column belongs to.
+ */
 Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table) :
 		changeListeners(QSet<const CompositeColumn*>()),
 		name(name),
@@ -45,26 +62,51 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 
 
 
+/**
+ * Indicates whether this column contains primary keys.
+ * 
+ * @return	True if this is a primary key column, false otherwise.
+ */
 bool Column::isPrimaryKey() const
 {
 	return primaryKey;
 }
 
+/**
+ * Indicates whether this column contains foreign keys.
+ * 
+ * @return	True if this is a foreign key column, false otherwise.
+ */
 bool Column::isForeignKey() const
 {
 	return foreignKey;
 }
 
+/**
+ * Indicates whether this column contains keys (primary or foreign).
+ * 
+ * @return	True if this is a key column, false otherwise.
+ */
 bool Column::isKey() const
 {
 	return isPrimaryKey() || isForeignKey();
 }
 
+/**
+ * Returns the column referenced by this column if it contains foreign keys, or nullptr otherwise.
+ * 
+ * @return	The foreign column referenced by this one, or nullptr.
+ */
 Column* Column::getReferencedForeignColumn() const
 {
 	return foreignKey;
 }
 
+/**
+ * Returns the index of this column in its table.
+ * 
+ * @return	The index of this column in its table.
+ */
 int Column::getIndex() const
 {
 	return table->getColumnIndex(this);
@@ -72,17 +114,35 @@ int Column::getIndex() const
 
 
 
+/**
+ * Returns the value stored in this column at the given row index.
+ * 
+ * @param rowIndex	The row index of the value to return.
+ * @return			The value stored in this column at the given row index.
+ */
 QVariant Column::getValueAt(BufferRowIndex bufferRowIndex) const
 {
 	return table->getBufferRow(bufferRowIndex)->at(getIndex());
 }
 
+/**
+ * Returns the value stored in this column in the row with the given primary key.
+ * 
+ * @param itemID	The primary key of the row to return the value from.
+ * @return			The value in this column at the indicated row.
+ */
 QVariant Column::getValueFor(ValidItemID itemID) const
 {
 	assert(!table->isAssociative);
 	return getValueAt(((NormalTable*) table)->getBufferIndexForPrimaryKey(itemID));
 }
 
+/**
+ * Checks whether the givevn value is found anywhere in this column.
+ * 
+ * @param value	The value to check for.
+ * @return		True if this column contains the given value, false otherwise.
+ */
 bool Column::anyCellMatches(QVariant value) const
 {
 	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(table->getNumberOfRows()); index++) {
@@ -93,6 +153,11 @@ bool Column::anyCellMatches(QVariant value) const
 
 
 
+/**
+ * Assembles a string specifying the column's properties for a SQL CREATE TABLE statement.
+ * 
+ * @return	A string specifying the column's properties for a SQL query.
+ */
 QString Column::getSqlSpecificationString() const
 {
 	QString typeString;
@@ -125,11 +190,21 @@ QString Column::getSqlSpecificationString() const
 
 
 
+/**
+ * Registers the given CompositeColumn as a listener for changes in this column.
+ * 
+ * @param compositeColumn	The CompositeColumn to register as a change listener.
+ */
 void Column::registerChangeListener(const CompositeColumn* compositeColumn)
 {
 	changeListeners.insert(compositeColumn);
 }
 
+/**
+ * Returns the set of all composite columns registered as change listeners for this column.
+ * 
+ * @param compositeColumn	The CompositeColumn to unregister as a change listener.
+ */
 QSet<const CompositeColumn*> Column::getChangeListeners() const
 {
 	return changeListeners;
@@ -139,6 +214,14 @@ QSet<const CompositeColumn*> Column::getChangeListeners() const
 
 
 
+/**
+ * Compares two cells of the given type.
+ * 
+ * @param type		The type of the cells to compare.
+ * @param value1	The first cell's value.
+ * @param value2	The second cell's value.
+ * @return			True if the first cell's value is less than the second cell's value, false otherwise.
+ */
 bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 {
 	// return result of operation 'value1 < value2'
@@ -199,6 +282,14 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 
 
 
+/**
+ * Returns a string listing the given columns' names.
+ * 
+ * Used for SQL SELECT queries.
+ * 
+ * @param columns	A list of columns.
+ * @return			A comma-separated list of the columns' names.
+ */
 QString getColumnListStringOf(QList<const Column*> columns)
 {
 	QString result = "";
@@ -212,6 +303,12 @@ QString getColumnListStringOf(QList<const Column*> columns)
 
 
 
+/**
+ * Returns a translated string detailing the given singular consequence of deleting an item.
+ * 
+ * @param whatIfResult	The consequence of deleting an item as previously calculated.
+ * @return				A translated string representing the consequence of deleting the item.
+ */
 QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& whatIfResult)
 {
 	int numAffectedItems = whatIfResult.numAffectedRowIndices;
@@ -231,6 +328,12 @@ QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& wha
 	return baseString.arg(numAffectedItems).arg(itemName);
 }
 
+/**
+ * Returns a translated string listing the given consequences of deleting an item.
+ * 
+ * @param whatIfResults	The consequences of deleting an item as previously calculated.
+ * @return				A translated string representing the consequences of deleting the item.
+ */
 QString getTranslatedWhatIfDeleteResultDescription(const QList<WhatIfDeleteResult>& whatIfResults)
 {
 	QString baseString = QCoreApplication::translate("WhatIfDeleteResult", "The item will be removed from %1.");
