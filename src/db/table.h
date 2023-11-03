@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file table.h
+ * 
+ * This file declares the Table class.
+ */
+
 #ifndef TABLE_H
 #define TABLE_H
 
@@ -30,17 +36,28 @@ class CompositeTable;
 
 
 
+/**
+ * A class for accessing and manipulating a table in the database.
+ * 
+ * This class is a QAbstractItemModel, so it can be used as a model for a QTableView.
+ */
 class Table : public QAbstractItemModel {
+	/** The columns of this table. */
 	QList<const Column*> columns;
 	
+	/** The composite table which is based on this table and needs to be notified of row changes. */
 	CompositeTable* rowChangeListener;
 
 public:
+	/** The internal name of the table. */
 	const QString	name;
+	/** The name of the table as it should be displayed in the UI. */
 	const QString	uiName;
+	/** Whether the table is associative, i.e. its primary key is a combination of foreign keys. */
 	const bool		isAssociative;
 	
 protected:
+	/** The buffer for this table. */
 	TableBuffer buffer;
 	
 	Table(QString name, QString uiName, bool isAssociative);

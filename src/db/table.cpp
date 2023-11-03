@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file table.cpp
+ * 
+ * This file defines the Table class.
+ */
+
 #include "table.h"
 
 #include "db_error.h"
@@ -24,6 +30,13 @@
 
 
 
+/**
+ * Creates a new Table.
+ * 
+ * @param name			The name of the table in the SQL database.
+ * @param uiName		The name of the table as it should be displayed in the UI.
+ * @param isAssociative	Whether the table is associative.
+ */
 Table::Table(QString name, QString uiName, bool isAssociative) :
 		rowChangeListener(nullptr),
 		name(name),
@@ -32,6 +45,9 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
 		buffer(TableBuffer())
 {}
 
+/**
+ * Destroys the Table.
+ */
 Table::~Table()
 {
 	qDeleteAll(columns);
@@ -39,6 +55,11 @@ Table::~Table()
 
 
 
+/**
+ * Adds a column to the table during initialization.
+ * 
+ * @param column	The column to add. The table takes ownership of the column.
+ */
 void Table::addColumn(const Column* column)
 {
 	columns.append(column);
@@ -48,11 +69,21 @@ void Table::addColumn(const Column* column)
 
 // COLUMN INFO
 
+/**
+ * Returns the number of columns in the table.
+ * 
+ * @return	The number of columns in the table.
+ */
 int Table::getNumberOfColumns() const
 {
 	return columns.size();
 }
 
+/**
+ * Returns the number of primary key columns in the table.
+ * 
+ * @return	The number of primary key columns in the table.
+ */
 int Table::getNumberOfPrimaryKeyColumns() const
 {
 	int numberOfPrimaryKeyColumns = 0;
@@ -62,11 +93,21 @@ int Table::getNumberOfPrimaryKeyColumns() const
 	return numberOfPrimaryKeyColumns;
 }
 
+/**
+ * Returns a list of all columns in the table.
+ * 
+ * @return	A list of all columns in the table.
+ */
 QList<const Column*> Table::getColumnList() const
 {
 	return QList<const Column*>(columns);
 }
 
+/**
+ * Returns a list of all primary key columns in the table.
+ * 
+ * @return	A list of all primary key columns in the table.
+ */
 QList<const Column*> Table::getPrimaryKeyColumnList() const
 {
 	QList<const Column*> primaryKeyColumns = QList<const Column*>();
@@ -76,6 +117,11 @@ QList<const Column*> Table::getPrimaryKeyColumnList() const
 	return primaryKeyColumns;
 }
 
+/**
+ * Returns a list of all non-primary-key columns in the table.
+ * 
+ * @return	A list of all non-primary-key columns in the table.
+ */
 QList<const Column*> Table::getNonPrimaryKeyColumnList() const
 {
 	QList<const Column*> primaryKeyColumns = QList<const Column*>();
@@ -85,21 +131,43 @@ QList<const Column*> Table::getNonPrimaryKeyColumnList() const
 	return primaryKeyColumns;
 }
 
+/**
+ * Returns a string listing all columns in the table.
+ * 
+ * @return	A string listing all columns in the table.
+ */
 QString Table::getColumnListString() const
 {
 	return getColumnListStringOf(getColumnList());
 }
 
+/**
+ * Returns a string listing all primary key columns in the table.
+ * 
+ * @return	A string listing all primary key columns in the table.
+ */
 QString Table::getPrimaryKeyColumnListString() const
 {
 	return getColumnListStringOf(getPrimaryKeyColumnList());
 }
 
+/**
+ * Returns the index of the given column.
+ * 
+ * @param column	The column whose index to return.
+ * @return			The index of the given column.
+ */
 int Table::getColumnIndex(const Column* column) const
 {
 	return columns.indexOf(column);
 }
 
+/**
+ * Returns the column at the given index.
+ * 
+ * @param index	The index of the column to return.
+ * @return		The column with the given index.
+ */
 const Column* Table::getColumnByIndex(int index) const
 {
 	assert(index >= 0 && index < columns.size());
@@ -110,6 +178,12 @@ const Column* Table::getColumnByIndex(int index) const
 
 // BUFFER ACCESS
 
+/**
+ * Initializes the buffer with the contents from the database.
+ * 
+ * @param parent		The parent window.
+ * @param expectEmpty	Whether the table is expected to be empty. A warning is printed if a table is unexpectedly empty.
+ */
 void Table::initBuffer(QWidget* parent, bool expectEmpty)
 {
 	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent, expectEmpty);
@@ -121,6 +195,9 @@ void Table::initBuffer(QWidget* parent, bool expectEmpty)
 	endInsertRows();
 }
 
+/**
+ * Resets the buffer.
+ */
 void Table::resetBuffer()
 {
 	beginRemoveRows(getNormalRootModelIndex(), 0, buffer.numRows() - 1);
@@ -128,16 +205,34 @@ void Table::resetBuffer()
 	endRemoveRows();
 }
 
+/**
+ * Returns the number of rows in the table.
+ * 
+ * @return	The number of rows in the table.
+ */
 int Table::getNumberOfRows() const
 {
 	return buffer.numRows();
 }
 
+/**
+ * Returns the row at the given index.
+ * 
+ * @param bufferRowIndex	The index of the row to return.
+ * @return					The row at the given index.
+ */
 const QList<QVariant>* Table::getBufferRow(BufferRowIndex bufferRowIndex) const
 {
 	return buffer.getRow(bufferRowIndex);
 }
 
+/**
+ * Collects indices of all rows in the table where the given column has the given value.
+ * 
+ * @param column	The column to check.
+ * @param content	The value to check for.
+ * @return			A list of all row indices in the table where the given column has the given value.
+ */
 QList<BufferRowIndex> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
 {
 	assert(getColumnList().contains(column));
@@ -151,6 +246,16 @@ QList<BufferRowIndex> Table::getMatchingBufferRowIndices(const Column* column, c
 	return result;
 }
 
+/**
+ * Finds the index of the row in the table where the given primary key columns have the given values.
+ * 
+ * @pre primaryKeyColumns contains all primary key columns of the table.
+ * @pre primaryKeys contains one value for each of the primary key columns in the same order as them columns.
+ * 
+ * @param primaryKeyColumns	The primary key columns to check.
+ * @param primaryKeys		The values to check for, in the same order as the columns.
+ * @return					The index of the row in the table where the given primary key columns have the given values.
+ */
 BufferRowIndex Table::getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const
 {
 	int numPrimaryKeys = getPrimaryKeyColumnList().size();
@@ -172,6 +277,9 @@ BufferRowIndex Table::getMatchingBufferRowIndex(const QList<const Column*>& prim
 }
 
 
+/**
+ * Prints the contents of the buffer to the console for debugging purposes.
+ */
 void Table::printBuffer() const
 {
 	qDebug() << "Printing buffer of" << name;
@@ -193,11 +301,19 @@ void Table::printBuffer() const
 
 // CHANGE PROPAGATION
 
+/**
+ * Registers the given composite table as the listener for row changes.
+ * 
+ * @param compositeTable	The composite table to register as the listener for row changes.
+ */
 void Table::setRowChangeListener(CompositeTable* compositeTable)
 {
 	rowChangeListener = compositeTable;
 }
 
+/**
+ * Notifies all change listeners of all columns that the data in the columns has changed.
+ */
 void Table::notifyAllColumns()
 {
 	// Collect change listeners and notify them
@@ -214,6 +330,14 @@ void Table::notifyAllColumns()
 
 // MODIFICATIONS
 
+/**
+ * Adds a row to the table from a list of columns and a corresponding list of data.
+ * 
+ * @param parent	The parent window.
+ * @param columns	The columns for which to add data.
+ * @param data		The data to add, in the same order as the columns.
+ * @return			The index of the newly added row in the buffer.
+ */
 BufferRowIndex Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {	
 	assert(columns.size() == data.size());
@@ -243,6 +367,16 @@ BufferRowIndex Table::addRow(QWidget* parent, const QList<const Column*>& column
 	return newItemBufferRowIndex;
 }
 
+/**
+ * Updates a cell in the table, specified by primary key and column, provided it is a normal table.
+ * 
+ * @pre The table is not associative.
+ * 
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param column		The column to update.
+ * @param data			The new data for the cell.
+ */
 void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
 	assert(!isAssociative);
@@ -270,6 +404,16 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	}
 }
 
+/**
+ * Updates a row in the table, specified by primary key, provided it is a normal table.
+ * 
+ * @pre The table is not associative.
+ * 
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param columns		The columns to update.
+ * @param data			The new data for the cells, in the same order as the columns.
+ */
 void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	assert(!isAssociative);
@@ -294,6 +438,13 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	notifyAllColumns();
 }
 
+/**
+ * Removes a row from the table, specified by primary keys.
+ * 
+ * @param parent			The parent window.
+ * @param primaryKeyColumns	The primary key columns.
+ * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
+ */
 void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	int numPrimaryKeys = getNumberOfPrimaryKeyColumns();
@@ -319,6 +470,13 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
 	notifyAllColumns();
 }
 
+/**
+ * Removes all rows from the table where the given column has the given value.
+ * 
+ * @param parent	The parent window.
+ * @param column	The column to check.
+ * @param key		The value to check for.
+ */
 void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key)
 {
 	assert(getColumnList().contains(column));
@@ -352,6 +510,13 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 
 // SQL
 
+/**
+ * Creates the table in the SQL database.
+ * 
+ * Only needed when creating a new database or updating the project file version.
+ * 
+ * @param parent	The parent window.
+ */
 void Table::createTableInSql(QWidget* parent)
 {
 	QString columnFormatsString = "";
@@ -378,6 +543,14 @@ void Table::createTableInSql(QWidget* parent)
 		displayError(parent, query.lastError(), queryString);
 }
 
+/**
+ * Runs a SQL query for all data in the table and returns the result as a two-dimensional list of
+ * QVariants.
+ * 
+ * @param parent		The parent window.
+ * @param expectEmpty	Whether the table is expected to be empty. A warning is printed if a table is unexpectedly empty.
+ * @return				A two-dimensional list of QVariants containing the response to the SQL query.
+ */
 QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expectEmpty) const
 {
 	QString queryString = QString(
@@ -414,6 +587,14 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
 	return result;
 }
 
+/**
+ * Adds a new row to the table in the SQL database.
+ * 
+ * @param parent	The parent window.
+ * @param columns	The columns for which to add data.
+ * @param data		The data to add, in the same order as the columns.
+ * @return			The ID of the newly added row.
+ */
 int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	QString questionMarks = "";
@@ -439,6 +620,14 @@ int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, con
 	return newRowID;
 }
 
+/**
+ * Updates a cell in the table in the SQL database.
+ * 
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param column		The column to update.
+ * @param data			The new data for the cell.
+ */
 void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
 	auto primaryKeyColumns = getPrimaryKeyColumnList();
@@ -458,6 +647,14 @@ void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const
 		displayError(parent, query.lastError(), queryString);
 }
 
+/**
+ * Updates a row in the table in the SQL database.
+ * 
+ * @param parent		The parent window.
+ * @param primaryKey	The primary key of the row to update.
+ * @param columns		The columns to update.
+ * @param data			The new data for the cells, in the same order as the columns.
+ */
 void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
 {
 	auto primaryKeyColumns = getPrimaryKeyColumnList();
@@ -484,6 +681,13 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 		displayError(parent, query.lastError(), queryString);
 }
 
+/**
+ * Removes a row from the table in the SQL database.
+ * 
+ * @param parent			The parent window.
+ * @param primaryKeyColumns	The primary key columns.
+ * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
+ */
 void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	QString condition = "";
@@ -505,6 +709,13 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 		displayError(parent, query.lastError(), queryString);
 }
 
+/**
+ * Removes all rows from the table in the SQL database where the given column has the given value.
+ * 
+ * @param parent	The parent window.
+ * @param column	The column to check.
+ * @param key		The value to check for.
+ */
 void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key)
 {
 	assert(getColumnList().contains(column));
@@ -524,6 +735,14 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 
 // QABSTRACTMODEL IMPLEMENTATION
 
+/**
+ * For the QAbstractItemModel implementation, creates a QModelIndex for the given row and column.
+ * 
+ * @param row		The row index.
+ * @param column	The column index.
+ * @param parent	The parent model index.
+ * @return			The QModelIndex for the given row and column.
+ */
 QModelIndex Table::index(int row, int column, const QModelIndex& parent) const
 {
 	if (!hasIndex(row, column, parent)) {
@@ -536,6 +755,12 @@ QModelIndex Table::index(int row, int column, const QModelIndex& parent) const
 	return createIndex(row, column, parent.row());
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the parent of the given model index.
+ * 
+ * @param index	A model index.
+ * @return		The parent model index of the given model index.
+ */
 QModelIndex Table::parent(const QModelIndex& index) const
 {
 	if (!index.isValid()) {
@@ -549,6 +774,13 @@ QModelIndex Table::parent(const QModelIndex& index) const
 	}
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the number of rows at the given parent model
+ * index.
+ * 
+ * @param parent	The parent model index.
+ * @return			The number of rows at the given parent model index.
+ */
 int Table::rowCount(const QModelIndex& parent) const
 {
 	if (!parent.isValid()) return 2;
@@ -560,12 +792,29 @@ int Table::rowCount(const QModelIndex& parent) const
 	}
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the number of columns at the given parent
+ * model index.
+ * 
+ * @param parent	The parent model index.
+ * @return			The number of columns at the given parent model index.
+ */
 int Table::columnCount(const QModelIndex& parent) const
 {
 	if (!parent.isValid()) return 1;
 	return getNumberOfColumns();
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the data for the given role at the given
+ * model index.
+ * 
+ * Delegates to multiData() implementations in subclasses NormalTable and AssociativeTable.
+ * 
+ * @param index	The model index.
+ * @param role	The role of the data to return.
+ * @return		The data at the given model index.
+ */
 QVariant Table::data(const QModelIndex& index, int role) const
 {
 	QModelRoleData roleData(role);
@@ -573,6 +822,14 @@ QVariant Table::data(const QModelIndex& index, int role) const
 	return roleData.data();
 }
 
+/**
+ * For the QAbstractItemModel implementation, returns the header data for the given role, section
+ * index and orientation.
+ * 
+ * @param section		The section index.
+ * @param orientation	The orientation of the header (horizontal or vertical).
+ * @param role			The role of the header data to return.
+ */
 QVariant Table::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Orientation::Vertical) {
@@ -591,13 +848,27 @@ QVariant Table::headerData(int section, Qt::Orientation orientation, int role) c
 }
 
 
+/** Role index to use for requesting the primary key of an entry via data(). */
 const int Table::PrimaryKeyRole = -1;
 
+/**
+ * Creates a QModelIndex for the root of the index space for normal table views, where the first
+ * element has row index 0.
+ * 
+ * @return	The root model index for normal mode.
+ */
 QModelIndex Table::getNormalRootModelIndex() const
 {
 	return index(0, 0);
 }
 
+/**
+ * Creates a QModelIndex for the root of the index space for nullable table views, where the first
+ * element has row index 1 and there is an additional element at row index 0, representing the
+ * absence of a value ("none").
+ * 
+ * @return	The root model index for nullable mode.
+ */
 QModelIndex Table::getNullableRootModelIndex() const
 {
 	return index(1, 0);
