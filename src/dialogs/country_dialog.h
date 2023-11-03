@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file country_dialog.h
+ * 
+ * This file declares the CountryDialog class.
+ */
+
 #ifndef COUNTRY_DIALOG_H
 #define COUNTRY_DIALOG_H
 
@@ -24,10 +30,14 @@
 
 
 
+/**
+ * Control class for the country dialog.
+ */
 class CountryDialog : public ItemDialog, public Ui_CountryDialog
 {
 	Q_OBJECT
 	
+	/** The country data before user interaction starts. */
 	const Country* init;
 	
 public:
