@@ -28,10 +28,6 @@
 
 
 
-const int ItemID::LOWEST_LEGAL_ID = 1;
-
-
-
 /**
  * Creates an ItemID from an integer index.
  * 

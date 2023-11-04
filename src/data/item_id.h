@@ -46,7 +46,7 @@ class ItemID {
 	int id;
 	
 	/** The lowest integer that can be used as an ID in the database system. */
-	static const int LOWEST_LEGAL_ID;
+	inline static const int LOWEST_LEGAL_ID = 1;
 	
 public:
 	ItemID(int id);
