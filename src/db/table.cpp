@@ -850,19 +850,26 @@ QVariant Table::data(const QModelIndex& index, int role) const
  */
 QVariant Table::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (orientation == Qt::Orientation::Vertical) {
+	switch (orientation) {
+	case Qt::Orientation::Vertical: {
 		switch (role) {
 		case Qt::TextAlignmentRole:	return Qt::AlignRight;
 		case Qt::DisplayRole:		return section + 1;
+		default:					return QVariant();
 		}
-		return QVariant();
 	}
-	
-	if (role != Qt::DisplayRole) return QVariant();
-	if (orientation != Qt::Orientation::Horizontal) return QVariant(section + 1);
-	QString result = getColumnByIndex(section)->uiName;
-	if (result.isEmpty()) result = getColumnByIndex(section)->name;
-	return result;
+	case Qt::Orientation::Horizontal: {
+		switch (role) {
+		case Qt::DisplayRole: {
+			QString result = getColumnByIndex(section)->uiName;
+			if (result.isEmpty()) result = getColumnByIndex(section)->name;
+			return result;
+		}
+		default: return QVariant();
+		}
+	}
+	default: assert(false);
+	}
 }
 
 
