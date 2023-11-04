@@ -60,7 +60,7 @@ PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QStr
 void PhotoRelocationThread::run()
 {
 	workloadSize = db->photosTable->getNumberOfRows();
-	reportWorkloadSize(workloadSize);
+	emit callback_reportWorkloadSize(workloadSize);
 	
 	int updatedPaths = 0;
 	
@@ -71,11 +71,11 @@ void PhotoRelocationThread::run()
 		
 		if (currentPath.startsWith(oldPrefix)) {
 			QString newPath = currentPath.replace(0, oldPrefix.size(), newPrefix);
-			callback_updateFilepathAt(index, newPath);
+			emit callback_updateFilepathAt(index, newPath);
 			updatedPaths++;
 		}
 		
-		emit reportProgress(index.get() + 1, updatedPaths);
+		emit callback_reportProgress(index.get() + 1, updatedPaths);
 	}
 }
 

@@ -110,8 +110,8 @@ void RelocatePhotosDialog::handle_start()
 	progressBar->setValue(0);
 	
 	workerThread = new PhotoRelocationThread(this, db, oldPathLineEdit->text(), newPathLineEdit->text());
-	connect(workerThread, &PhotoRelocationThread::reportWorkloadSize,			this,	&RelocatePhotosDialog::handle_callback_workloadSize);
-	connect(workerThread, &PhotoRelocationThread::reportProgress,				this,	&RelocatePhotosDialog::handle_callback_progressUpdate);
+	connect(workerThread, &PhotoRelocationThread::callback_reportWorkloadSize,	this,	&RelocatePhotosDialog::handle_callback_workloadSize);
+	connect(workerThread, &PhotoRelocationThread::callback_reportProgress,		this,	&RelocatePhotosDialog::handle_callback_progressUpdate);
 	connect(workerThread, &PhotoRelocationThread::callback_updateFilepathAt,	this,	&RelocatePhotosDialog::handle_callback_updateFilepath);
 	connect(workerThread, &PhotoRelocationThread::finished,						this,	&RelocatePhotosDialog::handle_finished);
 	

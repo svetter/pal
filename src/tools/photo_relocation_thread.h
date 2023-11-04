@@ -65,14 +65,14 @@ signals:
 	 * 
 	 * @param workloadSize	The number of photos to relocate.
 	 */
-	int reportWorkloadSize(int workloadSize);
+	void callback_reportWorkloadSize(int workloadSize);
 	/**
 	 * Emitted whenever the thread has processed one photo.
 	 * 
 	 * @param processed	The number of photos processed so far.
 	 * @param updated	The number of photos whose filepath was updated so far.
 	 */
-	void reportProgress(int processed, int updated);
+	void callback_reportProgress(int processed, int updated);
 	
 	/**
 	 * Emitted when the thread has found a photo whose filepath needs to be updated.
