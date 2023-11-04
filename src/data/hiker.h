@@ -46,7 +46,7 @@ public:
 	Hiker(ItemID hikerID, QString& name);
 	virtual ~Hiker();
 	
-	bool operator==(const Hiker* const other) const;
+	bool equalTo(const Hiker* const other) const;
 };
 
 

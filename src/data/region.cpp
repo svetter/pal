@@ -54,7 +54,7 @@ Region::~Region()
  * @param other	The other region.
  * @return		True if the other region is equal to this one, false otherwise.
  */
-bool Region::operator==(const Region* const other) const
+bool Region::equalTo(const Region* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

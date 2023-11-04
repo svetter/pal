@@ -176,7 +176,7 @@ Peak* PeakDialog::extractData()
 bool PeakDialog::changesMade()
 {
 	Peak* currentState = extractData();
-	bool equal = currentState == init;
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

@@ -124,7 +124,7 @@ Country* CountryDialog::extractData()
 bool CountryDialog::changesMade()
 {
 	Country* currentState = extractData();
-	bool equal = currentState == init;
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

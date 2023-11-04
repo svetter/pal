@@ -54,7 +54,7 @@ Range::~Range()
  * @param other	The other mountain range.
  * @return		True if the other mountain range is equal to this one, false otherwise.
  */
-bool Range::operator==(const Range* const other) const
+bool Range::equalTo(const Range* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

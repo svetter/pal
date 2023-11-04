@@ -78,7 +78,7 @@ Ascent::~Ascent()
  * @param other	The other ascent.
  * @return		True if the other ascent is equal to this one, false otherwise.
  */
-bool Ascent::operator==(const Ascent* const other) const
+bool Ascent::equalTo(const Ascent* const other) const
 {
 	assert(other);
 	if (title				!= other->title)			return false;

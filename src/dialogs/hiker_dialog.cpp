@@ -124,7 +124,7 @@ Hiker* HikerDialog::extractData()
 bool HikerDialog::changesMade()
 {
 	Hiker* currentState = extractData();
-	bool equal = currentState == init;
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

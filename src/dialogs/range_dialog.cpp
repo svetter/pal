@@ -140,7 +140,7 @@ Range* RangeDialog::extractData()
 bool RangeDialog::changesMade()
 {
 	Range* currentState = extractData();
-	bool equal = currentState == init;
+	bool equal = currentState->equalTo(init);
 	delete currentState;
 	return !equal;
 }

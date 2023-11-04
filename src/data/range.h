@@ -49,7 +49,7 @@ public:
 	Range(ItemID rangeID, QString& name, int continent);
 	virtual ~Range();
 	
-	bool operator==(const Range* const other) const;
+	bool equalTo(const Range* const other) const;
 };
 
 
