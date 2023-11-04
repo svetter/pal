@@ -52,6 +52,14 @@ ItemID::ItemID(QVariant id) : valid(id.isValid() && id.canConvert<int>() && id.t
 ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
 {}
 
+/**
+ * Creates an ItemID from another ItemID.
+ *
+ * @param id	A reference to the ItemID to copy.
+ */
+ItemID::ItemID(const ItemID& other) : valid(other.valid), id(other.id)
+{}
+
 
 
 /**
@@ -103,6 +111,7 @@ QVariant ItemID::asQVariant() const
 	}
 }
 
+
 /**
  * Asserts that this ItemID is valid and returns an equivalent ValidItemID.
  * 
@@ -114,6 +123,18 @@ ValidItemID ItemID::forceValid() const
 {
 	assert(valid);
 	return ValidItemID(id);
+}
+
+
+/**
+ * Assigns another ItemID to this ItemID.
+ * 
+ * @param other	A reference to the ItemID to assign to this one.
+ */
+void ItemID::operator=(const ItemID& other)
+{
+	valid = other.valid;
+	id = other.id;
 }
 
 
@@ -142,4 +163,77 @@ ValidItemID::ValidItemID(int id) : ItemID(id)
 ValidItemID::ValidItemID(QVariant id) : ItemID(id)
 {
 	assert(isValid());
+}
+
+/**
+ * Creates an ValidItemID from another ValidItemID.
+ *
+ * @param id	A reference to the ValidItemID to copy.
+ */
+ValidItemID::ValidItemID(const ValidItemID& other) : ValidItemID(other.asQVariant())
+{}
+
+
+/**
+ * Assigns another ValidItemID to this ValidItemID.
+ *
+ * @param other	A reference to the ValidItemID to assign to this one.
+ */
+void ValidItemID::operator=(const ValidItemID& other)
+{
+	ItemID::operator=(other);
+	assert(isValid());
+}
+
+
+
+
+
+/**
+ * Checks whether the given ItemIDs are equal to each other in validity and potentially value.
+ * 
+ * If both ItemIDs are invalid, they are considered equal.
+ * Otherwise, they are considered equal if both are valid and have the same value.
+ * 
+ * @param id1	The first ItemID to compare.
+ * @param id2	The second ItemID to compare.
+ * @return		True if the ItemIDs are equal, false otherwise.
+ */
+bool operator==(const ItemID& id1, const ItemID& id2)
+{
+	if (id1.isInvalid() && id2.isInvalid()) return true;
+	if (id1.isValid() != id2.isValid()) return false;
+	return id1.get() == id2.get();
+}
+
+/**
+ * Checks whether the given ItemIDs are not equal to each other in validity or potentially value.
+ * 
+ * If one ItemID is invalid and the other is valid, they are considered not equal.
+ * Otherwise, they are considered not equal if both are valid and have different values.
+ * 
+ * @param id1	The first ItemID to compare.
+ * @param id2	The second ItemID to compare.
+ * @return		True if the ItemIDs are not equal, false otherwise.
+ */
+bool operator!=(const ItemID& id1, const ItemID& id2)
+{
+	return !operator==(id1, id2);
+}
+
+
+
+/**
+ * Hashes the given ItemID using the given seed.
+ * 
+ * This implementation is required for using ItemID in QSets and implicitly comparing instances of
+ * QList<ItemID>.
+ * 
+ * @param key	The ItemID to hash.
+ * @param seed	The seed to use for hashing.
+ * @return		The hash value.
+ */
+size_t qHash(const ItemID& key, size_t seed)
+{
+	return qHashMulti(seed, key.isValid(), key.isValid() ? key.get() : 0);
 }
