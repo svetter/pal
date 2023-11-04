@@ -472,8 +472,8 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 		QString filepath = photos.at(currentPhotoIndex).filepath;
 		QImageReader reader = QImageReader(filepath);
 		reader.setAutoTransform(true);
-		const QImage newImage = reader.read();
-		if (newImage.isNull()) {
+		QImage image = reader.read();
+		if (image.isNull()) {
 			qDebug() << "Error reading" << filepath << reader.errorString();
 			imageLabel->clearImage();
 			
@@ -489,7 +489,6 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 			}
 		}
 		else {
-			image = newImage;
 			if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 			imageLabel->setImage(image);
 		}

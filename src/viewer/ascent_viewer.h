@@ -84,8 +84,6 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	
 	/** The widget for displaying the image. */
 	ScalableImageLabel* imageLabel;
-	/** The image currently displayed in the image label. */
-	QImage image;
 	
 	/** Indicates whether the ascent description is currently set to be editable. */
 	bool descriptionEditable;
