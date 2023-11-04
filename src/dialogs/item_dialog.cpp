@@ -186,10 +186,12 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * @param idList				The list in which to store the IDs of the entries.
  * @param overrideFirstLine		If not empty, this string will be used as the first line of the combo box instead of the table's none string.
  * @param filterColumn			If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
- * @param filterID				The ID to use for filtering entries, or an invalid ID to disable filtering.
+ * @param filterID				The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
  */
 void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const Column* filterColumn, ItemID filterID)
 {
+	assert(!(!filterColumn && filterID.isValid()));
+	
 	combo->clear();
 	idList.clear();
 	QString noneString = table->getNoneString();
@@ -199,7 +201,7 @@ void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, b
 	// Get pairs of ID and display/sort field
 	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(displayAndSortColumn);
 	
-	if (filterColumn && filterID.isValid()) {
+	if (filterColumn) {
 		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it
 		assert(filterColumn->table == table && filterColumn->type == ID);
 		for (int i = selectableItems.size() - 1; i >= 0; i--) {
