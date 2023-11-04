@@ -37,7 +37,7 @@ class EnumNames : private QObject {
 	Q_OBJECT
 	
 public:
-	static QStringList translateList(QStringList list);
+	static QStringList translateList(const QStringList& list);
 	
 	static const QStringList continentNames;
 	static const QStringList hikeKindNames;

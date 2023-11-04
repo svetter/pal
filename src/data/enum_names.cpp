@@ -31,10 +31,10 @@
  * @param list	List of enum name strings.
  * @return		Translated list of enum name strings.
  */
-QStringList EnumNames::translateList(QStringList list)
+QStringList EnumNames::translateList(const QStringList& list)
 {
 	QStringList translatedList = QStringList();
-	for (QString& string : list) {
+	for (const QString& string : list) {
 		QString translated = tr(string.toStdString().c_str());
 		translatedList.append(translated);
 	}
