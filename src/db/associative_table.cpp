@@ -182,14 +182,12 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
  * 
  * Delegates to Table::addRow().
  *
- * @param parent	The parent window.
- * @param columns	The columns for which to add data.
- * @param data		The data to add, in the same order as the columns.
- * @return			The index of the newly added row in the buffer.
+ * @param parent			The parent window.
+ * @param columnDataPairs	Pairs of columns and corresponding data to add.
  */
-void AssociativeTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+void AssociativeTable::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
 {
-	Table::addRow(parent, columns, data);
+	Table::addRow(parent, columnDataPairs);
 }
 
 /**

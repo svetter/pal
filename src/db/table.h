@@ -34,6 +34,8 @@
 
 class CompositeTable;
 
+typedef QPair<const Column* const, QVariant> ColumnDataPair;
+
 
 
 /**
@@ -96,9 +98,9 @@ private:
 	
 protected:
 	// Modifications
-	BufferRowIndex addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	BufferRowIndex addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
 	void updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
-	void updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
+	void updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key);
 	
@@ -106,11 +108,12 @@ private:
 	// SQL
 	void createTableInSql(QWidget* parent);
 	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent, bool expectEmpty = false) const;
-	int addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	int addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
 	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
-	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data);
+	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key);
+	QString getColumnListStringFrom(const QList<ColumnDataPair>& columnDataPairs);
 	
 public:
 	// QAbstractItemModel implementation (multiData implemented in subclasses)

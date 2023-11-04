@@ -46,7 +46,7 @@ public:
 	BufferRowIndex addRow(QWidget* parent, Country* country);
 	void updateRow(QWidget* parent, ValidItemID countryID, const Country* country);
 private:
-	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Country* country) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Country* country) const;
 	
 public:
 	virtual QString getNoneString() const;

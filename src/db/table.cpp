@@ -333,25 +333,25 @@ void Table::notifyAllColumns()
 /**
  * Adds a row to the table from a list of columns and a corresponding list of data.
  * 
- * @param parent	The parent window.
- * @param columns	The columns for which to add data.
- * @param data		The data to add, in the same order as the columns.
- * @return			The index of the newly added row in the buffer.
+ * @param parent			The parent window.
+ * @param columnDataPairs	Pairs of columns and corresponding data to add.
+ * @return					The index of the newly added row in the buffer.
  */
-BufferRowIndex Table::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
 {	
-	assert(columns.size() == data.size());
-	
 	// Announce row insertion
 	BufferRowIndex newItemBufferRowIndex = BufferRowIndex(buffer.numRows());
 	beginInsertRows(getNormalRootModelIndex(),		newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
 	beginInsertRows(getNullableRootModelIndex(),	newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
 	
 	// Add data to SQL database
-	ItemID newRowID = addRowToSql(parent, columns, data);
+	ItemID newRowID = addRowToSql(parent, columnDataPairs);
 	
 	// Update buffer
-	QList<QVariant>* newBufferRow = new QList<QVariant>(data);
+	QList<QVariant>* newBufferRow = new QList<QVariant>();
+	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
+		newBufferRow->append(columnDataPair.second);
+	}
 	if (!isAssociative) {
 		newBufferRow->insert(0, newRowID.asQVariant());
 	}
@@ -409,24 +409,23 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
  * 
  * @pre The table is not associative.
  * 
- * @param parent		The parent window.
- * @param primaryKey	The primary key of the row to update.
- * @param columns		The columns to update.
- * @param data			The new data for the cells, in the same order as the columns.
+ * @param parent			The parent window.
+ * @param primaryKey		The primary key of the row to update.
+ * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
 	
 	// Update cell in SQL database
-	updateRowInSql(parent, primaryKey, columns, data);
+	updateRowInSql(parent, primaryKey, columnDataPairs);
 	
 	// Update buffer
 	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	for (int i = 0; i < columns.size(); i++) {
-		buffer.replaceCell(bufferRowIndex, columns.at(i)->getIndex(), data.at(i));
+	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
+		buffer.replaceCell(bufferRowIndex, columnDataPair.first->getIndex(), columnDataPair.second);
 	}
 	
 	// Announce changed data
@@ -590,26 +589,26 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
 /**
  * Adds a new row to the table in the SQL database.
  * 
- * @param parent	The parent window.
- * @param columns	The columns for which to add data.
- * @param data		The data to add, in the same order as the columns.
- * @return			The ID of the newly added row.
+ * @param parent			The parent window.
+ * @param columnDataPairs	Pairs of columns and corresponding data to add.
+ * @return					The ID of the newly added row.
  */
-int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+int Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
 {
 	QString questionMarks = "";
-	for (int i = 0; i < columns.size(); i++) {
+	for (int i = 0; i < columnDataPairs.size(); i++) {
 		questionMarks = questionMarks + ((i == 0) ? "?" : ", ?");
 	}
 	QString queryString = QString(
-			"INSERT INTO " + name + "(" + getColumnListStringOf(columns) + ")" +
+			"INSERT INTO " + name + "(" + getColumnListStringFrom(columnDataPairs) + ")" +
 			"\nVALUES(" + questionMarks + ")"
 	);
 	QSqlQuery query = QSqlQuery();
-	if (!query.prepare(queryString))
+	if (!query.prepare(queryString)) {
 		displayError(parent, query.lastError(), queryString);
-	for (auto iter = data.constBegin(); iter != data.constEnd(); iter++) {
-		query.addBindValue(*iter);
+	}
+	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
+		query.addBindValue(columnDataPair.second);
 	}
 	
 	if (!query.exec())
@@ -630,7 +629,7 @@ int Table::addRowToSql(QWidget* parent, const QList<const Column*>& columns, con
  */
 void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
-	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
 	QString queryString = QString(
@@ -650,20 +649,19 @@ void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const
 /**
  * Updates a row in the table in the SQL database.
  * 
- * @param parent		The parent window.
- * @param primaryKey	The primary key of the row to update.
- * @param columns		The columns to update.
- * @param data			The new data for the cells, in the same order as the columns.
+ * @param parent			The parent window.
+ * @param primaryKey		The primary key of the row to update.
+ * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
-	auto primaryKeyColumns = getPrimaryKeyColumnList();
+	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
 	QString setString = "";
-	for (int i = 0; i < columns.size(); i++) {
+	for (int i = 0; i < columnDataPairs.size(); i++) {
 		if (i > 0) setString.append(", ");
-		setString.append(columns.at(i)->name).append(" = ?");
+		setString.append(columnDataPairs.at(i).first->name).append(" = ?");
 	}
 	QString queryString = QString(
 			"UPDATE " + name + 
@@ -673,8 +671,8 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
 		displayError(parent, query.lastError(), queryString);
-	for (int i = 0; i < data.size(); i++) {
-		query.addBindValue(data.at(i));
+	for (int i = 0; i < columnDataPairs.size(); i++) {
+		query.addBindValue(columnDataPairs.at(i).second);
 	}
 	
 	if (!query.exec())
@@ -729,6 +727,25 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 	
 	if (!query.exec(queryString))
 		displayError(parent, query.lastError(), queryString);
+}
+
+
+/**
+ * Returns a string listing the given columns' names from a list of column-data pairs.
+ * 
+ * @param columnDataPairs	A list of pairs of columns and associated values.
+ * @return					A comma-separated list of the columns' names.
+ */
+QString Table::getColumnListStringFrom(const QList<ColumnDataPair>& columnDataPairs)
+{
+	QString listString = QString();
+	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
+		if (!listString.isEmpty()) {
+			listString.append(", ");
+		}
+		listString.append(columnDataPair.first->name);
+	}
+	return listString;
 }
 
 

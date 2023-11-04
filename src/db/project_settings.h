@@ -181,7 +181,7 @@ class ProjectSettings : public SettingsTable {
 	/**
 	 * The list of all project settings and their default values.
 	 */
-	QList<QPair<Column*, QVariant>> defaults;
+	QList<ColumnDataPair> defaults;
 	
 public:
 	/** The default hiker setting. */
@@ -249,16 +249,14 @@ public:
 	 * @return			The default value for the setting.
 	 */
 	inline void insertDefaults(QWidget* parent) {
-		QList<const Column*> columns = QList<const Column*>();
-		QList<QVariant> values = QList<QVariant>();
-		QList<QVariant> secondRowValues = QList<QVariant>();
-		for (const QPair<Column*, QVariant> &columnDefaultPair : defaults) {
-			columns.append(columnDefaultPair.first);
-			values.append(columnDefaultPair.second);
-			secondRowValues.append(QVariant());
+		QList<ColumnDataPair>  firstRowColumnDataPairs = QList<ColumnDataPair>();
+		QList<ColumnDataPair> secondRowColumnDataPairs = QList<ColumnDataPair>();
+		for (const ColumnDataPair& columnDefaultPair : defaults) {
+			 firstRowColumnDataPairs.append({columnDefaultPair.first, columnDefaultPair.second});
+			secondRowColumnDataPairs.append({columnDefaultPair.first, QVariant()});
 		}
-		addRow(parent, columns, values);
-		addRow(parent, columns, secondRowValues);
+		addRow(parent, firstRowColumnDataPairs);
+		addRow(parent, secondRowColumnDataPairs);
 	}
 };
 

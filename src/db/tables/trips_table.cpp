@@ -58,9 +58,9 @@ TripsTable::TripsTable() :
 BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, trip);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
 	
-	BufferRowIndex newTripIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newTripIndex = NormalTable::addRow(parent, columnDataPairs);
 	trip->tripID = getPrimaryKeyAt(newTripIndex);
 	return newTripIndex;
 }
@@ -76,30 +76,33 @@ BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
 void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, trip);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
 	
-	NormalTable::updateRow(parent, tripID, columns, data);
+	NormalTable::updateRow(parent, tripID, columnDataPairs);
 }
 
 
 /**
- * Translates the data of a trip to a list of QVariants.
+ * Translates the data of a trip to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param trip		The trip from which to get the data.
- * @return			The list of QVariants representing the trip's data.
+ * @return			A list of column-data pairs representing the trip's data.
  */
-QList<QVariant> TripsTable::mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const
+const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip* trip) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == nameColumn)			{ data.append(trip->name);			continue; }
-		if (column == startDateColumn)		{ data.append(trip->startDate);		continue; }
-		if (column == endDateColumn)		{ data.append(trip->endDate);		continue; }
-		if (column == descriptionColumn)	{ data.append(trip->description);	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == nameColumn)			{ data = trip->name;		}
+		else if (column == startDateColumn)		{ data = trip->startDate;	}
+		else if (column == endDateColumn)		{ data = trip->endDate;		}
+		else if (column == descriptionColumn)	{ data = trip->description;	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

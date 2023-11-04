@@ -59,9 +59,9 @@ RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryI
 BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, region);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
 	
-	BufferRowIndex newRegionIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newRegionIndex = NormalTable::addRow(parent, columnDataPairs);
 	region->regionID = getPrimaryKeyAt(newRegionIndex);
 	return newRegionIndex;
 }
@@ -77,29 +77,32 @@ BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
 void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region* region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, region);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
 	
-	NormalTable::updateRow(parent, regionID, columns, data);
+	NormalTable::updateRow(parent, regionID, columnDataPairs);
 }
 
 
 /**
- * Translates the data of a region to a list of QVariants.
+ * Translates the data of a region to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param region	The region from which to get the data.
- * @return			The list of QVariants representing the region's data.
+ * @return			A list of column-data pairs representing the region's data.
  */
-QList<QVariant> RegionsTable::mapDataToQVariantList(QList<const Column*>& columns, const Region* region) const
+const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Region* region) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == nameColumn)		{ data.append(region->name);					continue; }
-		if (column == rangeIDColumn)	{ data.append(region->rangeID.asQVariant());	continue; }
-		if (column == countryIDColumn)	{ data.append(region->countryID.asQVariant());	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == nameColumn)		{ data = region->name;						}
+		else if (column == rangeIDColumn)	{ data = region->rangeID.asQVariant();		}
+		else if (column == countryIDColumn)	{ data = region->countryID.asQVariant();	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

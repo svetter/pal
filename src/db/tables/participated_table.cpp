@@ -51,9 +51,9 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (ValidItemID hikerID : ascent->hikerIDs) {
 		QList<const Column*> columns = getColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascent->ascentID.forceValid(), hikerID);
+		const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent->ascentID.forceValid(), hikerID);
 		
-		AssociativeTable::addRow(parent, columns, data);
+		AssociativeTable::addRow(parent, columnDataPairs);
 	}
 }
 
@@ -76,20 +76,23 @@ void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
 
 
 /**
- * Translates the data of a single participation to a list of QVariants.
+ * Translates the data of a single participation to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param ascentID	The ascentID of the participation.
  * @param hikerID	The hikerID of the participation.
- * @return			The list of QVariants representing the participation.
+ * @return			A list of column-data pairs representing the participation.
  */
-QList<QVariant> ParticipatedTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const
+const QList<ColumnDataPair> ParticipatedTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == ascentIDColumn)	{ data.append(ascentID.asQVariant());	continue; }
-		if (column == hikerIDColumn)	{ data.append(hikerID.asQVariant());	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == ascentIDColumn)	{ data = ascentID.asQVariant();	}
+		else if (column == hikerIDColumn)	{ data = hikerID.asQVariant();	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }

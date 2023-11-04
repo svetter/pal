@@ -108,14 +108,12 @@ QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column
  * 
  * Delegates to Table::addRow().
  *
- * @param parent	The parent window.
- * @param columns	The columns for which to add data.
- * @param data		The data to add, in the same order as the columns.
- * @return			The index of the newly added row in the buffer.
+ * @param parent			The parent window.
+ * @param columnDataPairs	Pairs of columns and corresponding data to add.
  */
-BufferRowIndex NormalTable::addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data)
+BufferRowIndex NormalTable::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
 {
-	return Table::addRow(parent, columns, data);
+	return Table::addRow(parent, columnDataPairs);
 }
 
 /**
@@ -138,14 +136,13 @@ void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, cons
  *
  * Delegates to Table::updateRowInNormalTable().
  *
- * @param parent		The parent window.
- * @param primaryKey	The primary key of the row to update.
- * @param columns		The columns to update.
- * @param data			The new data for the cells, in the same order as the columns.
+ * @param parent			The parent window.
+ * @param primaryKey		The primary key of the row to update.
+ * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<const Column*>& columns, const QList<QVariant>& data)
+void NormalTable::updateRow(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
-	return Table::updateRowInNormalTable(parent, primaryKey, columns, data);
+	return Table::updateRowInNormalTable(parent, primaryKey, columnDataPairs);
 }
 
 

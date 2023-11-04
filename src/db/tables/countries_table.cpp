@@ -52,9 +52,9 @@ CountriesTable::CountriesTable() :
 BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, country);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
 	
-	BufferRowIndex newCountryIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newCountryIndex = NormalTable::addRow(parent, columnDataPairs);
 	country->countryID = getPrimaryKeyAt(newCountryIndex);
 	return newCountryIndex;
 }
@@ -70,27 +70,30 @@ BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
 void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country* country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, country);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
 	
-	NormalTable::updateRow(parent, countryID, columns, data);
+	NormalTable::updateRow(parent, countryID, columnDataPairs);
 }
 
 
 /**
- * Translates the data of a country to a list of QVariants.
+ * Translates the data of a country to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param country	The country from which to get the data.
- * @return			The list of QVariants representing the country's data.
+ * @return			A list of column-data pairs representing the country's data.
  */
-QList<QVariant> CountriesTable::mapDataToQVariantList(QList<const Column*>& columns, const Country* country) const
+const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Country* country) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == nameColumn)	{ data.append(country->name);	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == nameColumn)	{ data = country->name;	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

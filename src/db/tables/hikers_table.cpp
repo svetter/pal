@@ -52,9 +52,9 @@ HikersTable::HikersTable() :
 BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker* hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, hiker);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
 	
-	BufferRowIndex newHikerIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newHikerIndex = NormalTable::addRow(parent, columnDataPairs);
 	hiker->hikerID = getPrimaryKeyAt(newHikerIndex);
 	return newHikerIndex;
 }
@@ -70,27 +70,30 @@ BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker* hiker)
 void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, hiker);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
 	
-	NormalTable::updateRow(parent, hikerID, columns, data);
+	NormalTable::updateRow(parent, hikerID, columnDataPairs);
 }
 
 
 /**
- * Translates the data of a hiker to a list of QVariants.
+ * Translates the data of a hiker to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param hiker		The hiker from which to get the data.
- * @return			The list of QVariants representing the hiker's data.
+ * @return			A list of column-data pairs representing the hiker's data.
  */
-QList<QVariant> HikersTable::mapDataToQVariantList(QList<const Column*>& columns, const Hiker* hiker) const
+const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker* hiker) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == nameColumn)	{ data.append(hiker->name);	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == nameColumn)	{ data = hiker->name;	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

@@ -285,8 +285,6 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 /**
  * Returns a string listing the given columns' names.
  * 
- * Used for SQL SELECT queries.
- * 
  * @param columns	A list of columns.
  * @return			A comma-separated list of the columns' names.
  */
@@ -294,8 +292,8 @@ QString getColumnListStringOf(QList<const Column*> columns)
 {
 	QString result = "";
 	bool first = true;
-	for (auto iter = columns.begin(); iter != columns.end(); iter++) {
-		result = result + (first ? "" : ", ") + (*iter)->name;
+	for (const Column* column : columns) {
+		result = result + (first ? "" : ", ") + column->name;
 		first = false;
 	}
 	return result;
@@ -344,8 +342,8 @@ QString getTranslatedWhatIfDeleteResultDescription(const QList<WhatIfDeleteResul
 	
 	QString argumentString = "";
 	int iterationsLeft = whatIfResults.size();
-	for (auto iter = whatIfResults.constBegin(); iter != whatIfResults.constEnd(); iter++) {
-		argumentString.append(getTranslatedWhatIfDeleteResultDescription(*iter));
+	for (const WhatIfDeleteResult whatIfResult : whatIfResults) {
+		argumentString.append(getTranslatedWhatIfDeleteResultDescription(whatIfResult));
 		
 		switch (--iterationsLeft) {
 		case 0:

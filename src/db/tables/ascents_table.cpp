@@ -77,9 +77,9 @@ AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDCo
 BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
-	BufferRowIndex newAscentIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newAscentIndex = NormalTable::addRow(parent, columnDataPairs);
 	ascent->ascentID = getPrimaryKeyAt(newAscentIndex);
 	return newAscentIndex;
 }
@@ -95,38 +95,41 @@ BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
 void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, ascent);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
-	NormalTable::updateRow(parent, ascent->ascentID.forceValid(), columns, data);
+	NormalTable::updateRow(parent, ascent->ascentID.forceValid(), columnDataPairs);
 }
 
 
 /**
- * Translates the data of an ascent to a list of QVariants.
+ * Translates the data of an ascent to a list of column-data pairs.
  * 
  * @param columns	The column list specifying the order of the data.
  * @param ascent	The ascent from which to get the data.
- * @return			The list of QVariants representing the ascent's data.
+ * @return			A list of column-data pairs representing the ascent's data.
  */
-QList<QVariant> AscentsTable::mapDataToQVariantList(QList<const Column*>& columns, const Ascent* ascent) const
+const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Ascent* ascent) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == titleColumn)				{ data.append(ascent->title);							continue; }
-		if (column == peakIDColumn)				{ data.append(ascent->peakID.asQVariant());				continue; }
-		if (column == dateColumn)				{ data.append(ascent->date);							continue; }
-		if (column == peakOnDayColumn)			{ data.append(ascent->perDayIndex);						continue; }
-		if (column == timeColumn)				{ data.append(ascent->time);							continue; }
-		if (column == elevationGainColumn)		{ data.append(ascent->getElevationGainAsQVariant());	continue; }
-		if (column == hikeKindColumn)			{ data.append(ascent->hikeKind);						continue; }
-		if (column == traverseColumn)			{ data.append(ascent->traverse);						continue; }
-		if (column == difficultySystemColumn)	{ data.append(ascent->difficultySystem);				continue; }
-		if (column == difficultyGradeColumn)	{ data.append(ascent->difficultyGrade);					continue; }
-		if (column == tripIDColumn)				{ data.append(ascent->tripID.asQVariant());				continue; }
-		if (column == descriptionColumn)		{ data.append(ascent->description);						continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == titleColumn)				{ data = ascent->title;							}
+		else if (column == peakIDColumn)			{ data = ascent->peakID.asQVariant();			}
+		else if (column == dateColumn)				{ data = ascent->date;							}
+		else if (column == peakOnDayColumn)			{ data = ascent->perDayIndex;					}
+		else if (column == timeColumn)				{ data = ascent->time;							}
+		else if (column == elevationGainColumn)		{ data = ascent->getElevationGainAsQVariant();	}
+		else if (column == hikeKindColumn)			{ data = ascent->hikeKind;						}
+		else if (column == traverseColumn)			{ data = ascent->traverse;						}
+		else if (column == difficultySystemColumn)	{ data = ascent->difficultySystem;				}
+		else if (column == difficultyGradeColumn)	{ data = ascent->difficultyGrade;				}
+		else if (column == tripIDColumn)			{ data = ascent->tripID.asQVariant();			}
+		else if (column == descriptionColumn)		{ data = ascent->description;					}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

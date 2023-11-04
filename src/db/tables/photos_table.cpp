@@ -87,9 +87,9 @@ void PhotosTable::addRows(QWidget* parent, ValidItemID ascentID, const QList<Pho
 {
 	for (int i = 0; i < photos.size(); i++) {
 		QList<const Column*> columns = getNonPrimaryKeyColumnList();
-		QList<QVariant> data = mapDataToQVariantList(columns, ascentID, i, photos.at(i).filepath, photos.at(i).description);
+		const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascentID, i, photos.at(i).filepath, photos.at(i).description);
 		
-		NormalTable::addRow(parent, columns, data);
+		NormalTable::addRow(parent, columnDataPairs);
 	}
 }
 
@@ -148,26 +148,29 @@ void PhotosTable::updateFilepathAt(QWidget* parent, BufferRowIndex bufferRowInde
 
 
 /**
- * Translates the data of a photo to a list of QVariants.
+ * Translates the data of a photo to a list of column-data pairs.
  *
  * @param columns		The column list specifying the order of the data.
  * @param ascentID		The ascentID of the photo.
  * @param sortIndex		The sortIndex of the photo.
  * @param filepath		The filepath of the photo.
  * @param description	The description of the photo.
- * @return				The list of QVariants representing the photo.
+ * @return				A list of column-data pairs representing the photo.
  */
-QList<QVariant> PhotosTable::mapDataToQVariantList(QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const
+const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == ascentIDColumn)		{ data.append(ascentID.asQVariant());	continue; }
-		if (column == sortIndexColumn)		{ data.append(sortIndex);				continue; }
-		if (column == filepathColumn)		{ data.append(filepath);				continue; }
-		if (column == descriptionColumn)	{ data.append(description);				continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == ascentIDColumn)		{ data = ascentID.asQVariant();	}
+		else if (column == sortIndexColumn)		{ data = sortIndex;				}
+		else if (column == filepathColumn)		{ data = filepath;				}
+		else if (column == descriptionColumn)	{ data = description;			}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 

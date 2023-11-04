@@ -48,7 +48,7 @@ public:
 	BufferRowIndex addRow(QWidget* parent, Range* range);
 	void updateRow(QWidget* parent, ValidItemID rangeID, const Range* range);
 private:
-	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Range* range) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Range* range) const;
 	
 public:
 	virtual QString getNoneString() const;

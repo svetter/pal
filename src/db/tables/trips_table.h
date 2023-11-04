@@ -52,7 +52,7 @@ public:
 	BufferRowIndex addRow(QWidget* parent, Trip* trip);
 	void updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip);
 private:
-	QList<QVariant> mapDataToQVariantList(QList<const Column*>& columns, const Trip* trip) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip* trip) const;
 	
 public:
 	virtual QString getNoneString() const;

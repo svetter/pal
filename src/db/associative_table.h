@@ -57,7 +57,7 @@ public:
 	QSet<ValidItemID> getMatchingEntries(const Column* column, ValidItemID primaryKey) const;
 	
 	// Modifications (passthrough)
-	void addRow(QWidget* parent, const QList<const Column*>& columns, const QList<QVariant>& data);
+	void addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
 	

@@ -54,9 +54,9 @@ RangesTable::RangesTable() :
 BufferRowIndex RangesTable::addRow(QWidget* parent, Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, range);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, range);
 	
-	BufferRowIndex newRangeIndex = NormalTable::addRow(parent, columns, data);
+	BufferRowIndex newRangeIndex = NormalTable::addRow(parent, columnDataPairs);
 	range->rangeID = getPrimaryKeyAt(newRangeIndex);
 	return newRangeIndex;
 }
@@ -72,28 +72,31 @@ BufferRowIndex RangesTable::addRow(QWidget* parent, Range* range)
 void RangesTable::updateRow(QWidget* parent, ValidItemID rangeID, const Range* range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	QList<QVariant> data = mapDataToQVariantList(columns, range);
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, range);
 	
-	NormalTable::updateRow(parent, rangeID, columns, data);
+	NormalTable::updateRow(parent, rangeID, columnDataPairs);
 }
 
 
 /**
- * Translates the data of a range to a list of QVariants.
+ * Translates the data of a range to a list of column-data pairs.
  *
  * @param columns	The column list specifying the order of the data.
  * @param range		The range from which to get the data.
- * @return			The list of QVariants representing the range's data.
+ * @return			A list of column-data pairs representing the range's data.
  */
-QList<QVariant> RangesTable::mapDataToQVariantList(QList<const Column*>& columns, const Range* range) const
+const QList<ColumnDataPair> RangesTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Range* range) const
 {
-	QList<QVariant> data = QList<QVariant>();
-	for (const Column* column : columns) {
-		if (column == nameColumn)		{ data.append(range->name);			continue; }
-		if (column == continentColumn)	{ data.append(range->continent);	continue; }
-		assert(false);
+	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
+	for (const Column* const column : columns) {
+		QVariant data;
+		     if (column == nameColumn)		{ data = range->name;		}
+		else if (column == continentColumn)	{ data = range->continent;	}
+		else assert(false);
+		
+		columnDataPairs.append({column, data});
 	}
-	return data;
+	return columnDataPairs;
 }
 
 
