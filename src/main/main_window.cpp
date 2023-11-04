@@ -60,6 +60,7 @@ MainWindow::MainWindow() :
 		participatedDebugTableView(nullptr)
 {
 	setupUi(this);
+	createTypesHandler();
 	setupMenuIcons();
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
 	statusbar->addPermanentWidget(statusBarFiltersLabel);
@@ -80,9 +81,6 @@ MainWindow::MainWindow() :
 	}
 	
 	showFiltersAction->setChecked(Settings::mainWindow_showFilters.get());
-	
-	
-	createTypesHandler();
 	
 	
 	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable);
@@ -527,20 +525,19 @@ void MainWindow::initCompositeBuffers()
  */
 void MainWindow::setUIEnabled(bool enabled)
 {
-	mainAreaTabs				->setEnabled(enabled);
-	newAscentButton				->setEnabled(enabled);
-	newPeakButton				->setEnabled(enabled);
-	newTripButton				->setEnabled(enabled);
-	ascentCounterSegmentNumber	->setEnabled(enabled);
-	ascentCounterLabel			->setEnabled(enabled);
-	
 	saveDatabaseAsAction		->setEnabled(enabled);
 	closeDatabaseAction			->setEnabled(enabled);
 	projectSettingsAction		->setEnabled(enabled);
-	
 	viewMenu					->setEnabled(enabled);
 	newMenu						->setEnabled(enabled);
 	toolsMenu					->setEnabled(enabled);
+	
+	typesHandler->forEach([enabled] (const ItemTypeMapper& mapper) {
+		mapper.newItemButton->setEnabled(enabled);
+	});
+	mainAreaTabs				->setEnabled(enabled);
+	ascentCounterSegmentNumber	->setEnabled(enabled);
+	ascentCounterLabel			->setEnabled(enabled);
 }
 
 /**
