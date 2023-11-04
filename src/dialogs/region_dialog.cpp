@@ -159,7 +159,7 @@ Region* RegionDialog::extractData()
 bool RegionDialog::changesMade()
 {
 	Region* currentState = extractData();
-	bool equal = currentState->equalTo(init);
+	bool equal = currentState == init;
 	delete currentState;
 	return !equal;
 }

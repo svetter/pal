@@ -282,7 +282,7 @@ Ascent* AscentDialog::extractData()
 bool AscentDialog::changesMade()
 {
 	Ascent* currentState = extractData();
-	bool equal = currentState->equalTo(init);
+	bool equal = currentState == init;
 	delete currentState;
 	return !equal;
 }

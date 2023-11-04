@@ -53,7 +53,7 @@ public:
 	Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QString& description);
 	virtual ~Trip();
 	
-	bool equalTo(const Trip* const other) const;
+	bool operator==(const Trip* const other) const;
 	
 	bool datesSpecified() const;
 };

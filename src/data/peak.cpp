@@ -62,7 +62,7 @@ Peak::~Peak()
  * @param other	The other peak.
  * @return		True if the other peak is equal to this one, false otherwise.
  */
-bool Peak::equalTo(const Peak* const other) const
+bool Peak::operator==(const Peak* const other) const
 {
 	assert(other);
 	if (name		!= other->name)			return false;

@@ -46,7 +46,7 @@ public:
 	Country(ItemID countryID, QString& name);
 	virtual ~Country();
 	
-	bool equalTo(const Country* const other) const;
+	bool operator==(const Country* const other) const;
 };
 
 

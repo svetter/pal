@@ -50,7 +50,7 @@ Hiker::~Hiker()
  * @param other	The other hiker.
  * @return		True if the other hiker is equal to this one, false otherwise.
  */
-bool Hiker::equalTo(const Hiker* const other) const
+bool Hiker::operator==(const Hiker* const other) const
 {
 	assert(other);
 	if (name	!= other->name)	return false;

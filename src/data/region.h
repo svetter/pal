@@ -50,7 +50,7 @@ public:
 	Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID);
 	virtual ~Region();
 	
-	bool equalTo(const Region* const other) const;
+	bool operator==(const Region* const other) const;
 };
 
 

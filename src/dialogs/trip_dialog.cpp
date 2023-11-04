@@ -150,7 +150,7 @@ Trip* TripDialog::extractData()
 bool TripDialog::changesMade()
 {
 	Trip* currentState = extractData();
-	bool equal = currentState->equalTo(init);
+	bool equal = currentState == init;
 	delete currentState;
 	return !equal;
 }
