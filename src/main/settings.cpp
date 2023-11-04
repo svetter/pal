@@ -52,7 +52,7 @@ QPair<QStringList, QStringList> getSupportedLanguages()
  * 
  * @return The language code of the language that should be used by default on the current system.
  */
-QString getDefaultLanguage()
+QString getDefaultLanguageCode()
 {
 	QString language = "en";
 	QStringList uiLanguages = QLocale::system().uiLanguages();

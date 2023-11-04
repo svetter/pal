@@ -39,7 +39,7 @@ inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScop
 
 
 QPair<QStringList, QStringList> getSupportedLanguages();
-QString getDefaultLanguage();
+QString getDefaultLanguageCode();
 
 
 
@@ -150,7 +150,7 @@ public:
 	
 	// Language
 	/** The language in which text in the application is displayed. */
-	inline static const Setting<QString>	language								= Setting<QString>	("language",									getDefaultLanguage());
+	inline static const Setting<QString>	language								= Setting<QString>	("language",									getDefaultLanguageCode());
 	
 	// General/global
 	/** Ask user for confirmation before deleting an item. */
