@@ -267,14 +267,24 @@ ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* tab
  */
 QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
-	QStringList stringList;
+	QStringList stringList = QStringList();
 	
+	// Fetch and format to string
 	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
-		assert(content.canConvert<QString>());
-		content = replaceEnumIfApplicable(content);
+		if (enumNames) {
+			content = replaceEnumIfApplicable(content);
+		} else {
+			assert(content.canConvert<QString>());
+		}
 		stringList.append(content.toString());
 	}
+	
+	// Sort list of strings
+	auto comparator = [] (const QString& string1, const QString& string2) {
+		return QString::localeAwareCompare(string1, string2) < 0;
+	};
+	std::stable_sort(stringList.begin(), stringList.end(), comparator);
 	
 	return stringList;
 }
