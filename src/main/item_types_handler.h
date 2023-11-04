@@ -211,10 +211,10 @@ public:
 /**
  * An ItemTypeMapper for item type Ascent.
  */
-class AscentTypeMapper : public ItemTypeMapper {
+class AscentMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new AscentTypeMapper instance.
+	 * Creates a new AscentMapper instance.
 	 * 
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -223,7 +223,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline AscentTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::ascentDialog_geometry,
 				&Settings::mainWindow_columnWidths_ascentsTable,
@@ -239,10 +239,10 @@ public:
 /**
  * An ItemTypeMapper for item type Peak.
  */
-class PeakTypeMapper : public ItemTypeMapper {
+class PeakMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new PeakTypeMapper instance.
+	 * Creates a new PeakMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -251,7 +251,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline PeakTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::peakDialog_geometry,
 				&Settings::mainWindow_columnWidths_peaksTable,
@@ -267,10 +267,10 @@ public:
 /**
  * An ItemTypeMapper for item type Trip.
  */
-class TripTypeMapper : public ItemTypeMapper {
+class TripMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new TripTypeMapper instance.
+	 * Creates a new TripMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -279,7 +279,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline TripTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::tripDialog_geometry,
 				&Settings::mainWindow_columnWidths_tripsTable,
@@ -295,10 +295,10 @@ public:
 /**
  * An ItemTypeMapper for item type Hiker.
  */
-class HikerTypeMapper : public ItemTypeMapper {
+class HikerMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new HikerTypeMapper instance.
+	 * Creates a new HikerMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -307,7 +307,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline HikerTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::hikerDialog_geometry,
 				&Settings::mainWindow_columnWidths_hikersTable,
@@ -323,10 +323,10 @@ public:
 /**
  * An ItemTypeMapper for item type Region.
  */
-class RegionTypeMapper : public ItemTypeMapper {
+class RegionMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new RegionTypeMapper instance.
+	 * Creates a new RegionMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -335,7 +335,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline RegionTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::regionDialog_geometry,
 				&Settings::mainWindow_columnWidths_regionsTable,
@@ -351,10 +351,10 @@ public:
 /**
  * An ItemTypeMapper for item type Range.
  */
-class RangeTypeMapper : public ItemTypeMapper {
+class RangeMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new RangeTypeMapper instance.
+	 * Creates a new RangeMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -363,7 +363,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline RangeTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::rangeDialog_geometry,
 				&Settings::mainWindow_columnWidths_rangesTable,
@@ -379,10 +379,10 @@ public:
 /**
  * An ItemTypeMapper for item type Country.
  */
-class CountryTypeMapper : public ItemTypeMapper {
+class CountryMapper : public ItemTypeMapper {
 public:
 	/**
-	 * Creates a new CountryTypeMapper instance.
+	 * Creates a new CountryMapper instance.
 	 *
 	 * @param db				The database.
 	 * @param tab				The tab in the main window.
@@ -391,7 +391,7 @@ public:
 	 * @param newItemAction		The action in the main window menu for creating a new ascent.
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
-	inline CountryTypeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
+	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::countryDialog_geometry,
 				&Settings::mainWindow_columnWidths_countriesTable,
@@ -425,13 +425,13 @@ public:
 	
 	/** Creates a new ItemTypesHandler instance. */
 	inline ItemTypesHandler(bool showDebugTableViews,
-			const AscentTypeMapper*		ascentMapper,
-			const PeakTypeMapper*		peakMapper,
-			const TripTypeMapper*		tripMapper,
-			const HikerTypeMapper*		hikerMapper,
-			const RegionTypeMapper*		regionMapper,
-			const RangeTypeMapper*		rangeMapper,
-			const CountryTypeMapper*	countryMapper
+			const AscentMapper*		ascentMapper,
+			const PeakMapper*		peakMapper,
+			const TripMapper*		tripMapper,
+			const HikerMapper*		hikerMapper,
+			const RegionMapper*		regionMapper,
+			const RangeMapper*		rangeMapper,
+			const CountryMapper*	countryMapper
 			) :
 			showDebugTableViews(showDebugTableViews),
 			mappers({
