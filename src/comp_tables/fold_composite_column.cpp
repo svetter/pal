@@ -105,7 +105,7 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
 			assert(secondColumn->isPrimaryKey());
 			
 			// Find row matching each primary key
-			for (ValidItemID key : currentKeySet) {
+			for (const ValidItemID& key : currentKeySet) {
 				BufferRowIndex bufferRowIndex = currentTable->getMatchingBufferRowIndex({ secondColumn }, { key });
 				currentRowIndexSet.insert(bufferRowIndex);
 			}
@@ -116,7 +116,7 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
 			assert(firstColumn->isPrimaryKey());
 			
 			// Find rows in new currentTable where key in secondColumn matches any key in current set
-			for (ValidItemID key : currentKeySet) {
+			for (const ValidItemID& key : currentKeySet) {
 				const QList<BufferRowIndex> bufferRowIndexList = currentTable->getMatchingBufferRowIndices(secondColumn, key.asQVariant());
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				currentRowIndexSet.unite(matchingBufferRowIndices);
