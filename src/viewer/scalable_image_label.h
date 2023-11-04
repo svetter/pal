@@ -59,6 +59,8 @@ class ScalableImageLabel : public QLabel
 	
 	/** The factor by which to zoom in or out when the mouse wheel is rotated. */
 	constexpr static const qreal ZOOM_FACTOR = 1.2;
+	/** The maximum ratio between the displayed size of the image and its original size, e.g., 200% = 2. */
+	constexpr static const qreal MAX_ZOOM_RATIO = 2;
 	
 public:
 	ScalableImageLabel(QScrollArea* parent);

@@ -73,9 +73,10 @@ void ScalableImageLabel::clearImage()
  * 
  * Zooming is always constrained first by the available area: the image is never smaller than the
  * available area. Second, zooming is constrained by the image's resolution: the image is only
- * allowed to be scaled up (over 100% of its original size) if the original size is smaller than
- * the available area in both dimensions. If the image is larger than the available area in either
- * dimension, the user can zoom in until the image reaches 100% scaling.
+ * allowed to be scaled up above the zoom limit (MAX_ZOOM_RATIO times its original size) if the
+ * size while zoomed in all the way is still smaller than the available area in both dimensions. If
+ * the maximum zoomed image is larger than the available area in either dimension, the user can
+ * zoom in until the image reaches MAX_ZOOM_RATIO times its size.
  * 
  * @param event	The mouse wheel event.
  */
@@ -87,14 +88,13 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 	QPoint mousePosition = event->position().toPoint() - oldScroll;
 	QSize oldImageSize = pixmap().size();
 	
-	// Zoom factor 1 means image is fit to screen
 	qreal currentZoomX	= (qreal) oldImageSize.width()  / availableArea.width();
 	qreal currentZoomY	= (qreal) oldImageSize.height() / availableArea.height();
 	bool zoomInNotOut = event->angleDelta().y() > 0;
 	qreal factor = zoomInNotOut ? ZOOM_FACTOR : (1 / ZOOM_FACTOR);
 	
-	int newImageWidth	= fmin(fullSizePixmap.width(),  availableArea.width()  * currentZoomX * factor);
-	int newImageHeight	= fmin(fullSizePixmap.height(), availableArea.height() * currentZoomY * factor);
+	int newImageWidth	= fmin(MAX_ZOOM_RATIO * fullSizePixmap.width(),  availableArea.width()  * currentZoomX * factor);
+	int newImageHeight	= fmin(MAX_ZOOM_RATIO * fullSizePixmap.height(), availableArea.height() * currentZoomY * factor);
 	
 	if (newImageWidth <= availableArea.width() && newImageHeight <= availableArea.height()) {
 		newImageWidth	= availableArea.width();
@@ -154,8 +154,8 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 	QSize availableArea = parent->maximumViewportSize();
 	bool resize = false;
 
-	// Resize if full-size image is smaller than the available area
-	resize |= fullSizePixmap.width() < availableArea.width() && fullSizePixmap.height() < availableArea.height();
+	// Resize if max-zoomed image is smaller than the available area
+	resize |= MAX_ZOOM_RATIO * fullSizePixmap.width() < availableArea.width() && MAX_ZOOM_RATIO * fullSizePixmap.height() < availableArea.height();
 	// Resize if fill mode is active but the image isn't fit to the available area
 	resize |= fillMode && (pixmap().width() != availableArea.width() && pixmap().height() != availableArea.height());
 	// Resize if fill mode is inactive but the image is smaller than the available area
