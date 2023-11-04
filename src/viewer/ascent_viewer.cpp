@@ -467,39 +467,39 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
 		imageLabel->clearImage();
-		return;
-	}
-	
-	QString filepath = photos.at(currentPhotoIndex).filepath;
-	QImageReader reader(filepath);
-	reader.setAutoTransform(true);
-	const QImage newImage = reader.read();
-	if (newImage.isNull()) {
-		qDebug() << "Error reading" << filepath << reader.errorString();
-		imageLabel->clearImage();
-		
-		QString title = tr("File error");
-		QString message = tr("Photo could not be loaded:")
-				+ "\n" + filepath
-				+ "\n\n" + tr("Do you want to remove it from this ascent?");
-		QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-		QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
-		
-		if (result == QMessageBox::Yes) {
-			removeCurrentPhoto();	// calls changeToPhoto() back, recursing until valid image is found or all photos removed
-		}
 	}
 	else {
-		image = newImage;
-		if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
-		imageLabel->setImage(image);
+		QString filepath = photos.at(currentPhotoIndex).filepath;
+		QImageReader reader = QImageReader(filepath);
+		reader.setAutoTransform(true);
+		const QImage newImage = reader.read();
+		if (newImage.isNull()) {
+			qDebug() << "Error reading" << filepath << reader.errorString();
+			imageLabel->clearImage();
+			
+			QString title = tr("File error");
+			QString message = tr("Photo could not be loaded:")
+					+ "\n" + filepath
+					+ "\n\n" + tr("Do you want to remove it from this ascent?");
+			QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+			QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
+			
+			if (result == QMessageBox::Yes) {
+				removeCurrentPhoto();	// calls changeToPhoto() back, recursing until valid image is found or all photos removed
+			}
+		}
+		else {
+			image = newImage;
+			if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
+			imageLabel->setImage(image);
+		}
+		
+		photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
+		photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
+		photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
+		photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
+		imageLabel				->setToolTip(filepath);
 	}
-	
-	photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
-	photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
-	photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
-	photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
-	imageLabel				->setToolTip(filepath);
 	
 	updatePhotoIndexLabel();
 	updatePhotoButtonsEnabled();
