@@ -109,7 +109,7 @@ private:
 	void createTableInSql(QWidget* parent);
 	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent, bool expectEmpty = false) const;
 	ValidItemID addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
-	void updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
+	void updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key);

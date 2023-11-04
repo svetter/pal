@@ -385,7 +385,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	assert(column->table == this);
 	
 	// Update cell in SQL database
-	updateCellInSql(parent, primaryKey, column, data);
+	updateCellOfNormalTableInSql(parent, primaryKey, column, data);
 	
 	// Update buffer
 	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
@@ -619,15 +619,17 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
 }
 
 /**
- * Updates a cell in the table in the SQL database.
+ * Updates a cell of a normal table in the SQL database.
  * 
  * @param parent		The parent window.
  * @param primaryKey	The primary key of the row to update.
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void Table::updateCellInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
 {
+	assert(!isAssociative);
+	
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
