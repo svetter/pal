@@ -88,8 +88,8 @@ private slots:
 	
 private:
 	virtual void aboutToClose() override;
-	
-	QSet<int> getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const;
+	void savePhotoDescriptionToList();
+	void savePhotoDescriptionToList(const QItemSelection& selected, const QItemSelection& deselected);
 };
 
 

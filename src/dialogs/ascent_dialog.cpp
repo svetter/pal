@@ -462,18 +462,14 @@ void AscentDialog::handle_removePhotos()
  */
 void AscentDialog::handle_photoSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-	QSet<int> previouslySelectedRows = getPreviouslySelectedRows(selected, deselected);
+	// Save description for previously selected photo, if applicable
+	savePhotoDescriptionToList(selected, deselected);
+	
 	QSet<int> nowSelectedRows = QSet<int>();
 	for (QModelIndex& index : photosListView->selectionModel()->selectedIndexes()) {
 		nowSelectedRows.insert(index.row());
 	}
-	
-	if (previouslySelectedRows.size() == 1) {	// Save description
-		QList<int> previouslySelectedRowIndexValues = previouslySelectedRows.values();
-		int rowIndex = previouslySelectedRowIndexValues.first();
-		photosModel.setDescriptionAt(rowIndex, photoDescriptionLineEdit->text());
-	}
-	
+
 	if (nowSelectedRows.size() == 1) {			// Load description
 		QList<int> nowSelectedRowIndexValues = nowSelectedRows.values();
 		int rowIndex = nowSelectedRowIndexValues.first();
@@ -507,21 +503,37 @@ void AscentDialog::aboutToClose()
 {
 	saveDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
 	
-	handle_photoSelectionChanged();
+	savePhotoDescriptionToList();
 }
 
-
+/**
+ * Saves the current content of the photo description line edit to the photos list model, iff
+ * exactly one photo is selected in the list view.
+ * 
+ * This method should not be used if the selection has just changed.
+ */
+void AscentDialog::savePhotoDescriptionToList()
+{
+	QSet<int> currentlySelectedRowIndices = QSet<int>();
+	for (QModelIndex& modelIndex : photosListView->selectionModel()->selectedIndexes()) {
+		currentlySelectedRowIndices.insert(modelIndex.row());
+	}
+	if (currentlySelectedRowIndices.size() == 1) {	// Save description
+		int selectedRowIndex = *currentlySelectedRowIndices.begin();
+		photosModel.setDescriptionAt(selectedRowIndex, photoDescriptionLineEdit->text());
+	}
+}
 
 /**
- * From the sets of newly selected and deselected rows in a QItemSelection, returns the set of rows
- * which were selected before the change.
+ * After a selection change in the photos list view, saves the current content of the photo
+ * description line edit to the photos list model, iff exactly one photo was selected before the
+ * change.
  * 
- * @param selected		The indices of the rows which were newly selected.
- * @param deselected	The indices of the rows which were deselected.
- * @return				The rows which were selected before the change.
+ * This method is intended to be used from an event handler for the selectionChanged signal.
  */
-QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected, const QItemSelection& deselected) const
+void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, const QItemSelection& deselected)
 {
+	// Find out which rows were selected before the change
 	QSet<int> unselectedRows = QSet<int>();
 	for (QModelIndex& index : deselected.indexes()) {
 		unselectedRows.insert(index.row());
@@ -540,7 +552,11 @@ QSet<int> AscentDialog::getPreviouslySelectedRows(const QItemSelection& selected
 	QSet<int> previouslySelectedRows = QSet<int>(unselectedRows);
 	previouslySelectedRows.unite(stillSelectedRows);
 	
-	return previouslySelectedRows;
+	// If exactly one photo was previously selected, save its description
+	if (previouslySelectedRows.size() == 1) {
+		int previouslySelectedRowIndex = *previouslySelectedRows.begin();
+		photosModel.setDescriptionAt(previouslySelectedRowIndex, photoDescriptionLineEdit->text());
+	}
 }
 
 
