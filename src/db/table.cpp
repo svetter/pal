@@ -593,7 +593,7 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
  * @param columnDataPairs	Pairs of columns and corresponding data to add.
  * @return					The ID of the newly added row.
  */
-int Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
+ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
 {
 	QString questionMarks = "";
 	for (int i = 0; i < columnDataPairs.size(); i++) {
@@ -614,8 +614,7 @@ int Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataP
 	if (!query.exec())
 		displayError(parent, query.lastError(), queryString);
 	
-	int newRowID = query.lastInsertId().toInt();
-	assert(newRowID > 0);
+	ValidItemID newRowID = query.lastInsertId().toInt();
 	return newRowID;
 }
 
