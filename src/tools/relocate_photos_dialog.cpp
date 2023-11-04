@@ -110,8 +110,8 @@ void RelocatePhotosDialog::handle_start()
 	progressBar->setValue(0);
 	
 	workerThread = new PhotoRelocationThread(this, db, oldPathLineEdit->text(), newPathLineEdit->text());
-	connect(workerThread, &PhotoRelocationThread::reportWorkloadSize,			this,	&RelocatePhotosDialog::handle_workloadSize);
-	connect(workerThread, &PhotoRelocationThread::reportProgress,				this,	&RelocatePhotosDialog::handle_progressUpdate);
+	connect(workerThread, &PhotoRelocationThread::reportWorkloadSize,			this,	&RelocatePhotosDialog::handle_callback_workloadSize);
+	connect(workerThread, &PhotoRelocationThread::reportProgress,				this,	&RelocatePhotosDialog::handle_callback_progressUpdate);
 	connect(workerThread, &PhotoRelocationThread::callback_updateFilepathAt,	this,	&RelocatePhotosDialog::handle_callback_updateFilepath);
 	connect(workerThread, &PhotoRelocationThread::finished,						this,	&RelocatePhotosDialog::handle_finished);
 	
@@ -179,7 +179,7 @@ void RelocatePhotosDialog::handle_close()
  * 
  * @param workloadSize	The number of photos found that need to be relocated.
  */
-void RelocatePhotosDialog::handle_workloadSize(int workloadSize)
+void RelocatePhotosDialog::handle_callback_workloadSize(int workloadSize)
 {
 	progressBar->setMaximum(workloadSize);
 }
@@ -190,7 +190,7 @@ void RelocatePhotosDialog::handle_workloadSize(int workloadSize)
  * @param processed	The number of photos processed so far.
  * @param updated	The number of photos whose location has been updated so far.
  */
-void RelocatePhotosDialog::handle_progressUpdate(int processed, int updated)
+void RelocatePhotosDialog::handle_callback_progressUpdate(int processed, int updated)
 {
 	progressBar->setValue(processed);
 	feedbackLabel->setText(tr("Photo locations updated: %1").arg(updated));
