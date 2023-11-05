@@ -101,7 +101,8 @@ void AscentViewer::additionalUISetup()
 	
 	imageLabel = new ScalableImageLabel(imageScrollArea);
 	imageScrollArea->setBackgroundRole(QPalette::Dark);
-	imageScrollAreaLayout->addWidget(imageLabel);
+	imageScrollArea->setWidget(imageLabel);
+	imageScrollArea->setVisible(false);
 	imageErrorGroupBox->setVisible(false);
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -471,11 +472,11 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 		photoDescriptionLineEdit	->setText(QString());
 		photoDescriptionLabel		->setVisible(false);
 		photoDescriptionLineEdit	->setVisible(false);
-		editPhotoDescriptionButton	->setVisible(false);
 		imageLabel					->setToolTip(QString());
 		
 		imageErrorGroupBox			->setVisible(false);
-		imageLabel					->setVisible(false);
+		imageScrollArea				->setVisible(false);
+		noImageFrame				->setVisible(true);
 		imageLabel					->clearImage();
 	}
 	else {
@@ -485,8 +486,8 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 		QImage image = reader.read();
 		
 		if (!image.isNull()) {	// Image loaded
-			imageErrorGroupBox->setVisible(false);
-			imageLabel->setVisible(true);
+			noImageFrame->setVisible(false);
+			imageScrollArea->setVisible(true);
 			if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 			imageLabel->setImage(image);
 		}
@@ -498,8 +499,9 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 				.arg(filepath, reader.errorString());	// Error string is already translated
 			imageErrorLabel->setText(labelText);
 			
-			imageLabel->setVisible(false);
 			imageErrorGroupBox->setVisible(true);
+			imageScrollArea->setVisible(false);
+			noImageFrame->setVisible(true);
 			imageLabel->clearImage();
 		}
 		
@@ -508,7 +510,6 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 		photoDescriptionLineEdit	->setText(photos.at(currentPhotoIndex).description);
 		photoDescriptionLabel		->setVisible(!photoDescriptionEditable);
 		photoDescriptionLineEdit	->setVisible(photoDescriptionEditable);
-		editPhotoDescriptionButton	->setVisible(true);
 		imageLabel					->setToolTip(filepath);
 	}
 	
@@ -533,15 +534,16 @@ void AscentViewer::updatePhotoIndexLabel()
  */
 void AscentViewer::updatePhotoButtonsEnabled()
 {
-	firstPhotoButton		->setEnabled(currentPhotoIndex > 0);
-	previousPhotoButton		->setEnabled(currentPhotoIndex > 0);
-	nextPhotoButton			->setEnabled(currentPhotoIndex < photos.size() - 1);
-	lastPhotoButton			->setEnabled(currentPhotoIndex < photos.size() - 1);
+	firstPhotoButton			->setEnabled(currentPhotoIndex > 0);
+	previousPhotoButton			->setEnabled(currentPhotoIndex > 0);
+	nextPhotoButton				->setEnabled(currentPhotoIndex < photos.size() - 1);
+	lastPhotoButton				->setEnabled(currentPhotoIndex < photos.size() - 1);
 	
-	movePhotoLeftButton		->setEnabled(currentPhotoIndex > 0);
-	movePhotoRightButton	->setEnabled(currentPhotoIndex < photos.size() - 1);
+	movePhotoLeftButton			->setEnabled(currentPhotoIndex > 0);
+	movePhotoRightButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
 	
-	removePhotoButton		->setEnabled(!photos.isEmpty());
+	editPhotoDescriptionButton	->setEnabled(!photos.isEmpty());
+	removePhotoButton			->setEnabled(!photos.isEmpty());
 }
 
 
