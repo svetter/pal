@@ -49,7 +49,7 @@ ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* fore
  */
 void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	for (ValidItemID hikerID : ascent->hikerIDs) {
+	for (const ValidItemID& hikerID : ascent->hikerIDs) {
 		QList<const Column*> columns = getColumnList();
 		const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, FORCE_VALID(ascent->ascentID), hikerID);
 		
