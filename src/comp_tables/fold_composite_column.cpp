@@ -343,13 +343,16 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
-	BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHiker->get());
-	if (defaultHiker->isNotNull() && rowIndexSet.contains(defaultHikerRowIndex)) {
-		QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
-		assert(content.canConvert<QString>());
-		defaultHikerString = content.toString();
-		// Remove default hiker from row index set
-		rowIndexSet.remove(defaultHikerRowIndex);
+	if (defaultHiker->isNotNull()) {
+		ValidItemID defaultHikerID = defaultHiker->get();
+		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
+		if (rowIndexSet.contains(defaultHikerRowIndex)) {
+			QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
+			assert(content.canConvert<QString>());
+			defaultHikerString = content.toString();
+			// Remove default hiker from row index set
+			rowIndexSet.remove(defaultHikerRowIndex);
+		}
 	}
 	
 	for (const BufferRowIndex& rowIndex : rowIndexSet) {
