@@ -1061,68 +1061,19 @@
       </layout>
      </widget>
      <widget class="QWidget" name="rightOfSplitterWidget">
-      <layout class="QVBoxLayout" name="photoLayout" stretch="1,1,0,0">
+      <layout class="QVBoxLayout" name="photoLayout" stretch="1,0,0">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QScrollArea" name="imageScrollArea">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>250</width>
-           <height>250</height>
-          </size>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
-         </property>
-         <property name="widgetResizable">
+        <widget class="FileDropFrame" name="imageFrame">
+         <property name="acceptDrops">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="imageScrollAreaWidget">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>700</width>
-            <height>389</height>
-           </rect>
-          </property>
-          <layout class="QHBoxLayout" name="imageScrollAreaLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="noImageFrame">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
-         <layout class="QHBoxLayout" name="noImageFrameLayout">
+         <layout class="QVBoxLayout" name="imageFrameLayout">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -1139,105 +1090,164 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QGroupBox" name="imageErrorGroupBox">
+           <widget class="QScrollArea" name="imageScrollArea">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>250</height>
+             </size>
             </property>
-            <property name="title">
-             <string>Image could not be loaded</string>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOn</enum>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOn</enum>
             </property>
-            <layout class="QVBoxLayout" name="imageErrorGroupBoxLayout">
-             <property name="spacing">
-              <number>10</number>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="imageScrollAreaWidget">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>678</width>
+               <height>576</height>
+              </rect>
              </property>
-             <property name="leftMargin">
-              <number>10</number>
-             </property>
-             <property name="topMargin">
-              <number>10</number>
-             </property>
-             <property name="rightMargin">
-              <number>10</number>
-             </property>
-             <property name="bottomMargin">
-              <number>10</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="imageErrorLabel">
-               <property name="font">
-                <font>
-                 <pointsize>9</pointsize>
-                </font>
+             <layout class="QHBoxLayout" name="imageScrollAreaLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="imageErrorCenteringLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="imageErrorGroupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="title">
+               <string>Image could not be loaded</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <layout class="QVBoxLayout" name="imageErrorGroupBoxLayout">
+               <property name="spacing">
+                <number>10</number>
                </property>
-               <property name="text">
-                <string notr="true">This image file cannot be shown:
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>10</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>10</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="imageErrorLabel">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string notr="true">This image file cannot be shown:
 &lt;FILENAME&gt;
 Reason: File not found.
 
 You can remove the image, replace the file, or mass relocate image files in the whole database.
 &lt;CAUTION: This text is always replaced from the code.&gt;</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="imageErrorButtonLayout">
-               <property name="spacing">
-                <number>10</number>
-               </property>
-               <item>
-                <widget class="QPushButton" name="imageErrorRemoveButton">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                  </font>
                  </property>
-                 <property name="text">
-                  <string>Remove</string>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="imageErrorReplaceButton">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                  </font>
+                <layout class="QHBoxLayout" name="imageErrorButtonLayout">
+                 <property name="spacing">
+                  <number>10</number>
                  </property>
-                 <property name="text">
-                  <string>Replace</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="imageErrorRelocateButton">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Mass relocate</string>
-                 </property>
-                </widget>
+                 <item>
+                  <widget class="QPushButton" name="imageErrorRemoveButton">
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Remove</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="imageErrorReplaceButton">
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Replace</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="imageErrorRelocateButton">
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Mass relocate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
-             </item>
-            </layout>
-           </widget>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -1612,6 +1622,14 @@ You can remove the image, replace the file, or mass relocate image files in the 
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileDropFrame</class>
+   <extends>QFrame</extends>
+   <header>src/viewer/file_drop_frame.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

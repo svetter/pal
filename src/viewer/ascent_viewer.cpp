@@ -159,6 +159,8 @@ void AscentViewer::connectUI()
 	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
 	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
 	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
+	// Drag and drop
+	connect(imageFrame,				&FileDropFrame::filesDropped,	this,	&AscentViewer::handle_filesDropped);
 }
 
 /**
@@ -467,17 +469,15 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 	currentPhotoIndex = photoIndex;
 	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
-		// Remove description widgets and tooltip
-		photoDescriptionLabel		->setText(QString());
-		photoDescriptionLineEdit	->setText(QString());
+		// Show empty image frame
+		updateImageFrameProperties(false, false);
+		// Hide and clear description widgets
 		photoDescriptionLabel		->setVisible(false);
 		photoDescriptionLineEdit	->setVisible(false);
-		imageLabel					->setToolTip(QString());
-		
-		imageErrorGroupBox			->setVisible(false);
-		imageScrollArea				->setVisible(false);
-		noImageFrame				->setVisible(true);
-		imageLabel					->clearImage();
+		photoDescriptionLabel		->setText(QString());
+		photoDescriptionLineEdit	->setText(QString());
+		// Clear image tooltip
+		imageLabel->setToolTip(QString());
 	}
 	else {
 		QString filepath = photos.at(currentPhotoIndex).filepath;
@@ -486,8 +486,8 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 		QImage image = reader.read();
 		
 		if (!image.isNull()) {	// Image loaded
-			noImageFrame->setVisible(false);
-			imageScrollArea->setVisible(true);
+			// Prepare image frame to show image
+			updateImageFrameProperties(true, true);
 			if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 			imageLabel->setImage(image);
 		}
@@ -498,23 +498,62 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 				"\n\nYou can remove the image, replace the file, or mass relocate image files in the whole database.")
 				.arg(filepath, reader.errorString());	// Error string is already translated
 			imageErrorLabel->setText(labelText);
-			
-			imageErrorGroupBox->setVisible(true);
-			imageScrollArea->setVisible(false);
-			noImageFrame->setVisible(true);
-			imageLabel->clearImage();
+
+			// Show image error box
+			updateImageFrameProperties(true, false);
 		}
 		
-		// Configure description widgets and tooltip
+		// Fill (and show) description widgets
 		photoDescriptionLabel		->setText(photos.at(currentPhotoIndex).description);
 		photoDescriptionLineEdit	->setText(photos.at(currentPhotoIndex).description);
 		photoDescriptionLabel		->setVisible(!photoDescriptionEditable);
 		photoDescriptionLineEdit	->setVisible(photoDescriptionEditable);
-		imageLabel					->setToolTip(filepath);
+		// Set image tooltip
+		imageLabel->setToolTip(filepath);
 	}
 	
 	updatePhotoIndexLabel();
 	updatePhotoButtonsEnabled();
+}
+
+/**
+ * Updates the image frame and its children to either show the frame empty (no images), or to show
+ * the image scroll area or the image file error box.
+ * 
+ * @pre imageReadable implies imagePresent, i.e., imagePresent cannot be false while imageReadable is true.
+ * 
+ * @param imagePresent	Whether the current ascent has any images.
+ * @param imageReadable	Whether the current image can be read and displayed.
+ */
+void AscentViewer::updateImageFrameProperties(bool imagePresent, bool imageReadable)
+{
+	assert(!imageReadable || imagePresent);
+	
+	if (!imagePresent) {
+		// Empty image frame will be displayed
+		imageFrame			->setFrameStyle(QFrame::StyledPanel);
+		imageErrorGroupBox	->setVisible(false);
+		imageScrollArea		->setVisible(false);
+		imageLabel			->clearImage();
+	}
+	
+	else if (!imageReadable) {
+		// Image error box will be displayed
+		imageScrollArea		->setVisible(false);
+		imageErrorGroupBox	->setVisible(true);
+		imageFrame			->setFrameStyle(QFrame::StyledPanel);
+		imageFrame			->layout()->setContentsMargins(10, 10, 10, 10);
+		imageLabel			->clearImage();
+		return;
+	}
+	
+	else {
+		// Image will be displayed
+		imageFrame			->setFrameStyle(QFrame::NoFrame);
+		imageFrame			->layout()->setContentsMargins(0, 0, 0, 0);
+		imageErrorGroupBox	->setVisible(false);
+		imageScrollArea		->setVisible(true);
+	}
 }
 
 /**
@@ -576,7 +615,7 @@ void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
  * Phots are inserted after the current photo, or at the beginning of the list if it is empty.
  * The first added photo is then displayed.
  */
-void AscentViewer::addPhotos()
+void AscentViewer::addPhotosFromDialog()
 {
 	QString preSelectedDir = QString();
 	if (!photos.isEmpty()) {
@@ -584,6 +623,21 @@ void AscentViewer::addPhotos()
 		QFileInfo(photos.at(currentPhotoIndex).filepath).path();
 	}
 	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
+	if (filepaths.isEmpty()) return;
+	
+	addPhotos(filepaths);
+}
+
+/**
+ * Adds the given photos to the current ascent.
+ * 
+ * Phots are inserted after the current photo, or at the beginning of the list if it is empty.
+ * The first added photo is then displayed.
+ * 
+ * @param filepaths	The filepaths of the photos to add.
+ */
+void AscentViewer::addPhotos(QStringList filepaths)
+{
 	if (filepaths.isEmpty()) return;
 	
 	savePhotoDescription();
@@ -803,7 +857,7 @@ void AscentViewer::handle_movePhotoRight()
  */
 void AscentViewer::handle_addPhotos()
 {
-	addPhotos();
+	addPhotosFromDialog();
 }
 
 /**
@@ -926,6 +980,24 @@ void AscentViewer::handle_editTrip()
 	BufferRowIndex tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
 	openEditTripDialogAndStore(this, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
+}
+
+
+// DRAG AND DROP
+
+/**
+ * Event handler for files dropped on the image frame.
+ * 
+ * Checks whether each file is a readable image, asks the user to confirm the addition of each one
+ * if not, and adds the readable as well as the confirmed ones to the current ascent.
+ * 
+ * @param filepaths	The filepaths of the dropped files.
+ */
+void AscentViewer::handle_filesDropped(QStringList filepaths)
+{
+	QStringList checkedPaths = checkFilepathsAndAskUser(this, filepaths);
+	if (checkedPaths.isEmpty()) return;
+	addPhotos(checkedPaths);
 }
 
 

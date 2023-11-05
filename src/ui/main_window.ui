@@ -974,7 +974,7 @@
   <customwidget>
    <class>AscentFilterBar</class>
    <extends>QWidget</extends>
-   <header>../PAL/src/main/ascent_filter_bar.h</header>
+   <header>src/main/ascent_filter_bar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

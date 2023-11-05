@@ -121,12 +121,14 @@ private:
 	
 	// Photo change
 	void changeToPhoto(int photoIndex, bool saveDescriptionFirst = false);
+	void updateImageFrameProperties(bool imagePresent, bool imageReadable);
 	void updatePhotoIndexLabel();
 	void updatePhotoButtonsEnabled();
 	
 	// Editing photos
 	void moveCurrentPhoto(bool moveLeftNotRight);
-	void addPhotos();
+	void addPhotosFromDialog();
+	void addPhotos(QStringList filepaths);
 	void removeCurrentPhoto();
 	void replaceCurrentPhoto();
 	void savePhotoDescription();
@@ -167,6 +169,8 @@ private slots:
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editTrip();
+	// Files dropped on image frame
+	void handle_filesDropped(QStringList filepaths);
 	
 private:
 	// Helpers
