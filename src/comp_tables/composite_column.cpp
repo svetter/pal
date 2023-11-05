@@ -473,7 +473,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 		currentTable = (NormalTable*) referencedColumn->table;
 		
 		// Find row index that contains the current primary key
-		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(key.forceValid());
+		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(FORCE_VALID(key));
 		assert(currentRowIndex.isValid());
 	}
 	

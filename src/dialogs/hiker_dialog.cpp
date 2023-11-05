@@ -194,7 +194,7 @@ void openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
 void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* hiker = db->getHikerAt(bufferRowIndex);
-	ValidItemID hikerID = hiker->hikerID.forceValid();
+	ValidItemID hikerID = FORCE_VALID(hiker->hikerID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hikerID);
 	
@@ -204,7 +204,7 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowInd
 		if (!proceed) return;
 	}
 	
-	if (db->projectSettings->defaultHiker->get() == hikerID) {
+	if (db->projectSettings->defaultHiker->get() == ID_GET(hikerID)) {
 		db->projectSettings->defaultHiker->setToNull(parent);
 	}
 	
@@ -240,7 +240,7 @@ static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, Dia
 			newHikerIndex = db->hikersTable->addRow(parent, extractedHiker);
 			break;
 		case editItem:
-			db->hikersTable->updateRow(parent, originalHiker->hikerID.forceValid(), extractedHiker);
+			db->hikersTable->updateRow(parent, FORCE_VALID(originalHiker->hikerID), extractedHiker);
 			break;
 		default:
 			assert(false);

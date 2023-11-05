@@ -265,7 +265,7 @@ BufferRowIndex Table::getMatchingBufferRowIndex(const QList<const Column*>& prim
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(buffer.numRows()); bufferRowIndex++) {
 		bool match = true;
 		for (int i = 0; i < numPrimaryKeys; i++) {
-			if (primaryKeyColumns.at(i)->getValueAt(bufferRowIndex) != primaryKeys.at(i).get()) {
+			if (primaryKeyColumns.at(i)->getValueAt(bufferRowIndex) != ID_GET(primaryKeys.at(i))) {
 				match = false;
 				break;
 			}
@@ -614,7 +614,7 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
 	if (!query.exec())
 		displayError(parent, query.lastError(), queryString);
 	
-	ValidItemID newRowID = query.lastInsertId().toInt();
+	ValidItemID newRowID = VALID_ITEM_ID(query.lastInsertId().toInt());
 	return newRowID;
 }
 
@@ -636,7 +636,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	QString queryString = QString(
 			"UPDATE " + name + 
 			"\nSET " + column->name + " = ?" +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -667,7 +667,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	QString queryString = QString(
 			"UPDATE " + name + 
 			"\nSET " + setString +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(primaryKey.get())
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -695,7 +695,7 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 		const Column* column = primaryKeyColumns.at(i);
 		assert(column->table == this && column->isPrimaryKey());
 		
-		condition.append(column->name + " = " + QString::number(primaryKeys.at(i).get()));
+		condition.append(column->name + " = " + QString::number(ID_GET(primaryKeys.at(i))));
 	}
 	QString queryString = QString(
 			"DELETE FROM " + name +
@@ -721,7 +721,7 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 	
 	QString queryString = QString(
 			"DELETE FROM " + name +
-			"\nWHERE " + column->name + " = " + QString::number(key.get())
+			"\nWHERE " + column->name + " = " + QString::number(ID_GET(key))
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);

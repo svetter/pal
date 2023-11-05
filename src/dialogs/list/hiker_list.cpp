@@ -44,7 +44,7 @@ void HikersOnAscent::addHiker(Hiker* hiker)
 {
 	int currentNumHikers = list.size();
 	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
-	list.append({hiker->hikerID.forceValid(), hiker->name});
+	list.append({FORCE_VALID(hiker->hikerID), hiker->name});
 	endInsertRows();
 }
 

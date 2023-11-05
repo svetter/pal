@@ -121,13 +121,13 @@ void RegionDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	// Range
 	if (init->rangeID.isValid()) {
-		rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(init->rangeID.get()) + 1);	// 0 is None
+		rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(ID_GET(init->rangeID)) + 1);	// 0 is None
 	} else {
 		rangeCombo->setCurrentIndex(0);
 	}
 	// Country
 	if (init->countryID.isValid()) {
-		countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(init->countryID.get()) + 1);	// 0 is None
+		countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(ID_GET(init->countryID)) + 1);	// 0 is None
 	} else {
 		countryCombo->setCurrentIndex(0);
 	}
@@ -261,7 +261,7 @@ void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
 void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* region = db->getRegionAt(bufferRowIndex);
-	ValidItemID regionID = region->regionID.forceValid();
+	ValidItemID regionID = FORCE_VALID(region->regionID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, regionID);
 	
@@ -303,7 +303,7 @@ static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, Di
 			newRegionIndex = db->regionsTable->addRow(parent, extractedRegion);
 			break;
 		case editItem:
-			db->regionsTable->updateRow(parent, originalRegion->regionID.forceValid(), extractedRegion);
+			db->regionsTable->updateRow(parent, FORCE_VALID(originalRegion->regionID), extractedRegion);
 			break;
 		default:
 			assert(false);

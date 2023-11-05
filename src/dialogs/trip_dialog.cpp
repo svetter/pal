@@ -261,7 +261,7 @@ void openEditTripDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
 void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Trip* trip = db->getTripAt(bufferRowIndex);
-	ValidItemID tripID = trip->tripID.forceValid();
+	ValidItemID tripID = FORCE_VALID(trip->tripID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, tripID);
 	
@@ -303,7 +303,7 @@ static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, Dial
 			newTripIndex = db->tripsTable->addRow(parent, extractedTrip);
 			break;
 		case editItem:
-			db->tripsTable->updateRow(parent, originalTrip->tripID.forceValid(), extractedTrip);
+			db->tripsTable->updateRow(parent, FORCE_VALID(originalTrip->tripID), extractedTrip);
 			break;
 		default:
 			assert(false);

@@ -97,7 +97,7 @@ void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
-	NormalTable::updateRow(parent, ascent->ascentID.forceValid(), columnDataPairs);
+	NormalTable::updateRow(parent, FORCE_VALID(ascent->ascentID), columnDataPairs);
 }
 
 

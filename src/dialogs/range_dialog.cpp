@@ -210,7 +210,7 @@ void openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
 void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Range* range = db->getRangeAt(bufferRowIndex);
-	ValidItemID rangeID = range->rangeID.forceValid();
+	ValidItemID rangeID = FORCE_VALID(range->rangeID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, rangeID);
 	
@@ -252,7 +252,7 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 			newRangeIndex = db->rangesTable->addRow(parent, extractedRange);
 			break;
 		case editItem:
-			db->rangesTable->updateRow(parent, originalRange->rangeID.forceValid(), extractedRange);
+			db->rangesTable->updateRow(parent, FORCE_VALID(originalRange->rangeID), extractedRange);
 			break;
 		default:
 			assert(false);

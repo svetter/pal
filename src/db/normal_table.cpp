@@ -65,7 +65,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
 {
 	BufferRowIndex index = BufferRowIndex(0);
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(0) == primaryKey.get()) return index;
+		if (bufferRow->at(0) == ID_GET(primaryKey)) return index;
 		index++;
 	}
 	return BufferRowIndex();
@@ -79,7 +79,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
  */
 ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
 {
-	return buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex());
+	return VALID_ITEM_ID(buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex()));
 }
 
 /**
@@ -94,7 +94,7 @@ QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column
 	int columnIndex = column->getIndex();
 	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		pairs.append({ValidItemID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
+		pairs.append({VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
 	}
 	return pairs;
 }

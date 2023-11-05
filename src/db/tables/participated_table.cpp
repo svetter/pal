@@ -51,7 +51,7 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 {
 	for (ValidItemID hikerID : ascent->hikerIDs) {
 		QList<const Column*> columns = getColumnList();
-		const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent->ascentID.forceValid(), hikerID);
+		const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, FORCE_VALID(ascent->ascentID), hikerID);
 		
 		AssociativeTable::addRow(parent, columnDataPairs);
 	}
@@ -69,7 +69,7 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent* ascent)
 void ParticipatedTable::updateRows(QWidget* parent, const Ascent* ascent)
 {
 	// delete pre-existing rows
-	removeMatchingRows(parent, ascentIDColumn, ascent->ascentID.forceValid());
+	removeMatchingRows(parent, ascentIDColumn, FORCE_VALID(ascent->ascentID));
 	// add back all current rows
 	addRows(parent, ascent);
 }

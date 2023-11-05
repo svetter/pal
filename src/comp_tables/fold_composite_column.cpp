@@ -92,7 +92,7 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (const BufferRowIndex& bufferRowIndex : currentRowIndexSet) {
 			ItemID key = firstColumn->getValueAt(bufferRowIndex);
-			if (key.isValid()) currentKeySet.insert(key.forceValid());
+			if (key.isValid()) currentKeySet.insert(FORCE_VALID(key));
 		}
 		
 		currentRowIndexSet.clear();
@@ -344,7 +344,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	
 	// Check whether default hiker is set and get name if so
 	if (defaultHiker->isNotNull()) {
-		ValidItemID defaultHikerID = defaultHiker->get();
+		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker->get());
 		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
 		if (rowIndexSet.contains(defaultHikerRowIndex)) {
 			QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);

@@ -194,7 +194,7 @@ void openEditCountryDialogAndStore(QWidget* parent, Database* db, BufferRowIndex
 void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Country* country = db->getCountryAt(bufferRowIndex);
-	ValidItemID countryID = country->countryID.forceValid();
+	ValidItemID countryID = FORCE_VALID(country->countryID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, countryID);
 	
@@ -236,7 +236,7 @@ static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, D
 			newCountryIndex = db->countriesTable->addRow(parent, extractedCountry);
 			break;
 		case editItem:
-			db->countriesTable->updateRow(parent, originalCountry->countryID.forceValid(), extractedCountry);
+			db->countriesTable->updateRow(parent, FORCE_VALID(originalCountry->countryID), extractedCountry);
 			break;
 		default:
 			assert(false);

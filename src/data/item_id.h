@@ -57,12 +57,20 @@ public:
 	bool isValid() const;
 	bool isInvalid() const;
 	
+private:
 	int get() const;
+public:
 	QVariant asQVariant() const;
 	
+private:
 	ValidItemID forceValid() const;
 	
+public:
 	void operator=(const ItemID& other);
+	
+	friend class ItemIDPrivilegedFunctionAccessor;
+	friend bool operator==(const ItemID& id1, const ItemID& id2);
+	friend size_t qHash(const ItemID& key, size_t seed);
 };
 
 
@@ -74,13 +82,16 @@ public:
  * ID is valid.
  */
 class ValidItemID : public ItemID {
-public:
+private:
 	ValidItemID(int id);
 	ValidItemID(QVariant id);
+public:
 	ValidItemID(const ValidItemID& other);
 	
 	void operator=(const ItemID& other) = delete;
 	void operator=(const ValidItemID& other);
+	
+	friend class ItemID;
 };
 
 
@@ -89,6 +100,59 @@ bool operator==(const ItemID& id1, const ItemID& id2);
 bool operator!=(const ItemID& id1, const ItemID& id2);
 
 size_t qHash(const ItemID& key, size_t seed);
+
+
+
+/**
+ * A macro to get the integer index of an ItemID.
+ * 
+ * Performs an assertion at caller level that the ItemID must be valid.
+ * Always use this macro to make sure that assertions are performed at caller level first, to make
+ * sure that violated assertion give a useful error message.
+ * 
+ * @param item_id	The ItemID to get the integer index of.
+ * @return			The integer index of the ItemID.
+*/
+#define ID_GET(item_id) (assert(item_id.isValid()), ItemIDPrivilegedFunctionAccessor::getValueForItemID(item_id))
+
+/**
+ * A macro to force an ItemID to be valid, turning it into a ValidItemID.
+ * 
+ * Performs an assertion at caller level that the ItemID must be valid.
+ * Always use this macro to make sure that assertions are performed at caller level first, to make
+ * sure that violated assertion give a useful error message.
+ * 
+ * @param item_id	The ItemID to force to be valid.
+ * @return			The ValidItemID created from the ItemID.
+ */
+#define FORCE_VALID(item_id) (assert(item_id.isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(item_id))
+
+/**
+ * A macro to create a ValidItemID from an int.
+ * 
+ * Performs an assertion at caller level that the integer must produce a valid ItemID.
+ * Always use this macro to make sure that assertions are performed at caller level first, to make
+ * sure that violated assertion give a useful error message.
+ * 
+ * @param integer	The integer to create a ValidItemID from.
+ * @return			The ValidItemID created from the integer.
+ */
+#define VALID_ITEM_ID(integer) (assert(ItemID(integer).isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(ItemID(integer)))
+
+
+/**
+ * A class which serves as an indirection tool to make functions of ItemID which require assertions
+ * publicly accessible, but in a way that makes it clear that they should not be used directly.
+ * 
+ * Instead, the macros ID_GET, FORCE_VALID and VALID_ITEM_ID, which this is designed to work
+ * with, should be used.
+ */
+class ItemIDPrivilegedFunctionAccessor
+{
+public:
+	inline static int			getValueForItemID	(ItemID itemID)	{ return itemID.get();			}
+	inline static ValidItemID	forceItemIDValid	(ItemID itemID)	{ return itemID.forceValid();	}
+};
 
 
 

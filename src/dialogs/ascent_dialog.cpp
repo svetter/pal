@@ -106,7 +106,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	// Set initial hiker
 	ItemID defaultHikerID = db->projectSettings->defaultHiker->get();
 	if (defaultHikerID.isValid()) {
-		Hiker* hiker = db->getHiker(defaultHikerID.forceValid());
+		Hiker* hiker = db->getHiker(FORCE_VALID(defaultHikerID));
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
@@ -185,7 +185,7 @@ void AscentDialog::insertInitData()
 	titleLineEdit->setText(init->title);
 	//  Peak
 	if (init->peakID.isValid()) {
-		peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(init->peakID.get()) + 1);	// 0 is None
+		peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(ID_GET(init->peakID)) + 1);	// 0 is None
 	} else {
 		peakCombo->setCurrentIndex(0);
 	}
@@ -221,7 +221,7 @@ void AscentDialog::insertInitData()
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	// Trip
 	if (init->tripID.isValid()) {
-		tripCombo->setCurrentIndex(selectableTripIDs.indexOf(init->tripID.get()) + 1);	// 0 is None
+		tripCombo->setCurrentIndex(selectableTripIDs.indexOf(ID_GET(init->tripID)) + 1);	// 0 is None
 	} else {
 		tripCombo->setCurrentIndex(0);
 	}
@@ -395,8 +395,8 @@ void AscentDialog::handle_addHiker()
 {
 	ItemID hikerID = openAddHikerDialog(this, db);
 	if (hikerID.isInvalid()) return;
-	if (hikersModel.containsHiker(hikerID.forceValid())) return;
-	Hiker* hiker = db->getHiker(hikerID.forceValid());
+	if (hikersModel.containsHiker(FORCE_VALID(hikerID))) return;
+	Hiker* hiker = db->getHiker(FORCE_VALID(hikerID));
 	hikersModel.addHiker(hiker);
 	delete hiker;
 }
@@ -627,7 +627,7 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
 void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* ascent = db->getAscentAt(bufferRowIndex);
-	ValidItemID ascentID = ascent->ascentID.forceValid();
+	ValidItemID ascentID = FORCE_VALID(ascent->ascentID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascentID);
 	

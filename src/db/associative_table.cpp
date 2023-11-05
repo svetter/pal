@@ -142,7 +142,7 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
 	assert(column == column1 || column == column2);
 	int numberOfMatches = 0;
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column->getIndex()) == primaryKey.get()) {
+		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey)) {
 			numberOfMatches++;
 		}
 	}
@@ -166,8 +166,8 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, Val
 	const Column* otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column->getIndex()) == primaryKey.get()) {
-			filtered.insert(bufferRow->at(otherColumn->getIndex()));
+		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey)) {
+			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn->getIndex()).toInt()));
 		}
 	}
 	return filtered;

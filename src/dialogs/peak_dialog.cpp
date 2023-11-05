@@ -135,7 +135,7 @@ void PeakDialog::insertInitData()
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
 	if (init->regionID.isValid()) {
-		regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(init->regionID.get()) + 1);	// 0 is None
+		regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(ID_GET(init->regionID)) + 1);	// 0 is None
 	} else {
 		regionCombo->setCurrentIndex(0);
 	}
@@ -288,7 +288,7 @@ void openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
 void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* peak = db->getPeakAt(bufferRowIndex);
-	ValidItemID peakID = peak->peakID.forceValid();
+	ValidItemID peakID = FORCE_VALID(peak->peakID);
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peakID);
 	
@@ -330,7 +330,7 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 			newPeakIndex = db->peaksTable->addRow(parent, extractedPeak);
 			break;
 		case editItem:
-			db->peaksTable->updateRow(parent, originalPeak->peakID.forceValid(), extractedPeak);
+			db->peaksTable->updateRow(parent, FORCE_VALID(originalPeak->peakID), extractedPeak);
 			break;
 		default:
 			assert(false);

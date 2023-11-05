@@ -65,7 +65,7 @@ protected:
 	{
 		assert(rowIndex < 2);
 		
-		ValidItemID primaryKey = primaryKeyColumn->getValueAt(BufferRowIndex(rowIndex));
+		ValidItemID primaryKey = VALID_ITEM_ID(primaryKeyColumn->getValueAt(BufferRowIndex(rowIndex)));
 		updateCellInNormalTable(parent, primaryKey, setting, value);
 	}
 	

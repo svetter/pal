@@ -59,7 +59,7 @@ PhotosTable::PhotosTable(Column* foreignAscentIDColumn) :
  */
 QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ascentID.get());
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ID_GET(ascentID));
 	
 	QMap<int, Photo> photosMap = QMap<int, Photo>();
 	for (BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -101,7 +101,7 @@ void PhotosTable::addRows(QWidget* parent, ValidItemID ascentID, const QList<Pho
  */
 void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
 {
-	return addRows(parent, ascent->ascentID.forceValid(), ascent->photos);
+	return addRows(parent, FORCE_VALID(ascent->ascentID), ascent->photos);
 }
 
 /**
@@ -130,7 +130,7 @@ void PhotosTable::updateRows(QWidget* parent, ValidItemID ascentID, const QList<
  */
 void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
 {
-	return updateRows(parent, ascent->ascentID.forceValid(), ascent->photos);
+	return updateRows(parent, FORCE_VALID(ascent->ascentID), ascent->photos);
 }
 
 /**
