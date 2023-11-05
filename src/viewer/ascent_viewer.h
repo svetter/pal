@@ -117,7 +117,7 @@ private:
 	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
 	void updateAscentNavigationNumbers();
-	void setupPhotos();
+	void loadPhotosList();
 	
 	// Photo change
 	void changeToPhoto(int photoIndex, bool saveDescriptionFirst = false);
@@ -128,6 +128,7 @@ private:
 	void moveCurrentPhoto(bool moveLeftNotRight);
 	void addPhotos();
 	void removeCurrentPhoto();
+	void replaceCurrentPhoto();
 	void savePhotoDescription();
 	void savePhotosList();
 	
@@ -154,6 +155,8 @@ private slots:
 	void handle_movePhotoRight();
 	void handle_addPhotos();
 	void handle_removePhoto();
+	void handle_replacePhoto();
+	void handle_relocatePhotos();
 	// Right click
 	void handle_rightClickOnAscentInfo(QPoint pos);
 	void handle_rightClickOnPeakInfo(QPoint pos);

@@ -44,7 +44,10 @@ class PhotosOfAscent : public QAbstractItemModel {
 public:
 	PhotosOfAscent();
 	
-	void addPhotos(const QList<Photo>& photo);	
+	void addPhotos(const QList<Photo>& photo);
+	
+	bool isEmpty() const;
+	const QString& getFilepathAt(int rowIndex) const;
 	const QString& getDescriptionAt(int rowIndex) const;
 	void setDescriptionAt(int rowIndex, QString description);
 	void removePhotoAt(int rowIndex);

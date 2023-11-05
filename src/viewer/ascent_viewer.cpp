@@ -23,6 +23,8 @@
 
 #include "ascent_viewer.h"
 
+#include "src/tools/relocate_photos_dialog.h"
+
 #include <QDialog>
 #include <QStyle>
 #include <QImageReader>
@@ -99,7 +101,8 @@ void AscentViewer::additionalUISetup()
 	
 	imageLabel = new ScalableImageLabel(imageScrollArea);
 	imageScrollArea->setBackgroundRole(QPalette::Dark);
-	imageScrollArea->setWidget(imageLabel);
+	imageScrollAreaLayout->addWidget(imageLabel);
+	imageErrorGroupBox->setVisible(false);
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	lastPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
@@ -144,6 +147,10 @@ void AscentViewer::connectUI()
 	connect(movePhotoRightButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoRight);
 	connect(addPhotosButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_addPhotos);
 	connect(removePhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_removePhoto);
+	// Image file error box
+	connect(imageErrorRemoveButton,		&QPushButton::clicked,	this,	&AscentViewer::handle_removePhoto);
+	connect(imageErrorReplaceButton,	&QPushButton::clicked,	this,	&AscentViewer::handle_replacePhoto);
+	connect(imageErrorRelocateButton,	&QPushButton::clicked,	this,	&AscentViewer::handle_relocatePhotos);
 	// Edit buttons
 	connect(editDescriptionButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_descriptionEditableChanged);
 	connect(editPhotoDescriptionButton,	&QToolButton::clicked,	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
@@ -212,7 +219,8 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
 	updateInfoArea();
-	setupPhotos();
+	loadPhotosList();
+	changeToPhoto(photos.isEmpty() ? -1 : 0);
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 	updateAscentNavigationNumbers();
@@ -427,20 +435,18 @@ void AscentViewer::updateAscentNavigationNumbers()
 }
 
 /**
- * Updates the current photo list for the current ascent and displays the first one, if present.
+ * Loads the current state of the photo list for the current ascent from the database.
+ * 
+ * Does not change or reset currentPhotoIndex.
  */
-void AscentViewer::setupPhotos()
+void AscentViewer::loadPhotosList()
 {
 	photos.clear();
-	int newPhotoIndex = -1;
 	
 	QList<Photo> savedPhotos = db->photosTable->getPhotosForAscent(currentAscentID.forceValid());
 	if (!savedPhotos.isEmpty()) {
 		photos = savedPhotos;
-		newPhotoIndex = 0;
 	}
-	
-	changeToPhoto(newPhotoIndex);
 }
 
 
@@ -459,45 +465,51 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 	
 	currentPhotoIndex = photoIndex;
 	
-	photoDescriptionLabel	->setText(QString());
-	photoDescriptionLineEdit->setText(QString());
-	photoDescriptionLabel	->setVisible(false);
-	photoDescriptionLineEdit->setVisible(false);
-	imageLabel				->setToolTip(QString());
-	
 	if (currentPhotoIndex < 0 || photos.isEmpty()) {
-		imageLabel->clearImage();
+		// Remove description widgets and tooltip
+		photoDescriptionLabel		->setText(QString());
+		photoDescriptionLineEdit	->setText(QString());
+		photoDescriptionLabel		->setVisible(false);
+		photoDescriptionLineEdit	->setVisible(false);
+		editPhotoDescriptionButton	->setVisible(false);
+		imageLabel					->setToolTip(QString());
+		
+		imageErrorGroupBox			->setVisible(false);
+		imageLabel					->setVisible(false);
+		imageLabel					->clearImage();
 	}
 	else {
 		QString filepath = photos.at(currentPhotoIndex).filepath;
 		QImageReader reader = QImageReader(filepath);
 		reader.setAutoTransform(true);
 		QImage image = reader.read();
-		if (image.isNull()) {
-			qDebug() << "Error reading" << filepath << reader.errorString();
-			imageLabel->clearImage();
-			
-			QString title = tr("File error");
-			QString message = tr("Photo could not be loaded:")
-					+ "\n" + filepath
-					+ "\n\n" + tr("Do you want to remove it from this ascent?");
-			QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
-			QMessageBox::StandardButton result = QMessageBox::warning(this, title, message, buttons);
-			
-			if (result == QMessageBox::Yes) {
-				removeCurrentPhoto();	// calls changeToPhoto() back, recursing until valid image is found or all photos removed
-			}
-		}
-		else {
+		
+		if (!image.isNull()) {	// Image loaded
+			imageErrorGroupBox->setVisible(false);
+			imageLabel->setVisible(true);
 			if (image.colorSpace().isValid()) image.convertToColorSpace(QColorSpace::SRgb);
 			imageLabel->setImage(image);
 		}
+		else {	// Loading failed
+			QString labelText = tr(
+				"This image file cannot be shown:\n%1"
+				"\nReason: %2."
+				"\n\nYou can remove the image, replace the file, or mass relocate image files in the whole database.")
+				.arg(filepath, reader.errorString());	// Error string is already translated
+			imageErrorLabel->setText(labelText);
+			
+			imageLabel->setVisible(false);
+			imageErrorGroupBox->setVisible(true);
+			imageLabel->clearImage();
+		}
 		
-		photoDescriptionLabel	->setText(photos.at(currentPhotoIndex).description);
-		photoDescriptionLineEdit->setText(photos.at(currentPhotoIndex).description);
-		photoDescriptionLabel	->setVisible(!photoDescriptionEditable);
-		photoDescriptionLineEdit->setVisible(photoDescriptionEditable);
-		imageLabel				->setToolTip(filepath);
+		// Configure description widgets and tooltip
+		photoDescriptionLabel		->setText(photos.at(currentPhotoIndex).description);
+		photoDescriptionLineEdit	->setText(photos.at(currentPhotoIndex).description);
+		photoDescriptionLabel		->setVisible(!photoDescriptionEditable);
+		photoDescriptionLineEdit	->setVisible(photoDescriptionEditable);
+		editPhotoDescriptionButton	->setVisible(true);
+		imageLabel					->setToolTip(filepath);
 	}
 	
 	updatePhotoIndexLabel();
@@ -564,7 +576,12 @@ void AscentViewer::moveCurrentPhoto(bool moveLeftNotRight)
  */
 void AscentViewer::addPhotos()
 {
-	QStringList filepaths = openFileDialogForPhotosSelection(this);
+	QString preSelectedDir = QString();
+	if (!photos.isEmpty()) {
+		assert(currentPhotoIndex >= 0);
+		QFileInfo(photos.at(currentPhotoIndex).filepath).path();
+	}
+	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	savePhotoDescription();
@@ -589,6 +606,26 @@ void AscentViewer::removeCurrentPhoto()
 	
 	int newPhotoIndex = std::min(currentPhotoIndex, (int) photos.size() - 1);
 	changeToPhoto(newPhotoIndex);
+}
+
+/**
+ * Opens a file dialog and lets the user select a new file to replace the filepath for the current
+ * photo, keeping the order and description.
+ */
+void AscentViewer::replaceCurrentPhoto()
+{
+	savePhotoDescription();
+	
+	/*: %1 is a filepath, so it is best if it remains at the end of the string. */
+	QString dialogTitle = tr("Replace %1").arg(photos.at(currentPhotoIndex).filepath);
+	QString preSelectedDir = QFileInfo(photos.at(currentPhotoIndex).filepath).path();
+	QString filepath = openFileDialogForSinglePhotoSelection(this, preSelectedDir, dialogTitle);
+	if (filepath.isEmpty()) return;
+	
+	photos[currentPhotoIndex].filepath = filepath;
+	savePhotosList();
+	
+	changeToPhoto(currentPhotoIndex);
 }
 
 /**
@@ -768,11 +805,30 @@ void AscentViewer::handle_addPhotos()
 }
 
 /**
- * Event handler for the "Remove photo" button.
+ * Event handler for the "Remove photo" buttons.
  */
 void AscentViewer::handle_removePhoto()
 {
 	removeCurrentPhoto();
+}
+
+/**
+ * Event handler for the "Replace" button in the file not found box.
+ */
+void AscentViewer::handle_replacePhoto()
+{
+	replaceCurrentPhoto();
+}
+
+/**
+ * Event handler for the "Mass relocate" button in the file not found box.
+ */
+void AscentViewer::handle_relocatePhotos()
+{
+	savePhotoDescription();
+	RelocatePhotosDialog(this, db).exec();
+	loadPhotosList();
+	changeToPhoto(currentPhotoIndex);
 }
 
 

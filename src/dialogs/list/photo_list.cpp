@@ -57,6 +57,28 @@ void PhotosOfAscent::addPhotos(const QList<Photo>& photos)
 	endInsertRows();
 }
 
+
+/**
+ * Indicates whether the photos list is currently empty.
+ * 
+ * @return	True if there are currently no photos in the list, false otherwise.
+ */
+bool PhotosOfAscent::isEmpty() const
+{
+	return list.isEmpty();
+}
+
+/**
+ * Returns the file path of the photo at the given row index.
+ * 
+ * @param rowIndex	The row index of the photo.
+ * @return			The file path of the photo.
+ */
+const QString& PhotosOfAscent::getFilepathAt(int rowIndex) const
+{
+	return list[rowIndex].filepath;
+}
+
 /**
  * Returns the description of the photo at the given row index.
  * 

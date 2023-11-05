@@ -423,7 +423,20 @@ void AscentDialog::handle_removeHikers()
  */
 void AscentDialog::handle_addPhotos()
 {
-	QStringList filepaths = openFileDialogForPhotosSelection(this);
+	// Determine path at which file dialog will open
+	int photoIndexForDir = -1;
+	QItemSelectionModel* selectionModel = photosListView->selectionModel();
+	if (selectionModel->hasSelection()) {	// Use first selected photo if possible
+		photoIndexForDir = selectionModel->selectedRows().first().row();
+	} else if (!photosModel.isEmpty()) {	// Otherwise, use first photo if it exists
+		photoIndexForDir = 0;
+	}
+	QString preSelectedDir = QString();
+	if (photoIndexForDir >= 0) {
+		preSelectedDir = QFileInfo(photosModel.getFilepathAt(photoIndexForDir)).path();
+	}
+	
+	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();
@@ -681,17 +694,106 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 
 
 /**
- * Opens a file dialog for selecting photos.
+ * Opens a file dialog for selecting a single image file.
  * 
- * @param parent	The parent window.
- * @return			The selected filepaths.
+ * @param parent				The parent window.
+ * @param preSelectedDir		The directory to open the file dialog in initially, or an empty QString.
+ * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
+ * @return						The selected filepath, or an empty QString if the dialog was cancelled.
  */
-QStringList openFileDialogForPhotosSelection(QWidget* parent)
+QString openFileDialogForSinglePhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
+{
+	QString caption = AscentDialog::tr("Select photo of ascent");
+	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
+	QString filter = getImageFileDialogFilterString();
+	QString filepath = QFileDialog::getOpenFileName(parent, caption, preSelectedDir, filter);
+	
+	QStringList checkedPath = checkFilepathsAndAskUser(parent, {filepath});
+	if (checkedPath.isEmpty()) return QString();
+	return checkedPath.first();
+}
+
+/**
+ * Opens a file dialog for selecting multiple image files.
+ * 
+ * @param parent				The parent window.
+ * @param preSelectedDir		The directory to open the file dialog in initially, or an empty QString.
+ * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
+ * @return						The selected filepaths, or an empty QStringList if the dialog was cancelled.
+ */
+QStringList openFileDialogForMultiPhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
 {
 	QString caption = AscentDialog::tr("Select photos of ascent");
-	QString preSelectedDir = QString();
-	QString filter = AscentDialog::tr("Images") + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
-			+ AscentDialog::tr("All files") + " (*.*)";
+	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
+	QString filter = getImageFileDialogFilterString();
 	QStringList filepaths = QFileDialog::getOpenFileNames(parent, caption, preSelectedDir, filter);
+	
+	filepaths = checkFilepathsAndAskUser(parent, filepaths);
+	
+	return filepaths;
+}
+
+/**
+ * Returns the translated filter string to use for image file dialogs.
+ * @return	The translated filter string.
+ */
+QString getImageFileDialogFilterString()
+{
+	return AscentDialog::tr("Images")    + " (*.jpg *.jpeg *.png *.bmp *.gif *.pbm *.pgm *.ppm *.xbm *.xpm);;"
+		 + AscentDialog::tr("All files") + " (*.*)";
+}
+
+/**
+ * Checks whether the given filepaths can be read as images and asks the user whether to add them
+ * anyway if they cannot.
+ * 
+ * @param parent		The parent window.
+ * @param filepaths		The filepaths to check.
+ * @return				The filepaths which are unproblematic  or confirmed by the user. Empty if the user cancels.
+ */
+QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths)
+{
+	bool noToAll = false;
+	
+	for (int i = 0; i < filepaths.size(); i++) {
+		QString filepath = filepaths.at(i);
+		QImageReader reader = QImageReader(filepath);
+		if (reader.canRead()) continue;
+		
+		if (noToAll) {
+			filepaths.remove(i--);	// Remove this path and skip the dialog
+			continue;
+		}
+		
+		QString title = AscentDialog::tr("File error");
+		QString message = AscentDialog::tr("Image file cannot be read:\n%1"
+										   "\nReason: %2."
+										   "\n\nDo you want to use it anyway?")
+				.arg(filepath, reader.errorString());
+		auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+		if (filepaths.size() - 1 > i) {
+			buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
+		}
+		auto pressedButton = QMessageBox::warning(parent, title, message, buttons);
+		
+		if (pressedButton == QMessageBox::Yes) {
+			// Do nothing
+		}
+		else if (pressedButton == QMessageBox::YesToAll) {
+			break;	// Leave loop, no more paths need to be checked or removed
+		}
+		else if (pressedButton == QMessageBox::No) {
+			filepaths.remove(i--);	// Remove this path
+		}
+		else if (pressedButton == QMessageBox::NoToAll) {
+			filepaths.remove(i--);	// Remove this path and set flag
+			noToAll = true;
+		}
+		else if (pressedButton == QMessageBox::Cancel) {
+			return QStringList();	// Return with empty list
+		}
+		else assert(false);
+	}
+	
 	return filepaths;
 }

@@ -99,7 +99,10 @@ BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db,
 void			openEditAscentDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 void			openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 
-QStringList openFileDialogForPhotosSelection(QWidget* parent);
+QString		openFileDialogForSinglePhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
+QStringList	openFileDialogForMultiPhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
+QString getImageFileDialogFilterString();
+QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths);
 
 
 
