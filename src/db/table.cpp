@@ -870,6 +870,7 @@ QVariant Table::headerData(int section, Qt::Orientation orientation, int role) c
 	}
 	default: assert(false);
 	}
+	return QVariant();
 }
 
 
