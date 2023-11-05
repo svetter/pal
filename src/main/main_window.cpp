@@ -416,11 +416,11 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	
 	// Keyboard shortcuts
 	QList<QTableView*> tableViews = mainAreaTabs->findChildren<QTableView*>();
-	for (auto iter = tableViews.constBegin(); iter != tableViews.constEnd(); iter++) {
-		QShortcut* openShortcut			= new QShortcut(openKeySequence,		*iter);
-		QShortcut* editShortcut			= new QShortcut(editKeySequence,		*iter);
-		QShortcut* duplicateShortcut	= new QShortcut(duplicateKeySequence,	*iter);
-		QShortcut* deleteShortcut		= new QShortcut(deleteKeySequence,		*iter);
+	for (QTableView* const tableView : tableViews) {
+		QShortcut* openShortcut			= new QShortcut(openKeySequence,		tableView);
+		QShortcut* editShortcut			= new QShortcut(editKeySequence,		tableView);
+		QShortcut* duplicateShortcut	= new QShortcut(duplicateKeySequence,	tableView);
+		QShortcut* deleteShortcut		= new QShortcut(deleteKeySequence,		tableView);
 		
 		shortcuts.append(openShortcut);
 		shortcuts.append(editShortcut);

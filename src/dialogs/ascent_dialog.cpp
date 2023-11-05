@@ -227,8 +227,8 @@ void AscentDialog::insertInitData()
 	}
 	// Hikers
 	hikersModel.clear();
-	for (auto iter = init->hikerIDs.constBegin(); iter != init->hikerIDs.constEnd(); iter++) {
-		Hiker* hiker = db->getHiker(*iter);
+	for (const ValidItemID& hikerID : init->hikerIDs) {
+		Hiker* hiker = db->getHiker(hikerID);
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
@@ -410,9 +410,9 @@ void AscentDialog::handle_removeHikers()
 {
 	QItemSelectionModel* selectionModel = hikersListView->selectionModel();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selected = selectionModel->selectedRows();
-	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
-		hikersModel.removeHikerAt((*iter).row());
+	QModelIndexList selectedIndices = selectionModel->selectedRows();
+	for (const QModelIndex& selectedIndex : selectedIndices) {
+		hikersModel.removeHikerAt(selectedIndex.row());
 	}
 }
 
@@ -456,9 +456,9 @@ void AscentDialog::handle_removePhotos()
 {
 	QItemSelectionModel* selectionModel = photosListView->selectionModel();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selected = selectionModel->selectedRows();
-	for (auto iter = selected.constBegin(); iter != selected.constEnd(); iter++) {
-		photosModel.removePhotoAt((*iter).row());
+	QModelIndexList selectedIndices = selectionModel->selectedRows();
+	for (const QModelIndex& selectedIndex : selectedIndices) {
+		photosModel.removePhotoAt(selectedIndex.row());
 	}
 }
 

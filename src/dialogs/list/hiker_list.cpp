@@ -78,8 +78,8 @@ void HikersOnAscent::clear()
  */
 bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 {
-	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
-		if ((*iter).first == hikerID) return true;
+	for (const QPair<ValidItemID, QString>& IdNamePair : list) {
+		if (IdNamePair.first == hikerID) return true;
 	}
 	return false;
 }
@@ -92,8 +92,8 @@ bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 QSet<ValidItemID> HikersOnAscent::getHikerIDSet() const
 {
 	QSet<ValidItemID> result = QSet<ValidItemID>();
-	for (auto iter = list.constBegin(); iter != list.constEnd(); iter++) {
-		result.insert((*iter).first);
+	for (const QPair<ValidItemID, QString>& IdNamePair : list) {
+		result.insert(IdNamePair.first);
 	}
 	return result;
 }
