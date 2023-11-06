@@ -45,10 +45,11 @@ ScalableImageLabel::ScalableImageLabel(QScrollArea* parent) : QLabel(parent), pa
 void ScalableImageLabel::setImage(const QImage& image)
 {
 	fullSizePixmap = QPixmap::fromImage(image);
+	imageLoaded = true;
+	setPixmap(fullSizePixmap);
 	fillMode = true;
 	setBarsEnabled(false);
-	setPixmap(fullSizePixmap);
-	imageLoaded = true;
+	imageCenter = QPoint();
 	setHandCursor(true);
 }
 
@@ -60,6 +61,7 @@ void ScalableImageLabel::clearImage()
 	fullSizePixmap = QPixmap();
 	setPixmap(QPixmap());
 	imageLoaded = false;
+	imageCenter = QPoint();
 	setNormalCursor();
 }
 
@@ -135,6 +137,12 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 		int newMaxScrollY = newImageHeight - availableArea.height();
 		setMaxScroll(newMaxScrollX, newMaxScrollY);
 		setScroll(newScrollX, newScrollY);
+		
+		// Calculate and save new center position
+		saveNewImageCenter();
+	}
+	else {
+		imageCenter = QPoint();
 	}
 	
 	event->accept();
@@ -156,7 +164,7 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 	if (!imageLoaded) return;
 	QSize availableArea = parent->maximumViewportSize();
 	bool resize = false;
-
+	
 	// Resize if max-zoomed image is smaller than the available area
 	resize |= MAX_ZOOM_RATIO * fullSizePixmap.width() < availableArea.width() && MAX_ZOOM_RATIO * fullSizePixmap.height() < availableArea.height();
 	// Resize if fill mode is active but the image is bigger than the available area
@@ -170,6 +178,13 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 			fillMode = true;
 			setBarsEnabled(false);
 		}
+	}
+	
+	if (!fillMode) {
+		// Make sure image stays centered
+		int moveX = getScrollX() + availableArea.width()  / 2 - imageCenter.x();
+		int moveY = getScrollY() + availableArea.height() / 2 - imageCenter.y();
+		if (moveX || moveY) scrollRelative(QPoint(moveX, moveY));
 	}
 	
 	QLabel::paintEvent(event);
@@ -207,6 +222,7 @@ void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 	if (!imageLoaded || fillMode || mousePressedAt.isNull()) return;
 	QPoint mouseMove = event->globalPosition().toPoint() - mousePressedAt;
 	scrollRelative(mouseMove);
+	saveNewImageCenter();
 	mousePressedAt = event->globalPosition().toPoint();
 }
 
@@ -227,6 +243,15 @@ void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 	mousePressedAt = QPoint();
 }
 
+
+
+void ScalableImageLabel::saveNewImageCenter()
+{
+	QSize availableArea = parent->maximumViewportSize();
+	int centerX = getScrollX() + availableArea.width () / 2;
+	int centerY = getScrollY() + availableArea.height() / 2;
+	imageCenter = QPoint(centerX, centerY);
+}
 
 
 /**

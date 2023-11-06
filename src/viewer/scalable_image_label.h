@@ -43,10 +43,10 @@ class ScalableImageLabel : public QLabel
 	
 	/** The parent QScrollArea. */
 	QScrollArea* parent;
-	/** The image to display in full available resolution. */
-	QPixmap fullSizePixmap;
 	/** Indicates whether an image is currently loaded and displayed. */
 	bool imageLoaded;
+	/** The image to display in full available resolution. */
+	QPixmap fullSizePixmap;
 	/**
 	 * Indicates whether the image should be scaled to fill the available space.
 	 * This mode is enabled by default, whenever the full-size image is smaller than the available
@@ -54,6 +54,8 @@ class ScalableImageLabel : public QLabel
 	 */
 	bool fillMode;
 	
+	/** When fill mode is inactive, indicates where in the current size of the image the center of the displayed area is. */
+	QPoint imageCenter;
 	/** The location where the mouse was last registered after being pressed over the image. Used for dragging. */
 	QPoint mousePressedAt;
 	
@@ -78,6 +80,8 @@ private slots:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	
 private:
+	void saveNewImageCenter();
+	
 	void setBarsEnabled(bool enabled) const;
 	int getScrollX() const;
 	int getScrollY() const;
