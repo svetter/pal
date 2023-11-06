@@ -449,7 +449,15 @@ void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
 {
 	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-		newRow->append(computeCellContent(bufferRowIndex, columnIndex));
+		QVariant newCell;
+		if (getColumnAt(columnIndex)->cellsAreInterdependent) {
+			// Computing single cell is expensive and whole column will be completely recomputed anyway
+			// => leave cell empty for now
+			newCell = QVariant();
+		} else {
+			newCell = computeCellContent(bufferRowIndex, columnIndex);
+		}
+		newRow->append(newCell);
 	}
 	buffer.insertRow(bufferRowIndex, newRow);
 	

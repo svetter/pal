@@ -670,6 +670,7 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName
  */
 QVariant IndexCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
+	qDebug() << "CAUTION: Using extremely inefficient IndexCompositeColumn::computeValueAt(BufferRowIndex)";
 	QList<BufferRowIndex> order = getRowIndexOrderList();
 	return order.indexOf(rowIndex) + 1;
 }
@@ -769,7 +770,7 @@ OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString ui
  */
 QVariant OrdinalCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	qDebug() << "CAUTION: Using extremely inefficient OrdinalCompositeColumn::computeValueAt(int)";
+	qDebug() << "CAUTION: Using extremely inefficient OrdinalCompositeColumn::computeValueAt(BufferRowIndex)";
 	return computeWholeColumn().at(rowIndex.get());
 }
 
