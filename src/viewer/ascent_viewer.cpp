@@ -96,6 +96,12 @@ void AscentViewer::additionalUISetup()
 	}
 	
 	
+	// Set icons for info boxes
+	tripInfoBox				->setIcon(QIcon(":/icons/trip.svg"),	28, 28);
+	peakInfoBox				->setIcon(QIcon(":/icons/peak.svg"),	28, 28);
+	ascentInfoBox			->setIcon(QIcon(":/icons/ascent.svg"),	28, 28);
+	ascentParticipantsBox	->setIcon(QIcon(":/icons/hiker.svg"),	20, 20);
+	
 	peakVolcanoCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
 	ascentTraverseCheckbox->setAttribute(Qt::WA_TransparentForMouseEvents);
 	

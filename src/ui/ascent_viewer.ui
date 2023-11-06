@@ -35,7 +35,7 @@
       <number>20</number>
      </property>
      <item>
-      <widget class="QGroupBox" name="tripInfoBox">
+      <widget class="IconGroupBox" name="tripInfoBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -94,7 +94,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="peakInfoBox">
+      <widget class="IconGroupBox" name="peakInfoBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -391,7 +391,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="ascentInfoBox">
+      <widget class="IconGroupBox" name="ascentInfoBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -642,7 +642,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QGroupBox" name="ascentParticipantsBox">
+         <widget class="IconGroupBox" name="ascentParticipantsBox">
           <property name="title">
            <string>Participants</string>
           </property>
@@ -1623,6 +1623,12 @@ You can remove the image, replace the file, or mass relocate image files in the 
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+    <class>IconGroupBox</class>
+    <extends>QGroupBox</extends>
+    <header>src/viewer/icon_group_box.h</header>
+    <container>1</container>
+  </customwidget>
   <customwidget>
    <class>FileDropFrame</class>
    <extends>QFrame</extends>

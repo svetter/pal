@@ -158,6 +158,7 @@ HEADERS += \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \
 	src/viewer/file_drop_frame.h \
+	src/viewer/icon_group_box.h \
 	src/viewer/scalable_image_label.h
 
 FORMS += \

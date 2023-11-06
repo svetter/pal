@@ -15,6 +15,12 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file file_drop_frame.h
+ * 
+ * This file defines the FileDropFrame class.
+ */
+
 #ifndef FILE_DROP_FRAME_H
 #define FILE_DROP_FRAME_H
 
