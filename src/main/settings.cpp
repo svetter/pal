@@ -132,6 +132,11 @@ void Settings::checkForVersionChange()
 		resetColumnWidths();
 	}
 	
+	// 1.1.2: New splitter in ascent viewer => remove deprecated setting
+	if (settingsOlderThan("1.1.2")) {
+		qSettings.remove("implicit/ascentViewer/splitterSizes");
+	}
+	
 	// Update settings version
 	QString currentAppVersion = getAppVersion();
 	if (settingsOlderThan(currentAppVersion)) {

@@ -86,13 +86,16 @@ AscentViewer::~AscentViewer()
  */
 void AscentViewer::additionalUISetup()
 {
-	centralSplitter->setStretchFactor(0, 1);
-	centralSplitter->setStretchFactor(1, 2);
-	centralSplitter->setSizes({ centralSplitter->size().width() / 2, centralSplitter->size().width() / 2 });
+	// Set spinner stretch factors as pairs of index and stretch
+	leftSplitter	->setStretchFactor(0, 0);
+	leftSplitter	->setStretchFactor(1, 1);
+	rightSplitter	->setStretchFactor(0, 1);
+	rightSplitter	->setStretchFactor(1, 2);
+	rightSplitter	->setSizes({ rightSplitter->size().width() / 2, rightSplitter->size().width() / 2 });
 	
 	if (Settings::rememberWindowPositions.get()) {
 		restoreDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
-		restoreSplitterSizes();
+		restoreAllSplitterSizes();
 	}
 	
 	
@@ -1072,37 +1075,61 @@ void AscentViewer::reject()
 	saveDescription();
 	savePhotoDescription();
 	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
-	saveSplitterSizes();
+	saveAllSplitterSizes();
 	QDialog::reject();
 }
 
 /**
- * Saves the current splitter sizes to settings.
+ * Saves the current sizes of all splitters to settings.
  */
-void AscentViewer::saveSplitterSizes()
+void AscentViewer::saveAllSplitterSizes()
 {
-	QList<int> splitterSizes = centralSplitter->sizes();
+	saveSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
+	saveSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+}
+
+/**
+ * Saves the current sizes of the given splitter to the given setting.
+ * 
+ * @param splitter				The splitter to save the sizes of.
+ * @param splitterSizesSetting	The setting to save the splitter sizes to.
+ */
+void AscentViewer::saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+{
+	QList<int> leftSplitterSizes = splitter->sizes();
 	QStringList stringList;
-	for (int size : splitterSizes) {
+	for (int size : leftSplitterSizes) {
 		stringList.append(QString::number(size));
 	}
-	Settings::ascentViewer_splitterSizes.set(stringList);
+	splitterSizesSetting->set(stringList);
 }
 
 
 /**
- * Restores the splitter sizes from settings.
+ * Restores the sizes to a splitter from settings.
  */
-void AscentViewer::restoreSplitterSizes()
+void AscentViewer::restoreAllSplitterSizes()
 {
-	QStringList splitterSizeStrings = Settings::ascentViewer_splitterSizes.get();
-	if (splitterSizeStrings.size() != centralSplitter->sizes().size()) {
+	restoreSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
+	restoreSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+}
+
+/**
+ * Restores the sizes of all splitters from settings.
+ * 
+ * @param splitter				The splitter to restore the sizes of.
+ * @param splitterSizesSetting	The setting to load the splitter sizes from.
+ */
+void AscentViewer::restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+{
+	QStringList splitterSizeStrings = splitterSizesSetting->get();
+	if (splitterSizeStrings.size() != splitter->sizes().size()) {
 		// Can't restore splitter sizes from settings
 		if (!splitterSizeStrings.isEmpty()) {
 			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Expected %1 numbers, but got %2")
-					.arg(centralSplitter->sizes().size()).arg(splitterSizeStrings.size());
+					.arg(splitter->sizes().size()).arg(splitterSizeStrings.size());
 		}
-		Settings::ascentViewer_splitterSizes.clear();
+		splitterSizesSetting->clear();
 		return;
 	}
 	
@@ -1112,11 +1139,11 @@ void AscentViewer::restoreSplitterSizes()
 		int size = sizeString.toInt(&conversionOk);
 		if (!conversionOk) {
 			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Value(s) couldn't be converted to int");
-			Settings::ascentViewer_splitterSizes.clear();
+			splitterSizesSetting->clear();
 			return;
 		}
 		splitterSizes.append(size);
 	}
 	
-	centralSplitter->setSizes(splitterSizes);
+	splitter->setSizes(splitterSizes);
 }

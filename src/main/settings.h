@@ -242,8 +242,10 @@ public:
 	// View state
 	/** Remember filters in the main window as being visible. */
 	inline static const Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
-	/** Remembered splitter sizes in the ascent viewer. */
-	inline static const Setting<QStringList>	ascentViewer_splitterSizes				= Setting<QStringList>	("implicit/ascentViewer/splitterSizes");
+	/** Remembered sizes for the left splitter in the ascent viewer. */
+	inline static const Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
+	/** Remembered sizes for the right splitter in the ascent viewer. */
+	inline static const Setting<QStringList>	ascentViewer_rightSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
 	// Open tab
 	/** Remembered index of open tab in the main window. */
 	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
@@ -279,10 +281,6 @@ public:
 	inline static const Setting<QStringList>	mainWindow_sorting_rangesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
 	/** Remembered sorting of the countries table in the main window. */
 	inline static const Setting<QStringList>	mainWindow_sorting_countriesTable		= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
-	
-	// Ascent filters
-	/** Remembered active filters of the ascents table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_ascentFilters				= Setting<QStringList>	("implicit/mainWindow/filters");
 	
 	
 	
