@@ -159,10 +159,10 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 
 	// Resize if max-zoomed image is smaller than the available area
 	resize |= MAX_ZOOM_RATIO * fullSizePixmap.width() < availableArea.width() && MAX_ZOOM_RATIO * fullSizePixmap.height() < availableArea.height();
-	// Resize if fill mode is active but the image isn't fit to the available area
-	resize |= fillMode && (pixmap().width() != availableArea.width() && pixmap().height() != availableArea.height());
-	// Resize if fill mode is inactive but the image is smaller than the available area
-	resize |= !fillMode && (pixmap().width() < availableArea.width() && pixmap().height() < availableArea.height());
+	// Resize if fill mode is active but the image is bigger than the available area
+	resize |= fillMode && (pixmap().width() > availableArea.width() || pixmap().height() > availableArea.height());
+	// Resize if the image is smaller than the available area
+	resize |= pixmap().width() < availableArea.width() && pixmap().height() < availableArea.height();
 	
 	if (resize) {
 		setPixmap(fullSizePixmap.scaled(availableArea, Qt::KeepAspectRatio, Qt::SmoothTransformation));
