@@ -78,15 +78,16 @@ private slots:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	
 private:
-	int getScrollX();
-	int getScrollY();
-	QPoint getScroll();
-	void setScroll(int scrollX, int scrollY);
-	void scrollRelative(QPoint scrollRel);
-	void setMaxScroll(int maxScrollX, int maxScrollY);
+	void setBarsEnabled(bool enabled) const;
+	int getScrollX() const;
+	int getScrollY() const;
+	QPoint getScroll() const;
+	void setScroll(int scrollX, int scrollY) const;
+	void scrollRelative(QPoint scrollRel) const;
+	void setMaxScroll(int maxScrollX, int maxScrollY) const;
 	
-	void setNormalCursor();
-	void setHandCursor(bool openNotClosed);
+	void setNormalCursor() const;
+	void setHandCursor(bool openNotClosed) const;
 };
 
 

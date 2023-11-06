@@ -1217,10 +1217,10 @@
                  </size>
                 </property>
                 <property name="verticalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOn</enum>
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
                 <property name="horizontalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOn</enum>
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
                 </property>
                 <property name="widgetResizable">
                  <bool>true</bool>
@@ -1230,8 +1230,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>624</width>
-                   <height>390</height>
+                   <width>638</width>
+                   <height>404</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="imageScrollAreaLayout">

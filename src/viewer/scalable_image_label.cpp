@@ -46,6 +46,7 @@ void ScalableImageLabel::setImage(const QImage& image)
 {
 	fullSizePixmap = QPixmap::fromImage(image);
 	fillMode = true;
+	setBarsEnabled(false);
 	setPixmap(fullSizePixmap);
 	imageLoaded = true;
 	setHandCursor(true);
@@ -100,8 +101,10 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 		newImageWidth	= availableArea.width();
 		newImageHeight	= availableArea.height();
 		fillMode = true;
+		setBarsEnabled(false);
 	} else {
 		fillMode = false;
+		setBarsEnabled(true);
 	}
 	
 	// Rescale image
@@ -163,7 +166,10 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
 	
 	if (resize) {
 		setPixmap(fullSizePixmap.scaled(availableArea, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-		fillMode = true;
+		if (!fillMode) {
+			fillMode = true;
+			setBarsEnabled(false);
+		}
 	}
 	
 	QLabel::paintEvent(event);
@@ -224,11 +230,24 @@ void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 
 
 /**
+ * Sets the enabled status of the parent QScrollArea's scroll bars.
+ * 
+ * Used to reduce flickering in the bars during resize.
+ * 
+ * @param enabled	The enabled status to set the parent QScrollArea to.
+ */
+void ScalableImageLabel::setBarsEnabled(bool enabled) const
+{
+	parent->horizontalScrollBar()->setEnabled(enabled);
+	parent->  verticalScrollBar()->setEnabled(enabled);
+}
+
+/**
  * Returns the current horizontal scroll value of the surrounding QScrollArea.
  * 
  * @return	The current horizontal scroll value.
  */
-int ScalableImageLabel::getScrollX()
+int ScalableImageLabel::getScrollX() const
 {
 	return parent->horizontalScrollBar()->value();
 }
@@ -238,7 +257,7 @@ int ScalableImageLabel::getScrollX()
  * 
  * @return	The current vertical scroll value.
  */
-int ScalableImageLabel::getScrollY()
+int ScalableImageLabel::getScrollY() const
 {
 	return parent->verticalScrollBar()->value();
 }
@@ -248,7 +267,7 @@ int ScalableImageLabel::getScrollY()
  * 
  * @return	The current scroll value.
  */
-QPoint ScalableImageLabel::getScroll()
+QPoint ScalableImageLabel::getScroll() const
 {
 	return QPoint(getScrollX(), getScrollY());
 }
@@ -259,7 +278,7 @@ QPoint ScalableImageLabel::getScroll()
  * @param scrollX	The new horizontal scroll value.
  * @param scrollY	The new vertical scroll value.
  */
-void ScalableImageLabel::setScroll(int scrollX, int scrollY)
+void ScalableImageLabel::setScroll(int scrollX, int scrollY) const
 {
 	parent->horizontalScrollBar()->setValue(scrollX);
 	parent->  verticalScrollBar()->setValue(scrollY);
@@ -270,7 +289,7 @@ void ScalableImageLabel::setScroll(int scrollX, int scrollY)
  * 
  * @param scrollRel	The scroll vector.
  */
-void ScalableImageLabel::scrollRelative(QPoint scrollRel)
+void ScalableImageLabel::scrollRelative(QPoint scrollRel) const
 {
 	setScroll(getScrollX() - scrollRel.x(), getScrollY() - scrollRel.y());
 }
@@ -281,7 +300,7 @@ void ScalableImageLabel::scrollRelative(QPoint scrollRel)
  * @param maxScrollX	The new maximum horizontal scroll value.
  * @param maxScrollY	The new maximum vertical scroll value.
  */
-void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
+void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY) const
 {
 	parent->horizontalScrollBar()->setMaximum(maxScrollX);
 	parent->verticalScrollBar()->setMaximum(maxScrollY);
@@ -292,7 +311,7 @@ void ScalableImageLabel::setMaxScroll(int maxScrollX, int maxScrollY)
 /**
  * Sets the cursor to the normal arrow cursor for the surrounding QScrollArea (content area only).
  */
-void ScalableImageLabel::setNormalCursor()
+void ScalableImageLabel::setNormalCursor() const
 {
 	parent->viewport()->setProperty("cursor", QVariant(QCursor(Qt::ArrowCursor)));
 }
@@ -302,7 +321,7 @@ void ScalableImageLabel::setNormalCursor()
  * 
  * @param openNotClosed	Whether to set an open (true) or closed (false) hand cursor.
  */
-void ScalableImageLabel::setHandCursor(bool openNotClosed)
+void ScalableImageLabel::setHandCursor(bool openNotClosed) const
 {
 	Qt::CursorShape cursorShape = openNotClosed ? Qt::OpenHandCursor : Qt::ClosedHandCursor;
 	parent->viewport()->setProperty("cursor", QVariant(QCursor(cursorShape)));
