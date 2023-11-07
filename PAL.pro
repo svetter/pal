@@ -86,9 +86,9 @@ SOURCES += \
 	src/main/ascent_filter_bar.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
-	src/main/project_settings_window.cpp \
-	src/main/settings.cpp \
-	src/main/settings_window.cpp \
+	src/settings/project_settings_window.cpp \
+	src/settings/settings.cpp \
+	src/settings/settings_window.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
 	src/viewer/ascent_viewer.cpp \
@@ -151,9 +151,9 @@ HEADERS += \
 	src/main/ascent_filter_bar.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
-	src/main/project_settings_window.h \
-	src/main/settings.h \
-	src/main/settings_window.h \
+	src/settings/project_settings_window.h \
+	src/settings/settings.h \
+	src/settings/settings_window.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \

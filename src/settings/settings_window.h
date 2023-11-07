@@ -24,7 +24,7 @@
 #ifndef SETTINGS_WINDOW_H
 #define SETTINGS_WINDOW_H
 
-#include "src/main/settings.h"
+#include "src/settings/settings.h"
 #include "ui_settings_window.h"
 
 
