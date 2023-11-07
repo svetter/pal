@@ -25,8 +25,8 @@
 
 #include "src/main/about_window.h"
 #include "src/main/item_types_handler.h"
-#include "src/main/project_settings_window.h"
-#include "src/main/settings_window.h"
+#include "src/settings/project_settings_window.h"
+#include "src/settings/settings_window.h"
 #include "src/tools/relocate_photos_dialog.h"
 #include "src/viewer/ascent_viewer.h"
 #include "ui_main_window.h"

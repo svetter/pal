@@ -25,7 +25,7 @@
 
 #include "src/dialogs/parse_helper.h"
 #include "src/dialogs/region_dialog.h"
-#include "src/main/settings.h"
+#include "src/settings/settings.h"
 
 #include <QMessageBox>
 

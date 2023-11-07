@@ -23,7 +23,7 @@
 
 #include "item_dialog.h"
 
-#include "src/main/settings.h"
+#include "src/settings/settings.h"
 
 #include <QPushButton>
 #include <QMessageBox>

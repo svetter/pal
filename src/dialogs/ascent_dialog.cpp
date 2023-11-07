@@ -28,7 +28,7 @@
 #include "src/dialogs/trip_dialog.h"
 #include "src/dialogs/parse_helper.h"
 #include "src/db/column.h"
-#include "src/main/settings.h"
+#include "src/settings/settings.h"
 #include "src/data/enum_names.h"
 
 #include <QFileDialog>

@@ -40,7 +40,7 @@
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
-#include "src/main/settings.h"
+#include "src/settings/settings.h"
 
 #include <QWidget>
 #include <QTableView>
