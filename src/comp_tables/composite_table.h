@@ -46,29 +46,29 @@
  * 
  * To make sure the buffer stays up to date, the CompositeTable must be notified of any changes
  * in the underlying data in the database. For this purpose, there is a change annunciation
- * mechanism. Depending on a user setting, the table can either be updated immediately or only
- * once it is actually needed. In the latter case, the affected columns are marked as dirty and
- * their update deferred.
+ * mechanism. Depending on a user setting, the table can either be updated immediately or only once
+ * it is actually needed. In the latter case, the affected columns are marked as dirty and their
+ * update deferred.
  * 
  * The change annunciation consists of two parts:
- * First, the CompositeTable must be notified when a row is inserted or removed from the base
- * table. This is done by registering the table as a row change listener with the base table, which
- * then calls bufferRowJustInserted() or bufferRowAboutToBeRemoved() on the CompositeTable.
- * Second, the CompositeTable must be notified when data in any of the columns it depends on
- * changes (without adding or removing rows). This is done by registering each composite column
- * as a change listener with every column it depends on using Column::registerChangeListener().
- * Any changes in a base column then trigger a call to CompositeColumn::announceChangedData(),
- * which in turn calls announceChangesUnderColumn(), which either updates the column immediately
- * or marks it as dirty.
+ * First, the CompositeTable must be notified when a row is inserted or removed from the base table.
+ * This is done by registering the table as a row change listener with the base table, which then
+ * calls bufferRowJustInserted() or bufferRowAboutToBeRemoved() on the CompositeTable.
+ * Second, the CompositeTable must be notified when data in any of the columns it depends on changes
+ * (without adding or removing rows). This is done by registering each composite column as a change
+ * listener with every column it depends on using Column::registerChangeListener().
+ * Any changes in a base column then trigger a call to CompositeColumn::announceChangedData(), which
+ * in turn calls announceChangesUnderColumn(), which either updates the column immediately or marks
+ * it as dirty.
  * 
  * The CompositeTable is also responsible for sorting and filtering its content. For controlling
- * which rows are actually displayed and in which order, a ViewOrderBuffer is used. This buffer
- * is updated whenever the sorting or filtering changes. The buffer is then used to map the
- * indices of the rows in the buffer (BufferRowIndex) to the indices of the rows in the UI
- * (ViewRowIndex). It is important that these two different kinds of indices are not conflated.
+ * which rows are actually displayed and in which order, a ViewOrderBuffer is used. This buffer is
+ * updated whenever the sorting or filtering changes. The buffer is then used to map the indices of
+ * the rows in the buffer (BufferRowIndex) to the indices of the rows in the UI (ViewRowIndex). It
+ * is important that these two different kinds of indices are not conflated.
  * 
- * This class implements the QAbstractTableModel interface so that it can be used as a model for
- * a QTableView.
+ * This class implements the QAbstractTableModel interface so that it can be used as a model for a
+ * QTableView.
  * 
  * @see CompositeColumn
  */
@@ -118,8 +118,11 @@ public:
 protected:
 	void addColumn(const CompositeColumn* column, bool hidden = false);
 public:
+	int getNumberOfVisibleColumns() const;
 	const CompositeColumn* getColumnAt(int columnIndex) const;
+	const CompositeColumn* getColumnByName(const QString& columnName) const;
 	int getIndexOf(const CompositeColumn* column) const;
+	QSet<QString> getVisibleColumnNameSet() const;
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;

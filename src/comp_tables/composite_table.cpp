@@ -85,6 +85,18 @@ void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 	}
 }
 
+
+/**
+ * Returns the number of visible columns in this table.
+ * 
+ * @return	The number of visible columns in this table.
+ */
+int CompositeTable::getNumberOfVisibleColumns() const
+{
+	if (firstHiddenColumnIndex >= 0) return firstHiddenColumnIndex;
+	return columns.size();
+}
+
 /**
  * Returns the composite column at the given index.
  * 
@@ -97,6 +109,20 @@ const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
 }
 
 /**
+ * Returns the composite column with the given internal name.
+ * 
+ * @param columnName	The internal name of the column to return.
+ * @return				The composite column with the given name, or a nullptr.
+ */
+const CompositeColumn* CompositeTable::getColumnByName(const QString& columnName) const
+{
+	for (const CompositeColumn* const column : columns) {
+		if (column->name == columnName) return column;
+	}
+	return nullptr;
+}
+
+/**
  * Returns the index of the given composite column.
  * 
  * @param column	The composite column to return the index of.
@@ -105,6 +131,20 @@ const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
 int CompositeTable::getIndexOf(const CompositeColumn* column) const
 {
 	return columns.indexOf(column);
+}
+
+/**
+ * Returns a set with the names of all visible columns.
+ * 
+ * @return	The names of all visible columns.
+ */
+QSet<QString> CompositeTable::getVisibleColumnNameSet() const
+{
+	QSet<QString> columnNameSet;
+	for (int columnIndex = 0; columnIndex < getNumberOfVisibleColumns(); columnIndex++) {
+		columnNameSet.insert(columns.at(columnIndex)->name);
+	}
+	return columnNameSet;
 }
 
 /**
@@ -525,8 +565,7 @@ int CompositeTable::rowCount(const QModelIndex& parent) const
 int CompositeTable::columnCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
-	if (firstHiddenColumnIndex >= 0) return firstHiddenColumnIndex;
-	return columns.size();
+	return getNumberOfVisibleColumns();
 }
 
 /**
