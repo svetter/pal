@@ -40,8 +40,9 @@
  * @param enumNames					An optional list of enum names with which to replace the raw cell content.
  * @param enumNameLists				An optional list of enum name lists with which to replace the raw cell content.
  */
-CompositeColumn::CompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+CompositeColumn::CompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		table(table),
+		name(name),
 		uiName(uiName),
 		alignment(alignment),
 		contentType(contentType),
@@ -386,8 +387,8 @@ ProjectSettings* CompositeColumn::getProjectSettings() const
  * @param contentColumn	The column from which to take the actual cell content.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, name, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		contentColumn(contentColumn)
 {
 	assert(contentColumn);
@@ -434,8 +435,8 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param contentColumn				The column from which to take the actual cell content.
  * @param enumNames					An optional list of enum names with which to replace the raw cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, uiName, alignment, contentColumn->type, false, suffix, enumNames),
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, name, uiName, alignment, contentColumn->type, false, suffix, enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn)
 {
@@ -515,8 +516,8 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
  * @param minuendColumn		The column from which to take the minuends.
  * @param subtrahendColumn	The column from which to take the subtrahends.
  */
-DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer, false, suffix),
+DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
+		CompositeColumn(table, name, uiName, Qt::AlignRight, Integer, false, suffix),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn)
 {
@@ -590,8 +591,8 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
  * @param displayedEnumColumn	The column from which to take the displayed enum.
  * @param enumNameLists			An optional list of enum name lists with which to replace the raw cell content.
  */
-DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		CompositeColumn(table, uiName, Qt::AlignLeft, DualEnum, false, QString(), nullptr, enumNameLists),
+DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn, const QList<QPair<QString, QStringList>>* enumNameLists) :
+		CompositeColumn(table, name, uiName, Qt::AlignLeft, DualEnum, false, QString(), nullptr, enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn)
 {
@@ -649,8 +650,8 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
  * @param suffix	A suffix to append to the content of each cell.
  * @param sorting	The list of columns to sort by and their sort order, in order of priority.
  */
-IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
-		CompositeColumn(table, uiName, Qt::AlignRight, Integer, true, suffix),
+IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+		CompositeColumn(table, name, uiName, Qt::AlignRight, Integer, true, suffix),
 		sorting(sorting)
 {
 	assert(!sorting.isEmpty());
@@ -753,8 +754,8 @@ const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
  * @param suffix	A suffix to append to the content of each cell.
  * @param sorting	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
  */
-OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
-	IndexCompositeColumn(table, uiName, suffix, sorting),
+OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+	IndexCompositeColumn(table, name, uiName, suffix, sorting),
 	separatingColumn(sorting.first().first)
 {
 	assert(sorting.first().first->isForeignKey());

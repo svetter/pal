@@ -60,13 +60,13 @@ public:
 	 */
 	inline CompositeCountriesTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->countriesTable, tableView),
-			//																		uiName				align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
-			nameColumn			(new const DirectCompositeColumn		(this,	tr("Country"),			Qt::AlignLeft,	noSuffix,	db->countriesTable->nameColumn)),
-			numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
-			numRegionsColumn	(new const NumericFoldCompositeColumn	(this,	tr("Num. regions"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn} })),
-			numPeaksColumn		(new const NumericFoldCompositeColumn	(this,	tr("Num. peaks"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
-			avgPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	tr("Avg. peak height"),	AverageFold,	mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
-			maxPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	tr("Max. peak height"),	MaxFold,		mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn))
+			//																	name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
+			nameColumn			(new const DirectCompositeColumn		(this,	"name",				tr("Country"),			Qt::AlignLeft,	noSuffix,	db->countriesTable->nameColumn)),
+			numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
+			numRegionsColumn	(new const NumericFoldCompositeColumn	(this,	"numRegions",		tr("Num. regions"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn} })),
+			numPeaksColumn		(new const NumericFoldCompositeColumn	(this,	"numPeaks",			tr("Num. peaks"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
+			avgPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	"avgPeakHeight",	tr("Avg. peak height"),	AverageFold,	mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
+			maxPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	"maxPeakHeight",	tr("Max. peak height"),	MaxFold,		mSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(numAscentsColumn);
