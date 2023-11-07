@@ -99,7 +99,7 @@ public:
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>* const			dialogGeometrySetting;
 	/** The setting storing the column widths for the UI table of this item type. */
-	const Setting<QStringList>* const	columnWidthsSetting;
+	MultiSetting<int>* const			columnWidthsSetting;
 	/** The setting storing the sorting of the UI table of this item type. */
 	const Setting<QStringList>* const	sortingSetting;
 
@@ -145,7 +145,7 @@ public:
 			QAction* const		newItemAction,
 			QPushButton* const	newItemButton,
 			const Setting<QRect>*		dialogGeometrySetting,
-			const Setting<QStringList>*	columnWidthsSetting,
+			MultiSetting<int>*			columnWidthsSetting,
 			const Setting<QStringList>*	sortingSetting,
 			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 			BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),

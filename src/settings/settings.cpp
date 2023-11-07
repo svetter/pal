@@ -124,24 +124,37 @@ bool Settings::settingsOlderThan(QString version)
 
 /**
  * Updates the settings file to the current version of the application.
+ * 
+ * In this function, it is important to use string literals for old keys, since the update process
+ * should still work in the future when keys will potentially change. For updated settings, the
+ * current keys can be used.
  */
 void Settings::checkForVersionChange()
 {
-	// 1.1.0: New columns => reset column widths
+	// 1.1.0
 	if (settingsOlderThan("1.1.0")) {
-		resetColumnWidths();
+		// New columns => reset column widths
+		qSettings.remove("implicit/mainWindow/columnWidths");
 	}
 	
-	// 1.1.2: New splitter in ascent viewer => remove deprecated setting
+	// 1.1.2
 	if (settingsOlderThan("1.1.2")) {
-		qSettings.remove("implicit/ascentViewer/splitterSizes");
+		// New splitter in ascent viewer => carry over and remove deprecated setting
+		QString oldSplitterKey = "implicit/ascentViewer/splitterSizes";
+		if (qSettings.contains(oldSplitterKey)) {
+			ascentViewer_rightSplitterSizes.set(qSettings.value(oldSplitterKey).toStringList());
+			qSettings.remove(oldSplitterKey);
+		}
+		
+		// New way to save column widths => remove deprecated settings
+		qSettings.remove("implicit/mainWindow/columnWidths");
 	}
 	
 	// Update settings version
 	QString currentAppVersion = getAppVersion();
 	if (settingsOlderThan(currentAppVersion)) {
-		qDebug().noquote().nospace() << "Updating settings from v" << appVersion.get() << " to v" << currentAppVersion;
 		appVersion.set(currentAppVersion);
+		qDebug().noquote().nospace() << "Updated settings from v" << appVersion.get() << " to v" << currentAppVersion;
 	}
 }
 

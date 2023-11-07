@@ -343,78 +343,78 @@ public:
 	
 	// Recently opened databases
 	/** The path to the last database that was opened. */
-	inline static const Setting<QString>		lastOpenDatabaseFile					= Setting<QString>		("openRecent/lastOpenDatabaseFile");
+	inline static const	Setting<QString>		lastOpenDatabaseFile					= Setting<QString>		("openRecent/lastOpenDatabaseFile");
 	/** Paths to the most recently opened databases, in order of most recently opened first. */
-	inline static const Setting<QStringList>	recentDatabaseFiles						= Setting<QStringList>	("openRecent/recentDatabaseFiles");
+	inline static const	Setting<QStringList>	recentDatabaseFiles						= Setting<QStringList>	("openRecent/recentDatabaseFiles");
 	
 	// Window geometry
 	/** Remember the main window as maximized. */
-	inline static const Setting<bool>			mainWindow_maximized					= Setting<bool>			("implicit/mainWindow/maximized",		false);
+	inline static const	Setting<bool>			mainWindow_maximized					= Setting<bool>			("implicit/mainWindow/maximized",		false);
 	/** Remembered position and size of the main window. */
-	inline static const Setting<QRect>			mainWindow_geometry						= Setting<QRect>		("implicit/mainWindow/geometry");
+	inline static const	Setting<QRect>			mainWindow_geometry						= Setting<QRect>		("implicit/mainWindow/geometry");
 	/** Remembered position and size of the ascent viewer window. */
-	inline static const Setting<QRect>			ascentViewer_geometry					= Setting<QRect>		("implicit/ascentViewer/geometry");
+	inline static const	Setting<QRect>			ascentViewer_geometry					= Setting<QRect>		("implicit/ascentViewer/geometry");
 	/** Remembered position and size of the settings window. */
-	inline static const Setting<QRect>			settingsWindow_geometry					= Setting<QRect>		("implicit/settingsWindow/geometry");
+	inline static const	Setting<QRect>			settingsWindow_geometry					= Setting<QRect>		("implicit/settingsWindow/geometry");
 	/** Remembered position and size of the project settings window. */
-	inline static const Setting<QRect>			projectSettingsWindow_geometry			= Setting<QRect>		("implicit/projectSettingsWindow/geometry");
+	inline static const	Setting<QRect>			projectSettingsWindow_geometry			= Setting<QRect>		("implicit/projectSettingsWindow/geometry");
 	/** Remembered position and size of the ascent dialog. */
-	inline static const Setting<QRect>			ascentDialog_geometry					= Setting<QRect>		("implicit/ascentDialog/geometry");
+	inline static const	Setting<QRect>			ascentDialog_geometry					= Setting<QRect>		("implicit/ascentDialog/geometry");
 	/** Remembered position and size of the peak dialog. */
-	inline static const Setting<QRect>			peakDialog_geometry						= Setting<QRect>		("implicit/peakDialog/geometry");
+	inline static const	Setting<QRect>			peakDialog_geometry						= Setting<QRect>		("implicit/peakDialog/geometry");
 	/** Remembered position and size of the trip dialog. */
-	inline static const Setting<QRect>			tripDialog_geometry						= Setting<QRect>		("implicit/tripDialog/geometry");
+	inline static const	Setting<QRect>			tripDialog_geometry						= Setting<QRect>		("implicit/tripDialog/geometry");
 	/** Remembered position and size of the hiker dialog. */
-	inline static const Setting<QRect>			hikerDialog_geometry					= Setting<QRect>		("implicit/hikerDialog/geometry");
+	inline static const	Setting<QRect>			hikerDialog_geometry					= Setting<QRect>		("implicit/hikerDialog/geometry");
 	/** Remembered position and size of the region dialog. */
-	inline static const Setting<QRect>			regionDialog_geometry					= Setting<QRect>		("implicit/regionDialog/geometry");
+	inline static const	Setting<QRect>			regionDialog_geometry					= Setting<QRect>		("implicit/regionDialog/geometry");
 	/** Remembered position and size of the range dialog. */
-	inline static const Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
+	inline static const	Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
 	/** Remembered position and size of the country dialog. */
-	inline static const Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
+	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
 	
 	// View state
 	/** Remember filters in the main window as being visible. */
-	inline static const Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
+	inline static const	Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
 	/** Remembered sizes for the left splitter in the ascent viewer. */
-	inline static const Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
+	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */
-	inline static const Setting<QStringList>	ascentViewer_rightSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
+	inline static const	Setting<QStringList>	ascentViewer_rightSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
 	// Open tab
 	/** Remembered index of open tab in the main window. */
-	inline static const Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
+	inline static const	Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
 	
 	// Column widths
 	/** Remembered column widths of the ascents table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_ascentsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/ascentsTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_ascentsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/ascentsTable");
 	/** Remembered column widths of the peaks table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_peaksTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/peaksTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_peaksTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/peaksTable",		-1);
 	/** Remembered column widths of the trips table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_tripsTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/tripsTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_tripsTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/tripsTable",		-1);
 	/** Remembered column widths of the hikers table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_hikersTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/hikersTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_hikersTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/hikersTable",	-1);
 	/** Remembered column widths of the regions table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_regionsTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/regionsTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_regionsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/regionsTable",	-1);
 	/** Remembered column widths of the ranges table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_rangesTable		= Setting<QStringList>	("implicit/mainWindow/columnWidths/rangesTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_rangesTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/rangesTable",	-1);
 	/** Remembered column widths of the countries table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_columnWidths_countriesTable	= Setting<QStringList>	("implicit/mainWindow/columnWidths/countriesTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_countriesTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/countriesTable",	-1);
 	
 	// Sorting
 	/** Remembered sorting of the ascents table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_ascentsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_ascentsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
 	/** Remembered sorting of the peaks table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_peaksTable			= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_peaksTable			= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
 	/** Remembered sorting of the trips table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_tripsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_tripsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
 	/** Remembered sorting of the hikers table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_hikersTable			= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_hikersTable			= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
 	/** Remembered sorting of the regions table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_regionsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_regionsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
 	/** Remembered sorting of the ranges table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_rangesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_rangesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
 	/** Remembered sorting of the countries table in the main window. */
-	inline static const Setting<QStringList>	mainWindow_sorting_countriesTable		= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
+	inline static const	Setting<QStringList>	mainWindow_sorting_countriesTable		= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
 	
 	
 	
