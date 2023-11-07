@@ -62,10 +62,12 @@ public:
 	 * @param key			The key under which the setting will be stored.
 	 * @param defaultValue	The default value for the setting.
 	 */
-	inline Setting(const QString key, QVariant defaultValue = QVariant()) :
+	inline Setting(const QString& key, QVariant defaultValue = T()) :
 			key(key),
 			defaultValue(defaultValue)
-	{}
+	{
+		assert(defaultValue.canConvert<T>());
+	}
 	
 	/**
 	 * Checks whether the setting is present in the settings file.
@@ -81,7 +83,7 @@ public:
 	 * If the setting is not present in the settings file or invalid, it is discarded and the
 	 * default value is returned and written back to the settings file.
 	 * 
-	 * @return The value of the setting as it is stored in the settings file after validation.
+	 * @return	The value of the setting as it is stored in the settings file after validation.
 	 */
 	inline T get() const
 	{
@@ -106,7 +108,7 @@ public:
 	/**
 	 * Returns the default value of the setting.
 	 * 
-	 * @return The default value of the setting.
+	 * @return	The default value of the setting.
 	 */
 	inline T getDefault() const{
 		return defaultValue.value<T>();
@@ -115,7 +117,7 @@ public:
 	/**
 	 * Sets the value of the setting.
 	 * 
-	 * @param value The new value for the setting.
+	 * @param value	The new value for the setting.
 	 */
 	inline void set(T value) const
 	{
@@ -128,6 +130,138 @@ public:
 	inline void clear() const
 	{
 		qSettings.remove(key);
+	}
+};
+
+
+
+template<typename T>
+class MultiSetting
+{
+	/** Dynamically grown list of all settings in this group, mapped to their sub-keys. */
+	QMap<QString, Setting<T>*> settings;
+	
+	/** The part of the key which all settings share. */
+	const QString baseKey;
+	/** The default value of all the settings. */
+	const QVariant defaultValue;
+	
+public:
+	/**
+	 * Creates a new setting with the given key and default value.
+	 *
+	 * @param baseKey		The common part of the keys under which the settings will be stored.
+	 * @param defaultValue	The default value for all the settings.
+	 */
+	inline MultiSetting(const QString baseKey, QVariant defaultValue = T()) :
+		settings(QMap<QString, Setting<T>*>()),
+		baseKey(baseKey),
+		defaultValue(defaultValue)
+	{}
+	
+	
+	/**
+	 * Checks whether any of the settings are present in the settings file.
+	 * 
+	 * @return	True if any settings are stored in the settings file under the baseKey, false otherwise.
+	 */
+	inline bool anyPresent() const
+	{
+		qSettings.beginGroup(baseKey);
+		bool anyPresent = qSettings.childKeys().size() > 0;
+		qSettings.endGroup();
+		return anyPresent;
+	}
+	
+	/**
+	 * Checks whether none of the settings are present in the settings file.
+	 * 
+	 * @return	True if no settings are stored in the settings file under the baseKey, false otherwise.
+	 */
+	inline bool nonePresent() const
+	{
+		return !anyPresent();
+	}
+	
+	/**
+	 * Checks whether al of the the setting are present in the settings file.
+	 * 
+	 * @param subKeys	The sub-keys of all settings to check.
+	 * @return			True if all settings given by their sub-keys are stored in the settings file under the baseKey, false otherwise.
+	 */
+	inline bool allPresent(QSet<QString> subKeys)
+	{
+		for (const QString& subKey : subKeys) {
+			createSettingIfMissing(subKey);
+			if (!settings[subKey].present()) return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the values of the settings after validating them, paired with their sub-keys.
+	 * 
+	 * If the setting is not present in the settings file or invalid, it is discarded and the
+	 * default value is returned and written back to the settings file.
+	 * 
+	 * @return	The value of the settings as they are stored in the settings file after validation.
+	 */
+	inline QMap<QString, T> get(const QSet<QString>& subKeys)
+	{
+		QMap<QString, T> values = QMap<QString, T>();
+		for (const QString& subKey : subKeys) {
+			createSettingIfMissing(subKey);
+			values[subKey] = settings.value(subKey)->get();
+		}
+		return values;
+	}
+	
+	/**
+	 * Returns the default value of the settings.
+	 * 
+	 * @return	The default value of the settings.
+	 */
+	inline T getDefault() const
+	{
+		return defaultValue.value<T>();
+	}
+	
+	
+	/**
+	 * Sets the value of the setting.
+	 * 
+	 * @param values	The new values for the settings.
+	 */
+	inline void set(const QMap<QString, T>& subKeyValueMap)
+	{
+		for (auto iter = subKeyValueMap.cbegin(); iter != subKeyValueMap.cend(); iter++) {
+			const QString& subKey	= iter.key();
+			const T& value			= iter.value();
+			
+			createSettingIfMissing(subKey);
+			settings[subKey]->set(value);
+		}
+	}
+	
+	/**
+	 * Removes all of the settings from the settings file.
+	 */
+	inline void clear() const
+	{
+		qSettings.beginGroup(baseKey);
+		for (const QString& key : qSettings.childKeys()) {
+			qSettings.remove(key);
+		}
+		qSettings.endGroup();
+	}
+	
+	
+private:
+	inline void createSettingIfMissing(const QString& subKey)
+	{
+		if (!settings.contains(subKey)) {
+			settings.insert(subKey, new Setting<T>(baseKey + "/" + subKey, defaultValue));
+		}
 	}
 };
 
