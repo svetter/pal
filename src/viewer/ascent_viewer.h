@@ -99,6 +99,10 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** Context menu action for editing the current ascent's trip. */
 	QAction* editTripAction;
 	
+private:
+	/** Temporary global static variable for error messages printed when loading images. */
+	inline static QString imageLoadErrorMessage = QString();
+	
 public:
 	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
@@ -171,6 +175,9 @@ private slots:
 	void handle_editTrip();
 	// Files dropped on image frame
 	void handle_filesDropped(QStringList filepaths);
+	
+	// Error message capture
+	static void imageErrorMessageOccurred(const QString& message);
 	
 private:
 	// Helpers

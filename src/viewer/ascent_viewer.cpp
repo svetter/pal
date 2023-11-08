@@ -490,9 +490,30 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 	}
 	else {
 		QString filepath = photos.at(currentPhotoIndex).filepath;
+		QImageReader::setAllocationLimit(512);
+
+		// Set up error message capturing
+		imageLoadErrorMessage.clear();
+		qInstallMessageHandler([] (QtMsgType type, const QMessageLogContext& context, const QString& msg) {
+			Q_UNUSED(type);
+			Q_UNUSED(context);
+			if (!msg.startsWith("QImageIOHandler: ")) return;
+			QString trimmedMessage = msg;
+			trimmedMessage.remove("QImageIOHandler: ");
+			AscentViewer::imageErrorMessageOccurred(trimmedMessage);
+		});
+
 		QImageReader reader = QImageReader(filepath);
 		reader.setAutoTransform(true);
 		QImage image = reader.read();
+
+		// Fetch printed error message
+		qInstallMessageHandler(nullptr);
+		QString extraErrorMessage = imageLoadErrorMessage;
+		imageLoadErrorMessage.clear();
+		if (!extraErrorMessage.isEmpty()) {
+			extraErrorMessage = tr("\nMore details: %1.").arg(extraErrorMessage);
+		}
 		
 		if (!image.isNull()) {	// Image loaded
 			// Prepare image frame to show image
@@ -504,8 +525,9 @@ void AscentViewer::changeToPhoto(int photoIndex, bool saveDescriptionFirst)
 			QString labelText = tr(
 				"This image file cannot be shown:\n%1"
 				"\nReason: %2."
+				"%3"
 				"\n\nYou can remove the image, replace the file, or mass relocate image files in the whole database.")
-				.arg(filepath, reader.errorString());	// Error string is already translated
+				.arg(filepath, reader.errorString(), extraErrorMessage);	// Error string is already translated
 			imageErrorLabel->setText(labelText);
 
 			// Show image error box
@@ -1007,6 +1029,20 @@ void AscentViewer::handle_filesDropped(QStringList filepaths)
 	QStringList checkedPaths = checkFilepathsAndAskUser(this, filepaths);
 	if (checkedPaths.isEmpty()) return;
 	addPhotos(checkedPaths);
+}
+
+
+
+/**
+ * Globally accessible static function for receiving error messages from QImageReader.
+ * 
+ * This function is used because qInstallMessageHandler() does not allow capturing in lambdas.
+ * 
+ * @param message	The error message with its prefix already removed.
+ */
+void AscentViewer::imageErrorMessageOccurred(const QString& message)
+{
+	imageLoadErrorMessage = message;
 }
 
 
