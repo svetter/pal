@@ -113,7 +113,13 @@ public:
 	void			(* const openDeleteItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex);
 	
 	
+private:
+	/** Indicates whether during the current run of the application, the tab corresponding to the item type was ever opened and the table fully initialized. */
+	bool hasBeenOpened;
 	
+	
+	
+public:
 	/**
 	 * Creates a new ItemTypeMapper instance.
 	 * 
@@ -167,7 +173,8 @@ public:
 			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
 			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
 			openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
-			openDeleteItemDialogAndStoreMethod		(openDeleteItemDialogAndStoreMethod)
+			openDeleteItemDialogAndStoreMethod		(openDeleteItemDialogAndStoreMethod),
+			hasBeenOpened							(false)
 	{}
 	
 	/**
@@ -176,6 +183,24 @@ public:
 	inline ~ItemTypeMapper()
 	{
 		delete compTable;
+	}
+	
+	/**
+	 * Notifies the item type mapper that the tab corresponding to it is curerntly being opened and fully initialized.
+	 */
+	inline void openingTab()
+	{
+		hasBeenOpened = true;
+	}
+	
+	/**
+	 * Whether during the runtime of the application, the tab corresponding to this mapper was ever opened.
+	 * 
+	 * @return	True if the tab has been open so far, false otherwise.
+	 */
+	inline bool tabHasBeenOpened() const
+	{
+		return hasBeenOpened;
 	}
 };
 
@@ -421,17 +446,17 @@ public:
 	const bool showDebugTableViews;
 	
 	/** The ItemTypeMapper instances for all item types. */
-	const QMap<PALItemType, const ItemTypeMapper*> mappers;
+	const QMap<PALItemType, ItemTypeMapper*> mappers;
 	
 	/** Creates a new ItemTypesHandler instance. */
 	inline ItemTypesHandler(bool showDebugTableViews,
-			const AscentMapper*		ascentMapper,
-			const PeakMapper*		peakMapper,
-			const TripMapper*		tripMapper,
-			const HikerMapper*		hikerMapper,
-			const RegionMapper*		regionMapper,
-			const RangeMapper*		rangeMapper,
-			const CountryMapper*	countryMapper
+			AscentMapper*	ascentMapper,
+			PeakMapper*		peakMapper,
+			TripMapper*		tripMapper,
+			HikerMapper*	hikerMapper,
+			RegionMapper*	regionMapper,
+			RangeMapper*	rangeMapper,
+			CountryMapper*	countryMapper
 			) :
 			showDebugTableViews(showDebugTableViews),
 			mappers({
@@ -461,9 +486,9 @@ public:
 	 * 
 	 * @param lambda	The lambda function to run.
 	 */
-	inline void forEach(std::function<void (const ItemTypeMapper&)> lambda) const
+	inline void forEach(std::function<void (ItemTypeMapper&)> lambda) const
 	{
-		for (const ItemTypeMapper* mapper : mappers) {
+		for (ItemTypeMapper* mapper : mappers) {
 			lambda(*mapper);
 		}
 	}

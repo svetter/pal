@@ -386,19 +386,19 @@ public:
 	
 	// Column widths
 	/** Remembered column widths of the ascents table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_ascentsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/ascentsTable");
+	inline static		MultiSetting<int>		mainWindow_columnWidths_ascentsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/ascentsTable",	100);
 	/** Remembered column widths of the peaks table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_peaksTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/peaksTable",		-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_peaksTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/peaksTable",		100);
 	/** Remembered column widths of the trips table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_tripsTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/tripsTable",		-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_tripsTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/tripsTable",		100);
 	/** Remembered column widths of the hikers table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_hikersTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/hikersTable",	-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_hikersTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/hikersTable",	100);
 	/** Remembered column widths of the regions table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_regionsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/regionsTable",	-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_regionsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/regionsTable",	100);
 	/** Remembered column widths of the ranges table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_rangesTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/rangesTable",	-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_rangesTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/rangesTable",	100);
 	/** Remembered column widths of the countries table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_countriesTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/countriesTable",	-1);
+	inline static		MultiSetting<int>		mainWindow_columnWidths_countriesTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/countriesTable",	100);
 	
 	// Sorting
 	/** Remembered sorting of the ascents table in the main window. */

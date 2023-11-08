@@ -331,6 +331,8 @@ void MainWindow::setupDebugTableViews()
  */
 void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 {
+	if (mapper.columnWidthsSetting->nonePresent()) return;	// Only restore if any widths are in the settings
+	
 	const QSet<QString> visibleColumnNames = mapper.compTable->getVisibleColumnNameSet();
 	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(visibleColumnNames);
 	
@@ -493,16 +495,18 @@ void MainWindow::initCompositeBuffers()
 	}
 	typesHandler->get(ItemTypeAscent)->compTable->setInitialFilters(ascentFilters);
 	
-	typesHandler->forEach([&progress, prepareAll, currentTableView] (const ItemTypeMapper& mapper) {
+	typesHandler->forEach([&progress, prepareAll, currentTableView] (ItemTypeMapper& mapper) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
 		
-		bool prepareThisTable = prepareAll || mapper.tableView == currentTableView;
+		bool isOpen = mapper.tableView == currentTableView;
+		bool prepareThisTable = prepareAll || isOpen;
 		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper.columnWidthsSetting->nonePresent();
 		QProgressDialog* updateProgress = prepareThisTable ? &progress : nullptr;
 		bool deferCompute = !prepareThisTable;
 		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper.tableView : nullptr;
 		
 		mapper.compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
+		if (isOpen) mapper.openingTab();
 	});
 }
 
@@ -768,12 +772,13 @@ void MainWindow::handle_tabChanged()
 	progress.setMinimumDuration(500);
 	
 	QAbstractItemModel* currentModel = getCurrentTableView()->model();
-	typesHandler->forEach([&currentModel, &progress] (const ItemTypeMapper& mapper) {
+	typesHandler->forEach([&currentModel, &progress] (ItemTypeMapper& mapper) {
 		CompositeTable* compTable = mapper.compTable;
 		if (currentModel == compTable) {
 			progress.setMaximum(mapper.compTable->getNumberOfCellsToUpdate());
 			
 			compTable->setUpdateImmediately(true, &progress);
+			mapper.openingTab();
 		}
 		else {
 			compTable->setUpdateImmediately(false);
@@ -1192,6 +1197,8 @@ void MainWindow::saveImplicitSettings() const
  */
 void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
 {
+	if (!mapper.tabHasBeenOpened()) return;	// Only save if table was actually shown
+	
 	QMap<QString, int> nameValueMap;
 	for (int columnIndex = 0; columnIndex < mapper.compTable->columnCount(); columnIndex++) {
 		const CompositeColumn* const column = mapper.compTable->getColumnAt(columnIndex);
