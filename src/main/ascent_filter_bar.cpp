@@ -552,11 +552,10 @@ void AscentFilterBar::handle_applyFilters()
  */
 void AscentFilterBar::handle_clearFilters()
 {
-	clearFiltersButton->setEnabled(false);
-	handle_filtersChanged();	// Potentially enable apply button
-	
 	compAscents->clearFilters();
 	clearSavedFilters();
+	
+	handle_filtersChanged();	// Potentially enable apply button
 	
 	mainWindow->updateTableSize();
 }
