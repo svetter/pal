@@ -46,6 +46,10 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 {
 	setupUi(this);
 	
+	applyFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
+	clearFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+	
+	
 	connectUI();
 }
 
