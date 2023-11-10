@@ -47,7 +47,7 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 	restoreDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	
 	
-	connect(rememberWindowPositionsCheckbox,	&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
+	connect(rememberWindowGeometryCheckbox,		&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
 	connect(ascentDateCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
 	connect(ascentTimeCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
 	connect(ascentElevationGainCheckbox,		&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
@@ -87,7 +87,7 @@ void SettingsWindow::loadSettings()
 	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.get());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.get());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
-	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.get());
+	rememberWindowGeometryCheckbox				->setChecked	(rememberWindowPositions					.get());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
 	rememberTableCheckbox						->setChecked	(rememberTab								.get());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.get());
@@ -123,7 +123,7 @@ void SettingsWindow::loadDefaults()
 	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.getDefault());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.getDefault());
 	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
-	rememberWindowPositionsCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
+	rememberWindowGeometryCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
 	rememberTableCheckbox						->setChecked	(rememberTab								.getDefault());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.getDefault());
@@ -164,7 +164,7 @@ void SettingsWindow::saveSettings()
 	warnAboutDuplicateNames						.set(warnAboutDuplicateNamesCheckbox			->isChecked());
 	onlyPrepareActiveTableOnStartup				.set(onlyPrepareActiveTableCheckbox				->isChecked());
 	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
-	rememberWindowPositions						.set(rememberWindowPositionsCheckbox			->isChecked());
+	rememberWindowPositions						.set(rememberWindowGeometryCheckbox				->isChecked());
 	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());
 	rememberTab									.set(rememberTableCheckbox						->isChecked());
 	rememberColumnWidths						.set(rememberColumnWidthsCheckbox				->isChecked());
@@ -215,7 +215,7 @@ void SettingsWindow::updateEnabled()
  */
 void SettingsWindow::handle_rememberWindowPositionsCheckboxChanged()
 {
-	bool enabled = rememberWindowPositionsCheckbox->checkState();
+	bool enabled = rememberWindowGeometryCheckbox->checkState();
 	rememberWindowPositionsRelativeCheckbox->setEnabled(enabled);
 }
 

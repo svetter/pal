@@ -323,12 +323,12 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Dabei</translation>
     </message>
     <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="512"/>
+        <location filename="../src/main/ascent_filter_bar.cpp" line="516"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="516"/>
+        <location filename="../src/main/ascent_filter_bar.cpp" line="520"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -610,14 +610,14 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Urlaub bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="509"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="515"/>
         <source>
 More details: %1.</source>
         <translation>
 Mehr Details: &quot;%1.&quot;</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="520"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="525"/>
         <source>This image file cannot be shown:
 %1
 Reason: %2.%3
@@ -630,33 +630,33 @@ Grund: %2.%3
 Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="591"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="596"/>
         <source>No photos</source>
         <translation>Keine Fotos</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="593"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="598"/>
         <source>Photo %1 of %2</source>
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="702"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="707"/>
         <source>Replace %1</source>
         <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
         <translation>Bilddatei ersetzen: %1</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1073"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1085"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1074"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1086"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1075"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1087"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -2505,13 +2505,13 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="202"/>
-        <source>Positions</source>
-        <translation>Positionen</translation>
+        <source>Positions and sizes</source>
+        <translation>Positionen und Größen</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="209"/>
-        <source>Relative to main window</source>
-        <translation>Relativ zu Hauptfenster</translation>
+        <source>Positions relative to main window</source>
+        <translation>Positionen relativ zu Hauptfenster</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="219"/>

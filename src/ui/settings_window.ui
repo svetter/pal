@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>758</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -197,16 +197,16 @@
           <number>5</number>
          </property>
          <item row="0" column="0">
-          <widget class="QCheckBox" name="rememberWindowPositionsCheckbox">
+          <widget class="QCheckBox" name="rememberWindowGeometryCheckbox">
            <property name="text">
-            <string>Positions</string>
+            <string>Positions and sizes</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QCheckBox" name="rememberWindowPositionsRelativeCheckbox">
            <property name="text">
-            <string>Relative to main window</string>
+            <string>Positions relative to main window</string>
            </property>
           </widget>
          </item>
