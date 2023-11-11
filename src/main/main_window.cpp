@@ -96,13 +96,7 @@ MainWindow::MainWindow() :
 	// Open database
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
 	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
-		setWindowTitleFilename(lastOpen);
-		db.openExisting(this, lastOpen);
-		updateFilters();
-		setVisible(true);
-		initCompositeBuffers();
-		updateTableSize();
-		setUIEnabled(true);
+		attemptToOpenFile(lastOpen);
 	}
 	
 	
@@ -448,6 +442,26 @@ void MainWindow::updateContextMenuEditIcon()
 
 
 // PROJECT SETUP
+
+/**
+ * Attempts to open the given file and only changes UI if database initialization is successful.
+ * 
+ * @param filepath	The file to attempt to open.
+ */
+void MainWindow::attemptToOpenFile(const QString& filepath)
+{
+	bool dbOpened = db.openExisting(this, filepath);
+	
+	if (dbOpened) {
+		setWindowTitleFilename(filepath);
+		updateFilters();
+		setVisible(true);
+		initCompositeBuffers();
+		updateTableSize();
+		setUIEnabled(true);
+		addToRecentFilesList(filepath);
+	}
+}
 
 /**
  * Prepares the composite tables and fills either all of them or only the one currently being
@@ -953,14 +967,7 @@ void MainWindow::handle_openDatabase()
 	
 	handle_closeDatabase();
 	
-	setWindowTitleFilename(filepath);
-	db.openExisting(this, filepath);
-	updateFilters();
-	initCompositeBuffers();
-	updateTableSize();
-	setUIEnabled(true);
-	
-	addToRecentFilesList(filepath);
+	attemptToOpenFile(filepath);
 }
 
 /**
@@ -980,14 +987,7 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 	
 	handle_closeDatabase();
 	
-	setWindowTitleFilename(filepath);
-	db.openExisting(this, filepath);
-	updateFilters();
-	initCompositeBuffers();
-	updateTableSize();
-	setUIEnabled(true);
-	
-	addToRecentFilesList(filepath);
+	attemptToOpenFile(filepath);
 }
 
 /**

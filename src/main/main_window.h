@@ -96,6 +96,7 @@ private:
 	void updateContextMenuEditIcon();
 	
 	// Project setup (on load)
+	void attemptToOpenFile(const QString& filepath);
 	void initCompositeBuffers();
 	
 	// UI updates
