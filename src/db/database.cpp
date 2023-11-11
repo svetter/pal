@@ -25,6 +25,7 @@
 
 #include "src/db/db_error.h"
 
+#include <QCoreApplication>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QFile>
@@ -114,8 +115,9 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	sql.setDatabaseName(filepath);
 	
 	// Open connection
-	if (!sql.open())
+	if (!sql.open()) {
 		displayError(parent, sql.lastError());
+	}
 	databaseLoaded = true;
 	
 	qDebug() << "Creating tables in SQL";
@@ -143,8 +145,9 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	sql.setDatabaseName(filepath);
 	
 	// Open connection
-	if (!sql.open())
+	if (!sql.open()) {
 		displayError(parent, sql.lastError());
+	}
 	databaseLoaded = true;
 	
 	populateBuffers(parent);
@@ -220,6 +223,13 @@ void Database::populateBuffers(QWidget* parent)
 		assert(table->getNumberOfRows() == 0);
 		table->initBuffer(parent);
 	}
+}
+
+
+
+QString Database::tr(const QString& string)
+{
+	return QCoreApplication::translate("Database", string.toStdString().c_str());
 }
 
 

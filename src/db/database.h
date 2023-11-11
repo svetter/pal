@@ -123,6 +123,9 @@ private:
 	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
 	
 	void populateBuffers(QWidget* parent);
+	
+public:
+	static QString tr(const QString& string);
 };
 
 

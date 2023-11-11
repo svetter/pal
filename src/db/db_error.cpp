@@ -23,7 +23,7 @@
 
 #include "db_error.h"
 
-#include <QApplication>
+#include "database.h"
 
 #include <QMessageBox>
 
@@ -37,7 +37,7 @@
  */
 void displayError(QWidget* parent, QString error)
 {
-	QMessageBox::critical(parent, QCoreApplication::translate("Database", "Database error"), error);
+	QMessageBox::critical(parent, Database::tr("Database error"), error);
 	exit(1);
 }
 
@@ -51,7 +51,7 @@ QString formatSqlError(QSqlError error)
 {
 	QString driverError		= error.driverText();	// Translated
 	QString databaseError	= error.databaseText();	// Untranslated
-	return driverError + ".\n\n" + QCoreApplication::translate("Database", "Details:") + " \"" + databaseError + "\"";
+	return driverError + ".\n\n" + Database::tr("Details:") + " \"" + databaseError + "\"";
 }
 
 
@@ -65,7 +65,7 @@ QString formatSqlError(QSqlError error)
  */
 void displayError(QWidget* parent, QString error, QString& queryString)
 {
-	return displayError(parent, error + "\n\n" + QCoreApplication::translate("Database", "Query:") + "\n" + queryString);
+	return displayError(parent, error + "\n\n" + Database::tr("Query:") + "\n" + queryString);
 }
 
 /**
