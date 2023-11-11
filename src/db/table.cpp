@@ -537,8 +537,9 @@ void Table::createTableInSql(QWidget* parent)
 	qDebug() << queryString;
 	QSqlQuery query = QSqlQuery();
 	
-	if (!query.exec(queryString))
+	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
+}
 }
 
 /**
@@ -558,8 +559,9 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
 	query.setForwardOnly(true);
 	QList<QList<QVariant>*> result = QList<QList<QVariant>*>();
 	
-	if (!query.exec(queryString))
+	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
+	}
 	
 	QList<const Column*> columns = getColumnList();
 	
@@ -605,8 +607,9 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
 		query.addBindValue(columnDataPair.second);
 	}
 	
-	if (!query.exec())
+	if (!query.exec()) {
 		displayError(parent, query.lastError(), queryString);
+	}
 	
 	ValidItemID newRowID = VALID_ITEM_ID(query.lastInsertId().toInt());
 	return newRowID;
@@ -637,8 +640,9 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 		displayError(parent, query.lastError(), queryString);
 	query.addBindValue(data);
 	
-	if (!query.exec())
+	if (!query.exec()) {
 		displayError(parent, query.lastError(), queryString);
+}
 }
 
 /**
@@ -670,8 +674,9 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 		query.addBindValue(columnDataPairs.at(i).second);
 	}
 	
-	if (!query.exec())
+	if (!query.exec()) {
 		displayError(parent, query.lastError(), queryString);
+}
 }
 
 /**
@@ -698,8 +703,9 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
 	
-	if (!query.exec(queryString))
+	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
+}
 }
 
 /**
@@ -720,8 +726,9 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);
 	
-	if (!query.exec(queryString))
+	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
+}
 }
 
 
