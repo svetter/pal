@@ -23,6 +23,8 @@
 
 #include "db_error.h"
 
+#include <QApplication>
+
 #include <QMessageBox>
 
 
@@ -35,9 +37,24 @@
  */
 void displayError(QWidget* parent, QString error)
 {
-	QMessageBox::critical(parent, "Database error", error);
+	QMessageBox::critical(parent, QCoreApplication::translate("Database", "Database error"), error);
 	exit(1);
 }
+
+/**
+ * Translates and formats a QSqlError into a string to use in an error message.
+ *
+ * @param error	The error.
+ * @return		A formatted and translated string representing the error.
+ */
+QString formatSqlError(QSqlError error)
+{
+	QString driverError		= error.driverText();	// Translated
+	QString databaseError	= error.databaseText();	// Untranslated
+	return driverError + ".\n\n" + QCoreApplication::translate("Database", "Details:") + " \"" + databaseError + "\"";
+}
+
+
 
 /**
  * Displays an error message including the query that caused the error.
@@ -48,7 +65,7 @@ void displayError(QWidget* parent, QString error)
  */
 void displayError(QWidget* parent, QString error, QString& queryString)
 {
-	return displayError(parent, error + "\n\nQuery:\n" + queryString);
+	return displayError(parent, error + "\n\n" + QCoreApplication::translate("Database", "Query:") + "\n" + queryString);
 }
 
 /**
@@ -60,7 +77,7 @@ void displayError(QWidget* parent, QString error, QString& queryString)
  */
 void displayError(QWidget* parent, QSqlError error, QString& queryString)
 {
-	return displayError(parent, error.text(), queryString);
+	return displayError(parent, formatSqlError(error), queryString);
 }
 
 /**
@@ -71,5 +88,5 @@ void displayError(QWidget* parent, QSqlError error, QString& queryString)
  */
 void displayError(QWidget* parent, QSqlError error)
 {
-	return displayError(parent, error.text());
+	return displayError(parent, formatSqlError(error));
 }

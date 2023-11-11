@@ -31,6 +31,8 @@
 
 
 void displayError(QWidget* parent, QString error);
+QString formatSqlError(QSqlError error);
+
 void displayError(QWidget* parent, QString error, QString& queryString);
 void displayError(QWidget* parent, QSqlError error);
 void displayError(QWidget* parent, QSqlError error, QString& queryString);

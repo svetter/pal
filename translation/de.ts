@@ -1152,6 +1152,24 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
 </context>
 <context>
+    <name>Database</name>
+    <message>
+        <location filename="../src/db/db_error.cpp" line="40"/>
+        <source>Database error</source>
+        <translation>Datenbank-Fehler</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_error.cpp" line="68"/>
+        <source>Query:</source>
+        <translation>Befehl:</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_error.cpp" line="54"/>
+        <source>Details:</source>
+        <translation>Details:</translation>
+    </message>
+</context>
+<context>
     <name>EnumNames</name>
     <message>
         <location filename="../src/data/enum_names.cpp" line="50"/>
