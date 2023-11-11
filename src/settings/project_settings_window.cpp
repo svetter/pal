@@ -93,7 +93,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
  */
 void ProjectSettingsWindow::loadSettings()
 {
-	ItemID hikerID = db->projectSettings->defaultHiker->get();
+	ItemID hikerID = db->projectSettings->defaultHiker.get();
 	if (hikerID.isValid()) {
 		defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 	} else {
@@ -112,7 +112,7 @@ void ProjectSettingsWindow::saveSettings()
 		BufferRowIndex newHikerIndex = db->hikersTable->addRow(this, newDefaultHiker);
 		defaultHikerCombo->setCurrentIndex(newHikerIndex.get() + 1);	// 0 is None
 	}
-	db->projectSettings->defaultHiker->set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+	db->projectSettings->defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
 }
 
 

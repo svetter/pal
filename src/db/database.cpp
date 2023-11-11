@@ -38,8 +38,7 @@
 Database::Database() :
 		databaseLoaded(false),
 		tables(QList<Table*>()),
-		mainWindowStatusBar(nullptr),
-		projectSettings(new ProjectSettings())
+		mainWindowStatusBar(nullptr)
 {
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();
@@ -50,6 +49,7 @@ Database::Database() :
 	ascentsTable		= new AscentsTable(peaksTable->primaryKeyColumn, tripsTable->primaryKeyColumn);
 	photosTable			= new PhotosTable(ascentsTable->primaryKeyColumn);
 	participatedTable	= new ParticipatedTable(ascentsTable->primaryKeyColumn, hikersTable->primaryKeyColumn);
+	settingsTable		= new SettingsTable();
 	
 	tables.append(tripsTable);
 	tables.append(hikersTable);
@@ -60,6 +60,9 @@ Database::Database() :
 	tables.append(ascentsTable);
 	tables.append(photosTable);
 	tables.append(participatedTable);
+	tables.append(settingsTable);
+	
+	projectSettings = new ProjectSettings(settingsTable);
 	
 	
 	QSqlDatabase::addDatabase("QSQLITE");
@@ -70,7 +73,6 @@ Database::Database() :
  */
 Database::~Database() {
 	qDeleteAll(getTableList());
-	delete projectSettings;
 }
 
 
@@ -85,7 +87,6 @@ void Database::reset()
 	for (Table* table : tables) {
 		table->resetBuffer();
 	}
-	projectSettings->resetBuffer();
 	
 	QSqlDatabase::database().close();
 	
@@ -121,9 +122,6 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	for (Table* table : tables) {
 		table->createTableInSql(parent);
 	}
-	projectSettings->createTableInSql(parent);
-	projectSettings->initBuffer(parent, true);
-	projectSettings->insertDefaults(parent);
 	
 	// All tables still empty of course, but this doubles as a table format check
 	populateBuffers(parent, true);
@@ -150,7 +148,6 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	databaseLoaded = true;
 	
 	populateBuffers(parent);
-	projectSettings->initBuffer(parent);
 }
 
 /**

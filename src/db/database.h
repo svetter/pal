@@ -83,6 +83,9 @@ public:
 	PhotosTable*		photosTable;
 	/** The participated table. */
 	ParticipatedTable*	participatedTable;
+
+	/** The project settings table. */
+	SettingsTable*		settingsTable;
 	
 	/** The project settings, based on a table. */
 	ProjectSettings*	projectSettings;

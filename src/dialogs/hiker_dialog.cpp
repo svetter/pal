@@ -204,8 +204,8 @@ void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowInd
 		if (!proceed) return;
 	}
 	
-	if (db->projectSettings->defaultHiker->get() == ID_GET(hikerID)) {
-		db->projectSettings->defaultHiker->setToNull(parent);
+	if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID)) {
+		db->projectSettings->defaultHiker.clear(parent);
 	}
 	
 	db->removeRow(parent, db->hikersTable, hikerID);

@@ -339,12 +339,12 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	QStringList stringList;
 	
 	QString defaultHikerString = QString();
-	const ProjectSetting<int>* defaultHiker = getProjectSettings()->defaultHiker;
+	ProjectSetting<int>& defaultHiker = getProjectSettings()->defaultHiker;
 	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
-	if (defaultHiker->isNotNull()) {
-		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker->get());
+	if (defaultHiker.isPresent()) {
+		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker.get());
 		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
 		if (rowIndexSet.contains(defaultHikerRowIndex)) {
 			QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);

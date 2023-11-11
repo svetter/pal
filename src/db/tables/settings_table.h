@@ -18,7 +18,7 @@
 /**
  * @file settings_table.h
  * 
- * This file defines the SettingsTable class.
+ * This file declares the SettingsTable class.
  */
 
 #ifndef SETTINGS_TABLE_H
@@ -29,7 +29,7 @@
 #include <QWidget>
 #include <QVariant>
 
-template<typename T> class ProjectSetting;
+class GenericProjectSetting;
 
 
 
@@ -39,37 +39,22 @@ template<typename T> class ProjectSetting;
 class SettingsTable : public Table {
 	/** The primary key column. */
 	Column* primaryKeyColumn;
+	/** The column for key strings which identify settings. */
+	Column* settingKeyColumn;
+	/** The column for setting values, encoded as strings. */
+	Column* settingValueColumn;
 	
 public:
-	/**
-	 * Creates a new SettingsTable.
-	 */
-	inline SettingsTable() :
-			Table("ProjectSettings", "Project settings", false),
-			primaryKeyColumn	(new Column("projectSettingsID", QString(), ID, false, true, nullptr, this))
-	{
-		addColumn(primaryKeyColumn);
-	}
+	SettingsTable();
 	
-protected:
-	/**
-	 * Updates the given setting.
-	 * 
-	 * @param parent	The parent window.
-	 * @param setting	The setting to update.
-	 * @param value		The new value for the setting.
-	 * @param rowIndex	The row index of the setting to update.
-	 */
-	template<typename T>
-	inline void updateSetting(QWidget* parent, const ProjectSetting<T>* setting, QVariant value, int rowIndex = 0)
-	{
-		assert(rowIndex < 2);
-		
-		ValidItemID primaryKey = VALID_ITEM_ID(primaryKeyColumn->getValueAt(BufferRowIndex(rowIndex)));
-		updateCellInNormalTable(parent, primaryKey, setting, value);
-	}
+	bool settingIsPresent(const GenericProjectSetting* setting, QWidget* parent = nullptr);
+	QVariant getSetting(const GenericProjectSetting* setting, QWidget* parent = nullptr);
 	
-	template<typename T> friend class ProjectSetting;
+	void setSetting(QWidget* parent, const GenericProjectSetting* setting, QVariant value);
+	void removeSetting(QWidget* parent, const GenericProjectSetting* setting);
+	
+private:
+	ItemID findSettingID(const GenericProjectSetting* setting, QWidget* parent = nullptr);
 };
 
 

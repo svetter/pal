@@ -18,18 +18,46 @@
 /**
  * @file project_settings.h
  * 
- * This file defines the ProjectSetting and ProjectSettings classes.
+ * This file declares the GenericProjectSetting and ProjectSetting classes and defines the
+ * ProjectSettings class.
  */
 
 #ifndef PROJECT_SETTINGS_H
 #define PROJECT_SETTINGS_H
 
-#include "src/db/table.h"
 #include "src/db/tables/settings_table.h"
 
 #include <QString>
 #include <QVariant>
 #include <QDate>
+
+class ProjectSettings;
+
+
+
+/**
+ * A class representing a project setting without a type.
+ * 
+ * This class exists to work around template quirks.
+ */
+class GenericProjectSetting {
+public:
+	/** The project settings table. */
+	SettingsTable* const table;
+	/** The key string which is used to identify this setting. */
+	const QString key;
+	/** The default value for the setting. */
+	const QVariant defaultValue;
+	
+	GenericProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue);
+	
+	bool isPresent(QWidget* parent = nullptr);
+	QVariant getAsQVariant(QWidget* parent = nullptr);
+	QVariant getDefaultAsQVariant() const;
+	
+	void set(QWidget* parent, QVariant value);
+	void clear(QWidget* parent);
+};
 
 
 
@@ -37,227 +65,80 @@
  * A class representing a project setting.
  */
 template<typename T>
-class ProjectSetting : public Column {
-	/** The project settings table. */
-	SettingsTable* settingsTable;
-	/** The default value for the setting. */
-	const QVariant defaultValue;
-	
+class ProjectSetting : public GenericProjectSetting {
 public:
-	/**
-	 * Creates a new ProjectSetting.
-	 * 
-	 * @param key			The key of the setting.
-	 * @param type			The data type of the setting.
-	 * @param nullable		Whether the setting is nullable.
-	 * @param settingsTable	The project settings table.
-	 * @param defaultValue	The default value for the setting.
-	 */
-	inline ProjectSetting(const QString key, DataType type, bool nullable, SettingsTable* settingsTable, QVariant defaultValue = QVariant()) :
-			Column(key, QString(), type, nullable, false, nullptr, settingsTable),
-			settingsTable(settingsTable),
-			defaultValue(defaultValue)
-	{}
+	ProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue = T());
 	
-	/**
-	 * Returns the default value for the setting.
-	 * 
-	 * @return	The default value for the setting.
-	 */
-	inline QVariant getDefault() const
-	{
-		return defaultValue;
-	}
-	
-	/**
-	 * Returns whether the setting is null at the given row index (0 or 1, 0 by default).
-	 * 
-	 * @param rowIndex	The row index of the setting.
-	 * @return			Whether the setting is null.
-	 */
-	inline bool isNotNull(int rowIndex = 0) const
-	{
-		assert(rowIndex < 2);
-		QVariant value = getValueAt(BufferRowIndex(rowIndex));
-		return value.isValid() && !value.isNull();
-	}
-
-	/**
-	 * Returns whether the setting is null at the second row index (1).
-	 * 
-	 * @return	Whether the setting is null at the second row index.
-	 */
-	inline bool secondIsNotNull() const
-	{
-		return isNotNull(1);
-	}
-	
-	/**
-	 * Returns the current value of the setting at the given row index (0 or 1, 0 by default).
-	 * 
-	 * @param rowIndex	The row index of the setting.
-	 * @return			The current value of the setting.
-	 */
-	inline T get(int rowIndex = 0) const
-	{
-		assert(rowIndex < 2);
-		return getValueAt(BufferRowIndex(rowIndex)).template value<T>();
-	}
-
-	/**
-	 * Returns the current value of the setting at the second row index (1).
-	 * 
-	 * @return	The current value of the setting at the second row index.
-	 */
-	inline T getSecond() const
-	{
-		return get(1);
-	}
-	
-	/**
-	 * Sets the value of the setting at the given row index (0 or 1, 0 by default).
-	 * 
-	 * @param parent	The parent window.
-	 * @param value		The new value for the setting.
-	 * @param rowIndex	The row index of the setting.
-	 */
-	inline void set(QWidget* parent, QVariant value, int rowIndex = 0) const
-	{
-		assert(rowIndex >= 0 && rowIndex < 2);
-		settingsTable->updateSetting(parent, this, value, rowIndex);
-	}
-
-	/**
-	 * Sets the value of the setting at the second row index (1).
-	 * 
-	 * @param parent	The parent window.
-	 * @param value		The new value for the setting.
-	 */
-	inline void setSecond(QWidget* parent, QVariant value) const
-	{
-		return set(parent, value, 1);
-	}
-	
-	/**
-	 * Sets the value of the setting to null at the given row index (0 or 1, 0 by default).
-	 * 
-	 * @param parent	The parent window.
-	 * @param rowIndex	The row index of the setting.
-	 */
-	inline void setToNull(QWidget* parent, int rowIndex = 0) const
-	{
-		set(parent, QVariant(), rowIndex);
-	}
-
-	/**
-	 * Sets the value of the setting to null at the second row index (1).
-	 * 
-	 * @param parent	The parent window.
-	 */
-	inline void setSecondToNull(QWidget* parent) const
-	{
-		setToNull(parent, 1);
-	}
-
-	/**
-	 * Sets the value of the setting to null at both row indices (0 and 1).
-	 * 
-	 * @param parent	The parent window.
-	 */
-	inline void setBothToNull(QWidget* parent) const
-	{
-		setToNull(parent);
-		setSecondToNull(parent);
-	}
+	T get(QWidget* parent = nullptr);
+	T getDefault() const;
 };
+
+// List used types as compiler hints
+template class ProjectSetting<bool>;
+template class ProjectSetting<int>;
+template class ProjectSetting<QString>;
+template class ProjectSetting<QDate>;
 
 
 
 /**
  * A class for managing all project settings.
  */
-class ProjectSettings : public SettingsTable {
-	// Can't store template objects ProjectSetting together directly, so storing Column + default value instead
-	/**
-	 * The list of all project settings and their default values.
-	 */
-	QList<ColumnDataPair> defaults;
-	
+class ProjectSettings {
 public:
+	/** The version string of the application with which the database was last written. */
+	ProjectSetting<QString>	databaseVersion;
+	
 	/** The default hiker setting. */
-	const ProjectSetting<int>*		defaultHiker;
+	ProjectSetting<int>		defaultHiker;
+	
 	// Implicit settings
-	/** The date filter setting. */
-	const ProjectSetting<QDate>*	dateFilter;
-	/** The peak height filter setting. */
-	const ProjectSetting<int>*		peakHeightFilter;
+	/** The primary date filter setting. Represents a filter for only this date when no max setting is present, and as a minimum date otherwise. */
+	ProjectSetting<QDate>	ascentFilterDate;
+	/** The maximum date filter setting. */
+	ProjectSetting<QDate>	ascentFilterMaxDate;
+	/** The primary peak height filter setting. Represents a filter for only this 1000s class of height when no max setting is present, and as a minimum height otherwise. */
+	ProjectSetting<int>		ascentFilterPeakHeight;
+	/** The maximum peak height filter setting. */
+	ProjectSetting<int>		ascentFilterMaxPeakHeight;
 	/** The volcano filter setting. */
-	const ProjectSetting<bool>*		volcanoFilter;
+	ProjectSetting<bool>	ascentFilterVolcano;
 	/** The range filter setting. */
-	const ProjectSetting<int>*		rangeFilter;
+	ProjectSetting<int>		ascentFilterRange;
 	/** The hike kind filter setting. */
-	const ProjectSetting<int>*		hikeKindFilter;
-	/** The difficulty filter setting. */
-	const ProjectSetting<int>*		difficultyFilter;
+	ProjectSetting<int>		ascentFilterHikeKind;
+	/** The difficulty system filter setting. Only valid when the difficulty grade setting is also present. */
+	ProjectSetting<int>		ascentFilterDifficultySystem;
+	/** The difficulty grade filter setting. */
+	ProjectSetting<int>		ascentFilterDifficultyGrade;
 	/** The hiker filter setting. */
-	const ProjectSetting<int>*		hikerFilter;
+	ProjectSetting<int>		ascentFilterHiker;
 	
-	/**
-	 * Adds a setting to the project settings table.
-	 * 
-	 * Only used during initialization.
-	 * 
-	 * @param setting	The setting to add.
-	 */
-	template<typename T> inline void addSetting(const ProjectSetting<T>* setting)
-	{
-		addColumn(setting);
-		defaults.append({ (Column*) setting, setting->getDefault() });
-	}
-	
+
+
 	/**
 	 * Creates a new ProjectSettings object.
-	 */
-	inline ProjectSettings() :
-			SettingsTable(),
-			//												name					SQL type	nullable	table	default value
-			defaultHiker		(new ProjectSetting<int>	("defaultHiker",		ID,			true,		this)),
-			// Implicit settings
-			dateFilter			(new ProjectSetting<QDate>	("dateFilter",			Date,		true,		this)),
-			peakHeightFilter	(new ProjectSetting<int>	("peakHeightFilter",	Integer,	true,		this)),
-			volcanoFilter		(new ProjectSetting<bool>	("volcanoFilter",		Bit,		true,		this)),
-			rangeFilter			(new ProjectSetting<int>	("rangeFilter",			ID,			true,		this)),
-			hikeKindFilter		(new ProjectSetting<int>	("hikeKindFilter",		Enum,		true,		this)),
-			difficultyFilter	(new ProjectSetting<int>	("difficultyFilter",	DualEnum,	true,		this)),
-			hikerFilter			(new ProjectSetting<int>	("hikerFilter",			ID,			true,		this))
-	{
-		addSetting(defaultHiker);
-		// Implicit settings
-		addSetting(dateFilter);
-		addSetting(peakHeightFilter);
-		addSetting(volcanoFilter);
-		addSetting(rangeFilter);
-		addSetting(hikeKindFilter);
-		addSetting(difficultyFilter);
-		addSetting(hikerFilter);
-	}
-	
-	/**
-	 * Sets all settings to their default values.
 	 * 
-	 * @param setting	The setting.
-	 * @return			The default value for the setting.
+	 * Creates all project setting objects dynamically. The ProjectSettings object as well as all
+	 * settings objects do not neet to be changed, destroyed or recreated when a project is closed
+	 * or opened.
 	 */
-	inline void insertDefaults(QWidget* parent) {
-		QList<ColumnDataPair>  firstRowColumnDataPairs = QList<ColumnDataPair>();
-		QList<ColumnDataPair> secondRowColumnDataPairs = QList<ColumnDataPair>();
-		for (const ColumnDataPair& columnDefaultPair : defaults) {
-			 firstRowColumnDataPairs.append({columnDefaultPair.first, columnDefaultPair.second});
-			secondRowColumnDataPairs.append({columnDefaultPair.first, QVariant()});
-		}
-		addRow(parent, firstRowColumnDataPairs);
-		addRow(parent, secondRowColumnDataPairs);
-	}
+	inline ProjectSettings(SettingsTable* table) :
+			//												type				key																default value
+			databaseVersion					(ProjectSetting<QString>	(table,	"databaseVersion")),
+			defaultHiker					(ProjectSetting<int>		(table,	"defaultHiker")),
+			// Implicit settings
+			ascentFilterDate				(ProjectSetting<QDate>		(table,	"implicit/mainWindow/filters/ascentsTable/date")),
+			ascentFilterMaxDate				(ProjectSetting<QDate>		(table,	"implicit/mainWindow/filters/ascentsTable/dateMax")),
+			ascentFilterPeakHeight			(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/peakHeight")),
+			ascentFilterMaxPeakHeight		(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/peakHeightMax")),
+			ascentFilterVolcano				(ProjectSetting<bool>		(table,	"implicit/mainWindow/filters/ascentsTable/volcano")),
+			ascentFilterRange				(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/range")),
+			ascentFilterHikeKind			(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/hikeKind")),
+			ascentFilterDifficultySystem	(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/difficultySystem")),
+			ascentFilterDifficultyGrade		(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/difficultyGrade")),
+			ascentFilterHiker				(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/hiker"))
+	{}
 };
 
 

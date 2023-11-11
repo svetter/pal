@@ -637,13 +637,16 @@ QSet<Filter> AscentFilterBar::collectFilters()
  */
 void AscentFilterBar::clearSavedFilters()
 {
-	db->projectSettings->dateFilter			->setBothToNull(this);
-	db->projectSettings->peakHeightFilter	->setBothToNull(this);
-	db->projectSettings->volcanoFilter		->setBothToNull(this);
-	db->projectSettings->rangeFilter		->setBothToNull(this);
-	db->projectSettings->hikeKindFilter		->setBothToNull(this);
-	db->projectSettings->difficultyFilter	->setBothToNull(this);
-	db->projectSettings->hikerFilter		->setBothToNull(this);
+	db->projectSettings->ascentFilterDate				.clear(this);
+	db->projectSettings->ascentFilterMaxDate			.clear(this);
+	db->projectSettings->ascentFilterPeakHeight			.clear(this);
+	db->projectSettings->ascentFilterMaxPeakHeight		.clear(this);
+	db->projectSettings->ascentFilterVolcano			.clear(this);
+	db->projectSettings->ascentFilterRange				.clear(this);
+	db->projectSettings->ascentFilterHikeKind			.clear(this);
+	db->projectSettings->ascentFilterDifficultySystem	.clear(this);
+	db->projectSettings->ascentFilterDifficultyGrade	.clear(this);
+	db->projectSettings->ascentFilterHiker				.clear(this);
 }
 
 /**
@@ -669,46 +672,46 @@ void AscentFilterBar::saveFilters(const QSet<Filter> filters)
 		
 		if (column == compAscents->dateColumn) {
 			assert(isDate);
-			db->projectSettings->dateFilter->set(this, value);
-			if (hasSecond) db->projectSettings->dateFilter->setSecond(this, secondValue);
+			db->projectSettings->ascentFilterDate.set(this, value);
+			if (hasSecond) db->projectSettings->ascentFilterMaxDate.set(this, secondValue);
 			continue;
 		}
 		
 		if (column == compAscents->peakHeightColumn) {
 			assert(isInt);
-			db->projectSettings->peakHeightFilter->set(this, value);
-			if (hasSecond) db->projectSettings->peakHeightFilter->setSecond(this, secondValue);
+			db->projectSettings->ascentFilterPeakHeight.set(this, value);
+			if (hasSecond) db->projectSettings->ascentFilterMaxPeakHeight.set(this, secondValue);
 			continue;
 		}
 		
 		if (column == compAscents->volcanoColumn) {
 			assert(isBool);
-			db->projectSettings->volcanoFilter->set(this, value);
+			db->projectSettings->ascentFilterVolcano.set(this, value);
 			continue;
 		}
 		
 		if (column == compAscents->rangeIDColumn) {
 			ItemID rangeID = value.toInt();
-			db->projectSettings->rangeFilter->set(this, rangeID.isValid() ? rangeID.asQVariant() : -1);
+			db->projectSettings->ascentFilterRange.set(this, rangeID.isValid() ? rangeID.asQVariant() : -1);
 			continue;
 		}
 		
 		if (column == compAscents->hikeKindColumn) {
 			assert(isInt);
-			db->projectSettings->hikeKindFilter->set(this, value);
+			db->projectSettings->ascentFilterHikeKind.set(this, value);
 			continue;
 		}
 		
 		if (column == compAscents->difficultyColumn) {
 			assert(isInt);
-			db->projectSettings->difficultyFilter->set(this, value);
-			db->projectSettings->difficultyFilter->setSecond(this, secondValue);
+			db->projectSettings->ascentFilterDifficultySystem.set(this, value);
+			db->projectSettings->ascentFilterDifficultyGrade.set(this, secondValue);
 			continue;
 		}
 		
 		if (column == compAscents->hikerIDsColumn) {
 			ItemID hikerID = value.toInt();
-			db->projectSettings->hikerFilter->set(this, hikerID.isValid() ? hikerID.asQVariant() : -1);
+			db->projectSettings->ascentFilterHiker.set(this, hikerID.isValid() ? hikerID.asQVariant() : -1);
 			continue;
 		}
 		
@@ -733,47 +736,47 @@ QSet<Filter> AscentFilterBar::parseFiltersFromProjectSettings()
 	
 	ProjectSettings* settings = db->projectSettings;
 	
-	if (settings->dateFilter->isNotNull()) {
-		QDate date1 = settings->dateFilter->get();
-		if (settings->dateFilter->secondIsNotNull()) {
-			QDate date2 = settings->dateFilter->getSecond();
+	if (settings->ascentFilterDate.isPresent()) {
+		QDate date1 = settings->ascentFilterDate.get();
+		if (settings->ascentFilterMaxDate.isPresent()) {
+			QDate date2 = settings->ascentFilterMaxDate.get();
 			filters.insert(Filter(compAscents->dateColumn, date1, date2));
 		} else {
 			filters.insert(Filter(compAscents->dateColumn, date1));
 		}
 	}
 	
-	if (settings->peakHeightFilter->isNotNull()) {
-		int minHeight = settings->peakHeightFilter->get();
-		assert(settings->peakHeightFilter->secondIsNotNull());
-		int maxHeight = settings->peakHeightFilter->getSecond();
+	if (settings->ascentFilterPeakHeight.isPresent()) {
+		int minHeight = settings->ascentFilterPeakHeight.get();
+		assert(settings->ascentFilterMaxPeakHeight.isPresent());
+		int maxHeight = settings->ascentFilterMaxPeakHeight.get();
 		filters.insert(Filter(compAscents->peakHeightColumn, minHeight, maxHeight));
 	}
 	
-	if (settings->volcanoFilter->isNotNull()) {
-		bool volcano = settings->volcanoFilter->get();
+	if (settings->ascentFilterVolcano.isPresent()) {
+		bool volcano = settings->ascentFilterVolcano.get();
 		filters.insert(Filter(compAscents->volcanoColumn, volcano));
 	}
 	
-	if (settings->rangeFilter->isNotNull()) {
-		ItemID rangeID = settings->rangeFilter->get();
+	if (settings->ascentFilterRange.isPresent()) {
+		ItemID rangeID = settings->ascentFilterRange.get();
 		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
 	}
 	
-	if (settings->hikeKindFilter->isNotNull()) {
-		int hikeKind = settings->hikeKindFilter->get();
+	if (settings->ascentFilterHikeKind.isPresent()) {
+		int hikeKind = settings->ascentFilterHikeKind.get();
 		filters.insert(Filter(compAscents->hikeKindColumn, hikeKind));
 	}
 	
-	if (settings->difficultyFilter->isNotNull()) {
-		assert(settings->difficultyFilter->secondIsNotNull());
-		int difficultySystem = settings->difficultyFilter->get();
-		int difficultyGrade = settings->difficultyFilter->getSecond();
+	if (settings->ascentFilterDifficultySystem.isPresent()) {
+		assert(settings->ascentFilterDifficultyGrade.isPresent());
+		int difficultySystem = settings->ascentFilterDifficultySystem.get();
+		int difficultyGrade = settings->ascentFilterDifficultyGrade.get();
 		filters.insert(Filter(compAscents->difficultyColumn, difficultySystem, difficultyGrade));
 	}
 	
-	if (settings->hikerFilter->isNotNull()) {
-		ItemID hikerID = settings->hikerFilter->get();
+	if (settings->ascentFilterHiker.isPresent()) {
+		ItemID hikerID = settings->ascentFilterHiker.get();
 		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
 	}
 	
