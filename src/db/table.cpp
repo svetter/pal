@@ -181,12 +181,11 @@ const Column* Table::getColumnByIndex(int index) const
 /**
  * Initializes the buffer with the contents from the database.
  * 
- * @param parent		The parent window.
- * @param expectEmpty	Whether the table is expected to be empty. A warning is printed if a table is unexpectedly empty.
+ * @param parent	The parent window.
  */
-void Table::initBuffer(QWidget* parent, bool expectEmpty)
+void Table::initBuffer(QWidget* parent)
 {
-	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent, expectEmpty);
+	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent);
 	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
 	buffer.reset();
 	for (QList<QVariant>* newRow : newContents) {
@@ -546,11 +545,10 @@ void Table::createTableInSql(QWidget* parent)
  * Runs a SQL query for all data in the table and returns the result as a two-dimensional list of
  * QVariants.
  * 
- * @param parent		The parent window.
- * @param expectEmpty	Whether the table is expected to be empty. A warning is printed if a table is unexpectedly empty.
- * @return				A two-dimensional list of QVariants containing the response to the SQL query.
+ * @param parent	The parent window.
+ * @return			A two-dimensional list of QVariants containing the response to the SQL query.
  */
-QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expectEmpty) const
+QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
 {
 	QString queryString = QString(
 			"SELECT " + getColumnListString() +
@@ -579,10 +577,6 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent, bool expect
 		rowIndex++;
 	}
 	
-	if (!expectEmpty && result.empty()) {
-		qDebug() << "Couldn't read record from SQL query, or it returned nothing:";
-		qDebug() << queryString;
-	}
 	return result;
 }
 

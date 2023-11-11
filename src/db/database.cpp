@@ -124,7 +124,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	}
 	
 	// All tables still empty of course, but this doubles as a table format check
-	populateBuffers(parent, true);
+	populateBuffers(parent);
 }
 
 /**
@@ -210,16 +210,15 @@ QString Database::getCurrentFilepath() const
  * 
  * @pre A database file is currently open.
  * 
- * @param parent		The parent window.
- * @param expectEmpty	Whether the tables are expected to be empty.
+ * @param parent	The parent window.
  */
-void Database::populateBuffers(QWidget* parent, bool expectEmpty)
+void Database::populateBuffers(QWidget* parent)
 {
 	assert(databaseLoaded);
 	
 	for (Table* table : tables) {
 		assert(table->getNumberOfRows() == 0);
-		table->initBuffer(parent, expectEmpty);
+		table->initBuffer(parent);
 	}
 }
 

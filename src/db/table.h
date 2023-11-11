@@ -82,7 +82,7 @@ public:
 	const Column* getColumnByIndex(int index) const;
 
 	// Buffer access
-	void initBuffer(QWidget* parent, bool expectEmpty = false);
+	void initBuffer(QWidget* parent);
 	void resetBuffer();
 	int getNumberOfRows() const;
 	const QList<QVariant>* getBufferRow(BufferRowIndex bufferRowIndex) const;
@@ -107,7 +107,7 @@ protected:
 private:
 	// SQL
 	void createTableInSql(QWidget* parent);
-	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent, bool expectEmpty = false) const;
+	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent) const;
 	ValidItemID addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
 	void updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
 	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
