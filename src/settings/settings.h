@@ -460,12 +460,15 @@ public:
 	}
 	
 private:
-	static bool isBelowVersion(QString settingsVersion, QString minimalVersion);
 	static bool settingsOlderThan(QString version);
 public:
-	static QString getAppVersion();
 	static void checkForVersionChange();
 };
+
+
+
+QString getAppVersion();
+bool isBelowVersion(QString versionToCheck, QString minimalVersion);
 
 
 

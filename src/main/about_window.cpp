@@ -40,7 +40,7 @@ AboutWindow::AboutWindow(QWidget* parent) :
 {
 	setupUi(this);
 	
-	QString appVersion	= Settings::getAppVersion();
+	QString appVersion	= getAppVersion();
 	QString qtVersion	= QString("%1.%2.%3").arg(QT_VERSION_MAJOR).arg(QT_VERSION_MINOR).arg(QT_VERSION_PATCH);
 	
 	appNameLabel	->setText(appNameLabel	->text().replace("$APP_VERSION$",	appVersion));

@@ -73,42 +73,6 @@ QString getDefaultLanguageCode()
 
 
 /**
- * Returns a string containing the application's version number.
- * 
- * @return The application's version number in string form.
- */
-QString Settings::getAppVersion()
-{
-	return QString("%1.%2.%3")
-		.arg(APP_VERSION_MAJOR)
-		.arg(APP_VERSION_MINOR)
-		.arg(APP_VERSION_PATCH);
-}
-
-/**
- * Compares two version strings and determines whether the first one is older than the second one.
- * 
- * @param settingsVersion The version of the application that saved the settings file.
- * @param minimalVersion The version of the application with which to compare the settings file version.
- * @return True if the settings file is older than the given version, false otherwise.
- */
-bool Settings::isBelowVersion(QString settingsVersion, QString minimalVersion)
-{
-	QStringList settingsSplit	= settingsVersion.split('.');
-	QStringList minimalSplit	= minimalVersion.split('.');
-	assert(settingsSplit.size() == 3 && minimalSplit.size() == 3);
-	for (int i = 0; i < 3; i++) {
-		bool conversionOk = false;
-		int settingsNumber = settingsSplit.at(i).toInt(&conversionOk);
-		assert(conversionOk);
-		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
-		assert(conversionOk);
-		if (settingsNumber < minimalNumber) return true;
-	}
-	return false;
-}
-
-/**
  * Determines whether the settings file was last saved by a version of the application that is
  * older than the current version.
  * 
@@ -156,6 +120,46 @@ void Settings::checkForVersionChange()
 		appVersion.set(currentAppVersion);
 		qDebug().noquote().nospace() << "Updated settings from v" << appVersion.get() << " to v" << currentAppVersion;
 	}
+}
+
+
+
+
+
+/**
+ * Returns a string containing the application's version number.
+ * 
+ * @return The application's version number in string form.
+ */
+QString getAppVersion()
+{
+	return QString("%1.%2.%3")
+		.arg(APP_VERSION_MAJOR)
+		.arg(APP_VERSION_MINOR)
+		.arg(APP_VERSION_PATCH);
+}
+
+/**
+ * Compares two version strings and determines whether the first one is older than the second one.
+ * 
+ * @param settingsVersion	The version of the application that saved the settings file.
+ * @param minimalVersion	The version of the application with which to compare the settings file version.
+ * @return					True if the settings file is older than the given version, false otherwise.
+ */
+bool isBelowVersion(QString versionToCheck, QString minimalVersion)
+{
+	QStringList checkSplit	= versionToCheck.split('.');
+	QStringList minimalSplit	= minimalVersion.split('.');
+	assert(checkSplit.size() == 3 && minimalSplit.size() == 3);
+	for (int i = 0; i < 3; i++) {
+		bool conversionOk = false;
+		int settingsNumber = checkSplit.at(i).toInt(&conversionOk);
+		assert(conversionOk);
+		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
+		assert(conversionOk);
+		if (settingsNumber < minimalNumber) return true;
+	}
+	return false;
 }
 
 
