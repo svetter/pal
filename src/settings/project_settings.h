@@ -25,7 +25,7 @@
 #define PROJECT_SETTINGS_H
 
 #include "src/db/table.h"
-#include "src/db/settings_table.h"
+#include "src/db/tables/settings_table.h"
 
 #include <QString>
 #include <QVariant>

@@ -69,6 +69,7 @@ SOURCES += \
 	src/db/tables/photos_table.cpp \
 	src/db/tables/ranges_table.cpp \
 	src/db/tables/regions_table.cpp \
+	src/db/tables/settings_table.cpp \
 	src/db/tables/trips_table.cpp \
 	src/dialogs/add_hiker_dialog.cpp \
 	src/dialogs/country_dialog.cpp \
@@ -86,6 +87,7 @@ SOURCES += \
 	src/main/ascent_filter_bar.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
+	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
@@ -121,9 +123,7 @@ HEADERS += \
 	src/db/database.h \
 	src/db/db_error.h \
 	src/db/normal_table.h \
-	src/db/project_settings.h \
 	src/db/row_index.h \
-	src/db/settings_table.h \
 	src/db/table.h \
 	src/db/table_buffer.h \
 	src/db/tables/ascents_table.h \
@@ -134,6 +134,7 @@ HEADERS += \
 	src/db/tables/photos_table.h \
 	src/db/tables/ranges_table.h \
 	src/db/tables/regions_table.h \
+	src/db/tables/settings_table.h \
 	src/db/tables/trips_table.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
@@ -151,6 +152,7 @@ HEADERS += \
 	src/main/ascent_filter_bar.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
+	src/settings/project_settings.h \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \

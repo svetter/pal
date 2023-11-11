@@ -31,7 +31,6 @@
 #include "src/data/region.h"
 #include "src/data/range.h"
 #include "src/data/country.h"
-#include "src/db/project_settings.h"
 #include "src/db/tables/ascents_table.h"
 #include "src/db/tables/countries_table.h"
 #include "src/db/tables/hikers_table.h"
@@ -41,6 +40,7 @@
 #include "src/db/tables/ranges_table.h"
 #include "src/db/tables/regions_table.h"
 #include "src/db/tables/trips_table.h"
+#include "src/settings/project_settings.h"
 
 #include <QStatusBar>
 #include <QSqlQuery>
