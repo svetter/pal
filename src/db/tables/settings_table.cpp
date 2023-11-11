@@ -102,9 +102,8 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* set
 		// Add setting
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 		columnDataPairs.append({settingKeyColumn,	setting->key});
-		columnDataPairs.append({settingValueColumn,	setting->defaultValue});
-		BufferRowIndex newBufferIndex = addRow(parent, columnDataPairs);
-		id = primaryKeyColumn->getValueAt(newBufferIndex);
+		columnDataPairs.append({settingValueColumn,	value});
+		addRow(parent, columnDataPairs);
 	}
 }
 
@@ -134,11 +133,11 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidge
 {
 	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting->key);
 	
-	if (bufferRowIndices.size() == 1) {
-		return VALID_ITEM_ID();
+	if (bufferRowIndices.size() == 0) {
+		return ItemID();
 	}
-	
 	BufferRowIndex settingIndex = bufferRowIndices.last();
+	
 	if (bufferRowIndices.size() > 1) {
 		QString error = "WARNING: Found " + QString::number(bufferRowIndices.size()) + " entries for project setting " + setting->key + ".";
 		if (parent) {

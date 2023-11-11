@@ -61,7 +61,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	restoreDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
 	
 	
-	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, defaultHikerCombo, selectableHikerIDs);
+	repopulateHikerCombo();
 	
 	
 	connect(newHikerButton,										&QPushButton::clicked,	this,	&ProjectSettingsWindow::handle_newHiker);
@@ -86,6 +86,11 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 	}
 }
 
+void ProjectSettingsWindow::repopulateHikerCombo()
+{
+	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, defaultHikerCombo, selectableHikerIDs);
+}
+
 
 
 /**
@@ -106,13 +111,19 @@ void ProjectSettingsWindow::loadSettings()
  */
 void ProjectSettingsWindow::saveSettings()
 {
-	if (firstOpen && !newDefaultHikerLineEdit->text().isEmpty()) {
+	if (firstOpen) {
+		if (newDefaultHikerLineEdit->text().isEmpty()) return;
+		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
 		Hiker* newDefaultHiker = new Hiker(ItemID(), newDefaultHikerName);
-		BufferRowIndex newHikerIndex = db->hikersTable->addRow(this, newDefaultHiker);
-		defaultHikerCombo->setCurrentIndex(newHikerIndex.get() + 1);	// 0 is None
+		db->hikersTable->addRow(this, newDefaultHiker);
+		
+		db->projectSettings->defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
+		delete newDefaultHiker;
 	}
-	db->projectSettings->defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+	else {
+		db->projectSettings->defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+	}
 }
 
 
@@ -126,6 +137,8 @@ void ProjectSettingsWindow::handle_newHiker()
 {
 	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
 	if (newHikerIndex.isInvalid()) return;
+	
+	repopulateHikerCombo();
 	ValidItemID hikerID = db->hikersTable->getPrimaryKeyAt(newHikerIndex);
 	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 }

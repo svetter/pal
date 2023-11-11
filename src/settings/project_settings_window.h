@@ -54,6 +54,8 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	
 public:
 	ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen = false);
+private:
+	void repopulateHikerCombo();
 	
 private:
 	void loadSettings();
