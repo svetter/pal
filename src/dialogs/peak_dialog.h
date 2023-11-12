@@ -60,7 +60,7 @@ private slots:
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
 	
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
@@ -71,7 +71,7 @@ private:
 BufferRowIndex	openNewPeakDialogAndStore		(QWidget* parent, Database* db);
 BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 void			openEditPeakDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeletePeakDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeletePeaksDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

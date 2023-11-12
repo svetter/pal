@@ -117,10 +117,10 @@ public:
 	Range*		getRangeAt		(BufferRowIndex rowIndex) const;
 	Country*	getCountryAt	(BufferRowIndex rowIndex) const;
 	
-	QList<WhatIfDeleteResult> whatIf_removeRow(NormalTable* table, ValidItemID primaryKey);
-	void removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey);
+	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable* table, QSet<ValidItemID> primaryKeys);
+	void removeRows(QWidget* parent, NormalTable* table, QSet<ValidItemID> primaryKeys);
 private:
-	QList<WhatIfDeleteResult> removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey);
+	QList<WhatIfDeleteResult> removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, QSet<ValidItemID> primaryKeys);
 	
 	void populateBuffers(QWidget* parent);
 	

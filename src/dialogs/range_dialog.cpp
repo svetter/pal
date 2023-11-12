@@ -205,22 +205,27 @@ void openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the range to delete in the database's range table buffer.
+ * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
  */
-void openDeleteRangeDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Range* range = db->getRangeAt(bufferRowIndex);
-	ValidItemID rangeID = FORCE_VALID(range->rangeID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->rangesTable, rangeID);
+	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->rangesTable, rangeIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = RangeDialog::tr("Delete mountain range");
+		bool plural = rangeIDs.size() > 1;
+		QString windowTitle = plural ? RangeDialog::tr("Delete mountain ranges") : RangeDialog::tr("Delete mountain range");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->rangesTable, rangeID);
+	db->removeRows(parent, db->rangesTable, rangeIDs);
 }
 
 

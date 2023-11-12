@@ -389,7 +389,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_viewSelectedItem);
 	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
 	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_duplicateAndEditSelectedItem);
-	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_deleteSelectedItem);
+	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_deleteSelectedItems);
 	
 	// Keyboard shortcuts
 	QList<QTableView*> tableViews = mainAreaTabs->findChildren<QTableView*>();
@@ -407,7 +407,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
 		connect(openShortcut,		&QShortcut::activated, this, &MainWindow::handle_viewSelectedItem);
 		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::handle_editSelectedItem);
 		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
-		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItem);
+		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItems);
 	}
 }
 
@@ -715,17 +715,24 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 }
 
 /**
- * Opens a dialog for deleting the item specified by the given ItemTypeMapper and view row index.
+ * Opens a dialog for deleting the items specified by the given ItemTypeMapper and a set of view row
+ * indices.
  * 
  * If the item was deleted, performs the necessary updates to the UI.
  * 
- * @param mapper		The ItemTypeMapper for the type of item to delete.
- * @param viewRowIndex	The view row index of the item to delete.
+ * @param mapper			The ItemTypeMapper for the type of item to delete.
+ * @param viewRowIndices	The view row indices of the items to delete.
  */
-void MainWindow::deleteItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices)
 {
-	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	mapper.openDeleteItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	if (viewRowIndices.isEmpty()) return;
+	
+	QSet<BufferRowIndex> bufferRowIndices = QSet<BufferRowIndex>();
+	for (const ViewRowIndex& viewRowIndex : viewRowIndices) {
+		bufferRowIndices += mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+	}
+	
+	mapper.openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
 	
 	performUpdatesAfterUserAction(mapper, true);
 	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
@@ -829,8 +836,13 @@ void MainWindow::handle_rightClick(QPoint pos)
 	QModelIndex index = currentTableView->indexAt(pos);
 	if (!index.isValid()) return;
 	
-	tableContextMenuOpenAction->setVisible(currentTableView == ascentsTableView);
-	tableContextMenuDuplicateAction->setVisible(currentTableView == ascentsTableView || currentTableView == peaksTableView);
+	bool singleRowSelected = currentTableView->selectionModel()->selectedRows().size() == 1;
+	bool viewableItemTable = currentTableView == ascentsTableView;
+	bool duplicatableItemTable = currentTableView == ascentsTableView || currentTableView == peaksTableView;
+	
+	tableContextMenuOpenAction		->setVisible(singleRowSelected && viewableItemTable);
+	tableContextMenuEditAction		->setVisible(singleRowSelected);
+	tableContextMenuDuplicateAction	->setVisible(singleRowSelected && duplicatableItemTable);
 	
 	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
 }
@@ -907,19 +919,26 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 /**
  * Event handler for the delete action in the table context menu.
  * 
- * Opens a dialog for deleting the currently selected item in the active table.
+ * Opens a dialog for deleting the currently selected items in the active table.
  */
-void MainWindow::handle_deleteSelectedItem()
+void MainWindow::handle_deleteSelectedItems()
 {
 	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex selectedIndex = currentTableView->currentIndex();
-	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
+	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
+	for (const QModelIndex& index : currentTableView->selectionModel()->selectedRows()) {
+		selectedViewRowIndices += ViewRowIndex(index.row());
+	}
+	if (selectedViewRowIndices.isEmpty()) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
+	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedViewRowIndices] (const ItemTypeMapper& mapper, bool debugTable) {
 		if (debugTable) {
-			mapper.openDeleteItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
+			QSet<BufferRowIndex> selectedBufferRowIndices = QSet<BufferRowIndex>();
+			for (const ViewRowIndex& viewRowIndex : selectedViewRowIndices) {
+				selectedBufferRowIndices += BufferRowIndex(viewRowIndex.get());
+			}
+			mapper.openDeleteItemsDialogAndExecuteMethod(this, &db, selectedBufferRowIndices);
 		} else {
-			deleteItem(mapper, ViewRowIndex(selectedIndex.row()));
+			deleteItems(mapper, selectedViewRowIndices);
 		}
 	});
 	assert(done);

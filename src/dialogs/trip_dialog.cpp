@@ -256,22 +256,27 @@ void openEditTripDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the trip to delete in the database's trip table buffer.
+ * @param bufferRowIndices	The indices of the trips to delete in the database's trip table buffer.
  */
-void openDeleteTripDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteTripsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Trip* trip = db->getTripAt(bufferRowIndex);
-	ValidItemID tripID = FORCE_VALID(trip->tripID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->tripsTable, tripID);
+	QSet<ValidItemID> tripIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->tripsTable, tripIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = TripDialog::tr("Delete trip");
+		bool plural = tripIDs.size() > 1;
+		QString windowTitle = plural ? TripDialog::tr("Delete trips") : TripDialog::tr("Delete trip");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->tripsTable, tripID);
+	db->removeRows(parent, db->tripsTable, tripIDs);
 }
 
 

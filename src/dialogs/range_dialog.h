@@ -54,7 +54,7 @@ private:
 	void insertInitData();
 	
 private slots:
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
@@ -62,9 +62,9 @@ private:
 
 
 
-BufferRowIndex	openNewRangeDialogAndStore		(QWidget* parent, Database* db);
-void			openEditRangeDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteRangeDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+BufferRowIndex	openNewRangeDialogAndStore			(QWidget* parent, Database* db);
+void			openEditRangeDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteRangesDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

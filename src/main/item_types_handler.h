@@ -110,7 +110,7 @@ public:
 	/** The method opening the dialog for editing an item of this type. */
 	void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex);
 	/** The method opening the dialog for deleting an item of this type. */
-	void			(* const openDeleteItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex);
+	void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>);
 	
 	
 private:
@@ -138,7 +138,7 @@ public:
 	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
 	 * @param openDuplicateItemDialogAndStoreMethod	The method opening the dialog for duplicating an item.
 	 * @param openEditItemDialogAndStoreMethod		The method opening the dialog for editing an item.
-	 * @param openDeleteItemDialogAndStoreMethod	The method opening the dialog for deleting an item.
+	 * @param openDeleteItemsDialogAndExecuteMethod	The method opening the dialog for deleting an item.
 	 */
 	inline ItemTypeMapper(
 			PALItemType			type,
@@ -156,7 +156,7 @@ public:
 			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 			BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
 			void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
-			void			(* const openDeleteItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex)
+			void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>)
 			) :
 			type									(type),
 			name									(name),
@@ -173,7 +173,7 @@ public:
 			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
 			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
 			openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
-			openDeleteItemDialogAndStoreMethod		(openDeleteItemDialogAndStoreMethod),
+			openDeleteItemsDialogAndExecuteMethod	(openDeleteItemsDialogAndExecuteMethod),
 			hasBeenOpened							(false)
 	{}
 	
@@ -258,7 +258,7 @@ public:
 				&openNewAscentDialogAndStore,
 				&openDuplicateAscentDialogAndStore,
 				&openEditAscentDialogAndStore,
-				&openDeleteAscentDialogAndExecute
+				&openDeleteAscentsDialogAndExecute
 			)
 	{}
 };
@@ -284,7 +284,7 @@ public:
 				&openNewPeakDialogAndStore,
 				&openDuplicatePeakDialogAndStore,
 				&openEditPeakDialogAndStore,
-				&openDeletePeakDialogAndExecute
+				&openDeletePeaksDialogAndExecute
 			)
 	{}
 };
@@ -310,7 +310,7 @@ public:
 				&openNewTripDialogAndStore,
 				nullptr,
 				&openEditTripDialogAndStore,
-				&openDeleteTripDialogAndExecute
+				&openDeleteTripsDialogAndExecute
 			)
 	{}
 };
@@ -336,7 +336,7 @@ public:
 				&openNewHikerDialogAndStore,
 				nullptr,
 				&openEditHikerDialogAndStore,
-				&openDeleteHikerDialogAndExecute
+				&openDeleteHikersDialogAndExecute
 			)
 	{}
 };
@@ -362,7 +362,7 @@ public:
 				&openNewRegionDialogAndStore,
 				nullptr,
 				&openEditRegionDialogAndStore,
-				&openDeleteRegionDialogAndExecute
+				&openDeleteRegionsDialogAndExecute
 			)
 	{}
 };
@@ -388,7 +388,7 @@ public:
 				&openNewRangeDialogAndStore,
 				nullptr,
 				&openEditRangeDialogAndStore,
-				&openDeleteRangeDialogAndExecute
+				&openDeleteRangesDialogAndExecute
 			)
 	{}
 };
@@ -414,7 +414,7 @@ public:
 				&openNewCountryDialogAndStore,
 				nullptr,
 				&openEditCountryDialogAndStore,
-				&openDeleteCountryDialogAndExecute
+				&openDeleteCountriesDialogAndExecute
 			)
 	{}
 };

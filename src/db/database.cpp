@@ -553,7 +553,7 @@ Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 
 
 /**
- * Returns a list of consequences of removing the row with the given primary key from the given
+ * Returns a list of consequences of removing the rows with the given primary keys from the given
  * normal table.
  * 
  * A "consequence" of a deletion here is any instance where another item would have information
@@ -562,47 +562,49 @@ Country* Database::getCountryAt(BufferRowIndex rowIndex) const
  * All consequences of the same kind, i.e., affected items in the same table, are grouped together
  * as one WhatIfDeleteResult with a count of how many items would be affected.
  * 
- * Delegates to removeRow_referenceSearch().
+ * Delegates to removeRows_referenceSearch().
  * 
  * @see WhatIfDeleteResult
  * 
  * @pre A database file is currently open.
  * 
  * @param table			The table to search in.
- * @param primaryKey	The primary key to search for.
+ * @param primaryKeys	The primary keys to search for.
  * @return				A list of all rows in the given table that reference the given primary key.
  */
-QList<WhatIfDeleteResult> Database::whatIf_removeRow(NormalTable* table, ValidItemID primaryKey)
+QList<WhatIfDeleteResult> Database::whatIf_removeRows(NormalTable* table, QSet<ValidItemID> primaryKeys)
 {
 	assert(databaseLoaded);
 	
-	return Database::removeRow_referenceSearch(nullptr, true, table, primaryKey);
+	return Database::removeRows_referenceSearch(nullptr, true, table, primaryKeys);
 }
 
 /**
- * Removes the row with the given primary key from the given normal table.
+ * Removes the rows with the given primary keys from the given normal table.
  * 
  * Before removing the row, all references to the row have to be removed from other tables. This
- * task is delegated to removeRow_referenceSearch().
+ * task is delegated to removeRows_referenceSearch().
  * 
  * @pre A database file is currently open.
  * 
  * @param parent		The parent window.
  * @param table			The table to remove the row from.
- * @param primaryKey	The primary key of the row to remove.
+ * @param primaryKeys	The primary keys of the rows to remove.
  */
-void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primaryKey)
+void Database::removeRows(QWidget* parent, NormalTable* table, QSet<ValidItemID> primaryKeys)
 {
 	assert(databaseLoaded);
 	
-	Database::removeRow_referenceSearch(parent, false, table, primaryKey);
+	Database::removeRows_referenceSearch(parent, false, table, primaryKeys);
 	
-	table->removeRow(parent, { table->primaryKeyColumn }, { primaryKey });
+	for (auto iter = primaryKeys.constBegin(); iter != primaryKeys.constEnd(); iter++) {
+		table->removeRow(parent, {table->primaryKeyColumn}, {*iter});
+	}
 }
 
 /**
- * For the item with the given primary key in the given table, performs an exhaustive search for
- * all references to it in other tables and either collects or removes them.
+ * For the items with the given primary keys in the given table, performs an exhaustive search for
+ * all references to them in other tables and either collects or removes them.
  * 
  * @see WhatIfDeleteResult
  * 
@@ -611,10 +613,10 @@ void Database::removeRow(QWidget* parent, NormalTable* table, ValidItemID primar
  * @param parent			The parent window.
  * @param searchNotExecute	Whether to collect references (true) or remove them (false).
  * @param table				The table from which a row is to be removed.
- * @param primaryKey		The primary key of the row to be removed.
+ * @param primaryKeys		The primary keys of the rows to be removed.
  * @return					A list of WhatIfDeleteResults which lists the reference count for each affected table. Empty if searchNotExecute is false.
  */
-QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, ValidItemID primaryKey)
+QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, QSet<ValidItemID> primaryKeys)
 {
 	assert(databaseLoaded);
 	
@@ -633,7 +635,10 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			
 			// WHAT IF
 			if (searchNotExecute) {
-				int numAffectedRowIndices = candidateAssociativeTable->getNumberOfMatchingRows(matchingColumn, primaryKey);
+				int numAffectedRowIndices = 0;
+				for (const ValidItemID& primaryKey : primaryKeys) {
+					numAffectedRowIndices += candidateAssociativeTable->getNumberOfMatchingRows(matchingColumn, primaryKey);
+				}
 				if (numAffectedRowIndices > 0) {
 					const NormalTable* itemTable = candidateAssociativeTable->traverseAssociativeRelation(primaryKeyColumn);
 					result.append(WhatIfDeleteResult(candidateAssociativeTable, itemTable, numAffectedRowIndices));
@@ -641,7 +646,9 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			}
 			// EXECUTE
 			else {
-				candidateAssociativeTable->removeMatchingRows(parent, matchingColumn, primaryKey);
+				for (const ValidItemID& primaryKey : primaryKeys) {
+					candidateAssociativeTable->removeMatchingRows(parent, matchingColumn, primaryKey);
+				}
 			}
 		}
 		
@@ -655,11 +662,13 @@ QList<WhatIfDeleteResult> Database::removeRow_referenceSearch(QWidget* parent, b
 			for (const Column* otherTableColumn : candidateNormalTable->getColumnList()) {
 				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
 				
-				QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(otherTableColumn, ID_GET(primaryKey));
-				QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
-				
-				affectedRowIndices.unite(rowIndexSet);
-				affectedCells.append({ otherTableColumn, rowIndexList });
+				for (const ValidItemID& primaryKey : primaryKeys) {
+					QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(otherTableColumn, ID_GET(primaryKey));
+					QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
+					
+					affectedRowIndices.unite(rowIndexSet);
+					affectedCells.append({ otherTableColumn, rowIndexList });
+				}
 			}
 			
 			// WHAT IF

@@ -189,22 +189,27 @@ void openEditCountryDialogAndStore(QWidget* parent, Database* db, BufferRowIndex
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the country to delete in the database's country table buffer.
+ * @param bufferRowIndices	The indices of the countries to delete in the database's country table buffer.
  */
-void openDeleteCountryDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteCountriesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Country* country = db->getCountryAt(bufferRowIndex);
-	ValidItemID countryID = FORCE_VALID(country->countryID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->countriesTable, countryID);
+	QSet<ValidItemID> countryIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		countryIDs += VALID_ITEM_ID(db->countriesTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->countriesTable, countryIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = CountryDialog::tr("Delete country");
+		bool plural = countryIDs.size() > 1;
+		QString windowTitle = plural ? CountryDialog::tr("Delete countries") : CountryDialog::tr("Delete country");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 	
-	db->removeRow(parent, db->countriesTable, countryID);
+	db->removeRows(parent, db->countriesTable, countryIDs);
 }
 
 

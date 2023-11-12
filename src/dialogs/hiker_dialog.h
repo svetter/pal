@@ -54,7 +54,7 @@ private:
 	void insertInitData();
 	
 private slots:
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
@@ -62,9 +62,9 @@ private:
 
 
 
-BufferRowIndex	openNewHikerDialogAndStore		(QWidget* parent, Database* db);
-void			openEditHikerDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteHikerDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+BufferRowIndex	openNewHikerDialogAndStore			(QWidget* parent, Database* db);
+void			openEditHikerDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteHikersDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

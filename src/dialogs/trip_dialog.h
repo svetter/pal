@@ -57,7 +57,7 @@ private slots:
 	void handle_startDateChanged();
 	void handle_endDateChanged();
 	
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
@@ -67,7 +67,7 @@ private:
 
 BufferRowIndex	openNewTripDialogAndStore		(QWidget* parent, Database* db);
 void			openEditTripDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteTripDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteTripsDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

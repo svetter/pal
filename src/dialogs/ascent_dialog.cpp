@@ -622,22 +622,27 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
  * 
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the ascent to delete in the database's ascent table buffer.
+ * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  */
-void openDeleteAscentDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Ascent* ascent = db->getAscentAt(bufferRowIndex);
-	ValidItemID ascentID = FORCE_VALID(ascent->ascentID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->ascentsTable, ascentID);
+	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		ascentIDs += VALID_ITEM_ID(db->ascentsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->ascentsTable, ascentIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = AscentDialog::tr("Delete ascent");
+		bool plural = ascentIDs.size() > 1;
+		QString windowTitle = plural ? AscentDialog::tr("Delete ascents") : AscentDialog::tr("Delete ascent");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 	
-	db->removeRow(parent, db->ascentsTable, ascentID);
+	db->removeRows(parent, db->ascentsTable, ascentIDs);
 }
 
 

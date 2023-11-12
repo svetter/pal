@@ -189,26 +189,34 @@ void openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the hiker to delete in the database's hiker table buffer.
+ * @param bufferRowIndices	The indices of the hikers to delete in the database's hiker table buffer.
  */
-void openDeleteHikerDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Hiker* hiker = db->getHikerAt(bufferRowIndex);
-	ValidItemID hikerID = FORCE_VALID(hiker->hikerID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->hikersTable, hikerID);
+	QSet<ValidItemID> hikerIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->hikersTable, hikerIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = HikerDialog::tr("Delete hiker");
+		bool plural = hikerIDs.size() > 1;
+		QString windowTitle = plural ? HikerDialog::tr("Delete hikers") : HikerDialog::tr("Delete hiker");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 	
-	if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID)) {
-		db->projectSettings->defaultHiker.clear(parent);
+	for (auto iter = hikerIDs.constBegin(); iter != hikerIDs.constEnd(); iter++) {
+		if (db->projectSettings->defaultHiker.get() == ID_GET((*iter))) {
+			db->projectSettings->defaultHiker.clear(parent);
+			break;
+		}
 	}
 	
-	db->removeRow(parent, db->hikersTable, hikerID);
+	db->removeRows(parent, db->hikersTable, hikerIDs);
 }
 
 

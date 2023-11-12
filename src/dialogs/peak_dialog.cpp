@@ -283,22 +283,27 @@ void openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the peak to delete in the database's peak table buffer.
+ * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  */
-void openDeletePeakDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Peak* peak = db->getPeakAt(bufferRowIndex);
-	ValidItemID peakID = FORCE_VALID(peak->peakID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->peaksTable, peakID);
+	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->peaksTable, peakIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = PeakDialog::tr("Delete peak");
+		bool plural = peakIDs.size() > 1;
+		QString windowTitle = plural ? PeakDialog::tr("Delete peaks") : PeakDialog::tr("Delete peak");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->peaksTable, peakID);
+	db->removeRows(parent, db->peaksTable, peakIDs);
 }
 
 

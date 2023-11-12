@@ -110,7 +110,7 @@ private:
 	void newItem(const ItemTypeMapper& mapper);
 	void duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
-	void deleteItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
+	void deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
 	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
@@ -127,7 +127,7 @@ private slots:
 	void handle_viewSelectedItem();
 	void handle_editSelectedItem();
 	void handle_duplicateAndEditSelectedItem();
-	void handle_deleteSelectedItem();
+	void handle_deleteSelectedItems();
 	
 	// File menu action handlers
 	void handle_newDatabase();

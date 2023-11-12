@@ -97,7 +97,7 @@ private:
 BufferRowIndex	openNewAscentDialogAndStore			(QWidget* parent, Database* db);
 BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
 void			openEditAscentDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteAscentDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteAscentsDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 QString		openFileDialogForSinglePhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
 QStringList	openFileDialogForMultiPhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());

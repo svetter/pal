@@ -256,22 +256,27 @@ void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
  *
  * @param parent			The parent window.
  * @param db				The project database.
- * @param bufferRowIndex	The index of the region to delete in the database's region table buffer.
+ * @param bufferRowIndices	The indices of the regions to delete in the database's region table buffer.
  */
-void openDeleteRegionDialogAndExecute(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+void openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	Region* region = db->getRegionAt(bufferRowIndex);
-	ValidItemID regionID = FORCE_VALID(region->regionID);
+	if (bufferRowIndices.isEmpty()) return;
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRow(db->regionsTable, regionID);
+	QSet<ValidItemID> regionIDs = QSet<ValidItemID>();
+	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
+		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+	}
+	
+	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->regionsTable, regionIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		QString windowTitle = RegionDialog::tr("Delete region");
+		bool plural = regionIDs.size() > 1;
+		QString windowTitle = plural ? RegionDialog::tr("Delete regions") : RegionDialog::tr("Delete region");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return;
 	}
 
-	db->removeRow(parent, db->regionsTable, regionID);
+	db->removeRows(parent, db->regionsTable, regionIDs);
 }
 
 

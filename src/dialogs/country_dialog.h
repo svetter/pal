@@ -53,7 +53,7 @@ private:
 	void insertInitData();
 	
 private slots:
-	void handle_ok();
+	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
@@ -63,7 +63,7 @@ private:
 
 BufferRowIndex	openNewCountryDialogAndStore		(QWidget* parent, Database* db);
 void			openEditCountryDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteCountryDialogAndExecute	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+void			openDeleteCountriesDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 
