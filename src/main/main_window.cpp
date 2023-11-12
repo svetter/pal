@@ -450,12 +450,12 @@ void MainWindow::updateContextMenuEditIcon()
  */
 void MainWindow::attemptToOpenFile(const QString& filepath)
 {
+	setVisible(true);
 	bool dbOpened = db.openExisting(this, filepath);
 	
 	if (dbOpened) {
 		setWindowTitleFilename(filepath);
 		updateFilters();
-		setVisible(true);
 		initCompositeBuffers();
 		updateTableSize();
 		setUIEnabled(true);

@@ -539,7 +539,7 @@ void Table::createTableInSql(QWidget* parent)
 	
 	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
-}
+	}
 }
 
 /**
@@ -642,7 +642,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	
 	if (!query.exec()) {
 		displayError(parent, query.lastError(), queryString);
-}
+	}
 }
 
 /**
@@ -676,7 +676,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	
 	if (!query.exec()) {
 		displayError(parent, query.lastError(), queryString);
-}
+	}
 }
 
 /**
@@ -705,7 +705,7 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	
 	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
-}
+	}
 }
 
 /**
@@ -728,7 +728,7 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 	
 	if (!query.exec(queryString)) {
 		displayError(parent, query.lastError(), queryString);
-}
+	}
 }
 
 

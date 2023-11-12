@@ -95,7 +95,7 @@ public:
 	
 	void reset();
 	void createNew(QWidget* parent, const QString& filepath);
-	void openExisting(QWidget* parent, const QString& filepath);
+	bool openExisting(QWidget* parent, const QString& filepath);
 	bool saveAs(QWidget* parent, const QString& filepath);
 	QString getCurrentFilepath() const;
 	
@@ -126,6 +126,8 @@ private:
 	
 public:
 	static QString tr(const QString& string);
+	
+	friend class DatabaseUpgrader;
 };
 
 

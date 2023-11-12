@@ -27,10 +27,10 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs depreca
 
 
 
-VERSION = 1.1.1
+VERSION = 1.2.0
 DEFINES += APP_VERSION_MAJOR=1
-DEFINES += APP_VERSION_MINOR=1
-DEFINES += APP_VERSION_PATCH=1
+DEFINES += APP_VERSION_MINOR=2
+DEFINES += APP_VERSION_PATCH=0
 
 DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
@@ -57,6 +57,7 @@ SOURCES += \
 	src/db/column.cpp \
 	src/db/database.cpp \
 	src/db/db_error.cpp \
+	src/db/db_upgrade.cpp \
 	src/db/normal_table.cpp \
 	src/db/row_index.cpp \
 	src/db/table.cpp \
@@ -122,6 +123,7 @@ HEADERS += \
 	src/db/column.h \
 	src/db/database.h \
 	src/db/db_error.h \
+	src/db/db_upgrade.h \
 	src/db/normal_table.h \
 	src/db/row_index.h \
 	src/db/table.h \

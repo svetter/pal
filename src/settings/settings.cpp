@@ -101,8 +101,8 @@ void Settings::checkForVersionChange()
 		qSettings.remove("implicit/mainWindow/columnWidths");
 	}
 	
-	// 1.1.2
-	if (settingsOlderThan("1.1.2")) {
+	// 1.2.0
+	if (settingsOlderThan("1.2.0")) {
 		// New splitter in ascent viewer => carry over and remove deprecated setting
 		QString oldSplitterKey = "implicit/ascentViewer/splitterSizes";
 		if (qSettings.contains(oldSplitterKey)) {
@@ -118,7 +118,7 @@ void Settings::checkForVersionChange()
 	QString currentAppVersion = getAppVersion();
 	if (settingsOlderThan(currentAppVersion)) {
 		appVersion.set(currentAppVersion);
-		qDebug().noquote().nospace() << "Updated settings from v" << appVersion.get() << " to v" << currentAppVersion;
+		qDebug().noquote().nospace() << "Upgraded global settings from v" << appVersion.get() << " to v" << currentAppVersion;
 	}
 }
 
@@ -148,7 +148,7 @@ QString getAppVersion()
  */
 bool isBelowVersion(QString versionToCheck, QString minimalVersion)
 {
-	QStringList checkSplit	= versionToCheck.split('.');
+	QStringList checkSplit		= versionToCheck.split('.');
 	QStringList minimalSplit	= minimalVersion.split('.');
 	assert(checkSplit.size() == 3 && minimalSplit.size() == 3);
 	for (int i = 0; i < 3; i++) {
@@ -157,6 +157,7 @@ bool isBelowVersion(QString versionToCheck, QString minimalVersion)
 		assert(conversionOk);
 		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
 		assert(conversionOk);
+		if (settingsNumber > minimalNumber) return false;
 		if (settingsNumber < minimalNumber) return true;
 	}
 	return false;

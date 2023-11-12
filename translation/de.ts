@@ -1168,6 +1168,62 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>Details:</source>
         <translation>Details:</translation>
     </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="199"/>
+        <source>Database upgrade necessary</source>
+        <translation>Datenbank muss aktualisiert werden</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="201"/>
+        <source>After the upgrade, previous versions of PAL will no longer be able to open the file.</source>
+        <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei nicht mehr öffnen können.</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="202"/>
+        <source>After the upgrade, previous versions of PAL might no longer be able to open the file.</source>
+        <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei möglicherweise nicht mehr öffnen können.</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="204"/>
+        <source>Opening this project requires upgrading its database from version %1 to version %2.
+%3
+
+Do you want to perform the upgrade now?
+
+Note: A copy of the project file in its current state will be created as a backup.</source>
+        <translation>Um diese Projektdatei zu öffnen, muss die Datenbank von Version %1 zu Version %2 aktualisiert werden.
+%3
+
+Soll die Aktualisierung jetzt durchgeführt werden?
+
+Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="237"/>
+        <source>Error creating backup</source>
+        <translation>Fehler beim Erstellen des Backups</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="239"/>
+        <source>An error occurred while trying to create a backup of the project file.
+Do you want to perform the upgrade anyway?
+
+Note: You can still create a backup manually before proceeding.</source>
+        <translation>Beim Kopieren der Projektdatei als Backup ist ein Fehler aufgetreten.
+Soll die Aktualisierung trotzdem durchgeführt werden?
+
+Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="260"/>
+        <source>Database upgrade successful</source>
+        <translation>Aktualisierung der Datenbank erfolgreich</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="261"/>
+        <source>The database was successfully upgraded from version %1 to version %2.</source>
+        <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
+    </message>
 </context>
 <context>
     <name>EnumNames</name>
@@ -1845,123 +1901,123 @@ Trotzdem speichern?</translation>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="391"/>
+        <location filename="../src/main/main_window.cpp" line="385"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="393"/>
+        <location filename="../src/main/main_window.cpp" line="387"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="394"/>
+        <location filename="../src/main/main_window.cpp" line="388"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="396"/>
+        <location filename="../src/main/main_window.cpp" line="390"/>
         <source>Delete...</source>
         <translation>Löschen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="464"/>
+        <location filename="../src/main/main_window.cpp" line="478"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="468"/>
+        <location filename="../src/main/main_window.cpp" line="482"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="499"/>
+        <location filename="../src/main/main_window.cpp" line="513"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="590"/>
+        <location filename="../src/main/main_window.cpp" line="604"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="595"/>
+        <location filename="../src/main/main_window.cpp" line="609"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="595"/>
+        <location filename="../src/main/main_window.cpp" line="609"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="597"/>
+        <location filename="../src/main/main_window.cpp" line="611"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="597"/>
+        <location filename="../src/main/main_window.cpp" line="611"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="605"/>
+        <location filename="../src/main/main_window.cpp" line="619"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="605"/>
+        <location filename="../src/main/main_window.cpp" line="619"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="607"/>
+        <location filename="../src/main/main_window.cpp" line="621"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="650"/>
-        <location filename="../src/main/main_window.cpp" line="669"/>
+        <location filename="../src/main/main_window.cpp" line="664"/>
+        <location filename="../src/main/main_window.cpp" line="683"/>
         <source>Saved new %1.</source>
         <translation>%1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="687"/>
+        <location filename="../src/main/main_window.cpp" line="701"/>
         <source>Saved changes in %1.</source>
         <translation>Änderungen in %1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="704"/>
+        <location filename="../src/main/main_window.cpp" line="718"/>
         <source>Deleted %1.</source>
         <translation>%1 gelöscht.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="768"/>
+        <location filename="../src/main/main_window.cpp" line="782"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="769"/>
+        <location filename="../src/main/main_window.cpp" line="783"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="915"/>
+        <location filename="../src/main/main_window.cpp" line="929"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="947"/>
+        <location filename="../src/main/main_window.cpp" line="961"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="950"/>
+        <location filename="../src/main/main_window.cpp" line="964"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="950"/>
+        <location filename="../src/main/main_window.cpp" line="964"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>

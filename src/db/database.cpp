@@ -24,6 +24,8 @@
 #include "database.h"
 
 #include "src/db/db_error.h"
+#include "src/db/db_upgrade.h"
+#include "src/settings/settings.h"
 
 #include <QCoreApplication>
 #include <QSqlError>
@@ -127,6 +129,9 @@ void Database::createNew(QWidget* parent, const QString& filepath)
 	
 	// All tables still empty of course, but this doubles as a table format check
 	populateBuffers(parent);
+	
+	// Set version
+	projectSettings->databaseVersion.set(parent, getAppVersion());
 }
 
 /**
@@ -134,8 +139,9 @@ void Database::createNew(QWidget* parent, const QString& filepath)
  * 
  * @param parent	The parent window.
  * @param filepath	The filepath of the existing database file.
+ * @return			True if the open was successful, false otherwise.
  */
-void Database::openExisting(QWidget* parent, const QString& filepath)
+bool Database::openExisting(QWidget* parent, const QString& filepath)
 {
 	assert(!databaseLoaded);
 	qDebug() << "Opening database file" << filepath;
@@ -150,7 +156,18 @@ void Database::openExisting(QWidget* parent, const QString& filepath)
 	}
 	databaseLoaded = true;
 	
-	populateBuffers(parent);
+	// Upgrade database version
+	DatabaseUpgrader upgrader = DatabaseUpgrader(this, parent);
+	bool abort = !upgrader.checkDatabaseVersionAndUpgrade([this, parent] () {
+		// After database structure was updated if needed:
+		populateBuffers(parent);
+	});
+	
+	if (abort) {
+		reset();
+		return false;
+	}
+	return true;
 }
 
 /**
