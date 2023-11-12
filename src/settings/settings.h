@@ -41,6 +41,9 @@ inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScop
 QPair<QStringList, QStringList> getSupportedLanguages();
 QString getDefaultLanguageCode();
 
+QString getAppVersion();
+bool isBelowVersion(QString versionToCheck, QString minimalVersion);
+
 
 
 /**
@@ -277,7 +280,7 @@ public:
 	// === APP VERSION ===
 
 	/** The version of the application with which the settings file was last written. */
-	inline static const Setting<QString>	appVersion								= Setting<QString>	("appVersion",									"0.0.0");
+	inline static const Setting<QString>	appVersion								= Setting<QString>	("appVersion",									getAppVersion());
 	
 	
 	// === EXPLICIT ===
@@ -464,11 +467,6 @@ private:
 public:
 	static void checkForVersionChange();
 };
-
-
-
-QString getAppVersion();
-bool isBelowVersion(QString versionToCheck, QString minimalVersion);
 
 
 
