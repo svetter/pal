@@ -1169,58 +1169,94 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Details:</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="199"/>
+        <location filename="../src/db/db_upgrade.cpp" line="204"/>
         <source>Database upgrade necessary</source>
         <translation>Datenbank muss aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="201"/>
+        <location filename="../src/db/db_upgrade.cpp" line="206"/>
         <source>After the upgrade, previous versions of PAL will no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="202"/>
+        <location filename="../src/db/db_upgrade.cpp" line="207"/>
         <source>After the upgrade, previous versions of PAL might no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei möglicherweise nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="204"/>
+        <location filename="../src/db/db_upgrade.cpp" line="208"/>
+        <location filename="../src/db/db_upgrade.cpp" line="238"/>
+        <source>Note: A copy of the project file in its current state will be created as a backup.</source>
+        <translation>Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="210"/>
         <source>Opening this project requires upgrading its database from version %1 to version %2.
 %3
 
 Do you want to perform the upgrade now?
 
-Note: A copy of the project file in its current state will be created as a backup.</source>
+%4</source>
         <translation>Um diese Projektdatei zu öffnen, muss die Datenbank von Version %1 zu Version %2 aktualisiert werden.
 %3
 
 Soll die Aktualisierung jetzt durchgeführt werden?
 
-Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
+%4</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="223"/>
+        <source>Do you want to perform the upgrade anyway?</source>
+        <translation>Soll die Aktualisierung trotzdem durchgeführt werden?</translation>
     </message>
     <message>
         <location filename="../src/db/db_upgrade.cpp" line="237"/>
-        <source>Error creating backup</source>
-        <translation>Fehler beim Erstellen des Backups</translation>
+        <source>App version outdated</source>
+        <translation>App-Version veraltet</translation>
     </message>
     <message>
         <location filename="../src/db/db_upgrade.cpp" line="239"/>
+        <source>Do you want to open the file anyway?</source>
+        <translation>Soll die Datei trotzdem geöffnet werden?</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="241"/>
+        <source>This project file has version %1, while the app has version %2.
+Opening a file with an older version of PAL can lead to errors, crashes and data corruption.It is strongly recommended to only use PAL version %1 or newer to open this file.
+
+%3
+
+%4</source>
+        <translation>Diese Projektdatei hat Version %1, die App jedoch Version %2.
+Eine Datei mit einer älteren Version von PAL zu öffnen, kann zu Fehlern, Abstürzen und Datenverlust führen. Es wird dringend empfohlen, nur PAL mit Version %1 oder neuer zu verwenden, um diese Datei zu öffnen.
+
+%3
+
+%4</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="281"/>
         <source>An error occurred while trying to create a backup of the project file.
-Do you want to perform the upgrade anyway?
+%1
 
 Note: You can still create a backup manually before proceeding.</source>
         <translation>Beim Kopieren der Projektdatei als Backup ist ein Fehler aufgetreten.
-Soll die Aktualisierung trotzdem durchgeführt werden?
+%1
 
 Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="260"/>
+        <location filename="../src/db/db_upgrade.cpp" line="279"/>
+        <source>Error creating backup</source>
+        <translation>Fehler beim Erstellen des Backups</translation>
+    </message>
+    <message>
+        <location filename="../src/db/db_upgrade.cpp" line="303"/>
         <source>Database upgrade successful</source>
         <translation>Aktualisierung der Datenbank erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="261"/>
+        <location filename="../src/db/db_upgrade.cpp" line="304"/>
         <source>The database was successfully upgraded from version %1 to version %2.</source>
         <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
     </message>

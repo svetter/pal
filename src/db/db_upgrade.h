@@ -47,8 +47,9 @@ public:
 	
 private:
 	QString determineCurrentDbVersion();
-	bool promptUserAboutUpgrade(const QString& oldDbVersion, bool claimOlderVersionsIncompatible);
-	bool createFileBackupCopy();
+	bool promptUserAboutUpgradeAndBackup(const QString& oldDbVersion, bool claimOlderVersionsIncompatible);
+	bool showOutdatedAppWarningAndBackup(const QString& dbVersion);
+	bool createFileBackupCopy(const QString& confirmationQuestion);
 	void showUpgradeSuccessMessage(const QString& previousVersion, const QString& newVersion);
 	
 	// Version-specific functions

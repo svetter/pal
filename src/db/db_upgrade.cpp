@@ -70,6 +70,13 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	const QString currentDbVersion	= determineCurrentDbVersion();
 	const QString appVersion		= getAppVersion();
 	
+	if (isBelowVersion(appVersion, currentDbVersion)) {
+		// App is older than database version, show warning
+		bool abort = !showOutdatedAppWarningAndBackup(currentDbVersion);
+		if (abort) return false;
+		executeAfterStructuralUpgrade();
+		return true;
+	}
 	if (!isBelowVersion(currentDbVersion, appVersion)) {
 		// No upgrade necessary
 		executeAfterStructuralUpgrade();
@@ -79,11 +86,8 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	// Determine whether upgrading from the old version will definitely break compatibility
 	bool upgradeBreakCompatibility = isBelowVersion(currentDbVersion, "1.2.0");
 	
-	// Ask user to confirm upgrade
-	bool abort = !promptUserAboutUpgrade(currentDbVersion, upgradeBreakCompatibility);
-	if (abort) return false;
-	// Create backup copy of project file
-	abort = !createFileBackupCopy();
+	// Ask user to confirm upgrade and create backup
+	bool abort = !promptUserAboutUpgradeAndBackup(currentDbVersion, upgradeBreakCompatibility);
 	if (abort) return false;
 	
 	
@@ -187,40 +191,78 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 
 
 /**
- * Shows a message box informing the user about the upgrade and asking them to confirm it.
+ * Shows a message box informing the user about the upgrade, asking them to confirm it, and creates
+ * a backup copy of the project file if so.
  * 
  * @param oldDbVersion						The version of the database file before the upgrade.
  * @param claimOlderVersionsIncompatible	Whether to claim that older versions of the app will be incompatible with the upgraded database.
- * @return									True if the user confirmed the upgrade, false otherwise.
+ * @return									True if the user wants to continue, false otherwise.
  */
-bool DatabaseUpgrader::promptUserAboutUpgrade(const QString& oldDbVersion, bool claimOlderVersionsIncompatible)
+bool DatabaseUpgrader::promptUserAboutUpgradeAndBackup(const QString& oldDbVersion, bool claimOlderVersionsIncompatible)
 {
 	QString filepath = db->getCurrentFilepath();
 	QString windowTitle = Database::tr("Database upgrade necessary");
 	QString compatibilityStatement = claimOlderVersionsIncompatible
 			? Database::tr("After the upgrade, previous versions of PAL will no longer be able to open the file.")
 			: Database::tr("After the upgrade, previous versions of PAL might no longer be able to open the file.");
+	QString backupNote = Database::tr("Note: A copy of the project file in its current state will be created as a backup.");
 	QString message = filepath + "\n\n"
 			+ Database::tr("Opening this project requires upgrading its database from version %1 to version %2."
 			"\n%3"
 			"\n\nDo you want to perform the upgrade now?"
-			"\n\nNote: A copy of the project file in its current state will be created as a backup.")
-			.arg(oldDbVersion, getAppVersion(), compatibilityStatement);
+			"\n\n%4")
+			.arg(oldDbVersion, getAppVersion(), compatibilityStatement, backupNote);
 	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto defaultButton = QMessageBox::Cancel;
 	
 	auto response = QMessageBox::question(parent, windowTitle, message, buttons, defaultButton);
 	
-	return response == QMessageBox::Yes;
+	bool abort = response != QMessageBox::Yes;
+	if (abort) return false;
+	
+	QString confirmationQuestion = Database::tr("Do you want to perform the upgrade anyway?");
+	abort = !createFileBackupCopy(confirmationQuestion);
+	return !abort;
+}
+
+/**
+ * Shows a message box informing the user about the outdated app version, asking them to confirm
+ * opening the file anyway, and creates a backup copy of the project file if so.
+ * 
+ * @param dbVersion	The version of the database file before the upgrade.
+ * @return			True if the user wants to continue, false otherwise.
+ */
+bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
+{
+	QString windowTitle = Database::tr("App version outdated");
+	QString backupNote = Database::tr("Note: A copy of the project file in its current state will be created as a backup.");
+	QString confirmationQuestion = Database::tr("Do you want to open the file anyway?");
+	QString message = db->getCurrentFilepath() + "\n\n"
+					  + Database::tr("This project file has version %1, while the app has version %2."
+									 "\nOpening a file with an older version of PAL can lead to errors, crashes and data corruption."
+									 "It is strongly recommended to only use PAL version %1 or newer to open this file."
+									 "\n\n%3"
+									 "\n\n%4")
+							.arg(dbVersion, getAppVersion(), confirmationQuestion, backupNote);
+	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+	auto defaultButton = QMessageBox::Cancel;
+	
+	auto response = QMessageBox::warning(parent, windowTitle, message, buttons, defaultButton);
+	bool abort = response != QMessageBox::Yes;
+	if (abort) return false;
+	
+	abort = !createFileBackupCopy(confirmationQuestion);
+	return !abort;
 }
 
 /**
  * Creates a backup copy of the project file and asks the user whether to continue if the copy
  * fails.
  * 
- * @return	True if the backup was created successfully or the user wants to continue anyway, false otherwise.
+ * @param confirmationQuestion	Translated string to insert into the message, asking the user whether to continue if the backup failed.
+ * @return						True if the backup was created successfully or the user wants to continue anyway, false otherwise.
  */
-bool DatabaseUpgrader::createFileBackupCopy()
+bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion)
 {
 	// Determine backup filename
 	QString filepath = db->getCurrentFilepath();
@@ -237,8 +279,9 @@ bool DatabaseUpgrader::createFileBackupCopy()
 		QString windowTitle = Database::tr("Error creating backup");
 		QString message = filepath + "\n\n"
 				+ Database::tr("An error occurred while trying to create a backup of the project file."
-				"\nDo you want to perform the upgrade anyway?"
-				"\n\nNote: You can still create a backup manually before proceeding.");
+				"\n%1"
+				"\n\nNote: You can still create a backup manually before proceeding.")
+				.arg(confirmationQuestion);
 		auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 		auto defaultButton = QMessageBox::Cancel;
 		
