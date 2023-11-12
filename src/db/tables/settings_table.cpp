@@ -137,6 +137,24 @@ void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting* 
 }
 
 
+/**
+ * Removes the value from the setting in the project settings table.
+ * 
+ * @param parent	The parent window. Cannot be nullptr.
+ * @param setting	The setting to remove.
+ */
+void SettingsTable::clearAllSettings(QWidget* parent, const QString& baseKey)
+{
+	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
+		QString key = settingKeyColumn->getValueAt(rowIndex).toString();
+		if (key.startsWith(baseKey)) {
+			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex));
+			removeMatchingRows(parent, primaryKeyColumn, settingID);
+		}
+	}
+}
+
+
 
 /**
  * Finds the projectSettingID (primary key) of the given setting in the database.

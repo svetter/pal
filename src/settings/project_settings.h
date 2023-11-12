@@ -18,8 +18,8 @@
 /**
  * @file project_settings.h
  * 
- * This file declares the GenericProjectSetting and ProjectSetting classes and defines the
- * ProjectSettings class.
+ * This file declares the GenericProjectSetting, ProjectSetting and ProjectMultiSetting classes
+ * and defines the ProjectSettings class.
  */
 
 #ifndef PROJECT_SETTINGS_H
@@ -30,8 +30,6 @@
 #include <QString>
 #include <QVariant>
 #include <QDate>
-
-class ProjectSettings;
 
 
 
@@ -51,8 +49,8 @@ public:
 	
 	GenericProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue);
 	
-	bool isPresent(QWidget* parent = nullptr);
-	QVariant getAsQVariant(QWidget* parent = nullptr);
+	bool isPresent(QWidget* parent = nullptr) const;
+	QVariant getAsQVariant(QWidget* parent = nullptr) const;
 	QVariant getDefaultAsQVariant() const;
 	
 	void set(QWidget* parent, QVariant value);
@@ -79,6 +77,38 @@ template class ProjectSetting<bool>;
 template class ProjectSetting<int>;
 template class ProjectSetting<QString>;
 template class ProjectSetting<QDate>;
+
+
+
+template<typename T>
+class ProjectMultiSetting
+{
+	/** Dynamically grown list of all settings in this group, mapped to their sub-keys. */
+	QMap<QString, ProjectSetting<T>*> settings;
+	
+	/** The project settings table. */
+	SettingsTable* const table;
+	/** The part of the key which all settings share. */
+	const QString baseKey;
+	/** The default value of all the settings. */
+	const QVariant defaultValue;
+	
+public:
+	ProjectMultiSetting(SettingsTable* table, const QString baseKey, QVariant defaultValue = T());
+	
+	bool anyPresent() const;
+	bool nonePresent() const;
+	bool allPresent(QSet<QString> subKeys);
+	
+	QMap<QString, T> get(const QSet<QString>& subKeys);
+	T getDefault() const;
+	
+	void set(QWidget* parent, const QMap<QString, T>& subKeyValueMap);
+	void clear(QWidget* parent, SettingsTable* settingsTable) const;
+	
+private:
+	void createSettingIfMissing(const QString& subKey);
+};
 
 
 

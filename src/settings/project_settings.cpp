@@ -18,7 +18,7 @@
 /**
  * @file project_settings.cpp
  * 
- * This file defines the ProjectSetting class.
+ * This file defines the GenericProjectSetting, ProjectSetting and ProjectMultiSetting classes.
  */
 
 #include "project_settings.h"
@@ -46,7 +46,7 @@ GenericProjectSetting::GenericProjectSetting(SettingsTable* table, const QString
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			True if the setting is present in the project settings storage, false otherwise.
  */
-bool GenericProjectSetting::isPresent(QWidget* parent)
+bool GenericProjectSetting::isPresent(QWidget* parent) const
 {
 	return table->settingIsPresent(this, parent);
 }
@@ -60,7 +60,7 @@ bool GenericProjectSetting::isPresent(QWidget* parent)
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			The current value of the setting as a QVariant.
  */
-QVariant GenericProjectSetting::getAsQVariant(QWidget* parent)
+QVariant GenericProjectSetting::getAsQVariant(QWidget* parent) const
 {
 	return table->getSetting(this, parent);
 }
@@ -153,4 +153,135 @@ template<typename T>
 T ProjectSetting<T>::getDefault() const
 {
 	return defaultValue.value<T>();
+}
+
+
+
+
+
+/**
+ * Creates a new ProjectMultiSetting with the given base key and default value.
+ * 
+ * @param baseKey		The common part of the keys under which the settings will be stored.
+ * @param defaultValue	The default value for all the settings.
+ */
+template<typename T>
+ProjectMultiSetting<T>::ProjectMultiSetting(SettingsTable* table, const QString baseKey, QVariant defaultValue) :
+		settings(QMap<QString, ProjectSetting<T>*>()),
+		table(table),
+		baseKey(baseKey),
+		defaultValue(defaultValue)
+{}
+
+
+/**
+ * Checks whether any of the settings are present in the project settings storage.
+ * 
+ * @return	True if any settings are stored in the settings file under the baseKey, false otherwise.
+ */
+template<typename T>
+bool ProjectMultiSetting<T>::anyPresent() const
+{
+	for (const ProjectSetting<T>* const setting : settings) {
+		if (setting->isPresent()) return true;
+	}
+	return false;
+}
+
+/**
+ * Checks whether none of the settings are present in the project settings storage.
+ * 
+ * @return	True if no settings are stored in the settings file under the baseKey, false otherwise.
+ */
+template<typename T>
+bool ProjectMultiSetting<T>::nonePresent() const
+{
+	return !anyPresent();
+}
+
+/**
+ * Checks whether al of the the setting are present in the project settings storage.
+ * 
+ * @param subKeys	The sub-keys of all settings to check.
+ * @return			True if all settings given by their sub-keys are stored in the settings file under the baseKey, false otherwise.
+ */
+template<typename T>
+bool ProjectMultiSetting<T>::allPresent(QSet<QString> subKeys)
+{
+	for (const QString& subKey : subKeys) {
+		createSettingIfMissing(subKey);
+		if (!settings[subKey]->isPresent()) return false;
+	}
+	return true;
+}
+
+/**
+ * Returns the values of the settings after validating them, paired with their sub-keys.
+ * 
+ * If the setting is not present in the settings file or invalid, it is discarded and the
+ * default value is returned and written back to the settings file.
+ * 
+ * @return	The value of the settings as they are stored in the settings file after validation.
+ */
+template<typename T>
+QMap<QString, T> ProjectMultiSetting<T>::get(const QSet<QString>& subKeys)
+{
+	QMap<QString, T> values = QMap<QString, T>();
+	for (const QString& subKey : subKeys) {
+		createSettingIfMissing(subKey);
+		values[subKey] = settings.value(subKey)->get();
+	}
+	return values;
+}
+
+/**
+ * Returns the default value of the settings.
+ * 
+ * @return	The default value of the settings.
+ */
+template<typename T>
+T ProjectMultiSetting<T>::getDefault() const
+{
+	return defaultValue.value<T>();
+}
+
+
+/**
+ * Sets the value of the setting.
+ * 
+ * @param values	The new values for the settings.
+ */
+template<typename T>
+void ProjectMultiSetting<T>::set(QWidget* parent, const QMap<QString, T>& subKeyValueMap)
+{
+	for (auto iter = subKeyValueMap.cbegin(); iter != subKeyValueMap.cend(); iter++) {
+		const QString& subKey	= iter.key();
+		const T& value			= iter.value();
+		
+		createSettingIfMissing(subKey);
+		settings[subKey]->set(parent, value);
+	}
+}
+
+/**
+ * Removes all of the settings from the project settings storage.
+ */
+template<typename T>
+void ProjectMultiSetting<T>::clear(QWidget* parent, SettingsTable* settingsTable) const
+{
+	settingsTable->clearAllSettings(parent, baseKey);
+}
+
+
+/**
+ * Creates a new Setting for the given sub-key and adds it to the setttings map.
+ * 
+ * @param subKey	The sub-key for the missing setting
+ */
+template<typename T>
+void ProjectMultiSetting<T>::createSettingIfMissing(const QString& subKey)
+{
+	if (!settings.contains(subKey)) {
+		settings.insert(subKey, new ProjectSetting<T>(table, baseKey + "/" + subKey, defaultValue));
+	}
 }

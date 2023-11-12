@@ -151,7 +151,7 @@ class MultiSetting
 	
 public:
 	/**
-	 * Creates a new setting with the given key and default value.
+	 * Creates a new MultiSetting with the given base key and default value.
 	 *
 	 * @param baseKey		The common part of the keys under which the settings will be stored.
 	 * @param defaultValue	The default value for all the settings.
@@ -260,6 +260,11 @@ public:
 	
 	
 private:
+	/**
+	 * Creates a new Setting for the given sub-key and adds it to the setttings map.
+	 * 
+	 * @param subKey	The sub-key for the missing setting
+	 */
 	inline void createSettingIfMissing(const QString& subKey)
 	{
 		if (!settings.contains(subKey)) {

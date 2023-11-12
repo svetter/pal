@@ -53,6 +53,7 @@ public:
 	void setSetting(QWidget* parent, const GenericProjectSetting* setting, QVariant value);
 	void clearSetting(QWidget* parent, const GenericProjectSetting* setting);
 	void removeSetting(QWidget* parent, const GenericProjectSetting* setting);
+	void clearAllSettings(QWidget* parent, const QString& baseKey);
 	
 private:
 	ItemID findSettingID(const GenericProjectSetting* setting, QWidget* parent = nullptr);
