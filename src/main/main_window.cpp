@@ -76,12 +76,6 @@ MainWindow::MainWindow() :
 		}
 	}
 	
-	if (Settings::rememberTab.get()) {
-		mainAreaTabs->setCurrentIndex(Settings::mainWindow_currentTabIndex.get());
-	}
-	
-	showFiltersAction->setChecked(Settings::mainWindow_showFilters.get());
-	
 	
 	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable);
 	
@@ -192,13 +186,13 @@ void MainWindow::createTypesHandler()
 	}
 	
 	typesHandler = new ItemTypesHandler(showDebugTableViews,
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton)
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->sorting_countriesTable)
 	);
 	
 	if (showDebugTableViews) {
@@ -276,16 +270,10 @@ void MainWindow::setupTableViews()
 		// Set model
 		mapper.tableView->setModel(mapper.compTable);
 		
-		if (Settings::rememberColumnWidths.get() && mapper.columnWidthsSetting->anyPresent()) {
-			restoreColumnWidths(mapper);
-		}
-		
 		// Enable context menu
 		connect(mapper.tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 		
 		mapper.compTable->setUpdateImmediately(mapper.tableView == getCurrentTableView());
-		
-		setSorting(mapper);
 	});
 }
 
@@ -325,7 +313,8 @@ void MainWindow::setupDebugTableViews()
  */
 void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 {
-	if (mapper.columnWidthsSetting->nonePresent()) return;	// Only restore if any widths are in the settings
+	QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+	if (mapper.columnWidthsSetting->nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
 	
 	const QSet<QString> visibleColumnNames = mapper.compTable->getVisibleColumnNameSet();
 	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(visibleColumnNames);
@@ -351,13 +340,13 @@ void MainWindow::setSorting(const ItemTypeMapper& mapper)
 	while (Settings::rememberSorting.get() && mapper.sortingSetting->present()) {
 		sortingSettingValid = false;
 		
-		QStringList saved = mapper.sortingSetting->get();
+		QStringList saved = mapper.sortingSetting->get().split(",");
 		if (saved.size() != 2) break;
 		
-		const CompositeColumn* column = mapper.compTable->getColumnByName(saved.at(0));
+		const CompositeColumn* column = mapper.compTable->getColumnByName(saved.at(0).trimmed());
 		if (!column) break;
 		
-		bool ascending = saved.at(1).compare("Descending", Qt::CaseInsensitive) != 0;
+		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
 		Qt::SortOrder order = ascending ? Qt::AscendingOrder : Qt::DescendingOrder;
 		
 		sorting.first = column;
@@ -367,7 +356,7 @@ void MainWindow::setSorting(const ItemTypeMapper& mapper)
 	}
 	mapper.tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
 	
-	if (!sortingSettingValid) mapper.sortingSetting->clear();
+	if (!sortingSettingValid) mapper.sortingSetting->clear(this);
 }
 
 
@@ -456,8 +445,28 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 	if (dbOpened) {
 		setWindowTitleFilename(filepath);
 		updateFilters();
+		
+		// Restore project-specific implicit settings:
+		// Filter bar
+		showFiltersAction->setChecked(db.projectSettings->mainWindow_showFilterBar.get(this));
+		// Open tab
+		if (Settings::rememberTab.get()) {
+			mainAreaTabs->setCurrentIndex(db.projectSettings->mainWindow_currentTabIndex.get(this));
+		}
+		typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+			// Column widths
+			QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+			if (Settings::rememberColumnWidths.get() && mapper.columnWidthsSetting->anyPresent(columnNameSet)) {
+				restoreColumnWidths(mapper);
+			}
+			// Sortings
+			setSorting(mapper);
+		});
+		
+		// Build buffers and update size info
 		initCompositeBuffers();
 		updateTableSize();
+		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
 	}
@@ -514,7 +523,11 @@ void MainWindow::initCompositeBuffers()
 		
 		bool isOpen = mapper.tableView == currentTableView;
 		bool prepareThisTable = prepareAll || isOpen;
-		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper.columnWidthsSetting->nonePresent();
+		
+		QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper.columnWidthsSetting->nonePresent(columnNameSet);
+		
+		// Collect buffer initialization parameters
 		QProgressDialog* updateProgress = prepareThisTable ? &progress : nullptr;
 		bool deferCompute = !prepareThisTable;
 		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper.tableView : nullptr;
@@ -1175,14 +1188,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
  * Saves window position and size, current tab index, column widths, sorting and filter bar
  * visiblity.
  */
-void MainWindow::saveImplicitSettings() const
+void MainWindow::saveImplicitSettings()
 {
 	bool maximized = windowState() == Qt::WindowMaximized;
 	Settings::mainWindow_maximized.set(maximized);
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
-	Settings::mainWindow_currentTabIndex.set(mainAreaTabs->currentIndex());
-	Settings::mainWindow_showFilters.set(showFiltersAction->isChecked());
+	db.projectSettings->mainWindow_currentTabIndex.set(this, mainAreaTabs->currentIndex());
+	db.projectSettings->mainWindow_showFilterBar  .set(this, showFiltersAction->isChecked());
 	
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		saveColumnWidths(mapper);
@@ -1195,7 +1208,7 @@ void MainWindow::saveImplicitSettings() const
  * 
  * @param mapper	The ItemTypeMapper containing the table whose column widths should be saved.
  */
-void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
+void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper)
 {
 	if (!mapper.tabHasBeenOpened()) return;	// Only save if table was actually shown
 	
@@ -1209,7 +1222,7 @@ void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
 		}
 		nameValueMap[column->name] = currentColumnWidth;
 	}
-	mapper.columnWidthsSetting->set(nameValueMap);
+	mapper.columnWidthsSetting->set(this, nameValueMap);
 }
 
 /**
@@ -1217,13 +1230,14 @@ void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper) const
  * 
  * @param mapper	The ItemTypeMapper containing the table whose sorting should be saved.
  */
-void MainWindow::saveSorting(const ItemTypeMapper& mapper) const
+void MainWindow::saveSorting(const ItemTypeMapper& mapper)
 {
 	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
 	const QString& columnName = currentSorting.first->name;
 	Qt::SortOrder order = currentSorting.second;
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
-	mapper.sortingSetting->set({columnName, orderString});
+	QString settingValue = columnName + ", " + orderString;
+	mapper.sortingSetting->set(this, settingValue);
 }
 
 

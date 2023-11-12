@@ -343,7 +343,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
-	if (defaultHiker.isPresent()) {
+	if (defaultHiker.present()) {
 		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker.get());
 		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
 		if (rowIndexSet.contains(defaultHikerRowIndex)) {

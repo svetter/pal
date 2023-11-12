@@ -152,7 +152,7 @@ class MultiSetting
 public:
 	/**
 	 * Creates a new MultiSetting with the given base key and default value.
-	 *
+	 * 
 	 * @param baseKey		The common part of the keys under which the settings will be stored.
 	 * @param defaultValue	The default value for all the settings.
 	 */
@@ -168,12 +168,13 @@ public:
 	 * 
 	 * @return	True if any settings are stored in the settings file under the baseKey, false otherwise.
 	 */
-	inline bool anyPresent() const
+	inline bool anyPresent(const QSet<QString>& subKeys)
 	{
-		qSettings.beginGroup(baseKey);
-		bool anyPresent = qSettings.childKeys().size() > 0;
-		qSettings.endGroup();
-		return anyPresent;
+		for (const QString& subKey : subKeys) {
+			createSettingIfMissing(subKey);
+			if (settings[subKey].present()) return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -181,9 +182,9 @@ public:
 	 * 
 	 * @return	True if no settings are stored in the settings file under the baseKey, false otherwise.
 	 */
-	inline bool nonePresent() const
+	inline bool nonePresent(const QSet<QString>& subKeys)
 	{
-		return !anyPresent();
+		return !anyPresent(subKeys);
 	}
 	
 	/**
@@ -192,7 +193,7 @@ public:
 	 * @param subKeys	The sub-keys of all settings to check.
 	 * @return			True if all settings given by their sub-keys are stored in the settings file under the baseKey, false otherwise.
 	 */
-	inline bool allPresent(QSet<QString> subKeys)
+	inline bool allPresent(const QSet<QString>& subKeys)
 	{
 		for (const QString& subKey : subKeys) {
 			createSettingIfMissing(subKey);
@@ -382,47 +383,10 @@ public:
 	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
 	
 	// View state
-	/** Remember filters in the main window as being visible. */
-	inline static const	Setting<bool>			mainWindow_showFilters					= Setting<bool>			("implicit/mainWindow/showFilters",		true);
 	/** Remembered sizes for the left splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_rightSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
-	// Open tab
-	/** Remembered index of open tab in the main window. */
-	inline static const	Setting<int>			mainWindow_currentTabIndex				= Setting<int>			("implicit/mainWindow/currentTabIndex",	0);
-	
-	// Column widths
-	/** Remembered column widths of the ascents table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_ascentsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/ascentsTable",	100);
-	/** Remembered column widths of the peaks table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_peaksTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/peaksTable",		100);
-	/** Remembered column widths of the trips table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_tripsTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/tripsTable",		100);
-	/** Remembered column widths of the hikers table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_hikersTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/hikersTable",	100);
-	/** Remembered column widths of the regions table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_regionsTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/regionsTable",	100);
-	/** Remembered column widths of the ranges table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_rangesTable		= MultiSetting<int>		("implicit/mainWindow/columnWidths/rangesTable",	100);
-	/** Remembered column widths of the countries table in the main window. */
-	inline static		MultiSetting<int>		mainWindow_columnWidths_countriesTable	= MultiSetting<int>		("implicit/mainWindow/columnWidths/countriesTable",	100);
-	
-	// Sorting
-	/** Remembered sorting of the ascents table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_ascentsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/ascentsTable");
-	/** Remembered sorting of the peaks table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_peaksTable			= Setting<QStringList>	("implicit/mainWindow/sorting/peaksTable");
-	/** Remembered sorting of the trips table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_tripsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/tripsTable");
-	/** Remembered sorting of the hikers table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_hikersTable			= Setting<QStringList>	("implicit/mainWindow/sorting/hikersTable");
-	/** Remembered sorting of the regions table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_regionsTable			= Setting<QStringList>	("implicit/mainWindow/sorting/regionsTable");
-	/** Remembered sorting of the ranges table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_rangesTable			= Setting<QStringList>	("implicit/mainWindow/sorting/rangesTable");
-	/** Remembered sorting of the countries table in the main window. */
-	inline static const	Setting<QStringList>	mainWindow_sorting_countriesTable		= Setting<QStringList>	("implicit/mainWindow/sorting/countriesTable");
 	
 	
 	
@@ -451,20 +415,6 @@ public:
 		regionDialog_geometry			.clear();
 		rangeDialog_geometry			.clear();
 		countryDialog_geometry			.clear();
-	}
-	
-	/**
-	 * Clears all settings for column widths from the settings file.
-	 */
-	static inline void resetColumnWidths()
-	{
-		mainWindow_columnWidths_ascentsTable	.clear();
-		mainWindow_columnWidths_peaksTable		.clear();
-		mainWindow_columnWidths_tripsTable		.clear();
-		mainWindow_columnWidths_hikersTable		.clear();
-		mainWindow_columnWidths_regionsTable	.clear();
-		mainWindow_columnWidths_rangesTable		.clear();
-		mainWindow_columnWidths_countriesTable	.clear();
 	}
 	
 private:

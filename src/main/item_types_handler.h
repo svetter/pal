@@ -97,11 +97,11 @@ public:
 	QPushButton* const		newItemButton;
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
-	const Setting<QRect>* const			dialogGeometrySetting;
+	const Setting<QRect>* const				dialogGeometrySetting;
 	/** The setting storing the column widths for the UI table of this item type. */
-	MultiSetting<int>* const			columnWidthsSetting;
+	ProjectMultiSetting<int>* const			columnWidthsSetting;
 	/** The setting storing the sorting of the UI table of this item type. */
-	const Setting<QStringList>* const	sortingSetting;
+	const ProjectSetting<QString>* const	sortingSetting;
 
 	/** The method opening the dialog for creating a new item of this type. */
 	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*);
@@ -132,9 +132,9 @@ public:
 	 * @param debugTableView						The table view in the main window showing the base table.
 	 * @param newItemAction							The action in the main window menu for creating a new iteme.
 	 * @param newItemButton							The button in the main window for creating a new item.
-	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
 	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
 	 * @param sortingSetting						The setting storing the sorting of the UI table.
+	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
 	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
 	 * @param openDuplicateItemDialogAndStoreMethod	The method opening the dialog for duplicating an item.
 	 * @param openEditItemDialogAndStoreMethod		The method opening the dialog for editing an item.
@@ -150,9 +150,9 @@ public:
 			QTableView*			debugTableView,
 			QAction* const		newItemAction,
 			QPushButton* const	newItemButton,
-			const Setting<QRect>*		dialogGeometrySetting,
-			MultiSetting<int>*			columnWidthsSetting,
-			const Setting<QStringList>*	sortingSetting,
+			ProjectMultiSetting<int>*		columnWidthsSetting,
+			const ProjectSetting<QString>*	sortingSetting,
+			const Setting<QRect>*			dialogGeometrySetting,
 			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 			BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
 			void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
@@ -213,12 +213,14 @@ public:
  * constructor by code with access to the dynamic elements.
  */
 #define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
-	Database*			db, \
-	QWidget*			tab, \
-	QTableView*			tableView, \
-	QTableView*			debugTableView, \
-	QAction* const		newItemAction, \
-	QPushButton* const	newItemButton
+	Database*						db, \
+	QWidget*						tab, \
+	QTableView*						tableView, \
+	QTableView*						debugTableView, \
+	QAction* const					newItemAction, \
+	QPushButton* const				newItemButton, \
+	ProjectMultiSetting<int>*		columnWidthsSetting, \
+	const ProjectSetting<QString>*	sortingSetting
 
 /**
  * The dynamic constructor arguments from all ItemTypeMapper subtypes which are passed on to the
@@ -229,7 +231,9 @@ public:
 	tableView, \
 	debugTableView, \
 	newItemAction, \
-	newItemButton
+	newItemButton, \
+	columnWidthsSetting, \
+	sortingSetting
 
 
 
@@ -251,8 +255,6 @@ public:
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::ascentDialog_geometry,
-				&Settings::mainWindow_columnWidths_ascentsTable,
-				&Settings::mainWindow_sorting_ascentsTable,
 				&openNewAscentDialogAndStore,
 				&openDuplicateAscentDialogAndStore,
 				&openEditAscentDialogAndStore,
@@ -279,8 +281,6 @@ public:
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::peakDialog_geometry,
-				&Settings::mainWindow_columnWidths_peaksTable,
-				&Settings::mainWindow_sorting_peaksTable,
 				&openNewPeakDialogAndStore,
 				&openDuplicatePeakDialogAndStore,
 				&openEditPeakDialogAndStore,
@@ -307,8 +307,6 @@ public:
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::tripDialog_geometry,
-				&Settings::mainWindow_columnWidths_tripsTable,
-				&Settings::mainWindow_sorting_tripsTable,
 				&openNewTripDialogAndStore,
 				nullptr,
 				&openEditTripDialogAndStore,
@@ -335,8 +333,6 @@ public:
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::hikerDialog_geometry,
-				&Settings::mainWindow_columnWidths_hikersTable,
-				&Settings::mainWindow_sorting_hikersTable,
 				&openNewHikerDialogAndStore,
 				nullptr,
 				&openEditHikerDialogAndStore,
@@ -363,8 +359,6 @@ public:
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::regionDialog_geometry,
-				&Settings::mainWindow_columnWidths_regionsTable,
-				&Settings::mainWindow_sorting_regionsTable,
 				&openNewRegionDialogAndStore,
 				nullptr,
 				&openEditRegionDialogAndStore,
@@ -391,8 +385,6 @@ public:
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::rangeDialog_geometry,
-				&Settings::mainWindow_columnWidths_rangesTable,
-				&Settings::mainWindow_sorting_rangesTable,
 				&openNewRangeDialogAndStore,
 				nullptr,
 				&openEditRangeDialogAndStore,
@@ -419,8 +411,6 @@ public:
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 			ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 				&Settings::countryDialog_geometry,
-				&Settings::mainWindow_columnWidths_countriesTable,
-				&Settings::mainWindow_sorting_countriesTable,
 				&openNewCountryDialogAndStore,
 				nullptr,
 				&openEditCountryDialogAndStore,

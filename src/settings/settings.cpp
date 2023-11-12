@@ -103,15 +103,18 @@ void Settings::checkForVersionChange()
 	
 	// 1.2.0
 	if (settingsOlderThan("1.2.0")) {
+		// Open tab, filter bar visibility, column widths, sortings moved to project settings => remove
+		qSettings.remove("implicit/mainWindow/currentTabIndex");
+		qSettings.remove("implicit/mainWindow/showFilters");
+		qSettings.remove("implicit/mainWindow/columnWidths");
+		qSettings.remove("implicit/mainWindow/sorting");
+		
 		// New splitter in ascent viewer => carry over and remove deprecated setting
 		QString oldSplitterKey = "implicit/ascentViewer/splitterSizes";
 		if (qSettings.contains(oldSplitterKey)) {
 			ascentViewer_rightSplitterSizes.set(qSettings.value(oldSplitterKey).toStringList());
 			qSettings.remove(oldSplitterKey);
 		}
-		
-		// New way to save column widths => remove deprecated settings
-		qSettings.remove("implicit/mainWindow/columnWidths");
 	}
 	
 	// Update settings version

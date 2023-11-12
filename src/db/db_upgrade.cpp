@@ -127,7 +127,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	if (isBelowVersion(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
-			db->projectSettings->defaultHiker.set(parent, v1_2_0_defaultHikerToCarryOver.asQVariant());
+			db->projectSettings->defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
 		}
 	}
 	

@@ -24,7 +24,6 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "src/comp_tables/filter.h"
 #include "ui_main_window.h"
 #include "src/db/database.h"
 #include "src/main/item_types_handler.h"
@@ -150,9 +149,9 @@ private slots:
 private:
 	// Closing behaviour
 	void closeEvent(QCloseEvent* event) override;
-	void saveImplicitSettings() const;
-	void saveColumnWidths(const ItemTypeMapper& mapper) const;
-	void saveSorting(const ItemTypeMapper& mapper) const;
+	void saveImplicitSettings();
+	void saveColumnWidths(const ItemTypeMapper& mapper);
+	void saveSorting(const ItemTypeMapper& mapper);
 	// Layout changes
 	virtual void resizeEvent(QResizeEvent* event) override;
 	

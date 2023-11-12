@@ -46,7 +46,7 @@ GenericProjectSetting::GenericProjectSetting(SettingsTable* table, const QString
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			True if the setting is present in the project settings storage, false otherwise.
  */
-bool GenericProjectSetting::isPresent(QWidget* parent) const
+bool GenericProjectSetting::present(QWidget* parent) const
 {
 	return table->settingIsPresent(this, parent);
 }
@@ -82,7 +82,7 @@ QVariant GenericProjectSetting::getDefaultAsQVariant() const
  * @param parent	The parent window. Cannot be nullptr.
  * @param value		The new value for the setting.
  */
-void GenericProjectSetting::set(QWidget* parent, QVariant value)
+void GenericProjectSetting::set(QWidget* parent, QVariant value) const
 {
 	table->setSetting(parent, this, value);
 }
@@ -92,7 +92,7 @@ void GenericProjectSetting::set(QWidget* parent, QVariant value)
  *
  * @param parent	The parent window. Cannot be nullptr.
  */
-void GenericProjectSetting::clear(QWidget* parent)
+void GenericProjectSetting::clear(QWidget* parent) const
 {
 	table->clearSetting(parent, this);
 }
@@ -102,7 +102,7 @@ void GenericProjectSetting::clear(QWidget* parent)
  *
  * @param parent	The parent window. Cannot be nullptr.
  */
-void GenericProjectSetting::remove(QWidget* parent)
+void GenericProjectSetting::remove(QWidget* parent) const
 {
 	table->removeSetting(parent, this);
 }
@@ -137,7 +137,7 @@ ProjectSetting<T>::ProjectSetting(SettingsTable* table, const QString& key, QVar
  * @return			The current value of the setting, or the default value if the setting is not present.
  */
 template<typename T>
-T ProjectSetting<T>::get(QWidget* parent)
+T ProjectSetting<T>::get(QWidget* parent) const
 {
 	QVariant value = table->getSetting(this, parent);
 	assert(value.canConvert<T>());
@@ -180,10 +180,11 @@ ProjectMultiSetting<T>::ProjectMultiSetting(SettingsTable* table, const QString 
  * @return	True if any settings are stored in the settings file under the baseKey, false otherwise.
  */
 template<typename T>
-bool ProjectMultiSetting<T>::anyPresent() const
+bool ProjectMultiSetting<T>::anyPresent(const QSet<QString>& subKeys)
 {
-	for (const ProjectSetting<T>* const setting : settings) {
-		if (setting->isPresent()) return true;
+	for (const QString& subKey : subKeys) {
+		createSettingIfMissing(subKey);
+		if (settings[subKey]->present()) return true;
 	}
 	return false;
 }
@@ -194,9 +195,9 @@ bool ProjectMultiSetting<T>::anyPresent() const
  * @return	True if no settings are stored in the settings file under the baseKey, false otherwise.
  */
 template<typename T>
-bool ProjectMultiSetting<T>::nonePresent() const
+bool ProjectMultiSetting<T>::nonePresent(const QSet<QString>& subKeys)
 {
-	return !anyPresent();
+	return !anyPresent(subKeys);
 }
 
 /**
@@ -206,11 +207,11 @@ bool ProjectMultiSetting<T>::nonePresent() const
  * @return			True if all settings given by their sub-keys are stored in the settings file under the baseKey, false otherwise.
  */
 template<typename T>
-bool ProjectMultiSetting<T>::allPresent(QSet<QString> subKeys)
+bool ProjectMultiSetting<T>::allPresent(const QSet<QString>& subKeys)
 {
 	for (const QString& subKey : subKeys) {
 		createSettingIfMissing(subKey);
-		if (!settings[subKey]->isPresent()) return false;
+		if (!settings[subKey]->present()) return false;
 	}
 	return true;
 }
