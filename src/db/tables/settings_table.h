@@ -51,6 +51,7 @@ public:
 	QVariant getSetting(const GenericProjectSetting* setting, QWidget* parent = nullptr);
 	
 	void setSetting(QWidget* parent, const GenericProjectSetting* setting, QVariant value);
+	void clearSetting(QWidget* parent, const GenericProjectSetting* setting);
 	void removeSetting(QWidget* parent, const GenericProjectSetting* setting);
 	
 private:

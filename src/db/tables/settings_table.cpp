@@ -35,7 +35,7 @@ SettingsTable::SettingsTable() :
 		//								name				uiName		type	nullable	primaryKey	foreignKey	table
 		primaryKeyColumn	(new Column("projectSettingID",	QString(),	ID,		false,		true,		nullptr,	this)),
 		settingKeyColumn	(new Column("settingKey",		QString(),	String,	false,		false,		nullptr,	this)),
-		settingValueColumn	(new Column("settingValue",		QString(),	String,	false,		false,		nullptr,	this))
+		settingValueColumn	(new Column("settingValue",		QString(),	String,	true,		false,		nullptr,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(settingKeyColumn);
@@ -45,15 +45,18 @@ SettingsTable::SettingsTable() :
 
 
 /**
- * Indicates whether the given setting is present in the project settings table.
+ * Indicates whether the given setting is present and has a value in the project settings table.
  * 
  * @param setting	The setting to check.
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
- * @return			True if the setting is present, false otherwise.
+ * @return			True if the setting is present and not null, false otherwise.
  */
 bool SettingsTable::settingIsPresent(const GenericProjectSetting* setting, QWidget* parent)
 {
-	return findSettingID(setting, parent).isValid();
+	ItemID settingID = findSettingID(setting, parent);
+	if (settingID.isInvalid()) return false;
+	QVariant value = settingValueColumn->getValueFor(FORCE_VALID(settingID));
+	return value.isValid();
 }
 
 /**
@@ -108,8 +111,21 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* set
 }
 
 /**
- * Removes the setting from the project settings table entirely.
+ * Removes the value from the setting in the project settings table.
  * 
+ * @param parent	The parent window. Cannot be nullptr.
+ * @param setting	The setting to remove.
+ */
+void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting* setting)
+{
+	ItemID id = findSettingID(setting, parent);
+	if (id.isInvalid()) return;
+	updateCellInNormalTable(parent, FORCE_VALID(id), settingValueColumn, QVariant());
+}
+
+/**
+ * Removes the setting from the project settings table entirely.
+ *
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */

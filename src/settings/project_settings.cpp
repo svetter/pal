@@ -88,11 +88,21 @@ void GenericProjectSetting::set(QWidget* parent, QVariant value)
 }
 
 /**
- * Removes the setting from the project settings storage.
- * 
+ * Clears the setting in the project settings storage.
+ *
  * @param parent	The parent window. Cannot be nullptr.
  */
 void GenericProjectSetting::clear(QWidget* parent)
+{
+	table->clearSetting(parent, this);
+}
+
+/**
+ * Removes the setting from the project settings storage completely.
+ *
+ * @param parent	The parent window. Cannot be nullptr.
+ */
+void GenericProjectSetting::remove(QWidget* parent)
 {
 	table->removeSetting(parent, this);
 }

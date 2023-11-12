@@ -57,6 +57,7 @@ public:
 	
 	void set(QWidget* parent, QVariant value);
 	void clear(QWidget* parent);
+	void remove(QWidget* parent);
 };
 
 
@@ -114,8 +115,8 @@ public:
 	/** The hiker filter setting. */
 	ProjectSetting<int>		ascentFilterHiker;
 	
-
-
+	
+	
 	/**
 	 * Creates a new ProjectSettings object.
 	 * 
