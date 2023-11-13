@@ -151,6 +151,71 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 
 
 /**
+ * Event handler for mouse double click events, which are interpreted as zooming to 100% or back to
+ * fill mode.
+ * 
+ * If the image can't be zoomed because it is too small, the event is ignored. Otherwise, if fill
+ * mode is active, the image is zoomed to 100%, and if the image is already zoomed to any degree,
+ * fill mode is reactivated.
+ * When zooming to 100%, the image is centered around the mouse position.
+ * 
+ * @param event	The mouse double click event.
+ */
+void ScalableImageLabel::mouseDoubleClickEvent(QMouseEvent* event)
+{
+	Q_UNUSED(event);
+	if (!imageLoaded) {
+		event->ignore();
+		return;
+	}
+	QSize availableArea = parent->maximumViewportSize();
+
+	if (!fillMode) {
+		// Set to fill mode
+		setPixmap(fullSizePixmap.scaled(availableArea.width(), availableArea.height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		setBarsEnabled(false);
+		fillMode = true;
+		event->accept();
+		return;
+	}
+	if (fullSizePixmap.width() < availableArea.width() && fullSizePixmap.height() < availableArea.height()) {
+		// 100% would be smaller than image is in fill mode, do nothing
+		event->ignore();
+		return;
+	}
+
+	// Zoom to 100%
+	// Calculate mouse position
+	QSize oldImageSize = pixmap().size();
+	QPoint mousePosition = event->position().toPoint();
+	// Mouse position relative to image (not available area)
+	qreal relMousePositionX = ((qreal)mousePosition.x() - (availableArea.width() - oldImageSize.width()) / 2) / oldImageSize.width();
+	relMousePositionX = fmax(0, fmin(1, relMousePositionX));
+	qreal relMousePositionY = ((qreal)mousePosition.y() - (availableArea.height() - oldImageSize.height()) / 2) / oldImageSize.height();
+	relMousePositionY = fmax(0, fmin(1, relMousePositionY));
+
+	int newScrollX = (relMousePositionX * fullSizePixmap.width()) - mousePosition.x();
+	int newScrollY = (relMousePositionY * fullSizePixmap.height()) - mousePosition.y();
+
+	// Set new scroll boundaries and values
+	int newMaxScrollX = fullSizePixmap.width() - availableArea.width();
+	int newMaxScrollY = fullSizePixmap.height() - availableArea.height();
+
+	fillMode = false;
+	setBarsEnabled(true);
+	setPixmap(fullSizePixmap);
+	setMaxScroll(newMaxScrollX, newMaxScrollY);
+	setScroll(newScrollX, newScrollY);
+
+	// Calculate and save new center position
+	saveNewImageCenter();
+
+	event->accept();
+}
+
+
+
+/**
  * Event handler for paint events, which are interpreted as resizing events.
  * 
  * When the available area is resized, the image is also rescaled **iff* fill mode is active.

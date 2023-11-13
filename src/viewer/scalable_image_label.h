@@ -72,12 +72,16 @@ public slots:
 	void clearImage();
 	
 private slots:
+	// Zoom
 	void wheelEvent(QWheelEvent* event) override;
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
+	// Resize
 	void paintEvent(QPaintEvent* event) override;
 	// Drag image
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
+	
 	
 private:
 	void saveNewImageCenter();
