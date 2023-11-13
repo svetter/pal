@@ -60,6 +60,8 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	QAction* tableContextMenuEditAction;
 	/** The context menu entry for duplicating the selected item. */
 	QAction* tableContextMenuDuplicateAction;
+	/** The context menu entry for deleting the selected items. */
+	QAction* tableContextMenuDeleteAction;
 	/** List of keyboard shortcuts. */
 	QList<QShortcut*> shortcuts;
 	/** The status bar label for the current table size. */

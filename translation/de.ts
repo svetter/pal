@@ -202,37 +202,42 @@
         <translation>Grad auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="635"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="640"/>
         <source>Delete ascent</source>
         <translation>Besteigung löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="706"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="640"/>
+        <source>Delete ascents</source>
+        <translation>Besteigungen löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="711"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="726"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="731"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="742"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="747"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="743"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="748"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="768"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="773"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="769"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="774"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -1146,9 +1151,14 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="202"/>
+        <location filename="../src/dialogs/country_dialog.cpp" line="207"/>
         <source>Delete country</source>
         <translation>Land löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/country_dialog.cpp" line="207"/>
+        <source>Delete countries</source>
+        <translation>Länder löschen</translation>
     </message>
 </context>
 <context>
@@ -1688,8 +1698,13 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="202"/>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="207"/>
         <source>Delete hiker</source>
+        <translation>Wanderer löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="207"/>
+        <source>Delete hikers</source>
         <translation>Wanderer löschen</translation>
     </message>
 </context>
@@ -1937,155 +1952,156 @@ Trotzdem speichern?</translation>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="385"/>
+        <location filename="../src/main/main_window.cpp" line="374"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="387"/>
+        <location filename="../src/main/main_window.cpp" line="376"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="388"/>
+        <location filename="../src/main/main_window.cpp" line="377"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="390"/>
-        <source>Delete...</source>
-        <translation>Löschen...</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="478"/>
+        <location filename="../src/main/main_window.cpp" line="488"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="482"/>
+        <location filename="../src/main/main_window.cpp" line="492"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="513"/>
+        <location filename="../src/main/main_window.cpp" line="523"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="604"/>
+        <location filename="../src/main/main_window.cpp" line="618"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="609"/>
+        <location filename="../src/main/main_window.cpp" line="623"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="609"/>
+        <location filename="../src/main/main_window.cpp" line="623"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="611"/>
+        <location filename="../src/main/main_window.cpp" line="625"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="611"/>
+        <location filename="../src/main/main_window.cpp" line="625"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="619"/>
+        <location filename="../src/main/main_window.cpp" line="633"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="619"/>
+        <location filename="../src/main/main_window.cpp" line="633"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="621"/>
+        <location filename="../src/main/main_window.cpp" line="635"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="664"/>
-        <location filename="../src/main/main_window.cpp" line="683"/>
+        <location filename="../src/main/main_window.cpp" line="678"/>
+        <location filename="../src/main/main_window.cpp" line="697"/>
         <source>Saved new %1.</source>
         <translation>%1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="701"/>
+        <location filename="../src/main/main_window.cpp" line="715"/>
         <source>Saved changes in %1.</source>
         <translation>Änderungen in %1 gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="718"/>
+        <location filename="../src/main/main_window.cpp" line="739"/>
         <source>Deleted %1.</source>
         <translation>%1 gelöscht.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="782"/>
+        <location filename="../src/main/main_window.cpp" line="803"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="783"/>
+        <location filename="../src/main/main_window.cpp" line="804"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="929"/>
+        <location filename="../src/main/main_window.cpp" line="379"/>
+        <location filename="../src/main/main_window.cpp" line="848"/>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/main_window.cpp" line="965"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="961"/>
+        <location filename="../src/main/main_window.cpp" line="997"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="964"/>
+        <location filename="../src/main/main_window.cpp" line="1000"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="964"/>
+        <location filename="../src/main/main_window.cpp" line="1000"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1015"/>
-        <location filename="../src/main/main_window.cpp" line="1025"/>
-        <location filename="../src/main/main_window.cpp" line="1039"/>
+        <location filename="../src/main/main_window.cpp" line="1051"/>
+        <location filename="../src/main/main_window.cpp" line="1061"/>
+        <location filename="../src/main/main_window.cpp" line="1075"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1026"/>
+        <location filename="../src/main/main_window.cpp" line="1062"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1027"/>
+        <location filename="../src/main/main_window.cpp" line="1063"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1027"/>
+        <location filename="../src/main/main_window.cpp" line="1063"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1040"/>
+        <location filename="../src/main/main_window.cpp" line="1076"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1042"/>
+        <location filename="../src/main/main_window.cpp" line="1078"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2180,8 +2196,13 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="296"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="301"/>
         <source>Delete peak</source>
+        <translation>Gipfel löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="301"/>
+        <source>Delete peaks</source>
         <translation>Gipfel löschen</translation>
     </message>
 </context>
@@ -2352,8 +2373,13 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="218"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="223"/>
         <source>Delete mountain range</source>
+        <translation>Gebirge löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/range_dialog.cpp" line="223"/>
+        <source>Delete mountain ranges</source>
         <translation>Gebirge löschen</translation>
     </message>
 </context>
@@ -2459,9 +2485,14 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="269"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="274"/>
         <source>Delete region</source>
         <translation>Region löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/region_dialog.cpp" line="274"/>
+        <source>Delete regions</source>
+        <translation>Regionen löschen</translation>
     </message>
 </context>
 <context>
@@ -2777,9 +2808,14 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="269"/>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="274"/>
         <source>Delete trip</source>
         <translation>Urlaub löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="274"/>
+        <source>Delete trips</source>
+        <translation>Urlaube löschen</translation>
     </message>
 </context>
 <context>

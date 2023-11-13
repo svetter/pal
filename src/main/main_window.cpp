@@ -376,11 +376,12 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						editKeySequence);
 	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
 	tableContextMenu.addSeparator();
-	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete..."),					deleteKeySequence);
+	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete"),						deleteKeySequence);
 	// Store actions for open and duplicate (for disbling them where they're not needed)
 	tableContextMenuOpenAction		= openAction;
 	tableContextMenuEditAction		= editAction;
 	tableContextMenuDuplicateAction	= duplicateAction;
+	tableContextMenuDeleteAction	= deleteAction;
 	
 	// Set icons
 	openAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
@@ -843,6 +844,9 @@ void MainWindow::handle_rightClick(QPoint pos)
 	tableContextMenuOpenAction		->setVisible(singleRowSelected && viewableItemTable);
 	tableContextMenuEditAction		->setVisible(singleRowSelected);
 	tableContextMenuDuplicateAction	->setVisible(singleRowSelected && duplicatableItemTable);
+	
+	QString deleteString = tr("Delete") + (Settings::confirmDelete.get() ? "..." : "");
+	tableContextMenuDeleteAction->setText(deleteString);
 	
 	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
 }
