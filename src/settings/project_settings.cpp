@@ -173,6 +173,15 @@ ProjectMultiSetting<T>::ProjectMultiSetting(SettingsTable* table, const QString 
 		defaultValue(defaultValue)
 {}
 
+/**
+ * Destroys the ProjectMultiSetting.
+ */
+ template<typename T>
+ ProjectMultiSetting<T>::~ProjectMultiSetting()
+{
+	qDeleteAll(settings);
+}
+
 
 /**
  * Checks whether any of the settings are present in the project settings storage.

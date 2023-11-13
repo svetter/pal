@@ -161,6 +161,15 @@ public:
 		baseKey(baseKey),
 		defaultValue(defaultValue)
 	{}
+
+	/**
+	 * Destroys the MultiSetting.
+	 */
+	inline ~MultiSetting()
+	{
+		qDeleteAll(settings);
+	}
+
 	
 	
 	/**

@@ -95,6 +95,7 @@ class ProjectMultiSetting
 	
 public:
 	ProjectMultiSetting(SettingsTable* table, const QString baseKey, QVariant defaultValue = T());
+	~ProjectMultiSetting();
 	
 	bool anyPresent(const QSet<QString>& subKeys);
 	bool nonePresent(const QSet<QString>& subKeys);
