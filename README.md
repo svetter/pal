@@ -1,4 +1,4 @@
-              ![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
+            ![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
 
 PeakAscentLogger (PAL)
 ======================
@@ -65,6 +65,8 @@ Other features:
 - PAL supports dark mode with Qt's "Fusion" theme
 	- To enable, pass `fusion` as a program argument and set system theme to dark
 
+The codebase is fully documented.
+
 
 
 Building PAL
@@ -76,8 +78,8 @@ If there is no release suitable for you or you want to make changes in the code,
 
 
 
-Translations
-------------
+Contributions & translations
+----------------------------
 
 Besides the English base version, there is currently only a German translation.
 New translations can be added with relative ease with no need to write code, using Qt Linguist.
