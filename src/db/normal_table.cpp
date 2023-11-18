@@ -34,13 +34,14 @@
  * 
  * Immediately after construction, all columns should be created and added to the table.
  * 
- * @param name					The internal name of the table.
- * @param uiName				The name of the table as it should be displayed in the UI.
- * @param primaryKeyColumnName	The name of the primary key column.
+ * @param name						The internal name of the table.
+ * @param uiName					The name of the table as it should be displayed in the UI.
+ * @param primaryKeyColumnName		The name of the primary key column.
+ * @param primaryKeyColumnUIName	The name of the primary key column as it should be displayed in the UI.
  */
-NormalTable::NormalTable(QString name, QString uiName, QString primaryKeyColumnName) :
+NormalTable::NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
 		Table(name, uiName, false),
-		primaryKeyColumn(new Column(primaryKeyColumnName, QString(), ID, false, true, nullptr, this))
+		primaryKeyColumn(new Column(primaryKeyColumnName, primaryKeyColumnUIName, ID, false, true, nullptr, this))
 {}
 
 /**

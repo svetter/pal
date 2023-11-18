@@ -45,7 +45,7 @@ protected:
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool isStatistical, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	QSet<BufferRowIndex> evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const;
 	

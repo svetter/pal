@@ -92,6 +92,8 @@ SOURCES += \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
+	src/tools/export_dialog.cpp \
+	src/tools/export_thread.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
 	src/viewer/ascent_viewer.cpp \
@@ -158,6 +160,8 @@ HEADERS += \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/tools/export_dialog.h \
+	src/tools/export_thread.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \
@@ -169,6 +173,7 @@ FORMS += \
 	src/ui/about_window.ui \
 	src/ui/ascent_filter_bar.ui \
 	src/ui/ascent_viewer.ui \
+	src/ui/export_dialog.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \

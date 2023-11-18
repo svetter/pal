@@ -32,7 +32,7 @@
  * Creates a new HikersTable.
  */
 HikersTable::HikersTable() :
-		NormalTable(QString("Hikers"), tr("Hikers"), "hikerID"),
+		NormalTable(QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
 		//						name	uiName		type	nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new Column("name",	tr("Name"),	String,	false,		false,		nullptr,	this))
 {

@@ -34,12 +34,12 @@
  * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
  */
 PeaksTable::PeaksTable(Column* foreignRegionIDColumn) :
-		NormalTable(QString("Peaks"), tr("Peaks"), "peakID"),
+		NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
 		//							name			uiName						type		nullable	primaryKey	foreignKey				inTable
 		nameColumn		(new Column("name",			tr("Name"),					String,		false,		false,		nullptr,				this)),
 		heightColumn	(new Column("height",		tr("Height"),				Integer,	true,		false,		nullptr,				this)),
 		volcanoColumn	(new Column("volcano",		tr("Volcano"),				Bit,		false,		false,		nullptr,				this)),
-		regionIDColumn	(new Column("regionID",		QString(),					ID,			true,		false,		foreignRegionIDColumn,	this)),
+		regionIDColumn	(new Column("regionID",		tr("Region ID"),			ID,			true,		false,		foreignRegionIDColumn,	this)),
 		mapsLinkColumn	(new Column("mapsLink",		tr("Google Maps link"),		String,		true,		false,		nullptr,				this)),
 		earthLinkColumn	(new Column("earthLink",	tr("Google Earth link"),	String,		true,		false,		nullptr,				this)),
 		wikiLinkColumn	(new Column("wikiLink",		tr("Wikipedia link"),		String,		true,		false,		nullptr,				this))

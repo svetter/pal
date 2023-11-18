@@ -438,15 +438,22 @@ public:
 	/** The ItemTypeMapper instances for all item types. */
 	const QMap<PALItemType, ItemTypeMapper*> mappers;
 	
+	/** The base table for photos. */
+	PhotosTable* const photosTable;
+	/** The base table for hiker participation in trips. */
+	ParticipatedTable* const participatedTable;
+	
 	/** Creates a new ItemTypesHandler instance. */
 	inline ItemTypesHandler(bool showDebugTableViews,
-			AscentMapper*	ascentMapper,
-			PeakMapper*		peakMapper,
-			TripMapper*		tripMapper,
-			HikerMapper*	hikerMapper,
-			RegionMapper*	regionMapper,
-			RangeMapper*	rangeMapper,
-			CountryMapper*	countryMapper
+			AscentMapper*		ascentMapper,
+			PeakMapper*			peakMapper,
+			TripMapper*			tripMapper,
+			HikerMapper*		hikerMapper,
+			RegionMapper*		regionMapper,
+			RangeMapper*		rangeMapper,
+			CountryMapper*		countryMapper,
+			PhotosTable*		photosTable,
+			ParticipatedTable*	participatedTable
 			) :
 			showDebugTableViews(showDebugTableViews),
 			mappers({
@@ -457,7 +464,9 @@ public:
 				{ItemTypeRegion,	regionMapper},
 				{ItemTypeRange,		rangeMapper},
 				{ItemTypeCountry,	countryMapper},
-			})
+			}),
+			photosTable(photosTable),
+			participatedTable(participatedTable)
 	{}
 	
 	/**
@@ -469,6 +478,23 @@ public:
 	inline const ItemTypeMapper* get(PALItemType type) const
 	{
 		return mappers.value(type);
+	}
+	
+	/**
+	 * Returns a list of all base tables, including photos and participated tables, in a fixed
+	 * order.
+	 * 
+	 * @return	All base tables in a fixed order.
+	 */
+	inline QList<Table*> getAllBaseTables() const
+	{
+		QList<Table*> tables = QList<Table*>();
+		for (ItemTypeMapper* mapper : mappers) {
+			tables += mapper->baseTable;
+		}
+		tables.append(photosTable);
+		tables.append(participatedTable);
+		return tables;
 	}
 	
 	/**

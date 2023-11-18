@@ -28,6 +28,7 @@
 #include "src/settings/project_settings_window.h"
 #include "src/settings/settings_window.h"
 #include "src/tools/relocate_photos_dialog.h"
+#include "src/tools/export_dialog.h"
 #include "src/viewer/ascent_viewer.h"
 #include "ui_main_window.h"
 
@@ -130,6 +131,7 @@ void MainWindow::setupMenuIcons()
 	// New menu: no fitting icons
 	// Tools menu
 	relocatePhotosAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	exportDataAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	// Help menu: already has icons
 }
 
@@ -192,7 +194,9 @@ void MainWindow::createTypesHandler()
 		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->sorting_hikersTable),
 		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->sorting_regionsTable),
 		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->sorting_countriesTable)
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->sorting_countriesTable),
+		db.photosTable,
+		db.participatedTable
 	);
 	
 	if (showDebugTableViews) {
@@ -233,6 +237,7 @@ void MainWindow::connectUI()
 	});
 	// Menu "Tools"
 	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
+	connect(exportDataAction,				&QAction::triggered,			this,	&MainWindow::handle_exportData);
 	// Menu "Help"
 	connect(aboutAction,					&QAction::triggered,			this,	&MainWindow::handle_about);
 	connect(aboutQtAction,					&QAction::triggered,			this,	&QApplication::aboutQt);
@@ -1173,6 +1178,16 @@ void MainWindow::handle_autoResizeColumns()
 void MainWindow::handle_relocatePhotos()
 {
 	RelocatePhotosDialog(this, &db).exec();
+}
+
+/**
+ * Event handler for the "export data" action in the tools menu.
+ * 
+ * Opens the photo relocation dialog.
+ */
+void MainWindow::handle_exportData()
+{
+	DataExportDialog(this, &db, typesHandler).exec();
 }
 
 

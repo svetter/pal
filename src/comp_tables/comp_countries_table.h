@@ -60,7 +60,7 @@ public:
 	 */
 	inline CompositeCountriesTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->countriesTable, tableView),
-			//																	name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
+			//																	name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column
 			nameColumn			(new const DirectCompositeColumn		(this,	"name",				tr("Country"),			Qt::AlignLeft,	noSuffix,	db->countriesTable->nameColumn)),
 			numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
 			numRegionsColumn	(new const NumericFoldCompositeColumn	(this,	"numRegions",		tr("Num. regions"),		CountFold,		noSuffix,	{ {db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn} })),

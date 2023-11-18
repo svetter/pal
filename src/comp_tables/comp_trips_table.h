@@ -68,7 +68,7 @@ public:
 	 */
 	inline CompositeTripsTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->tripsTable, tableView),
-			//																		name				uiName					align/fold op	suffix			breadcrumbs (column reference chain) + content column [+ enum names]
+			//																		name				uiName					align/fold op	suffix			breadcrumbs (column reference chain) + content column
 			indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),							noSuffix,		{ {db->tripsTable->startDateColumn,		Qt::AscendingOrder},					{db->tripsTable->endDateColumn,				Qt::AscendingOrder} })),
 			nameColumn				(new const DirectCompositeColumn		(this,	"name",				tr("Name"),				Qt::AlignLeft,	noSuffix,		db->tripsTable->nameColumn)),
 			startDateColumn			(new const DirectCompositeColumn		(this,	"startDate",		tr("Start date"),		Qt::AlignLeft,	noSuffix,		db->tripsTable->startDateColumn)),

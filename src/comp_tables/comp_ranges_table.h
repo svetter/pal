@@ -38,6 +38,8 @@ class CompositeRangesTable : public CompositeTable {
 public:
 	/** The name of the mountain range. */
 	const DirectCompositeColumn*	nameColumn;
+	/** The continent the mountain range is on. */
+	const DirectCompositeColumn*	continentColumn;
 	/** The number of regions assigned to this mountain range. */
 	const FoldCompositeColumn*		numRegionsColumn;
 	/** The number of peaks assigned to this mountain range. */
@@ -60,8 +62,9 @@ public:
 	 */
 	inline CompositeRangesTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->rangesTable, tableView),
-			//																	name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column [+ enum names]
+			//																	name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column
 			nameColumn			(new const DirectCompositeColumn		(this,	"name",				tr("Mountain range"),	Qt::AlignLeft,	noSuffix,	db->rangesTable->nameColumn)),
+			continentColumn		(new const DirectCompositeColumn		(this,	"continent",		tr("Continent"),		Qt::AlignLeft,	noSuffix,	db->rangesTable->continentColumn)),
 			numRegionsColumn	(new const NumericFoldCompositeColumn	(this,	"numRegions",		tr("Num. regions"),		CountFold,		noSuffix,	{ {db->rangesTable->primaryKeyColumn,	db->regionsTable->rangeIDColumn} })),
 			numPeaksColumn		(new const NumericFoldCompositeColumn	(this,	"numPeaks",			tr("Num. peaks"),		CountFold,		noSuffix,	{ {db->rangesTable->primaryKeyColumn,	db->regionsTable->rangeIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} })),
 			avgPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	"avgPeakHeight",	tr("Avg. peak height"),	AverageFold,	mSuffix,	{ {db->rangesTable->primaryKeyColumn,	db->regionsTable->rangeIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn} },	db->peaksTable->heightColumn)),
@@ -69,6 +72,7 @@ public:
 			numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->rangesTable->primaryKeyColumn,	db->regionsTable->rangeIDColumn},		{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},	{db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} }))
 	{
 		addColumn(nameColumn);
+		addColumn(continentColumn);
 		addColumn(numRegionsColumn);
 		addColumn(numPeaksColumn);
 		addColumn(avgPeakHeightColumn);

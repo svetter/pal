@@ -23,6 +23,8 @@
 
 #include "ascents_table.h"
 
+#include "src/data/enum_names.h"
+
 #include <QString>
 #include <QTranslator>
 
@@ -35,19 +37,19 @@
  * @param foreignTripIDColumn	The primary key column of the TripsTable.
  */
 AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDColumn) :
-		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID"),
-		//									name				uiName				type		nullable	primaryKey	foreignKey				inTable
+		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
+		//									name				uiName				type		nullable	primaryKey	foreignKey				inTable	enumNames	enumNameLists
 		titleColumn				(new Column("title",			tr("Title"),		String,		true,		false,		nullptr,				this)),
-		peakIDColumn			(new Column("peakID",			QString(),			ID,			true,		false,		foreignPeakIDColumn,	this)),
+		peakIDColumn			(new Column("peakID",			tr("Peak ID"),		ID,			true,		false,		foreignPeakIDColumn,	this)),
 		dateColumn				(new Column("date",				tr("Date"),			Date,		true,		false,		nullptr,				this)),
 		peakOnDayColumn			(new Column("peakOnDay",		tr("Peak/day"),		Integer,	false,		false,		nullptr,				this)),
 		timeColumn				(new Column("time",				tr("Local time"),	Time,		true,		false,		nullptr,				this)),
 		elevationGainColumn		(new Column("elevationGain",	tr("Elev. gain"),	Integer,	true,		false,		nullptr,				this)),
-		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	Enum,		false,		false,		nullptr,				this)),
+		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	Enum,		false,		false,		nullptr,				this,	&EnumNames::hikeKindNames)),
 		traverseColumn			(new Column("traverse",			tr("Traverse"),		Bit,		false,		false,		nullptr,				this)),
-		difficultySystemColumn	(new Column("difficultySystem",	tr("Diff. system"),	DualEnum,	false,		false,		nullptr,				this)),
-		difficultyGradeColumn	(new Column("difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		false,		nullptr,				this)),
-		tripIDColumn			(new Column("tripID",			QString(),			ID,			true,		false,		foreignTripIDColumn,	this)),
+		difficultySystemColumn	(new Column("difficultySystem",	tr("Diff. system"),	DualEnum,	false,		false,		nullptr,				this,	nullptr,	&EnumNames::difficultyNames)),
+		difficultyGradeColumn	(new Column("difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		false,		nullptr,				this,	nullptr,	&EnumNames::difficultyNames)),
+		tripIDColumn			(new Column("tripID",			tr("Trip ID"),		ID,			true,		false,		foreignTripIDColumn,	this)),
 		descriptionColumn		(new Column("description",		tr("Description"),	String,		true,		false,		nullptr,				this))
 {
 	addColumn(primaryKeyColumn);

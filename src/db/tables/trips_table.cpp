@@ -32,7 +32,7 @@
  * Creates a new TripsTable.
  */
 TripsTable::TripsTable() :
-		NormalTable(QString("Trips"), tr("Trips"), "tripID"),
+		NormalTable(QString("Trips"), tr("Trips"), "tripID", tr("Trip ID")),
 		//								name			uiName				type	nullable	primaryKey	foreignKey	inTable
 		nameColumn			(new Column("name",			tr("Name"),			String,	false,		false,		nullptr,	this)),
 		startDateColumn		(new Column("startDate",	tr("Start date"),	Date,	true,		false,		nullptr,	this)),

@@ -38,9 +38,6 @@ class PhotoRelocationThread : public QThread
 {
 	Q_OBJECT
 	
-	/** The parent window. */
-	QDialog* parent;
-	
 	/** The project database. */
 	Database* db;
 	/** The old prefix to replace in the photo filepaths. */

@@ -32,10 +32,10 @@
  */
 SettingsTable::SettingsTable() :
 		Table("ProjectSettings", "Project settings", false),
-		//								name				uiName		type	nullable	primaryKey	foreignKey	table
-		primaryKeyColumn	(new Column("projectSettingID",	QString(),	ID,		false,		true,		nullptr,	this)),
-		settingKeyColumn	(new Column("settingKey",		QString(),	String,	false,		false,		nullptr,	this)),
-		settingValueColumn	(new Column("settingValue",		QString(),	String,	true,		false,		nullptr,	this))
+		//								name				uiName							type	nullable	primaryKey	foreignKey	table
+		primaryKeyColumn	(new Column("projectSettingID",	tr("Project setting ID"),		ID,		false,		true,		nullptr,	this)),
+		settingKeyColumn	(new Column("settingKey",		tr("Project setting key"),		String,	false,		false,		nullptr,	this)),
+		settingValueColumn	(new Column("settingValue",		tr("Project setting value"),	String,	true,		false,		nullptr,	this))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(settingKeyColumn);

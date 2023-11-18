@@ -23,6 +23,8 @@
 
 #include "ranges_table.h"
 
+#include "src/data/enum_names.h"
+
 #include <QString>
 #include <QTranslator>
 
@@ -32,10 +34,10 @@
  * Creates a new RangesTable.
  */
 RangesTable::RangesTable() :
-		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID"),
-		//							name			uiName				type	nullable	primaryKey	foreignKey	inTable
+		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
+		//							name			uiName				type	nullable	primaryKey	foreignKey	inTable	enumNames
 		nameColumn		(new Column("name",			tr("Name"),			String,	false,		false,		nullptr,	this)),
-		continentColumn	(new Column("continent",	tr("Continent"),	Enum,	false,		false,		nullptr,	this))
+		continentColumn	(new Column("continent",	tr("Continent"),	Enum,	false,		false,		nullptr,	this,	&EnumNames::continentNames))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

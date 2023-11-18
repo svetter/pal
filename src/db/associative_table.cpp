@@ -33,11 +33,12 @@
  * Creates a new AssociativeTable and automatically creates and adds its two columns.
  * 
  * @param name					The internal name of the table.
+ * @param uiName				The name of the table as it should be displayed in the UI.
  * @param foreignKeyColumn1		The first primary and foreign key column.
  * @param foreignKeyColumn2		The second primary and foreign key column.
  */
-AssociativeTable::AssociativeTable(QString name, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
-		Table(name, QString(), true),
+AssociativeTable::AssociativeTable(QString name, QString uiName, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
+		Table(name, uiName, true),
 		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::ID, false, true, foreignKeyColumn1, this)),
 		column2(new Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::ID, false, true, foreignKeyColumn2, this))
 {

@@ -42,8 +42,10 @@
  * @param primaryKey	Whether the column contains primary keys.
  * @param foreignKey	The foreign column referenced by this column if it contains foreign keys.
  * @param table			The table this column belongs to.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
-Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table) :
+Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 		changeListeners(QSet<const CompositeColumn*>()),
 		name(name),
 		uiName(uiName),
@@ -51,7 +53,9 @@ Column::Column(QString name, QString uiName, DataType type, bool nullable, bool 
 		primaryKey(primaryKey),
 		foreignKey(foreignKey),
 		nullable(nullable),
-		table(table)
+		table(table),
+		enumNames(enumNames),
+		enumNameLists(enumNameLists)
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
 	assert(table->isAssociative == (primaryKey && foreignKey));

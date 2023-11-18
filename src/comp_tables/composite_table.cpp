@@ -38,7 +38,7 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 		baseTable(baseTable),
 		tableView(tableView),
 		columns(QList<const CompositeColumn*>()),
-		firstHiddenColumnIndex(-1),
+		firstBackendColumnIndex(-1),
 		buffer(TableBuffer()),
 		viewOrder(ViewOrderBuffer()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
@@ -71,9 +71,9 @@ CompositeTable::~CompositeTable()
 void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 {
 	if (hidden) {
-		if (firstHiddenColumnIndex < 0) firstHiddenColumnIndex = columns.size();
+		if (firstBackendColumnIndex < 0) firstBackendColumnIndex = columns.size();
 	} else {
-		assert(firstHiddenColumnIndex < 0);
+		assert(firstBackendColumnIndex < 0);
 	}
 	
 	columns.append(column);
@@ -93,8 +93,18 @@ void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
  */
 int CompositeTable::getNumberOfVisibleColumns() const
 {
-	if (firstHiddenColumnIndex >= 0) return firstHiddenColumnIndex;
+	if (firstBackendColumnIndex >= 0) return firstBackendColumnIndex;
 	return columns.size();
+}
+
+/**
+ * Returns a list of all composite columns in the table.
+ * 
+ * @return	A list of all composite columns in the table.
+ */
+QList<const CompositeColumn*> CompositeTable::getColumnList() const
+{
+	return QList<const CompositeColumn*>(columns);
 }
 
 /**
@@ -274,9 +284,9 @@ int CompositeTable::getNumberOfCellsToUpdate() const
  * 
  * After updating the buffer, the order buffer is rebuilt and the model is notified of the changes.
  * 
- * @param progressDialog	A progress dialog to update while updating the buffer.
+ * @param runAfterEachCellUpdate	A lambda function to be run every time a cell value has been updated.
  */
-void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
+void CompositeTable::updateBuffer(std::function<void ()> runAfterEachCellUpdate)
 {
 	if (columnsToUpdate.isEmpty()) return;
 	
@@ -288,14 +298,15 @@ void CompositeTable::updateBuffer(QProgressDialog* progressDialog)
 				QVariant newContent = computeCellContent(bufferRowIndex, columnIndex);
 				buffer.replaceCell(bufferRowIndex, columnIndex, newContent);
 				
-				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+				runAfterEachCellUpdate();
 			}
 		}
 		else {
 			QList<QVariant> cells = computeWholeColumnContent(columnIndex);
 			for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
 				buffer.replaceCell(bufferRowIndex, columnIndex, cells.at(bufferRowIndex.get()));
-				if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+				
+				runAfterEachCellUpdate();
 			}
 		}
 		
@@ -477,7 +488,11 @@ bool CompositeTable::filterIsActive() const
 void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialog* progress)
 {
 	this->updateImmediately = updateImmediately;
-	if (updateImmediately) updateBuffer(progress);
+	
+	auto progressUpdateLambda = [progress] () {
+		progress->setValue(progress->value() + 1);
+	};
+	if (updateImmediately) updateBuffer(progressUpdateLambda);
 }
 
 /**

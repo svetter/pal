@@ -145,6 +145,7 @@ private slots:
 	void handle_autoResizeColumns();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
+	void handle_exportData();
 	// Help menu action handlers
 	void handle_about();
 	

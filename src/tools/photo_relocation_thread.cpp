@@ -35,7 +35,6 @@
  */
 PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QString oldPrefix, QString newPrefix) :
 		QThread(parent),
-		parent(parent),
 		db(db),
 		oldPrefix(oldPrefix),
 		newPrefix(newPrefix),

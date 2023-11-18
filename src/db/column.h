@@ -67,7 +67,12 @@ public:
 	/** The table this column belongs to. */
 	const Table* const	table;
 	
-	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table);
+	/** A list of enum names corresponding to the enum used for this column, or nullptr. */
+	const QStringList* const enumNames;
+	/** A list of enum name lists corresponding to the nested enum used for this column, or nullptr. */
+	const QList<QPair<QString, QStringList>>* const enumNameLists;
+	
+	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 	
 	bool	isPrimaryKey() const;
 	bool	isForeignKey() const;

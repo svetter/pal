@@ -83,7 +83,7 @@ class CompositeTable : public QAbstractTableModel {
 	/** The composite columns of this table in their default order. */
 	QList<const CompositeColumn*> columns;
 	/** The index of the first column which is never shown in UI, but only used for filtering. */
-	int firstHiddenColumnIndex;
+	int firstBackendColumnIndex;
 	
 	/** The buffer used for storing the raw computed values of the cells. */
 	TableBuffer buffer;
@@ -119,6 +119,7 @@ protected:
 	void addColumn(const CompositeColumn* column, bool hidden = false);
 public:
 	int getNumberOfVisibleColumns() const;
+	QList<const CompositeColumn*> getColumnList() const;
 	const CompositeColumn* getColumnAt(int columnIndex) const;
 	const CompositeColumn* getColumnByName(const QString& columnName) const;
 	int getIndexOf(const CompositeColumn* column) const;
@@ -129,7 +130,7 @@ public:
 	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
-	void updateBuffer(QProgressDialog* progressDialog);
+	void updateBuffer(std::function<void ()> runAfterEachCellUpdate = {});
 	void resetBuffer();
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;

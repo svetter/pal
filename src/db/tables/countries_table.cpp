@@ -32,7 +32,7 @@
  * Creates a new CountriesTable.
  */
 CountriesTable::CountriesTable() :
-		NormalTable(QString("Countries"), tr("Countries"), "countryID"),
+		NormalTable(QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
 		//						name	uiName		type	nullable	primaryKey	foreignKey	inTable
 		nameColumn	(new Column("name",	tr("Name"),	String,	false,		false,		nullptr,	this))
 {

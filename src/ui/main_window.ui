@@ -803,6 +803,7 @@
      <string>Tools</string>
     </property>
     <addaction name="relocatePhotosAction"/>
+    <addaction name="exportDataAction"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
@@ -967,6 +968,11 @@
    </property>
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="exportDataAction">
+   <property name="text">
+    <string>Export data...</string>
    </property>
   </action>
  </widget>
