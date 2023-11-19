@@ -73,7 +73,9 @@ public:
 	
 public:
 	int getIndex() const;
-	bool isBackendColumn() const;
+	int getExportIndex() const;
+	bool isExportOnlyColumn() const;
+	bool isFilterOnlyColumn() const;
 	
 	/**
 	 * Computes the value of the cell at the given row index.

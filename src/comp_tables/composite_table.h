@@ -83,7 +83,9 @@ class CompositeTable : public QAbstractTableModel {
 	/** The composite columns of this table in their default order. */
 	QList<const CompositeColumn*> columns;
 	/** The index of the first column which is never shown in UI, but only used for filtering. */
-	int firstBackendColumnIndex;
+	int firstFilterColumnIndex;
+	/** The composite columns of this table which are only used for exporting, not for display in the UI. Paired with the index of the normal column they come in front of. */
+	QList<QPair<int, const CompositeColumn*>> exportColumns;
 	
 	/** The buffer used for storing the raw computed values of the cells. */
 	TableBuffer buffer;
@@ -118,13 +120,19 @@ public:
 	~CompositeTable();
 	
 protected:
-	void addColumn(const CompositeColumn* column, bool hidden = false);
+	void addColumn(const CompositeColumn* column);
+	void addExportOnlyColumn(const CompositeColumn* column);
+	void addFilterColumn(const CompositeColumn* column);
 public:
-	int getNumberOfVisibleColumns() const;
-	QList<const CompositeColumn*> getColumnList() const;
+	int getNumberOfNormalColumns() const;
+	int getNumberOfColumnsForCompleteExport() const;
+	QList<const CompositeColumn*> getNormalColumnList() const;
+	QList<const CompositeColumn*> getCompleteExportColumnList() const;
 	const CompositeColumn* getColumnAt(int columnIndex) const;
+	const CompositeColumn* getExportOnlyColumnAt(int columnIndex) const;
 	const CompositeColumn* getColumnByName(const QString& columnName) const;
 	int getIndexOf(const CompositeColumn* column) const;
+	int getExportIndexOf(const CompositeColumn* column) const;
 	QSet<QString> getVisibleColumnNameSet() const;
 	const NormalTable* getBaseTable() const;
 	

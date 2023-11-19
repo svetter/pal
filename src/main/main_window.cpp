@@ -325,7 +325,7 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(visibleColumnNames);
 	
 	// Restore column widths
-	for (int columnIndex = 0; columnIndex < mapper.compTable->getNumberOfVisibleColumns(); columnIndex++) {
+	for (int columnIndex = 0; columnIndex < mapper.compTable->getNumberOfNormalColumns(); columnIndex++) {
 		const QString& columnName = mapper.compTable->getColumnAt(columnIndex)->name;
 		mapper.tableView->setColumnWidth(columnIndex, columnWidthMap[columnName]);
 	}

@@ -38,7 +38,8 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 		baseTable(baseTable),
 		tableView(tableView),
 		columns(QList<const CompositeColumn*>()),
-		firstBackendColumnIndex(-1),
+		firstFilterColumnIndex(-1),
+		exportColumns(QList<QPair<int, const CompositeColumn*>>()),
 		buffer(TableBuffer()),
 		viewOrder(ViewOrderBuffer()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
@@ -64,18 +65,45 @@ CompositeTable::~CompositeTable()
 
 
 /**
- * Adds a column to this table during initialization.
+ * Adds a normal column to this table during initialization.
  * 
  * @param column	The composite column to add.
- * @param hidden	Whether the column is hidden from the UI (only used for filtering).
  */
-void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
+void CompositeTable::addColumn(const CompositeColumn* column)
 {
-	if (hidden) {
-		if (firstBackendColumnIndex < 0) firstBackendColumnIndex = columns.size();
-	} else {
-		assert(firstBackendColumnIndex < 0);
+	assert(firstFilterColumnIndex < 0);
+	
+	columns.append(column);
+	
+	// Register as change listener at all underlying columns
+	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
+	for (Column* underlyingColumn : underlyingColumns) {
+		underlyingColumn->registerChangeListener(column);
 	}
+}
+
+/**
+ * Adds an export-only column to this table during initialization.
+ *
+ * @param column	The composite column to add as an export-only column.
+ */
+void CompositeTable::addExportOnlyColumn(const CompositeColumn* column)
+{
+	assert(firstFilterColumnIndex < 0);
+	
+	exportColumns.append({columns.size(), column});
+}
+
+/**
+ * Adds a filter-only column to this table during initialization.
+ * 
+ * @pre All normal and export-only columns have been added already.
+ *
+ * @param column	The composite column to add as a filter-only column.
+ */
+void CompositeTable::addFilterColumn(const CompositeColumn* column)
+{
+	if (firstFilterColumnIndex < 0) firstFilterColumnIndex = columns.size();
 	
 	columns.append(column);
 	
@@ -88,24 +116,78 @@ void CompositeTable::addColumn(const CompositeColumn* column, bool hidden)
 
 
 /**
- * Returns the number of visible columns in this table.
+ * Returns the number of normal columns (for display in the UI) in this table.
  * 
  * @return	The number of visible columns in this table.
  */
-int CompositeTable::getNumberOfVisibleColumns() const
+int CompositeTable::getNumberOfNormalColumns() const
 {
-	if (firstBackendColumnIndex >= 0) return firstBackendColumnIndex;
+	if (firstFilterColumnIndex >= 0) return firstFilterColumnIndex;
 	return columns.size();
 }
 
 /**
- * Returns a list of all composite columns in the table.
+ * Returns the number of columns which can be exported from this table, including normal columns
+ * and export-only columns.
  * 
- * @return	A list of all composite columns in the table.
+ * @return	The number of columns which can be exported from this table.
  */
-QList<const CompositeColumn*> CompositeTable::getColumnList() const
+int CompositeTable::getNumberOfColumnsForCompleteExport() const
 {
-	return QList<const CompositeColumn*>(columns);
+	return getNumberOfNormalColumns() + exportColumns.size();
+}
+
+/**
+ * Returns a list of all normal (not export-only or filter-only) composite columns in the table.
+ * 
+ * @return	A list of all normal columns in the table.
+ */
+QList<const CompositeColumn*> CompositeTable::getNormalColumnList() const
+{
+	QList<const CompositeColumn*> list = QList<const CompositeColumn*>();
+	for (int columnIndex = 0; columnIndex < getNumberOfNormalColumns(); columnIndex++) {
+		list.append(columns.at(columnIndex));
+	}
+	return list;
+}
+
+/**
+ * Returns a list of all composite columns which can be exported from this table, including normal
+ * columns and export-only columns.
+ * 
+ * Sorts the export-only columns between the normal columns according to their assciated indices.
+ * 
+ * @return	A list of all columns which can be exported from this table.
+ */
+QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() const
+{
+	QList<const CompositeColumn*> list = QList<const CompositeColumn*>();
+	int numNormalColumns = getNumberOfNormalColumns();
+	int exportOnlyColumnIndex = 0;
+	int normalColumnIndex = 0;
+	while (normalColumnIndex < numNormalColumns || exportOnlyColumnIndex < exportColumns.size()) {
+		if (exportOnlyColumnIndex < exportColumns.size()) {
+			// At least one export only column left
+			// These are inserted before normal columns for the same index, so have to be handled first
+			int nextExportColumnInsertIndex = exportColumns.at(exportOnlyColumnIndex).first;
+			if (nextExportColumnInsertIndex == normalColumnIndex) {
+				list.append(exportColumns.at(exportOnlyColumnIndex).second);
+				exportOnlyColumnIndex++;
+				continue;
+			}
+		}
+		
+		if (normalColumnIndex < numNormalColumns) {
+			// At least one normal column left
+			list.append(columns.at(normalColumnIndex));
+			normalColumnIndex++;
+			continue;
+		}
+		
+		assert(false);
+	}
+	
+	return list;
 }
 
 /**
@@ -120,7 +202,20 @@ const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
 }
 
 /**
+ * Returns the composite column used only for exports at the given index of the export column list.
+ * 
+ * @param columnIndex	The index in the export-only column list of the column to return.
+ * @return				The composite column at the given index in the export-only column list.
+ */
+const CompositeColumn* CompositeTable::getExportOnlyColumnAt(int columnIndex) const
+{
+	return exportColumns.at(columnIndex).second;
+}
+
+/**
  * Returns the composite column with the given internal name.
+ * 
+ * @pre The column is a normal or filter-only column, not an export-only column.
  * 
  * @param columnName	The internal name of the column to return.
  * @return				The composite column with the given name, or a nullptr.
@@ -134,14 +229,32 @@ const CompositeColumn* CompositeTable::getColumnByName(const QString& columnName
 }
 
 /**
- * Returns the index of the given composite column.
+ * Returns the index of the given normal or filter-only column.
  * 
- * @param column	The composite column to return the index of.
- * @return			The index of the given composite column.
+ * @pre The given column is a normal or filter-only column, not an export-only column.
+ * 
+ * @param column	The normal or filter-only column to return the index of.
+ * @return			The index of the given normal or filter-only column.
  */
 int CompositeTable::getIndexOf(const CompositeColumn* column) const
 {
 	return columns.indexOf(column);
+}
+
+/**
+ * Returns the index of the given export-only composite column.
+ * 
+ * @pre The given column is an export-only column, not a normal or filter-only column.
+ * 
+ * @param column	The composite column to return the export-only column index of.
+ * @return			The export-only column index of the given composite column.
+ */
+int CompositeTable::getExportIndexOf(const CompositeColumn* column) const
+{
+	for (int exportColumnIndex = 0; exportColumnIndex < exportColumns.size(); exportColumnIndex++) {
+		if (exportColumns.at(exportColumnIndex).second == column) return exportColumnIndex;
+	}
+	return -1;
 }
 
 /**
@@ -152,7 +265,7 @@ int CompositeTable::getIndexOf(const CompositeColumn* column) const
 QSet<QString> CompositeTable::getVisibleColumnNameSet() const
 {
 	QSet<QString> columnNameSet;
-	for (int columnIndex = 0; columnIndex < getNumberOfVisibleColumns(); columnIndex++) {
+	for (int columnIndex = 0; columnIndex < getNumberOfNormalColumns(); columnIndex++) {
 		columnNameSet.insert(columns.at(columnIndex)->name);
 	}
 	return columnNameSet;
@@ -582,7 +695,7 @@ int CompositeTable::rowCount(const QModelIndex& parent) const
 int CompositeTable::columnCount(const QModelIndex& parent) const
 {
 	assert(!parent.isValid());
-	return getNumberOfVisibleColumns();
+	return getNumberOfNormalColumns();
 }
 
 /**

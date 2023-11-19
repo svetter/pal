@@ -70,8 +70,8 @@ public:
 	const ReferenceCompositeColumn*		volcanoColumn;
 	/** The peak ordinal indicates that this ascent was the nth one of the peak. */
 	const OrdinalCompositeColumn*		peakOrdinalColumn;
-
-	// Hidden (for filters)
+	
+	// Filter-only columns
 	/** The ID of the mountain range the peak is assigned to. */
 	const ReferenceCompositeColumn*		rangeIDColumn;
 	/** The IDs of all hikers who participated in the ascent. */
@@ -106,7 +106,7 @@ public:
 			difficultyColumn	(new const DependentEnumCompositeColumn	(this,	"difficulty",	tr("Difficulty"),									db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn)),
 			volcanoColumn		(new const ReferenceCompositeColumn		(this,	"volcano",		tr("Volcano"),				noSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->volcanoColumn)),
 			peakOrdinalColumn	(new const OrdinalCompositeColumn		(this,	"peakOrdinal",	tr("Nth ascent of peak"),	".",					{ {db->ascentsTable->peakIDColumn,			Qt::AscendingOrder},						{db->ascentsTable->dateColumn,			Qt::AscendingOrder},					{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},		{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
-			// Hidden (for filters)
+			// Filter-only columns
 			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	"rangeID",		"Range ID",					noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
 			hikerIDsColumn		(new const NumericFoldCompositeColumn	(this,	"hikerIDs",		"Hiker IDs",				noSuffix,	IDListFold,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
 	{
@@ -127,9 +127,10 @@ public:
 		addColumn(difficultyColumn);
 		addColumn(volcanoColumn);
 		addColumn(peakOrdinalColumn);
-		// Hidden (for filters)
-		addColumn(rangeIDColumn, true);
-		addColumn(hikerIDsColumn, true);
+		
+		// Filter-only columns
+		addFilterColumn(rangeIDColumn);
+		addFilterColumn(hikerIDsColumn);
 	}
 	
 	

@@ -126,6 +126,8 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 /**
  * Returns the column's index in its table.
  * 
+ * @pre This is a normal or filter-only column, not an export-only column.
+ * 
  * @return	The column's index.
  */
 int CompositeColumn::getIndex() const
@@ -134,13 +136,35 @@ int CompositeColumn::getIndex() const
 }
 
 /**
- * Indicates whether this column is for backend purposes only and not for UI display.
+ * Returns the column's index in the export-only column list of its table.
  * 
- * @return	True if this is a backend column, false otherwise.
+ * @pre This is an export-only column, not a normal or filter-only column.
+ * 
+ * @return	The column's index in the export-only column list.
  */
-bool CompositeColumn::isBackendColumn() const
+int CompositeColumn::getExportIndex() const
 {
-	return getIndex() >= table->getNumberOfVisibleColumns();
+	return table->getExportIndexOf(this);
+}
+
+/**
+ * Indicates whether this column is only used for exports and not for UI display.
+ * 
+ * @return	True if this is an export-only column, false otherwise.
+ */
+bool CompositeColumn::isExportOnlyColumn() const
+{
+	return table->getExportIndexOf(this) >= 0;
+}
+
+/**
+ * Indicates whether this column is only used for filtering and not for UI display.
+ * 
+ * @return	True if this is a filter-only column, false otherwise.
+ */
+bool CompositeColumn::isFilterOnlyColumn() const
+{
+	return getIndex() >= table->getNumberOfNormalColumns();
 }
 
 
