@@ -1187,7 +1187,7 @@ void MainWindow::handle_relocatePhotos()
  */
 void MainWindow::handle_exportData()
 {
-	DataExportDialog(this, &db, typesHandler).exec();
+	DataExportDialog(this, typesHandler).exec();
 }
 
 

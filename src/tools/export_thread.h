@@ -24,101 +24,53 @@
 #ifndef EXPORT_THREAD_H
 #define EXPORT_THREAD_H
 
-#include "src/db/database.h"
+#include "src/tools/export_decls.h"
+#include "export_writer.h"
 #include "src/main/item_types_handler.h"
 
 #include <QDialog>
 #include <QThread>
-#include <QXmlStreamWriter>
 
 
 
-enum ExportMode
-{
-	Raw,
-	Readable
-};
-
-enum ExportFormat
-{
-	CSV,
-	FODS
-};
-
-struct ExportColumnInfo
-{
-	int indexInTable;
-	QString name;
-	DataType type;
-	const QStringList* enumNames;
-	const QList<QPair<QString, QStringList>>* enumNameLists;
-	
-	QString styleName = "Default";
-};
-
-
-
+/**
+ * A thread that exports data to one or multiple files according to the given parameters.
+ */
 class DataExportThread : public QThread
 {
 	Q_OBJECT
 	
-	const Database* db;
+	/** The project item types handler. */
 	const ItemTypesHandler* typesHandler;
+	/** The export mode. */
 	const ExportMode mode;
+	/** Whether to include statistical column. */
 	const bool includeStats;
+	/** The base filepath. */
 	const QString filepath;
-	const ExportFormat format;
-	const QString csvSeparator;
 	
+	/** The writer object specific to the export format. */
+	ExportWriter* writer;
+	
+	/** The determined number of cells to export, plus the number of cells to update first. */
 	int workloadSize;
+	/** Indicates whether an abort was requested. */
 	bool abortWasCalled;
 	
-	QFile* file;
-	QTextStream* fileWriter;
-	QXmlStreamWriter* xmlWriter;
-	
-	inline static const QString fods_boldStyleName = "ce1";
-	inline static const QString fods_dateStyleName = "ce2";
-	inline static const QString fods_timeStyleName = "ce3";
-	
 public:
-	DataExportThread(QDialog* parent, Database* db, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
+	DataExportThread(QDialog* parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
 	~DataExportThread();
 	
 	void run() override;
 	void abort();
+
 private:
+	void exportOneTable();
+
+	void exportAsShown();
+
 	void exportRaw();
 	void writeEnumTable(const QList<Table*>& baseTables, const QList<QList<ExportColumnInfo>>& allColumnInfos);
-	void exportReadable();
-	
-	// Low-level helpers
-	void openFileForWriting(const QString& filepathToOpen);
-	
-	void beginExport(QList<QList<ExportColumnInfo>>& allColumnInfos, QStringList tableNames);
-	void beginTable(const QString& tableName, const QList<ExportColumnInfo>& columnInfos);
-	void beginRow();
-	void writeCell(const QVariant& value, const ExportColumnInfo& columnInfo, bool firstInRow);
-	void endRow();
-	void writeEmptyRow(const QList<ExportColumnInfo>& columnInfos);
-	void endTable();
-	void endExport();
-	
-	void beginTableCSV(const QString& tableName, const QList<ExportColumnInfo>& columnInfos);
-	void beginRowCSV();
-	void writeCellCSV(const QVariant& value, const ExportColumnInfo& columnInfo, bool firstInRow);
-	void endTableCSV();
-	
-	void beginExportFODS(QList<QList<ExportColumnInfo>>& allColumnInfos, QStringList tableNames);
-	void beginTableFODS(const QString& tableName, const QList<ExportColumnInfo>& columnInfos);
-	void beginRowFODS();
-	void writeCellFODS(const QVariant& value, const ExportColumnInfo& columnInfo);
-	void endRowFODS();
-	void endTableFODS();
-	void endExportFODS();
-	
-public:
-	static QString insertBeforeExtension(const QString& baseFilepath, const QString& insert);
 	
 signals:
 	void callback_reportWorkloadSize(int workloadSize);

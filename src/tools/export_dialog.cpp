@@ -29,18 +29,18 @@
 
 
 /**
- * Creates a new RelocatePhotosDialog.
+ * Creates a new DataExportDialog.
  * 
  * Prepares and connects the UI.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
+ * @param parent		The parent window.
+ * @param typesHandler	The project item types handler.
  */
-DataExportDialog::DataExportDialog(QWidget* parent, Database* db, const ItemTypesHandler* typesHandler) :
+DataExportDialog::DataExportDialog(QWidget* parent, const ItemTypesHandler* typesHandler) :
 		QDialog(parent),
-		db(db),
 		typesHandler(typesHandler),
 		running(false),
+		aborted(false),
 		extensions(QMap<ExportFormat, QString>()),
 		csvSeparators(QList<QString>())
 {
@@ -58,26 +58,28 @@ DataExportDialog::DataExportDialog(QWidget* parent, Database* db, const ItemType
 	
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Close),	&QPushButton::clicked,	this,	&DataExportDialog::handle_close);
+
+	connect(exportModeOneTableRadio,	&QRadioButton::clicked,		this,	&DataExportDialog::updateEnableUI);
+	connect(exportModeAsShownRadio,		&QRadioButton::clicked,		this,	&DataExportDialog::updateEnableUI);
+	connect(exportModeRawRadio,			&QRadioButton::clicked,		this,	&DataExportDialog::updateEnableUI);
 	
-	connect(exportModeShownRadio,	&QRadioButton::clicked,		this,	&DataExportDialog::updateEnableUI);
-	connect(exportModeRawRadio,		&QRadioButton::clicked,		this,	&DataExportDialog::updateEnableUI);
+	connect(filepathBrowseButton,		&QPushButton::clicked,		this,	&DataExportDialog::handle_browseFilepath);
+	connect(filepathLineEdit,			&QLineEdit::textChanged,	this,	&DataExportDialog::handle_filepathChanged);
 	
-	connect(filepathBrowseButton,	&QPushButton::clicked,		this,	&DataExportDialog::handle_browseFilepath);
-	connect(filepathLineEdit,		&QLineEdit::textChanged,	this,	&DataExportDialog::handle_filepathChanged);
+	connect(fileFormatCsvRadio,			&QRadioButton::clicked,		this,	&DataExportDialog::handle_fileFormatChanged);
+	connect(fileFormatFodsRadio,		&QRadioButton::clicked,		this,	&DataExportDialog::handle_fileFormatChanged);
 	
-	connect(fileFormatCsvRadio,		&QRadioButton::clicked,		this,	&DataExportDialog::handle_fileFormatChanged);
-	connect(fileFormatFodsRadio,	&QRadioButton::clicked,		this,	&DataExportDialog::handle_fileFormatChanged);
-	
-	connect(startButton,			&QPushButton::clicked,		this,	&DataExportDialog::handle_start);
-	connect(abortButton,			&QPushButton::clicked,		this,	&DataExportDialog::handle_abort);
-	
-	
-	
-	filepathLineEdit->setText("D:/GoogleDrive/Software-Projekte/PAL/export_test/export.csv");
+	connect(startButton,				&QPushButton::clicked,		this,	&DataExportDialog::handle_start);
+	connect(abortButton,				&QPushButton::clicked,		this,	&DataExportDialog::handle_abort);
 }
 
 
 
+/**
+ * Event handler for the filepath line edit.
+ * 
+ * Sets the file format according to the extension, if possible, then updates the UI.
+ */
 void DataExportDialog::handle_filepathChanged()
 {
 	setFileFormatFromExtension(filepathLineEdit->text());
@@ -85,9 +87,10 @@ void DataExportDialog::handle_filepathChanged()
 }
 
 /**
- * Event handler for the "browse old path" button.
+ * Event handler for the "browse" button.
  * 
- * Opens a file dialog to select the old path and sets the path in the line edit if valid.
+ * Opens a file dialog to select the destination filepath and sets the path in the line edit if
+ * valid.
  */
 void DataExportDialog::handle_browseFilepath()
 {
@@ -105,6 +108,11 @@ void DataExportDialog::handle_browseFilepath()
 	if (!filepath.isEmpty()) filepathLineEdit->setText(filepath);
 }
 
+/**
+ * Event handler for the file format radio buttons.
+ * 
+ * Updates the file extension in the filepath line edit and updates the UI.
+ */
 void DataExportDialog::handle_fileFormatChanged()
 {
 	filepathLineEdit->setText(enforceExtension(filepathLineEdit->text()));
@@ -116,13 +124,14 @@ void DataExportDialog::handle_fileFormatChanged()
 /**
  * Event handler for the "start" button.
  * 
- * Starts the relocation process.
+ * Starts the export process.
  */
 void DataExportDialog::handle_start()
 {
 	assert(!running);
 	
 	running = true;
+	aborted = false;
 	updateEnableUI();
 	
 	progressBar->setMinimum(0);
@@ -130,11 +139,11 @@ void DataExportDialog::handle_start()
 	
 	// Collect parameters
 	ExportMode mode				= getCurrentlySelectedExportMode();
-	bool includeStats			= exportModeShownStatsCheckbox->isChecked();
+	bool includeStats			= exportModeAsShownStatsCheckbox->isChecked();
 	ExportFormat fileFormat		= getCurrentlySelectedFileFormat();
 	const QString& csvSeparator	= getCurrentlySelectedCsvSeparator();
 	
-	workerThread = new DataExportThread(this, db, typesHandler, mode, includeStats, filepathLineEdit->text(), fileFormat, csvSeparator);
+	workerThread = new DataExportThread(this, typesHandler, mode, includeStats, filepathLineEdit->text(), fileFormat, csvSeparator);
 	
 	connect(workerThread, &DataExportThread::callback_reportWorkloadSize,	this,	&DataExportDialog::handle_callback_workloadSize);
 	connect(workerThread, &DataExportThread::callback_reportProgress,		this,	&DataExportDialog::handle_callback_progressUpdate);
@@ -148,35 +157,37 @@ void DataExportDialog::handle_start()
  * Event handler for the worker thread's "finished" signal.
  * 
  * Cleans up the worker thread and updates the UI.
+ * Note that this is also called if the thread was aborted.
  */
 void DataExportDialog::handle_finished()
 {
 	assert(running);
 	
-	progressLabel->clear();
+	if (aborted) {
+		progressLabel->setText(tr("Export aborted."));
+	} else {
+		progressLabel->setText(tr("Export finished successfully."));
+	}
 	
 	workerThread->wait();
-	
 	workerThread->deleteLater();
 	workerThread = nullptr;
 	
 	running = false;
-	updateEnableUI();
+	updateEnableUI(false);
 }
 
 /**
  * Event handler for the "abort" button.
  * 
- * Aborts the relocation process.
+ * Aborts the export process.
  */
 void DataExportDialog::handle_abort()
 {
 	assert(running);
 	
+	aborted = true;
 	workerThread->abort();
-	workerThread->wait();
-	workerThread->deleteLater();
-	workerThread = nullptr;
 }
 
 /**
@@ -208,7 +219,7 @@ void DataExportDialog::handle_close()
 /**
  * Callback function for the worker thread reporting back its workload size after starting.
  * 
- * @param workloadSize	The number of photos found that need to be relocated.
+ * @param workloadSize	The number of cells which need to be updated and exported (additive).
  */
 void DataExportDialog::handle_callback_workloadSize(int workloadSize)
 {
@@ -218,7 +229,7 @@ void DataExportDialog::handle_callback_workloadSize(int workloadSize)
 /**
  * Callback function for the worker thread reporting back its progress.
  * 
- * @param processed	The number of rows processed so far.
+ * @param processed	The number of cells updated or exported (additive) so far.
  */
 void DataExportDialog::handle_callback_progressUpdate(int processed)
 {
@@ -239,12 +250,14 @@ void DataExportDialog::handle_callback_progressTextUpdate(const QString& progres
 
 /**
  * Updates the enabled state of the UI elements.
+ * 
+ * @param resetProgress	Whether to reset the progress bar and label.
  */
-void DataExportDialog::updateEnableUI()
+void DataExportDialog::updateEnableUI(bool resetProgress)
 {
 	// Options
-	exportModeShownLabel			->setEnabled(exportModeShownRadio	->isChecked());
-	exportModeShownStatsCheckbox	->setEnabled(exportModeShownRadio	->isChecked());
+	exportModeAsShownLabel			->setEnabled(exportModeAsShownRadio	->isChecked());
+	exportModeAsShownStatsCheckbox	->setEnabled(exportModeAsShownRadio	->isChecked());
 	exportModeRawLabel				->setEnabled(exportModeRawRadio		->isChecked());
 	fileFormatCsvSeparatorLabel		->setEnabled(fileFormatCsvRadio		->isChecked());
 	fileFormatCsvSeparatorComboBox	->setEnabled(fileFormatCsvRadio		->isChecked());
@@ -259,19 +272,37 @@ void DataExportDialog::updateEnableUI()
 			&& getCurrentlySelectedFileFormat() != ExportFormat(-1);
 	startButton->setEnabled(!running && canStart);
 	abortButton->setEnabled(running);
+	
+	// Progress bar & label
+	if (resetProgress) {
+		progressBar->reset();
+		progressLabel->clear();
+	}
 }
 
 
+/**
+ * Returns the currently selected export mode.
+ * 
+ * @return	The currently selected export mode.
+ */
 ExportMode DataExportDialog::getCurrentlySelectedExportMode() const
 {
-	if (exportModeShownRadio->isChecked()) {
-		return Readable;
+	if (exportModeOneTableRadio->isChecked()) {
+		return OneTable;
+	} else 	if (exportModeAsShownRadio->isChecked()) {
+		return AsShown;
 	} else if (exportModeRawRadio->isChecked()) {
 		return Raw;
 	}
 	return ExportMode(-1);
 }
 
+/**
+ * Returns the currently selected file format.
+ * 
+ * @return	The currently selected file format.
+ */
 ExportFormat DataExportDialog::getCurrentlySelectedFileFormat() const
 {
 	if (fileFormatCsvRadio->isChecked()) {
@@ -282,17 +313,36 @@ ExportFormat DataExportDialog::getCurrentlySelectedFileFormat() const
 	return ExportFormat(-1);
 }
 
+/**
+ * Returns the file extension corresponding to the currently selected file format.
+ * 
+ * @return	The file extension for the currently selected file format.
+ */
 QString DataExportDialog::getCurrentlySelectedFileFormatExtension() const
 {
 	return extensions[getCurrentlySelectedFileFormat()];
 }
 
+/**
+ * Returns the CSV separator string fot the currently selected option from the combo box.
+ * 
+ * @return	The CSV separator string currently selected in the combo box.
+ */
 const QString& DataExportDialog::getCurrentlySelectedCsvSeparator() const
 {
 	return csvSeparators.at(fileFormatCsvSeparatorComboBox->currentIndex());
 }
 
 
+/**
+ * Ensures that the path in the filepath line edit has the correct extension.
+ * 
+ * Appends the extension for the currently selected file format if the path has no extension or an
+ * unknown extension. Does nothing if the path is empty or already has the correct extension.
+ * 
+ * @param filepath	The filepath to enforce the extension on.
+ * @return			The filepath with the correct extension, or an empty string.
+ */
 QString DataExportDialog::enforceExtension(const QString& filepath) const
 {
 	if (filepath.isNull() || filepath.isEmpty()) return filepath;
@@ -322,6 +372,13 @@ QString DataExportDialog::enforceExtension(const QString& filepath) const
 	}
 }
 
+/**
+ * Sets the file format radio button according to the extension of the given filepath.
+ * 
+ * If the filepath has no extension or an unknown extension, does nothing.
+ * 
+ * @param filepath	The filepath to get the extension from.
+ */
 void DataExportDialog::setFileFormatFromExtension(const QString& filepath) const
 {
 	QString extension = QFileInfo(filepath).suffix();

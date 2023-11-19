@@ -94,6 +94,7 @@ SOURCES += \
 	src/settings/settings_window.cpp \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
+	src/tools/export_writer.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
 	src/viewer/ascent_viewer.cpp \
@@ -160,8 +161,10 @@ HEADERS += \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/tools/export_decls.h \
 	src/tools/export_dialog.h \
 	src/tools/export_thread.h \
+	src/tools/export_writer.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \

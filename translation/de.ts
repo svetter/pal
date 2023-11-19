@@ -757,98 +757,93 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="93"/>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="95"/>
-        <source>Title</source>
-        <translation>Kommentar</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="94"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="105"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="92"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="103"/>
         <source>Index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="96"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="107"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="98"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="109"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="99"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="110"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="108"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="119"/>
         <source>Nth ascent of peak</source>
         <translation>Nte Besteigung des Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="97"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="132"/>
+        <source>Range ID</source>
+        <translation>Gebirgs-ID</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="133"/>
+        <source>Hiker IDs</source>
+        <translation>Wanderer-ID</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="127"/>
+        <source>Trip start date</source>
+        <translation>Datum Beginn Urlaub</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="128"/>
+        <source>Trip end date</source>
+        <translation>Datum Ende Urlaub</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="129"/>
+        <source>Trip description</source>
+        <translation>Beschreibung Urlaub</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="108"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="100"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="111"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="107"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="118"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="101"/>
-        <source>Elev. gain</source>
-        <translation>Höhenm.</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="104"/>
-        <source>Kind of hike</source>
-        <translation>Art der Wanderung</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="105"/>
-        <source>Traverse</source>
-        <translation>Überschreitung</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="106"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="117"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="102"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="113"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="103"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="114"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
 </context>
 <context>
     <name>CompositeCountriesTable</name>
-    <message>
-        <location filename="../src/comp_tables/comp_countries_table.h" line="64"/>
-        <source>Country</source>
-        <translation>Land</translation>
-    </message>
     <message>
         <location filename="../src/comp_tables/comp_countries_table.h" line="66"/>
         <source>Num. regions</source>
@@ -878,11 +873,6 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>CompositeHikersTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_hikers_table.h" line="64"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
         <location filename="../src/comp_tables/comp_hikers_table.h" line="65"/>
         <source>Num. ascents</source>
         <translation>Anzahl Besteigungen</translation>
@@ -910,21 +900,6 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 </context>
 <context>
     <name>CompositePeaksTable</name>
-    <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="72"/>
-        <source>Peak</source>
-        <translation>Gipfel</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="73"/>
-        <source>Height</source>
-        <translation>Höhe</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_peaks_table.h" line="81"/>
-        <source>Volcano</source>
-        <translation>Vulkan</translation>
-    </message>
     <message>
         <location filename="../src/comp_tables/comp_peaks_table.h" line="75"/>
         <source>Region</source>
@@ -964,16 +939,6 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>CompositeRangesTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="66"/>
-        <source>Mountain range</source>
-        <translation>Gebirge</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_ranges_table.h" line="67"/>
-        <source>Continent</source>
-        <translation>Kontinent</translation>
-    </message>
-    <message>
         <location filename="../src/comp_tables/comp_ranges_table.h" line="68"/>
         <source>Num. regions</source>
         <translation>Anzahl Regionen</translation>
@@ -1001,11 +966,6 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 </context>
 <context>
     <name>CompositeRegionsTable</name>
-    <message>
-        <location filename="../src/comp_tables/comp_regions_table.h" line="69"/>
-        <source>Region</source>
-        <translation>Region</translation>
-    </message>
     <message>
         <location filename="../src/comp_tables/comp_regions_table.h" line="70"/>
         <source>Mountain range</source>
@@ -1048,21 +1008,6 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <location filename="../src/comp_tables/comp_trips_table.h" line="72"/>
         <source>Index</source>
         <translation>Index</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="73"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="74"/>
-        <source>Start date</source>
-        <translation>Datum Beginn</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_trips_table.h" line="75"/>
-        <source>End date</source>
-        <translation>Datum Ende</translation>
     </message>
     <message>
         <location filename="../src/comp_tables/comp_trips_table.h" line="76"/>
@@ -1209,75 +1154,89 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/export_dialog.ui" line="84"/>
+        <source>Export as single table</source>
+        <translation>Als einzelne Tabelle exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/export_dialog.ui" line="94"/>
+        <source>Recommended for use in a spreadsheet when intending to continue adding ascents.
+Will export an extended version of the ascents table.
+Note: Not all data from other tables will be included, nor will photos.</source>
+        <translation>Empfohlen für die Verwendung in Tabellenkalkulationsprogrammen, wenn weiter Daten hinzugefügt werden sollen.
+Exportiert die Besteigungs-Tabelle mit zusätzlichen Spalten.
+Hinweis: Nicht alle Daten aus anderen Tabellen sind beinhaltet, genauso wie Foto-Daten.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/export_dialog.ui" line="106"/>
         <source>Export tables as shown</source>
         <translation>Tabellen wie dargestellt exportieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="96"/>
-        <source>Recommended for use in a spreadsheet.
+        <location filename="../src/ui/export_dialog.ui" line="115"/>
+        <source>Recommended for use in a spreadsheet without adding data.
 Note: Some data (like photo paths and descriptions) will not be included.</source>
-        <translation>Empfohlen um Daten in Tabellenkalkulationsprogrammen zu verwenden.
-Hinweis: Manche Daten (wie Foto-Dateipfade und -Beschreibungen) ist nicht inbegriffen.</translation>
+        <translation>Empfohlen für Verwendung in Tabellenkalkulationsprogrammen, ohne weitere Daten hinzuzufügen.
+Hinweis: Manche Daten (wie Foto-Daten) sind nicht beinhaltet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="107"/>
+        <location filename="../src/ui/export_dialog.ui" line="126"/>
         <source>Include derived statistical data</source>
         <translation>Statistische Daten einbeziehen</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="119"/>
+        <location filename="../src/ui/export_dialog.ui" line="138"/>
         <source>Export raw database</source>
         <translation>Rohe Datenbank exportieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="126"/>
+        <location filename="../src/ui/export_dialog.ui" line="145"/>
         <source>Recommended for importing into another database application, or for complete backups.
 Note that you can also read the project file itself with any general SQLite reader application.</source>
         <translation>Empfohlen um Daten in andere Datenbankprogramme zu importieren, oder für komplette Backups.
 Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Leseprogramm geöffnet werden.</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="140"/>
+        <location filename="../src/ui/export_dialog.ui" line="159"/>
         <source>Output file(s)</source>
         <translation>Ausgabedatei(en)</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="169"/>
+        <location filename="../src/ui/export_dialog.ui" line="188"/>
         <source>CSV (Comma-Separated Values)</source>
         <translation>CSV (Komma-getrennte Werte)</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="181"/>
+        <location filename="../src/ui/export_dialog.ui" line="200"/>
         <source>Separated by:</source>
         <translation>Trennzeichen:</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="206"/>
+        <location filename="../src/ui/export_dialog.ui" line="225"/>
         <source>Recommended for LibreOffice/OpenOffice</source>
         <translation>Empfohlen für LibreOffice/OpenOffice</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="216"/>
+        <location filename="../src/ui/export_dialog.ui" line="235"/>
         <source>FODS (Flat OpenDocument Spreadsheet)</source>
         <translation>FODS (Flache OpenDocument-Tabelle)</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="239"/>
+        <location filename="../src/ui/export_dialog.ui" line="258"/>
         <source>Save location</source>
         <translation>Speicherort</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="246"/>
+        <location filename="../src/ui/export_dialog.ui" line="265"/>
         <source>Browse...</source>
         <translation>Durchsuchen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="279"/>
+        <location filename="../src/ui/export_dialog.ui" line="298"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/ui/export_dialog.ui" line="286"/>
+        <location filename="../src/ui/export_dialog.ui" line="305"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
@@ -1292,27 +1251,37 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
         <translation>Tabulator</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_dialog.cpp" line="94"/>
+        <location filename="../src/tools/export_dialog.cpp" line="97"/>
         <source>Select save location</source>
         <translation>Speicherort auswählen</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_dialog.cpp" line="99"/>
+        <location filename="../src/tools/export_dialog.cpp" line="102"/>
         <source>Spreadsheets</source>
         <translation>Tabellendateien</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_dialog.cpp" line="100"/>
+        <location filename="../src/tools/export_dialog.cpp" line="103"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_dialog.cpp" line="194"/>
+        <location filename="../src/tools/export_dialog.cpp" line="167"/>
+        <source>Export aborted.</source>
+        <translation>Export abgebrochen.</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/export_dialog.cpp" line="169"/>
+        <source>Export finished successfully.</source>
+        <translation>Export erfolgreich abgeschlossen.</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/export_dialog.cpp" line="205"/>
         <source>Operation running</source>
         <translation>Prozess läuft</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_dialog.cpp" line="195"/>
+        <location filename="../src/tools/export_dialog.cpp" line="206"/>
         <source>Do you want to abort the running process?</source>
         <translation>Soll der Prozess abgebrochen werden?</translation>
     </message>
@@ -1320,75 +1289,75 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
 <context>
     <name>DataExportThread</name>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="125"/>
-        <location filename="../src/tools/export_thread.cpp" line="268"/>
+        <location filename="../src/tools/export_thread.cpp" line="256"/>
+        <location filename="../src/tools/export_thread.cpp" line="329"/>
         <source>Exporting table %1...</source>
         <translation>Tabelle %1 wird exportiert...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="162"/>
+        <location filename="../src/tools/export_thread.cpp" line="373"/>
         <source>Table</source>
         <translation>Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="163"/>
+        <location filename="../src/tools/export_thread.cpp" line="374"/>
         <source>Column</source>
         <translation>Spalte</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="164"/>
+        <location filename="../src/tools/export_thread.cpp" line="375"/>
         <source>Enumerator index</source>
         <translation>Enumerator-Index</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="165"/>
+        <location filename="../src/tools/export_thread.cpp" line="376"/>
         <source>Enumerator name</source>
         <translation>Enumerator-Name</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="166"/>
+        <location filename="../src/tools/export_thread.cpp" line="377"/>
         <source>Nested enumerator index</source>
         <translation>Verschachtelter Enumerator-Index</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="167"/>
+        <location filename="../src/tools/export_thread.cpp" line="378"/>
         <source>Nested enumerator name</source>
         <translation>Verschachtelter Enumerator-Name</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="169"/>
+        <location filename="../src/tools/export_thread.cpp" line="380"/>
         <source>Enumerator names</source>
         <translation>Enumerator-Namen</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="170"/>
+        <location filename="../src/tools/export_thread.cpp" line="381"/>
         <source>Exporting enumerator names table...</source>
         <translation>Tabelle für Enumerator-Namen wird exportiert...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="252"/>
+        <location filename="../src/tools/export_thread.cpp" line="238"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="326"/>
+        <location filename="../src/tools/export_thread.cpp" line="151"/>
         <source>Preparing table...</source>
         <translation>Tabelle wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="339"/>
+        <location filename="../src/tools/export_thread.cpp" line="162"/>
         <source>Exporting table...</source>
         <translation>Tabelle wird exportiert...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="485"/>
-        <location filename="../src/tools/export_thread.cpp" line="776"/>
+        <location filename="../src/tools/export_writer.cpp" line="219"/>
+        <location filename="../src/tools/export_writer.cpp" line="580"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="485"/>
-        <location filename="../src/tools/export_thread.cpp" line="776"/>
+        <location filename="../src/tools/export_writer.cpp" line="219"/>
+        <location filename="../src/tools/export_writer.cpp" line="580"/>
         <source>No</source>
         <translation>Nein</translation>
     </message>
@@ -2847,12 +2816,12 @@ Trotzdem speichern?</translation>
         <translation>Jetziger Speicherort</translation>
     </message>
     <message>
-        <location filename="../src/ui/relocate_photos_dialog.ui" line="141"/>
+        <location filename="../src/ui/relocate_photos_dialog.ui" line="145"/>
         <source>Abort</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/ui/relocate_photos_dialog.ui" line="148"/>
+        <location filename="../src/ui/relocate_photos_dialog.ui" line="152"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>

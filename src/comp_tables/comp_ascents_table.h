@@ -71,6 +71,17 @@ public:
 	/** The peak ordinal indicates that this ascent was the nth one of the peak. */
 	const OrdinalCompositeColumn*		peakOrdinalColumn;
 	
+	
+	// === BACKEND COLUMNS ===
+	
+	// Export-only columns (unbuffered)
+	const DirectCompositeColumn*		peakOnDayColumn;
+	const DirectCompositeColumn*		timeColumn;
+	const DirectCompositeColumn*		descriptionColumn;
+	const ReferenceCompositeColumn*		tripStartDateColumn;
+	const ReferenceCompositeColumn*		tripEndDateColumn;
+	const ReferenceCompositeColumn*		tripDescriptionColumn;
+	
 	// Filter-only columns
 	/** The ID of the mountain range the peak is assigned to. */
 	const ReferenceCompositeColumn*		rangeIDColumn;
@@ -88,30 +99,43 @@ public:
 	 */
 	inline CompositeAscentsTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->ascentsTable, tableView),
-			//																	name			uiName						suffix		fold op		[breadcrumbs (column reference chain) +] content column
-			indexColumn			(new const IndexCompositeColumn			(this,	"index",		tr("Index"),				noSuffix,				{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},					{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
-			dateColumn			(new const DirectCompositeColumn		(this,												noSuffix,				db->ascentsTable->dateColumn)),
-			peakColumn			(new const ReferenceCompositeColumn		(this,	"peak",			tr("Peak"),					noSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->nameColumn)),
-			titleColumn			(new const DirectCompositeColumn		(this,												noSuffix,				db->ascentsTable->titleColumn)),
-			peakHeightColumn	(new const ReferenceCompositeColumn		(this,	"peakHeight",	tr("Height"),				mSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->heightColumn)),
-			countryColumn		(new const ReferenceCompositeColumn		(this,	"country",		tr("Country"),				noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->countryIDColumn},		db->countriesTable->nameColumn)),
-			regionColumn		(new const ReferenceCompositeColumn		(this,	"region",		tr("Region"),				noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn},			db->regionsTable->nameColumn)),
-			rangeColumn			(new const ReferenceCompositeColumn		(this,	"range",		tr("Mountain range"),		noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->nameColumn)),
-			continentColumn		(new const ReferenceCompositeColumn		(this,	"continent",	tr("Continent"),			noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->continentColumn)),
-			elevationGainColumn	(new const DirectCompositeColumn		(this,												mSuffix,				db->ascentsTable->elevationGainColumn)),
-			hikersColumn		(new const HikerListCompositeColumn		(this,	"hikers",		tr("Participants"),									{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},		{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
-			tripColumn			(new const ReferenceCompositeColumn		(this,	"trip",			tr("Trip"),					noSuffix,				{ db->ascentsTable->tripIDColumn },			db->tripsTable->nameColumn)),
-			hikeKindColumn		(new const DirectCompositeColumn		(this,												noSuffix,				db->ascentsTable->hikeKindColumn)),
-			traverseColumn		(new const DirectCompositeColumn		(this,												noSuffix,				db->ascentsTable->traverseColumn)),
-			difficultyColumn	(new const DependentEnumCompositeColumn	(this,	"difficulty",	tr("Difficulty"),									db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn)),
-			volcanoColumn		(new const ReferenceCompositeColumn		(this,	"volcano",		tr("Volcano"),				noSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->volcanoColumn)),
-			peakOrdinalColumn	(new const OrdinalCompositeColumn		(this,	"peakOrdinal",	tr("Nth ascent of peak"),	".",					{ {db->ascentsTable->peakIDColumn,			Qt::AscendingOrder},						{db->ascentsTable->dateColumn,			Qt::AscendingOrder},					{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},		{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+			//																		name				uiName						suffix		fold op		[breadcrumbs (column reference chain) +] content column
+			indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),				noSuffix,				{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},					{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+			dateColumn				(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->dateColumn)),
+			peakColumn				(new const ReferenceCompositeColumn		(this,	"peak",				tr("Peak"),					noSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->nameColumn)),
+			titleColumn				(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->titleColumn)),
+			peakHeightColumn		(new const ReferenceCompositeColumn		(this,	"peakHeight",		tr("Height"),				mSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->heightColumn)),
+			countryColumn			(new const ReferenceCompositeColumn		(this,	"country",			tr("Country"),				noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->countryIDColumn},		db->countriesTable->nameColumn)),
+			regionColumn			(new const ReferenceCompositeColumn		(this,	"region",			tr("Region"),				noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn},			db->regionsTable->nameColumn)),
+			rangeColumn				(new const ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),		noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->nameColumn)),
+			continentColumn			(new const ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),			noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->continentColumn)),
+			elevationGainColumn		(new const DirectCompositeColumn		(this,													mSuffix,				db->ascentsTable->elevationGainColumn)),
+			hikersColumn			(new const HikerListCompositeColumn		(this,	"hikers",			tr("Participants"),									{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},		{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
+			tripColumn				(new const ReferenceCompositeColumn		(this,	"trip",				tr("Trip"),					noSuffix,				{ db->ascentsTable->tripIDColumn },			db->tripsTable->nameColumn)),
+			hikeKindColumn			(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->hikeKindColumn)),
+			traverseColumn			(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->traverseColumn)),
+			difficultyColumn		(new const DependentEnumCompositeColumn	(this,	"difficulty",		tr("Difficulty"),									db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn)),
+			volcanoColumn			(new const ReferenceCompositeColumn		(this,	"volcano",			tr("Volcano"),				noSuffix,				{ db->ascentsTable->peakIDColumn },			db->peaksTable->volcanoColumn)),
+			peakOrdinalColumn		(new const OrdinalCompositeColumn		(this,	"peakOrdinal",		tr("Nth ascent of peak"),	".",					{ {db->ascentsTable->peakIDColumn,			Qt::AscendingOrder},						{db->ascentsTable->dateColumn,			Qt::AscendingOrder},					{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},		{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+			
+			// === BACKEND COLUMNS ===
+			
+			// Export-only columns (unbuffered)
+			peakOnDayColumn			(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->peakOnDayColumn)),
+			timeColumn				(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->timeColumn)),
+			descriptionColumn		(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->descriptionColumn)),
+			tripStartDateColumn		(new const ReferenceCompositeColumn		(this,	"tripStartDate",	tr("Trip start date"),		noSuffix,				{ db->ascentsTable->tripIDColumn },			db->tripsTable->startDateColumn)),
+			tripEndDateColumn		(new const ReferenceCompositeColumn		(this,	"tripEndDate",		tr("Trip end date"),		noSuffix,				{ db->ascentsTable->tripIDColumn },			db->tripsTable->endDateColumn)),
+			tripDescriptionColumn	(new const ReferenceCompositeColumn		(this,	"tripDescription",	tr("Trip description"),		noSuffix,				{ db->ascentsTable->tripIDColumn },			db->tripsTable->descriptionColumn)),
+			
 			// Filter-only columns
-			rangeIDColumn		(new const ReferenceCompositeColumn		(this,	"rangeID",		"Range ID",					noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
-			hikerIDsColumn		(new const NumericFoldCompositeColumn	(this,	"hikerIDs",		"Hiker IDs",				noSuffix,	IDListFold,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
+			rangeIDColumn			(new const ReferenceCompositeColumn		(this,	"rangeID",			tr("Range ID"),				noSuffix,				{ db->ascentsTable->peakIDColumn,			db->peaksTable->regionIDColumn,				db->regionsTable->rangeIDColumn},		db->rangesTable->primaryKeyColumn)),
+			hikerIDsColumn			(new const NumericFoldCompositeColumn	(this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	{ {db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn} },	db->participatedTable->hikerIDColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(dateColumn);
+		addExportOnlyColumn(peakOnDayColumn);		// Export-only column
+		addExportOnlyColumn(timeColumn);			// Export-only column
 		addColumn(peakColumn);
 		addColumn(titleColumn);
 		addColumn(peakHeightColumn);
@@ -127,6 +151,10 @@ public:
 		addColumn(difficultyColumn);
 		addColumn(volcanoColumn);
 		addColumn(peakOrdinalColumn);
+		addExportOnlyColumn(descriptionColumn);		// Export-only column
+		addExportOnlyColumn(tripStartDateColumn);	// Export-only column
+		addExportOnlyColumn(tripEndDateColumn);		// Export-only column
+		addExportOnlyColumn(tripDescriptionColumn);	// Export-only column
 		
 		// Filter-only columns
 		addFilterColumn(rangeIDColumn);

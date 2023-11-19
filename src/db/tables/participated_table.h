@@ -36,6 +36,8 @@
  * A class for accessing and manipulating the participated table in the database.
  */
 class ParticipatedTable : public AssociativeTable {
+	Q_OBJECT
+	
 public:
 	/** The ascent ID column. */
 	Column* const ascentIDColumn;

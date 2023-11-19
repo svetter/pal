@@ -25,7 +25,6 @@
 #define EXPORT_DIALOG_H
 
 #include "ui_export_dialog.h"
-#include "src/db/database.h"
 #include "src/tools/export_thread.h"
 
 #include <QDialog>
@@ -33,25 +32,30 @@
 
 
 
+/**
+ * Control class for the data export dialog.
+ */
 class DataExportDialog : public QDialog, public Ui_DataExportDialog
 {
 	Q_OBJECT
 	
-	/** The project database. */
-	Database* db;
-	
+	/** The project item types handler. */
 	const ItemTypesHandler* typesHandler;
 	
 	/** Indicates whether the worker thread is running. */
 	bool running;
+	/** Indicates whether the user requested an abort. */
+	bool aborted;
 	/** The worker thread. */
 	DataExportThread* workerThread;
 	
+	/** A map giving the file format extensions for each export format. */
 	QMap<ExportFormat, QString> extensions;
+	/** A list of all available CSV separator string, in the order in which they appear in the CSV separator combo box. */
 	QList<QString> csvSeparators;
 	
 public:
-	DataExportDialog(QWidget* parent, Database* db, const ItemTypesHandler* typesHandler);
+	DataExportDialog(QWidget* parent, const ItemTypesHandler* typesHandler);
 	
 private slots:
 	void handle_filepathChanged();
@@ -68,7 +72,7 @@ private slots:
 	void handle_callback_progressTextUpdate(const QString& progressString);
 	
 private:
-	void updateEnableUI();
+	void updateEnableUI(bool resetProgress = true);
 	
 	ExportMode getCurrentlySelectedExportMode() const;
 	ExportFormat getCurrentlySelectedFileFormat() const;

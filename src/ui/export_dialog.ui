@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>560</height>
+    <width>550</width>
+    <height>601</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -79,9 +79,9 @@
        <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QRadioButton" name="exportModeShownRadio">
+       <widget class="QRadioButton" name="exportModeOneTableRadio">
         <property name="text">
-         <string>Export tables as shown</string>
+         <string>Export as single table</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -89,11 +89,30 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <layout class="QVBoxLayout" name="exportModeShownLayout">
+       <widget class="QLabel" name="exportModeOneTableLabel">
+        <property name="text">
+         <string>Recommended for use in a spreadsheet when intending to continue adding ascents.
+Will export an extended version of the ascents table.
+Note: Not all data from other tables will be included, nor will photos.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="exportModeAsShownRadio">
+        <property name="text">
+         <string>Export tables as shown</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QVBoxLayout" name="exportModeAsShownLayout">
         <item>
-         <widget class="QLabel" name="exportModeShownLabel">
+         <widget class="QLabel" name="exportModeAsShownLabel">
           <property name="text">
-           <string>Recommended for use in a spreadsheet.
+           <string>Recommended for use in a spreadsheet without adding data.
 Note: Some data (like photo paths and descriptions) will not be included.</string>
           </property>
           <property name="wordWrap">
@@ -102,7 +121,7 @@ Note: Some data (like photo paths and descriptions) will not be included.</strin
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="exportModeShownStatsCheckbox">
+         <widget class="QCheckBox" name="exportModeAsShownStatsCheckbox">
           <property name="text">
            <string>Include derived statistical data</string>
           </property>
@@ -113,14 +132,14 @@ Note: Some data (like photo paths and descriptions) will not be included.</strin
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QRadioButton" name="exportModeRawRadio">
         <property name="text">
          <string>Export raw database</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QLabel" name="exportModeRawLabel">
         <property name="text">
          <string>Recommended for importing into another database application, or for complete backups.
@@ -139,7 +158,7 @@ Note that you can also read the project file itself with any general SQLite read
      <property name="title">
       <string>Output file(s)</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="outputFileLayout">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -269,7 +288,7 @@ Note that you can also read the project file itself with any general SQLite read
     </spacer>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="processLayout">
      <property name="spacing">
       <number>10</number>
      </property>
@@ -288,7 +307,11 @@ Note that you can also read the project file itself with any general SQLite read
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QProgressBar" name="progressBar"/>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="progressLabel">

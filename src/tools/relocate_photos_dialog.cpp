@@ -122,13 +122,13 @@ void RelocatePhotosDialog::handle_start()
  * Event handler for the worker thread's "finished" signal.
  * 
  * Cleans up the worker thread and updates the UI.
+ * Note that this is also called if the thread was aborted.
  */
 void RelocatePhotosDialog::handle_finished()
 {
 	assert(running);
 	
 	workerThread->wait();
-	
 	workerThread->deleteLater();
 	workerThread = nullptr;
 	
