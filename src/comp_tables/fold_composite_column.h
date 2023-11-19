@@ -45,7 +45,7 @@ protected:
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool isStatistical, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	QSet<BufferRowIndex> evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const;
 	
@@ -73,7 +73,7 @@ class NumericFoldCompositeColumn : public FoldCompositeColumn {
 	/** The operation to perform when folding the numeric values. */
 	const NumericFoldOp op;
 public:
-	NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, NumericFoldOp op, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr);
+	NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };

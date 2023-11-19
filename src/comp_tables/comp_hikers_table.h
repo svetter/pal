@@ -60,13 +60,13 @@ public:
 	 */
 	inline CompositeHikersTable(Database* db, QTableView* tableView) :
 			CompositeTable(db, db->hikersTable, tableView),
-			//																		name				uiName					align/fold op	suffix		breadcrumbs (column reference chain) + content column
-			nameColumn				(new const DirectCompositeColumn		(this,	"name",				tr("Name"),				Qt::AlignLeft,	noSuffix,	db->hikersTable->nameColumn)),
-			numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		CountFold,		noSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn} })),
-			numTripsColumn			(new const NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		CountFold,		noSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn},	{db->ascentsTable->tripIDColumn,		db->tripsTable->primaryKeyColumn} })),
-			avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	AverageFold,	mSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn)),
-			maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	MaxFold,		mSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn)),
-			sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	SumFold,		mSuffix,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn))
+			//																		name				uiName					suffix		fold op			[breadcrumbs (column reference chain) +] content column
+			nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,					db->hikersTable->nameColumn)),
+			numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn} })),
+			numTripsColumn			(new const NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn},	{db->ascentsTable->tripIDColumn,		db->tripsTable->primaryKeyColumn} })),
+			avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn)),
+			maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn)),
+			sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		{ {db->hikersTable->primaryKeyColumn,	db->participatedTable->hikerIDColumn},		{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn} },	db->ascentsTable->elevationGainColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(numAscentsColumn);

@@ -67,7 +67,7 @@ protected:
 	const QString suffix;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	CompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
@@ -127,7 +127,7 @@ class DirectCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
 	
 public:
-	DirectCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, QString suffix, Column* contentColumn);
+	DirectCompositeColumn(CompositeTable* table, QString suffix, Column* contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -147,7 +147,7 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	Column* const contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, Qt::AlignmentFlag alignment, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn);
+	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
