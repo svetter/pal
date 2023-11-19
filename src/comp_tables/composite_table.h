@@ -130,7 +130,7 @@ public:
 	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	int getNumberOfCellsToUpdate() const;
-	void updateBuffer(std::function<void ()> runAfterEachCellUpdate = {});
+	void updateBuffer(std::function<void()> runAfterEachCellUpdate = []() {});
 	void resetBuffer();
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;

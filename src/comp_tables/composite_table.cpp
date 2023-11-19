@@ -286,9 +286,10 @@ int CompositeTable::getNumberOfCellsToUpdate() const
  * 
  * @param runAfterEachCellUpdate	A lambda function to be run every time a cell value has been updated.
  */
-void CompositeTable::updateBuffer(std::function<void ()> runAfterEachCellUpdate)
+void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate)
 {
 	if (columnsToUpdate.isEmpty()) return;
+	if (!runAfterEachCellUpdate) runAfterEachCellUpdate = []() {};
 	
 	for (const CompositeColumn* column : qAsConst(columnsToUpdate)) {
 		int columnIndex = column->getIndex();
@@ -552,7 +553,7 @@ void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
 	columnsToUpdate.insert(columns.at(columnIndex));
-	if (updateImmediately) updateBuffer(nullptr);
+	if (updateImmediately) updateBuffer();
 }
 
 
