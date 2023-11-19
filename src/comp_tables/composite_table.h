@@ -44,11 +44,11 @@
  * displayed in the UI. The buffer stores "raw" computed values, which have to be formatted before
  * being shown in the UI, which is done on the fly in CompositeColumn::toFormattedTableContent().
  * 
- * To make sure the buffer stays up to date, the CompositeTable must be notified of any changes
- * in the underlying data in the database. For this purpose, there is a change annunciation
- * mechanism. Depending on a user setting, the table can either be updated immediately or only once
- * it is actually needed. In the latter case, the affected columns are marked as dirty and their
- * update deferred.
+ * To make sure the buffer stays up to date, the CompositeTable must be notified of any changes in
+ * the underlying data in the database. For this purpose, there is a change annunciation mechanism.
+ * Depending on a user setting, the table can either be updated immediately or only once it is
+ * actually needed. In the latter case, the affected columns are marked as dirty and their update
+ * deferred.
  * 
  * The change annunciation consists of two parts:
  * First, the CompositeTable must be notified when a row is inserted or removed from the base table.
@@ -104,6 +104,8 @@ class CompositeTable : public QAbstractTableModel {
 public:
 	/** The internal name of the table (not for display in the UI). */
 	const QString name;
+	/** The name of the table as it should be displayed in the UI. */
+	const QString uiName;
 	
 protected:
 	/** An empty string to use as suffix for columns which don't need one. */

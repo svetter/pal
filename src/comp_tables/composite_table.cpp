@@ -46,7 +46,8 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 		columnsToUpdate(QSet<const CompositeColumn*>()),
 		updateImmediately(false),
 		tableToAutoResizeAfterCompute(nullptr),
-		name(baseTable->name)
+		name(baseTable->name),
+		uiName(baseTable->uiName)
 {
 	baseTable->setRowChangeListener(this);
 }
