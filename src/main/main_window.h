@@ -144,6 +144,7 @@ private slots:
 	// View menu action handlers
 	void handle_showFiltersChanged();
 	void handle_autoResizeColumns();
+	void handle_resetColumnOrder();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
 	void handle_exportData();

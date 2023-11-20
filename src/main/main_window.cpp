@@ -128,6 +128,7 @@ void MainWindow::setupMenuIcons()
 	// View menu
 	// showFiltersAction is checkable
 	autoResizeColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	resetColumnOrderAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	// New menu: no fitting icons
 	// Tools menu
 	relocatePhotosAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
@@ -223,6 +224,7 @@ void MainWindow::connectUI()
 	// Menu "View"
 	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
+	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	// Menu "New"
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		auto newFunction = [this, &mapper] () {
@@ -1200,6 +1202,25 @@ void MainWindow::handle_autoResizeColumns()
 		tableView->resizeColumnsToContents();
 		for (int i = 0; i < numColumns; i++) {
 			if (tableView->columnWidth(i) > 400) tableView->setColumnWidth(i, 400);
+		}
+	});
+	assert(done);
+}
+
+/**
+ * Event handler for the "reset column order" action in the view menu.
+ * 
+ * Resets the order of columns in the currently active table to their order in the CompositeTable.
+ */
+void MainWindow::handle_resetColumnOrder()
+{
+	QTableView* currentTableView = getCurrentTableView();
+	bool done = typesHandler->forMatchingTableView(currentTableView, [] (const ItemTypeMapper& mapper, bool debugTable) {
+		Q_UNUSED(debugTable);
+		QHeaderView* header = mapper.tableView->horizontalHeader();
+		for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
+			int currentVisualIndex = header->visualIndex(logicalIndex);
+			header->moveSection(currentVisualIndex, logicalIndex);
 		}
 	});
 	assert(done);
