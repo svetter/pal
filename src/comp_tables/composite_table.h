@@ -133,7 +133,7 @@ public:
 	const CompositeColumn* getColumnByName(const QString& columnName) const;
 	int getIndexOf(const CompositeColumn* column) const;
 	int getExportIndexOf(const CompositeColumn* column) const;
-	QSet<QString> getVisibleColumnNameSet() const;
+	QSet<QString> getNormalColumnNameSet() const;
 	const NormalTable* getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;

@@ -258,11 +258,11 @@ int CompositeTable::getExportIndexOf(const CompositeColumn* column) const
 }
 
 /**
- * Returns a set with the names of all visible columns.
+ * Returns a set with the names of all normal (not export-only or filter-only) columns.
  * 
- * @return	The names of all visible columns.
+ * @return	The names of all normal columns.
  */
-QSet<QString> CompositeTable::getVisibleColumnNameSet() const
+QSet<QString> CompositeTable::getNormalColumnNameSet() const
 {
 	QSet<QString> columnNameSet;
 	for (int columnIndex = 0; columnIndex < getNumberOfNormalColumns(); columnIndex++) {

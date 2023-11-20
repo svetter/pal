@@ -318,11 +318,11 @@ void MainWindow::setupDebugTableViews()
  */
 void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 {
-	QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+	QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
 	if (mapper.columnWidthsSetting->nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
 	
-	const QSet<QString> visibleColumnNames = mapper.compTable->getVisibleColumnNameSet();
-	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(visibleColumnNames);
+	const QSet<QString> normalColumnNames = mapper.compTable->getNormalColumnNameSet();
+	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(normalColumnNames);
 	
 	// Restore column widths
 	for (int columnIndex = 0; columnIndex < mapper.compTable->getNumberOfNormalColumns(); columnIndex++) {
@@ -461,7 +461,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		}
 		typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 			// Column widths
-			QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+			QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
 			if (Settings::rememberColumnWidths.get() && mapper.columnWidthsSetting->anyPresent(columnNameSet)) {
 				restoreColumnWidths(mapper);
 			}
@@ -530,7 +530,7 @@ void MainWindow::initCompositeBuffers()
 		bool isOpen = mapper.tableView == currentTableView;
 		bool prepareThisTable = prepareAll || isOpen;
 		
-		QSet<QString> columnNameSet = mapper.compTable->getVisibleColumnNameSet();
+		QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
 		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper.columnWidthsSetting->nonePresent(columnNameSet);
 		
 		// Collect buffer initialization parameters
