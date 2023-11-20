@@ -188,13 +188,13 @@ void MainWindow::createTypesHandler()
 	}
 	
 	typesHandler = new ItemTypesHandler(showDebugTableViews,
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->sorting_countriesTable),
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
@@ -275,6 +275,9 @@ void MainWindow::setupTableViews()
 		// Set model
 		mapper.tableView->setModel(mapper.compTable);
 		
+		// Enable column header reordering
+		mapper.tableView->horizontalHeader()->setSectionsMovable(true);
+		
 		// Enable context menu
 		connect(mapper.tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 		
@@ -328,6 +331,39 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
 	for (int columnIndex = 0; columnIndex < mapper.compTable->getNumberOfNormalColumns(); columnIndex++) {
 		const QString& columnName = mapper.compTable->getColumnAt(columnIndex)->name;
 		mapper.tableView->setColumnWidth(columnIndex, columnWidthMap[columnName]);
+	}
+}
+
+/**
+ * Restores the column order for the table view specified by the given ItemTypeMapper.
+ * 
+ * @param mapper	The ItemTypeMapper for the table view whose column order should be restored.
+ */
+void MainWindow::restoreColumnOrder(const ItemTypeMapper& mapper)
+{
+	QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
+	if (mapper.columnOrderSetting->nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
+	
+	const QSet<QString> normalColumnNames = mapper.compTable->getNormalColumnNameSet();
+	const QMap<QString, int> columnOrderMap = mapper.columnOrderSetting->get(normalColumnNames);
+	// Sort by visual index
+	QList<QPair<QString, int>> columnOrderList = QList<QPair<QString, int>>();
+	for (const QPair<QString, int>& columnOrderPair : columnOrderMap.asKeyValueRange()) {
+		if (columnOrderPair.second < 0) continue;	// Visual index invalid, ignore column
+		columnOrderList.append(columnOrderPair);
+	}
+	auto comparator = [](const QPair<QString, int>& pair1, const QPair<QString, int>& pair2) {
+		return pair1.second < pair2.second;
+	};
+	std::sort(columnOrderList.begin(), columnOrderList.end(), comparator);
+	
+	// Restore column order
+	QHeaderView* header = mapper.tableView->horizontalHeader();
+	for (int visualIndex = 0; visualIndex < columnOrderList.size(); visualIndex++) {
+		const QString& columnName = columnOrderList.at(visualIndex).first;
+		int logicalIndex = mapper.compTable->getColumnByName(columnName)->getIndex();
+		int currentVisualIndex = header->visualIndex(logicalIndex);
+		header->moveSection(currentVisualIndex, visualIndex);
 	}
 }
 
@@ -461,9 +497,12 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		}
 		typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 			// Column widths
-			QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
-			if (Settings::rememberColumnWidths.get() && mapper.columnWidthsSetting->anyPresent(columnNameSet)) {
+			if (Settings::rememberColumnWidths.get()) {
 				restoreColumnWidths(mapper);
+			}
+			// Column order
+			if (Settings::rememberColumnOrder.get()) {
+				restoreColumnOrder(mapper);
 			}
 			// Sortings
 			setSorting(mapper);
@@ -1237,6 +1276,7 @@ void MainWindow::saveImplicitSettings()
 	
 	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
 		saveColumnWidths(mapper);
+		saveColumnOrder(mapper);
 		saveSorting(mapper);
 	});
 }
@@ -1255,12 +1295,35 @@ void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper)
 		const CompositeColumn* const column = mapper.compTable->getColumnAt(columnIndex);
 		int currentColumnWidth = mapper.tableView->columnWidth(columnIndex);
 		if (currentColumnWidth <= 0) {
-			qDebug() << "Couldn't read column width for column" << column->name << "in table" << mapper.compTable->name << "- skipping column";
+			qDebug() << "Saving column widths: Couldn't read column width for column" << column->name << "in table" << mapper.compTable->name << "- skipping column";
 			continue;
 		}
 		nameValueMap[column->name] = currentColumnWidth;
 	}
 	mapper.columnWidthsSetting->set(this, nameValueMap);
+}
+
+/**
+ * Saves the column order of the table for the given item type.
+ * 
+ * @param mapper	The ItemTypeMapper containing the table whose column order should be saved.
+ */
+void MainWindow::saveColumnOrder(const ItemTypeMapper& mapper)
+{
+	if (!mapper.tabHasBeenOpened()) return;	// Only save if table was actually shown
+	QHeaderView* header = mapper.tableView->horizontalHeader();
+	
+	QMap<QString, int> nameValueMap;
+	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper.compTable->columnCount(); logicalColumnIndex++) {
+		const CompositeColumn* const column = mapper.compTable->getColumnAt(logicalColumnIndex);
+		int visualIndex = header->visualIndex(logicalColumnIndex);
+		if (visualIndex < 0) {
+			qDebug() << "Saving column order: Couldn't read column order for column" << column->name << "in table" << mapper.compTable->name << "- skipping column";
+			continue;
+		}
+		nameValueMap[column->name] = visualIndex;
+	}
+	mapper.columnOrderSetting->set(this, nameValueMap);
 }
 
 /**

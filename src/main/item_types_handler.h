@@ -100,6 +100,8 @@ public:
 	const Setting<QRect>* const				dialogGeometrySetting;
 	/** The setting storing the column widths for the UI table of this item type. */
 	ProjectMultiSetting<int>* const			columnWidthsSetting;
+	/** The setting storing the column order for the UI table of this item type. */
+	ProjectMultiSetting<int>* const			columnOrderSetting;
 	/** The setting storing the sorting of the UI table of this item type. */
 	const ProjectSetting<QString>* const	sortingSetting;
 
@@ -151,6 +153,7 @@ public:
 			QAction* const		newItemAction,
 			QPushButton* const	newItemButton,
 			ProjectMultiSetting<int>*		columnWidthsSetting,
+			ProjectMultiSetting<int>*		columnOrderSetting,
 			const ProjectSetting<QString>*	sortingSetting,
 			const Setting<QRect>*			dialogGeometrySetting,
 			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
@@ -169,6 +172,7 @@ public:
 			newItemButton							(newItemButton),
 			dialogGeometrySetting					(dialogGeometrySetting),
 			columnWidthsSetting						(columnWidthsSetting),
+			columnOrderSetting						(columnOrderSetting),
 			sortingSetting							(sortingSetting),
 			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
 			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
@@ -220,6 +224,7 @@ public:
 	QAction* const					newItemAction, \
 	QPushButton* const				newItemButton, \
 	ProjectMultiSetting<int>*		columnWidthsSetting, \
+	ProjectMultiSetting<int>*		columnOrderSetting, \
 	const ProjectSetting<QString>*	sortingSetting
 
 /**
@@ -233,6 +238,7 @@ public:
 	newItemAction, \
 	newItemButton, \
 	columnWidthsSetting, \
+	columnOrderSetting, \
 	sortingSetting
 
 

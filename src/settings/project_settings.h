@@ -154,6 +154,22 @@ public:
 	/** Remembered column widths of the countries table in the main window. */
 	ProjectMultiSetting<int>	columnWidths_countriesTable;
 	
+	// Column order
+	/** Remembered column order of the ascents table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_ascentsTable;
+	/** Remembered column order of the peaks table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_peaksTable;
+	/** Remembered column order of the trips table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_tripsTable;
+	/** Remembered column order of the hikers table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_hikersTable;
+	/** Remembered column order of the regions table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_regionsTable;
+	/** Remembered column order of the ranges table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_rangesTable;
+	/** Remembered column order of the countries table in the main window. */
+	ProjectMultiSetting<int>	columnOrder_countriesTable;
+	
 	// Sorting
 	/** Remembered sorting of the ascents table in the main window. */
 	ProjectSetting<QString>		sorting_ascentsTable;
@@ -224,6 +240,15 @@ public:
 			columnWidths_regionsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/regionsTable",				100)),
 			columnWidths_rangesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/rangesTable",					100)),
 			columnWidths_countriesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/countriesTable",				100)),
+			
+			// Column widths
+			columnOrder_ascentsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/ascentsTable",					-1)),
+			columnOrder_peaksTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/peaksTable",					-1)),
+			columnOrder_tripsTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/tripsTable",					-1)),
+			columnOrder_hikersTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/hikersTable",					-1)),
+			columnOrder_regionsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/regionsTable",					-1)),
+			columnOrder_rangesTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/rangesTable",					-1)),
+			columnOrder_countriesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/countriesTable",				-1)),
 			
 			// Sorting
 			sorting_ascentsTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/ascentsTable")),

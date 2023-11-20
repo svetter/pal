@@ -92,6 +92,7 @@ private:
 	void setupTableViews();
 	void setupDebugTableViews();
 	void restoreColumnWidths(const ItemTypeMapper& mapper);
+	void restoreColumnOrder(const ItemTypeMapper& mapper);
 	void setSorting(const ItemTypeMapper& mapper);
 	void initTableContextMenuAndShortcuts();
 	void updateContextMenuEditIcon();
@@ -154,6 +155,7 @@ private:
 	void closeEvent(QCloseEvent* event) override;
 	void saveImplicitSettings();
 	void saveColumnWidths(const ItemTypeMapper& mapper);
+	void saveColumnOrder(const ItemTypeMapper& mapper);
 	void saveSorting(const ItemTypeMapper& mapper);
 	// Layout changes
 	virtual void resizeEvent(QResizeEvent* event) override;
