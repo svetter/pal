@@ -92,9 +92,9 @@ private:
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
-	void restoreColumnWidths(const ItemTypeMapper& mapper);
-	void restoreColumnOrder(const ItemTypeMapper& mapper);
-	void setSorting(const ItemTypeMapper& mapper);
+	void restoreColumnWidths(const ItemTypeMapper* const mapper);
+	void restoreColumnOrder(const ItemTypeMapper* const mapper);
+	void setSorting(const ItemTypeMapper* const mapper);
 	void initTableContextMenuAndShortcuts();
 	void updateContextMenuEditIcon();
 	
@@ -110,19 +110,18 @@ public:
 	
 private:
 	// Execute user commands
-	void viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
-	void newItem(const ItemTypeMapper& mapper);
-	void duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
-	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
-	void deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices);
+	void viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
+	void newItem(const ItemTypeMapper* const mapper);
+	void duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
+	void editItem(const ItemTypeMapper* const mapper, const QModelIndex& index);
+	void deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
-	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
+	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
-	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
+	void updateSelectionAfterUserAction(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
 	
 private slots:
-	
 	// UI event handlers
 	void handle_tabChanged();
 	void handle_rightClick(QPoint pos);
@@ -157,14 +156,15 @@ private:
 	void closeEvent(QCloseEvent* event) override;
 	void saveProjectImplicitSettings();
 	void saveGlobalImplicitSettings();
-	void saveColumnWidths(const ItemTypeMapper& mapper);
-	void saveColumnOrder(const ItemTypeMapper& mapper);
-	void saveSorting(const ItemTypeMapper& mapper);
+	void saveColumnWidths(const ItemTypeMapper* const mapper);
+	void saveColumnOrder(const ItemTypeMapper* const mapper);
+	void saveSorting(const ItemTypeMapper* const mapper);
 	// Layout changes
 	virtual void resizeEvent(QResizeEvent* event) override;
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
+	const ItemTypeMapper* getActiveMapper() const;
 	void addToRecentFilesList(const QString& filepath);
 	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);

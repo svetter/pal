@@ -206,19 +206,19 @@ void DataExportThread::exportAsShown()
 	QList<CompositeTable*> compTables = QList<CompositeTable*>();
 	QStringList tableNames = QStringList();
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
-	typesHandler->forEach([&] (ItemTypeMapper& mapper) {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper.compTable->getNormalColumnList()) {
+		for (const CompositeColumn* column : mapper->compTable->getNormalColumnList()) {
 			bool skipColumn = !includeStats && column->isStatistical;
 			if (skipColumn) continue;
 			
 			columnInfos.append({false, column->getIndex(), column->uiName, column->contentType, column->enumNames, column->enumNameLists});
 		}
 		
-		compTables.append(mapper.compTable);
-		tableNames.append(mapper.compTable->uiName);
+		compTables.append(mapper->compTable);
+		tableNames.append(mapper->compTable->uiName);
 		allColumnInfos.append(columnInfos);
-	});
+	}
 	
 	// Determine and report workload size
 	int workloadSize = 0;	// In cells

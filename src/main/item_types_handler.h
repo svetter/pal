@@ -476,6 +476,20 @@ public:
 	{}
 	
 	/**
+	 * Returns a complete list of ItemTypeMapper instances for every item type.
+	 * 
+	 * @return	A list of every ItemTypeMapper.
+	 */
+	inline const QList<ItemTypeMapper*> getAllMappers() const
+	{
+		QList<ItemTypeMapper*> list = QList<ItemTypeMapper*>();
+		for (ItemTypeMapper* mapper : mappers) {
+			list += mapper;
+		}
+		return list;
+	}
+	
+	/**
 	 * Returns the ItemTypeMapper instance for the given item type.
 	 * 
 	 * @param type	The item type.
@@ -504,40 +518,32 @@ public:
 	}
 	
 	/**
-	 * Runs the given lambda function with an ItemTypeMapper as input for each item type.
+	 * Returns the ItemTypeMapper for the item type to which the given table view belongs.
 	 * 
-	 * @param lambda	The lambda function to run.
-	 */
-	inline void forEach(std::function<void (ItemTypeMapper&)> lambda) const
-	{
-		for (ItemTypeMapper* mapper : mappers) {
-			lambda(*mapper);
-		}
-	}
-	
-	/**
-	 * Runs the given lambda function with an ItemTypeMapper as input only for the item type to
-	 * which the given table view belongs.
+	 * Optionally, writes back a bool via pointer to indicate whether the given table view belongs
+	 * to a debug table.
 	 * 
-	 * @param tableView	The table view identifying the item type.
-	 * @param lambda	The lambda function to run for the specified item type.
-	 * @return			True if the function was run, false if the item type could not be identified.
+	 * @param tableView		The table view identifying the item type.
+	 * @param isDebugTable	A bool pointer to which to write whether the given table view is for a debug table.
+	 * @return				The ItemTypeMapper for the item type to which the given table view belongs.
 	 */
-	inline bool forMatchingTableView(QTableView* tableView, std::function<void (const ItemTypeMapper&, bool)> lambda) const
+	inline ItemTypeMapper* getMatchingMapper(QTableView* tableView, bool* isDebugTable = nullptr) const
 	{
-		const ItemTypeMapper* matchingMapper = nullptr;
+		ItemTypeMapper* matchingMapper = nullptr;
 		bool debugTable = false;
-		for (const ItemTypeMapper* mapper : mappers) {
-			if (mapper->tableView == tableView) matchingMapper = mapper;
+		for (ItemTypeMapper* const mapper : mappers) {
+			if (mapper->tableView == tableView) {
+				matchingMapper = mapper;
+			}
 			if (mapper->debugTableView == tableView) {
 				matchingMapper = mapper;
 				debugTable = true;
 			}
 		}
-		if (!matchingMapper) return false;
+		assert(matchingMapper);
 		
-		lambda(*matchingMapper, debugTable);
-		return true;
+		if (isDebugTable) *isDebugTable = debugTable;
+		return matchingMapper;
 	}
 };
 

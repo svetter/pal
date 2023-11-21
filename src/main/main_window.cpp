@@ -227,17 +227,17 @@ void MainWindow::connectUI()
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	// Menu "New"
-	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
-		auto newFunction = [this, &mapper] () {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		auto newFunction = [this, mapper] () {
 			newItem(mapper);
 		};
 		
-		connect(mapper.newItemAction,		&QAction::triggered,			this,	newFunction);
+		connect(mapper->newItemAction,		&QAction::triggered,			this,	newFunction);
 		// Big new item buttons
-		if (mapper.newItemButton) {
-			connect(mapper.newItemButton,	&QPushButton::clicked,			this,	newFunction);
+		if (mapper->newItemButton) {
+			connect(mapper->newItemButton,	&QPushButton::clicked,			this,	newFunction);
 		}
-	});
+	}
 	// Menu "Tools"
 	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
 	connect(exportDataAction,				&QAction::triggered,			this,	&MainWindow::handle_exportData);
@@ -250,23 +250,23 @@ void MainWindow::connectUI()
 	// Tabs
 	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	// Double clicks on table
-	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		auto openFunction = [this, &mapper] (const QModelIndex& index) {
-			if (mapper.type == ItemTypeAscent) {
+			if (mapper->type == ItemTypeAscent) {
 				viewItem(mapper, ViewRowIndex(index.row()));
 			} else {
 				editItem(mapper, index);
 			}
 		};
-		connect(mapper.tableView,			&QTableView::doubleClicked,		this,	openFunction);
+		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	openFunction);
 		
 		if (showDebugTableViews) {
 			auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
-				mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(index.row()));
+				mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(index.row()));
 			};
-			connect(mapper.debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
+			connect(mapper->debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
 		}
-	});
+	}
 }
 
 /**
@@ -274,18 +274,18 @@ void MainWindow::connectUI()
  */
 void MainWindow::setupTableViews()
 {
-	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		// Set model
-		mapper.tableView->setModel(mapper.compTable);
+		mapper->tableView->setModel(mapper->compTable);
 		
 		// Enable column header reordering
-		mapper.tableView->horizontalHeader()->setSectionsMovable(true);
+		mapper->tableView->horizontalHeader()->setSectionsMovable(true);
 		
 		// Enable context menu
-		connect(mapper.tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 		
-		mapper.compTable->setUpdateImmediately(mapper.tableView == getCurrentTableView());
-	});
+		mapper->compTable->setUpdateImmediately(mapper->tableView == getCurrentTableView());
+	}
 }
 
 /**
@@ -309,9 +309,9 @@ void MainWindow::setupDebugTableViews()
 		connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
 	};
 	
-	typesHandler->forEach([&setupFunction] (const ItemTypeMapper& mapper) {
-		setupFunction(mapper.debugTableView, mapper.baseTable);
-	});
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		setupFunction(mapper->debugTableView, mapper->baseTable);
+	}
 	
 	setupFunction(photosDebugTableView,			db.photosTable);
 	setupFunction(participatedDebugTableView,	db.participatedTable);
@@ -322,18 +322,18 @@ void MainWindow::setupDebugTableViews()
  * 
  * @param mapper	The ItemTypeMapper for the table view whose column widths should be restored.
  */
-void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
+void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
 {
-	QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
-	if (mapper.columnWidthsSetting->nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
+	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
+	if (mapper->columnWidthsSetting->nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
 	
-	const QSet<QString> normalColumnNames = mapper.compTable->getNormalColumnNameSet();
-	const QMap<QString, int> columnWidthMap = mapper.columnWidthsSetting->get(normalColumnNames);
+	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
+	const QMap<QString, int> columnWidthMap = mapper->columnWidthsSetting->get(normalColumnNames);
 	
 	// Restore column widths
-	for (int columnIndex = 0; columnIndex < mapper.compTable->getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper.compTable->getColumnAt(columnIndex)->name;
-		mapper.tableView->setColumnWidth(columnIndex, columnWidthMap[columnName]);
+	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
+		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
+		mapper->tableView->setColumnWidth(columnIndex, columnWidthMap[columnName]);
 	}
 }
 
@@ -342,13 +342,13 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper& mapper)
  * 
  * @param mapper	The ItemTypeMapper for the table view whose column order should be restored.
  */
-void MainWindow::restoreColumnOrder(const ItemTypeMapper& mapper)
+void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 {
-	QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
-	if (mapper.columnOrderSetting->nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
+	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
+	if (mapper->columnOrderSetting->nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
 	
-	const QSet<QString> normalColumnNames = mapper.compTable->getNormalColumnNameSet();
-	const QMap<QString, int> columnOrderMap = mapper.columnOrderSetting->get(normalColumnNames);
+	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
+	const QMap<QString, int> columnOrderMap = mapper->columnOrderSetting->get(normalColumnNames);
 	// Sort by visual index
 	QList<QPair<QString, int>> columnOrderList = QList<QPair<QString, int>>();
 	for (const QPair<QString, int>& columnOrderPair : columnOrderMap.asKeyValueRange()) {
@@ -361,10 +361,10 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper& mapper)
 	std::sort(columnOrderList.begin(), columnOrderList.end(), comparator);
 	
 	// Restore column order
-	QHeaderView* header = mapper.tableView->horizontalHeader();
+	QHeaderView* header = mapper->tableView->horizontalHeader();
 	for (int visualIndex = 0; visualIndex < columnOrderList.size(); visualIndex++) {
 		const QString& columnName = columnOrderList.at(visualIndex).first;
-		int logicalIndex = mapper.compTable->getColumnByName(columnName)->getIndex();
+		int logicalIndex = mapper->compTable->getColumnByName(columnName)->getIndex();
 		int currentVisualIndex = header->visualIndex(logicalIndex);
 		header->moveSection(currentVisualIndex, visualIndex);
 	}
@@ -376,18 +376,18 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper& mapper)
  * 
  * @param mapper	The ItemTypeMapper for the table view whose sorting should be set.
  */
-void MainWindow::setSorting(const ItemTypeMapper& mapper)
+void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 {
-	QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper.compTable->getDefaultSorting();
+	QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper->compTable->getDefaultSorting();
 	bool sortingSettingValid = true;
 	
-	while (Settings::rememberSorting.get() && mapper.sortingSetting->present()) {
+	while (Settings::rememberSorting.get() && mapper->sortingSetting->present()) {
 		sortingSettingValid = false;
 		
-		QStringList saved = mapper.sortingSetting->get().split(",");
+		QStringList saved = mapper->sortingSetting->get().split(",");
 		if (saved.size() != 2) break;
 		
-		const CompositeColumn* column = mapper.compTable->getColumnByName(saved.at(0).trimmed());
+		const CompositeColumn* column = mapper->compTable->getColumnByName(saved.at(0).trimmed());
 		if (!column) break;
 		
 		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
@@ -398,9 +398,9 @@ void MainWindow::setSorting(const ItemTypeMapper& mapper)
 		sortingSettingValid = true;
 		break;
 	}
-	mapper.tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
+	mapper->tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
 	
-	if (!sortingSettingValid) mapper.sortingSetting->clear(this);
+	if (!sortingSettingValid) mapper->sortingSetting->clear(this);
 }
 
 
@@ -464,13 +464,9 @@ void MainWindow::initTableContextMenuAndShortcuts()
  */
 void MainWindow::updateContextMenuEditIcon()
 {
-	QTableView* currentTableView = getCurrentTableView();
-	typesHandler->forMatchingTableView(currentTableView, [this] (const ItemTypeMapper& mapper, bool debug) {
-		Q_UNUSED(debug);
-		QIcon icon = QIcon(":/icons/" + mapper.name + ".svg");
-		tableContextMenuEditAction->setIcon(icon);
-		tableContextMenuDuplicateAction->setIcon(icon);
-	});
+	QIcon icon = QIcon(":/icons/" + getActiveMapper()->name + ".svg");
+	tableContextMenuEditAction->setIcon(icon);
+	tableContextMenuDuplicateAction->setIcon(icon);
 }
 
 
@@ -499,7 +495,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		if (Settings::rememberTab.get()) {
 			mainAreaTabs->setCurrentIndex(db.projectSettings->mainWindow_currentTabIndex.get(this));
 		}
-		typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Column widths
 			if (Settings::rememberColumnWidths.get()) {
 				restoreColumnWidths(mapper);
@@ -510,7 +506,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			}
 			// Sortings
 			setSorting(mapper);
-		});
+		}
 		
 		// Build buffers and update size info
 		initCompositeBuffers();
@@ -545,14 +541,11 @@ void MainWindow::initCompositeBuffers()
 	
 	int numCells = 0;
 	if (prepareAll) {
-		typesHandler->forEach([&numCells] (const ItemTypeMapper& mapper) {
-			numCells += mapper.compTable->getNumberOfCellsToInit();
-		});
+		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+			numCells += mapper->compTable->getNumberOfCellsToInit();
+		}
 	} else {
-		typesHandler->forMatchingTableView(currentTableView, [&numCells] (const ItemTypeMapper& mapper, bool debug) {
-			Q_UNUSED(debug);
-			numCells += mapper.compTable->getNumberOfCellsToInit();
-		});
+		numCells += getActiveMapper()->compTable->getNumberOfCellsToInit();
 	}
 	progress.setMinimum(0);
 	progress.setMaximum(numCells);
@@ -568,23 +561,23 @@ void MainWindow::initCompositeBuffers()
 	}
 	typesHandler->get(ItemTypeAscent)->compTable->setInitialFilters(ascentFilters);
 	
-	typesHandler->forEach([&progress, prepareAll, currentTableView] (ItemTypeMapper& mapper) {
-		progress.setLabelText(tr("Preparing table %1...").arg(mapper.baseTable->uiName));
+	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		progress.setLabelText(tr("Preparing table %1...").arg(mapper->baseTable->uiName));
 		
-		bool isOpen = mapper.tableView == currentTableView;
+		bool isOpen = mapper->tableView == currentTableView;
 		bool prepareThisTable = prepareAll || isOpen;
 		
-		QSet<QString> columnNameSet = mapper.compTable->getNormalColumnNameSet();
-		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper.columnWidthsSetting->nonePresent(columnNameSet);
+		QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
+		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper->columnWidthsSetting->nonePresent(columnNameSet);
 		
 		// Collect buffer initialization parameters
 		QProgressDialog* updateProgress = prepareThisTable ? &progress : nullptr;
 		bool deferCompute = !prepareThisTable;
-		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper.tableView : nullptr;
+		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper->tableView : nullptr;
 		
-		mapper.compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
-		if (isOpen) mapper.openingTab();
-	});
+		mapper->compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
+		if (isOpen) mapper->openingTab();
+	}
 }
 
 
@@ -605,9 +598,9 @@ void MainWindow::setUIEnabled(bool enabled)
 	newMenu						->setEnabled(enabled);
 	toolsMenu					->setEnabled(enabled);
 	
-	typesHandler->forEach([enabled] (const ItemTypeMapper& mapper) {
-		mapper.newItemButton->setEnabled(enabled);
-	});
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->newItemButton->setEnabled(enabled);
+	}
 	mainAreaTabs				->setEnabled(enabled);
 	ascentCounterSegmentNumber	->setEnabled(enabled);
 	ascentCounterLabel			->setEnabled(enabled);
@@ -660,32 +653,33 @@ void MainWindow::updateTableSize(bool reset)
 		return;
 	}
 	
-	typesHandler->forMatchingTableView(getCurrentTableView(), [this] (const ItemTypeMapper& mapper, bool debugTable) {
-		QString countText = QString();
-		int total = mapper.baseTable->getNumberOfRows();
-		if (total == 0) {
-			countText = tr("Table is empty");
-		}
-		else if (mapper.type == ItemTypeAscent && !debugTable) {
-			int displayed = mapper.compTable->rowCount();
-			int filtered = total - displayed;
-			countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	QString countText = QString();
+	int total = mapper->baseTable->getNumberOfRows();
+	if (total == 0) {
+		countText = tr("Table is empty");
+	}
+	else if (mapper->type == ItemTypeAscent && !debugTable) {
+		int displayed = mapper->compTable->rowCount();
+		int filtered = total - displayed;
+		countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
+	} else {
+		countText = (total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total);
+	}
+	statusBarTableSizeLabel->setText(countText);
+	
+	QString filterText = QString();
+	if (mapper->type == ItemTypeAscent && !debugTable) {
+		int filtersApplied = mapper->compTable->getCurrentFilters().size();
+		if (filtersApplied) {
+			filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
 		} else {
-			countText = (total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total);
+			filterText = tr("No filters applied");
 		}
-		statusBarTableSizeLabel->setText(countText);
-		
-		QString filterText = QString();
-		if (mapper.type == ItemTypeAscent && !debugTable) {
-			int filtersApplied = mapper.compTable->getCurrentFilters().size();
-			if (filtersApplied) {
-				filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
-			} else {
-				filterText = tr("No filters applied");
-			}
-		}
-		statusBarFiltersLabel->setText(filterText);
-	});
+	}
+	statusBarFiltersLabel->setText(filterText);
 	
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
 }
@@ -700,9 +694,9 @@ void MainWindow::updateTableSize(bool reset)
  * @param mapper		The ItemTypeMapper for the type of item to open.
  * @param viewRowIndex	The view row index of the item to open.
  */
-void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex)
 {
-	switch (mapper.type) {
+	switch (mapper->type) {
 	case ItemTypeAscent:
 		AscentViewer(this, &db, typesHandler, viewRowIndex).exec();
 		return;
@@ -718,13 +712,13 @@ void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowInde
  * 
  * @param mapper	The ItemTypeMapper for the type of item to create.
  */
-void MainWindow::newItem(const ItemTypeMapper& mapper)
+void MainWindow::newItem(const ItemTypeMapper* const mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, &db);
+	BufferRowIndex newBufferRowIndex = mapper->openNewItemDialogAndStoreMethod(this, &db);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
-	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
 }
 
 /**
@@ -736,14 +730,14 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
  * @param mapper		The ItemTypeMapper for the type of item to duplicate.
  * @param viewRowIndex	The view row index of the item to duplicate.
  */
-void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex)
 {
-	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	BufferRowIndex newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
+	BufferRowIndex newBufferRowIndex = mapper->openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
-	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
 }
 
 /**
@@ -754,14 +748,14 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex
  * @param mapper		The ItemTypeMapper for the type of item to edit.
  * @param viewRowIndex	The view row index of the item to edit.
  */
-void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
+void MainWindow::editItem(const ItemTypeMapper* const mapper, const QModelIndex& index)
 {
 	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
-	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	mapper.openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
+	mapper->openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
-	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved changes in %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
 }
 
 /**
@@ -773,19 +767,19 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
  * @param mapper			The ItemTypeMapper for the type of item to delete.
  * @param viewRowIndices	The view row indices of the items to delete.
  */
-void MainWindow::deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices)
+void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices)
 {
 	if (viewRowIndices.isEmpty()) return;
 	
 	QSet<BufferRowIndex> bufferRowIndices = QSet<BufferRowIndex>();
 	for (const ViewRowIndex& viewRowIndex : viewRowIndices) {
-		bufferRowIndices += mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+		bufferRowIndices += mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
 	}
 	
-	mapper.openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
+	mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
 	
 	performUpdatesAfterUserAction(mapper, true);
-	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Deleted %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
 }
 
 
@@ -796,11 +790,11 @@ void MainWindow::deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> vi
  * @param numberOfEntriesChanged	Whether the number of entries in the table changed.
  * @param bufferRowToSelectIndex	The buffer row index of the item to select after the update.
  */
-void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex)
+void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex)
 {
 	// Update selection in table
 	if (bufferRowToSelectIndex.isValid()) {
-		ViewRowIndex viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
+		ViewRowIndex viewRowToSelectIndex = mapper->compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
 	}
 	// Update table size info
@@ -827,11 +821,11 @@ void MainWindow::updateFilters(const ItemTypeMapper* mapper)
  * @param mapper		The ItemTypeMapper containing the table view whose selection should be updated.
  * @param viewRowIndex	The view row index of the item to select.
  */
-void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex)
 {
-	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex.get(), 0);
-	mapper.tableView->setCurrentIndex(modelIndex);
-	mapper.tableView->scrollTo(modelIndex);
+	QModelIndex modelIndex = mapper->compTable->index(viewRowIndex.get(), 0);
+	mapper->tableView->setCurrentIndex(modelIndex);
+	mapper->tableView->scrollTo(modelIndex);
 }
 
 
@@ -855,19 +849,18 @@ void MainWindow::handle_tabChanged()
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(500);
 	
-	QAbstractItemModel* currentModel = getCurrentTableView()->model();
-	typesHandler->forEach([&currentModel, &progress] (ItemTypeMapper& mapper) {
-		CompositeTable* compTable = mapper.compTable;
-		if (currentModel == compTable) {
-			progress.setMaximum(mapper.compTable->getNumberOfCellsToUpdate());
+	const ItemTypeMapper* const mapperForOpenTab = getActiveMapper();
+	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		if (mapper == mapperForOpenTab) {
+			progress.setMaximum(mapper->compTable->getNumberOfCellsToUpdate());
 			
-			compTable->setUpdateImmediately(true, &progress);
-			mapper.openingTab();
+			mapper->compTable->setUpdateImmediately(true, &progress);
+			mapper->openingTab();
 		}
 		else {
-			compTable->setUpdateImmediately(false);
+			mapper->compTable->setUpdateImmediately(false);
 		}
-	});
+	}
 	
 	updateTableSize();
 	updateContextMenuEditIcon();
@@ -915,16 +908,16 @@ void MainWindow::handle_viewSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
-		if (debugTable) {
-			mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-		} else if (mapper.type == ItemTypeAscent) {
-			viewItem(mapper, ViewRowIndex(selectedIndex.row()));
-		} else {
-			editItem(mapper, selectedIndex);
-		}
-	});
-	assert(done);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	if (debugTable) {
+		mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
+	} else if (mapper->type == ItemTypeAscent) {
+		viewItem(mapper, ViewRowIndex(selectedIndex.row()));
+	} else {
+		editItem(mapper, selectedIndex);
+	}
 }
 
 /**
@@ -938,14 +931,14 @@ void MainWindow::handle_editSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
-		if (debugTable) {
-			mapper.openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-		} else {
-			editItem(mapper, selectedIndex);
-		}
-	});
-	assert(done);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	if (debugTable) {
+		mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
+	} else {
+		editItem(mapper, selectedIndex);
+	}
 }
 
 /**
@@ -959,14 +952,14 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedIndex] (const ItemTypeMapper& mapper, bool debugTable) {
-		if (debugTable) {
-			mapper.openDuplicateItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-		} else {
-			duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
-		}
-	});
-	assert(done);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	if (debugTable) {
+		mapper->openDuplicateItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
+	} else {
+		duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
+	}
 }
 
 /**
@@ -983,18 +976,18 @@ void MainWindow::handle_deleteSelectedItems()
 	}
 	if (selectedViewRowIndices.isEmpty()) return;
 	
-	bool done = typesHandler->forMatchingTableView(currentTableView, [this, selectedViewRowIndices] (const ItemTypeMapper& mapper, bool debugTable) {
-		if (debugTable) {
-			QSet<BufferRowIndex> selectedBufferRowIndices = QSet<BufferRowIndex>();
-			for (const ViewRowIndex& viewRowIndex : selectedViewRowIndices) {
-				selectedBufferRowIndices += BufferRowIndex(viewRowIndex.get());
-			}
-			mapper.openDeleteItemsDialogAndExecuteMethod(this, &db, selectedBufferRowIndices);
-		} else {
-			deleteItems(mapper, selectedViewRowIndices);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	if (debugTable) {
+		QSet<BufferRowIndex> selectedBufferRowIndices = QSet<BufferRowIndex>();
+		for (const ViewRowIndex& viewRowIndex : selectedViewRowIndices) {
+			selectedBufferRowIndices += BufferRowIndex(viewRowIndex.get());
 		}
-	});
-	assert(done);
+		mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, selectedBufferRowIndices);
+	} else {
+		deleteItems(mapper, selectedViewRowIndices);
+	}
 }
 
 
@@ -1152,9 +1145,9 @@ void MainWindow::handle_closeDatabase()
 	db.reset();
 	projectOpen = false;
 	updateFilters();
-	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
-		mapper.compTable->resetBuffer();
-	});
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->compTable->resetBuffer();
+	}
 	updateTableSize(true);
 }
 
@@ -1202,17 +1195,16 @@ void MainWindow::handle_showFiltersChanged()
  */
 void MainWindow::handle_autoResizeColumns()
 {
-	QTableView* currentTableView = getCurrentTableView();
-	bool done = typesHandler->forMatchingTableView(currentTableView, [] (const ItemTypeMapper& mapper, bool debugTable) {
-		QTableView* tableView = debugTable ? mapper.debugTableView : mapper.tableView;
-		int numColumns = debugTable ? mapper.baseTable->getNumberOfColumns() : mapper.compTable->columnCount();
-		
-		tableView->resizeColumnsToContents();
-		for (int i = 0; i < numColumns; i++) {
-			if (tableView->columnWidth(i) > 400) tableView->setColumnWidth(i, 400);
-		}
-	});
-	assert(done);
+	bool debugTable;
+	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	
+	QTableView* tableView = debugTable ? mapper->debugTableView : mapper->tableView;
+	int numColumns = debugTable ? mapper->baseTable->getNumberOfColumns() : mapper->compTable->columnCount();
+	
+	tableView->resizeColumnsToContents();
+	for (int i = 0; i < numColumns; i++) {
+		if (tableView->columnWidth(i) > 400) tableView->setColumnWidth(i, 400);
+	}
 }
 
 /**
@@ -1222,16 +1214,11 @@ void MainWindow::handle_autoResizeColumns()
  */
 void MainWindow::handle_resetColumnOrder()
 {
-	QTableView* currentTableView = getCurrentTableView();
-	bool done = typesHandler->forMatchingTableView(currentTableView, [] (const ItemTypeMapper& mapper, bool debugTable) {
-		Q_UNUSED(debugTable);
-		QHeaderView* header = mapper.tableView->horizontalHeader();
-		for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
-			int currentVisualIndex = header->visualIndex(logicalIndex);
-			header->moveSection(currentVisualIndex, logicalIndex);
-		}
-	});
-	assert(done);
+	QHeaderView* header = getActiveMapper()->tableView->horizontalHeader();
+	for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
+		int currentVisualIndex = header->visualIndex(logicalIndex);
+		header->moveSection(currentVisualIndex, logicalIndex);
+	}
 }
 
 
@@ -1301,11 +1288,11 @@ void MainWindow::saveProjectImplicitSettings()
 	db.projectSettings->mainWindow_currentTabIndex.set(this, mainAreaTabs->currentIndex());
 	db.projectSettings->mainWindow_showFilterBar  .set(this, showFiltersAction->isChecked());
 	
-	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveColumnWidths(mapper);
 		saveColumnOrder(mapper);
 		saveSorting(mapper);
-	});
+	}
 }
 
 /**
@@ -1323,21 +1310,21 @@ void MainWindow::saveGlobalImplicitSettings()
  * 
  * @param mapper	The ItemTypeMapper containing the table whose column widths should be saved.
  */
-void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper)
+void MainWindow::saveColumnWidths(const ItemTypeMapper* const mapper)
 {
-	if (!mapper.tabHasBeenOpened()) return;	// Only save if table was actually shown
+	if (!mapper->tabHasBeenOpened()) return;	// Only save if table was actually shown
 	
 	QMap<QString, int> nameValueMap;
-	for (int columnIndex = 0; columnIndex < mapper.compTable->columnCount(); columnIndex++) {
-		const CompositeColumn* const column = mapper.compTable->getColumnAt(columnIndex);
-		int currentColumnWidth = mapper.tableView->columnWidth(columnIndex);
+	for (int columnIndex = 0; columnIndex < mapper->compTable->columnCount(); columnIndex++) {
+		const CompositeColumn* const column = mapper->compTable->getColumnAt(columnIndex);
+		int currentColumnWidth = mapper->tableView->columnWidth(columnIndex);
 		if (currentColumnWidth <= 0) {
-			qDebug() << "Saving column widths: Couldn't read column width for column" << column->name << "in table" << mapper.compTable->name << "- skipping column";
+			qDebug() << "Saving column widths: Couldn't read column width for column" << column->name << "in table" << mapper->compTable->name << "- skipping column";
 			continue;
 		}
 		nameValueMap[column->name] = currentColumnWidth;
 	}
-	mapper.columnWidthsSetting->set(this, nameValueMap);
+	mapper->columnWidthsSetting->set(this, nameValueMap);
 }
 
 /**
@@ -1345,22 +1332,22 @@ void MainWindow::saveColumnWidths(const ItemTypeMapper& mapper)
  * 
  * @param mapper	The ItemTypeMapper containing the table whose column order should be saved.
  */
-void MainWindow::saveColumnOrder(const ItemTypeMapper& mapper)
+void MainWindow::saveColumnOrder(const ItemTypeMapper* const mapper)
 {
-	if (!mapper.tabHasBeenOpened()) return;	// Only save if table was actually shown
-	QHeaderView* header = mapper.tableView->horizontalHeader();
+	if (!mapper->tabHasBeenOpened()) return;	// Only save if table was actually shown
+	QHeaderView* header = mapper->tableView->horizontalHeader();
 	
 	QMap<QString, int> nameValueMap;
-	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper.compTable->columnCount(); logicalColumnIndex++) {
-		const CompositeColumn* const column = mapper.compTable->getColumnAt(logicalColumnIndex);
+	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable->columnCount(); logicalColumnIndex++) {
+		const CompositeColumn* const column = mapper->compTable->getColumnAt(logicalColumnIndex);
 		int visualIndex = header->visualIndex(logicalColumnIndex);
 		if (visualIndex < 0) {
-			qDebug() << "Saving column order: Couldn't read column order for column" << column->name << "in table" << mapper.compTable->name << "- skipping column";
+			qDebug() << "Saving column order: Couldn't read column order for column" << column->name << "in table" << mapper->compTable->name << "- skipping column";
 			continue;
 		}
 		nameValueMap[column->name] = visualIndex;
 	}
-	mapper.columnOrderSetting->set(this, nameValueMap);
+	mapper->columnOrderSetting->set(this, nameValueMap);
 }
 
 /**
@@ -1368,14 +1355,14 @@ void MainWindow::saveColumnOrder(const ItemTypeMapper& mapper)
  * 
  * @param mapper	The ItemTypeMapper containing the table whose sorting should be saved.
  */
-void MainWindow::saveSorting(const ItemTypeMapper& mapper)
+void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
 {
-	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper.compTable->getCurrentSorting();
+	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper->compTable->getCurrentSorting();
 	const QString& columnName = currentSorting.first->name;
 	Qt::SortOrder order = currentSorting.second;
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
 	QString settingValue = columnName + ", " + orderString;
-	mapper.sortingSetting->set(this, settingValue);
+	mapper->sortingSetting->set(this, settingValue);
 }
 
 
@@ -1397,11 +1384,11 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 		return;
 	}
 	
-	typesHandler->forEach([this] (const ItemTypeMapper& mapper) {
-		QPushButton* button = mapper.newItemButton;
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		QPushButton* button = mapper->newItemButton;
 		bool buttonVisible = button->x() + button->width() < ascentCounterLabel->x() - 40;
 		button->setVisible(buttonVisible);
-	});
+	}
 	event->accept();
 }
 
@@ -1419,6 +1406,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 QTableView* MainWindow::getCurrentTableView() const
 {
 	return mainAreaTabs->currentWidget()->findChild<QTableView*>();
+}
+
+/**
+ * Returns the ItemTypeMapper for the currently active tab.
+ * 
+ * @return	The active ItemTypeMapper.
+ */
+const ItemTypeMapper* MainWindow::getActiveMapper() const
+{
+	return typesHandler->getMatchingMapper(getCurrentTableView());
 }
 
 /**

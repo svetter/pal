@@ -228,7 +228,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID = db->ascentsTable->getPrimaryKeyAt(bufferRowIndex);
 	// Update main window selection
-	mainWindow->updateSelectionAfterUserAction(*typesHandler->get(ItemTypeAscent), currentViewRowIndex);
+	mainWindow->updateSelectionAfterUserAction(typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
 	updateInfoArea();
 	loadPhotosList();
