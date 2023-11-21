@@ -128,6 +128,18 @@ void AscentFilterBar::additionalUISetup()
 	difficultyFilterSystemCombo->insertItems(0, EnumNames::translateList(difficultySystemNames));
 	
 	handle_difficultyFilterSystemChanged();
+	
+	// Make QGroupBox titles turn gray when disabled (like on other widgets)
+	QColor disabledColor = QApplication::palette().color(QPalette::Disabled, QPalette::WindowText);
+	QPalette disabledPalette = QPalette();
+	disabledPalette.setColor(QPalette::Disabled, QPalette::WindowText, disabledColor);
+	dateFilterBox		->setPalette(disabledPalette);
+	peakHeightFilterBox	->setPalette(disabledPalette);
+	volcanoFilterBox	->setPalette(disabledPalette);
+	rangeFilterBox		->setPalette(disabledPalette);
+	hikeKindFilterBox	->setPalette(disabledPalette);
+	difficultyFilterBox	->setPalette(disabledPalette);
+	hikerFilterBox		->setPalette(disabledPalette);
 }
 
 
