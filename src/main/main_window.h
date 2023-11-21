@@ -48,6 +48,7 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	/** The duration of temporary messages in the status bar in seconds. */
 	static const int DYNAMIC_STATUS_MESSAGE_DURATION_SEC = 10;
 	
+	bool projectOpen;
 	/** The project database. */
 	Database db;
 	/** The list of menu items for opening the most recently opened database files. */
@@ -154,7 +155,8 @@ private slots:
 private:
 	// Closing behaviour
 	void closeEvent(QCloseEvent* event) override;
-	void saveImplicitSettings();
+	void saveProjectImplicitSettings();
+	void saveGlobalImplicitSettings();
 	void saveColumnWidths(const ItemTypeMapper& mapper);
 	void saveColumnOrder(const ItemTypeMapper& mapper);
 	void saveSorting(const ItemTypeMapper& mapper);

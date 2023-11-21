@@ -49,6 +49,7 @@
 MainWindow::MainWindow() :
 		QMainWindow(nullptr),
 		Ui_MainWindow(),
+		projectOpen(false),
 		db(Database()),
 		openRecentActions(QList<QAction*>()),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
@@ -483,6 +484,7 @@ void MainWindow::updateContextMenuEditIcon()
  */
 void MainWindow::attemptToOpenFile(const QString& filepath)
 {
+	assert(!projectOpen);
 	setVisible(true);
 	bool dbOpened = db.openExisting(this, filepath);
 	
@@ -517,6 +519,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
 	}
+	projectOpen = dbOpened;
 }
 
 /**
@@ -1094,6 +1097,8 @@ void MainWindow::handle_clearRecentDatabasesList()
  */
 void MainWindow::handle_saveDatabaseAs()
 {
+	assert(projectOpen);
+	
 	QString caption = tr("Save database as");
 	QString preSelectedDir = Settings::lastOpenDatabaseFile.get();
 	if (preSelectedDir.isEmpty()) preSelectedDir = QDir::homePath();
@@ -1139,10 +1144,13 @@ void MainWindow::handle_saveDatabaseAs()
  */
 void MainWindow::handle_closeDatabase()
 {
+	assert(projectOpen);
+	saveProjectImplicitSettings();
 	setWindowTitleFilename();
 	setUIEnabled(false);
 	ascentFilterBar->resetUI();
 	db.reset();
+	projectOpen = false;
 	updateFilters();
 	typesHandler->forEach([] (const ItemTypeMapper& mapper) {
 		mapper.compTable->resetBuffer();
@@ -1277,20 +1285,18 @@ void MainWindow::handle_about()
  */
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	saveImplicitSettings();
+	if (projectOpen) handle_closeDatabase();
+	saveGlobalImplicitSettings();
 	
 	QMainWindow::closeEvent(event);
 }
 
 /**
- * Saves window position and size, current tab index, column widths, sorting and filter bar
- * visiblity.
+ * Saves current tab index, column widths, sorting and filter bar visiblity.
  */
-void MainWindow::saveImplicitSettings()
+void MainWindow::saveProjectImplicitSettings()
 {
-	bool maximized = windowState() == Qt::WindowMaximized;
-	Settings::mainWindow_maximized.set(maximized);
-	if (!maximized) Settings::mainWindow_geometry.set(geometry());
+	assert(projectOpen);
 	
 	db.projectSettings->mainWindow_currentTabIndex.set(this, mainAreaTabs->currentIndex());
 	db.projectSettings->mainWindow_showFilterBar  .set(this, showFiltersAction->isChecked());
@@ -1300,6 +1306,16 @@ void MainWindow::saveImplicitSettings()
 		saveColumnOrder(mapper);
 		saveSorting(mapper);
 	});
+}
+
+/**
+ * Saves window position and size.
+ */
+void MainWindow::saveGlobalImplicitSettings()
+{
+	bool maximized = windowState() == Qt::WindowMaximized;
+	Settings::mainWindow_maximized.set(maximized);
+	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 }
 
 /**
