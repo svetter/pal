@@ -233,18 +233,17 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 	bool value2Valid = value2.isValid();
 	
 	if (!value1Valid && !value2Valid)	return false;
+	if (!value1Valid &&  value2Valid)	return true;
+	if ( value1Valid && !value2Valid)	return false;
+	assert(value1Valid && value2Valid);
 	
 	switch (type) {
 	case Integer:
 	case ID:
-		if (!value1Valid && value2Valid)	return true;
-		if (value1Valid && !value2Valid)	return false;
 		return value1.toInt() < value2.toInt();
 	case Enum:
-		assert(value1Valid && value2Valid);
 		return value1.toInt() < value2.toInt();
 	case DualEnum: {
-		assert(value1Valid && value2Valid);
 		assert(value1.canConvert<QList<QVariant>>() && value2.canConvert<QList<QVariant>>());
 		QList<QVariant> intList1 = value1.toList();
 		QList<QVariant> intList2 = value2.toList();
@@ -259,21 +258,14 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 		return displayed1 < displayed2;
 	}
 	case Bit:
-		assert(value1Valid && value2Valid);
 		assert(value1.canConvert<bool>() && value2.canConvert<bool>());
 		return value1.toBool() < value2.toBool();
 	case String:
-		if (!value1Valid && value2Valid)	return false;
-		if (value1Valid && !value2Valid)	return true;
 		return QString::localeAwareCompare(value1.toString(), value2.toString()) < 0;
 	case Date:
-		if (!value1Valid && value2Valid)	return true;
-		if (value1Valid && !value2Valid)	return false;
 		assert(value1.canConvert<QDate>() && value2.canConvert<QDate>());
 		return value1.toDate() < value2.toDate();
 	case Time:
-		if (!value1Valid && value2Valid)	return true;
-		if (value1Valid && !value2Valid)	return false;
 		assert(value1.canConvert<QTime>() && value2.canConvert<QTime>());
 		return value1.toTime() < value2.toTime();
 	default:
