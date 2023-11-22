@@ -175,7 +175,8 @@ QList<QList<QVariant>*>::const_iterator TableBuffer::end() const
 /**
  * Creates an empty ViewOrderBuffer.
  */
-ViewOrderBuffer::ViewOrderBuffer() : order(QList<BufferRowIndex>())
+ViewOrderBuffer::ViewOrderBuffer() :
+		order(QList<BufferRowIndex>())
 {}
 
 

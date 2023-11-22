@@ -251,7 +251,7 @@ void MainWindow::connectUI()
 	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	// Double clicks on table
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		auto openFunction = [this, &mapper] (const QModelIndex& index) {
+		auto openFunction = [this, mapper] (const QModelIndex& index) {
 			if (mapper->type == ItemTypeAscent) {
 				viewItem(mapper, ViewRowIndex(index.row()));
 			} else {
@@ -261,7 +261,7 @@ void MainWindow::connectUI()
 		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	openFunction);
 		
 		if (showDebugTableViews) {
-			auto editFunctionDebug = [this, &mapper] (const QModelIndex& index) {
+			auto editFunctionDebug = [this, mapper] (const QModelIndex& index) {
 				mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(index.row()));
 			};
 			connect(mapper->debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
