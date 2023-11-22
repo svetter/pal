@@ -340,9 +340,11 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
 	// Restore column widths
 	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
 		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
-		int storedColumnWidth = columnWidthMap[columnName];
-		if (storedColumnWidth < 1) continue;
-		mapper->tableView->setColumnWidth(columnIndex, storedColumnWidth);
+		int columnWidth = columnWidthMap[columnName];
+		if (columnWidth < 1) {
+			columnWidth = mapper->tableView->horizontalHeader()->sizeHintForColumn(columnIndex);
+		}
+		mapper->tableView->setColumnWidth(columnIndex, columnWidth);
 	}
 }
 
@@ -398,6 +400,7 @@ void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
 		bool storedColumnHiddenStatus = columnHiddenMap[columnName];
 		if (!storedColumnHiddenStatus) continue;
 		mapper->tableView->horizontalHeader()->setSectionHidden(columnIndex, true);
+		mapper->compTable->markColumnHidden(columnIndex);
 	}
 }
 
@@ -1001,6 +1004,7 @@ void MainWindow::handle_hideColumn()
 	
 	const ItemTypeMapper* const mapper = getActiveMapper();
 	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, true);
+	mapper->compTable->markColumnHidden(logicalIndex);
 	
 }
 
@@ -1016,7 +1020,10 @@ void MainWindow::handle_unhideColumn()
 	
 	int logicalIndex = action->data().toInt();
 	
-	getActiveMapper()->tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
+	mapper->compTable->markColumnUnhidden(logicalIndex);
+	mapper->compTable->updateBuffer();
 }
 
 
@@ -1359,6 +1366,8 @@ void MainWindow::handle_restoreHiddenColumns()
 	for (int columnIndex = 0; columnIndex < header->count(); columnIndex++) {
 		header->setSectionHidden(columnIndex, false);
 	}
+	mapper->compTable->markAllColumnsUnhidden();
+	mapper->compTable->updateBuffer();
 }
 
 

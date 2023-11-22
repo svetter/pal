@@ -45,7 +45,8 @@ CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView*
 		viewOrder(ViewOrderBuffer()),
 		currentSorting({nullptr, Qt::AscendingOrder}),
 		currentFilters(QSet<Filter>()),
-		columnsToUpdate(QSet<const CompositeColumn*>()),
+		dirtyColumns(QSet<const CompositeColumn*>()),
+		hiddenColumns(QSet<const CompositeColumn*>()),
 		updateImmediately(false),
 		tableToAutoResizeAfterCompute(nullptr),
 		name(baseTable->name),
@@ -308,17 +309,24 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 {
 	assert(!bufferInitialized);
 	assert(buffer.isEmpty() && viewOrder.isEmpty());
+	assert(dirtyColumns.isEmpty());
 	
-	int numberOfRows = baseTable->getNumberOfRows();
+	for (const CompositeColumn* column : columns) {
+		dirtyColumns.insert(column);
+	}
+	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
 	
 	// Initialize cells and compute their contents for most columns
+	int numberOfRows = baseTable->getNumberOfRows();
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(numberOfRows); bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
-		for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-			bool computeWholeColumn = getColumnAt(columnIndex)->cellsAreInterdependent;
+		for (const CompositeColumn* const column : columns) {
+			bool noUpdateColumn = !columnsToUpdate.contains(column);
+			bool computeWholeColumn = column->cellsAreInterdependent;
+			
 			QVariant newCell = QVariant();
-			if (!deferCompute && !computeWholeColumn) {
-				newCell = computeCellContent(bufferRowIndex, columnIndex);
+			if (!deferCompute && !noUpdateColumn && !computeWholeColumn) {
+				newCell = computeCellContent(bufferRowIndex, column->getIndex());
 			}
 			newRow->append(newCell);
 			
@@ -328,13 +336,14 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	}
 	
 	// For columns which have to be computed as a whole, do that now
-	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-		bool computeWholeColumn = getColumnAt(columnIndex)->cellsAreInterdependent;
-		if (!computeWholeColumn) continue;
+	for (const CompositeColumn* const column : columns) {
+		bool noUpdateColumn = !columnsToUpdate.contains(column);
+		bool computeWholeColumn = column->cellsAreInterdependent;
+		if (noUpdateColumn || !computeWholeColumn) continue;
 		
-		QList<QVariant> cells = computeWholeColumnContent(columnIndex);
+		QList<QVariant> cells = computeWholeColumnContent(column->getIndex());
 		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
-			buffer.replaceCell(bufferRowIndex, columnIndex, cells.at(bufferRowIndex.get()));
+			buffer.replaceCell(bufferRowIndex, column->getIndex(), cells.at(bufferRowIndex.get()));
 			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
 	}
@@ -342,12 +351,12 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	bufferInitialized = true;
 	rebuildOrderBuffer();
 	
-	columnsToUpdate.clear();
+	dirtyColumns.subtract(columnsToUpdate);
+	
 	if (deferCompute) {
-		for (const CompositeColumn* column : columns) columnsToUpdate.insert(column);
 		tableToAutoResizeAfterCompute = autoResizeAfterCompute;
-	} else {
-		if (autoResizeAfterCompute) autoResizeAfterCompute->resizeColumnsToContents();
+	} else if (autoResizeAfterCompute) {
+		autoResizeAfterCompute->resizeColumnsToContents();
 	}
 }
 
@@ -384,20 +393,41 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	}
 	
 	// Sort order buffer
-	performSortByColumn(getCurrentSorting().first, getCurrentSorting().second, false);
+	performSort(getCurrentSorting().first, false);
 	
 	endResetModel();
 }
 
 /**
- * Returns the number of cells which are currently marked dirty and need to be updated.
+ * Returns the number of cells which need to be updated.
+ * 
+ * This includes every column which is dirty and either not hidden or used for sorting or filtering.
+ * 
+ * @return	The set of columns which need to be updated.
+ */
+QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
+{
+	QSet<const CompositeColumn*> columnsToUpdate = QSet<const CompositeColumn*>(dirtyColumns);
+	columnsToUpdate.subtract(hiddenColumns);
+	if (currentSorting.first) columnsToUpdate.insert(currentSorting.first);
+	for (const Filter& filter : currentFilters) {
+		assert(filter.column);
+		columnsToUpdate.insert(filter.column);
+	}
+	return columnsToUpdate;
+}
+
+/**
+ * Returns the number of cells which need to be updated.
+ * 
+ * This does not include columns which are marked dirty but also hidden.
  * 
  * @return	The number of cells which need to be updated.
  */
 int CompositeTable::getNumberOfCellsToUpdate() const
 {
 	assert(bufferInitialized);
-	return columnsToUpdate.size() * buffer.numRows();
+	return getColumnsToUpdate().size() * buffer.numRows();
 }
 
 /**
@@ -406,11 +436,15 @@ int CompositeTable::getNumberOfCellsToUpdate() const
  * After updating the buffer, the order buffer is rebuilt and the model is notified of the changes.
  * 
  * @param runAfterEachCellUpdate	A lambda function to be run every time a cell value has been updated.
+ * @param forceUpdateColumn			An optional column which should be updated even though it is not currently scheduled for an update.
  */
-void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate)
+void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate, const CompositeColumn* const forceUpdateColumn)
 {
 	assert(bufferInitialized);
 	
+	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
+	if (forceUpdateColumn) columnsToUpdate.insert(forceUpdateColumn);
+
 	if (columnsToUpdate.isEmpty()) return;
 	if (!runAfterEachCellUpdate) runAfterEachCellUpdate = []() {};
 	
@@ -439,9 +473,16 @@ void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate)
 		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	}
 	
-	rebuildOrderBuffer(false);
+	dirtyColumns.subtract(columnsToUpdate);
 	
-	columnsToUpdate.clear();
+	// Rebuild order buffer if necessary
+	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.first);
+	for (const Filter& filter : qAsConst(currentFilters)) {
+		orderBufferDirty |= columnsToUpdate.contains(filter.column);
+	}
+	if (orderBufferDirty) {
+		rebuildOrderBuffer(false);
+	}
 	
 	if (tableToAutoResizeAfterCompute) {
 		tableToAutoResizeAfterCompute->resizeColumnsToContents();
@@ -462,6 +503,8 @@ void CompositeTable::resetBuffer()
 	
 	buffer.reset();
 	bufferInitialized = false;
+	dirtyColumns.clear();
+	hiddenColumns.clear();
 }
 
 /**
@@ -501,12 +544,27 @@ ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferR
  * @param column			The column to return the value for.
  * @return					The raw value of the cell at the given buffer row and column index.
  */
-QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
+QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column)
 {
 	assert(bufferInitialized);
 	assert(columns.contains(column));
 	assert(bufferRowIndex.isValid(buffer.numRows()));
-	QVariant result = buffer.getCell(bufferRowIndex, column->getIndex());
+	
+	QVariant result;
+	if (dirtyColumns.contains(column)) {
+		if (column->cellsAreInterdependent) {
+			// Have to compute whole column anyway, might as well update the buffer
+			updateBuffer(nullptr, column);
+			result = buffer.getCell(bufferRowIndex, column->getIndex());
+		} else {
+			// Compute single cell instead of updating buffer for entire column to save time
+			result = column->computeValueAt(bufferRowIndex);
+		}
+	} else {
+		// Buffer is up to date
+		result = buffer.getCell(bufferRowIndex, column->getIndex());
+	}
+	
 	return result.isNull() ? QVariant() : result;
 }
 
@@ -518,7 +576,7 @@ QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const Compos
  * @param column			The column to return the value for.
  * @return					The formatted value of the cell at the given buffer row and column index.
  */
-QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const
+QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column)
 {
 	return column->toFormattedTableContent(getRawValue(bufferRowIndex, column));
 }
@@ -561,6 +619,7 @@ void CompositeTable::applyFilters(QSet<Filter> filters)
 	
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
+	updateBuffer();	// Filter column(s) might need to be updated if hidden
 	rebuildOrderBuffer(skipRepopulate);
 	
 	// Restore selection
@@ -598,6 +657,38 @@ QSet<Filter> CompositeTable::getCurrentFilters() const
 bool CompositeTable::filterIsActive() const
 {
 	return !currentFilters.isEmpty();
+}
+
+
+
+/**
+ * Marks the given column as hidden.
+ * 
+ * A hidden column is not updated unless it is used for sorting and/or filtering.
+ * 
+ * @param columnIndex	The index of the column to mark as hidden.
+ */
+void CompositeTable::markColumnHidden(int columnIndex)
+{
+	hiddenColumns.insert(getColumnAt(columnIndex));
+}
+
+/**
+ * Marks the given column as not hidden, but does not perform an automatic buffer update.
+ * 
+ * @param columnIndex	The index of the column to mark as not hidden.
+ */
+void CompositeTable::markColumnUnhidden(int columnIndex)
+{
+	hiddenColumns.remove(getColumnAt(columnIndex));
+}
+
+/**
+ * Marks all columns as not hidden, but does not perform an automatic buffer update.
+ */
+void CompositeTable::markAllColumnsUnhidden()
+{
+	hiddenColumns.clear();
 }
 
 
@@ -684,7 +775,7 @@ void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
  */
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
-	columnsToUpdate.insert(columns.at(columnIndex));
+	dirtyColumns.insert(columns.at(columnIndex));
 	if (updateImmediately) updateBuffer();
 }
 
@@ -805,7 +896,11 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn* const column = columns.at(columnIndex);
 	
-	performSortByColumn(column, order, true);
+	const CompositeColumn* const previousSortColumn = currentSorting.first;
+	currentSorting = {column, order};
+	if (bufferInitialized) updateBuffer();	// Sort column might need to be updated if hidden
+	
+	performSort(previousSortColumn, true);
 }
 
 /**
@@ -816,19 +911,20 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
  * nothing needs to be done if the order is *also* the same as in the current sorting, or the order
  * can simply be reversed if the order is opposite to the current sorting.
  * 
- * @param column				The column to sort by.
- * @param order					The order to sort by (ascending or descending).
+ * @param previousSortColumn	The column the table was sorted by before this call.
  * @param allowPassAndReverse	Whether to allow shortcuts in resorting. Do not use on initial sort.
  */
-void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse)
+void CompositeTable::performSort(const CompositeColumn* previousSortColumn, bool allowPassAndReverse)
 {
+	const CompositeColumn* const column = currentSorting.first;
+	const Qt::SortOrder order = currentSorting.second;
 	assert(column);
 	assert(tableView);
 	
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
 	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
-	if (allowPassAndReverse && column == currentSorting.first) {
+	if (allowPassAndReverse && column == previousSortColumn) {
 		if (order == currentSorting.second) return;
 		
 		viewOrder.reverse();
@@ -861,8 +957,6 @@ void CompositeTable::performSortByColumn(const CompositeColumn* column, Qt::Sort
 	QModelIndex bottomRightIndex	= index(viewOrder.numRows() - 1, columns.size() - 1);
 	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
-	
-	currentSorting = {column, order};
 }
 
 

@@ -99,7 +99,9 @@ class CompositeTable : public QAbstractTableModel {
 	QSet<Filter> currentFilters;
 	
 	/** The current set of dirty columns which need to be updated before reading the buffer. */
-	QSet<const CompositeColumn*> columnsToUpdate;
+	QSet<const CompositeColumn*> dirtyColumns;
+	/** The set of columns which are currently hidden and therefore do not need to be updated unless they are used for sorting and/or filtering. */
+	QSet<const CompositeColumn*> hiddenColumns;
 	/** Whether the table is currently set to update its columns immediately when notified of changes in the database. */
 	bool updateImmediately;
 	/** A pointer to the UI table view which, if set, is automatically resized after the buffer is computed. */
@@ -141,14 +143,15 @@ public:
 	int getNumberOfCellsToInit() const;
 	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
 	void rebuildOrderBuffer(bool skipRepopulate = false);
+	QSet<const CompositeColumn*> getColumnsToUpdate() const;
 	int getNumberOfCellsToUpdate() const;
-	void updateBuffer(std::function<void()> runAfterEachCellUpdate = []() {});
+	void updateBuffer(std::function<void()> runAfterEachCellUpdate = []() {}, const CompositeColumn* const forceUpdateColumn = nullptr);
 	void resetBuffer();
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;
 	
-	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const;
-	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column) const;
+	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
+	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
 	
 	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
 	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
@@ -160,6 +163,10 @@ public:
 	bool filterIsActive() const;
 	
 public:
+	// Mark columns hidden or unhidden
+	void markColumnHidden(int columnIndex);
+	void markColumnUnhidden(int columnIndex);
+	void markAllColumnsUnhidden();
 	// Change annunciation
 	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
 	void bufferRowJustInserted(BufferRowIndex bufferRowIndex);
@@ -173,7 +180,7 @@ public:
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	void sort(int columnIndex, Qt::SortOrder order = Qt::AscendingOrder) override;
 private:
-	void performSortByColumn(const CompositeColumn* column, Qt::SortOrder order, bool allowPassAndReverse);
+	void performSort(const CompositeColumn* previousSortColumn, bool allowPassAndReverse);
 	
 	QVariant computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const;
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
