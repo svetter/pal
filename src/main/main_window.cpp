@@ -888,6 +888,8 @@ void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper* const mapp
  */
 void MainWindow::handle_tabChanged()
 {
+	if (!projectOpen) return;
+	
 	QProgressDialog progress(this);
 	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
 	progress.setWindowModality(Qt::WindowModal);
