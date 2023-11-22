@@ -52,6 +52,7 @@ MainWindow::MainWindow() :
 		projectOpen(false),
 		db(Database()),
 		openRecentActions(QList<QAction*>()),
+		columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr), columnContextMenuRestoreColumnMenu(nullptr),
 		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
 		shortcuts(QList<QShortcut*>()),
 		statusBarTableSizeLabel(new QLabel(statusbar)),
@@ -84,6 +85,7 @@ MainWindow::MainWindow() :
 	
 	connectUI();
 	setupTableViews();
+	initColumnContextMenu();
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
 	
@@ -96,7 +98,7 @@ MainWindow::MainWindow() :
 	}
 	
 	
-	updateContextMenuEditIcon();
+	updateTableContextMenuIcons();
 	
 	if (showDebugTableViews) setupDebugTableViews();	// After opening database so that auto-sizing columns works correctly
 }
@@ -106,6 +108,7 @@ MainWindow::MainWindow() :
  */
 MainWindow::~MainWindow()
 {
+	delete columnContextMenuRestoreColumnMenu;
 	qDeleteAll(shortcuts);
 	delete typesHandler;
 }
@@ -119,21 +122,22 @@ MainWindow::~MainWindow()
  */
 void MainWindow::setupMenuIcons()
 {
-	newDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
-	openDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
-	openRecentMenu			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
-	saveDatabaseAsAction	->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
-	closeDatabaseAction		->setIcon(style()->standardIcon(QStyle::SP_TabCloseButton));
-	projectSettingsAction	->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
-	settingsAction			->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+	newDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+	openDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	openRecentMenu				->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
+	saveDatabaseAsAction		->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+	closeDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_TabCloseButton));
+	projectSettingsAction		->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+	settingsAction				->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 	// View menu
 	// showFiltersAction is checkable
-	autoResizeColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	resetColumnOrderAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	autoResizeColumnsAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	resetColumnOrderAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	restoreHiddenColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	// New menu: no fitting icons
 	// Tools menu
-	relocatePhotosAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	exportDataAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	relocatePhotosAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	exportDataAction			->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	// Help menu: already has icons
 }
 
@@ -190,13 +194,13 @@ void MainWindow::createTypesHandler()
 	}
 	
 	typesHandler = new ItemTypesHandler(showDebugTableViews,
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->sorting_countriesTable),
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
@@ -226,6 +230,7 @@ void MainWindow::connectUI()
 	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
+	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
 	// Menu "New"
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		auto newFunction = [this, mapper] () {
@@ -281,8 +286,10 @@ void MainWindow::setupTableViews()
 		// Enable column header reordering
 		mapper->tableView->horizontalHeader()->setSectionsMovable(true);
 		
-		// Enable context menu
-		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+		// Enable context menus
+		mapper->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(mapper->tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindow::handle_rightClickOnColumnHeader);
+		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
 		
 		mapper->compTable->setUpdateImmediately(mapper->tableView == getCurrentTableView());
 	}
@@ -306,7 +313,7 @@ void MainWindow::setupDebugTableViews()
 		}
 		
 		// Enable context menu
-		connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClick);
+		connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
 	};
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
@@ -333,7 +340,9 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
 	// Restore column widths
 	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
 		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
-		mapper->tableView->setColumnWidth(columnIndex, columnWidthMap[columnName]);
+		int storedColumnWidth = columnWidthMap[columnName];
+		if (storedColumnWidth < 1) continue;
+		mapper->tableView->setColumnWidth(columnIndex, storedColumnWidth);
 	}
 }
 
@@ -371,6 +380,28 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 }
 
 /**
+ * Restores the column hidden states for the table view specified by the given ItemTypeMapper.
+ * 
+ * @param mapper	The ItemTypeMapper for the table view whose column hidden statuses should be restored.
+ */
+void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
+{
+	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
+	if (mapper->hiddenColumnsSetting->nonePresent(columnNameSet)) return;	// Only restore if any column are in the settings
+	
+	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
+	const QMap<QString, bool> columnHiddenMap = mapper->hiddenColumnsSetting->get(normalColumnNames);
+	
+	// Restore column hidden status
+	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
+		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
+		bool storedColumnHiddenStatus = columnHiddenMap[columnName];
+		if (!storedColumnHiddenStatus) continue;
+		mapper->tableView->horizontalHeader()->setSectionHidden(columnIndex, true);
+	}
+}
+
+/**
  * Sets the sorting for the table view specified by the given ItemTypeMapper to either the
  * remembered sorting or, if that is not present or disabled, to the default sorting.
  * 
@@ -403,6 +434,19 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 	if (!sortingSettingValid) mapper->sortingSetting->clear(this);
 }
 
+
+/**
+ * Initializes the column context menu.
+ */
+void MainWindow::initColumnContextMenu()
+{
+	// Context menu
+	columnContextMenuHideColumnAction = columnContextMenu.addAction(tr("Hide this column"));
+	columnContextMenu.addSeparator();
+	columnContextMenuRestoreColumnMenu = columnContextMenu.addMenu(tr("Restore hidden column"));
+	
+	connect(columnContextMenuHideColumnAction, &QAction::triggered, this, &MainWindow::handle_hideColumn);
+}
 
 /**
  * Initializes the table context menu and the keyboard shortcuts for the table views.
@@ -462,7 +506,7 @@ void MainWindow::initTableContextMenuAndShortcuts()
  * This method has to be called whenever the currently selected table changes because the context
  * menu actions are shared between all tables.
  */
-void MainWindow::updateContextMenuEditIcon()
+void MainWindow::updateTableContextMenuIcons()
 {
 	QIcon icon = QIcon(":/icons/" + getActiveMapper()->name + ".svg");
 	tableContextMenuEditAction->setIcon(icon);
@@ -503,6 +547,10 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			// Column order
 			if (Settings::rememberColumnOrder.get()) {
 				restoreColumnOrder(mapper);
+			}
+			// Hidden columns
+			if (Settings::rememberHiddenColumns.get()) {
+				restoreColumnHiddenStatus(mapper);
 			}
 			// Sortings
 			setSorting(mapper);
@@ -863,17 +911,57 @@ void MainWindow::handle_tabChanged()
 	}
 	
 	updateTableSize();
-	updateContextMenuEditIcon();
+	updateTableContextMenuIcons();
 }
 
 /**
- * Event handler for right clicks in the table views.
+ * Event handler for right clicks on the column header area of the active table view.
+ * 
+ * Prepares and opens the column context menu at the given position.
+ * 
+ * @param pos	The position of the right click in the viewport of the horizontal table view header.
+ */
+void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
+{
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	
+	// Get index of clicked column
+	QHeaderView* header = mapper->tableView->horizontalHeader();
+	int logicalIndexClicked = header->logicalIndexAt(pos);
+	if (logicalIndexClicked < 0) return;
+	
+	columnContextMenuHideColumnAction->setData(logicalIndexClicked);
+	
+	// Repopulate 'restore column' submenu
+	int visibleColumns = 0;
+	columnContextMenuRestoreColumnMenu->clear();
+	for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
+		if (!header->isSectionHidden(logicalIndex)) {
+			visibleColumns++;
+			continue;
+		}
+		
+		const QString& columnName = mapper->compTable->getColumnAt(logicalIndex)->uiName;
+		QAction* restoreColumnAction = columnContextMenuRestoreColumnMenu->addAction(columnName);
+		restoreColumnAction->setData(logicalIndex);
+		connect(restoreColumnAction, &QAction::triggered, this, &MainWindow::handle_unhideColumn);
+	}
+	columnContextMenuRestoreColumnMenu->setEnabled(!columnContextMenuRestoreColumnMenu->isEmpty());
+	
+	columnContextMenuHideColumnAction->setEnabled(visibleColumns > 1);
+	
+	// Show contet menu
+	columnContextMenu.popup(header->viewport()->mapToGlobal(pos));
+}
+
+/**
+ * Event handler for right clicks in the cell area of the active table view.
  * 
  * Prepares and opens the table context menu at the given position.
  * 
  * @param pos	The position of the right click in the viewport of the table view.
  */
-void MainWindow::handle_rightClick(QPoint pos)
+void MainWindow::handle_rightClickInTable(QPoint pos)
 {
 	QTableView* currentTableView = getCurrentTableView();
 	QModelIndex index = currentTableView->indexAt(pos);
@@ -895,7 +983,43 @@ void MainWindow::handle_rightClick(QPoint pos)
 
 
 
-// CONTEXT MENU ACTION HANDLERS
+// COLUMN CONTEXT MENU ACTION HANDLERS
+
+/**
+ * Event handler for the 'hide column' action in the column context menu.
+ * 
+ * Extracts the column index from calling sender().
+ */
+void MainWindow::handle_hideColumn()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	if (!action) return;
+	
+	int logicalIndex = action->data().toInt();
+	
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, true);
+	
+}
+
+/**
+ * Event handler for any of the 'unhide column' actions in the column context menu.
+ * 
+ * Extracts the column index from calling sender().
+ */
+void MainWindow::handle_unhideColumn()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	if (!action) return;
+	
+	int logicalIndex = action->data().toInt();
+	
+	getActiveMapper()->tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
+}
+
+
+
+// TABLE CONTEXT MENU ACTION HANDLERS
 
 /**
  * Event handler for the view action in the table context menu.
@@ -981,7 +1105,7 @@ void MainWindow::handle_deleteSelectedItems()
 	
 	if (debugTable) {
 		QSet<BufferRowIndex> selectedBufferRowIndices = QSet<BufferRowIndex>();
-		for (const ViewRowIndex& viewRowIndex : selectedViewRowIndices) {
+		for (const ViewRowIndex& viewRowIndex : qAsConst(selectedViewRowIndices)) {
 			selectedBufferRowIndices += BufferRowIndex(viewRowIndex.get());
 		}
 		mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, selectedBufferRowIndices);
@@ -1012,7 +1136,7 @@ void MainWindow::handle_newDatabase()
 	
 	if (!filepath.endsWith(".db")) filepath.append(".db");
 	
-	handle_closeDatabase();
+	if (projectOpen) handle_closeDatabase();
 	
 	setWindowTitleFilename(filepath);
 	db.createNew(this, filepath);
@@ -1043,7 +1167,7 @@ void MainWindow::handle_openDatabase()
 	QString filepath = QFileDialog::getOpenFileName(this, caption, preSelectedDir, filter);
 	if (filepath.isEmpty() || !QFile(filepath).exists()) return;
 	
-	handle_closeDatabase();
+	if (projectOpen) handle_closeDatabase();
 	
 	attemptToOpenFile(filepath);
 }
@@ -1063,7 +1187,7 @@ void MainWindow::handle_openRecentDatabase(QString filepath)
 		return;
 	}
 	
-	handle_closeDatabase();
+	if (projectOpen) handle_closeDatabase();
 	
 	attemptToOpenFile(filepath);
 }
@@ -1221,6 +1345,20 @@ void MainWindow::handle_resetColumnOrder()
 	}
 }
 
+/**
+ * Event handler for the "restore hidden columns" action in the view menu.
+ * 
+ * Resets all columns in the currently active table to being visible.
+ */
+void MainWindow::handle_restoreHiddenColumns()
+{
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	QHeaderView* const header = mapper->tableView->horizontalHeader();
+	for (int columnIndex = 0; columnIndex < header->count(); columnIndex++) {
+		header->setSectionHidden(columnIndex, false);
+	}
+}
+
 
 
 // TOOLS MENU ACTION HANDLERS
@@ -1247,7 +1385,7 @@ void MainWindow::handle_exportData()
 
 
 
-// HELP MANU ACTION HANDLERS
+// HELP MENU ACTION HANDLERS
 
 /**
  * Event handler for the "about PAL" action in the help menu.
@@ -1289,8 +1427,7 @@ void MainWindow::saveProjectImplicitSettings()
 	db.projectSettings->mainWindow_showFilterBar  .set(this, showFiltersAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		saveColumnWidths(mapper);
-		saveColumnOrder(mapper);
+		saveImplicitColumnSettings(mapper);
 		saveSorting(mapper);
 	}
 }
@@ -1306,48 +1443,46 @@ void MainWindow::saveGlobalImplicitSettings()
 }
 
 /**
- * Saves the column widths of the table for the given item type.
+ * Saves all column-related implicit project settings for the given item type.
  * 
  * @param mapper	The ItemTypeMapper containing the table whose column widths should be saved.
  */
-void MainWindow::saveColumnWidths(const ItemTypeMapper* const mapper)
-{
-	if (!mapper->tabHasBeenOpened()) return;	// Only save if table was actually shown
-	
-	QMap<QString, int> nameValueMap;
-	for (int columnIndex = 0; columnIndex < mapper->compTable->columnCount(); columnIndex++) {
-		const CompositeColumn* const column = mapper->compTable->getColumnAt(columnIndex);
-		int currentColumnWidth = mapper->tableView->columnWidth(columnIndex);
-		if (currentColumnWidth <= 0) {
-			qDebug() << "Saving column widths: Couldn't read column width for column" << column->name << "in table" << mapper->compTable->name << "- skipping column";
-			continue;
-		}
-		nameValueMap[column->name] = currentColumnWidth;
-	}
-	mapper->columnWidthsSetting->set(this, nameValueMap);
-}
-
-/**
- * Saves the column order of the table for the given item type.
- * 
- * @param mapper	The ItemTypeMapper containing the table whose column order should be saved.
- */
-void MainWindow::saveColumnOrder(const ItemTypeMapper* const mapper)
+void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 {
 	if (!mapper->tabHasBeenOpened()) return;	// Only save if table was actually shown
 	QHeaderView* header = mapper->tableView->horizontalHeader();
 	
-	QMap<QString, int> nameValueMap;
+	QMap<QString, int>	widthsMap;
+	QMap<QString, int>	orderMap;
+	QMap<QString, bool>	hiddenMap;
 	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable->columnCount(); logicalColumnIndex++) {
-		const CompositeColumn* const column = mapper->compTable->getColumnAt(logicalColumnIndex);
+		const QString& columnName = mapper->compTable->getColumnAt(logicalColumnIndex)->name;
+		
+		// Hidden status
+		const bool hidden = header->isSectionHidden(logicalColumnIndex);
+		hiddenMap[columnName] = hidden;
+		
+		// Column width (not available if column is hidden)
+		if (!hidden) {
+			int currentColumnWidth = mapper->tableView->columnWidth(logicalColumnIndex);
+			if (currentColumnWidth <= 0) {
+				qDebug() << "Saving column widths: Couldn't read column width for column" << columnName << "in table" << mapper->compTable->name << "- skipping column";
+			} else {
+				widthsMap[columnName] = currentColumnWidth;
+			}
+		}
+		
+		// Column order
 		int visualIndex = header->visualIndex(logicalColumnIndex);
 		if (visualIndex < 0) {
-			qDebug() << "Saving column order: Couldn't read column order for column" << column->name << "in table" << mapper->compTable->name << "- skipping column";
-			continue;
+			qDebug() << "Saving column order: Couldn't read column order for column" << columnName << "in table" << mapper->compTable->name << "- skipping column";
+		} else {
+			orderMap[columnName] = visualIndex;
 		}
-		nameValueMap[column->name] = visualIndex;
 	}
-	mapper->columnOrderSetting->set(this, nameValueMap);
+	mapper->columnWidthsSetting	->set(this, widthsMap);
+	mapper->columnOrderSetting	->set(this, orderMap);
+	mapper->hiddenColumnsSetting->set(this, hiddenMap);
 }
 
 /**

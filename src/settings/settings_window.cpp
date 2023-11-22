@@ -92,6 +92,7 @@ void SettingsWindow::loadSettings()
 	rememberTableCheckbox						->setChecked	(rememberTab								.get());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.get());
 	rememberColumnOrderCheckbox					->setChecked	(rememberColumnOrder						.get());
+	rememberHiddenColumnsCheckbox				->setChecked	(rememberHiddenColumns						.get());
 	rememberSortingCheckbox						->setChecked	(rememberSorting							.get());
 	rememberFiltersCheckbox						->setChecked	(rememberFilters							.get());
 	
@@ -129,6 +130,7 @@ void SettingsWindow::loadDefaults()
 	rememberTableCheckbox						->setChecked	(rememberTab								.getDefault());
 	rememberColumnWidthsCheckbox				->setChecked	(rememberColumnWidths						.getDefault());
 	rememberColumnOrderCheckbox					->setChecked	(rememberColumnOrder						.getDefault());
+	rememberHiddenColumnsCheckbox				->setChecked	(rememberHiddenColumns						.getDefault());
 	rememberSortingCheckbox						->setChecked	(rememberSorting							.getDefault());
 	rememberFiltersCheckbox						->setChecked	(rememberFilters							.getDefault());
 	
@@ -171,6 +173,7 @@ void SettingsWindow::saveSettings()
 	rememberTab									.set(rememberTableCheckbox						->isChecked());
 	rememberColumnWidths						.set(rememberColumnWidthsCheckbox				->isChecked());
 	rememberColumnOrder							.set(rememberColumnOrderCheckbox				->isChecked());
+	rememberHiddenColumns						.set(rememberHiddenColumnsCheckbox				->isChecked());
 	rememberSorting								.set(rememberSortingCheckbox					->isChecked());
 	rememberFilters								.set(rememberFiltersCheckbox					->isChecked());
 	

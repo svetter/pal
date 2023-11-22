@@ -113,6 +113,7 @@ private:
 
 // List used types as compiler hints
 template class ProjectMultiSetting<int>;
+template class ProjectMultiSetting<bool>;
 
 
 
@@ -169,6 +170,22 @@ public:
 	ProjectMultiSetting<int>	columnOrder_rangesTable;
 	/** Remembered column order of the countries table in the main window. */
 	ProjectMultiSetting<int>	columnOrder_countriesTable;
+	
+	// Hidden columns
+	/** Remembered column hidden states of the ascents table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_ascentsTable;
+	/** Remembered column hidden states of the peaks table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_peaksTable;
+	/** Remembered column hidden states of the trips table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_tripsTable;
+	/** Remembered column hidden states of the hikers table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_hikersTable;
+	/** Remembered column hidden states of the regions table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_regionsTable;
+	/** Remembered column hidden states of the ranges table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_rangesTable;
+	/** Remembered column hidden states of the countries table in the main window. */
+	ProjectMultiSetting<bool>	hiddenColumns_countriesTable;
 	
 	// Sorting
 	/** Remembered sorting of the ascents table in the main window. */
@@ -249,6 +266,15 @@ public:
 			columnOrder_regionsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/regionsTable",					-1)),
 			columnOrder_rangesTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/rangesTable",					-1)),
 			columnOrder_countriesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/countriesTable",				-1)),
+			
+			// Column widths
+			hiddenColumns_ascentsTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/ascentsTable",				false)),
+			hiddenColumns_peaksTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/peaksTable",					false)),
+			hiddenColumns_tripsTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/tripsTable",					false)),
+			hiddenColumns_hikersTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/hikersTable",				false)),
+			hiddenColumns_regionsTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/regionsTable",				false)),
+			hiddenColumns_rangesTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/rangesTable",				false)),
+			hiddenColumns_countriesTable	(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/countriesTable",				false)),
 			
 			// Sorting
 			sorting_ascentsTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/ascentsTable")),

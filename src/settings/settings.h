@@ -331,6 +331,8 @@ public:
 	inline static const Setting<bool>	rememberColumnWidths						= Setting<bool>		("rememberColumnWidths",						true);
 	/** Remember the column order of all tables in the main window. */
 	inline static const Setting<bool>	rememberColumnOrder							= Setting<bool>		("rememberColumnOrder",							true);
+	/** Remember which columns are hidden in all tables in the main window. */
+	inline static const Setting<bool>	rememberHiddenColumns						= Setting<bool>		("rememberHiddenColumns",						true);
 	/** Remember the sorting of all tables in the main window. */
 	inline static const Setting<bool>	rememberSorting								= Setting<bool>		("rememberSorting",								true);
 	/** Remember the active filters of all tables in the main window. */

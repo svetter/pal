@@ -53,7 +53,15 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	Database db;
 	/** The list of menu items for opening the most recently opened database files. */
 	QList<QAction*> openRecentActions;
-	/** The context menu for the UI tables. */
+	
+	/** The context menu for the column header area of all UI tables. */
+	QMenu columnContextMenu;
+	/** The column context menu entry for hiding the selected column. */
+	QAction* columnContextMenuHideColumnAction;
+	/** The column context submenu for unhiding any previously hidden column. */
+	QMenu* columnContextMenuRestoreColumnMenu;
+	
+	/** The context menu for the cell are of all UI tables. */
 	QMenu tableContextMenu;
 	/** The context menu entry for opening the selected item. */
 	QAction* tableContextMenuOpenAction;
@@ -63,8 +71,10 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	QAction* tableContextMenuDuplicateAction;
 	/** The context menu entry for deleting the selected items. */
 	QAction* tableContextMenuDeleteAction;
+	
 	/** List of keyboard shortcuts. */
 	QList<QShortcut*> shortcuts;
+	
 	/** The status bar label for the current table size. */
 	QLabel* statusBarTableSizeLabel;
 	/** The status bar label for the current filter settings. */
@@ -94,9 +104,11 @@ private:
 	void setupDebugTableViews();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
+	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);
 	void setSorting(const ItemTypeMapper* const mapper);
+	void initColumnContextMenu();
 	void initTableContextMenuAndShortcuts();
-	void updateContextMenuEditIcon();
+	void updateTableContextMenuIcons();
 	
 	// Project setup (on load)
 	void attemptToOpenFile(const QString& filepath);
@@ -124,9 +136,13 @@ public:
 private slots:
 	// UI event handlers
 	void handle_tabChanged();
-	void handle_rightClick(QPoint pos);
+	void handle_rightClickOnColumnHeader(QPoint pos);
+	void handle_rightClickInTable(QPoint pos);
 	
-	// Context menu action handlers
+	// Column context menu action handlers
+	void handle_hideColumn();
+	void handle_unhideColumn();
+	// Table context menu action handlers
 	void handle_viewSelectedItem();
 	void handle_editSelectedItem();
 	void handle_duplicateAndEditSelectedItem();
@@ -145,6 +161,7 @@ private slots:
 	void handle_showFiltersChanged();
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
+	void handle_restoreHiddenColumns();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
 	void handle_exportData();
@@ -156,8 +173,7 @@ private:
 	void closeEvent(QCloseEvent* event) override;
 	void saveProjectImplicitSettings();
 	void saveGlobalImplicitSettings();
-	void saveColumnWidths(const ItemTypeMapper* const mapper);
-	void saveColumnOrder(const ItemTypeMapper* const mapper);
+	void saveImplicitColumnSettings(const ItemTypeMapper* const mapper);
 	void saveSorting(const ItemTypeMapper* const mapper);
 	// Layout changes
 	virtual void resizeEvent(QResizeEvent* event) override;

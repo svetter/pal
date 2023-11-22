@@ -102,6 +102,8 @@ public:
 	ProjectMultiSetting<int>* const			columnWidthsSetting;
 	/** The setting storing the column order for the UI table of this item type. */
 	ProjectMultiSetting<int>* const			columnOrderSetting;
+	/** The setting storing the column hidden states for the UI table of this item type. */
+	ProjectMultiSetting<bool>* const		hiddenColumnsSetting;
 	/** The setting storing the sorting of the UI table of this item type. */
 	const ProjectSetting<QString>* const	sortingSetting;
 
@@ -154,6 +156,7 @@ public:
 			QPushButton* const	newItemButton,
 			ProjectMultiSetting<int>*		columnWidthsSetting,
 			ProjectMultiSetting<int>*		columnOrderSetting,
+			ProjectMultiSetting<bool>*		hiddenColumnsSetting,
 			const ProjectSetting<QString>*	sortingSetting,
 			const Setting<QRect>*			dialogGeometrySetting,
 			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
@@ -173,6 +176,7 @@ public:
 			dialogGeometrySetting					(dialogGeometrySetting),
 			columnWidthsSetting						(columnWidthsSetting),
 			columnOrderSetting						(columnOrderSetting),
+			hiddenColumnsSetting					(hiddenColumnsSetting),
 			sortingSetting							(sortingSetting),
 			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
 			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
@@ -225,6 +229,7 @@ public:
 	QPushButton* const				newItemButton, \
 	ProjectMultiSetting<int>*		columnWidthsSetting, \
 	ProjectMultiSetting<int>*		columnOrderSetting, \
+	ProjectMultiSetting<bool>*		hiddenColumnsSetting, \
 	const ProjectSetting<QString>*	sortingSetting
 
 /**
@@ -239,6 +244,7 @@ public:
 	newItemButton, \
 	columnWidthsSetting, \
 	columnOrderSetting, \
+	hiddenColumnsSetting, \
 	sortingSetting
 
 

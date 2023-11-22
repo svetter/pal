@@ -786,6 +786,7 @@
     <addaction name="separator"/>
     <addaction name="autoResizeColumnsAction"/>
     <addaction name="resetColumnOrderAction"/>
+    <addaction name="restoreHiddenColumnsAction"/>
    </widget>
    <widget class="QMenu" name="newMenu">
     <property name="title">
@@ -979,6 +980,11 @@
   <action name="resetColumnOrderAction">
    <property name="text">
     <string>Reset column order</string>
+   </property>
+  </action>
+  <action name="restoreHiddenColumnsAction">
+   <property name="text">
+    <string>Restore hidden columns</string>
    </property>
   </action>
  </widget>
