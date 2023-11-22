@@ -87,6 +87,8 @@ class CompositeTable : public QAbstractTableModel {
 	/** The composite columns of this table which are only used for exporting, not for display in the UI. Paired with the index of the normal column they come in front of. */
 	QList<QPair<int, const CompositeColumn*>> exportColumns;
 	
+	/** Whether the buffer has been initialized for an open project. */
+	bool bufferInitialized;
 	/** The buffer used for storing the raw computed values of the cells. */
 	TableBuffer buffer;
 	/** The order buffer used to change which rows are displayed in the UI and in which order. */
