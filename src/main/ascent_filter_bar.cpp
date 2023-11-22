@@ -431,10 +431,11 @@ void AscentFilterBar::handle_filtersChanged()
 void AscentFilterBar::handle_difficultyFilterBoxChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
-	if (!difficultyFilterBox->isChecked()) return;
 	
-	int system = difficultyFilterSystemCombo->currentIndex();
-	difficultyFilterGradeCombo->setEnabled(system);
+	if (difficultyFilterBox->isChecked()) {
+		int system = difficultyFilterSystemCombo->currentIndex();
+		difficultyFilterGradeCombo->setEnabled(system);
+	}
 	
 	handle_filtersChanged();
 }
