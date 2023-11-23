@@ -35,6 +35,17 @@
 
 
 /**
+ * A struct representing a single pass of sorting a composite table by a single column and sort
+ * order.
+ */
+struct SortingPass {
+	const CompositeColumn* column;
+	Qt::SortOrder order;
+};
+
+
+
+/**
  * A class for UI-facing tables whose contents are compiled from potentially multiple different
  * columns of base tables in the database.
  * 
@@ -94,7 +105,7 @@ class CompositeTable : public QAbstractTableModel {
 	/** The order buffer used to change which rows are displayed in the UI and in which order. */
 	ViewOrderBuffer viewOrder;
 	/** The currently applied sorting, as a pair of the column to sort by and the sort order. */
-	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting;
+	SortingPass currentSorting;
 	/** The set of currently applied filters. */
 	QSet<Filter> currentFilters;
 	
@@ -153,8 +164,8 @@ public:
 	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
 	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
 	
-	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const = 0;
-	QPair<const CompositeColumn*, Qt::SortOrder> getCurrentSorting() const;
+	virtual SortingPass getDefaultSorting() const = 0;
+	SortingPass getCurrentSorting() const;
 	
 	void setInitialFilters(QSet<Filter> filters);
 	void applyFilters(QSet<Filter> filters);
@@ -180,7 +191,7 @@ public:
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 	void sort(int columnIndex, Qt::SortOrder order = Qt::AscendingOrder) override;
 private:
-	void performSort(const CompositeColumn* previousSortColumn, bool allowPassAndReverse);
+	void performSort(SortingPass previousSort, bool allowPassAndReverse);
 	
 	QVariant computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const;
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;

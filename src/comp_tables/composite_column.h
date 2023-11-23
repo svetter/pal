@@ -198,13 +198,25 @@ public:
 
 
 
-/** A composite column which indexes all rows in the table according to a given sorting. */
+/**
+ * A struct representing a single pass of sorting base tables according to a column and sort order.
+ */
+struct BaseSortingPass {
+	Column* const column;
+	const Qt::SortOrder order;
+};
+
+
+
+/**
+ * A composite column which indexes all rows in the table according to a given sorting.
+ */
 class IndexCompositeColumn : public CompositeColumn {
 	/** The sorting to use for indexing, in order of last sorting round given first. */
-	const QList<QPair<Column* const, Qt::SortOrder>> sorting;
+	const QList<BaseSortingPass> sortingPasses;
 	
 public:
-	IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
+	IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
@@ -222,7 +234,7 @@ class OrdinalCompositeColumn : public IndexCompositeColumn {
 	const Column* const separatingColumn;
 	
 public:
-	OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting);
+	OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;

@@ -168,7 +168,7 @@ public:
 	 *
 	 * @return The default sorting for the table as a pair of the column to sort by and a Qt::SortOrder.
 	 */
-	virtual QPair<const CompositeColumn*, Qt::SortOrder> getDefaultSorting() const override
+	virtual SortingPass getDefaultSorting() const override
 	{
 		return {indexColumn, Qt::AscendingOrder};
 	}
