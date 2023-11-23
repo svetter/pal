@@ -23,30 +23,98 @@
 
 #include "fold_composite_column.h"
 
-#include "src/db/normal_table.h"
 #include "src/db/tables/hikers_table.h"
 
 
 
 /**
- * Constructs a new FoldCompositeColumn.
+ * Creates a new Breadcrumb from two columns.
  * 
- * @param table			The CompositeTable that this column belongs to.
- * @param uiName		The name of this column as it should be displayed in the UI.
- * @param contentType	The type of data the column contents.
- * @param isStatistical	Whether the contents of this column display statistical data which can be excluded from exports.
- * @param suffix		A suffix to append to the content of each cell.
- * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
- * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ * @param firstColumn	The first column in the breadcrumb pair.
+ * @param secondColumn	The second column in the breadcrumb pair.
  */
-FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
-		CompositeColumn(table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
-		breadcrumbs(breadcrumbs),
-		contentColumn(contentColumn)
-{}
+Breadcrumb::Breadcrumb(Column* firstColumn, Column* secondColumn) :
+	firstColumn(firstColumn),
+	secondColumn(secondColumn)
+{
+	assert(firstColumn->table != secondColumn->table);
+	assert(firstColumn->isForeignKey() != secondColumn->isForeignKey());
+	if (isForward()) {
+		assert(secondColumn->isPrimaryKey());
+		assert(firstColumn->getReferencedForeignColumn() == secondColumn);
+	} else {
+		assert(firstColumn->isPrimaryKey());
+		assert(secondColumn->getReferencedForeignColumn() == firstColumn);
+	}
+}
+
+
+/**
+ * Indicates whether the breadcrumb pair represents a forward reference.
+ * 
+ * A forward reference points from a foreign key column to the corresponding primary key column of
+ * another table. When following a forward reference, the number of accumulated items can only stay
+ * the same or decrease (because of overlap), never increase.
+ * 
+ * @return	True if the breadcrumb pair is a forward reference, false otherwise.
+ */
+bool Breadcrumb::isForward() const
+{
+	return firstColumn->isForeignKey();
+}
+
+/**
+ * Indicates whether the breadcrumb pair represents a backward reference.
+ * 
+ * A backward reference points from a primary key column to a matching foreign key column of
+ * another table. When following a backward reference, the number of accumulated items is only
+ * bounded by the number of entries in the second table, meaning it can stay the same, decrease,
+ * or increase.
+ * 
+ * @return	True if the breadcrumb pair is a forward reference, false otherwise.
+ */
+bool Breadcrumb::isBackward() const
+{
+	return secondColumn->isForeignKey();
+}
 
 
 
+
+
+/**
+ * Creates a new Breadcrumbs list from an initializer list.
+ * 
+ * @param initList
+ */
+Breadcrumbs::Breadcrumbs(std::initializer_list<Breadcrumb> initList) :
+		list(initList)
+{
+	assert(!list.isEmpty());
+	assert(!list.first().firstColumn->table->isAssociative);
+	
+	const Table* currentTable = list.first().firstColumn->table;
+	for (const auto& [firstColumn, secondColumn] : list) {
+		assert(firstColumn->table == currentTable);
+		currentTable = secondColumn->table;
+	}
+}
+
+
+/**
+ * Returns a set of all columns used as breadcrumbs.
+ * 
+ * @return	A set of all base table columns used as breadcrumbs.
+ */
+const QSet<Column* const> Breadcrumbs::getColumnSet() const
+{
+	QSet<Column* const> result = QSet<Column* const>();
+	for (const auto& [firstColumn, secondColumn] : list) {
+		result.insert(firstColumn);
+		result.insert(secondColumn);
+	}
+	return result;
+}
 
 
 /**
@@ -61,73 +129,83 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString name, QS
  * turns that set of keys into a new set of row indices.
  * 
  * This second half can work either in forward direction (lookup) or backward direction (reference
- * search). A forward lookup means looking for the row in a different table that matches each key
- * in the current key set. A backward reference search means looking for rows in a different table
+ * search). A forward lookup means looking for the row in a different table that matches each key in
+ * the current key set. A backward reference search means looking for rows in a different table
  * where the key in the given column matches any key in the current key set.
  * 
  * The first column in each pair is used to collect a set of keys (as ItemID) by looking up the
- * value of that column for a set of buffer row indices. The second column in each pair is then
- * used to find rows in a different table that match the previously collected keys. After all
- * breadcrumbs have been followed, the content column is referenced to collect the values of the
- * rows that were found in the last breadcrumb.
+ * value of that column for a set of buffer row indices. The second column in each pair is then used
+ * to find rows in a different table that match the previously collected keys. After all breadcrumbs
+ * have been followed, the content column is referenced to collect the values of the rows that were
+ * found in the last breadcrumb.
  * 
- * @param initialBufferRowIndex The row index to start from.
- * @return The set of row indices in the table of the first breadcrumb.
+ * @param initialBufferRowIndex	The row index to start from.
+ * @return						The set of row indices in the table of the first breadcrumb.
  */
-QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const
+QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex) const
 {
 	QSet<BufferRowIndex> currentRowIndexSet = { initialBufferRowIndex };
-	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
 	
-	for (const auto& [firstColumn, secondColumn] : breadcrumbs) {
-		// Check continuity
-		assert(firstColumn->table == currentTable);
-		assert(firstColumn->table != secondColumn->table);
-		assert(firstColumn->isForeignKey() != secondColumn->isForeignKey());
-		
+	for (const Breadcrumb& crumb : list) {
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (const BufferRowIndex& bufferRowIndex : currentRowIndexSet) {
-			ItemID key = firstColumn->getValueAt(bufferRowIndex);
-			if (key.isValid()) currentKeySet.insert(FORCE_VALID(key));
+			ItemID key = crumb.firstColumn->getValueAt(bufferRowIndex);
+			if (key.isInvalid()) continue;
+
+			currentKeySet.insert(FORCE_VALID(key));
 		}
 		
+		if (currentKeySet.isEmpty()) return QSet<BufferRowIndex>();
+		
 		currentRowIndexSet.clear();
-		currentTable = secondColumn->table;
+		const Table* const table = crumb.secondColumn->table;
 		
 		// The second half of the transfer is dependent on the reference direction:
-		if (firstColumn->isForeignKey()) {
+		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
-			assert(firstColumn->getReferencedForeignColumn() == secondColumn);
-			assert(secondColumn->isPrimaryKey());
-			
 			// Find row matching each primary key
 			for (const ValidItemID& key : currentKeySet) {
-				BufferRowIndex bufferRowIndex = currentTable->getMatchingBufferRowIndex({ secondColumn }, { key });
+				BufferRowIndex bufferRowIndex = table->getMatchingBufferRowIndex({ crumb.secondColumn }, { key });
 				currentRowIndexSet.insert(bufferRowIndex);
 			}
 		}
-		else if (secondColumn->isForeignKey()) {
+		else {
 			// Backward reference (reference search, result for each input element is key set)
-			assert(firstColumn == secondColumn->getReferencedForeignColumn());
-			assert(firstColumn->isPrimaryKey());
-			
-			// Find rows in new currentTable where key in secondColumn matches any key in current set
+			// Find rows in new table where key in secondColumn matches any key in current set
 			for (const ValidItemID& key : currentKeySet) {
-				const QList<BufferRowIndex> bufferRowIndexList = currentTable->getMatchingBufferRowIndices(secondColumn, key.asQVariant());
+				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				currentRowIndexSet.unite(matchingBufferRowIndices);
 			}
 		}
-		else assert(false);
 		
-		if (currentRowIndexSet.isEmpty()) {
-			return QSet<BufferRowIndex>();
-		}
+		if (currentRowIndexSet.isEmpty()) return QSet<BufferRowIndex>();
 	}
 	
 	return currentRowIndexSet;
 }
+
+
+
+
+
+/**
+ * Constructs a new FoldCompositeColumn.
+ * 
+ * @param table			The CompositeTable that this column belongs to.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param contentType	The type of data the column contents.
+ * @param isStatistical	Whether the contents of this column display statistical data which can be excluded from exports.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ */
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+		CompositeColumn(table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
+		breadcrumbs(breadcrumbs),
+		contentColumn(contentColumn)
+{}
 
 
 
@@ -139,12 +217,8 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
  */
 const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column* const> result = QSet<Column* const>();
+	QSet<Column* const> result = breadcrumbs.getColumnSet();
 	if (contentColumn) result.insert(contentColumn);
-	for (const auto& [firstColumn, secondColumn] : breadcrumbs) {
-		result.insert(firstColumn);
-		result.insert(secondColumn);
-	}
 	return result;
 }
 
@@ -162,7 +236,7 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column* contentColumn) :
 		FoldCompositeColumn(table, name, uiName, op == CountFold ? Integer : op == IDListFold ? IDList : contentColumn->type, true, suffix, breadcrumbs, contentColumn),
 		op(op)
 {
@@ -179,7 +253,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QS
  */
 QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
 	// Shortcuts for empty set
 	if (rowIndexSet.isEmpty()) {
@@ -254,7 +328,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to list.
  */
-ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
 		FoldCompositeColumn(table, name, uiName, String, false, QString(), breadcrumbs, contentColumn, enumNames)
 {}
 
@@ -297,7 +371,7 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buff
  */
 QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	
@@ -322,7 +396,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The hiker name column whose values to list.
  */
-HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn) :
+HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn) :
 		ListStringFoldCompositeColumn(table, name, uiName, breadcrumbs, contentColumn)
 {}
 
@@ -377,7 +451,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
  */
 QVariant HikerListCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QSet<BufferRowIndex> rowIndexSet = evaluateBreadcrumbTrail(rowIndex);
+	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	

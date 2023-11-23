@@ -29,28 +29,66 @@
 
 
 /**
- * A composite column that follows a trail of "breadcrumbs" to a content column, collecting a set
- * of buffer row indices, and folds these rows into a single value.
+ * A struct representing one pair of columns in a chain of "breadcrumbs" to be followed in order to
+ * collect a set of items connected to a starting item.
+ * 
+ * @see Breadcrumbs
+ */
+struct Breadcrumb {
+	/** The first column in the breadcrumb pair. */
+	Column* const firstColumn;
+	/** The second column in the breadcrumb pair. */
+	Column* const secondColumn;
+	
+	Breadcrumb(Column* firstColumn, Column* secondColumn);
+	
+	bool isForward() const;
+	bool isBackward() const;
+};
+
+
+/**
+ * A class representing a chain of "breadcrumbs" to be followed in order to collect a set of items
+ * connected to a starting item.
+ * 
+ * @see evaluate()
+ */
+class Breadcrumbs
+{
+	QList<Breadcrumb> list;
+	
+public:
+	Breadcrumbs(std::initializer_list<Breadcrumb> initList);
+	
+	const QSet<Column* const> getColumnSet() const;
+	QSet<BufferRowIndex> evaluate(BufferRowIndex initialBufferRowIndex) const;
+};
+
+
+
+/**
+ * A composite column that follows a trail of "breadcrumbs" to a content column, collecting a set of
+ * buffer row indices, and folds these rows into a single value.
  * 
  * The breadcrumbs are a list of pairs of columns which lead from the CompositeTable's underlying
- * database table to the content column, following a path through the database topology specified
- * by the breadcrumbs. This process leads to a set of buffer row indices, which are then folded
- * into a single value.
+ * database table to the content column, following a path through the database topology specified by
+ * the breadcrumbs. This process leads to a set of buffer row indices, which are then folded into a
+ * single value.
  */
 class FoldCompositeColumn : public CompositeColumn {
-	/** The breadcrumbs, which are pairs of base table columns which lead to the content column. */
-	const QList<QPair<Column*, Column*>> breadcrumbs;
 protected:
+	/** The breadcrumbs, which are pairs of base table columns which lead to the content column. */
+	const Breadcrumbs breadcrumbs;
 	/** The column that contains the content to be folded. */
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
-	
-	QSet<BufferRowIndex> evaluateBreadcrumbTrail(BufferRowIndex initialBufferRowIndex) const;
+	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
 };
+
+
 
 /**
  * The different fold operations that can be performed in a FoldCompositeColumn.
@@ -73,21 +111,25 @@ class NumericFoldCompositeColumn : public FoldCompositeColumn {
 	/** The operation to perform when folding the numeric values. */
 	const NumericFoldOp op;
 public:
-	NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn = nullptr);
+	NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column* contentColumn = nullptr);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
+
+
 
 /**
  * A composite column that folds values into a sorted comma separated list string.
  */
 class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
-	ListStringFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn, const QStringList* enumNames = nullptr);
+	ListStringFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
+
+
 
 /**
  * A specialized ListStringFoldCompositeColumn that folds hiker names into a sorted comma separated
@@ -98,7 +140,7 @@ public:
  */
 class HikerListCompositeColumn : public ListStringFoldCompositeColumn {
 public:
-	HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const QList<QPair<Column*, Column*>> breadcrumbs, Column* contentColumn);
+	HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
