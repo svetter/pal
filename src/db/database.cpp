@@ -597,8 +597,8 @@ void Database::removeRows(QWidget* parent, NormalTable* table, QSet<ValidItemID>
 	
 	Database::removeRows_referenceSearch(parent, false, table, primaryKeys);
 	
-	for (auto iter = primaryKeys.constBegin(); iter != primaryKeys.constEnd(); iter++) {
-		table->removeRow(parent, {table->primaryKeyColumn}, {*iter});
+	for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
+		table->removeRow(parent, {table->primaryKeyColumn}, {primaryKey});
 	}
 }
 
@@ -679,9 +679,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			}
 			// EXECUTE
 			else {
-				for (const QPair<const Column*, QList<BufferRowIndex>>& pair : affectedCells) {
-					const Column* affectedColumn = pair.first;
-					QList<BufferRowIndex> rowIndices = pair.second;
+				for (const auto& [affectedColumn, rowIndices] : affectedCells) {
 					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
 					const Column* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
 					

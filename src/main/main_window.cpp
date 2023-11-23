@@ -1503,11 +1503,9 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
  */
 void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
 {
-	QPair<const CompositeColumn*, Qt::SortOrder> currentSorting = mapper->compTable->getCurrentSorting();
-	const QString& columnName = currentSorting.first->name;
-	Qt::SortOrder order = currentSorting.second;
+	const auto& [column, order] = mapper->compTable->getCurrentSorting();
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
-	QString settingValue = columnName + ", " + orderString;
+	QString settingValue = column->name + ", " + orderString;
 	mapper->sortingSetting->set(this, settingValue);
 }
 

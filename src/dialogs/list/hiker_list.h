@@ -51,7 +51,7 @@ public:
 	void removeHikerAt(int rowIndex);
 	void clear();
 	
-	bool containsHiker(ValidItemID hikerID) const;
+	bool containsHiker(ValidItemID otherHikerID) const;
 	QSet<ValidItemID> getHikerIDSet() const;
 	
 	// QAbstractTableModel implementation

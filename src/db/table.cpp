@@ -423,8 +423,8 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	
 	// Update buffer
 	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
-		buffer.replaceCell(bufferRowIndex, columnDataPair.first->getIndex(), columnDataPair.second);
+	for (const auto& [column, data] : columnDataPairs) {
+		buffer.replaceCell(bufferRowIndex, column->getIndex(), data);
 	}
 	
 	// Announce changed data
@@ -658,9 +658,9 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
 	QString setString = "";
-	for (int i = 0; i < columnDataPairs.size(); i++) {
-		if (i > 0) setString.append(", ");
-		setString.append(columnDataPairs.at(i).first->name).append(" = ?");
+	for (const auto& [column, data] : columnDataPairs) {
+		if (!setString.isEmpty()) setString.append(", ");
+		setString.append(column->name).append(" = ?");
 	}
 	QString queryString = QString(
 			"UPDATE " + name + 
@@ -741,11 +741,9 @@ void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, Val
 QString Table::getColumnListStringFrom(const QList<ColumnDataPair>& columnDataPairs)
 {
 	QString listString = QString();
-	for (const ColumnDataPair& columnDataPair : columnDataPairs) {
-		if (!listString.isEmpty()) {
-			listString.append(", ");
-		}
-		listString.append(columnDataPair.first->name);
+	for (const auto& [column, data] : columnDataPairs) {
+		if (!listString.isEmpty()) listString.append(", ");
+		listString.append(column->name);
 	}
 	return listString;
 }

@@ -247,10 +247,7 @@ public:
 	 */
 	inline void set(const QMap<QString, T>& subKeyValueMap)
 	{
-		for (auto iter = subKeyValueMap.cbegin(); iter != subKeyValueMap.cend(); iter++) {
-			const QString& subKey	= iter.key();
-			const T& value			= iter.value();
-			
+		for (const auto& [subKey, value] : subKeyValueMap) {
 			createSettingIfMissing(subKey);
 			settings[subKey]->set(value);
 		}

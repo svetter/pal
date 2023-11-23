@@ -689,9 +689,9 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, 
 		sorting(sorting)
 {
 	assert(!sorting.isEmpty());
-	for (QPair<Column* const, Qt::SortOrder> sortPair : sorting) {
-		assert(sortPair.first->table == table->getBaseTable());
-		assert(sortPair.second == Qt::AscendingOrder || sortPair.second == Qt::DescendingOrder);
+	for (const auto& [column, order] : sorting) {
+		assert(column->table == table->getBaseTable());
+		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
 }
 
@@ -770,8 +770,8 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> columns = QSet<Column* const>();
-	for (QPair<Column* const, Qt::SortOrder> sortPair : sorting) {
-		columns += sortPair.first;
+	for (const auto& [column, order] : sorting) {
+		columns += column;
 	}
 	return columns;
 }

@@ -79,10 +79,7 @@ QSet<BufferRowIndex> FoldCompositeColumn::evaluateBreadcrumbTrail(BufferRowIndex
 	QSet<BufferRowIndex> currentRowIndexSet = { initialBufferRowIndex };
 	const Table* currentTable = (NormalTable*) breadcrumbs.first().first->table;
 	
-	for (int round = 0; round < breadcrumbs.size(); round++) {
-		const Column* firstColumn	= breadcrumbs.at(round).first;
-		const Column* secondColumn	= breadcrumbs.at(round).second;
-		
+	for (const auto& [firstColumn, secondColumn] : breadcrumbs) {
 		// Check continuity
 		assert(firstColumn->table == currentTable);
 		assert(firstColumn->table != secondColumn->table);
@@ -144,9 +141,9 @@ const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> result = QSet<Column* const>();
 	if (contentColumn) result.insert(contentColumn);
-	for (QPair<Column*, Column*> pair : breadcrumbs) {
-		result.insert(pair.first);
-		result.insert(pair.second);
+	for (const auto& [firstColumn, secondColumn] : breadcrumbs) {
+		result.insert(firstColumn);
+		result.insert(secondColumn);
 	}
 	return result;
 }

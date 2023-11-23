@@ -401,8 +401,7 @@ void DataExportThread::writeEnumTable(const QList<Table*>& baseTables, const QLi
 			if (columnInfo.enumNameLists) {
 				for (int j = 0; j < columnInfo.enumNameLists->size(); j++) {
 					writer->writeEmptyRow(columnInfos);
-					const QString& discerningEnumName = columnInfo.enumNameLists->at(j).first;
-					const QStringList& enumNames = columnInfo.enumNameLists->at(j).second;
+					const auto& [discerningEnumName, enumNames] = columnInfo.enumNameLists->at(j);
 					for (int i = 0; i < enumNames.size(); i++) {
 						writer->beginRow();
 						writer->writeCell(baseTable->uiName,	enumTableColumnInfos.at(0));

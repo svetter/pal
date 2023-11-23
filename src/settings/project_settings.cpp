@@ -264,10 +264,7 @@ T ProjectMultiSetting<T>::getDefault() const
 template<typename T>
 void ProjectMultiSetting<T>::set(QWidget* parent, const QMap<QString, T>& subKeyValueMap)
 {
-	for (auto iter = subKeyValueMap.cbegin(); iter != subKeyValueMap.cend(); iter++) {
-		const QString& subKey	= iter.key();
-		const T& value			= iter.value();
-		
+	for (const auto& [subKey, value] : subKeyValueMap.asKeyValueRange()) {
 		createSettingIfMissing(subKey);
 		settings[subKey]->set(parent, value);
 	}

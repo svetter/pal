@@ -221,8 +221,8 @@ void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, b
 	std::sort(selectableItems.begin(), selectableItems.end(), comparator);
 	
 	// Save IDs and populate combo box
-	for (const QPair<ValidItemID, QVariant>& pair : selectableItems) {
-		idList.append(pair.first);
-		combo->addItem(pair.second.toString());
+	for (const auto& [itemID, name] : selectableItems) {
+		idList.append(itemID);
+		combo->addItem(name.toString());
 	}
 }

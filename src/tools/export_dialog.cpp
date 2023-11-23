@@ -381,14 +381,14 @@ QString DataExportDialog::enforceExtension(const QString& filepath) const
  */
 void DataExportDialog::setFileFormatFromExtension(const QString& filepath) const
 {
-	QString extension = QFileInfo(filepath).suffix();
-	if (extension.isEmpty()) {
+	QString givenExtension = QFileInfo(filepath).suffix();
+	if (givenExtension.isEmpty()) {
 		return;
 	}
 	
-	for (auto iter = extensions.constBegin(); iter != extensions.constEnd(); iter++) {
-		if (QString::compare(iter.value(), extension, Qt::CaseInsensitive) == 0) {
-			switch (iter.key()) {
+	for (const auto& [format, extension] : extensions.asKeyValueRange()) {
+		if (QString::compare(extension, givenExtension, Qt::CaseInsensitive) == 0) {
+			switch (format) {
 			case CSV: {
 				fileFormatCsvRadio->setChecked(true);
 				break;

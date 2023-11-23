@@ -73,13 +73,13 @@ void HikersOnAscent::clear()
 /**
  * Returns whether the list contains the hiker with the given ID.
  * 
- * @param hikerID	The ID of the hiker to check for.
- * @return			True if the list contains the hiker with the given ID, false otherwise.
+ * @param otherHikerID	The ID of the hiker to check for.
+ * @return				True if the list contains the hiker with the given ID, false otherwise.
  */
-bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
+bool HikersOnAscent::containsHiker(ValidItemID otherHikerID) const
 {
-	for (const QPair<ValidItemID, QString>& IdNamePair : list) {
-		if (IdNamePair.first == hikerID) return true;
+	for (const auto& [hikerID, name] : list) {
+		if (hikerID == otherHikerID) return true;
 	}
 	return false;
 }
@@ -92,8 +92,8 @@ bool HikersOnAscent::containsHiker(ValidItemID hikerID) const
 QSet<ValidItemID> HikersOnAscent::getHikerIDSet() const
 {
 	QSet<ValidItemID> result = QSet<ValidItemID>();
-	for (const QPair<ValidItemID, QString>& IdNamePair : list) {
-		result.insert(IdNamePair.first);
+	for (const auto& [hikerID, name] : list) {
+		result.insert(hikerID);
 	}
 	return result;
 }

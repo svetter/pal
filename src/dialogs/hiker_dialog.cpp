@@ -209,8 +209,8 @@ void openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
 		if (!proceed) return;
 	}
 	
-	for (auto iter = hikerIDs.constBegin(); iter != hikerIDs.constEnd(); iter++) {
-		if (db->projectSettings->defaultHiker.get() == ID_GET((*iter))) {
+	for (const ItemID& hikerID : qAsConst(hikerIDs)) {
+		if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID)) {
 			db->projectSettings->defaultHiker.clear(parent);
 			break;
 		}
