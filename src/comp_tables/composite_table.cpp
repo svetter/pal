@@ -393,7 +393,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	}
 	
 	// Sort order buffer
-	performSort(getCurrentSorting().first, false);
+	performSort(getCurrentSorting(), false);
 	
 	endResetModel();
 }
@@ -409,7 +409,7 @@ QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
 {
 	QSet<const CompositeColumn*> columnsToUpdate = QSet<const CompositeColumn*>(dirtyColumns);
 	columnsToUpdate.subtract(hiddenColumns);
-	if (currentSorting.first) columnsToUpdate.insert(currentSorting.first);
+	if (currentSorting.column) columnsToUpdate.insert(currentSorting.column);
 	for (const Filter& filter : currentFilters) {
 		assert(filter.column);
 		columnsToUpdate.insert(filter.column);
@@ -476,7 +476,7 @@ void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate, 
 	dirtyColumns.subtract(columnsToUpdate);
 	
 	// Rebuild order buffer if necessary
-	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.first);
+	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
 	for (const Filter& filter : qAsConst(currentFilters)) {
 		orderBufferDirty |= columnsToUpdate.contains(filter.column);
 	}
@@ -588,7 +588,7 @@ QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const 
  * 
  * @return	The current sorting as a pair of the column to sort by and the sort order.
  */
-QPair<const CompositeColumn*, Qt::SortOrder> CompositeTable::getCurrentSorting() const
+SortingPass CompositeTable::getCurrentSorting() const
 {
 	return currentSorting;
 }
@@ -896,11 +896,11 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn* const column = columns.at(columnIndex);
 	
-	const CompositeColumn* const previousSortColumn = currentSorting.first;
+	const SortingPass previousSort = currentSorting;
 	currentSorting = {column, order};
 	if (bufferInitialized) updateBuffer();	// Sort column might need to be updated if hidden
 	
-	performSort(previousSortColumn, true);
+	performSort(previousSort, true);
 }
 
 /**
@@ -911,33 +911,31 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
  * nothing needs to be done if the order is *also* the same as in the current sorting, or the order
  * can simply be reversed if the order is opposite to the current sorting.
  * 
- * @param previousSortColumn	The column the table was sorted by before this call.
+ * @param previousSort			The column and order the table was sorted by before this call.
  * @param allowPassAndReverse	Whether to allow shortcuts in resorting. Do not use on initial sort.
  */
-void CompositeTable::performSort(const CompositeColumn* previousSortColumn, bool allowPassAndReverse)
+void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReverse)
 {
-	const CompositeColumn* const column = currentSorting.first;
-	const Qt::SortOrder order = currentSorting.second;
-	assert(column);
+	assert(currentSorting.column);
 	assert(tableView);
 	
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
 	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
-	if (allowPassAndReverse && column == previousSortColumn) {
-		if (order == currentSorting.second) return;
+	if (allowPassAndReverse && currentSorting.column == previousSort.column) {
+		if (currentSorting.order == previousSort.order) return;
 		
 		viewOrder.reverse();
 	}
 	else {
-		auto comparator = [&column, order](const BufferRowIndex& index1, const BufferRowIndex& index2) {
-			QVariant value1 = column->getRawValueAt(index1);
-			QVariant value2 = column->getRawValueAt(index2);
+		auto comparator = [this](const BufferRowIndex& index1, const BufferRowIndex& index2) {
+			QVariant value1 = currentSorting.column->getRawValueAt(index1);
+			QVariant value2 = currentSorting.column->getRawValueAt(index2);
 			
-			if (order == Qt::AscendingOrder) {
-				return column->compare(value1, value2);
+			if (currentSorting.order == Qt::AscendingOrder) {
+				return currentSorting.column->compare(value1, value2);
 			} else {
-				return column->compare(value2, value1);
+				return currentSorting.column->compare(value2, value1);
 			}
 		};
 		

@@ -682,14 +682,14 @@ const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns(
  * @param table		The CompositeTable that this column belongs to.
  * @param uiName	The name of this column as it should be displayed in the UI.
  * @param suffix	A suffix to append to the content of each cell.
- * @param sorting	The list of columns to sort by and their sort order, in order of priority.
+ * @param sorting	The list of sorting passes in order of priority, each containing column and order.
  */
-IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
+IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
 		CompositeColumn(table, name, uiName, Integer, true, true, suffix),
-		sorting(sorting)
+		sortingPasses(sortingPasses)
 {
-	assert(!sorting.isEmpty());
-	for (const auto& [column, order] : sorting) {
+	assert(!sortingPasses.isEmpty());
+	for (const auto& [column, order] : sortingPasses) {
 		assert(column->table == table->getBaseTable());
 		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
@@ -731,25 +731,24 @@ QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
 
 QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 {
-	int numberOfRows = sorting.at(0).first->table->getNumberOfRows();
+	int numberOfRows = sortingPasses.at(0).column->table->getNumberOfRows();
 	// Local order buffer which represents the ordered list of row indices
 	QList<BufferRowIndex> order = QList<BufferRowIndex>();
 	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(numberOfRows); index++) {
 		order.append(index);
 	}
 	
-	for (int i = sorting.size() - 1; i >= 0; i--) {
-		Column* const sortColumn	= sorting.at(i).first;
-		Qt::SortOrder sortOrder		= sorting.at(i).second;
+	for (int i = sortingPasses.size() - 1; i >= 0; i--) {
+		const BaseSortingPass sorting = sortingPasses.at(i);
 		
-		auto comparator = [&sortColumn, sortOrder](BufferRowIndex i1, BufferRowIndex i2) {
-			QVariant value1 = sortColumn->getValueAt(i1);
-			QVariant value2 = sortColumn->getValueAt(i2);
+		auto comparator = [&sorting](BufferRowIndex i1, BufferRowIndex i2) {
+			QVariant value1 = sorting.column->getValueAt(i1);
+			QVariant value2 = sorting.column->getValueAt(i2);
 			
-			if (sortOrder == Qt::AscendingOrder) {
-				return compareCells(sortColumn->type, value1, value2);
+			if (sorting.order == Qt::AscendingOrder) {
+				return compareCells(sorting.column->type, value1, value2);
 			} else {
-				return compareCells(sortColumn->type, value2, value1);
+				return compareCells(sorting.column->type, value2, value1);
 			}
 		};
 		
@@ -770,7 +769,7 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> columns = QSet<Column* const>();
-	for (const auto& [column, order] : sorting) {
+	for (const auto& [column, order] : sortingPasses) {
 		columns += column;
 	}
 	return columns;
@@ -788,11 +787,11 @@ const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
  * @param suffix	A suffix to append to the content of each cell.
  * @param sorting	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
  */
-OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<QPair<Column* const, Qt::SortOrder>> sorting) :
-	IndexCompositeColumn(table, name, uiName, suffix, sorting),
-	separatingColumn(sorting.first().first)
+OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
+	IndexCompositeColumn(table, name, uiName, suffix, sortingPasses),
+	separatingColumn(sortingPasses.first().column)
 {
-	assert(sorting.first().first->isForeignKey());
+	assert(sortingPasses.first().column->isForeignKey());
 }
 
 

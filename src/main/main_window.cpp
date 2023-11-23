@@ -412,7 +412,7 @@ void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
  */
 void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 {
-	QPair<const CompositeColumn*, Qt::SortOrder> sorting = mapper->compTable->getDefaultSorting();
+	SortingPass sorting = mapper->compTable->getDefaultSorting();
 	bool sortingSettingValid = true;
 	
 	while (Settings::rememberSorting.get() && mapper->sortingSetting->present()) {
@@ -427,12 +427,12 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
 		Qt::SortOrder order = ascending ? Qt::AscendingOrder : Qt::DescendingOrder;
 		
-		sorting.first = column;
-		sorting.second = order;
+		sorting.column = column;
+		sorting.order = order;
 		sortingSettingValid = true;
 		break;
 	}
-	mapper->tableView->sortByColumn(sorting.first->getIndex(), sorting.second);
+	mapper->tableView->sortByColumn(sorting.column->getIndex(), sorting.order);
 	
 	if (!sortingSettingValid) mapper->sortingSetting->clear(this);
 }
