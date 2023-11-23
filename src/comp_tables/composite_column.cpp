@@ -468,7 +468,7 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param foreignKeyColumnSequence	The sequence of foreign key columns to follow to get to the content column's table.
  * @param contentColumn				The column from which to take the actual cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<ForeignKeyColumn*> foreignKeyColumnSequence, Column* contentColumn) :
 		CompositeColumn(table, name, uiName, contentColumn->type, false, false, suffix, contentColumn->enumNames),
 		foreignKeyColumnSequence(foreignKeyColumnSequence),
 		contentColumn(contentColumn)
@@ -492,7 +492,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 	assert(!foreignKeyColumnSequence.first()->table->isAssociative);
 	NormalTable* currentTable = (NormalTable*) foreignKeyColumnSequence.first()->table;
 	
-	for (const Column* currentColumn : foreignKeyColumnSequence) {
+	for (const ForeignKeyColumn* currentColumn : foreignKeyColumnSequence) {
 		assert(currentColumn->table == currentTable);
 		assert(currentColumn->isForeignKey());
 		
@@ -502,7 +502,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 		if (key.isInvalid()) return QVariant();
 		
 		// Get referenced primary key column of other table
-		const Column* referencedColumn = currentColumn->getReferencedForeignColumn();
+		const PrimaryKeyColumn* referencedColumn = currentColumn->getReferencedForeignColumn();
 		assert(!referencedColumn->table->isAssociative);
 		currentTable = (NormalTable*) referencedColumn->table;
 		
@@ -549,7 +549,7 @@ const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() co
  * @param minuendColumn		The column from which to take the minuends.
  * @param subtrahendColumn	The column from which to take the subtrahends.
  */
-DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn) :
+DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn* minuendColumn, ValueColumn* subtrahendColumn) :
 		CompositeColumn(table, name, uiName, Integer, false, true, suffix),
 		minuendColumn(minuendColumn),
 		subtrahendColumn(subtrahendColumn)
@@ -624,7 +624,7 @@ const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() c
  * @param displayedEnumColumn	The column from which to take the displayed enum.
  * @param enumNameLists			An optional list of enum name lists with which to replace the raw cell content.
  */
-DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn) :
+DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn* discerningEnumColumn, ValueColumn* displayedEnumColumn) :
 		CompositeColumn(table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn->enumNameLists),
 		discerningEnumColumn(discerningEnumColumn),
 		displayedEnumColumn(displayedEnumColumn)

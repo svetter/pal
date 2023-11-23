@@ -70,7 +70,7 @@ protected:
 	
 	void changeStringsForEdit(QPushButton* okButton);
 	
-	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn);
+	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const ValueColumn* nameColumn);
 	/**
 	 * Event handler for the OK button.
 	 */
@@ -87,7 +87,7 @@ protected:
 	 */
 	virtual void aboutToClose() = 0;
 	
-	bool checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn);
+	bool checkNameForDuplicatesAndWarn(QString name, const ValueColumn* nameColumn);
 	
 public:
 	/**
@@ -102,7 +102,7 @@ public:
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
-void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine = QString(), const Column* filterColumn = nullptr, ItemID filterID = ItemID());
+void populateItemCombo(NormalTable* table, const ValueColumn* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine = QString(), const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID());
 
 
 

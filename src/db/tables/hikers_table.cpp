@@ -33,8 +33,8 @@
  */
 HikersTable::HikersTable() :
 		NormalTable(QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
-		//						name	uiName		type	nullable	primaryKey	foreignKey	inTable
-		nameColumn	(new Column("name",	tr("Name"),	String,	false,		false,		nullptr,	this))
+		//										name	uiName		type	nullable
+		nameColumn	(new ValueColumn	(this,	"name",	tr("Name"),	String,	false))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

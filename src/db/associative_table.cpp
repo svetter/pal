@@ -37,10 +37,10 @@
  * @param foreignKeyColumn1		The first primary and foreign key column.
  * @param foreignKeyColumn2		The second primary and foreign key column.
  */
-AssociativeTable::AssociativeTable(QString name, QString uiName, Column* foreignKeyColumn1, Column* foreignKeyColumn2) :
+AssociativeTable::AssociativeTable(QString name, QString uiName, PrimaryKeyColumn* foreignKeyColumn1, PrimaryKeyColumn* foreignKeyColumn2) :
 		Table(name, uiName, true),
-		column1(new Column(foreignKeyColumn1->name, foreignKeyColumn1->uiName, DataType::ID, false, true, foreignKeyColumn1, this)),
-		column2(new Column(foreignKeyColumn2->name, foreignKeyColumn2->uiName, DataType::ID, false, true, foreignKeyColumn2, this))
+		column1(new PrimaryForeignKeyColumn(this, foreignKeyColumn1->name, foreignKeyColumn1->uiName, foreignKeyColumn1)),
+		column2(new PrimaryForeignKeyColumn(this, foreignKeyColumn2->name, foreignKeyColumn2->uiName, foreignKeyColumn2))
 {
 	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::ID);
 	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::ID);
@@ -64,7 +64,7 @@ AssociativeTable::~AssociativeTable()
  * 
  * @return	The first primary and foreign key column of the table.
  */
-Column* AssociativeTable::getColumn1() const
+PrimaryForeignKeyColumn* AssociativeTable::getColumn1() const
 {
 	return column1;
 }
@@ -74,7 +74,7 @@ Column* AssociativeTable::getColumn1() const
  * 
  * @return	The second primary and foreign key column of the table.
  */
-Column* AssociativeTable::getColumn2() const
+PrimaryForeignKeyColumn* AssociativeTable::getColumn2() const
 {
 	return column2;
 }
@@ -85,7 +85,7 @@ Column* AssociativeTable::getColumn2() const
  * @param column	A column of the table.
  * @return			The other column of the table.
  */
-const Column* AssociativeTable::getOtherColumn(const Column* column) const
+const PrimaryForeignKeyColumn* AssociativeTable::getOtherColumn(const PrimaryForeignKeyColumn* column) const
 {
 	if (column == column1) return column2;
 	if (column == column2) return column1;
@@ -100,10 +100,10 @@ const Column* AssociativeTable::getOtherColumn(const Column* column) const
  * @param foreignColumn	A key column in a foreign table.
  * @return				The column of this table which references the given column, or nullptr.
  */
-const Column* AssociativeTable::getOwnColumnReferencing(const Column* foreignColumn) const
+const PrimaryForeignKeyColumn* AssociativeTable::getOwnColumnReferencing(const PrimaryKeyColumn* foreignColumn) const
 {
-	if (column1->foreignKey == foreignColumn)	return column1;
-	if (column2->foreignKey == foreignColumn)	return column2;
+	if (column1->foreignColumn == foreignColumn)	return column1;
+	if (column2->foreignColumn == foreignColumn)	return column2;
 	return nullptr;
 }
 
@@ -118,13 +118,13 @@ const Column* AssociativeTable::getOwnColumnReferencing(const Column* foreignCol
  * @param foreignColumn	A key column in a foreign table.
  * @return				The table on the other side of the associative relation, or nullptr.
  */
-const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* foreignColumn) const
+const NormalTable* AssociativeTable::traverseAssociativeRelation(const PrimaryKeyColumn* foreignColumn) const
 {
-	const Column* matchingOwnColumn = getOwnColumnReferencing(foreignColumn);
+	const PrimaryForeignKeyColumn* matchingOwnColumn = getOwnColumnReferencing(foreignColumn);
 	if (!matchingOwnColumn) return nullptr;
 	
-	const Column* otherColumn = getOtherColumn(matchingOwnColumn);
-	return (NormalTable*) otherColumn->foreignKey->table;
+	const PrimaryForeignKeyColumn* otherColumn = getOtherColumn(matchingOwnColumn);
+	return (NormalTable*) otherColumn->foreignColumn->table;
 }
 
 
@@ -138,7 +138,7 @@ const NormalTable* AssociativeTable::traverseAssociativeRelation(const Column* f
  * @param primaryKey	The primary key to search for.
  * @return				The number of rows in the buffer which match the given primary key in the given column.
  */
-int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const
+int AssociativeTable::getNumberOfMatchingRows(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
 	int numberOfMatches = 0;
@@ -161,10 +161,10 @@ int AssociativeTable::getNumberOfMatchingRows(const Column* column, ValidItemID 
  * @param primaryKey	The primary key to search for.
  * @return				The set of all primary keys in the other column which are associated with the given key.
  */
-QSet<ValidItemID> AssociativeTable::getMatchingEntries(const Column* column, ValidItemID primaryKey) const
+QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
-	const Column* otherColumn = getOtherColumn(column);
+	const PrimaryForeignKeyColumn* otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
 		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey)) {

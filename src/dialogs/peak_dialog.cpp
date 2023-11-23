@@ -221,7 +221,7 @@ void PeakDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save peak");
 	QString emptyNameWindowMessage	= tr("The peak needs a name.");
-	const Column* nameColumn = db->peaksTable->nameColumn;
+	const ValueColumn* nameColumn = db->peaksTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 

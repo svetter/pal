@@ -40,11 +40,11 @@ class ParticipatedTable : public AssociativeTable {
 	
 public:
 	/** The ascent ID column. */
-	Column* const ascentIDColumn;
+	PrimaryForeignKeyColumn* const ascentIDColumn;
 	/** The hiker ID column. */
-	Column* const hikerIDColumn;
+	PrimaryForeignKeyColumn* const hikerIDColumn;
 	
-	ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn);
+	ParticipatedTable(PrimaryKeyColumn* foreignAscentIDColumn, PrimaryKeyColumn* foreignHikerIDColumn);
 	
 	void addRows(QWidget* parent, const Ascent* ascent);
 	void updateRows(QWidget* parent, const Ascent* ascent);

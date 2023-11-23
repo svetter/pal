@@ -39,21 +39,21 @@ class PeaksTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	Column* const nameColumn;
+	ValueColumn* const nameColumn;
 	/** The height column. */
-	Column* const heightColumn;
+	ValueColumn* const heightColumn;
 	/** The volcano column. */
-	Column* const volcanoColumn;
+	ValueColumn* const volcanoColumn;
 	/** The region ID column. */
-	Column* const regionIDColumn;
+	ForeignKeyColumn* const regionIDColumn;
 	/** The Google Maps link column. */
-	Column* const mapsLinkColumn;
+	ValueColumn* const mapsLinkColumn;
 	/** The Google Earth link column. */
-	Column* const earthLinkColumn;
+	ValueColumn* const earthLinkColumn;
 	/** The Wikipedia link column. */
-	Column* const wikiLinkColumn;
+	ValueColumn* const wikiLinkColumn;
 	
-	PeaksTable(Column* foreignRegionIDColumn);
+	PeaksTable(PrimaryKeyColumn* foreignRegionIDColumn);
 	
 	BufferRowIndex addRow(QWidget* parent, Peak* peak);
 	void updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak);

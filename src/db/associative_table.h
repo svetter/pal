@@ -37,24 +37,24 @@
  */
 class AssociativeTable : public Table {
 	/** The first primary and foreign key column of the table. */
-	Column* const column1;
+	PrimaryForeignKeyColumn* const column1;
 	/** The second primary and foreign key column of the table. */
-	Column* const column2;
+	PrimaryForeignKeyColumn* const column2;
 	
 public:
-	AssociativeTable(QString name, QString uiName, Column* foreignKeyColumn1, Column* foreignKeyColumn2);
+	AssociativeTable(QString name, QString uiName, PrimaryKeyColumn* foreignKeyColumn1, PrimaryKeyColumn* foreignKeyColumn2);
 	virtual ~AssociativeTable();
 	
 	// Column info
-	Column* getColumn1() const;
-	Column* getColumn2() const;
-	const Column* getOtherColumn(const Column* column) const;
-	const Column* getOwnColumnReferencing(const Column* column) const;
-	const NormalTable* traverseAssociativeRelation(const Column* foreignColumn) const;
+	PrimaryForeignKeyColumn* getColumn1() const;
+	PrimaryForeignKeyColumn* getColumn2() const;
+	const PrimaryForeignKeyColumn* getOtherColumn(const PrimaryForeignKeyColumn* column) const;
+	const PrimaryForeignKeyColumn* getOwnColumnReferencing(const PrimaryKeyColumn* column) const;
+	const NormalTable* traverseAssociativeRelation(const PrimaryKeyColumn* foreignColumn) const;
 	
 	// Buffer access
-	int getNumberOfMatchingRows(const Column* column, ValidItemID primaryKey) const;
-	QSet<ValidItemID> getMatchingEntries(const Column* column, ValidItemID primaryKey) const;
+	int getNumberOfMatchingRows(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const;
+	QSet<ValidItemID> getMatchingEntries(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const;
 	
 	// Modifications (passthrough)
 	void addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);

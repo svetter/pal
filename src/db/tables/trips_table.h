@@ -39,13 +39,13 @@ class TripsTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	Column* const nameColumn;
+	ValueColumn* const nameColumn;
 	/** The start date column. */
-	Column* const startDateColumn;
+	ValueColumn* const startDateColumn;
 	/** The end date column. */
-	Column* const endDateColumn;
+	ValueColumn* const endDateColumn;
 	/** The description column. */
-	Column* const descriptionColumn;
+	ValueColumn* const descriptionColumn;
 	
 	TripsTable();
 	

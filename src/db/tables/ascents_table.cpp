@@ -36,21 +36,21 @@
  * @param foreignPeakIDColumn	The primary key column of the PeaksTable.
  * @param foreignTripIDColumn	The primary key column of the TripsTable.
  */
-AscentsTable::AscentsTable(Column* foreignPeakIDColumn,  Column* foreignTripIDColumn) :
+AscentsTable::AscentsTable(PrimaryKeyColumn* foreignPeakIDColumn,  PrimaryKeyColumn* foreignTripIDColumn) :
 		NormalTable(QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
-		//									name				uiName				type		nullable	primaryKey	foreignKey				inTable	enumNames	enumNameLists
-		titleColumn				(new Column("title",			tr("Title"),		String,		true,		false,		nullptr,				this)),
-		peakIDColumn			(new Column("peakID",			tr("Peak ID"),		ID,			true,		false,		foreignPeakIDColumn,	this)),
-		dateColumn				(new Column("date",				tr("Date"),			Date,		true,		false,		nullptr,				this)),
-		peakOnDayColumn			(new Column("peakOnDay",		tr("Peak/day"),		Integer,	false,		false,		nullptr,				this)),
-		timeColumn				(new Column("time",				tr("Local time"),	Time,		true,		false,		nullptr,				this)),
-		elevationGainColumn		(new Column("elevationGain",	tr("Elev. gain"),	Integer,	true,		false,		nullptr,				this)),
-		hikeKindColumn			(new Column("hikeKind",			tr("Kind of hike"),	Enum,		false,		false,		nullptr,				this,	&EnumNames::hikeKindNames)),
-		traverseColumn			(new Column("traverse",			tr("Traverse"),		Bit,		false,		false,		nullptr,				this)),
-		difficultySystemColumn	(new Column("difficultySystem",	tr("Diff. system"),	DualEnum,	false,		false,		nullptr,				this,	nullptr,	&EnumNames::difficultyNames)),
-		difficultyGradeColumn	(new Column("difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		false,		nullptr,				this,	nullptr,	&EnumNames::difficultyNames)),
-		tripIDColumn			(new Column("tripID",			tr("Trip ID"),		ID,			true,		false,		foreignTripIDColumn,	this)),
-		descriptionColumn		(new Column("description",		tr("Description"),	String,		true,		false,		nullptr,				this))
+		//														name				uiName				type		nullable	foreignColumn/enumNames/enumNameLists
+		titleColumn				(new ValueColumn		(this,	"title",			tr("Title"),		String,		true)),
+		peakIDColumn			(new ForeignKeyColumn	(this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),
+		dateColumn				(new ValueColumn		(this,	"date",				tr("Date"),			Date,		true)),
+		peakOnDayColumn			(new ValueColumn		(this,	"peakOnDay",		tr("Peak/day"),		Integer,	false)),
+		timeColumn				(new ValueColumn		(this,	"time",				tr("Local time"),	Time,		true)),
+		elevationGainColumn		(new ValueColumn		(this,	"elevationGain",	tr("Elev. gain"),	Integer,	true)),
+		hikeKindColumn			(new ValueColumn		(this,	"hikeKind",			tr("Kind of hike"),	Enum,		false,		&EnumNames::hikeKindNames)),
+		traverseColumn			(new ValueColumn		(this,	"traverse",			tr("Traverse"),		Bit,		false)),
+		difficultySystemColumn	(new ValueColumn		(this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+		difficultyGradeColumn	(new ValueColumn		(this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+		tripIDColumn			(new ForeignKeyColumn	(this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
+		descriptionColumn		(new ValueColumn		(this,	"description",		tr("Description"),	String,		true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(titleColumn);

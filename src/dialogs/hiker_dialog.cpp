@@ -141,7 +141,7 @@ void HikerDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save hiker");
 	QString emptyNameWindowMessage	= tr("The hiker needs a name.");
-	const Column* nameColumn = db->hikersTable->nameColumn;
+	const ValueColumn* nameColumn = db->hikersTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 

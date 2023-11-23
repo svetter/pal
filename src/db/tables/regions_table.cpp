@@ -34,12 +34,12 @@
  * @param foreignRangeIDColumn		The primary key column of the RangesTable.
  * @param foreignCountryIDColumn	The primary key column of the CountriesTable.
  */
-RegionsTable::RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn) :
+RegionsTable::RegionsTable(PrimaryKeyColumn* foreignRangeIDColumn, PrimaryKeyColumn* foreignCountryIDColumn) :
 		NormalTable(QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
-		//							name			uiName						type	nullable	primaryKey	foreignKey				inTable
-		nameColumn		(new Column("name",			tr("Name"),					String,	false,		false,		nullptr,				this)),
-		rangeIDColumn	(new Column("rangeID",		tr("Mountain range ID"),	ID,		true,		false,		foreignRangeIDColumn,	this)),
-		countryIDColumn	(new Column("countryID",	tr("Country ID"),			ID,		true,		false,		foreignCountryIDColumn,	this))
+		//												name			uiName						type	nullable	foreignColumn
+		nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,	false)),
+		rangeIDColumn	(new ForeignKeyColumn	(this,	"rangeID",		tr("Mountain range ID"),			true,		foreignRangeIDColumn)),
+		countryIDColumn	(new ForeignKeyColumn	(this,	"countryID",	tr("Country ID"),					true,		foreignCountryIDColumn))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

@@ -208,7 +208,7 @@ void RegionDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save region");
 	QString emptyNameWindowMessage	= tr("The region needs a name.");
-	const Column* nameColumn = db->regionsTable->nameColumn;
+	const ValueColumn* nameColumn = db->regionsTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 

@@ -28,7 +28,7 @@
 
 
 /**
- * Creates a new Breadcrumb from two columns.
+ * Creates a Breadcrumb from two columns.
  * 
  * @param firstColumn	The first column in the breadcrumb pair.
  * @param secondColumn	The second column in the breadcrumb pair.
@@ -47,6 +47,27 @@ Breadcrumb::Breadcrumb(Column* firstColumn, Column* secondColumn) :
 		assert(secondColumn->getReferencedForeignColumn() == firstColumn);
 	}
 }
+
+/**
+ * Creates a forward-referencing Breadcrumb from a foreign key column and a primary key column.
+ * 
+ * @param firstColumn	The first column in the breadcrumb pair.
+ * @param secondColumn	The second column in the breadcrumb pair.
+ */
+Breadcrumb::Breadcrumb(ForeignKeyColumn* firstColumn, PrimaryKeyColumn* secondColumn) :
+		Breadcrumb((Column*) firstColumn, (Column*) secondColumn)
+{}
+
+/**
+ * Creates a backward-referencing Breadcrumb from a primary key column and a foreign key column.
+ * 
+ * @param firstColumn	The first column in the breadcrumb pair.
+ * @param secondColumn	The second column in the breadcrumb pair.
+ */
+Breadcrumb::Breadcrumb(PrimaryKeyColumn* firstColumn, ForeignKeyColumn* secondColumn) :
+		Breadcrumb((Column*) firstColumn, (Column*) secondColumn)
+{}
+
 
 
 /**
@@ -152,7 +173,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 		for (const BufferRowIndex& bufferRowIndex : currentRowIndexSet) {
 			ItemID key = crumb.firstColumn->getValueAt(bufferRowIndex);
 			if (key.isInvalid()) continue;
-
+			// Add new item ID to current set
 			currentKeySet.insert(FORCE_VALID(key));
 		}
 		
@@ -167,6 +188,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			// Find row matching each primary key
 			for (const ValidItemID& key : currentKeySet) {
 				BufferRowIndex bufferRowIndex = table->getMatchingBufferRowIndex({ crumb.secondColumn }, { key });
+				// Add new buffer index to current set
 				currentRowIndexSet.insert(bufferRowIndex);
 			}
 		}
@@ -176,6 +198,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			for (const ValidItemID& key : currentKeySet) {
 				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
+				// Add new buffer indices to current set
 				currentRowIndexSet.unite(matchingBufferRowIndices);
 			}
 		}
@@ -396,7 +419,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The hiker name column whose values to list.
  */
-HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn) :
+HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn) :
 		ListStringFoldCompositeColumn(table, name, uiName, breadcrumbs, contentColumn)
 {}
 

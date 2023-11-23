@@ -620,7 +620,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 {
 	assert(databaseLoaded);
 	
-	const Column* const primaryKeyColumn = table->primaryKeyColumn;
+	const PrimaryKeyColumn* const primaryKeyColumn = table->primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (Table* candidateTable : tables) {
 		if (candidateTable == table) continue;
@@ -630,7 +630,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 		if (candidateTable->isAssociative) {
 			AssociativeTable* candidateAssociativeTable = (AssociativeTable*) candidateTable;
 			
-			const Column* matchingColumn = candidateAssociativeTable->getOwnColumnReferencing(primaryKeyColumn);
+			const PrimaryForeignKeyColumn* matchingColumn = candidateAssociativeTable->getOwnColumnReferencing(primaryKeyColumn);
 			if (!matchingColumn) continue;
 			
 			// WHAT IF
@@ -681,7 +681,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			else {
 				for (const auto& [affectedColumn, rowIndices] : affectedCells) {
 					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
-					const Column* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
+					const PrimaryKeyColumn* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
 					
 					for (const BufferRowIndex& rowIndex : rowIndices) {
 						ValidItemID primaryKey = VALID_ITEM_ID(affectedPrimaryKeyColumn->getValueAt(rowIndex));

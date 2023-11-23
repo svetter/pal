@@ -141,7 +141,7 @@ void CountryDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save country");
 	QString emptyNameWindowMessage	= tr("The country needs a name.");
-	const Column* nameColumn = db->countriesTable->nameColumn;
+	const ValueColumn* nameColumn = db->countriesTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 

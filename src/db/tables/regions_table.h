@@ -37,13 +37,13 @@ class RegionsTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	Column* const nameColumn;
+	ValueColumn* const nameColumn;
 	/** The range ID column. */
-	Column* const rangeIDColumn;
+	ForeignKeyColumn* const rangeIDColumn;
 	/** The country ID column. */
-	Column* const countryIDColumn;
+	ForeignKeyColumn* const countryIDColumn;
 	
-	RegionsTable(Column* foreignRangeIDColumn, Column* foreignCountryIDColumn);
+	RegionsTable(PrimaryKeyColumn* foreignRangeIDColumn, PrimaryKeyColumn* foreignCountryIDColumn);
 	
 	BufferRowIndex addRow(QWidget* parent, Region* region);
 	void updateRow(QWidget* parent, ValidItemID regionID, const Region* region);

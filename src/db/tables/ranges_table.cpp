@@ -35,9 +35,9 @@
  */
 RangesTable::RangesTable() :
 		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
-		//							name			uiName				type	nullable	primaryKey	foreignKey	inTable	enumNames
-		nameColumn		(new Column("name",			tr("Name"),			String,	false,		false,		nullptr,	this)),
-		continentColumn	(new Column("continent",	tr("Continent"),	Enum,	false,		false,		nullptr,	this,	&EnumNames::continentNames))
+		//											name			uiName				type	nullable	enumNames
+		nameColumn		(new ValueColumn	(this,	"name",			tr("Name"),			String,	false)),
+		continentColumn	(new ValueColumn	(this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

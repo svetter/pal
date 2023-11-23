@@ -28,6 +28,7 @@
 #include "src/data/item_id.h"
 #include <QSet>
 
+class PrimaryKeyColumn;
 class Table;
 struct WhatIfDeleteResult;
 class CompositeColumn;
@@ -44,41 +45,46 @@ enum DataType {
 };
 
 
+
 /**
- * A class modelling a column in a database table.
+ * A general superclass for all column model classes for database tables.
  */
 class Column {
-	/** The composite columnd which have registered to be notified when data in this column changes. */
-	QSet<const CompositeColumn*> changeListeners;
-	
 public:
-	/** The internal name of the column. */
-	const QString		name;
-	/** The name of the column as it should be displayed in the UI. */
-	const QString		uiName;
-	/** The type of data contained in the column. */
-	const DataType		type;
-	/** Whether the column contains primary keys. */
-	const bool			primaryKey;
-	/** The foreign column referenced by this column if it contains foreign keys. */
-	Column* const		foreignKey;
-	/** Whether the column can contain null values. */
-	const bool			nullable;
 	/** The table this column belongs to. */
-	const Table* const	table;
+	const Table* const table;
+	
+	/** The internal name of the column. */
+	const QString name;
+	/** The name of the column as it should be displayed in the UI. */
+	const QString uiName;
+	/** The type of data contained in the column. */
+	const DataType type;
+	/** Whether the column contains primary keys. */
+	const bool primaryKey;
+	/** The foreign column referenced by this column if it contains foreign keys. */
+	PrimaryKeyColumn* const	foreignColumn;
+	/** Whether the column can contain null values. */
+	const bool nullable;
 	
 	/** A list of enum names corresponding to the enum used for this column, or nullptr. */
 	const QStringList* const enumNames;
 	/** A list of enum name lists corresponding to the nested enum used for this column, or nullptr. */
 	const QList<QPair<QString, QStringList>>* const enumNameLists;
 	
-	Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+private:
+	/** The composite columnd which have registered to be notified when data in this column changes. */
+	QSet<const CompositeColumn*> changeListeners;
 	
-	bool	isPrimaryKey() const;
-	bool	isForeignKey() const;
-	bool	isKey() const;
-	Column*	getReferencedForeignColumn() const;
-	int		getIndex() const;
+protected:
+	Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignKey, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	
+public:
+	bool isPrimaryKey() const;
+	bool isForeignKey() const;
+	bool isKey() const;
+	PrimaryKeyColumn* getReferencedForeignColumn() const;
+	int getIndex() const;
 	
 	QVariant getValueAt(BufferRowIndex bufferRowIndex) const;
 	QVariant getValueFor(ValidItemID itemID) const;
@@ -88,6 +94,50 @@ public:
 	
 	void registerChangeListener(const CompositeColumn* compositeColumn);
 	QSet<const CompositeColumn*> getChangeListeners() const;
+};
+
+
+
+/**
+ * A class modelling a normal column holding some value in a database table.
+ */
+class ValueColumn : public Column
+{
+public:
+	ValueColumn(const Table* table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+};
+
+
+
+/**
+ * A class modelling a primary key column in a database table.
+ */
+class PrimaryKeyColumn : public Column
+{
+public:
+	PrimaryKeyColumn(const Table* table, QString name, QString uiName);
+};
+
+
+
+/**
+ * A class modelling a foreign key column in a database table.
+ */
+class ForeignKeyColumn : public Column
+{
+public:
+	ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn* foreignColumn, bool primaryKey = false);
+};
+
+
+
+/**
+ * A class modelling a primary and foreign key column in a database table.
+ */
+class PrimaryForeignKeyColumn : public ForeignKeyColumn
+{
+public:
+	PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn* foreignColumn);
 };
 
 

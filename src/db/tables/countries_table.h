@@ -39,7 +39,7 @@ class CountriesTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	Column* const nameColumn;
+	ValueColumn* const nameColumn;
 	
 	CountriesTable();
 	

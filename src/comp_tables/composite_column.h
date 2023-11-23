@@ -144,12 +144,12 @@ public:
  */
 class ReferenceCompositeColumn : public CompositeColumn {
 	/** The sequence of foreign key columns to follow to the target base table containing the content. */
-	QList<Column*> foreignKeyColumnSequence;
+	QList<ForeignKeyColumn*> foreignKeyColumnSequence;
 	/** The column in the target base table from which to take the content. */
 	Column* const contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<Column*> foreignKeyColumnSequence, Column* contentColumn);
+	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<ForeignKeyColumn*> foreignKeyColumnSequence, Column* contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -164,12 +164,12 @@ public:
  */
 class DifferenceCompositeColumn : public CompositeColumn {
 	/** The column containing the minuend. */
-	Column* const minuendColumn;
+	ValueColumn* const minuendColumn;
 	/** The column containing the subtrahend. */
-	Column* const subtrahendColumn;
+	ValueColumn* const subtrahendColumn;
 	
 public:
-	DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Column* minuendColumn, Column* subtrahendColumn);
+	DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn* minuendColumn, ValueColumn* subtrahendColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -184,12 +184,12 @@ public:
  */
 class DependentEnumCompositeColumn : public CompositeColumn {
 	/** The first base table column, which determines the first dimension in the lookup. */
-	Column* const discerningEnumColumn;
+	ValueColumn* const discerningEnumColumn;
 	/** The second base table column, which determines the second second dimension in the lookup. */
-	Column* const displayedEnumColumn;
+	ValueColumn* const displayedEnumColumn;
 	
 public:
-	DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, Column* discerningEnumColumn, Column* displayedEnumColumn);
+	DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn* discerningEnumColumn, ValueColumn* displayedEnumColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	

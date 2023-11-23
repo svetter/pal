@@ -35,33 +35,33 @@
 /**
  * Creates a new Column.
  * 
+ * @param table			The table this column belongs to.
  * @param name			The internal name of the column.
  * @param uiName		The name of the column as it should be displayed in the UI.
+ * @param primaryKey	Whether the column contains primary keys.
+ * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  * @param type			The type of data contained in the column.
  * @param nullable		Whether the column may contain null values.
- * @param primaryKey	Whether the column contains primary keys.
- * @param foreignKey	The foreign column referenced by this column if it contains foreign keys.
- * @param table			The table this column belongs to.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
-Column::Column(QString name, QString uiName, DataType type, bool nullable, bool primaryKey, Column* foreignKey, const Table* table, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		changeListeners(QSet<const CompositeColumn*>()),
+Column::Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignColumn, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+		table(table),
 		name(name),
 		uiName(uiName),
 		type(type),
 		primaryKey(primaryKey),
-		foreignKey(foreignKey),
+		foreignColumn(foreignColumn),
 		nullable(nullable),
-		table(table),
 		enumNames(enumNames),
-		enumNameLists(enumNameLists)
+		enumNameLists(enumNameLists),
+		changeListeners(QSet<const CompositeColumn*>())
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
-	assert(table->isAssociative == (primaryKey && foreignKey));
-	if (primaryKey)					assert(!nullable);
-	if (primaryKey || foreignKey)	assert(type == ID && name.endsWith("ID"));
-	if (name.endsWith("ID"))		assert((type == ID) && (primaryKey || foreignKey));
+	assert(table->isAssociative == (primaryKey && foreignColumn));
+	if (primaryKey)						assert(!nullable);
+	if (primaryKey || foreignColumn)	assert(type == ID && name.endsWith("ID"));
+	if (name.endsWith("ID"))			assert((type == ID) && (primaryKey || foreignColumn));
 }
 
 
@@ -83,7 +83,7 @@ bool Column::isPrimaryKey() const
  */
 bool Column::isForeignKey() const
 {
-	return foreignKey;
+	return foreignColumn;
 }
 
 /**
@@ -101,9 +101,9 @@ bool Column::isKey() const
  * 
  * @return	The foreign column referenced by this one, or nullptr.
  */
-Column* Column::getReferencedForeignColumn() const
+PrimaryKeyColumn* Column::getReferencedForeignColumn() const
 {
-	return foreignKey;
+	return foreignColumn;
 }
 
 /**
@@ -182,8 +182,8 @@ QString Column::getSqlSpecificationString() const
 		primaryKeyString = " PRIMARY KEY";
 	
 	QString foreignKeyString = "";
-	if (foreignKey)
-		primaryKeyString = " REFERENCES " + foreignKey->table->name + "(" + foreignKey->name + ")";
+	if (foreignColumn)
+		primaryKeyString = " REFERENCES " + foreignColumn->table->name + "(" + foreignColumn->name + ")";
 	
 	QString nullString = "";
 	if (!nullable)
@@ -213,6 +213,68 @@ QSet<const CompositeColumn*> Column::getChangeListeners() const
 {
 	return changeListeners;
 }
+
+
+
+
+
+/**
+ * Creates a ValueColumn.
+ * 
+ * @param table			The table this column belongs to.
+ * @param name			The internal name of the column.
+ * @param uiName		The name of the column as it should be displayed in the UI.
+ * @param type			The type of data contained in the column.
+ * @param nullable		Whether the column may contain null values.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
+ */
+ValueColumn::ValueColumn(const Table* table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+		Column(table, name, uiName, false, nullptr, type, nullable, enumNames, enumNameLists)
+{}
+
+
+
+/**
+ * Creates a PrimaryKeyColumn.
+ * 
+ * @param table		The table this column belongs to.
+ * @param name		The internal name of the column.
+ * @param uiName	The name of the column as it should be displayed in the UI.
+ */
+PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiName) :
+		Column(table, name, uiName, true, nullptr, ID, false)
+{}
+
+
+
+/**
+ * Creates a ForeignKeyColumn.
+ * 
+ * @param table			The table this column belongs to.
+ * @param name			The internal name of the column.
+ * @param uiName		The name of the column as it should be displayed in the UI.
+ * @param nullable		Whether the column may contain null values.
+ * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
+ * @param primaryKey	Whether the column contains primary keys.
+ */
+ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn* foreignColumn, bool primaryKey) :
+		Column(table, name, uiName, primaryKey, foreignColumn, ID, nullable)
+{}
+
+
+
+/**
+ * Creates a PrimaryForeignKeyColumn.
+ * 
+ * @param table		The table this column belongs to.
+ * @param name		The internal name of the column.
+ * @param uiName	The name of the column as it should be displayed in the UI.
+ * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
+ */
+PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn* foreignColumn) :
+		ForeignKeyColumn(table, name, uiName, false, foreignColumn, true)
+{}
 
 
 

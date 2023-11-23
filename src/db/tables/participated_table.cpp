@@ -33,7 +33,7 @@
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  * @param foreignHikerIDColumn	The primary key column of the HikersTable.
  */
-ParticipatedTable::ParticipatedTable(Column* foreignAscentIDColumn, Column* foreignHikerIDColumn) :
+ParticipatedTable::ParticipatedTable(PrimaryKeyColumn* foreignAscentIDColumn, PrimaryKeyColumn* foreignHikerIDColumn) :
 		AssociativeTable(QString("Participated"), tr("Ascent participation of hikers"), foreignAscentIDColumn, foreignHikerIDColumn),
 		ascentIDColumn(getColumn1()),
 		hikerIDColumn(getColumn2())

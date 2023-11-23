@@ -64,7 +64,7 @@ void ItemDialog::changeStringsForEdit(QPushButton* okButton)
  * Prepares the dialog for closing, performs checks for and warns about empty and duplicate names
  * if settings require it, then accepts the dialog.
  */
-void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const Column* nameColumn)
+void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const ValueColumn* nameColumn)
 {
 	aboutToClose();
 	
@@ -129,7 +129,7 @@ void ItemDialog::reject()
  * @param nameColumn	The column to check.
  * @return				True if the name is not a duplicate or the user chooses to proceed anyway, false otherwise.
  */
-bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const Column* nameColumn)
+bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const ValueColumn* nameColumn)
 {
 	if (!nameColumn->anyCellMatches(name)) {
 		return true;	// Item name is not a duplicate, proceed with save
@@ -188,7 +188,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * @param filterColumn			If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
  * @param filterID				The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
  */
-void populateItemCombo(NormalTable* table, const Column* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const Column* filterColumn, ItemID filterID)
+void populateItemCombo(NormalTable* table, const ValueColumn* displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const ForeignKeyColumn* filterColumn, ItemID filterID)
 {
 	assert(!(!filterColumn && filterID.isValid()));
 	

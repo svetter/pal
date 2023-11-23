@@ -29,18 +29,23 @@
 
 
 /**
- * A struct representing one pair of columns in a chain of "breadcrumbs" to be followed in order to
+ * A class representing one pair of columns in a chain of "breadcrumbs" to be followed in order to
  * collect a set of items connected to a starting item.
  * 
  * @see Breadcrumbs
  */
-struct Breadcrumb {
+class Breadcrumb {
+public:
 	/** The first column in the breadcrumb pair. */
 	Column* const firstColumn;
 	/** The second column in the breadcrumb pair. */
 	Column* const secondColumn;
 	
+protected:
 	Breadcrumb(Column* firstColumn, Column* secondColumn);
+public:
+	Breadcrumb(ForeignKeyColumn* firstColumn, PrimaryKeyColumn* secondColumn);
+	Breadcrumb(PrimaryKeyColumn* firstColumn, ForeignKeyColumn* secondColumn);
 	
 	bool isForward() const;
 	bool isBackward() const;
@@ -140,7 +145,7 @@ public:
  */
 class HikerListCompositeColumn : public ListStringFoldCompositeColumn {
 public:
-	HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column* contentColumn);
+	HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;

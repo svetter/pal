@@ -157,7 +157,7 @@ void RangeDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save mountain range");
 	QString emptyNameWindowMessage	= tr("The mountain range needs a name.");
-	const Column* nameColumn = db->rangesTable->nameColumn;
+	const ValueColumn* nameColumn = db->rangesTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
