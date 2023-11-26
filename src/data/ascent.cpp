@@ -47,21 +47,21 @@
  * @param description		The description of the ascent, if specified. Empty QString otherwise.
  */
 Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QList<Photo>& photos, QString& description) :
-		ascentID(ascentID),
-		title(title),
-		peakID(peakID),
-		date(date),
-		perDayIndex(perDayIndex),
-		time(time),
-		elevationGain(elevationGain),
-		hikeKind(hikeKind),
-		traverse(traverse),
-		difficultySystem(difficultySystem),
-		difficultyGrade(difficultyGrade),
-		tripID(tripID),
-		hikerIDs(hikerIDs),
-		photos(photos),
-		description(description)
+	ascentID(ascentID),
+	title(title),
+	peakID(peakID),
+	date(date),
+	perDayIndex(perDayIndex),
+	time(time),
+	elevationGain(elevationGain),
+	hikeKind(hikeKind),
+	traverse(traverse),
+	difficultySystem(difficultySystem),
+	difficultyGrade(difficultyGrade),
+	tripID(tripID),
+	hikerIDs(hikerIDs),
+	photos(photos),
+	description(description)
 {}
 
 /**

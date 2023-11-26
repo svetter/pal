@@ -39,9 +39,9 @@
  * SQLite database driver.
  */
 Database::Database() :
-		databaseLoaded(false),
-		tables(QList<Table*>()),
-		mainWindowStatusBar(nullptr)
+	databaseLoaded(false),
+	tables(QList<Table*>()),
+	mainWindowStatusBar(nullptr)
 {
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();
@@ -708,7 +708,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
  * @param numAffectedRowIndices	The number of rows in the affected table that would be affected by the deletion.
  */
 WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices) :
-		affectedTable(affectedTable),
-		itemTable(itemTable),
-		numAffectedRowIndices(numAffectedRowIndices)
+	affectedTable(affectedTable),
+	itemTable(itemTable),
+	numAffectedRowIndices(numAffectedRowIndices)
 {}

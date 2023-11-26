@@ -29,8 +29,8 @@
  * Creates a new HikersOnAscent object with no hikers.
  */
 HikersOnAscent::HikersOnAscent() :
-		QAbstractTableModel(),
-		list(QList<QPair<ValidItemID, QString>>())
+	QAbstractTableModel(),
+	list(QList<QPair<ValidItemID, QString>>())
 {}
 
 

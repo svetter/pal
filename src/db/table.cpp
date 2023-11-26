@@ -38,11 +38,11 @@
  * @param isAssociative	Whether the table is associative.
  */
 Table::Table(QString name, QString uiName, bool isAssociative) :
-		rowChangeListener(nullptr),
-		name(name),
-		uiName(uiName),
-		isAssociative(isAssociative),
-		buffer(TableBuffer())
+	rowChangeListener(nullptr),
+	name(name),
+	uiName(uiName),
+	isAssociative(isAssociative),
+	buffer(TableBuffer())
 {}
 
 /**

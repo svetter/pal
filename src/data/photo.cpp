@@ -29,11 +29,11 @@
  * Creates a new empty photo object with invalid values.
  */
 Photo::Photo() :
-		photoID(ItemID()),
-		ascentID(ItemID()),
-		sortIndex(-1),
-		filepath(QString()),
-		description(QString())
+	photoID(ItemID()),
+	ascentID(ItemID()),
+	sortIndex(-1),
+	filepath(QString()),
+	description(QString())
 {}
 
 /**
@@ -46,11 +46,11 @@ Photo::Photo() :
  * @param description	The description of the photo, if specified. Empty QString otherwise.
  */
 Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, QString description) :
-		photoID(photoID),
-		ascentID(ascentID),
-		sortIndex(sortIndex),
-		filepath(filepath),
-		description(description)
+	photoID(photoID),
+	ascentID(ascentID),
+	sortIndex(sortIndex),
+	filepath(filepath),
+	description(description)
 {}
 
 /**
@@ -59,12 +59,12 @@ Photo::Photo(ItemID photoID, ItemID ascentID, int sortIndex, QString filepath, Q
  * @param originalPhoto	The photo object to copy.
  */
 Photo::Photo(const Photo& originalPhoto) :
-		QObject(),
-		photoID(originalPhoto.photoID),
-		ascentID(originalPhoto.ascentID),
-		sortIndex(originalPhoto.sortIndex),
-		filepath(originalPhoto.filepath),
-		description(originalPhoto.description)
+	QObject(),
+	photoID(originalPhoto.photoID),
+	ascentID(originalPhoto.ascentID),
+	sortIndex(originalPhoto.sortIndex),
+	filepath(originalPhoto.filepath),
+	description(originalPhoto.description)
 {}
 
 /**

@@ -38,14 +38,14 @@
  * @param wikiLink	A link to a Wikipedia page about the peak, if specified. Empty QString otherwise.
  */
 Peak::Peak(ItemID peakID, QString& name, int height, bool volcano, ItemID regionID, QString& mapsLink, QString& earthLink, QString& wikiLink) :
-		peakID(peakID),
-		name(name),
-		height(height),
-		volcano(volcano),
-		regionID(regionID),
-		mapsLink(mapsLink),
-		earthLink(earthLink),
-		wikiLink(wikiLink)
+	peakID(peakID),
+	name(name),
+	height(height),
+	volcano(volcano),
+	regionID(regionID),
+	mapsLink(mapsLink),
+	earthLink(earthLink),
+	wikiLink(wikiLink)
 {}
 
 /**

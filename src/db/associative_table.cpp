@@ -38,9 +38,9 @@
  * @param foreignKeyColumn2		The second primary and foreign key column.
  */
 AssociativeTable::AssociativeTable(QString name, QString uiName, PrimaryKeyColumn* foreignKeyColumn1, PrimaryKeyColumn* foreignKeyColumn2) :
-		Table(name, uiName, true),
-		column1(new PrimaryForeignKeyColumn(this, foreignKeyColumn1->name, foreignKeyColumn1->uiName, foreignKeyColumn1)),
-		column2(new PrimaryForeignKeyColumn(this, foreignKeyColumn2->name, foreignKeyColumn2->uiName, foreignKeyColumn2))
+	Table(name, uiName, true),
+	column1(new PrimaryForeignKeyColumn(this, foreignKeyColumn1->name, foreignKeyColumn1->uiName, foreignKeyColumn1)),
+	column2(new PrimaryForeignKeyColumn(this, foreignKeyColumn2->name, foreignKeyColumn2->uiName, foreignKeyColumn2))
 {
 	assert(foreignKeyColumn1->primaryKey && foreignKeyColumn1->type == DataType::ID);
 	assert(foreignKeyColumn2->primaryKey && foreignKeyColumn2->type == DataType::ID);

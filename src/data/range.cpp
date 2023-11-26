@@ -35,9 +35,9 @@
  * @param continent	The continent the mountain range is located on, if specified. -1 otherwise.
  */
 Range::Range(ItemID rangeID, QString& name, int continent) :
-		rangeID(rangeID),
-		name(name),
-		continent(continent)
+	rangeID(rangeID),
+	name(name),
+	continent(continent)
 {}
 
 /**

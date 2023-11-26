@@ -47,20 +47,20 @@
  * most recently opened database file, if present.
  */
 MainWindow::MainWindow() :
-		QMainWindow(nullptr),
-		Ui_MainWindow(),
-		projectOpen(false),
-		db(Database()),
-		openRecentActions(QList<QAction*>()),
-		columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr), columnContextMenuRestoreColumnMenu(nullptr),
-		tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
-		shortcuts(QList<QShortcut*>()),
-		statusBarTableSizeLabel(new QLabel(statusbar)),
-		statusBarFiltersLabel(new QLabel(statusbar)),
-		typesHandler(nullptr),
-		showDebugTableViews(DEBUG_TABLE_TABS),
-		photosDebugTableView(nullptr),
-		participatedDebugTableView(nullptr)
+	QMainWindow(nullptr),
+	Ui_MainWindow(),
+	projectOpen(false),
+	db(Database()),
+	openRecentActions(QList<QAction*>()),
+	columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr), columnContextMenuRestoreColumnMenu(nullptr),
+	tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
+	shortcuts(QList<QShortcut*>()),
+	statusBarTableSizeLabel(new QLabel(statusbar)),
+	statusBarFiltersLabel(new QLabel(statusbar)),
+	typesHandler(nullptr),
+	showDebugTableViews(DEBUG_TABLE_TABS),
+	photosDebugTableView(nullptr),
+	participatedDebugTableView(nullptr)
 {
 	setupUi(this);
 	createTypesHandler();

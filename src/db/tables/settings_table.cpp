@@ -31,11 +31,11 @@
  * Creates a new SettingsTable.
  */
 SettingsTable::SettingsTable() :
-		Table("ProjectSettings", tr("Project settings"), false),
-		//													name				uiName							type	nullable
-		primaryKeyColumn	(new PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
-		settingKeyColumn	(new ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
-		settingValueColumn	(new ValueColumn		(this,	"settingValue",		tr("Project setting value"),	String,	true))
+	Table("ProjectSettings", tr("Project settings"), false),
+	//													name				uiName							type	nullable
+	primaryKeyColumn	(new PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
+	settingKeyColumn	(new ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
+	settingValueColumn	(new ValueColumn		(this,	"settingValue",		tr("Project setting value"),	String,	true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(settingKeyColumn);

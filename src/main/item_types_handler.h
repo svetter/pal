@@ -145,44 +145,44 @@ public:
 	 * @param openDeleteItemsDialogAndExecuteMethod	The method opening the dialog for deleting an item.
 	 */
 	inline ItemTypeMapper(
-			PALItemType			type,
-			QString				name,
-			NormalTable*		baseTable,
-			CompositeTable*		compTable,
-			QWidget*			tab,
-			QTableView*			tableView,
-			QTableView*			debugTableView,
-			QAction* const		newItemAction,
-			QPushButton* const	newItemButton,
-			ProjectMultiSetting<int>*		columnWidthsSetting,
-			ProjectMultiSetting<int>*		columnOrderSetting,
-			ProjectMultiSetting<bool>*		hiddenColumnsSetting,
-			const ProjectSetting<QString>*	sortingSetting,
-			const Setting<QRect>*			dialogGeometrySetting,
-			BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
-			BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
-			void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
-			void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>)
-			) :
-			type									(type),
-			name									(name),
-			baseTable								(baseTable),
-			compTable								(compTable),
-			tab										(tab),
-			tableView								(tableView),
-			debugTableView							(debugTableView),
-			newItemAction							(newItemAction),
-			newItemButton							(newItemButton),
-			dialogGeometrySetting					(dialogGeometrySetting),
-			columnWidthsSetting						(columnWidthsSetting),
-			columnOrderSetting						(columnOrderSetting),
-			hiddenColumnsSetting					(hiddenColumnsSetting),
-			sortingSetting							(sortingSetting),
-			openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
-			openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
-			openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
-			openDeleteItemsDialogAndExecuteMethod	(openDeleteItemsDialogAndExecuteMethod),
-			hasBeenOpened							(false)
+		PALItemType						type,
+		QString							name,
+		NormalTable*					baseTable,
+		CompositeTable*					compTable,
+		QWidget*						tab,
+		QTableView*						tableView,
+		QTableView*						debugTableView,
+		QAction* const					newItemAction,
+		QPushButton* const				newItemButton,
+		ProjectMultiSetting<int>*		columnWidthsSetting,
+		ProjectMultiSetting<int>*		columnOrderSetting,
+		ProjectMultiSetting<bool>*		hiddenColumnsSetting,
+		const ProjectSetting<QString>*	sortingSetting,
+		const Setting<QRect>*			dialogGeometrySetting,
+		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
+		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
+		void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
+		void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>)
+	) :
+		type									(type),
+		name									(name),
+		baseTable								(baseTable),
+		compTable								(compTable),
+		tab										(tab),
+		tableView								(tableView),
+		debugTableView							(debugTableView),
+		newItemAction							(newItemAction),
+		newItemButton							(newItemButton),
+		dialogGeometrySetting					(dialogGeometrySetting),
+		columnWidthsSetting						(columnWidthsSetting),
+		columnOrderSetting						(columnOrderSetting),
+		hiddenColumnsSetting					(hiddenColumnsSetting),
+		sortingSetting							(sortingSetting),
+		openNewItemDialogAndStoreMethod			(openNewItemDialogAndStoreMethod),
+		openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
+		openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
+		openDeleteItemsDialogAndExecuteMethod	(openDeleteItemsDialogAndExecuteMethod),
+		hasBeenOpened							(false)
 	{}
 	
 	/**
@@ -265,13 +265,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::ascentDialog_geometry,
-				&openNewAscentDialogAndStore,
-				&openDuplicateAscentDialogAndStore,
-				&openEditAscentDialogAndStore,
-				&openDeleteAscentsDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::ascentDialog_geometry,
+			&openNewAscentDialogAndStore,
+			&openDuplicateAscentDialogAndStore,
+			&openEditAscentDialogAndStore,
+			&openDeleteAscentsDialogAndExecute
+		)
 	{}
 };
 
@@ -291,13 +291,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::peakDialog_geometry,
-				&openNewPeakDialogAndStore,
-				&openDuplicatePeakDialogAndStore,
-				&openEditPeakDialogAndStore,
-				&openDeletePeaksDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::peakDialog_geometry,
+			&openNewPeakDialogAndStore,
+			&openDuplicatePeakDialogAndStore,
+			&openEditPeakDialogAndStore,
+			&openDeletePeaksDialogAndExecute
+		)
 	{}
 };
 
@@ -317,13 +317,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::tripDialog_geometry,
-				&openNewTripDialogAndStore,
-				nullptr,
-				&openEditTripDialogAndStore,
-				&openDeleteTripsDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::tripDialog_geometry,
+			&openNewTripDialogAndStore,
+			nullptr,
+			&openEditTripDialogAndStore,
+			&openDeleteTripsDialogAndExecute
+		)
 	{}
 };
 
@@ -343,13 +343,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::hikerDialog_geometry,
-				&openNewHikerDialogAndStore,
-				nullptr,
-				&openEditHikerDialogAndStore,
-				&openDeleteHikersDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::hikerDialog_geometry,
+			&openNewHikerDialogAndStore,
+			nullptr,
+			&openEditHikerDialogAndStore,
+			&openDeleteHikersDialogAndExecute
+		)
 	{}
 };
 
@@ -369,13 +369,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::regionDialog_geometry,
-				&openNewRegionDialogAndStore,
-				nullptr,
-				&openEditRegionDialogAndStore,
-				&openDeleteRegionsDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::regionDialog_geometry,
+			&openNewRegionDialogAndStore,
+			nullptr,
+			&openEditRegionDialogAndStore,
+			&openDeleteRegionsDialogAndExecute
+		)
 	{}
 };
 
@@ -395,13 +395,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::rangeDialog_geometry,
-				&openNewRangeDialogAndStore,
-				nullptr,
-				&openEditRangeDialogAndStore,
-				&openDeleteRangesDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::rangeDialog_geometry,
+			&openNewRangeDialogAndStore,
+			nullptr,
+			&openEditRangeDialogAndStore,
+			&openDeleteRangesDialogAndExecute
+		)
 	{}
 };
 
@@ -421,13 +421,13 @@ public:
 	 * @param newItemButton		The button in the main window for creating a new ascent.
 	 */
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-			ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-				&Settings::countryDialog_geometry,
-				&openNewCountryDialogAndStore,
-				nullptr,
-				&openEditCountryDialogAndStore,
-				&openDeleteCountriesDialogAndExecute
-			)
+		ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+			&Settings::countryDialog_geometry,
+			&openNewCountryDialogAndStore,
+			nullptr,
+			&openEditCountryDialogAndStore,
+			&openDeleteCountriesDialogAndExecute
+		)
 	{}
 };
 
@@ -457,28 +457,28 @@ public:
 	
 	/** Creates a new ItemTypesHandler instance. */
 	inline ItemTypesHandler(bool showDebugTableViews,
-			AscentMapper*		ascentMapper,
-			PeakMapper*			peakMapper,
-			TripMapper*			tripMapper,
-			HikerMapper*		hikerMapper,
-			RegionMapper*		regionMapper,
-			RangeMapper*		rangeMapper,
-			CountryMapper*		countryMapper,
-			PhotosTable*		photosTable,
-			ParticipatedTable*	participatedTable
-			) :
-			showDebugTableViews(showDebugTableViews),
-			mappers({
-				{ItemTypeAscent,	ascentMapper},
-				{ItemTypePeak,		peakMapper},
-				{ItemTypeTrip,		tripMapper},
-				{ItemTypeHiker,		hikerMapper},
-				{ItemTypeRegion,	regionMapper},
-				{ItemTypeRange,		rangeMapper},
-				{ItemTypeCountry,	countryMapper},
-			}),
-			photosTable(photosTable),
-			participatedTable(participatedTable)
+		AscentMapper*		ascentMapper,
+		PeakMapper*			peakMapper,
+		TripMapper*			tripMapper,
+		HikerMapper*		hikerMapper,
+		RegionMapper*		regionMapper,
+		RangeMapper*		rangeMapper,
+		CountryMapper*		countryMapper,
+		PhotosTable*		photosTable,
+		ParticipatedTable*	participatedTable
+	) :
+		showDebugTableViews(showDebugTableViews),
+		mappers({
+			{ItemTypeAscent,	ascentMapper},
+			{ItemTypePeak,		peakMapper},
+			{ItemTypeTrip,		tripMapper},
+			{ItemTypeHiker,		hikerMapper},
+			{ItemTypeRegion,	regionMapper},
+			{ItemTypeRange,		rangeMapper},
+			{ItemTypeCountry,	countryMapper},
+		}),
+		photosTable(photosTable),
+		participatedTable(participatedTable)
 	{}
 	
 	/**

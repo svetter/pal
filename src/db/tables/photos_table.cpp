@@ -35,12 +35,12 @@
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  */
 PhotosTable::PhotosTable(PrimaryKeyColumn* foreignAscentIDColumn) :
-		NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
-		//													name			uiName				type		nullable	foreignColumn
-		ascentIDColumn		(new ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
-		sortIndexColumn		(new ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
-		filepathColumn		(new ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
-		descriptionColumn	(new ValueColumn		(this,	"description",	tr("Description"),	String,		true))
+	NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
+	//													name			uiName				type		nullable	foreignColumn
+	ascentIDColumn		(new ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
+	sortIndexColumn		(new ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
+	filepathColumn		(new ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
+	descriptionColumn	(new ValueColumn		(this,	"description",	tr("Description"),	String,		true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);

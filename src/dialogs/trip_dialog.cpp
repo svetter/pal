@@ -42,8 +42,8 @@
  * @param init		The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  */
 TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Trip* init) :
-		ItemDialog(parent, db, purpose),
-		init(init)
+	ItemDialog(parent, db, purpose),
+	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));

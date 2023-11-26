@@ -39,9 +39,9 @@
  * @param db		The project database.
  */
 RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
-		QDialog(parent),
-		db(db),
-		running(false)
+	QDialog(parent),
+	db(db),
+	running(false)
 {
 	setupUi(this);
 	

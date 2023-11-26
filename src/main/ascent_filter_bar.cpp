@@ -36,13 +36,13 @@
  * @param parent The parent widget.
  */
 AscentFilterBar::AscentFilterBar(QWidget* parent) :
-		QWidget(parent),
-		mainWindow(nullptr),
-		db(nullptr),
-		compAscents(nullptr),
-		selectableRangeIDs(QList<ValidItemID>()),
-		selectableHikerIDs(QList<ValidItemID>()),
-		temporarilyIgnoreChangeEvents(false)
+	QWidget(parent),
+	mainWindow(nullptr),
+	db(nullptr),
+	compAscents(nullptr),
+	selectableRangeIDs(QList<ValidItemID>()),
+	selectableHikerIDs(QList<ValidItemID>()),
+	temporarilyIgnoreChangeEvents(false)
 {
 	setupUi(this);
 	

@@ -42,8 +42,8 @@
  * @param init		The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  */
 CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpose, Country* init) :
-		ItemDialog(parent, db, purpose),
-		init(init)
+	ItemDialog(parent, db, purpose),
+	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));

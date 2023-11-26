@@ -33,9 +33,9 @@
  * @param defaultValue	The default value for the setting.
  */
 GenericProjectSetting::GenericProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue) :
-		table(table),
-		key(key),
-		defaultValue(defaultValue)
+	table(table),
+	key(key),
+	defaultValue(defaultValue)
 {}
 
 
@@ -120,7 +120,7 @@ void GenericProjectSetting::remove(QWidget* parent) const
  */
 template<typename T>
 ProjectSetting<T>::ProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue) :
-		GenericProjectSetting(table, key, defaultValue)
+	GenericProjectSetting(table, key, defaultValue)
 {
 	assert(defaultValue.canConvert<T>());
 }
@@ -167,10 +167,10 @@ T ProjectSetting<T>::getDefault() const
  */
 template<typename T>
 ProjectMultiSetting<T>::ProjectMultiSetting(SettingsTable* table, const QString baseKey, QVariant defaultValue) :
-		settings(QMap<QString, ProjectSetting<T>*>()),
-		table(table),
-		baseKey(baseKey),
-		defaultValue(defaultValue)
+	settings(QMap<QString, ProjectSetting<T>*>()),
+	table(table),
+	baseKey(baseKey),
+	defaultValue(defaultValue)
 {}
 
 /**

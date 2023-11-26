@@ -32,8 +32,8 @@
  * @param name		The name of the hiker, if specified. Empty QString otherwise.
  */
 Hiker::Hiker(ItemID hikerID, QString& name) :
-		hikerID(hikerID),
-		name(name)
+	hikerID(hikerID),
+	name(name)
 {}
 
 /**

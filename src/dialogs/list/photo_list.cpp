@@ -32,8 +32,8 @@
  * Creates a new PhotosOfAscent object with no photos.
  */
 PhotosOfAscent::PhotosOfAscent() :
-		QAbstractItemModel(),
-		list(QList<Photo>())
+	QAbstractItemModel(),
+	list(QList<Photo>())
 {}
 
 

@@ -40,8 +40,8 @@
  * @param primaryKeyColumnUIName	The name of the primary key column as it should be displayed in the UI.
  */
 NormalTable::NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
-		Table(name, uiName, false),
-		primaryKeyColumn(new PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
+	Table(name, uiName, false),
+	primaryKeyColumn(new PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
 {}
 
 /**

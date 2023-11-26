@@ -43,8 +43,8 @@
  * @param init		The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
 RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init) :
-		ItemDialog(parent, db, purpose),
-		init(init)
+	ItemDialog(parent, db, purpose),
+	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));

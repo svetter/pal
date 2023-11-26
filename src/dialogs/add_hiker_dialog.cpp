@@ -38,9 +38,9 @@
  * @param db		The project database.
  */
 AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
-		QDialog(parent),
-		db(db),
-		selectableHikerIDs(QList<ValidItemID>())
+	QDialog(parent),
+	db(db),
+	selectableHikerIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setFixedHeight(minimumSizeHint().height());

@@ -38,9 +38,9 @@
  * @param parent The parent window.
  */
 SettingsWindow::SettingsWindow(QWidget* parent) :
-		QDialog(parent),
-		parent(parent),
-		languages(getSupportedLanguages())
+	QDialog(parent),
+	parent(parent),
+	languages(getSupportedLanguages())
 {
 	setupUi(this);
 	

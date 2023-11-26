@@ -34,10 +34,10 @@
  * Creates a new RangesTable.
  */
 RangesTable::RangesTable() :
-		NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
-		//											name			uiName				type	nullable	enumNames
-		nameColumn		(new ValueColumn	(this,	"name",			tr("Name"),			String,	false)),
-		continentColumn	(new ValueColumn	(this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))
+	NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
+	//											name			uiName				type	nullable	enumNames
+	nameColumn		(new ValueColumn	(this,	"name",			tr("Name"),			String,	false)),
+	continentColumn	(new ValueColumn	(this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

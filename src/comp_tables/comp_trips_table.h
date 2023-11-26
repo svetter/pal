@@ -67,18 +67,18 @@ public:
 	 * @param tableView	The trips table view in the main window
 	 */
 	inline CompositeTripsTable(Database* db, QTableView* tableView) :
-			CompositeTable(db, db->tripsTable, tableView),
-			//																		name				uiName					suffix			fold op			[breadcrumbs (column reference chain) +] content column
-			indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db->tripsTable->startDateColumn,		Qt::AscendingOrder},					{db->tripsTable->endDateColumn,				Qt::AscendingOrder} })),
-			nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->nameColumn)),
-			startDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->startDateColumn)),
-			endDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->endDateColumn)),
-			lengthColumn			(new const DifferenceCompositeColumn	(this,	"length",			tr("Length"),			tr(" days"),					db->tripsTable->endDateColumn,			db->tripsTable->startDateColumn)),
-			numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} })),
-			avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
-			listHikersColumn		(new const HikerListCompositeColumn		(this,	"listHikers",		tr("Participants"),										{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
+		CompositeTable(db, db->tripsTable, tableView),
+		//																		name				uiName					suffix			fold op			[breadcrumbs (column reference chain) +] content column
+		indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db->tripsTable->startDateColumn,		Qt::AscendingOrder},					{db->tripsTable->endDateColumn,				Qt::AscendingOrder} })),
+		nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->nameColumn)),
+		startDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->startDateColumn)),
+		endDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->endDateColumn)),
+		lengthColumn			(new const DifferenceCompositeColumn	(this,	"length",			tr("Length"),			tr(" days"),					db->tripsTable->endDateColumn,			db->tripsTable->startDateColumn)),
+		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} })),
+		avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+		maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+		sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn} },		db->ascentsTable->elevationGainColumn)),
+		listHikersColumn		(new const HikerListCompositeColumn		(this,	"listHikers",		tr("Participants"),										{ {db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(nameColumn);

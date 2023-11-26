@@ -66,8 +66,8 @@ public:
 	 * @param defaultValue	The default value for the setting.
 	 */
 	inline Setting(const QString& key, QVariant defaultValue = T()) :
-			key(key),
-			defaultValue(defaultValue)
+		key(key),
+		defaultValue(defaultValue)
 	{
 		assert(defaultValue.canConvert<T>());
 	}

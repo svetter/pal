@@ -35,11 +35,11 @@
  * @param description	The description of the trip, if specified. Empty QString otherwise.
  */
 Trip::Trip(ItemID tripID, QString& name, QDate& startDate, QDate& endDate, QString& description) :
-		tripID(tripID),
-		name(name),
-		startDate(startDate),
-		endDate(endDate),
-		description(description)
+	tripID(tripID),
+	name(name),
+	startDate(startDate),
+	endDate(endDate),
+	description(description)
 {}
 
 /**

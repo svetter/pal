@@ -34,15 +34,15 @@
  * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
  */
 PeaksTable::PeaksTable(PrimaryKeyColumn* foreignRegionIDColumn) :
-		NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
-		//										name					uiName						type		nullable	foreignColumn
-		nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,		false)),
-		heightColumn	(new ValueColumn		(this,	"height",		tr("Height"),				Integer,	true)),
-		volcanoColumn	(new ValueColumn		(this,	"volcano",		tr("Volcano"),				Bit,		false)),
-		regionIDColumn	(new ForeignKeyColumn	(this,	"regionID",		tr("Region ID"),						true,		foreignRegionIDColumn)),
-		mapsLinkColumn	(new ValueColumn		(this,	"mapsLink",		tr("Google Maps link"),		String,		true)),
-		earthLinkColumn	(new ValueColumn		(this,	"earthLink",	tr("Google Earth link"),	String,		true)),
-		wikiLinkColumn	(new ValueColumn		(this,	"wikiLink",		tr("Wikipedia link"),		String,		true))
+	NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
+	//										name					uiName						type		nullable	foreignColumn
+	nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,		false)),
+	heightColumn	(new ValueColumn		(this,	"height",		tr("Height"),				Integer,	true)),
+	volcanoColumn	(new ValueColumn		(this,	"volcano",		tr("Volcano"),				Bit,		false)),
+	regionIDColumn	(new ForeignKeyColumn	(this,	"regionID",		tr("Region ID"),						true,		foreignRegionIDColumn)),
+	mapsLinkColumn	(new ValueColumn		(this,	"mapsLink",		tr("Google Maps link"),		String,		true)),
+	earthLinkColumn	(new ValueColumn		(this,	"earthLink",	tr("Google Earth link"),	String,		true)),
+	wikiLinkColumn	(new ValueColumn		(this,	"wikiLink",		tr("Wikipedia link"),		String,		true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);

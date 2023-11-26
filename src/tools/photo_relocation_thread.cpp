@@ -34,12 +34,12 @@
  * @param newPrefix	The new prefix to insert in the paths.
  */
 PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QString oldPrefix, QString newPrefix) :
-		QThread(parent),
-		db(db),
-		oldPrefix(oldPrefix),
-		newPrefix(newPrefix),
-		workloadSize(-1),
-		abortWasCalled(false)
+	QThread(parent),
+	db(db),
+	oldPrefix(oldPrefix),
+	newPrefix(newPrefix),
+	workloadSize(-1),
+	abortWasCalled(false)
 {}
 
 

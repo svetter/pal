@@ -44,19 +44,19 @@
  * @param viewRowIndex	The view row index of the ascent to open in the viewer.
  */
 AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex) :
-		QDialog(parent),
-		mainWindow(parent),
-		db(db),
-		typesHandler(typesHandler),
-		compAscents((CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable),
-		compPeaks((CompositePeaksTable*) typesHandler->get(ItemTypePeak)->compTable),
-		compTrips((CompositeTripsTable*) typesHandler->get(ItemTypeTrip)->compTable),
-		currentViewRowIndex(viewRowIndex),
-		currentAscentID(ItemID()),
-		photos(QList<Photo>()),
-		descriptionEditable(false),
-		photoDescriptionEditable(false),
-		infoContextMenu(QMenu(this))
+	QDialog(parent),
+	mainWindow(parent),
+	db(db),
+	typesHandler(typesHandler),
+	compAscents((CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable),
+	compPeaks((CompositePeaksTable*) typesHandler->get(ItemTypePeak)->compTable),
+	compTrips((CompositeTripsTable*) typesHandler->get(ItemTypeTrip)->compTable),
+	currentViewRowIndex(viewRowIndex),
+	currentAscentID(ItemID()),
+	photos(QList<Photo>()),
+	descriptionEditable(false),
+	photoDescriptionEditable(false),
+	infoContextMenu(QMenu(this))
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));

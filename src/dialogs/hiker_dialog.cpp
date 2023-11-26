@@ -42,8 +42,8 @@
  * @param init		The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  */
 HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init) :
-		ItemDialog(parent, db, purpose),
-		init(init)
+	ItemDialog(parent, db, purpose),
+	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));

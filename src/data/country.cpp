@@ -32,8 +32,8 @@
  * @param name		The name of the country, if specified. Empty QString otherwise.
  */
 Country::Country(ItemID countryID, QString& name) :
-		countryID(countryID),
-		name(name)
+	countryID(countryID),
+	name(name)
 {}
 
 /**

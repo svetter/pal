@@ -34,10 +34,10 @@
  * @param countryID	The ID of the country the region belongs to, if specified. Invalid ItemID otherwise.
  */
 Region::Region(ItemID regionID, QString& name, ItemID rangeID, ItemID countryID) :
-		regionID(regionID),
-		name(name),
-		rangeID(rangeID),
-		countryID(countryID)
+	regionID(regionID),
+	name(name),
+	rangeID(rangeID),
+	countryID(countryID)
 {}
 
 /**

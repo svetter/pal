@@ -38,8 +38,8 @@
  * @param parent	The parent window.
  */
 DatabaseUpgrader::DatabaseUpgrader(Database* db, QWidget* parent) :
-		db(db),
-		parent(parent)
+	db(db),
+	parent(parent)
 {}
 
 

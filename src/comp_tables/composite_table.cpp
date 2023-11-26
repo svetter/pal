@@ -33,24 +33,24 @@
  * @param tableView	The view this table is displayed in.
  */
 CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView) :
-		QAbstractTableModel(),
-		db(db),
-		baseTable(baseTable),
-		tableView(tableView),
-		columns(QList<const CompositeColumn*>()),
-		firstFilterColumnIndex(-1),
-		exportColumns(QList<QPair<int, const CompositeColumn*>>()),
-		bufferInitialized(false),
-		buffer(TableBuffer()),
-		viewOrder(ViewOrderBuffer()),
-		currentSorting({nullptr, Qt::AscendingOrder}),
-		currentFilters(QSet<Filter>()),
-		dirtyColumns(QSet<const CompositeColumn*>()),
-		hiddenColumns(QSet<const CompositeColumn*>()),
-		updateImmediately(false),
-		tableToAutoResizeAfterCompute(nullptr),
-		name(baseTable->name),
-		uiName(baseTable->uiName)
+	QAbstractTableModel(),
+	db(db),
+	baseTable(baseTable),
+	tableView(tableView),
+	columns(QList<const CompositeColumn*>()),
+	firstFilterColumnIndex(-1),
+	exportColumns(QList<QPair<int, const CompositeColumn*>>()),
+	bufferInitialized(false),
+	buffer(TableBuffer()),
+	viewOrder(ViewOrderBuffer()),
+	currentSorting({nullptr, Qt::AscendingOrder}),
+	currentFilters(QSet<Filter>()),
+	dirtyColumns(QSet<const CompositeColumn*>()),
+	hiddenColumns(QSet<const CompositeColumn*>()),
+	updateImmediately(false),
+	tableToAutoResizeAfterCompute(nullptr),
+	name(baseTable->name),
+	uiName(baseTable->uiName)
 {
 	baseTable->setRowChangeListener(this);
 }

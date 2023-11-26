@@ -37,12 +37,12 @@
  * @param typesHandler	The project item types handler.
  */
 DataExportDialog::DataExportDialog(QWidget* parent, const ItemTypesHandler* typesHandler) :
-		QDialog(parent),
-		typesHandler(typesHandler),
-		running(false),
-		aborted(false),
-		extensions(QMap<ExportFormat, QString>()),
-		csvSeparators(QList<QString>())
+	QDialog(parent),
+	typesHandler(typesHandler),
+	running(false),
+	aborted(false),
+	extensions(QMap<ExportFormat, QString>()),
+	csvSeparators(QList<QString>())
 {
 	setupUi(this);
 	

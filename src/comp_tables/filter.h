@@ -52,10 +52,10 @@ public:
 	 * @param value			The value to use for filtering rows.
 	 */
 	inline Filter(const CompositeColumn* column, QVariant value) :
-			column(column),
-			value(value),
-			hasSecond(false),
-			secondValue(QVariant())
+		column(column),
+		value(value),
+		hasSecond(false),
+		secondValue(QVariant())
 	{}
 
 	/**
@@ -66,10 +66,10 @@ public:
 	 * @param secondValue	The second value to use for filtering rows.
 	 */
 	inline Filter(const CompositeColumn* column, QVariant value, QVariant secondValue) :
-			column(column),
-			value(value),
-			hasSecond(true),
-			secondValue(secondValue)
+		column(column),
+		value(value),
+		hasSecond(true),
+		secondValue(secondValue)
 	{}
 };
 

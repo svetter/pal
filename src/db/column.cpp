@@ -46,16 +46,16 @@
  * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
 Column::Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignColumn, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		table(table),
-		name(name),
-		uiName(uiName),
-		type(type),
-		primaryKey(primaryKey),
-		foreignColumn(foreignColumn),
-		nullable(nullable),
-		enumNames(enumNames),
-		enumNameLists(enumNameLists),
-		changeListeners(QSet<const CompositeColumn*>())
+	table(table),
+	name(name),
+	uiName(uiName),
+	type(type),
+	primaryKey(primaryKey),
+	foreignColumn(foreignColumn),
+	nullable(nullable),
+	enumNames(enumNames),
+	enumNameLists(enumNameLists),
+	changeListeners(QSet<const CompositeColumn*>())
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
 	assert(table->isAssociative == (primaryKey && foreignColumn));
@@ -230,7 +230,7 @@ QSet<const CompositeColumn*> Column::getChangeListeners() const
  * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
 ValueColumn::ValueColumn(const Table* table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
-		Column(table, name, uiName, false, nullptr, type, nullable, enumNames, enumNameLists)
+	Column(table, name, uiName, false, nullptr, type, nullable, enumNames, enumNameLists)
 {}
 
 
@@ -243,7 +243,7 @@ ValueColumn::ValueColumn(const Table* table, QString name, QString uiName, DataT
  * @param uiName	The name of the column as it should be displayed in the UI.
  */
 PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiName) :
-		Column(table, name, uiName, true, nullptr, ID, false)
+	Column(table, name, uiName, true, nullptr, ID, false)
 {}
 
 
@@ -259,7 +259,7 @@ PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiN
  * @param primaryKey	Whether the column contains primary keys.
  */
 ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn* foreignColumn, bool primaryKey) :
-		Column(table, name, uiName, primaryKey, foreignColumn, ID, nullable)
+	Column(table, name, uiName, primaryKey, foreignColumn, ID, nullable)
 {}
 
 
@@ -273,7 +273,7 @@ ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiN
  * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  */
 PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn* foreignColumn) :
-		ForeignKeyColumn(table, name, uiName, false, foreignColumn, true)
+	ForeignKeyColumn(table, name, uiName, false, foreignColumn, true)
 {}
 
 

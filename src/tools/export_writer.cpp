@@ -36,9 +36,9 @@
  * for the export.
  */
 ExportWriter::ExportWriter(ExportMode mode, const QString& filepath) :
-		mode(mode),
-		filepath(filepath),
-		file(nullptr)
+	mode(mode),
+	filepath(filepath),
+	file(nullptr)
 {}
 
 /**
@@ -124,11 +124,11 @@ QString ExportWriter::insertBeforeExtension(const QString& baseFilepath, const Q
  * @param separator	The separator to use between columns.
  */
 CsvExportWriter::CsvExportWriter(ExportMode mode, const QString& filepath, const QString& separator) :
-		ExportWriter(mode, filepath),
-		separator(separator),
-		fileWriter(nullptr),
-		numTables(-1),
-		afterFirstItemInRow(false)
+	ExportWriter(mode, filepath),
+	separator(separator),
+	fileWriter(nullptr),
+	numTables(-1),
+	afterFirstItemInRow(false)
 {
 	assert(!separator.isNull());
 	assert(separator.size() == 1);
@@ -330,8 +330,8 @@ void CsvExportWriter::endExport()
  * @param filepath	The path and filename to use for the export.
  */
 FodsExportWriter::FodsExportWriter(ExportMode mode, const QString& filepath) :
-		ExportWriter(mode, filepath),
-		xmlWriter(nullptr)
+	ExportWriter(mode, filepath),
+	xmlWriter(nullptr)
 {}
 
 /**

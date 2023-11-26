@@ -43,9 +43,9 @@
  * @param init		The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
 PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init) :
-		ItemDialog(parent, db, purpose),
-		init(init),
-		selectableRegionIDs(QList<ValidItemID>())
+	ItemDialog(parent, db, purpose),
+	init(init),
+	selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));

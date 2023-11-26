@@ -44,10 +44,10 @@
  * @param init		The region data to initialize the dialog with and store as initial data. RegionDialog takes ownership of this pointer.
  */
 RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose, Region* init) :
-		ItemDialog(parent, db, purpose),
-		init(init),
-		selectableRangeIDs(QList<ValidItemID>()),
-		selectableCountryIDs(QList<ValidItemID>())
+	ItemDialog(parent, db, purpose),
+	init(init),
+	selectableRangeIDs(QList<ValidItemID>()),
+	selectableCountryIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));

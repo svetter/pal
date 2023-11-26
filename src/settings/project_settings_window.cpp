@@ -41,11 +41,11 @@
  * @param firstOpen	Indicates that the window is being opened as part of the project creation process.
  */
 ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen) :
-		QDialog(parent),
-		parent(parent),
-		db(db),
-		firstOpen(firstOpen),
-		selectableHikerIDs(QList<ValidItemID>())
+	QDialog(parent),
+	parent(parent),
+	db(db),
+	firstOpen(firstOpen),
+	selectableHikerIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setFixedSize(sizeHint());

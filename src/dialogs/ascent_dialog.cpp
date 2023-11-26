@@ -51,13 +51,13 @@
  * @param init		The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
 AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
-		ItemDialog(parent, db, purpose),
-		init(init),
-		selectableRegionIDs(QList<ValidItemID>()),
-		selectablePeakIDs(QList<ValidItemID>()),
-		selectableTripIDs(QList<ValidItemID>()),
-		hikersModel(HikersOnAscent()),
-		photosModel(PhotosOfAscent())
+	ItemDialog(parent, db, purpose),
+	init(init),
+	selectableRegionIDs(QList<ValidItemID>()),
+	selectablePeakIDs(QList<ValidItemID>()),
+	selectableTripIDs(QList<ValidItemID>()),
+	hikersModel(HikersOnAscent()),
+	photosModel(PhotosOfAscent())
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
