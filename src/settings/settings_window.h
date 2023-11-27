@@ -41,6 +41,9 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	
 	/** Lists of avalable languages, as codes and native names. */
 	QPair<QStringList, QStringList> languages;
+	QPair<QStringList, QStringList> styles;
+	
+	bool liveStyleUpdates;
 	
 public:
 	SettingsWindow(QWidget* parent);
@@ -65,6 +68,10 @@ private slots:
 	void handle_loadDefaults();
 	
 private:
+	void applySelectedStyle();
+	void applyStoredStyle();
+	void applyStyle(QString styleString);
+	
 	void reject() override;
 };
 

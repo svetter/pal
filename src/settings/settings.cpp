@@ -23,13 +23,17 @@
 
 #include "settings.h"
 
+#include "src/settings/settings_window.h"
+
+#include <QStyleFactory>
+
 
 
 /**
- * Lists all languages supported by the application and returns a two lists of the language codes
- * and the native language names, respectively.
+ * Lists all languages supported by the application and returns two lists of the language codes and
+ * the native language names, respectively.
  * 
- * @return A pair of two lists, the first containing the language codes and the second containing the native language names.
+ * @return	A pair of two lists, the first containing the language codes and the second containing the native language names.
  */
 QPair<QStringList, QStringList> getSupportedLanguages()
 {
@@ -50,7 +54,7 @@ QPair<QStringList, QStringList> getSupportedLanguages()
  * Determines which language should be used by default for the application, based on the user's
  * system language and the languages supported by the application.
  * 
- * @return The language code of the language that should be used by default on the current system.
+ * @return	The language code of the language that should be used by default on the current system.
  */
 QString getDefaultLanguageCode()
 {
@@ -70,14 +74,40 @@ QString getDefaultLanguageCode()
 
 
 
+/**
+ * Lists all styles supported by the application and returns two lists of the style codes and the
+ * translated style names, respectively.
+ * 
+ * @return	A pair of two lists, the first containing the style codes and the second containing the translated style names.
+ */
+QPair<QStringList, QStringList> getSupportedStyles()
+{
+	QStringList codes = QStyleFactory::keys();
+	codes.insert(0, "");
+	QStringList names = QStringList();
+	
+	for (const QString& code : codes) {
+		     if (code == "")				names.append(SettingsWindow::tr("Default"));
+		else if (code == "Fusion")			names.append(SettingsWindow::tr("Qt Fusion"));
+		else if (code == "windowsvista")	names.append(SettingsWindow::tr("Modern Windows"));
+		else if (code == "Windows")			names.append(SettingsWindow::tr("Classic Windows"));
+		else if (code == "macOS")			names.append(SettingsWindow::tr("MacOS"));
+		else								names.append(code);
+	}
+	
+	return {codes, names};
+}
+
+
+
 
 
 /**
  * Determines whether the settings file was last saved by a version of the application that is
  * older than the current version.
  * 
- * @param version The version of the application with which to compare the settings file version.
- * @return True if the settings file is older than the current version, false otherwise.
+ * @param version	The version of the application with which to compare the settings file version.
+ * @return			True if the settings file is older than the current version, false otherwise.
  */
 bool Settings::settingsOlderThan(QString version)
 {
@@ -132,7 +162,7 @@ void Settings::checkForVersionChange()
 /**
  * Returns a string containing the application's version number.
  * 
- * @return The application's version number in string form.
+ * @return	The application's version number in string form.
  */
 QString getAppVersion()
 {

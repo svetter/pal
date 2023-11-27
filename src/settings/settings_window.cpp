@@ -40,18 +40,21 @@
 SettingsWindow::SettingsWindow(QWidget* parent) :
 	QDialog(parent),
 	parent(parent),
-	languages(getSupportedLanguages())
+	languages(getSupportedLanguages()),
+	styles(getSupportedStyles()),
+	liveStyleUpdates(false)
 {
 	setupUi(this);
 	
 	restoreDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
 	
 	
-	connect(rememberWindowGeometryCheckbox,		&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
-	connect(ascentDateCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
-	connect(ascentTimeCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
-	connect(ascentElevationGainCheckbox,		&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
-	connect(peakHeightCheckbox,					&QCheckBox::stateChanged,	this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
+	connect(styleCombo,							&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedStyle);
+	connect(rememberWindowGeometryCheckbox,		&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
+	connect(ascentDateCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
+	connect(ascentTimeCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
+	connect(ascentElevationGainCheckbox,		&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
+	connect(peakHeightCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Save),			&QPushButton::clicked,	this,	&SettingsWindow::handle_save);
 	connect(bottomButtonBox->button(QDialogButtonBox::Apply),			&QPushButton::clicked,	this,	&SettingsWindow::handle_apply);
@@ -59,10 +62,14 @@ SettingsWindow::SettingsWindow(QWidget* parent) :
 	connect(bottomButtonBox->button(QDialogButtonBox::RestoreDefaults),	&QPushButton::clicked,	this,	&SettingsWindow::handle_loadDefaults);
 	
 	
-	languageCombo->addItems(languages.second);
+	languageCombo	->addItems(languages.second);
+	styleCombo		->addItems(styles.second);
 	
 	
 	loadSettings();
+	
+	// Live style updates disabled because a Qt bug resets table column widths when setting style
+	//liveStyleUpdates = true;
 }
 
 
@@ -80,6 +87,14 @@ void SettingsWindow::loadSettings()
 		languageIndex = languages.first.indexOf(language.getDefault());
 	}
 	languageCombo->setCurrentIndex(languageIndex);
+	
+	int styleIndex = styles.first.indexOf(uiStyle.get());
+	if (styleIndex < 0) {
+		qDebug() << "Couldn't parse style setting, reverting to default";
+		styleIndex = styles.first.indexOf(language.getDefault());
+		if (styleIndex < 0) styleIndex = 0;
+	}
+	styleCombo->setCurrentIndex(styleIndex);
 	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
@@ -118,6 +133,8 @@ void SettingsWindow::loadDefaults()
 {
 	int languageIndex = languages.first.indexOf(language.getDefault());
 	languageCombo->setCurrentIndex(languageIndex);
+	int styleIndex = styles.first.indexOf(uiStyle.getDefault());
+	styleCombo->setCurrentIndex(styleIndex);
 	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
@@ -160,6 +177,11 @@ void SettingsWindow::saveSettings()
 	int selectedLanguageIndex = languageCombo->currentIndex();
 	if (selectedLanguageIndex >= 0) {
 		language.set(languages.first.at(selectedLanguageIndex));
+	}
+	
+	int selectedStyleIndex = styleCombo->currentIndex();
+	if (selectedStyleIndex >= 0) {
+		uiStyle.set(styles.first.at(selectedStyleIndex));
 	}
 	
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
@@ -303,6 +325,8 @@ void SettingsWindow::handle_apply()
 void SettingsWindow::handle_cancel()
 {
 	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
+	setVisible(false);
+	applyStoredStyle();
 	QDialog::reject();
 }
 
@@ -314,6 +338,47 @@ void SettingsWindow::handle_cancel()
 void SettingsWindow::handle_loadDefaults()
 {
 	loadDefaults();
+	applySelectedStyle();
+}
+
+
+
+/**
+ * Parses the currently selected style from the style combo box and applies it if live style updates
+ * are enabled.
+ */
+void SettingsWindow::applySelectedStyle()
+{
+	if (!liveStyleUpdates) return;
+
+	int selectedStyleIndex = styleCombo->currentIndex();
+	if (selectedStyleIndex < 0) return;
+	QString selectedStyle = styles.first.at(selectedStyleIndex);
+	applyStyle(selectedStyle);
+}
+
+/**
+ * Fetchesthe style saved in the settings and applies it if live style updates are enabled.
+ */
+void SettingsWindow::applyStoredStyle()
+{
+	if (!liveStyleUpdates) return;
+
+	applyStyle(uiStyle.get());
+}
+
+/**
+ * Applies the given style to the application.
+ * 
+ * @param styleString	The style to apply.
+ */
+void SettingsWindow::applyStyle(QString styleString)
+{
+	if (styleString.isEmpty()) {
+		styleString = Settings::systemDefaultStyle;
+	}
+	QApplication* application = qobject_cast<QApplication*>(QCoreApplication::instance());
+	application->setStyle(styleString);
 }
 
 

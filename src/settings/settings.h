@@ -30,6 +30,8 @@
 #include <QRect>
 #include <QWidget>
 #include <QDirIterator>
+#include <QApplication>
+#include <QStyle>
 
 
 
@@ -40,6 +42,8 @@ inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScop
 
 QPair<QStringList, QStringList> getSupportedLanguages();
 QString getDefaultLanguageCode();
+
+QPair<QStringList, QStringList> getSupportedStyles();
 
 QString getAppVersion();
 bool isBelowVersion(QString versionToCheck, QString minimalVersion);
@@ -289,8 +293,11 @@ private:
  */
 class Settings {
 public:
+	inline static QString systemDefaultStyle;
+	
+	
 	// === APP VERSION ===
-
+	
 	/** The version of the application with which the settings file was last written. */
 	inline static const Setting<QString>	appVersion								= Setting<QString>	("appVersion",									getAppVersion());
 	
@@ -300,6 +307,10 @@ public:
 	// Language
 	/** The language in which text in the application is displayed. */
 	inline static const Setting<QString>	language								= Setting<QString>	("language",									getDefaultLanguageCode());
+	
+	// Application UI style
+	/** The style in which the application is displayed. */
+	inline static const Setting<QString>	uiStyle									= Setting<QString>	("uiStyle",										"");
 	
 	// General/global
 	/** Ask user for confirmation before deleting an item. */

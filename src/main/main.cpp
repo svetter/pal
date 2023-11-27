@@ -87,12 +87,15 @@ int main(int argc, char *argv[])
 {
 	QApplication application(argc, argv);
 	
-	if (argc >= 2) {
-		application.setStyle(argv[1]);
-	}
+	Settings::systemDefaultStyle = application.style()->objectName();
 	
 	// Update settings if necessary
 	Settings::checkForVersionChange();
+	
+	QString styleSetting = Settings::uiStyle.get();
+	if (!styleSetting.isEmpty()) {
+		application.setStyle(styleSetting);
+	}
 	
 	configureTranslation(application);
 	
