@@ -898,9 +898,10 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn* const column = columns.at(columnIndex);
 	
+	if (bufferInitialized) updateBuffer(nullptr, column);	// Sort column might need to be updated if hidden
+	
 	const SortingPass previousSort = currentSorting;
 	currentSorting = {column, order};
-	if (bufferInitialized) updateBuffer();	// Sort column might need to be updated if hidden
 	
 	performSort(previousSort, true);
 }
