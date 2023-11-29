@@ -351,7 +351,9 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	bufferInitialized = true;
 	rebuildOrderBuffer();
 	
-	dirtyColumns.subtract(columnsToUpdate);
+	if (!deferCompute) {
+		dirtyColumns.subtract(columnsToUpdate);
+	}
 	
 	if (deferCompute) {
 		tableToAutoResizeAfterCompute = autoResizeAfterCompute;
