@@ -90,6 +90,8 @@ public:
 	QTableView* const		tableView;
 	/** The table view in the main window showing the base table of this item type (usually disabled). */
 	QTableView* const		debugTableView;
+	/** The layout in the main window containing the table view and the item-related statistics panel. */
+	QHBoxLayout* const		tableAndStatsLayout;
 	
 	/** The action in the main window menu for creating a new item of this type. */
 	QAction* const			newItemAction;
@@ -134,9 +136,12 @@ public:
 	 * @param tab									The tab in the main window.
 	 * @param tableView								The table view in the main window showing the composite table.
 	 * @param debugTableView						The table view in the main window showing the base table.
+	 * @param tableAndStatsLayout					The layout in the main window containing the table view and the item-related statistics panel.
 	 * @param newItemAction							The action in the main window menu for creating a new iteme.
 	 * @param newItemButton							The button in the main window for creating a new item.
 	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting					The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting					The setting storing the column hidden states of the UI table.
 	 * @param sortingSetting						The setting storing the sorting of the UI table.
 	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
 	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
@@ -152,6 +157,7 @@ public:
 		QWidget*						tab,
 		QTableView*						tableView,
 		QTableView*						debugTableView,
+		QHBoxLayout*					tableAndStatsLayout,
 		QAction* const					newItemAction,
 		QPushButton* const				newItemButton,
 		ProjectMultiSetting<int>*		columnWidthsSetting,
@@ -171,6 +177,7 @@ public:
 		tab										(tab),
 		tableView								(tableView),
 		debugTableView							(debugTableView),
+		tableAndStatsLayout						(tableAndStatsLayout),
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
@@ -225,6 +232,7 @@ public:
 	QWidget*						tab, \
 	QTableView*						tableView, \
 	QTableView*						debugTableView, \
+	QHBoxLayout*					tableAndStatsLayout, \
 	QAction* const					newItemAction, \
 	QPushButton* const				newItemButton, \
 	ProjectMultiSetting<int>*		columnWidthsSetting, \
@@ -240,6 +248,7 @@ public:
 	tab, \
 	tableView, \
 	debugTableView, \
+	tableAndStatsLayout, \
 	newItemAction, \
 	newItemButton, \
 	columnWidthsSetting, \

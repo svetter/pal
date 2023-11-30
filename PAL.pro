@@ -211,6 +211,7 @@ resources.files = \
 	resources/icons/ico/range_multisize_square.ico \
 	resources/icons/ico/country_multisize_square.ico \
 	resources/icons/ico/ascent_viewer_multisize_square.ico \
+	resources/icons/ico/statistics_multisize_square.ico \
 	resources/gpl/gpl-v3-logo.svg
 resources.base = resources
 resources.prefix = /
