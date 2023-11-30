@@ -1023,7 +1023,7 @@ void MainWindow::handle_unhideColumn()
 	const ItemTypeMapper* const mapper = getActiveMapper();
 	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
 	mapper->compTable->markColumnUnhidden(logicalIndex);
-	mapper->compTable->updateBuffer();
+	mapper->compTable->updateBothBuffers();
 }
 
 
@@ -1367,7 +1367,7 @@ void MainWindow::handle_restoreHiddenColumns()
 		header->setSectionHidden(columnIndex, false);
 	}
 	mapper->compTable->markAllColumnsUnhidden();
-	mapper->compTable->updateBuffer();
+	mapper->compTable->updateBothBuffers();
 }
 
 

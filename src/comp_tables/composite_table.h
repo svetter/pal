@@ -156,7 +156,8 @@ public:
 	void rebuildOrderBuffer(bool skipRepopulate = false);
 	QSet<const CompositeColumn*> getColumnsToUpdate() const;
 	int getNumberOfCellsToUpdate() const;
-	void updateBuffer(std::function<void()> runAfterEachCellUpdate = []() {}, const CompositeColumn* const forceUpdateColumn = nullptr);
+	void updateBufferColumns(QSet<const CompositeColumn*> columnsToUpdate, std::function<void()> runAfterEachCellUpdate = []() {});
+	void updateBothBuffers(std::function<void()> runAfterEachCellUpdate = []() {});
 	void resetBuffer();
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;

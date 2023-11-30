@@ -152,7 +152,7 @@ void DataExportThread::exportOneTable()
 		auto progressLambda = [this, &progress] () {
 			emit callback_reportProgress(++progress);
 		};
-		compTable->updateBuffer(progressLambda);
+		compTable->updateBothBuffers(progressLambda);
 	}
 	
 	
@@ -239,7 +239,7 @@ void DataExportThread::exportAsShown()
 		auto progressLambda = [this, &progress] () {
 			emit callback_reportProgress(++progress);
 		};
-		compTable->updateBuffer(progressLambda);
+		compTable->updateBothBuffers(progressLambda);
 	}
 	
 	

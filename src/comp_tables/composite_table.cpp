@@ -433,21 +433,21 @@ int CompositeTable::getNumberOfCellsToUpdate() const
 }
 
 /**
- * Updates the contents of all columns which are marked dirty.
+ * Updates the contents of the given columns in the buffer, if they are marked dirty.
  * 
- * After updating the buffer, the order buffer is rebuilt and the model is notified of the changes.
+ * After updating, the updated columns are removed from the set of dirty columns, but the order
+ * buffer is not rebuilt, therefore performSort() is not called.
  * 
+ * @param columnsToUpdate			The columns to potentially update.
  * @param runAfterEachCellUpdate	A lambda function to be run every time a cell value has been updated.
- * @param forceUpdateColumn			An optional column which should be updated even though it is not currently scheduled for an update.
  */
-void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate, const CompositeColumn* const forceUpdateColumn)
+void CompositeTable::updateBufferColumns(QSet<const CompositeColumn*> columnsToUpdate, std::function<void()> runAfterEachCellUpdate)
 {
 	assert(bufferInitialized);
 	
-	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
-	if (forceUpdateColumn) columnsToUpdate.insert(forceUpdateColumn);
-
+	columnsToUpdate.intersect(dirtyColumns);
 	if (columnsToUpdate.isEmpty()) return;
+	
 	if (!runAfterEachCellUpdate) runAfterEachCellUpdate = []() {};
 	
 	for (const CompositeColumn* column : qAsConst(columnsToUpdate)) {
@@ -476,6 +476,24 @@ void CompositeTable::updateBuffer(std::function<void()> runAfterEachCellUpdate, 
 	}
 	
 	dirtyColumns.subtract(columnsToUpdate);
+}
+
+/**
+ * Updates the contents of all columns which are marked dirty.
+ * 
+ * After updating the buffer, the order buffer is rebuilt and the model is notified of the changes.
+ * 
+ * @param runAfterEachCellUpdate	A lambda function to be run every time a cell value has been updated.
+ */
+void CompositeTable::updateBothBuffers(std::function<void()> runAfterEachCellUpdate)
+{
+	assert(bufferInitialized);
+	
+	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
+	if (columnsToUpdate.isEmpty()) return;
+	
+	// Update the scheduled columns
+	updateBufferColumns(columnsToUpdate, runAfterEachCellUpdate);
 	
 	// Rebuild order buffer if necessary
 	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
@@ -556,7 +574,7 @@ QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const Compos
 	if (dirtyColumns.contains(column)) {
 		if (column->cellsAreInterdependent) {
 			// Have to compute whole column anyway, might as well update the buffer
-			updateBuffer(nullptr, column);
+			updateBufferColumns({column});
 			result = buffer.getCell(bufferRowIndex, column->getIndex());
 		} else {
 			// Compute single cell instead of updating buffer for entire column to save time
@@ -621,7 +639,7 @@ void CompositeTable::applyFilters(QSet<Filter> filters)
 	
 	bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
-	updateBuffer();	// Filter column(s) might need to be updated if hidden
+	updateBufferColumns(getColumnsToUpdate());	// Filter column(s) might need to be updated if hidden
 	rebuildOrderBuffer(skipRepopulate);
 	
 	// Restore selection
@@ -713,7 +731,7 @@ void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialo
 		progress->setValue(progress->value() + 1);
 	};
 	if (updateImmediately && bufferInitialized) {
-		updateBuffer(progressUpdateLambda);
+		updateBothBuffers(progressUpdateLambda);
 	}
 }
 
@@ -778,7 +796,7 @@ void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
 void CompositeTable::announceChangesUnderColumn(int columnIndex)
 {
 	dirtyColumns.insert(columns.at(columnIndex));
-	if (updateImmediately) updateBuffer();
+	if (updateImmediately) updateBothBuffers();
 }
 
 
@@ -898,7 +916,7 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn* const column = columns.at(columnIndex);
 	
-	if (bufferInitialized) updateBuffer(nullptr, column);	// Sort column might need to be updated if hidden
+	if (bufferInitialized) updateBufferColumns({column});	// Sort column might need to be updated if hidden
 	
 	const SortingPass previousSort = currentSorting;
 	currentSorting = {column, order};
