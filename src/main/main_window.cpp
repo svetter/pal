@@ -37,6 +37,11 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 #include <QCalendarWidget>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QValueAxis>
 
 
 
@@ -89,8 +94,6 @@ MainWindow::MainWindow() :
 	initColumnContextMenu();
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
-	
-	handle_showFiltersChanged();
 	
 	// Open database
 	QString lastOpen = Settings::lastOpenDatabaseFile.get();
@@ -324,6 +327,173 @@ void MainWindow::setupDebugTableViews()
 	
 	setupFunction(photosDebugTableView,			db.photosTable);
 	setupFunction(participatedDebugTableView,	db.participatedTable);
+}
+
+void MainWindow::setupStatisticsTab()
+{
+	QScatterSeries* peakHeightSeries= new QScatterSeries();
+	QScatterSeries* elevGainSeries	= new QScatterSeries();
+	QMap<int, int> yearElevGainSums = QMap<int, int>();
+	QMap<int, int> yearNumAscents = QMap<int, int>();
+	int minYear = INT_MAX;
+	int maxYear = INT_MIN;
+	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db.ascentsTable->getNumberOfRows()); bufferIndex++) {
+		Ascent* ascent = db.getAscentAt(bufferIndex);
+		
+		if (ascent->dateSpecified()) {
+			int year = ascent->date.year();
+			if (year < minYear) minYear = year;
+			if (year > maxYear) maxYear = year;
+			
+			yearNumAscents[year]++;
+			
+			qreal dateReal = (qreal) ascent->date.dayOfYear() / ascent->date.daysInYear() + ascent->date.year();
+			
+			if (ascent->elevationGainSpecified()) {
+				int elevGain = ascent->elevationGain;
+				elevGainSeries->append(dateReal, elevGain);
+				peakHeightSeries->append(dateReal, elevGain);
+				yearElevGainSums[year] += elevGain;
+			}
+			if (ascent->peakID.isValid()) {
+				const Peak* const peak = db.getPeak(FORCE_VALID(ascent->peakID));
+				if (peak->heightSpecified()) {
+					int peakHeight = peak->height;
+					peakHeightSeries->append(dateReal, peakHeight);
+				}
+			}
+		}
+		
+		delete ascent;
+	}
+	
+	QLineSeries* elevGainPerYearSeries		= new QLineSeries();
+	QLineSeries* numAscentsPerYearSeries	= new QLineSeries();
+	for (int year = minYear; year <= maxYear; year++) {
+		int elevGainSum	= yearElevGainSums	.contains(year) ? yearElevGainSums	[year] : 0;
+		int numAscents	= yearNumAscents	.contains(year) ? yearNumAscents	[year] : 0;
+		elevGainPerYearSeries	->append(year, (qreal) elevGainSum / 1000);
+		numAscentsPerYearSeries	->append(year, numAscents);
+	}
+	elevGainPerYearSeries	->setName("Elevation gain");
+	numAscentsPerYearSeries	->setName("Number of ascended peaks");
+	
+	
+	
+	QChart* chart1 = new QChart();
+	chart1->addSeries(elevGainPerYearSeries);
+	chart1->setMargins(QMargins(0, 0, 0, 0));
+	chart1->layout()->setContentsMargins(0, 0, 0, 0);
+	chart1->setBackgroundRoundness(0);
+	chart1->legend()->hide();
+	
+	QValueAxis* axisX1 = new QValueAxis();
+	chart1->addAxis(axisX1, Qt::AlignBottom);
+	elevGainPerYearSeries->attachAxis(axisX1);
+	axisX1->setLabelFormat("%.0f");
+	axisX1->setTickType(QValueAxis::TicksDynamic);
+	axisX1->setTickInterval(5);
+	axisX1->setTickAnchor(minYear / 5 * 5);
+	axisX1->setMinorTickCount(4);
+	//axisX2->applyNiceNumbers();
+	
+	QValueAxis* axisY1 = new QValueAxis();
+	chart1->addAxis(axisY1, Qt::AlignLeft);
+	elevGainPerYearSeries->attachAxis(axisY1);
+	axisY1->setLabelFormat("%.0f");
+	axisY1->applyNiceNumbers();
+	
+	chart1->setTitle("Elevation gain sum per year");
+	axisY1->setTitleText("km");
+	
+	// Create a chart view and set the chart
+	QChartView* chartView1 = new QChartView(chart1);
+	chartView1->setRenderHint(QPainter::Antialiasing);
+	
+	
+	
+	QChart* chart2 = new QChart();
+	chart2->addSeries(numAscentsPerYearSeries);
+	chart2->setMargins(QMargins(0, 0, 0, 0));
+	chart2->layout()->setContentsMargins(0, 0, 0, 0);
+	chart2->setBackgroundRoundness(0);
+	chart2->legend()->hide();
+	
+	QValueAxis* axisX2 = new QValueAxis();
+	chart2->addAxis(axisX2, Qt::AlignBottom);
+	numAscentsPerYearSeries->attachAxis(axisX2);
+	axisX2->setLabelFormat("%.0f");
+	axisX2->setTickType(QValueAxis::TicksDynamic);
+	axisX2->setTickInterval(5);
+	axisX2->setTickAnchor(minYear / 5 * 5);
+	axisX2->setMinorTickCount(4);
+	//axisX2->applyNiceNumbers();
+	
+	QValueAxis* axisY2 = new QValueAxis();
+	chart2->addAxis(axisY2, Qt::AlignLeft);
+	numAscentsPerYearSeries->attachAxis(axisY2);
+	axisY2->setLabelFormat("%.0f");
+	axisY2->applyNiceNumbers();
+	
+	chart2->setTitle("Number of scaled peaks per year");
+	axisY2->setTitleText("# peaks");
+	
+	// Create a chart view and set the chart
+	QChartView* chartView2 = new QChartView(chart2);
+	chartView2->setRenderHint(QPainter::Antialiasing);
+	
+	
+	
+	QChart* chart3 = new QChart();
+	chart3->addSeries(peakHeightSeries);
+	chart3->addSeries(elevGainSeries);
+	chart3->setMargins(QMargins(0, 0, 0, 0));
+	chart3->layout()->setContentsMargins(0, 0, 0, 0);
+	chart3->setBackgroundRoundness(0);
+	peakHeightSeries->setName("Peak heights");
+	elevGainSeries->setName("Elevation gains");
+	
+	peakHeightSeries->setMarkerShape(QScatterSeries::MarkerShapeTriangle);
+	peakHeightSeries->setMarkerSize(6);
+	elevGainSeries->setMarkerShape(QScatterSeries::MarkerShapeRotatedRectangle);
+	elevGainSeries->setMarkerSize(6);
+	QPen pen(Qt::transparent);
+	peakHeightSeries->setPen(pen);
+	elevGainSeries->setPen(pen);
+	
+	QValueAxis* axisX3 = new QValueAxis();
+	chart3->addAxis(axisX3, Qt::AlignBottom);
+	peakHeightSeries->attachAxis(axisX3);
+	elevGainSeries->attachAxis(axisX3);
+	axisX3->setLabelFormat("%.0f");
+	axisX3->setTickType(QValueAxis::TicksDynamic);
+	axisX3->setTickInterval(2);
+	axisX3->setTickAnchor(minYear / 2 * 2);
+	axisX3->setMinorTickCount(1);
+	
+	QValueAxis* axisY3 = new QValueAxis();
+	chart3->addAxis(axisY3, Qt::AlignLeft);
+	peakHeightSeries->attachAxis(axisY3);
+	elevGainSeries->attachAxis(axisY3);
+	axisY3->setLabelFormat("%.0f");
+	axisY3->applyNiceNumbers();
+	
+	chart3->setTitle("All elevation gains and peak heights over time");
+	axisY3->setTitleText("m");
+	
+	// Create a chart view and set the chart
+	QChartView* chartView3 = new QChartView(chart3);
+	chartView3->setRenderHint(QPainter::Antialiasing);
+	
+	
+	
+	statisticsTabUpperLayout->addWidget(chartView1);
+	statisticsTabUpperLayout->addWidget(chartView2);
+	statisticsTabUpperLayout->setStretch(0, 1);
+	statisticsTabUpperLayout->setStretch(1, 1);
+	statisticsTabLayout->addWidget(chartView3);
+	statisticsTabLayout->setStretch(0, 2);
+	statisticsTabLayout->setStretch(1, 3);
 }
 
 /**
@@ -572,6 +742,8 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
+		
+		setupStatisticsTab();
 	}
 	projectOpen = dbOpened;
 }

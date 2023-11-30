@@ -102,6 +102,7 @@ private:
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
+	void setupStatisticsTab();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
 	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);

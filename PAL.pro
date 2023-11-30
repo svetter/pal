@@ -18,6 +18,7 @@
 QT += core gui
 QT += sql
 QT += svg svgwidgets
+QT += charts
 
 CONFIG += c++17
 CONFIG += lrelease
