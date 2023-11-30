@@ -138,6 +138,8 @@ public:
 	ProjectSetting<int>			mainWindow_currentTabIndex;
 	/** Remember filters in the main window as being visible. */
 	ProjectSetting<bool>		mainWindow_showFilterBar;
+	/** Remember item statistics panel in the main window as being visible. */
+	ProjectSetting<bool>		mainWindow_showItemStatsPanel;
 	
 	// Column widths
 	/** Remembered column widths of the ascents table in the main window. */
@@ -248,6 +250,7 @@ public:
 		// View state
 		mainWindow_currentTabIndex		(ProjectSetting<int>		(table,	"implicit/mainWindow/currentTabIndex",							0)),
 		mainWindow_showFilterBar		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters",								true)),
+		mainWindow_showItemStatsPanel	(ProjectSetting<bool>		(table,	"implicit/mainWindow/showItemStatsPanel",						false)),
 		
 		// Column widths
 		columnWidths_ascentsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/ascentsTable",				100)),

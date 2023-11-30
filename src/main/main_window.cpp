@@ -67,6 +67,7 @@ MainWindow::MainWindow() :
 	setupMenuIcons();
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
 	statusbar->addPermanentWidget(statusBarFiltersLabel);
+	itemStatsFrame->setVisible(false);
 	setUIEnabled(false);
 	
 	setWindowTitleFilename();
@@ -228,6 +229,7 @@ void MainWindow::connectUI()
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
 	// Menu "View"
 	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
+	connect(showItemStatsPanelAction,		&QAction::changed,				this,	&MainWindow::handle_showStatsPanelChanged);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
@@ -538,6 +540,8 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		// Restore project-specific implicit settings:
 		// Filter bar
 		showFiltersAction->setChecked(db.projectSettings->mainWindow_showFilterBar.get(this));
+		// Item statistics panel
+		showItemStatsPanelAction->setChecked(db.projectSettings->mainWindow_showItemStatsPanel.get(this));
 		// Open tab
 		if (Settings::rememberTab.get()) {
 			mainAreaTabs->setCurrentIndex(db.projectSettings->mainWindow_currentTabIndex.get(this));
@@ -562,6 +566,9 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		// Build buffers and update size info
 		initCompositeBuffers();
 		updateTableSize();
+		
+		handle_showFiltersChanged();
+		handle_showStatsPanelChanged();
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
@@ -1324,6 +1331,17 @@ void MainWindow::handle_showFiltersChanged()
 	ascentFilterBar->setVisible(showFilters);
 	if (!showFilters) ascentFilterBar->handle_clearFilters();
 }
+	
+/**
+ * Event handler for the "show statistics panel" action in the view menu.
+ * 
+ * Shows or hides the item-related statistics panel.
+ */
+void MainWindow::handle_showStatsPanelChanged()
+{
+	bool showStatsPanel = showItemStatsPanelAction->isChecked();
+	itemStatsFrame->setVisible(showStatsPanel);
+}
 
 /**
  * Event handler for the "auto-resize columns" action in the view menu.
@@ -1438,8 +1456,9 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings->mainWindow_currentTabIndex.set(this, mainAreaTabs->currentIndex());
-	db.projectSettings->mainWindow_showFilterBar  .set(this, showFiltersAction->isChecked());
+	db.projectSettings->mainWindow_currentTabIndex		.set(this, mainAreaTabs->currentIndex());
+	db.projectSettings->mainWindow_showFilterBar		.set(this, showFiltersAction->isChecked());
+	db.projectSettings->mainWindow_showItemStatsPanel	.set(this, showItemStatsPanelAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
