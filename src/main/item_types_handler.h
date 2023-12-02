@@ -90,8 +90,8 @@ public:
 	QTableView* const		tableView;
 	/** The table view in the main window showing the base table of this item type (usually disabled). */
 	QTableView* const		debugTableView;
-	/** The layout in the main window containing the table view and the item-related statistics panel. */
-	QHBoxLayout* const		tableAndStatsLayout;
+	/** The frame for displaying item-related statistics next to the table in the item's tab. */
+	QFrame* const			statsFrame;
 	
 	/** The action in the main window menu for creating a new item of this type. */
 	QAction* const			newItemAction;
@@ -99,15 +99,15 @@ public:
 	QPushButton* const		newItemButton;
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
-	const Setting<QRect>* const				dialogGeometrySetting;
+	const Setting<QRect>* const			dialogGeometrySetting;
 	/** The setting storing the column widths for the UI table of this item type. */
-	ProjectMultiSetting<int>* const			columnWidthsSetting;
+	ProjectMultiSetting<int>* const		columnWidthsSetting;
 	/** The setting storing the column order for the UI table of this item type. */
-	ProjectMultiSetting<int>* const			columnOrderSetting;
+	ProjectMultiSetting<int>* const		columnOrderSetting;
 	/** The setting storing the column hidden states for the UI table of this item type. */
-	ProjectMultiSetting<bool>* const		hiddenColumnsSetting;
+	ProjectMultiSetting<bool>* const	hiddenColumnsSetting;
 	/** The setting storing the sorting of the UI table of this item type. */
-	const ProjectSetting<QString>* const	sortingSetting;
+	ProjectSetting<QString>* const		sortingSetting;
 
 	/** The method opening the dialog for creating a new item of this type. */
 	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*);
@@ -136,7 +136,7 @@ public:
 	 * @param tab									The tab in the main window.
 	 * @param tableView								The table view in the main window showing the composite table.
 	 * @param debugTableView						The table view in the main window showing the base table.
-	 * @param tableAndStatsLayout					The layout in the main window containing the table view and the item-related statistics panel.
+	 * @param statsFrame							The frame for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction							The action in the main window menu for creating a new iteme.
 	 * @param newItemButton							The button in the main window for creating a new item.
 	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
@@ -150,21 +150,21 @@ public:
 	 * @param openDeleteItemsDialogAndExecuteMethod	The method opening the dialog for deleting an item.
 	 */
 	inline ItemTypeMapper(
-		PALItemType						type,
-		QString							name,
-		NormalTable*					baseTable,
-		CompositeTable*					compTable,
-		QWidget*						tab,
-		QTableView*						tableView,
-		QTableView*						debugTableView,
-		QHBoxLayout*					tableAndStatsLayout,
-		QAction* const					newItemAction,
-		QPushButton* const				newItemButton,
-		ProjectMultiSetting<int>*		columnWidthsSetting,
-		ProjectMultiSetting<int>*		columnOrderSetting,
-		ProjectMultiSetting<bool>*		hiddenColumnsSetting,
-		const ProjectSetting<QString>*	sortingSetting,
-		const Setting<QRect>*			dialogGeometrySetting,
+		PALItemType					type,
+		QString						name,
+		NormalTable*				baseTable,
+		CompositeTable*				compTable,
+		QWidget*					tab,
+		QTableView*					tableView,
+		QTableView*					debugTableView,
+		QFrame*						statsFrame,
+		QAction*					newItemAction,
+		QPushButton*				newItemButton,
+		ProjectMultiSetting<int>*	columnWidthsSetting,
+		ProjectMultiSetting<int>*	columnOrderSetting,
+		ProjectMultiSetting<bool>*	hiddenColumnsSetting,
+		ProjectSetting<QString>*	sortingSetting,
+		const Setting<QRect>*		dialogGeometrySetting,
 		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
 		void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
@@ -177,7 +177,7 @@ public:
 		tab										(tab),
 		tableView								(tableView),
 		debugTableView							(debugTableView),
-		tableAndStatsLayout						(tableAndStatsLayout),
+		statsFrame								(statsFrame),
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
@@ -228,17 +228,17 @@ public:
  * constructor by code with access to the dynamic elements.
  */
 #define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
-	Database*						db, \
-	QWidget*						tab, \
-	QTableView*						tableView, \
-	QTableView*						debugTableView, \
-	QHBoxLayout*					tableAndStatsLayout, \
-	QAction* const					newItemAction, \
-	QPushButton* const				newItemButton, \
-	ProjectMultiSetting<int>*		columnWidthsSetting, \
-	ProjectMultiSetting<int>*		columnOrderSetting, \
-	ProjectMultiSetting<bool>*		hiddenColumnsSetting, \
-	const ProjectSetting<QString>*	sortingSetting
+	Database*					db, \
+	QWidget*					tab, \
+	QTableView*					tableView, \
+	QTableView*					debugTableView, \
+	QFrame*						statsFrame, \
+	QAction*					newItemAction, \
+	QPushButton*				newItemButton, \
+	ProjectMultiSetting<int>*	columnWidthsSetting, \
+	ProjectMultiSetting<int>*	columnOrderSetting, \
+	ProjectMultiSetting<bool>*	hiddenColumnsSetting, \
+	ProjectSetting<QString>*	sortingSetting
 
 /**
  * The dynamic constructor arguments from all ItemTypeMapper subtypes which are passed on to the
@@ -248,7 +248,7 @@ public:
 	tab, \
 	tableView, \
 	debugTableView, \
-	tableAndStatsLayout, \
+	statsFrame, \
 	newItemAction, \
 	newItemButton, \
 	columnWidthsSetting, \
@@ -266,12 +266,17 @@ public:
 	/**
 	 * Creates a new AscentMapper instance.
 	 * 
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -291,13 +296,18 @@ class PeakMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new PeakMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -317,13 +327,18 @@ class TripMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new TripMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -343,13 +358,18 @@ class HikerMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new HikerMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -369,13 +389,18 @@ class RegionMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new RegionMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -395,13 +420,18 @@ class RangeMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new RangeMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -421,13 +451,18 @@ class CountryMapper : public ItemTypeMapper {
 public:
 	/**
 	 * Creates a new CountryMapper instance.
-	 *
-	 * @param db				The database.
-	 * @param tab				The tab in the main window.
-	 * @param tableView			The table view in the main window showing the composite table.
-	 * @param debugTableView	The table view in the main window showing the base table.
-	 * @param newItemAction		The action in the main window menu for creating a new ascent.
-	 * @param newItemButton		The button in the main window for creating a new ascent.
+	 * 
+	 * @param db					The database.
+	 * @param tab					The tab in the main window.
+	 * @param tableView				The table view in the main window showing the composite table.
+	 * @param debugTableView		The table view in the main window showing the base table.
+	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param newItemAction			The action in the main window menu for creating a new ascent.
+	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
+	 * @param columnOrderSetting	The setting storing the column order of the UI table.
+	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
+	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
@@ -524,7 +559,7 @@ public:
 	inline QList<Table*> getAllBaseTables() const
 	{
 		QList<Table*> tables = QList<Table*>();
-		for (ItemTypeMapper* mapper : mappers) {
+		for (const ItemTypeMapper* const mapper : mappers) {
 			tables += mapper->baseTable;
 		}
 		tables.append(photosTable);

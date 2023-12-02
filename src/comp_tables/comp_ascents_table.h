@@ -97,7 +97,7 @@ public:
 	 * @param db		The project database
 	 * @param tableView	The ascents table view in the main window
 	 */
-	inline CompositeAscentsTable(Database* db, QTableView* tableView) :
+	inline CompositeAscentsTable(const Database* db, QTableView* tableView) :
 		CompositeTable(db, db->ascentsTable, tableView),
 		//																		name				uiName						suffix		fold op		[breadcrumbs (column reference chain) +] content column
 		indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),				noSuffix,				{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},					{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),

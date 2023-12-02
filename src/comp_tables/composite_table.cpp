@@ -32,7 +32,7 @@
  * @param baseTable	The database table this table is based on.
  * @param tableView	The view this table is displayed in.
  */
-CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView) :
+CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTableView* tableView) :
 	QAbstractTableModel(),
 	db(db),
 	baseTable(baseTable),

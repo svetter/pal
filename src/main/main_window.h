@@ -97,8 +97,9 @@ public:
 	
 private:
 	// Initial setup
-	void setupMenuIcons();
 	void createTypesHandler();
+	void setupMenuIcons();
+	void setupStatsAreas();
 	void connectUI();
 	void setupTableViews();
 	void setupDebugTableViews();
