@@ -61,6 +61,7 @@ enum PALItemType {
 };
 
 
+
 /**
  * A helper class for storing pointers to different kinds of item-specific members, like dialogs,
  * settings, buttons and other UI elements.
@@ -100,6 +101,7 @@ public:
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>* const			dialogGeometrySetting;
+	const Setting<QStringList>* const	statsPanelSplitterSizesSetting;
 	/** The setting storing the column widths for the UI table of this item type. */
 	ProjectMultiSetting<int>* const		columnWidthsSetting;
 	/** The setting storing the column order for the UI table of this item type. */
@@ -144,6 +146,7 @@ public:
 	 * @param hiddenColumnsSetting					The setting storing the column hidden states of the UI table.
 	 * @param sortingSetting						The setting storing the sorting of the UI table.
 	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
+	 * @param statsPanelSplitterSizesSetting		The setting storing the splitter sizes of the stats panel next to the UI table.
 	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
 	 * @param openDuplicateItemDialogAndStoreMethod	The method opening the dialog for duplicating an item.
 	 * @param openEditItemDialogAndStoreMethod		The method opening the dialog for editing an item.
@@ -165,6 +168,7 @@ public:
 		ProjectMultiSetting<bool>*	hiddenColumnsSetting,
 		ProjectSetting<QString>*	sortingSetting,
 		const Setting<QRect>*		dialogGeometrySetting,
+		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
 		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
 		void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
@@ -181,6 +185,7 @@ public:
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
+		statsPanelSplitterSizesSetting			(statsPanelSplitterSizesSetting),
 		columnWidthsSetting						(columnWidthsSetting),
 		columnOrderSetting						(columnOrderSetting),
 		hiddenColumnsSetting					(hiddenColumnsSetting),
@@ -281,6 +286,7 @@ public:
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
+			&Settings::ascentsStats_splitterSizes,
 			&openNewAscentDialogAndStore,
 			&openDuplicateAscentDialogAndStore,
 			&openEditAscentDialogAndStore,
@@ -312,6 +318,7 @@ public:
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
+			&Settings::peaksStats_splitterSizes,
 			&openNewPeakDialogAndStore,
 			&openDuplicatePeakDialogAndStore,
 			&openEditPeakDialogAndStore,
@@ -343,6 +350,7 @@ public:
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
+			&Settings::tripsStats_splitterSizes,
 			&openNewTripDialogAndStore,
 			nullptr,
 			&openEditTripDialogAndStore,
@@ -374,6 +382,7 @@ public:
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
+			&Settings::hikersStats_splitterSizes,
 			&openNewHikerDialogAndStore,
 			nullptr,
 			&openEditHikerDialogAndStore,
@@ -405,6 +414,7 @@ public:
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
+			&Settings::regionsStats_splitterSizes,
 			&openNewRegionDialogAndStore,
 			nullptr,
 			&openEditRegionDialogAndStore,
@@ -436,6 +446,7 @@ public:
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
+			&Settings::rangesStats_splitterSizes,
 			&openNewRangeDialogAndStore,
 			nullptr,
 			&openEditRangeDialogAndStore,
@@ -467,6 +478,7 @@ public:
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,
+			&Settings::countriesStats_splitterSizes,
 			&openNewCountryDialogAndStore,
 			nullptr,
 			&openEditCountryDialogAndStore,

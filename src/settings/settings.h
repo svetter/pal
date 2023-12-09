@@ -396,6 +396,20 @@ public:
 	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/countryDialog/geometry");
 	
 	// View state
+	/** Remembered sizes for the splitter between table and statistics frame in the ascents tab of the main window. */
+	inline static const	Setting<QStringList>	ascentsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ascents/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the peaks tab of the main window. */
+	inline static const	Setting<QStringList>	peaksStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/peaks/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the trips tab of the main window. */
+	inline static const	Setting<QStringList>	tripsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/trips/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the hikers tab of the main window. */
+	inline static const	Setting<QStringList>	hikersStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/hikers/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the regions tab of the main window. */
+	inline static const	Setting<QStringList>	regionsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/regions/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the ranges tab of the main window. */
+	inline static const	Setting<QStringList>	rangesStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ranges/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the countries tab of the main window. */
+	inline static const	Setting<QStringList>	countriesStats_splitterSizes			= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
 	/** Remembered sizes for the left splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */

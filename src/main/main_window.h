@@ -99,9 +99,9 @@ private:
 	// Initial setup
 	void createTypesHandler();
 	void setupMenuIcons();
-	void setupStatsAreas();
 	void connectUI();
 	void setupTableViews();
+	void setupStatsPanels();
 	void setupDebugTableViews();
 	void setupStatisticsTab();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);

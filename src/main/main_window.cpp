@@ -72,7 +72,6 @@ MainWindow::MainWindow() :
 	setupMenuIcons();
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
 	statusbar->addPermanentWidget(statusBarFiltersLabel);
-	itemStatsFrame->setVisible(false);
 	setUIEnabled(false);
 	
 	setWindowTitleFilename();
@@ -91,6 +90,7 @@ MainWindow::MainWindow() :
 	
 	connectUI();
 	setupTableViews();
+	setupStatsPanels();
 	initColumnContextMenu();
 	initTableContextMenuAndShortcuts();
 	updateRecentFilesMenu();
@@ -307,6 +307,22 @@ void MainWindow::setupTableViews()
 		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
 		
 		mapper->compTable->setUpdateImmediately(mapper->tableView == getCurrentTableView());
+	}
+}
+
+/**
+ * Resets visibility of stats panels to false, and sets stretch factors and remembered sizes of the
+ * stats panel splitters.
+ */
+void MainWindow::setupStatsPanels()
+{
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->statsFrame->setVisible(false);
+		
+		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+		splitter->setStretchFactor(0, 4);
+		splitter->setStretchFactor(1, 1);
+		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 	}
 }
 
@@ -1654,6 +1670,13 @@ void MainWindow::saveGlobalImplicitSettings()
 	bool maximized = windowState() == Qt::WindowMaximized;
 	Settings::mainWindow_maximized.set(maximized);
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
+	
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		if (mapper->tabHasBeenOpened()) {
+			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		}
+	}
 }
 
 /**
