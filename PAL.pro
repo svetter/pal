@@ -41,6 +41,7 @@ DEFINES += DEBUG_TABLE_TABS=false
 
 
 SOURCES += \
+	src/comp_tables/breadcrumbs.cpp \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/comp_tables/fold_composite_column.cpp \
@@ -102,6 +103,7 @@ SOURCES += \
 	src/viewer/scalable_image_label.cpp
 
 HEADERS += \
+	src/comp_tables/breadcrumbs.h \
 	src/comp_tables/comp_ascents_table.h \
 	src/comp_tables/comp_countries_table.h \
 	src/comp_tables/comp_hikers_table.h \

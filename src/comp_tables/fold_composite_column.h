@@ -25,49 +25,7 @@
 #define FOLD_COMPOSITE_COLUMN_H
 
 #include "composite_column.h"
-
-
-
-/**
- * A class representing one pair of columns in a chain of "breadcrumbs" to be followed in order to
- * collect a set of items connected to a starting item.
- * 
- * @see Breadcrumbs
- */
-class Breadcrumb {
-public:
-	/** The first column in the breadcrumb pair. */
-	Column* const firstColumn;
-	/** The second column in the breadcrumb pair. */
-	Column* const secondColumn;
-	
-protected:
-	Breadcrumb(Column* firstColumn, Column* secondColumn);
-public:
-	Breadcrumb(ForeignKeyColumn* firstColumn, PrimaryKeyColumn* secondColumn);
-	Breadcrumb(PrimaryKeyColumn* firstColumn, ForeignKeyColumn* secondColumn);
-	
-	bool isForward() const;
-	bool isBackward() const;
-};
-
-
-/**
- * A class representing a chain of "breadcrumbs" to be followed in order to collect a set of items
- * connected to a starting item.
- * 
- * @see evaluate()
- */
-class Breadcrumbs
-{
-	QList<Breadcrumb> list;
-	
-public:
-	Breadcrumbs(std::initializer_list<Breadcrumb> initList);
-	
-	const QSet<Column* const> getColumnSet() const;
-	QSet<BufferRowIndex> evaluate(BufferRowIndex initialBufferRowIndex) const;
-};
+#include "src/comp_tables/breadcrumbs.h"
 
 
 
