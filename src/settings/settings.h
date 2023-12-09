@@ -393,7 +393,7 @@ public:
 	/** Remembered position and size of the range dialog. */
 	inline static const	Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
 	/** Remembered position and size of the country dialog. */
-	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
+	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/countryDialog/geometry");
 	
 	// View state
 	/** Remembered sizes for the left splitter in the ascent viewer. */
