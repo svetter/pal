@@ -24,6 +24,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "src/main/helpers.h"
+
 #include <QDate>
 #include <QTime>
 #include <QSettings>
@@ -37,16 +39,6 @@
 
 /** PAL uses QSettings with INI format to store general (not project-specific) settings. */
 inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScope, "PeakAscentLogger", "PeakAscentLogger");
-
-
-
-QPair<QStringList, QStringList> getSupportedLanguages();
-QString getDefaultLanguageCode();
-
-QPair<QStringList, QStringList> getSupportedStyles();
-
-QString getAppVersion();
-bool isBelowVersion(QString versionToCheck, QString minimalVersion);
 
 
 
@@ -446,8 +438,13 @@ public:
 
 
 
-void saveDialogGeometry   (QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
+// Saving/restoring implicit settings
+
+void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
 void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
+
+void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
+void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
 
 
 

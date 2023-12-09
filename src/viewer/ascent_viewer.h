@@ -187,10 +187,7 @@ private:
 	// Exit behaviour
 	void reject() override;
 	void saveAllSplitterSizes();
-	static void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
-	
 	void restoreAllSplitterSizes();
-	void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
 };
 
 
