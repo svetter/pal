@@ -25,7 +25,7 @@
 
 #include "src/db/db_error.h"
 #include "src/db/db_upgrade.h"
-#include "src/settings/settings.h"
+#include "src/main/helpers.h"
 
 #include <QCoreApplication>
 #include <QSqlError>

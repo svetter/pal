@@ -215,16 +215,6 @@ void MainWindow::setupMenuIcons()
 	// Help menu: already has icons
 }
 
-void MainWindow::setupStatsAreas()
-{
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsFrame->setVisible(false);
-		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-		splitter->setStretchFactor(0, 4);
-		splitter->setStretchFactor(1, 1);
-	}
-}
-
 /**
  * Connects all UI elements to their respective handlers.
  */

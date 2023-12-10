@@ -88,6 +88,7 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/ascent_filter_bar.cpp \
+	src/main/helpers.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/settings/project_settings.cpp \
@@ -158,6 +159,7 @@ HEADERS += \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
 	src/main/ascent_filter_bar.h \
+	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
 	src/settings/project_settings.h \
