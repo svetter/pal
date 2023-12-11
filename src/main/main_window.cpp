@@ -174,13 +174,13 @@ void MainWindow::createTypesHandler()
 	}
 	
 	typesHandler = new ItemTypesHandler(showDebugTableViews,
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	ascentsStatsFrame,		newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	peaksStatsFrame,		newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	tripsStatsFrame,		newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	hikersStatsFrame,		newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	regionsStatsFrame,		newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	rangesStatsFrame,		newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	countriesStatsFrame,	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
@@ -307,7 +307,7 @@ void MainWindow::setupTableViews()
 void MainWindow::setupStatsPanels()
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsFrame->setVisible(false);
+		mapper->statsScrollArea->setVisible(false);
 		
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 4);
@@ -1525,7 +1525,7 @@ void MainWindow::handle_showStatsPanelChanged()
 {
 	bool showStatsPanel = showItemStatsPanelAction->isChecked();
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsFrame->setVisible(showStatsPanel);
+		mapper->statsScrollArea->setVisible(showStatsPanel);
 	}
 }
 

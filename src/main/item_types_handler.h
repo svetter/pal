@@ -91,8 +91,8 @@ public:
 	QTableView* const		tableView;
 	/** The table view in the main window showing the base table of this item type (usually disabled). */
 	QTableView* const		debugTableView;
-	/** The frame for displaying item-related statistics next to the table in the item's tab. */
-	QFrame* const			statsFrame;
+	/** The scroll area for displaying item-related statistics next to the table in the item's tab. */
+	QScrollArea* const		statsScrollArea;
 	
 	/** The action in the main window menu for creating a new item of this type. */
 	QAction* const			newItemAction;
@@ -138,7 +138,7 @@ public:
 	 * @param tab									The tab in the main window.
 	 * @param tableView								The table view in the main window showing the composite table.
 	 * @param debugTableView						The table view in the main window showing the base table.
-	 * @param statsFrame							The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea						The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction							The action in the main window menu for creating a new iteme.
 	 * @param newItemButton							The button in the main window for creating a new item.
 	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
@@ -160,7 +160,7 @@ public:
 		QWidget*					tab,
 		QTableView*					tableView,
 		QTableView*					debugTableView,
-		QFrame*						statsFrame,
+		QScrollArea*				statsScrollArea,
 		QAction*					newItemAction,
 		QPushButton*				newItemButton,
 		ProjectMultiSetting<int>*	columnWidthsSetting,
@@ -181,7 +181,7 @@ public:
 		tab										(tab),
 		tableView								(tableView),
 		debugTableView							(debugTableView),
-		statsFrame								(statsFrame),
+		statsScrollArea							(statsScrollArea),
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
@@ -237,7 +237,7 @@ public:
 	QWidget*					tab, \
 	QTableView*					tableView, \
 	QTableView*					debugTableView, \
-	QFrame*						statsFrame, \
+	QScrollArea*				statsScrollArea, \
 	QAction*					newItemAction, \
 	QPushButton*				newItemButton, \
 	ProjectMultiSetting<int>*	columnWidthsSetting, \
@@ -253,7 +253,7 @@ public:
 	tab, \
 	tableView, \
 	debugTableView, \
-	statsFrame, \
+	statsScrollArea, \
 	newItemAction, \
 	newItemButton, \
 	columnWidthsSetting, \
@@ -275,7 +275,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -307,7 +307,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -339,7 +339,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -371,7 +371,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -403,7 +403,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -435,7 +435,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
@@ -467,7 +467,7 @@ public:
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
 	 * @param debugTableView		The table view in the main window showing the base table.
-	 * @param statsFrame			The frame for displaying item-related statistics next to the table in the item's tab.
+	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.

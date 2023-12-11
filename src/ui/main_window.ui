@@ -398,33 +398,46 @@
               <bool>false</bool>
              </attribute>
             </widget>
-            <widget class="QFrame" name="ascentsStatsFrame">
+            <widget class="QScrollArea" name="ascentsStatsScrollArea">
              <property name="minimumSize">
               <size>
                <width>250</width>
                <height>250</height>
               </size>
              </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+             <property name="widgetResizable">
+              <bool>true</bool>
              </property>
-             <layout class="QVBoxLayout" name="itemStatsFrameLayout">
-              <property name="spacing">
-               <number>10</number>
+             <property name="alignment">
+              <set>Qt::AlignHCenter|Qt::AlignTop</set>
+             </property>
+             <widget class="QWidget" name="ascentsStatsScrollAreaWidget">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>248</width>
+                <height>621</height>
+               </rect>
               </property>
-              <property name="leftMargin">
-               <number>10</number>
-              </property>
-              <property name="topMargin">
-               <number>10</number>
-              </property>
-              <property name="rightMargin">
-               <number>10</number>
-              </property>
-              <property name="bottomMargin">
-               <number>10</number>
-              </property>
-             </layout>
+              <layout class="QVBoxLayout" name="ascentsStatsScrollAreaLayout">
+               <property name="spacing">
+                <number>10</number>
+               </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>10</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>10</number>
+               </property>
+              </layout>
+             </widget>
             </widget>
            </widget>
           </item>
@@ -514,33 +527,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="peaksStatsFrame">
+          <widget class="QScrollArea" name="peaksStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="peaksItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="peaksStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="peaksStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -631,33 +657,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="tripsStatsFrame">
+          <widget class="QScrollArea" name="tripsStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="tripsItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="tripsStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="tripsStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -745,33 +784,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="hikersStatsFrame">
+          <widget class="QScrollArea" name="hikersStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="hikersItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="hikersStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="hikersStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -859,33 +911,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="regionsStatsFrame">
+          <widget class="QScrollArea" name="regionsStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="regionsItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="regionsStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="regionsStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -973,33 +1038,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="rangesStatsFrame">
+          <widget class="QScrollArea" name="rangesStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="rangesItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="rangesStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="rangesStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -1087,33 +1165,46 @@
             <bool>false</bool>
            </attribute>
           </widget>
-          <widget class="QFrame" name="countriesStatsFrame">
+          <widget class="QScrollArea" name="countriesStatsScrollArea">
            <property name="minimumSize">
             <size>
              <width>250</width>
              <height>250</height>
             </size>
            </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
+           <property name="widgetResizable">
+            <bool>true</bool>
            </property>
-           <layout class="QVBoxLayout" name="countriesItemStatsFrameLayout">
-            <property name="spacing">
-             <number>10</number>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="countriesStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>643</height>
+             </rect>
             </property>
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>10</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
-           </layout>
+            <layout class="QVBoxLayout" name="countriesStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>10</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>10</number>
+             </property>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
