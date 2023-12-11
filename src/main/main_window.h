@@ -83,6 +83,9 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	/** The ItemTypesHandler singleton. */
 	const ItemTypesHandler* typesHandler;
 	
+	/** The stats engine instance for computing general statistics. */
+	GeneralStatsEngine generalStatsEngine;
+	
 	// Debugging table views
 	/** Whether the debugging table views are enabled. */
 	bool showDebugTableViews;
@@ -103,7 +106,6 @@ private:
 	void setupTableViews();
 	void setupStatsPanels();
 	void setupDebugTableViews();
-	void setupStatisticsTab();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
 	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);

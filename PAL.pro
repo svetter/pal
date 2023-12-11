@@ -45,6 +45,7 @@ SOURCES += \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/comp_tables/fold_composite_column.cpp \
+	src/comp_tables/stats_engine.cpp \
 	src/data/ascent.cpp \
 	src/data/country.cpp \
 	src/data/enum_names.cpp \
@@ -116,6 +117,7 @@ HEADERS += \
 	src/comp_tables/composite_table.h \
 	src/comp_tables/filter.h \
 	src/comp_tables/fold_composite_column.h \
+	src/comp_tables/stats_engine.h \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/enum_names.h \

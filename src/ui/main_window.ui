@@ -1234,13 +1234,6 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
-        <item>
-         <layout class="QHBoxLayout" name="statisticsTabUpperLayout">
-          <property name="spacing">
-           <number>10</number>
-          </property>
-         </layout>
-        </item>
        </layout>
       </widget>
      </widget>
