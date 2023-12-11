@@ -45,7 +45,6 @@ SOURCES += \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/comp_tables/fold_composite_column.cpp \
-	src/comp_tables/stats_engine.cpp \
 	src/data/ascent.cpp \
 	src/data/country.cpp \
 	src/data/enum_names.cpp \
@@ -92,6 +91,7 @@ SOURCES += \
 	src/main/helpers.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
+	src/main/stats_engine.cpp \
 	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
@@ -117,7 +117,6 @@ HEADERS += \
 	src/comp_tables/composite_table.h \
 	src/comp_tables/filter.h \
 	src/comp_tables/fold_composite_column.h \
-	src/comp_tables/stats_engine.h \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/enum_names.h \
@@ -164,6 +163,7 @@ HEADERS += \
 	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
+	src/main/stats_engine.h \
 	src/settings/project_settings.h \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
