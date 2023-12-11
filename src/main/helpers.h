@@ -26,8 +26,6 @@
 
 #include <QSplitter>
 
-template<typename T> class Setting;
-
 
 
 // Application version

@@ -23,8 +23,6 @@
 
 #include "helpers.h"
 
-#include "src/settings/settings.h"
-
 #include <QDirIterator>
 #include <QStyleFactory>
 #include <QApplication>
