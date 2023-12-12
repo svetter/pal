@@ -18,7 +18,7 @@
 /**
  * @file stats_engine.h
  * 
- * This file declares the GeneralStatsEngine class.
+ * This file declares the StatsEngine, GeneralStatsEngine and ItemStatsEngine classes.
  */
 
 #ifndef STATS_ENGINE_H
@@ -29,46 +29,90 @@
 #include <QLayout>
 #include <QChart>
 #include <QValueAxis>
+#include <QBarCategoryAxis>
 #include <QChartView>
 #include <QLineSeries>
 #include <QScatterSeries>
+#include <QBarSet>
+#include <QAbstractBarSeries>
+#include <QHorizontalBarSeries>
 
 
 
-class GeneralStatsEngine
+class StatsEngine
 {
+protected:
 	Database* const db;
 	
+	inline static const int pixelsPerTick = 100;
+	
+	StatsEngine(Database* db);
+	
+	// Setup helpers
+	static QChart* createChart(const QString& title, bool displayLegend);
+	static QValueAxis* createValueXAxis(QChart* chart, const QString& title = QString());
+	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const QStringList& categories, const Qt::AlignmentFlag alignment = Qt::AlignBottom);
+	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
+	static QChartView* createChartView(QChart* chart, int minimumHeight = -1);
+	static void addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors = QList<int>());
+	
+	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
+	static QBarSet* createBarSet(const QString& name, QAbstractBarSeries* series);
+	
+	// Update helpers
+	static QLineSeries* createLineSeries(const QString& name);
+	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape marker = QScatterSeries::MarkerShape(-1));
+	static void updateSeriesForChartWithYearXAxis(QChart* chart, QValueAxis* xAxis, QValueAxis* yAxis, const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY, bool bufferXAxisRange);
+	static void adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0);
+	static qreal findTickIntervalAndMinorTickCount(int range, int chartSize);
+};
+
+
+
+class GeneralStatsEngine : public StatsEngine
+{
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
-	QChart* elevGainPerYearChart;
-	QValueAxis* elevGainPerYearXAxis;
-	QValueAxis* elevGainPerYearYAxis;
-	QChart* numAscentsPerYearChart;
-	QValueAxis* numAscentsPerYearXAxis;
-	QValueAxis* numAscentsPerYearYAxis;
-	QChart* heightsScatterChart;
-	QValueAxis* heightsScatterXAxis;
-	QValueAxis* heightsScatterYAxis;
+	QChart*		elevGainPerYearChart;
+	QValueAxis*	elevGainPerYearXAxis;
+	QValueAxis*	elevGainPerYearYAxis;
+	QChartView*	elevGainPerYearChartView;
+	QChart*		numAscentsPerYearChart;
+	QValueAxis*	numAscentsPerYearXAxis;
+	QValueAxis*	numAscentsPerYearYAxis;
+	QChartView*	numAscentsPerYearChartView;
+	QChart*		heightsScatterChart;
+	QValueAxis*	heightsScatterXAxis;
+	QValueAxis*	heightsScatterYAxis;
+	QChartView*	heightsScatterChartView;
 	
 public:
 	GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr);
 	
 	void setupStatsTab();
 	void updateStatsTab();
+};
+
+
+
+class ItemStatsEngine : public StatsEngine
+{
+	QVBoxLayout* const statsFrameLayout;
 	
-private:
-	// Setup helpers
-	static QChart* createChart(const QString& title, bool displayLegend);
-	static QValueAxis* createXAxis(QChart* chart, const QString& title = QString());
-	static QValueAxis* createYAxis(QChart* chart, const QString& title = QString());
-	static QChartView* createChartView(QChart* chart);
-	static void addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors = QList<int>());
+	QChart*		peakHeightHistChart;
+	QBarSet*	peakHeightHistBarSet;
+	QValueAxis*	peakHeightHistYAxis;
+	QChartView*	peakHeightHistChartView;
+	QChart*		elevGainHistChart;
+	QBarSet*	elevGainHistBarSet;
+	QValueAxis*	elevGainHistYAxis;
+	QChartView*	elevGainHistChartView;
 	
-	// Update helpers
-	static QLineSeries* createLineSeries(const QString& name);
-	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape marker = QScatterSeries::MarkerShape(-1));
-	static void updateSeriesForChartWithYearXAxis(QChart* chart, QValueAxis* xAxis, QValueAxis* yAxis, const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, int yearInterval);
+public:
+	ItemStatsEngine(Database* db, QVBoxLayout* statsFrameLayout);
+	
+	void setupStatsPanel();
+	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
 };
 
 

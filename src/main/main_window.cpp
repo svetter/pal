@@ -223,13 +223,16 @@ void MainWindow::setupTableViews()
 		connect(mapper->tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindow::handle_rightClickOnColumnHeader);
 		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
 		
+		// Connect selection change listener
+		connect(mapper->tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
+		
 		mapper->compTable->setUpdateImmediately(mapper->tableView == getCurrentTableView());
 	}
 }
 
 /**
- * Resets visibility of stats panels to false, and sets stretch factors and remembered sizes of the
- * stats panel splitters.
+ * Resets visibility of stats panels to false, sets stretch factors and remembered sizes of the
+ * stats panel splitters, and initializes stats panel content.
  */
 void MainWindow::setupStatsPanels()
 {
@@ -237,9 +240,11 @@ void MainWindow::setupStatsPanels()
 		mapper->statsScrollArea->setVisible(false);
 		
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-		splitter->setStretchFactor(0, 4);
+		splitter->setStretchFactor(0, 3);
 		splitter->setStretchFactor(1, 1);
 		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		
+		mapper->stats->setupStatsPanel();
 	}
 }
 
@@ -864,6 +869,33 @@ void MainWindow::handle_tabChanged()
 	updateTableContextMenuIcons();
 	
 	setUIEnabled(true);
+}
+
+/**
+ * Event handler for changes in which rows of the active table view are selected.
+ * 
+ * Updates the item statistics panel.
+ */
+void MainWindow::handle_tableSelectionChanged()
+{
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	if (mapper->name != "trip") return;
+	
+	const QItemSelection selection = mapper->tableView->selectionModel()->selection();
+	QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
+	for (const QItemSelectionRange& range : selection) {
+		for (const QModelIndex& index : range.indexes()) {
+			selectedViewRows.insert(ViewRowIndex(index.row()));
+		}
+	}
+	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
+	for (const ViewRowIndex& viewIndex : selectedViewRows) {
+		BufferRowIndex bufferIndex = mapper->compTable->getBufferRowIndexForViewRow(viewIndex);
+		selectedBufferRows.insert(bufferIndex);
+	}
+	
+	typesHandler->get(ItemTypeTrip)->stats->updateStatsPanel(selectedBufferRows);
 }
 
 /**

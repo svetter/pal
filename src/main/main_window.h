@@ -131,6 +131,7 @@ public:
 private slots:
 	// UI event handlers
 	void handle_tabChanged();
+	void handle_tableSelectionChanged();
 	void handle_rightClickOnColumnHeader(QPoint pos);
 	void handle_rightClickInTable(QPoint pos);
 	

@@ -40,6 +40,7 @@
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
+#include "src/main/stats_engine.h"
 #include "src/settings/settings.h"
 
 #include <QWidget>
@@ -84,6 +85,9 @@ public:
 	NormalTable* const		baseTable;
 	/** The UI buffer (composite) table containing data of this item type. */
 	CompositeTable* const	compTable;
+	
+	/** The item-specific statistics engine for this item type. */
+	ItemStatsEngine* const	stats;
 	
 	/** The tab in the main window corresponding to this item type. */
 	QWidget* const			tab;
@@ -133,6 +137,7 @@ public:
 	 * @param name									The name of the item type for this mapper.
 	 * @param baseTable								The SQL buffer (base) table.
 	 * @param compTable								The UI buffer (composite) table.
+	 * @param statsEngine							The statistics engine for the item type.
 	 * @param tab									The tab in the main window.
 	 * @param tableView								The table view in the main window showing the composite table.
 	 * @param statsScrollArea						The scroll area for displaying item-related statistics next to the table in the item's tab.
@@ -154,6 +159,7 @@ public:
 		QString						name,
 		NormalTable*				baseTable,
 		CompositeTable*				compTable,
+		ItemStatsEngine*			statsEngine,
 		QWidget*					tab,
 		QTableView*					tableView,
 		QScrollArea*				statsScrollArea,
@@ -174,6 +180,7 @@ public:
 		name									(name),
 		baseTable								(baseTable),
 		compTable								(compTable),
+		stats									(statsEngine),
 		tab										(tab),
 		tableView								(tableView),
 		statsScrollArea							(statsScrollArea),
@@ -276,7 +283,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeAscent, "ascent", db->ascentsTable, new CompositeAscentsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeAscent, "ascent",
+			db->ascentsTable,
+			new CompositeAscentsTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
 			&Settings::ascentsStats_splitterSizes,
 			&openNewAscentDialogAndStore,
@@ -307,7 +318,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypePeak, "peak", db->peaksTable, new CompositePeaksTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypePeak, "peak",
+			db->peaksTable,
+			new CompositePeaksTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
 			&Settings::peaksStats_splitterSizes,
 			&openNewPeakDialogAndStore,
@@ -338,7 +353,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeTrip, "trip", db->tripsTable, new CompositeTripsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeTrip, "trip",
+			db->tripsTable,
+			new CompositeTripsTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
 			&Settings::tripsStats_splitterSizes,
 			&openNewTripDialogAndStore,
@@ -369,7 +388,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeHiker, "hiker", db->hikersTable, new CompositeHikersTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeHiker, "hiker",
+			db->hikersTable,
+			new CompositeHikersTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
 			&Settings::hikersStats_splitterSizes,
 			&openNewHikerDialogAndStore,
@@ -400,7 +423,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeRegion, "region", db->regionsTable, new CompositeRegionsTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeRegion, "region",
+			db->regionsTable,
+			new CompositeRegionsTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
 			&Settings::regionsStats_splitterSizes,
 			&openNewRegionDialogAndStore,
@@ -431,7 +458,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeRange, "range", db->rangesTable, new CompositeRangesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeRange, "range",
+			db->rangesTable,
+			new CompositeRangesTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
 			&Settings::rangesStats_splitterSizes,
 			&openNewRangeDialogAndStore,
@@ -462,7 +493,11 @@ public:
 	 * @param sortingSetting		The setting storing the sorting of the UI table.
 	 */
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeCountry, "country", db->countriesTable, new CompositeCountriesTable(db, tableView), TYPE_MAPPER_DYNAMIC_ARG_NAMES,
+		ItemTypeMapper(ItemTypeCountry, "country",
+			db->countriesTable,
+			new CompositeCountriesTable(db, tableView),
+			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,
 			&Settings::countriesStats_splitterSizes,
 			&openNewCountryDialogAndStore,
