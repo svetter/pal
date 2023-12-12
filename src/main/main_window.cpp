@@ -465,6 +465,10 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		if (Settings::rememberTab.get()) {
 			int tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
 			mainAreaTabs->setCurrentIndex(tabIndex);
+			
+			if (tabIndex == mainAreaTabs->indexOf(statisticsTab)) {
+				generalStatsEngine.updateStatsTab();
+			}
 		}
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Column widths
@@ -492,8 +496,6 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
-		
-		generalStatsEngine.updateStatsTab();
 	}
 	projectOpen = dbOpened;
 }
@@ -850,6 +852,10 @@ void MainWindow::handle_tabChanged()
 		else {
 			mapper->compTable->setUpdateImmediately(false);
 		}
+	}
+	if (!activeMapper) {
+		// Statistics tab is open
+		generalStatsEngine.updateStatsTab();
 	}
 	
 	updateTableSize();
