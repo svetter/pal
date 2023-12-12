@@ -86,14 +86,6 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	/** The stats engine instance for computing general statistics. */
 	GeneralStatsEngine generalStatsEngine;
 	
-	// Debugging table views
-	/** Whether the debugging table views are enabled. */
-	bool showDebugTableViews;
-	/** The debugging table view for the photos table. */
-	QTableView* photosDebugTableView;
-	/** The debugging table view for the ascents table. */
-	QTableView* participatedDebugTableView;
-	
 public:
 	MainWindow();
 	~MainWindow();
@@ -105,7 +97,6 @@ private:
 	void connectUI();
 	void setupTableViews();
 	void setupStatsPanels();
-	void setupDebugTableViews();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
 	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);

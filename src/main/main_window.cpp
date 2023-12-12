@@ -52,10 +52,7 @@ MainWindow::MainWindow() :
 	statusBarTableSizeLabel(new QLabel(statusbar)),
 	statusBarFiltersLabel(new QLabel(statusbar)),
 	typesHandler(nullptr),
-	generalStatsEngine(GeneralStatsEngine(&db, &statisticsTabLayout)),
-	showDebugTableViews(DEBUG_TABLE_TABS),
-	photosDebugTableView(nullptr),
-	participatedDebugTableView(nullptr)
+	generalStatsEngine(GeneralStatsEngine(&db, &statisticsTabLayout))
 {
 	setupUi(this);
 	createTypesHandler();
@@ -94,8 +91,6 @@ MainWindow::MainWindow() :
 	
 	
 	updateTableContextMenuIcons();
-	
-	if (showDebugTableViews) setupDebugTableViews();	// After opening database so that auto-sizing columns works correctly
 }
 
 /**
@@ -114,72 +109,20 @@ MainWindow::~MainWindow()
 
 /**
  * Creates the ItemTypesHandler singleton.
- * 
- * If debug table views are enabled, also creates the debug tabs and table views.
  */
 void MainWindow::createTypesHandler()
 {
-	QList<QTableView*> debugTableViews = QList<QTableView*>(9, nullptr);
-	
-	if (showDebugTableViews) {
-		QStringList debugTableNames = {
-			"ascents",
-			"peaks",
-			"trips",
-			"hikers",
-			"regions",
-			"ranges",
-			"countries",
-			"photos",
-			"participated"
-		};
-		
-		for (int i = 0; i < debugTableViews.size(); i++) {
-			QWidget*		debugTab;
-			QHBoxLayout*	debugTabLayout;
-			QTableView*		debugTableView;
-			
-			debugTab = new QWidget();
-			debugTab->setObjectName(debugTableNames.at(i) + "DebugTab" + QString::number(i));
-			debugTabLayout = new QHBoxLayout(debugTab);
-			debugTabLayout->setSpacing(10);
-			debugTabLayout->setObjectName(debugTableNames.at(i) + "DebugTabLayout" + QString::number(i));
-			debugTabLayout->setContentsMargins(10, 10, 10, 10);
-			
-			debugTableView = new QTableView(debugTab);
-			debugTableView->setObjectName(debugTableNames.at(i) + "DebugTableView" + QString::number(i));
-			debugTableView->setContextMenuPolicy(Qt::CustomContextMenu);
-			debugTableView->setAlternatingRowColors(true);
-			debugTableView->setSelectionMode(QAbstractItemView::SingleSelection);
-			debugTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-			debugTableView->setCornerButtonEnabled(false);
-			debugTableView->horizontalHeader()->setHighlightSections(false);
-			debugTableView->verticalHeader()->setDefaultSectionSize(20);
-			debugTableView->verticalHeader()->setHighlightSections(false);
-			
-			debugTabLayout->addWidget(debugTableView);
-			mainAreaTabs->addTab(debugTab, "DBG_" + debugTableNames.at(i));
-			
-			debugTableViews.replace(i, debugTableView);
-		}
-	}
-	
-	typesHandler = new ItemTypesHandler(showDebugTableViews,
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	debugTableViews.at(0),	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		debugTableViews.at(1),	peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		debugTableViews.at(2),	tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	debugTableViews.at(3),	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	debugTableViews.at(4),	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	debugTableViews.at(5),	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	debugTableViews.at(6),	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
+	typesHandler = new ItemTypesHandler(
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
-	
-	if (showDebugTableViews) {
-		photosDebugTableView		= debugTableViews.at(7);
-		participatedDebugTableView	= debugTableViews.at(8);
-	}
 }
 
 /**
@@ -260,13 +203,6 @@ void MainWindow::connectUI()
 			}
 		};
 		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	openFunction);
-		
-		if (showDebugTableViews) {
-			auto editFunctionDebug = [this, mapper] (const QModelIndex& index) {
-				mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(index.row()));
-			};
-			connect(mapper->debugTableView,	&QTableView::doubleClicked,		this,	editFunctionDebug);
-		}
 	}
 }
 
@@ -305,35 +241,6 @@ void MainWindow::setupStatsPanels()
 		splitter->setStretchFactor(1, 1);
 		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 	}
-}
-
-/**
- * Connects each debug table view to the underlying Table and to the table context menu.
- */
-void MainWindow::setupDebugTableViews()
-{
-	assert(showDebugTableViews);
-	qDebug() << "Showing debugging table tabs in main window";
-	
-	auto setupFunction = [this] (QTableView* view, Table* table) {
-		// Set model
-		view->setModel(table);
-		view->setRootIndex(table->getNormalRootModelIndex());
-		view->resizeColumnsToContents();
-		for (int i = 0; i < table->columnCount(); i++) {
-			if (view->columnWidth(i) > 400) view->setColumnWidth(i, 400);
-		}
-		
-		// Enable context menu
-		connect(view, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
-	};
-	
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		setupFunction(mapper->debugTableView, mapper->baseTable);
-	}
-	
-	setupFunction(photosDebugTableView,			db.photosTable);
-	setupFunction(participatedDebugTableView,	db.participatedTable);
 }
 
 /**
@@ -523,7 +430,9 @@ void MainWindow::initTableContextMenuAndShortcuts()
  */
 void MainWindow::updateTableContextMenuIcons()
 {
-	QIcon icon = QIcon(":/icons/" + getActiveMapper()->name + ".svg");
+	const ItemTypeMapper* const activeMapper = getActiveMapper();
+	if (!activeMapper) return;
+	QIcon icon = QIcon(":/icons/" + activeMapper->name + ".svg");
 	tableContextMenuEditAction->setIcon(icon);
 	tableContextMenuDuplicateAction->setIcon(icon);
 }
@@ -554,7 +463,8 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		showItemStatsPanelAction->setChecked(db.projectSettings->mainWindow_showItemStatsPanel.get(this));
 		// Open tab
 		if (Settings::rememberTab.get()) {
-			mainAreaTabs->setCurrentIndex(db.projectSettings->mainWindow_currentTabIndex.get(this));
+			int tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
+			mainAreaTabs->setCurrentIndex(tabIndex);
 		}
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Column widths
@@ -615,7 +525,10 @@ void MainWindow::initCompositeBuffers()
 			numCells += mapper->compTable->getNumberOfCellsToInit();
 		}
 	} else {
-		numCells += getActiveMapper()->compTable->getNumberOfCellsToInit();
+		const ItemTypeMapper* const activeMapper = getActiveMapper();
+		if (activeMapper) {
+			numCells += activeMapper->compTable->getNumberOfCellsToInit();
+		}
 	}
 	progress.setMinimum(0);
 	progress.setMaximum(numCells);
@@ -723,15 +636,14 @@ void MainWindow::updateTableSize(bool reset)
 		return;
 	}
 	
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
 	
 	QString countText = QString();
 	int total = mapper->baseTable->getNumberOfRows();
 	if (total == 0) {
 		countText = tr("Table is empty");
 	}
-	else if (mapper->type == ItemTypeAscent && !debugTable) {
+	else if (mapper->type == ItemTypeAscent) {
 		int displayed = mapper->compTable->rowCount();
 		int filtered = total - displayed;
 		countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
@@ -741,7 +653,7 @@ void MainWindow::updateTableSize(bool reset)
 	statusBarTableSizeLabel->setText(countText);
 	
 	QString filterText = QString();
-	if (mapper->type == ItemTypeAscent && !debugTable) {
+	if (mapper->type == ItemTypeAscent) {
 		int filtersApplied = mapper->compTable->getCurrentFilters().size();
 		if (filtersApplied) {
 			filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
@@ -921,9 +833,9 @@ void MainWindow::handle_tabChanged()
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(500);
 	
-	const ItemTypeMapper* const mapperForOpenTab = getActiveMapper();
+	const ItemTypeMapper* const activeMapper = getActiveMapper();
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (mapper == mapperForOpenTab) {
+		if (mapper == activeMapper) {
 			progress.setMaximum(mapper->compTable->getNumberOfCellsToUpdate());
 			
 			mapper->compTable->setUpdateImmediately(true, &progress);
@@ -948,6 +860,7 @@ void MainWindow::handle_tabChanged()
 void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 {
 	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
 	// Get index of clicked column
 	QHeaderView* header = mapper->tableView->horizontalHeader();
@@ -1022,6 +935,8 @@ void MainWindow::handle_hideColumn()
 	int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	
 	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, true);
 	mapper->compTable->markColumnHidden(logicalIndex);
 	
@@ -1040,6 +955,8 @@ void MainWindow::handle_unhideColumn()
 	int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	
 	mapper->tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
 	mapper->compTable->markColumnUnhidden(logicalIndex);
 	mapper->compTable->updateBothBuffers();
@@ -1060,12 +977,10 @@ void MainWindow::handle_viewSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
-	if (debugTable) {
-		mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-	} else if (mapper->type == ItemTypeAscent) {
+	if (mapper->type == ItemTypeAscent) {
 		viewItem(mapper, ViewRowIndex(selectedIndex.row()));
 	} else {
 		editItem(mapper, selectedIndex);
@@ -1083,14 +998,10 @@ void MainWindow::handle_editSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
-	if (debugTable) {
-		mapper->openEditItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-	} else {
-		editItem(mapper, selectedIndex);
-	}
+	editItem(mapper, selectedIndex);
 }
 
 /**
@@ -1104,14 +1015,10 @@ void MainWindow::handle_duplicateAndEditSelectedItem()
 	QModelIndex selectedIndex = currentTableView->currentIndex();
 	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
 	
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
-	if (debugTable) {
-		mapper->openDuplicateItemDialogAndStoreMethod(this, &db, BufferRowIndex(selectedIndex.row()));
-	} else {
-		duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
-	}
+	duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
 }
 
 /**
@@ -1128,18 +1035,10 @@ void MainWindow::handle_deleteSelectedItems()
 	}
 	if (selectedViewRowIndices.isEmpty()) return;
 	
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
-	if (debugTable) {
-		QSet<BufferRowIndex> selectedBufferRowIndices = QSet<BufferRowIndex>();
-		for (const ViewRowIndex& viewRowIndex : qAsConst(selectedViewRowIndices)) {
-			selectedBufferRowIndices += BufferRowIndex(viewRowIndex.get());
-		}
-		mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, selectedBufferRowIndices);
-	} else {
-		deleteItems(mapper, selectedViewRowIndices);
-	}
+	deleteItems(mapper, selectedViewRowIndices);
 }
 
 
@@ -1360,11 +1259,11 @@ void MainWindow::handle_showStatsPanelChanged()
  */
 void MainWindow::handle_autoResizeColumns()
 {
-	bool debugTable;
-	const ItemTypeMapper* const mapper = typesHandler->getMatchingMapper(getCurrentTableView(), &debugTable);
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
 	
-	QTableView* tableView = debugTable ? mapper->debugTableView : mapper->tableView;
-	int numColumns = debugTable ? mapper->baseTable->getNumberOfColumns() : mapper->compTable->columnCount();
+	QTableView* tableView = mapper->tableView;
+	int numColumns = mapper->compTable->columnCount();
 	
 	tableView->resizeColumnsToContents();
 	for (int i = 0; i < numColumns; i++) {
@@ -1379,7 +1278,10 @@ void MainWindow::handle_autoResizeColumns()
  */
 void MainWindow::handle_resetColumnOrder()
 {
-	QHeaderView* header = getActiveMapper()->tableView->horizontalHeader();
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	
+	QHeaderView* header = mapper->tableView->horizontalHeader();
 	for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
 		int currentVisualIndex = header->visualIndex(logicalIndex);
 		header->moveSection(currentVisualIndex, logicalIndex);
@@ -1394,6 +1296,8 @@ void MainWindow::handle_resetColumnOrder()
 void MainWindow::handle_restoreHiddenColumns()
 {
 	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	
 	QHeaderView* const header = mapper->tableView->horizontalHeader();
 	for (int columnIndex = 0; columnIndex < header->count(); columnIndex++) {
 		header->setSectionHidden(columnIndex, false);
@@ -1589,7 +1493,9 @@ void MainWindow::resizeEvent(QResizeEvent* event)
  */
 QTableView* MainWindow::getCurrentTableView() const
 {
-	return mainAreaTabs->currentWidget()->findChild<QTableView*>();
+	const ItemTypeMapper* const activeMapper = typesHandler->getActiveMapper();
+	if (!activeMapper) return nullptr;
+	return activeMapper->tableView;
 }
 
 /**
@@ -1599,7 +1505,7 @@ QTableView* MainWindow::getCurrentTableView() const
  */
 const ItemTypeMapper* MainWindow::getActiveMapper() const
 {
-	return typesHandler->getMatchingMapper(getCurrentTableView());
+	return typesHandler->getActiveMapper();
 }
 
 /**

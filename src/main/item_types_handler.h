@@ -89,8 +89,6 @@ public:
 	QWidget* const			tab;
 	/** The table view in the main window showing the composite table of this item type. */
 	QTableView* const		tableView;
-	/** The table view in the main window showing the base table of this item type (usually disabled). */
-	QTableView* const		debugTableView;
 	/** The scroll area for displaying item-related statistics next to the table in the item's tab. */
 	QScrollArea* const		statsScrollArea;
 	
@@ -137,7 +135,6 @@ public:
 	 * @param compTable								The UI buffer (composite) table.
 	 * @param tab									The tab in the main window.
 	 * @param tableView								The table view in the main window showing the composite table.
-	 * @param debugTableView						The table view in the main window showing the base table.
 	 * @param statsScrollArea						The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction							The action in the main window menu for creating a new iteme.
 	 * @param newItemButton							The button in the main window for creating a new item.
@@ -159,7 +156,6 @@ public:
 		CompositeTable*				compTable,
 		QWidget*					tab,
 		QTableView*					tableView,
-		QTableView*					debugTableView,
 		QScrollArea*				statsScrollArea,
 		QAction*					newItemAction,
 		QPushButton*				newItemButton,
@@ -180,7 +176,6 @@ public:
 		compTable								(compTable),
 		tab										(tab),
 		tableView								(tableView),
-		debugTableView							(debugTableView),
 		statsScrollArea							(statsScrollArea),
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
@@ -236,7 +231,6 @@ public:
 	Database*					db, \
 	QWidget*					tab, \
 	QTableView*					tableView, \
-	QTableView*					debugTableView, \
 	QScrollArea*				statsScrollArea, \
 	QAction*					newItemAction, \
 	QPushButton*				newItemButton, \
@@ -252,7 +246,6 @@ public:
 #define TYPE_MAPPER_DYNAMIC_ARG_NAMES \
 	tab, \
 	tableView, \
-	debugTableView, \
 	statsScrollArea, \
 	newItemAction, \
 	newItemButton, \
@@ -274,7 +267,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -306,7 +298,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -338,7 +329,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -370,7 +360,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -402,7 +391,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -434,7 +422,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -466,7 +453,6 @@ public:
 	 * @param db					The database.
 	 * @param tab					The tab in the main window.
 	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param debugTableView		The table view in the main window showing the base table.
 	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
 	 * @param newItemAction			The action in the main window menu for creating a new ascent.
 	 * @param newItemButton			The button in the main window for creating a new ascent.
@@ -500,9 +486,6 @@ public:
  */
 class ItemTypesHandler {
 public:
-	/** Whether debug table views are shown in the main window for all item types. */
-	const bool showDebugTableViews;
-	
 	/** The ItemTypeMapper instances for all item types. */
 	const QMap<PALItemType, ItemTypeMapper*> mappers;
 	
@@ -512,7 +495,7 @@ public:
 	ParticipatedTable* const participatedTable;
 	
 	/** Creates a new ItemTypesHandler instance. */
-	inline ItemTypesHandler(bool showDebugTableViews,
+	inline ItemTypesHandler(
 		AscentMapper*		ascentMapper,
 		PeakMapper*			peakMapper,
 		TripMapper*			tripMapper,
@@ -523,7 +506,6 @@ public:
 		PhotosTable*		photosTable,
 		ParticipatedTable*	participatedTable
 	) :
-		showDebugTableViews(showDebugTableViews),
 		mappers({
 			{ItemTypeAscent,	ascentMapper},
 			{ItemTypePeak,		peakMapper},
@@ -585,26 +567,17 @@ public:
 	 * Optionally, writes back a bool via pointer to indicate whether the given table view belongs
 	 * to a debug table.
 	 * 
-	 * @param tableView		The table view identifying the item type.
-	 * @param isDebugTable	A bool pointer to which to write whether the given table view is for a debug table.
-	 * @return				The ItemTypeMapper for the item type to which the given table view belongs.
+	 * @return	The ItemTypeMapper for the item type to which the given table view belongs, or nullptr if no table tab is open.
 	 */
-	inline ItemTypeMapper* getMatchingMapper(QTableView* tableView, bool* isDebugTable = nullptr) const
+	inline ItemTypeMapper* getActiveMapper() const
 	{
 		ItemTypeMapper* matchingMapper = nullptr;
-		bool debugTable = false;
 		for (ItemTypeMapper* const mapper : mappers) {
-			if (mapper->tableView == tableView) {
+			if (mapper->tab->isVisible()) {
 				matchingMapper = mapper;
-			}
-			if (mapper->debugTableView == tableView) {
-				matchingMapper = mapper;
-				debugTable = true;
+				break;
 			}
 		}
-		assert(matchingMapper);
-		
-		if (isDebugTable) *isDebugTable = debugTable;
 		return matchingMapper;
 	}
 };

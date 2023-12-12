@@ -36,8 +36,6 @@ DEFINES += APP_VERSION_PATCH=0
 DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
-DEFINES += DEBUG_TABLE_TABS=false
-
 
 
 SOURCES += \
