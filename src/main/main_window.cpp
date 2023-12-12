@@ -574,12 +574,18 @@ void MainWindow::initCompositeBuffers()
  */
 void MainWindow::setUIEnabled(bool enabled)
 {
+	int currentTabIndex = mainAreaTabs->currentIndex();
+	bool statsTabOpen = currentTabIndex == mainAreaTabs->indexOf(statisticsTab);
+	bool ascentsTabOpen = currentTabIndex == mainAreaTabs->indexOf(ascentsTab);
+	
 	saveDatabaseAsAction		->setEnabled(enabled);
 	closeDatabaseAction			->setEnabled(enabled);
 	projectSettingsAction		->setEnabled(enabled);
-	viewMenu					->setEnabled(enabled);
+	viewMenu					->setEnabled(enabled && !statsTabOpen);
 	newMenu						->setEnabled(enabled);
 	toolsMenu					->setEnabled(enabled);
+	
+	showFiltersAction			->setVisible(enabled && ascentsTabOpen);
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->newItemButton->setEnabled(enabled);
@@ -848,6 +854,8 @@ void MainWindow::handle_tabChanged()
 	
 	updateTableSize();
 	updateTableContextMenuIcons();
+	
+	setUIEnabled(true);
 }
 
 /**
