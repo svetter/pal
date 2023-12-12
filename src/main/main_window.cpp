@@ -647,21 +647,23 @@ void MainWindow::updateTableSize(bool reset)
 	const ItemTypeMapper* const mapper = getActiveMapper();
 	
 	QString countText = QString();
-	int total = mapper->baseTable->getNumberOfRows();
-	if (total == 0) {
-		countText = tr("Table is empty");
-	}
-	else if (mapper->type == ItemTypeAscent) {
-		int displayed = mapper->compTable->rowCount();
-		int filtered = total - displayed;
-		countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
-	} else {
-		countText = (total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total);
+	if (mapper) {
+		int total = mapper->baseTable->getNumberOfRows();
+		if (total == 0) {
+			countText = tr("Table is empty");
+		}
+		else if (mapper->type == ItemTypeAscent) {
+			int displayed = mapper->compTable->rowCount();
+			int filtered = total - displayed;
+			countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
+		} else {
+			countText = (total == 1 ? tr("%1 entry") : tr("%1 entries")).arg(total);
+		}
 	}
 	statusBarTableSizeLabel->setText(countText);
 	
 	QString filterText = QString();
-	if (mapper->type == ItemTypeAscent) {
+	if (mapper && mapper->type == ItemTypeAscent) {
 		int filtersApplied = mapper->compTable->getCurrentFilters().size();
 		if (filtersApplied) {
 			filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
