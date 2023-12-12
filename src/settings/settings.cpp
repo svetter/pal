@@ -42,9 +42,8 @@ bool Settings::settingsOlderThan(QString version)
 /**
  * Updates the settings file to the current version of the application.
  * 
- * In this function, it is important to use string literals for old keys, since the update process
- * should still work in the future when keys will potentially change. For updated settings, the
- * current keys can be used.
+ * In this function, it is important to use string literals for all keys, since the update process
+ * should still work in the future when keys will potentially change.
  */
 void Settings::checkForVersionChange()
 {
@@ -62,11 +61,16 @@ void Settings::checkForVersionChange()
 		qSettings.remove("implicit/mainWindow/columnWidths");
 		qSettings.remove("implicit/mainWindow/sorting");
 		
-		// New splitter in ascent viewer => carry over and remove deprecated setting
-		QString oldSplitterKey = "implicit/ascentViewer/splitterSizes";
-		if (qSettings.contains(oldSplitterKey)) {
-			ascentViewer_rightSplitterSizes.set(qSettings.value(oldSplitterKey).toStringList());
-			qSettings.remove(oldSplitterKey);
+		// New splitter in ascent viewer => remove deprecated setting
+		qSettings.remove("implicit/ascentViewer/splitterSizes");
+
+		// Inconsistent key changed => move to new key
+		QString oldCountryDialogGeometryKey = "implicit/country/geometry";
+		QString newCountryDialogGeometryKey = "implicit/countryDialog/geometry";
+		if (qSettings.contains(oldCountryDialogGeometryKey)) {
+			QVariant value = qSettings.value(oldCountryDialogGeometryKey);
+			qSettings.setValue(newCountryDialogGeometryKey, value);
+			qSettings.remove(oldCountryDialogGeometryKey);
 		}
 	}
 	
