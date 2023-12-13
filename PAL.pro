@@ -93,6 +93,7 @@ SOURCES += \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
+	src/stats/chart.cpp \
 	src/stats/stats_engine.cpp \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
@@ -165,6 +166,7 @@ HEADERS += \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/stats/chart.h \
 	src/stats/stats_engine.h \
 	src/tools/export_decls.h \
 	src/tools/export_dialog.h \
