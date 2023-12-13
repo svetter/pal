@@ -89,11 +89,11 @@ SOURCES += \
 	src/main/helpers.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
-	src/main/stats_engine.cpp \
 	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
+	src/stats/stats_engine.cpp \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
 	src/tools/export_writer.cpp \
@@ -161,11 +161,11 @@ HEADERS += \
 	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
-	src/main/stats_engine.h \
 	src/settings/project_settings.h \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/stats/stats_engine.h \
 	src/tools/export_decls.h \
 	src/tools/export_dialog.h \
 	src/tools/export_thread.h \
