@@ -823,13 +823,20 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 	if (viewRowIndices.isEmpty()) return;
 	
 	QSet<BufferRowIndex> bufferRowIndices = QSet<BufferRowIndex>();
+	ViewRowIndex minViewIndex = *viewRowIndices.begin();
 	for (const ViewRowIndex& viewRowIndex : viewRowIndices) {
-		bufferRowIndices += mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
+		BufferRowIndex bufferIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
+		bufferRowIndices += bufferIndex;
+		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
 	}
 	
 	mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
 	
-	performUpdatesAfterUserAction(mapper, true);
+	if (minViewIndex.get() >= mapper->compTable->rowCount()) {
+		minViewIndex = ViewRowIndex(mapper->compTable->rowCount());
+	}
+	BufferRowIndex bufferRowToSelect = mapper->compTable->getBufferRowIndexForViewRow(minViewIndex);
+	performUpdatesAfterUserAction(mapper, true, bufferRowToSelect);
 	setStatusLine(tr("Deleted %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
 }
 
