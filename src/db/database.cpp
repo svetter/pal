@@ -35,12 +35,13 @@
 
 
 /**
- * Creates a new Database object, immediately creates the table models and initializes the
- * SQLite database driver.
+ * Creates a new Database object, immediately creates the table models and initializes the SQLite
+ * database driver.
  */
 Database::Database() :
 	databaseLoaded(false),
 	tables(QList<Table*>()),
+	breadcrumbMatrix(QMap<const NormalTable*, QMap<const Table*, Breadcrumbs>>()),
 	mainWindowStatusBar(nullptr)
 {
 	tripsTable			= new TripsTable();
@@ -67,6 +68,8 @@ Database::Database() :
 	
 	projectSettings = new ProjectSettings(settingsTable);
 	
+	computeBreadcrumbMatrix();
+	
 	
 	QSqlDatabase::addDatabase("QSQLITE");
 }
@@ -75,7 +78,7 @@ Database::Database() :
  * Destroys the Database object.
  */
 Database::~Database() {
-	qDeleteAll(getTableList());
+	qDeleteAll(tables);
 }
 
 
@@ -244,6 +247,151 @@ void Database::populateBuffers(QWidget* parent)
 
 
 
+/**
+ * For all pairs of normal tables and any other table (always excluding the project settings table),
+ * computes the breadcrumbs for the connection between them and stores them in the breadcrumbMatrix.
+ * 
+ * The algorithm consists of three steps:
+ * 1.	Fill the diagonal with empty breadcrumbs (since connecting a table to itself does not
+ * 		require any breadcrumbs).
+ * 2.	Proactively find all trivial connections by iterating through all tables and adding
+ * 		breadcrumbs consisting of a single column pair for each foreign key column.
+ * 		This step adds two breadcrumbs for each normal table and four for each associative table.
+ * 3.	Iteratively find the remaining connections by chaining existing ones together. During this
+ * 		process, the maximum length of accepted new breadcrumb chains is gradually increased to
+ * 		prevent forming connections which turn back on themselves.
+ */
+void Database::computeBreadcrumbMatrix()
+{
+	const int numNormalTables = getNormalItemTableList().size();
+	const int numCells = numNormalTables * getItemTableList().size();
+	int numFilled = 0;
+	
+	// Fill empty diagonal (normal table to itself)
+	for (const NormalTable* const normalTable : getNormalItemTableList()) {
+		breadcrumbMatrix[normalTable][normalTable] = Breadcrumbs();
+		numFilled++;
+	}
+	
+	// Fill trivial connections (one crumb or two over an associative table)
+	for (const Table* const table : getItemTableList()) {
+		if (table->isAssociative) {
+			// Associative table
+			const AssociativeTable* const associativeTable = (AssociativeTable*) table;
+			PrimaryForeignKeyColumn* const column1 = associativeTable->getColumn1();
+			PrimaryForeignKeyColumn* const column2 = associativeTable->getColumn2();
+			PrimaryKeyColumn* const foreignColumn1 = column1->getReferencedForeignColumn();
+			PrimaryKeyColumn* const foreignColumn2 = column2->getReferencedForeignColumn();
+			const NormalTable* const foreignTable1 = (NormalTable*) foreignColumn1->table;
+			const NormalTable* const foreignTable2 = (NormalTable*) foreignColumn2->table;
+			
+			assert(breadcrumbMatrix[foreignTable1][table].isEmpty());
+			assert(breadcrumbMatrix[foreignTable2][table].isEmpty());
+			assert(breadcrumbMatrix[foreignTable1][foreignTable2].isEmpty());
+			assert(breadcrumbMatrix[foreignTable2][foreignTable1].isEmpty());
+			
+			// Foreign table to associative table (either side)
+			breadcrumbMatrix[foreignTable1][table] = Breadcrumbs({
+				{foreignColumn1,	column1}
+			});
+			breadcrumbMatrix[foreignTable2][table] = Breadcrumbs({
+				{foreignColumn2,	column2}
+			});
+			// Foreign table to other foreign table via associative table (either side)
+			breadcrumbMatrix[foreignTable1][foreignTable2] = Breadcrumbs({
+				{foreignColumn1,	column1},
+				{column2,			foreignColumn2}
+			});
+			breadcrumbMatrix[foreignTable2][foreignTable1] = Breadcrumbs({
+				{foreignColumn2,	column2},
+				{column1,			foreignColumn1}
+			});
+			numFilled += 4;
+		}
+		
+		else {
+			// Normal table
+			const NormalTable* const normalTable = (NormalTable*) table;
+			QList<const Column*> foreignKeyColumns = normalTable->getForeignKeyColumnList();
+			for (const Column* const column : foreignKeyColumns) {
+				ForeignKeyColumn* localColumn = (ForeignKeyColumn*) column;
+				PrimaryKeyColumn* foreignColumn = column->getReferencedForeignColumn();
+				const NormalTable* const foreignTable = (NormalTable*) foreignColumn->table;
+				
+				assert(breadcrumbMatrix[normalTable][foreignTable].isEmpty());
+				assert(breadcrumbMatrix[foreignTable][normalTable].isEmpty());
+				
+				breadcrumbMatrix[normalTable][foreignTable] = Breadcrumbs({
+					{localColumn, foreignColumn}
+				});
+				breadcrumbMatrix[foreignTable][normalTable] = Breadcrumbs({
+					{foreignColumn, localColumn}
+				});
+				numFilled += 2;
+			}
+		}
+	}
+	
+	// Iteratively find the remaining connections by chaining existing ones
+	int connectionLengthLimit = 2;
+	// Gradually increase the maximum length of combined connections which are accepted to prevent
+	// ending up with connections which turn back on themselves.
+	while (numFilled < numCells) {
+		const int numFilledBeforeIter = numFilled;
+		
+		for (const NormalTable* const tableA : getNormalItemTableList()) {
+			for (const NormalTable* const tableB : getNormalItemTableList()) {
+				if (tableA == tableB) continue;
+				if (breadcrumbMatrix[tableA][tableB].isEmpty()) continue;
+				// We are on a connection A -> B which has already been found.
+				// We are now looking for another existing connection B -> C. We then derive A -> C.
+				
+				for (const Table* const tableC : getItemTableList()) {
+					if (tableB == tableC || tableA == tableC) continue;
+					if (breadcrumbMatrix[tableB][tableC].isEmpty()) continue;
+					// We have found an existing connection B -> C.
+					if (!breadcrumbMatrix[tableA][tableC].isEmpty()) continue;
+					
+					const Breadcrumbs& breadcrumbsAtoB = breadcrumbMatrix[tableA][tableB];
+					const Breadcrumbs& breadcrumbsBtoC = breadcrumbMatrix[tableB][tableC];
+					
+					int candidateLength = breadcrumbsAtoB.length() + breadcrumbsBtoC.length();
+					if (candidateLength > connectionLengthLimit) continue;
+					
+					breadcrumbMatrix[tableA][tableC] = breadcrumbsAtoB + breadcrumbsBtoC;
+					numFilled++;
+				}
+			}
+		}
+		
+		assert(numFilled > numFilledBeforeIter);
+		connectionLengthLimit++;
+	}
+}
+
+/**
+ * Returns the pre-computed breadcrumbs for the connection between the given tables.
+ * 
+ * @param startTable		The table to start from (e.g. where the user made a selection).
+ * @param destinationTable	The table which must be reached.
+ * @return					The breadcrumbs for the connection between the given tables.
+ */
+Breadcrumbs Database::getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* destinationTable)
+{
+	assert(breadcrumbMatrix.contains(startTable));
+	assert(breadcrumbMatrix.value(startTable).contains(destinationTable));
+	
+	return breadcrumbMatrix.value(startTable).value(destinationTable);
+}
+
+
+
+/**
+ * Translates the given string under the context "Database".
+ * 
+ * @param string	The string to translate.
+ * @return			The translated string.
+ */
 QString Database::tr(const QString& string)
 {
 	return QCoreApplication::translate("Database", string.toStdString().c_str());
@@ -256,9 +404,30 @@ QString Database::tr(const QString& string)
  * 
  * @return	A list of all regular tables (not project settings) in the database.
  */
-QList<Table*> Database::getTableList() const
+QList<Table*> Database::getItemTableList() const
 {
-	return QList<Table*>(tables);
+	QList<Table*> list = QList<Table*>();
+	for (Table* const table : tables) {
+		if (table == settingsTable) continue;
+		list.append(table);
+	}
+	return list;
+}
+
+/**
+ * Returns a list of all normal tables in the database (not including the project settings table).
+ * 
+ * @return	A list of all regular normal tables (not project settings) in the database.
+ */
+QList<NormalTable*> Database::getNormalItemTableList() const
+{
+	QList<NormalTable*> list = QList<NormalTable*>();
+	for (const Table* const table : tables) {
+		if (table == settingsTable) continue;
+		if (table->isAssociative) continue;
+		list.append((NormalTable*) table);
+	}
+	return list;
 }
 
 

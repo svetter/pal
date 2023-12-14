@@ -24,6 +24,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include "src/comp_tables/breadcrumbs.h"
 #include "src/data/ascent.h"
 #include "src/data/peak.h"
 #include "src/data/trip.h"
@@ -58,8 +59,11 @@ struct WhatIfDeleteResult;
 class Database {
 	/** Whether a database is currently loaded. */
 	bool databaseLoaded;
-	/** The (functionally static) list of tables in any project database. */
+	/** The (functionally static) list of tables in any project database. Caution: Contains the project settings table! */
 	QList<Table*> tables;
+	
+	/** A precomputed matrix of breadcrumb connections from any normal table to any table in the project (settings table always excluded). */
+	QMap<const NormalTable*, QMap<const Table*, Breadcrumbs>> breadcrumbMatrix;
 	
 	/** A pointer to the status bar of the main window, used to display status messages. */
 	QStatusBar* mainWindowStatusBar;
@@ -99,7 +103,8 @@ public:
 	bool saveAs(QWidget* parent, const QString& filepath);
 	QString getCurrentFilepath() const;
 	
-	QList<Table*> getTableList() const;
+	QList<Table*> getItemTableList() const;
+	QList<NormalTable*> getNormalItemTableList() const;
 	
 	Ascent*		getAscent	(ValidItemID ascentID)	const;
 	Peak*		getPeak		(ValidItemID peakID)	const;
@@ -124,7 +129,10 @@ private:
 	
 	void populateBuffers(QWidget* parent);
 	
+	void computeBreadcrumbMatrix();
 public:
+	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* destinationTable);
+	
 	static QString tr(const QString& string);
 	
 	friend class DatabaseUpgrader;

@@ -75,6 +75,7 @@ public:
 	int getNumberOfPrimaryKeyColumns() const;
 	QList<const Column*> getColumnList() const;
 	QList<const Column*> getPrimaryKeyColumnList() const;
+	QList<const Column*> getForeignKeyColumnList() const;
 	QList<const Column*> getNonPrimaryKeyColumnList() const;
 	QString getColumnListString() const;
 	QString getPrimaryKeyColumnListString() const;
