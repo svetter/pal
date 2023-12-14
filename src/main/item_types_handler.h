@@ -165,7 +165,7 @@ public:
 		name									(name),
 		baseTable								(baseTable),
 		compTable								(compTable),
-		stats									(new ItemStatsEngine(db, type, statsScrollArea->findChild<QVBoxLayout*>())),
+		stats									(new ItemStatsEngine(db, type, baseTable, statsScrollArea->findChild<QVBoxLayout*>())),
 		tab										(tab),
 		tableView								(tableView),
 		statsScrollArea							(statsScrollArea),

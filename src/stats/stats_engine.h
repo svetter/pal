@@ -68,20 +68,18 @@ public:
 class ItemStatsEngine : public StatsEngine
 {
 	const PALItemType itemType;
+	const NormalTable* const baseTable;
 	QVBoxLayout* const statsFrameLayout;
 	
 	HistogramChart* peakHeightHistChart;
 	HistogramChart* elevGainHistChart;
 	
 public:
-	ItemStatsEngine(Database* db, PALItemType itemType, QVBoxLayout* statsFrameLayout);
+	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsFrameLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
-	
-private:
-	Breadcrumbs getBreadcrumbsFor(NormalTable* destinationTable);
 };
 
 
