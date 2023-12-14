@@ -426,7 +426,7 @@ Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 	QString	name		= row->at(peaksTable->nameColumn->getIndex()).toString();
 	int		height		= row->at(peaksTable->heightColumn->getIndex()).toInt();
 	bool	volcano		= row->at(peaksTable->volcanoColumn->getIndex()).toBool();
-	int		regionID	= row->at(peaksTable->regionIDColumn->getIndex()).toInt();
+	ItemID	regionID	= row->at(peaksTable->regionIDColumn->getIndex()).toInt();
 	QString	mapsLink	= row->at(peaksTable->mapsLinkColumn->getIndex()).toString();
 	QString	earthLink	= row->at(peaksTable->earthLinkColumn->getIndex()).toString();
 	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn->getIndex()).toString();
@@ -499,8 +499,8 @@ Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 	
 	ValidItemID regionID = VALID_ITEM_ID(row->at(regionsTable->primaryKeyColumn->getIndex()));
 	QString	name		= row->at(regionsTable->nameColumn->getIndex()).toString();
-	int		rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
-	int		countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
+	ItemID	rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
+	ItemID	countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
 	
 	return new Region(regionID, name, rangeID, countryID);
 }

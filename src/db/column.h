@@ -26,6 +26,7 @@
 
 #include "src/db/row_index.h"
 #include "src/data/item_id.h"
+
 #include <QSet>
 
 class PrimaryKeyColumn;

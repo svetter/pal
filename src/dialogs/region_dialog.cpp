@@ -121,13 +121,13 @@ void RegionDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	// Range
 	if (init->rangeID.isValid()) {
-		rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(ID_GET(init->rangeID)) + 1);	// 0 is None
+		rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(FORCE_VALID(init->rangeID)) + 1);	// 0 is None
 	} else {
 		rangeCombo->setCurrentIndex(0);
 	}
 	// Country
 	if (init->countryID.isValid()) {
-		countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(ID_GET(init->countryID)) + 1);	// 0 is None
+		countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(FORCE_VALID(init->countryID)) + 1);	// 0 is None
 	} else {
 		countryCombo->setCurrentIndex(0);
 	}

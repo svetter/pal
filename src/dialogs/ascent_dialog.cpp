@@ -185,7 +185,7 @@ void AscentDialog::insertInitData()
 	titleLineEdit->setText(init->title);
 	//  Peak
 	if (init->peakID.isValid()) {
-		peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(ID_GET(init->peakID)) + 1);	// 0 is None
+		peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(FORCE_VALID(init->peakID)) + 1);	// 0 is None
 	} else {
 		peakCombo->setCurrentIndex(0);
 	}
@@ -221,7 +221,7 @@ void AscentDialog::insertInitData()
 	difficultyGradeCombo->setCurrentIndex(init->difficultyGrade);
 	// Trip
 	if (init->tripID.isValid()) {
-		tripCombo->setCurrentIndex(selectableTripIDs.indexOf(ID_GET(init->tripID)) + 1);	// 0 is None
+		tripCombo->setCurrentIndex(selectableTripIDs.indexOf(FORCE_VALID(init->tripID)) + 1);	// 0 is None
 	} else {
 		tripCombo->setCurrentIndex(0);
 	}

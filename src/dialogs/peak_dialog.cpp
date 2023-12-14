@@ -135,7 +135,7 @@ void PeakDialog::insertInitData()
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
 	if (init->regionID.isValid()) {
-		regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(ID_GET(init->regionID)) + 1);	// 0 is None
+		regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(FORCE_VALID(init->regionID)) + 1);	// 0 is None
 	} else {
 		regionCombo->setCurrentIndex(0);
 	}

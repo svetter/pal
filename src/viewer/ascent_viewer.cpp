@@ -437,9 +437,10 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
  */
 void AscentViewer::updateAscentNavigationNumbers()
 {
-	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(lastAscentViewRowIndex.get() + 1);
+	int numAscents = compAscents->rowCount();
+	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(numAscents);
 	allAscentsNumberLabel->setText(allAscentsNewText);
-	allAscentsNumberLabel->setEnabled(lastAscentViewRowIndex.get() > 0);
+	allAscentsNumberLabel->setEnabled(numAscents > 0);
 	
 	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
 	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
