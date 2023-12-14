@@ -100,27 +100,72 @@ bool Breadcrumb::isBackward() const
 }
 
 
+/**
+ * Indicates whether the breadcrumb pair is equal to another breadcrumb pair.
+ * 
+ * @param other	The other breadcrumb pair to compare to.
+ * @return		True if the breadcrumb pairs are equal, false otherwise.
+ */
+bool Breadcrumb::operator==(const Breadcrumb& other) const
+{
+	return firstColumn == other.firstColumn && secondColumn == other.secondColumn;
+}
+
+/**
+ * Indicates whether the breadcrumb pair is not equal to another breadcrumb pair.
+ * 
+ * @param other	The other breadcrumb pair to compare to.
+ * @return		True if the breadcrumb pairs are not equal, false otherwise.
+ */
+bool Breadcrumb::operator!=(const Breadcrumb& other) const
+{
+	return !operator==(other);
+}
+
+
 
 
 
 /**
- * Creates a new Breadcrumbs list from an initializer list.
- * 
- * @param initList
+ * Creates a new empty Breadcrumbs list.
  */
-Breadcrumbs::Breadcrumbs(std::initializer_list<Breadcrumb> initList) :
-	list(initList)
+Breadcrumbs::Breadcrumbs() :
+	list(QList<Breadcrumb>())
+{}
+
+/**
+ * Creates a new Breadcrumbs list from a given list of breadcrumb pairs.
+ *
+ * @param breadcrumbs	The list to create the Breadcrumbs from.
+ */
+Breadcrumbs::Breadcrumbs(const QList<Breadcrumb>& breadcrumbs) :
+	list(breadcrumbs)
 {
 	if (!list.isEmpty()) {
 		assert(!list.first().firstColumn->table->isAssociative);
 		
+		const Table* previousTable = nullptr;
 		const Table* currentTable = list.first().firstColumn->table;
 		for (const auto& [firstColumn, secondColumn] : list) {
+			assert(firstColumn);
+			assert(secondColumn);
 			assert(firstColumn->table == currentTable);
+			assert(secondColumn->table != previousTable);
+			
+			previousTable = firstColumn->table;
 			currentTable = secondColumn->table;
 		}
 	}
 }
+
+/**
+ * Creates a new Breadcrumbs list from an initializer list.
+ * 
+ * @param initList	The initializer list to create the Breadcrumbs from.
+ */
+Breadcrumbs::Breadcrumbs(std::initializer_list<Breadcrumb> initList) :
+	Breadcrumbs(QList<Breadcrumb>(initList))
+{}
 
 
 /**
@@ -137,6 +182,84 @@ const QSet<Column* const> Breadcrumbs::getColumnSet() const
 	}
 	return result;
 }
+
+
+/**
+ * Indicates whether the list of breadcrumbs is empty.
+ * 
+ * @return	True if the list of breadcrumbs is empty, false otherwise.
+ */
+bool Breadcrumbs::isEmpty() const
+{
+	return list.isEmpty();
+}
+
+/**
+ * Returns the number of breadcrumb pairs in the list.
+ * 
+ * @return	The number of breadcrumb pairs in the list.
+ */
+int Breadcrumbs::length() const
+{
+	return list.size();
+}
+
+
+/**
+ * Indicates whether the list of breadcrumbs is equal to another list of breadcrumbs.
+ * 
+ * @param other	The other list of breadcrumbs to compare to.
+ * @return		True if the lists of breadcrumbs are equal, false otherwise.
+ */
+bool Breadcrumbs::operator==(const Breadcrumbs& other) const
+{
+	if (list.size() != other.list.size()) return false;
+	for (int i = 0; i < list.size(); i++) {
+		if (list.at(i) != other.list.at(i)) return false;
+	}
+	return true;
+}
+
+/**
+ * Indicates whether the list of breadcrumbs is not equal to another list of breadcrumbs.
+ * 
+ * @param other	The other list of breadcrumbs to compare to.
+ * @return		True if the lists of breadcrumbs are not equal, false otherwise.
+ */
+bool Breadcrumbs::operator!=(const Breadcrumbs& other) const
+{
+	return !operator==(other);
+}
+
+
+/**
+ * Appends a new breadcrumb to the end of the list.
+ * 
+ * @param breadcrumb	The new breadcrumb to add to the list.
+ */
+void Breadcrumbs::append(const Breadcrumb& breadcrumb)
+{
+	if (list.isEmpty()) {
+		assert(!breadcrumb.firstColumn->table->isAssociative);
+	} else {
+		assert(list.last().secondColumn->table == breadcrumb.firstColumn->table);
+	}
+	
+	list.append(breadcrumb);
+}
+
+
+/**
+ * Combines two breadcrumb lists into a new breadcrumb list.
+ * 
+ * @param other	The other breadcrumb list to combine with.
+ * @return		The combined breadcrumb list.
+ */
+Breadcrumbs Breadcrumbs::operator+(const Breadcrumbs& other) const
+{
+	return Breadcrumbs(list + other.list);
+}
+
 
 
 /**

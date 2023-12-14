@@ -49,6 +49,9 @@ public:
 	
 	bool isForward() const;
 	bool isBackward() const;
+	
+	bool operator==(const Breadcrumb& other) const;
+	bool operator!=(const Breadcrumb& other) const;
 };
 
 
@@ -64,9 +67,20 @@ class Breadcrumbs
 	QList<Breadcrumb> list;
 	
 public:
+	Breadcrumbs();
 	Breadcrumbs(std::initializer_list<Breadcrumb> initList);
+	Breadcrumbs(const QList<Breadcrumb>& initList);
 	
 	const QSet<Column* const> getColumnSet() const;
+	bool isEmpty() const;
+	int length() const;
+	
+	bool operator==(const Breadcrumbs& other) const;
+	bool operator!=(const Breadcrumbs& other) const;
+	
+	void append(const Breadcrumb& breadcrumb);
+	
+	Breadcrumbs operator+(const Breadcrumbs& other) const;
 	
 	QSet<BufferRowIndex> evaluate(BufferRowIndex initialBufferRowIndex) const;
 	QList<BufferRowIndex> evaluateForStats(const QSet<BufferRowIndex>& initialBufferRowIndices) const;
