@@ -68,16 +68,16 @@ public:
 	 */
 	inline CompositePeaksTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->peaksTable, tableView),
-		//																		name				uiName					suffix		fold op		[breadcrumbs (column reference chain) +] content column
+		//																		name				uiName					suffix		fold op		[breadcrumbs +] content column
 		nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,				db->peaksTable->nameColumn)),
 		heightColumn			(new const DirectCompositeColumn		(this,												mSuffix,				db->peaksTable->heightColumn)),
-		countryColumn			(new const ReferenceCompositeColumn		(this,	"country",			tr("Country"),			noSuffix,				{ db->peaksTable->regionIDColumn,		db->regionsTable->countryIDColumn },	db->countriesTable->nameColumn)),
-		regionColumn			(new const ReferenceCompositeColumn		(this,	"region",			tr("Region"),			noSuffix,				{ db->peaksTable->regionIDColumn },		db->regionsTable->nameColumn)),
-		rangeColumn				(new const ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),	noSuffix,				{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->nameColumn)),
-		continentColumn			(new const ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),		noSuffix,				{ db->peaksTable->regionIDColumn,		db->regionsTable->rangeIDColumn },		db->rangesTable->continentColumn)),
-		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} })),
-		listHikersColumn		(new const HikerListCompositeColumn		(this,	"listHikers",		tr("Scaled by"),								{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn},		{db->ascentsTable->primaryKeyColumn,		db->participatedTable->ascentIDColumn},	{db->participatedTable->hikerIDColumn,	db->hikersTable->primaryKeyColumn} },	db->hikersTable->nameColumn)),
-		sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,	{ {db->peaksTable->primaryKeyColumn,	db->ascentsTable->peakIDColumn} },		db->ascentsTable->elevationGainColumn)),
+		countryColumn			(new const ReferenceCompositeColumn		(this,	"country",			tr("Country"),			noSuffix,				crumbsTo(db, db->countriesTable),	db->countriesTable->nameColumn)),
+		regionColumn			(new const ReferenceCompositeColumn		(this,	"region",			tr("Region"),			noSuffix,				crumbsTo(db, db->regionsTable),		db->regionsTable->nameColumn)),
+		rangeColumn				(new const ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),	noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable->nameColumn)),
+		continentColumn			(new const ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),		noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable->continentColumn)),
+		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,	crumbsTo(db, db->ascentsTable))),
+		listHikersColumn		(new const HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Scaled by"),								crumbsTo(db, db->hikersTable),		db->hikersTable->nameColumn)),
+		sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
 		volcanoColumn			(new const DirectCompositeColumn		(this,												noSuffix,				db->peaksTable->volcanoColumn))
 	{
 		addColumn(nameColumn);

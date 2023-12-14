@@ -101,9 +101,9 @@ public:
  * This class exists to enable always having the default hiker at the first position of a hiker
  * list.
  */
-class HikerListCompositeColumn : public ListStringFoldCompositeColumn {
+class HikerListFoldCompositeColumn : public ListStringFoldCompositeColumn {
 public:
-	HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn);
+	HikerListFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;

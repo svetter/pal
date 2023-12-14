@@ -131,7 +131,7 @@ private:
 	
 	void computeBreadcrumbMatrix();
 public:
-	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* destinationTable);
+	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const Table* targetTable) const;
 	
 	static QString tr(const QString& string);
 	

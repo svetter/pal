@@ -233,7 +233,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The hiker name column whose values to list.
  */
-HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn) :
+HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn* contentColumn) :
 	ListStringFoldCompositeColumn(table, name, uiName, breadcrumbs, contentColumn)
 {}
 
@@ -242,7 +242,7 @@ HikerListCompositeColumn::HikerListCompositeColumn(CompositeTable* table, QStrin
  * from the content column into a list of strings, then sorts the list while keeping the default
  * hiker, if present, at the top of the list.
  */
-QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
+QStringList HikerListFoldCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
 	QStringList stringList;
 	
@@ -286,7 +286,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
  * @param rowIndex	The row index.
  * @return			The computed value of the cell.
  */
-QVariant HikerListCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
+QVariant HikerListFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	

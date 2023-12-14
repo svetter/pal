@@ -23,6 +23,7 @@
 
 #include "breadcrumbs.h"
 
+#include "src/db/normal_table.h"
 #include "src/db/table.h"
 
 
@@ -183,6 +184,19 @@ const QSet<Column* const> Breadcrumbs::getColumnSet() const
 	return result;
 }
 
+/**
+ * Returns the table which the last breadcrumb references with its second column.
+ * 
+ * @pre The list of breadcrumbs is not empty.
+ * 
+ * @return	The table which the last breadcrumb references.
+ */
+const Table* Breadcrumbs::getTargetTable() const
+{
+	assert(!list.isEmpty());
+	return list.last().secondColumn->table;
+}
+
 
 /**
  * Indicates whether the list of breadcrumbs is empty.
@@ -263,7 +277,7 @@ Breadcrumbs Breadcrumbs::operator+(const Breadcrumbs& other) const
 
 
 /**
- * @brief Evaluates the breadcrumb trail for a given row index.
+ * Evaluates the breadcrumb trail for a given row index.
  * 
  * The breadcrumb trail is evaluated from the given row index to the first breadcrumb.
  * The result is a set of row indices in the table of the first breadcrumb.
@@ -331,6 +345,39 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 	}
 	
 	return currentRowIndexSet;
+}
+
+/**
+ * Evaluates the breadcrumb trail, assuming it is entirely forward-referencing, and returns a single
+ * row index, which may be invalid if a foreign key along the way was not set.
+ * 
+ * @param initialBufferRowIndex	The row index to start from.
+ * @return						The corresponding row index in the target table.
+ */
+BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferRowIndex) const
+{
+	BufferRowIndex currentRowIndex = initialBufferRowIndex;
+	
+	for (const Breadcrumb& crumb : list) {
+		assert(crumb.isForward());
+		
+		// Look up key stored in current column at current row index
+		Column* const currentColumn = crumb.firstColumn;
+		ItemID key = currentColumn->getValueAt(currentRowIndex);
+		
+		if (key.isInvalid()) return BufferRowIndex();
+		
+		// Get referenced primary key column of other table
+		const PrimaryKeyColumn* referencedColumn = currentColumn->getReferencedForeignColumn();
+		assert(!referencedColumn->table->isAssociative);
+		const NormalTable* currentTable = (NormalTable*) referencedColumn->table;
+		
+		// Find row index that contains the current primary key
+		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(FORCE_VALID(key));
+		assert(currentRowIndex.isValid());
+	}
+	
+	return currentRowIndex;
 }
 
 QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& initialBufferRowIndices) const

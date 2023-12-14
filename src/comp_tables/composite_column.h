@@ -24,6 +24,7 @@
 #ifndef COMPOSITE_COLUMN_H
 #define COMPOSITE_COLUMN_H
 
+#include "src/comp_tables/breadcrumbs.h"
 #include "src/comp_tables/filter.h"
 #include "src/db/column.h"
 #include "src/settings/project_settings.h"
@@ -143,13 +144,13 @@ public:
  * content from a column in that table.
  */
 class ReferenceCompositeColumn : public CompositeColumn {
-	/** The sequence of foreign key columns to follow to the target base table containing the content. */
-	QList<ForeignKeyColumn*> foreignKeyColumnSequence;
+	/** The breadcrumb trail (chain of foreign key columns) to follow to the target table containing the content. */
+	Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
 	Column* const contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<ForeignKeyColumn*> foreignKeyColumnSequence, Column* contentColumn);
+	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column* contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	

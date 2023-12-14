@@ -372,16 +372,16 @@ void Database::computeBreadcrumbMatrix()
 /**
  * Returns the pre-computed breadcrumbs for the connection between the given tables.
  * 
- * @param startTable		The table to start from (e.g. where the user made a selection).
- * @param destinationTable	The table which must be reached.
- * @return					The breadcrumbs for the connection between the given tables.
+ * @param startTable	The table to start from (e.g. where the user made a selection).
+ * @param targetTable	The table which must be reached.
+ * @return				The breadcrumbs for the connection between the given tables.
  */
-Breadcrumbs Database::getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* destinationTable)
+Breadcrumbs Database::getBreadcrumbsFor(const NormalTable* startTable, const Table* targetTable) const
 {
 	assert(breadcrumbMatrix.contains(startTable));
-	assert(breadcrumbMatrix.value(startTable).contains(destinationTable));
+	assert(breadcrumbMatrix.value(startTable).contains(targetTable));
 	
-	return breadcrumbMatrix.value(startTable).value(destinationTable);
+	return breadcrumbMatrix.value(startTable).value(targetTable);
 }
 
 

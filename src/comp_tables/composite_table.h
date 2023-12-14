@@ -197,6 +197,9 @@ private:
 	QVariant computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const;
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
+protected:
+	Breadcrumbs crumbsTo(const Database* db, const Table* destinationTable) const;
+	
 public:
 	ProjectSettings* getProjectSettings() const;
 };

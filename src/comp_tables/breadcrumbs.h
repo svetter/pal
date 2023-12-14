@@ -72,6 +72,7 @@ public:
 	Breadcrumbs(const QList<Breadcrumb>& initList);
 	
 	const QSet<Column* const> getColumnSet() const;
+	const Table* getTargetTable() const;
 	bool isEmpty() const;
 	int length() const;
 	
@@ -83,6 +84,7 @@ public:
 	Breadcrumbs operator+(const Breadcrumbs& other) const;
 	
 	QSet<BufferRowIndex> evaluate(BufferRowIndex initialBufferRowIndex) const;
+	BufferRowIndex evaluateAsForwardChain(BufferRowIndex initialBufferRowIndex) const;
 	QList<BufferRowIndex> evaluateForStats(const QSet<BufferRowIndex>& initialBufferRowIndices) const;
 };
 

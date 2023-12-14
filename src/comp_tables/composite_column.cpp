@@ -468,12 +468,13 @@ const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param foreignKeyColumnSequence	The sequence of foreign key columns to follow to get to the content column's table.
  * @param contentColumn				The column from which to take the actual cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, QList<ForeignKeyColumn*> foreignKeyColumnSequence, Column* contentColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column* contentColumn) :
 	CompositeColumn(table, name, uiName, contentColumn->type, false, false, suffix, contentColumn->enumNames),
-	foreignKeyColumnSequence(foreignKeyColumnSequence),
+	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
 {
 	assert(contentColumn);
+	assert(contentColumn->table == breadcrumbs.getTargetTable());
 }
 
 
@@ -486,34 +487,12 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QStrin
  */
 QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	assert(foreignKeyColumnSequence.first()->isForeignKey());
+	BufferRowIndex targetRowIndex = breadcrumbs.evaluateAsForwardChain(rowIndex);
 	
-	BufferRowIndex currentRowIndex = rowIndex;
-	assert(!foreignKeyColumnSequence.first()->table->isAssociative);
-	NormalTable* currentTable = (NormalTable*) foreignKeyColumnSequence.first()->table;
+	if (targetRowIndex.isInvalid()) return QVariant();
 	
-	for (const ForeignKeyColumn* currentColumn : foreignKeyColumnSequence) {
-		assert(currentColumn->table == currentTable);
-		assert(currentColumn->isForeignKey());
-		
-		// Look up key stored in current column at current row index
-		ItemID key = currentColumn->getValueAt(currentRowIndex);
-		
-		if (key.isInvalid()) return QVariant();
-		
-		// Get referenced primary key column of other table
-		const PrimaryKeyColumn* referencedColumn = currentColumn->getReferencedForeignColumn();
-		assert(!referencedColumn->table->isAssociative);
-		currentTable = (NormalTable*) referencedColumn->table;
-		
-		// Find row index that contains the current primary key
-		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(FORCE_VALID(key));
-		assert(currentRowIndex.isValid());
-	}
-	
-	// Finally, look up content column at last row index
-	assert(contentColumn->table == currentTable);
-	QVariant content = contentColumn->getValueAt(currentRowIndex);
+	// Look up content column at last row index
+	QVariant content = contentColumn->getValueAt(targetRowIndex);
 	
 	return content;
 }
@@ -529,10 +508,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column* const> result = { contentColumn };
-	for (Column* column : foreignKeyColumnSequence) {
-		result.insert(column);
-		result.insert(column->getReferencedForeignColumn());
-	}
+	result.unite(breadcrumbs.getColumnSet());
 	return result;
 }
 
