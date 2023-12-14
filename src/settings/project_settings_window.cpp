@@ -98,7 +98,7 @@ void ProjectSettingsWindow::repopulateHikerCombo()
  */
 void ProjectSettingsWindow::loadSettings()
 {
-	ItemID hikerID = db->projectSettings->defaultHiker.get();
+	ItemID hikerID = ItemID(db->projectSettings->defaultHiker.get(), ItemTypeHiker);
 	if (hikerID.isValid()) {
 		defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 	} else {
@@ -115,14 +115,14 @@ void ProjectSettingsWindow::saveSettings()
 		if (newDefaultHikerLineEdit->text().isEmpty()) return;
 		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
-		Hiker* newDefaultHiker = new Hiker(ItemID(), newDefaultHikerName);
+		Hiker* newDefaultHiker = new Hiker(ItemID(ItemTypeHiker), newDefaultHikerName);
 		db->hikersTable->addRow(this, newDefaultHiker);
 		
-		db->projectSettings->defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
+		db->projectSettings->defaultHiker.set(this, ID_AS_QVARIANT(newDefaultHiker->hikerID, ItemTypeHiker));
 		delete newDefaultHiker;
 	}
 	else {
-		db->projectSettings->defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+		db->projectSettings->defaultHiker.set(this, ID_AS_QVARIANT(parseItemCombo(defaultHikerCombo, selectableHikerIDs, ItemTypeHiker), ItemTypeHiker));
 	}
 }
 

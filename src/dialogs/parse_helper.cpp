@@ -73,10 +73,10 @@ int parseSpinner(const QSpinBox* spinBox)
  * @param itemIDs	The list of item IDs corresponding to the entries in the combo box.
  * @return			The parsed ItemID, which may be invalid.
  */
-ItemID parseItemCombo(const QComboBox* combo, const QList<ValidItemID>& itemIDs)
+ItemID parseItemCombo(const QComboBox* combo, const QList<ValidItemID>& itemIDs, PALItemType itemType)
 {
 	if (combo->currentIndex() < 1) {
-		return ItemID();
+		return ItemID(itemType);
 	}
 	return itemIDs.at(combo->currentIndex() - 1);
 }

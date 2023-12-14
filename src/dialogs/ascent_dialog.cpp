@@ -104,7 +104,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	// Set initial hiker
-	ItemID defaultHikerID = db->projectSettings->defaultHiker.get();
+	ItemID defaultHikerID = ItemID(db->projectSettings->defaultHiker.get(), ItemTypeHiker);
 	if (defaultHikerID.isValid()) {
 		Hiker* hiker = db->getHiker(FORCE_VALID(defaultHikerID));
 		hikersModel.addHiker(hiker);
@@ -246,7 +246,7 @@ void AscentDialog::insertInitData()
 Ascent* AscentDialog::extractData()
 {
 	QString				title				= parseLineEdit			(titleLineEdit);
-	ItemID				peakID				= parseItemCombo		(peakCombo, selectablePeakIDs);
+	ItemID				peakID				= parseItemCombo		(peakCombo, selectablePeakIDs, ItemTypePeak);
 	QDate				date				= parseDateWidget		(dateWidget);
 	int					perDayIndex			= parseSpinner			(peakIndexSpinner);
 	QTime				time				= parseTimeWidget		(timeWidget);
@@ -255,7 +255,7 @@ Ascent* AscentDialog::extractData()
 	bool				traverse			= parseCheckbox			(traverseCheckbox);
 	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
 	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
-	ItemID				tripID				= parseItemCombo		(tripCombo, selectableTripIDs);
+	ItemID				tripID				= parseItemCombo		(tripCombo, selectableTripIDs, ItemTypeTrip);
 	QString				description			= parsePlainTextEdit	(descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
 	QList<Photo>		photos				= photosModel.getPhotoList();
@@ -268,7 +268,7 @@ Ascent* AscentDialog::extractData()
 		difficultyGrade		= 0;
 	}
 	
-	Ascent* ascent = new Ascent(ItemID(), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	Ascent* ascent = new Ascent(ItemID(ItemTypeAscent), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 	return ascent;
 }
 
@@ -296,7 +296,7 @@ bool AscentDialog::changesMade()
  */
 void AscentDialog::handle_regionFilterChanged()
 {
-	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
+	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs, ItemTypeRegion);
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
 }
 
@@ -441,7 +441,7 @@ void AscentDialog::handle_addPhotos()
 	
 	QList<Photo> photos = QList<Photo>();
 	for (const QString& filepath : filepaths) {
-		photos.append(Photo(ItemID(), ItemID(), -1, filepath, QString()));
+		photos.append(Photo(ItemID(ItemTypeNone), ItemID(ItemTypeAscent), -1, filepath, QString()));
 	}
 	
 	photosModel.addPhotos(photos);
@@ -630,7 +630,7 @@ void openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
 	
 	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		ascentIDs += VALID_ITEM_ID(db->ascentsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		ascentIDs += VALID_ITEM_ID(db->ascentsTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeAscent);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->ascentsTable, ascentIDs);
@@ -661,7 +661,7 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 	BufferRowIndex newAscentIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalAscent);
-		originalAscent->ascentID = ItemID();
+		originalAscent->ascentID = ItemID(ItemTypeAscent);
 	}
 	
 	AscentDialog dialog(parent, db, purpose, originalAscent);

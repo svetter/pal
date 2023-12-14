@@ -32,7 +32,7 @@
  * Creates a new HikersTable.
  */
 HikersTable::HikersTable() :
-	NormalTable(QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
+	NormalTable(ItemTypeHiker, QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
 	//										name	uiName		type	nullable
 	nameColumn	(new ValueColumn	(this,	"name",	tr("Name"),	String,	false))
 {

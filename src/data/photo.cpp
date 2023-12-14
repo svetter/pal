@@ -29,8 +29,8 @@
  * Creates a new empty photo object with invalid values.
  */
 Photo::Photo() :
-	photoID(ItemID()),
-	ascentID(ItemID()),
+	photoID(ItemID(ItemTypeNone)),
+	ascentID(ItemID(ItemTypeAscent)),
 	sortIndex(-1),
 	filepath(QString()),
 	description(QString())

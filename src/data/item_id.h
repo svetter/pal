@@ -25,6 +25,8 @@
 #ifndef ITEM_ID_H
 #define ITEM_ID_H
 
+#include "src/data/types.h"
+
 #include <cstddef>
 #include <QVariant>
 #include <QHashFunctions>
@@ -45,22 +47,24 @@ class ItemID {
 	bool valid;
 	/** The ID index, if valid. */
 	int id;
+protected:
+	PALItemType type;
 	
 	/** The lowest integer that can be used as an ID in the database system. */
 	inline static const int LOWEST_LEGAL_ID = 1;
 	
 public:
-	ItemID(int id);
-	ItemID(QVariant id);
-	ItemID();
+	ItemID(int id, PALItemType type);
+	ItemID(QVariant id, PALItemType type);
+	ItemID(PALItemType type);
 	ItemID(const ItemID& other);
 	
 	bool isValid() const;
 	bool isInvalid() const;
+	bool isType(PALItemType itemType) const;
 	
-private:
+protected:
 	int get() const;
-public:
 	QVariant asQVariant() const;
 	
 private:
@@ -84,8 +88,8 @@ public:
  */
 class ValidItemID : public ItemID {
 private:
-	ValidItemID(int id);
-	ValidItemID(QVariant id);
+	ValidItemID(int id, PALItemType itemType);
+	ValidItemID(QVariant id, PALItemType itemType);
 public:
 	ValidItemID(const ValidItemID& other);
 	
@@ -112,9 +116,22 @@ size_t qHash(const ItemID& key, size_t seed);
  * sure that violated assertions give a useful error message.
  * 
  * @param item_id	The ItemID to get the integer index of.
+ * @param type		The item type of the ItemID.
  * @return			The integer index of the ItemID.
 */
-#define ID_GET(item_id) (assert(item_id.isValid()), ItemIDPrivilegedFunctionAccessor::getValueForItemID(item_id))
+#define ID_GET(item_id, type) (assert(item_id.isValid()), assert(item_id.isType(type)), ItemIDPrivilegedFunctionAccessor::getValueForItemID(item_id))
+
+/**
+ * A macro to get the index of an ItemID as a QVariant.
+ * 
+ * Always use this macro to make sure that assertions are performed at caller level first, to make
+ * sure that violated assertions give a useful error message.
+ * 
+ * @param item_id	The ItemID to get the integer index of.
+ * @param type		The item type of the ItemID.
+ * @return			The integer index of the ItemID.
+*/
+#define ID_AS_QVARIANT(item_id, type) (assert(item_id.isType(type)), ItemIDPrivilegedFunctionAccessor::getQVariantForItemID(item_id))
 
 /**
  * A macro to force an ItemID to be valid, turning it into a ValidItemID.
@@ -138,7 +155,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * @param integer	The integer to create a ValidItemID from.
  * @return			The ValidItemID created from the integer.
  */
-#define VALID_ITEM_ID(integer) (assert(ItemID(integer).isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(ItemID(integer)))
+#define VALID_ITEM_ID(integer, type) (assert(ItemID(integer, type).isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(ItemID(integer, type)))
 
 
 /**
@@ -152,9 +169,11 @@ class ItemIDPrivilegedFunctionAccessor
 {
 public:
 	/** Do NOT call directly! Use macro ID_GET(...) instead. */
-	inline static int			getValueForItemID	(ItemID itemID)	{ return itemID.get();			}
+	inline static int			getValueForItemID		(ItemID itemID)	{ return itemID.get();			}
+	/** Do NOT call directly! Use macro ID_AS_QVARIANT(...) instead. */
+	inline static QVariant		getQVariantForItemID	(ItemID itemID)	{ return itemID.asQVariant();	}
 	/** Do NOT call directly! Use macros FORCE_VALID(...) and VALID_ITEM_ID(...) instead. */
-	inline static ValidItemID	forceItemIDValid	(ItemID itemID)	{ return itemID.forceValid();	}
+	inline static ValidItemID	forceItemIDValid		(ItemID itemID)	{ return itemID.forceValid();	}
 };
 
 

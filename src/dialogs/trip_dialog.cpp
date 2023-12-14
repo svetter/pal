@@ -137,7 +137,7 @@ Trip* TripDialog::extractData()
 	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();	
 	if (datesUnspecifiedCheckbox->isChecked())	endDate = QDate();
 	
-	Trip* trip = new Trip(ItemID(), name, startDate, endDate, description);
+	Trip* trip = new Trip(ItemID(ItemTypeTrip), name, startDate, endDate, description);
 	return trip;
 }
 
@@ -264,7 +264,7 @@ void openDeleteTripsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferR
 	
 	QSet<ValidItemID> tripIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeTrip);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->tripsTable, tripIDs);
@@ -295,7 +295,7 @@ static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, Dial
 	BufferRowIndex newTripIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalTrip);
-		originalTrip->tripID = ItemID();
+		originalTrip->tripID = ItemID(ItemTypeTrip);
 	}
 	
 	TripDialog dialog(parent, db, purpose, originalTrip);

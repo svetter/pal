@@ -86,6 +86,7 @@ public:
 	bool isKey() const;
 	PrimaryKeyColumn* getReferencedForeignColumn() const;
 	int getIndex() const;
+	PALItemType getTableItemType() const;
 	
 	QVariant getValueAt(BufferRowIndex bufferRowIndex) const;
 	QVariant getValueFor(ValidItemID itemID) const;

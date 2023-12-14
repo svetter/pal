@@ -35,7 +35,7 @@
  * @param foreignCountryIDColumn	The primary key column of the CountriesTable.
  */
 RegionsTable::RegionsTable(PrimaryKeyColumn* foreignRangeIDColumn, PrimaryKeyColumn* foreignCountryIDColumn) :
-	NormalTable(QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
+	NormalTable(ItemTypeRegion, QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
 	//												name			uiName						type	nullable	foreignColumn
 	nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,	false)),
 	rangeIDColumn	(new ForeignKeyColumn	(this,	"rangeID",		tr("Mountain range ID"),			true,		foreignRangeIDColumn)),
@@ -95,9 +95,9 @@ const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<c
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)		{ data = region->name;						}
-		else if (column == rangeIDColumn)	{ data = region->rangeID.asQVariant();		}
-		else if (column == countryIDColumn)	{ data = region->countryID.asQVariant();	}
+		     if (column == nameColumn)		{ data =				region->name;							}
+		else if (column == rangeIDColumn)	{ data = ID_AS_QVARIANT(region->rangeID,	ItemTypeRange);		}
+		else if (column == countryIDColumn)	{ data = ID_AS_QVARIANT(region->countryID,	ItemTypeCountry);	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

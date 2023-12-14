@@ -171,7 +171,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 		// Look up keys stored in firstColumn at given row indices
 		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
 		for (const BufferRowIndex& bufferRowIndex : currentRowIndexSet) {
-			ItemID key = crumb.firstColumn->getValueAt(bufferRowIndex);
+			ItemID key = ItemID(crumb.firstColumn->getValueAt(bufferRowIndex), crumb.firstColumn->getTableItemType());
 			if (key.isInvalid()) continue;
 			// Add new item ID to current set
 			currentKeySet.insert(FORCE_VALID(key));
@@ -196,7 +196,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			// Backward reference (reference search, result for each input element is key set)
 			// Find rows in new table where key in secondColumn matches any key in current set
 			for (const ValidItemID& key : currentKeySet) {
-				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
+				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, ID_AS_QVARIANT(key, crumb.secondColumn->getTableItemType()));
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				// Add new buffer indices to current set
 				currentRowIndexSet.unite(matchingBufferRowIndices);
@@ -438,7 +438,7 @@ QStringList HikerListCompositeColumn::formatAndSortIntoStringList(QSet<BufferRow
 	
 	// Check whether default hiker is set and get name if so
 	if (defaultHiker.present()) {
-		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker.get());
+		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker.get(), ItemTypeHiker);
 		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
 		if (rowIndexSet.contains(defaultHikerRowIndex)) {
 			QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);

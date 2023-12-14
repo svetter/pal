@@ -142,10 +142,10 @@ void RegionDialog::insertInitData()
 Region* RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
-	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs);
-	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs);
+	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs, ItemTypeRange);
+	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs, ItemTypeCountry);
 	
-	Region* region = new Region(ItemID(), name, rangeID, countryID);
+	Region* region = new Region(ItemID(ItemTypeRegion), name, rangeID, countryID);
 	return region;
 }
 
@@ -264,7 +264,7 @@ void openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
 	
 	QSet<ValidItemID> regionIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeRegion);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->regionsTable, regionIDs);
@@ -295,7 +295,7 @@ static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, Di
 	BufferRowIndex newRegionIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRegion);
-		originalRegion->regionID = ItemID();
+		originalRegion->regionID = ItemID(ItemTypeRegion);
 	}
 	
 	RegionDialog dialog(parent, db, purpose, originalRegion);

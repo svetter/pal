@@ -32,7 +32,7 @@
  * Creates a new CountriesTable.
  */
 CountriesTable::CountriesTable() :
-	NormalTable(QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
+	NormalTable(ItemTypeCountry, QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
 	//										name	uiName		type	nullable
 	nameColumn	(new ValueColumn	(this,	"name",	tr("Name"),	String,	false))
 {

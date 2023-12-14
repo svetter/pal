@@ -41,7 +41,7 @@
 QString		parseLineEdit		(const QLineEdit*		lineEdit);
 QString		parsePlainTextEdit	(const QPlainTextEdit*	plainTextEdit);
 int			parseSpinner		(const QSpinBox*		spinBox);
-ItemID		parseItemCombo		(const QComboBox*		combo, const QList<ValidItemID>& itemIDs);
+ItemID		parseItemCombo		(const QComboBox*		combo, const QList<ValidItemID>& itemIDs, PALItemType itemType);
 int			parseEnumCombo		(const QComboBox*		combo, bool defaultToZero);
 bool		parseCheckbox		(const QCheckBox*		checkbox);
 QDate		parseDateWidget		(const QDateEdit*		dateEdit);

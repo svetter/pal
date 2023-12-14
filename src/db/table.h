@@ -51,6 +51,7 @@ class Table : public QAbstractItemModel {
 	CompositeTable* rowChangeListener;
 
 public:
+	const PALItemType itemType;
 	/** The internal name of the table. */
 	const QString	name;
 	/** The name of the table as it should be displayed in the UI. */
@@ -62,7 +63,7 @@ protected:
 	/** The buffer for this table. */
 	TableBuffer buffer;
 	
-	Table(QString name, QString uiName, bool isAssociative);
+	Table(PALItemType itemType, QString name, QString uiName, bool isAssociative);
 public:
 	virtual ~Table();
 	

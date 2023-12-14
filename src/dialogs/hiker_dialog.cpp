@@ -110,7 +110,7 @@ Hiker* HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Hiker* hiker = new Hiker(ItemID(), name);
+	Hiker* hiker = new Hiker(ItemID(ItemTypeHiker), name);
 	return hiker;
 }
 
@@ -197,7 +197,7 @@ void openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
 	
 	QSet<ValidItemID> hikerIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeHiker);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->hikersTable, hikerIDs);
@@ -210,7 +210,7 @@ void openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
 	}
 	
 	for (const ItemID& hikerID : qAsConst(hikerIDs)) {
-		if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID)) {
+		if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID, ItemTypeHiker)) {
 			db->projectSettings->defaultHiker.clear(parent);
 			break;
 		}
@@ -235,7 +235,7 @@ static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, Dia
 	BufferRowIndex newHikerIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalHiker);
-		originalHiker->hikerID = ItemID();
+		originalHiker->hikerID = ItemID(ItemTypeHiker);
 	}
 	
 	HikerDialog dialog(parent, db, purpose, originalHiker);

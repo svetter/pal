@@ -33,7 +33,10 @@
  * 
  * @param id	The index.
  */
-ItemID::ItemID(int id) : valid(id >= LOWEST_LEGAL_ID), id(id)
+ItemID::ItemID(int id, PALItemType type) :
+	valid(id >= LOWEST_LEGAL_ID),
+	id(id),
+	type(type)
 {}
 
 /**
@@ -43,13 +46,19 @@ ItemID::ItemID(int id) : valid(id >= LOWEST_LEGAL_ID), id(id)
  * 
  * @param id	The index as a QVariant.
  */
-ItemID::ItemID(QVariant id) : valid(id.isValid() && id.canConvert<int>() && id.toInt() >= LOWEST_LEGAL_ID), id(id.toInt())
+ItemID::ItemID(QVariant id, PALItemType type) :
+	valid(id.isValid() && id.canConvert<int>() && id.toInt() >= LOWEST_LEGAL_ID),
+	id(id.toInt()),
+	type(type)
 {}
 
 /**
  * Creates an invalid ItemID.
  */
-ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
+ItemID::ItemID(PALItemType type) :
+	valid(false),
+	id(LOWEST_LEGAL_ID - 1),
+	type(type)
 {}
 
 /**
@@ -57,7 +66,10 @@ ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
  *
  * @param id	A reference to the ItemID to copy.
  */
-ItemID::ItemID(const ItemID& other) : valid(other.valid), id(other.id)
+ItemID::ItemID(const ItemID& other) :
+	valid(other.valid),
+	id(other.id),
+	type(other.type)
 {}
 
 
@@ -80,6 +92,11 @@ bool ItemID::isValid() const
 bool ItemID::isInvalid() const
 {
 	return !valid;
+}
+
+bool ItemID::isType(PALItemType itemType) const
+{
+	return itemType == type;
 }
 
 /**
@@ -122,7 +139,7 @@ QVariant ItemID::asQVariant() const
 ValidItemID ItemID::forceValid() const
 {
 	assert(valid);
-	return ValidItemID(id);
+	return ValidItemID(id, type);
 }
 
 
@@ -148,7 +165,8 @@ void ItemID::operator=(const ItemID& other)
  * 
  * @param id	The index.
  */
-ValidItemID::ValidItemID(int id) : ItemID(id)
+ValidItemID::ValidItemID(int id, PALItemType itemType) :
+	ItemID(id, itemType)
 {
 	assert(isValid());
 }
@@ -160,7 +178,8 @@ ValidItemID::ValidItemID(int id) : ItemID(id)
  * 
  * @param id	The index as a QVariant.
  */
-ValidItemID::ValidItemID(QVariant id) : ItemID(id)
+ValidItemID::ValidItemID(QVariant id, PALItemType itemType) :
+	ItemID(id, itemType)
 {
 	assert(isValid());
 }
@@ -170,7 +189,8 @@ ValidItemID::ValidItemID(QVariant id) : ItemID(id)
  *
  * @param id	A reference to the ValidItemID to copy.
  */
-ValidItemID::ValidItemID(const ValidItemID& other) : ValidItemID(other.asQVariant())
+ValidItemID::ValidItemID(const ValidItemID& other) :
+	ValidItemID(other.asQVariant(), other.type)
 {}
 
 

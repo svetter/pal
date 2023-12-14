@@ -128,7 +128,7 @@ private:
 	void editItem(const ItemTypeMapper* const mapper, const QModelIndex& index);
 	void deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
-	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
+	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex);
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);

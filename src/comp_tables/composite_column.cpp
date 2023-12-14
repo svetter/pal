@@ -256,6 +256,8 @@ void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& o
 	if (orderBuffer.isEmpty()) return;
 	assert(filter.column == this);
 	
+	PALItemType itemType = table->getBaseTable()->itemType;
+	
 	const QVariant value		= filter.value;
 	const bool hasSecond		= filter.hasSecond;
 	const QVariant secondValue	= filter.secondValue;
@@ -284,19 +286,19 @@ void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& o
 		break;
 	}
 	case ID: {
-		ItemID id = isInt ? value.toInt() : ItemID();
-		valuePasses = [id] (QVariant valueToFilter) {
-			if (id.isInvalid()) return ItemID(valueToFilter).isInvalid();
-			return valueToFilter == id.asQVariant();
+		ItemID id = isInt ? ItemID(value.toInt(), itemType) : ItemID(itemType);
+		valuePasses = [id, itemType] (QVariant valueToFilter) {
+			if (id.isInvalid()) return ItemID(valueToFilter, itemType).isInvalid();
+			return valueToFilter == ID_AS_QVARIANT(id, itemType);
 		};
 		break;
 	}
 	case IDList: {
-		ItemID id = isInt ? value.toInt() : ItemID();
-		valuePasses = [id] (QVariant valueToFilter) {
+		ItemID id = isInt ? ItemID(value.toInt(), itemType) : ItemID(itemType);
+		valuePasses = [id, itemType] (QVariant valueToFilter) {
 			QList<QVariant> list = valueToFilter.toList();
 			if (id.isInvalid()) return list.isEmpty();
-			return list.contains(id.asQVariant());
+			return list.contains(ID_AS_QVARIANT(id, itemType));
 		};
 		break;
 	}
@@ -497,7 +499,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 		assert(currentColumn->isForeignKey());
 		
 		// Look up key stored in current column at current row index
-		ItemID key = currentColumn->getValueAt(currentRowIndex);
+		ItemID key = ItemID(currentColumn->getValueAt(currentRowIndex), currentColumn->foreignColumn->table->itemType);
 		
 		if (key.isInvalid()) return QVariant();
 		
@@ -821,10 +823,10 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	
 	QList<QVariant> ordinals = QList<QVariant>(order.size());
 	
-	ItemID lastKey = ItemID();
+	ItemID lastKey = ItemID(table->getBaseTable()->itemType);
 	int ordinal = 1;
 	for (const BufferRowIndex& rowIndex : order) {
-		ItemID currentKey = separatingColumn->getValueAt(rowIndex);
+		ItemID currentKey = ItemID(separatingColumn->getValueAt(rowIndex), table->getBaseTable()->itemType);
 		if (!currentKey.isValid()) {
 			// No key, reset ordinal and append empty
 			ordinal = 1;

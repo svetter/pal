@@ -110,7 +110,7 @@ Country* CountryDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Country* country = new Country(ItemID(), name);
+	Country* country = new Country(ItemID(ItemTypeCountry), name);
 	return country;
 }
 
@@ -197,7 +197,7 @@ void openDeleteCountriesDialogAndExecute(QWidget* parent, Database* db, QSet<Buf
 	
 	QSet<ValidItemID> countryIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		countryIDs += VALID_ITEM_ID(db->countriesTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		countryIDs += VALID_ITEM_ID(db->countriesTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeCountry);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->countriesTable, countryIDs);
@@ -228,7 +228,7 @@ static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, D
 	BufferRowIndex newCountryIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalCountry);
-		originalCountry->countryID = ItemID();
+		originalCountry->countryID = ItemID(ItemTypeCountry);
 	}
 	
 	CountryDialog dialog(parent, db, purpose, originalCountry);

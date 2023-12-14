@@ -35,7 +35,7 @@
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  */
 PhotosTable::PhotosTable(PrimaryKeyColumn* foreignAscentIDColumn) :
-	NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
+	NormalTable(ItemTypeNone, QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
 	//													name			uiName				type		nullable	foreignColumn
 	ascentIDColumn		(new ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
 	sortIndexColumn		(new ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
@@ -59,7 +59,7 @@ PhotosTable::PhotosTable(PrimaryKeyColumn* foreignAscentIDColumn) :
  */
 QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 {
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ID_GET(ascentID));
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(ascentIDColumn, ID_GET(ascentID, ItemTypeAscent));
 	
 	QMap<int, Photo> photosMap = QMap<int, Photo>();
 	for (BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -67,7 +67,7 @@ QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 		QString filepath	= filepathColumn	->getValueAt(bufferRowIndex).toString();
 		QString description	= descriptionColumn	->getValueAt(bufferRowIndex).toString();
 		
-		Photo newPhoto = Photo(ItemID(), ascentID, sortIndex, filepath, description);
+		Photo newPhoto = Photo(ItemID(ItemTypeNone), ascentID, sortIndex, filepath, description);
 		photosMap.insert(sortIndex, newPhoto);
 	}
 	QList<Photo> sortedList = photosMap.values();
@@ -162,10 +162,10 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == ascentIDColumn)		{ data = ascentID.asQVariant();	}
-		else if (column == sortIndexColumn)		{ data = sortIndex;				}
-		else if (column == filepathColumn)		{ data = filepath;				}
-		else if (column == descriptionColumn)	{ data = description;			}
+		     if (column == ascentIDColumn)		{ data = ID_AS_QVARIANT(ascentID, ItemTypeAscent);	}
+		else if (column == sortIndexColumn)		{ data =				sortIndex;					}
+		else if (column == filepathColumn)		{ data =				filepath;					}
+		else if (column == descriptionColumn)	{ data =				description;				}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

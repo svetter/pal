@@ -88,8 +88,8 @@ const QList<ColumnDataPair> ParticipatedTable::mapDataToColumnDataPairs(const QL
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == ascentIDColumn)	{ data = ascentID.asQVariant();	}
-		else if (column == hikerIDColumn)	{ data = hikerID.asQVariant();	}
+		     if (column == ascentIDColumn)	{ data = ID_AS_QVARIANT(ascentID, ItemTypeAscent);	}
+		else if (column == hikerIDColumn)	{ data = ID_AS_QVARIANT(hikerID, ItemTypeHiker);	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

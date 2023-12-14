@@ -32,13 +32,13 @@
 /**
  * Creates a new AssociativeTable and automatically creates and adds its two columns.
  * 
- * @param name					The internal name of the table.
- * @param uiName				The name of the table as it should be displayed in the UI.
- * @param foreignKeyColumn1		The first primary and foreign key column.
- * @param foreignKeyColumn2		The second primary and foreign key column.
+ * @param name				The internal name of the table.
+ * @param uiName			The name of the table as it should be displayed in the UI.
+ * @param foreignKeyColumn1	The first primary and foreign key column.
+ * @param foreignKeyColumn2	The second primary and foreign key column.
  */
 AssociativeTable::AssociativeTable(QString name, QString uiName, PrimaryKeyColumn* foreignKeyColumn1, PrimaryKeyColumn* foreignKeyColumn2) :
-	Table(name, uiName, true),
+	Table(ItemTypeNone, name, uiName, true),
 	column1(new PrimaryForeignKeyColumn(this, foreignKeyColumn1->name, foreignKeyColumn1->uiName, foreignKeyColumn1)),
 	column2(new PrimaryForeignKeyColumn(this, foreignKeyColumn2->name, foreignKeyColumn2->uiName, foreignKeyColumn2))
 {
@@ -141,9 +141,10 @@ const NormalTable* AssociativeTable::traverseAssociativeRelation(const PrimaryKe
 int AssociativeTable::getNumberOfMatchingRows(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
+	
 	int numberOfMatches = 0;
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey)) {
+		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey, column->getTableItemType())) {
 			numberOfMatches++;
 		}
 	}
@@ -164,11 +165,12 @@ int AssociativeTable::getNumberOfMatchingRows(const PrimaryForeignKeyColumn* col
 QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const
 {
 	assert(column == column1 || column == column2);
+	
 	const PrimaryForeignKeyColumn* otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey)) {
-			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn->getIndex()).toInt()));
+		if (bufferRow->at(column->getIndex()) == ID_GET(primaryKey, column->getTableItemType())) {
+			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn->getIndex()).toInt(), otherColumn->table->itemType));
 		}
 	}
 	return filtered;

@@ -33,12 +33,14 @@
 /**
  * Creates a new Table.
  * 
+ * @param itemType		The type of item stored in the table, if applicable, otherwise -1.
  * @param name			The name of the table in the SQL database.
  * @param uiName		The name of the table as it should be displayed in the UI.
  * @param isAssociative	Whether the table is associative.
  */
-Table::Table(QString name, QString uiName, bool isAssociative) :
+Table::Table(PALItemType itemType, QString name, QString uiName, bool isAssociative) :
 	rowChangeListener(nullptr),
+	itemType(itemType),
 	name(name),
 	uiName(uiName),
 	isAssociative(isAssociative),
@@ -264,7 +266,8 @@ BufferRowIndex Table::getMatchingBufferRowIndex(const QList<const Column*>& prim
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(buffer.numRows()); bufferRowIndex++) {
 		bool match = true;
 		for (int i = 0; i < numPrimaryKeys; i++) {
-			if (primaryKeyColumns.at(i)->getValueAt(bufferRowIndex) != ID_GET(primaryKeys.at(i))) {
+			PALItemType type = primaryKeyColumns.at(i)->getTableItemType();
+			if (primaryKeyColumns.at(i)->getValueAt(bufferRowIndex) != ID_GET(primaryKeys.at(i), type)) {
 				match = false;
 				break;
 			}
@@ -352,7 +355,7 @@ BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& colum
 		newBufferRow->append(columnDataPair.second);
 	}
 	if (!isAssociative) {
-		newBufferRow->insert(0, newRowID.asQVariant());
+		newBufferRow->insert(0, ID_AS_QVARIANT(newRowID, itemType));
 	}
 	buffer.appendRow(newBufferRow);
 	
@@ -484,7 +487,7 @@ void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemI
 	removeMatchingRowsFromSql(parent, column, key);
 	
 	// Update buffer
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(column, ID_AS_QVARIANT(key, column->getTableItemType()));
 	if (bufferRowIndices.isEmpty()) return;
 	
 	auto iter = bufferRowIndices.constEnd();
@@ -611,7 +614,7 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
 		displayError(parent, query.lastError(), queryString);
 	}
 	
-	ValidItemID newRowID = VALID_ITEM_ID(query.lastInsertId().toInt());
+	ValidItemID newRowID = VALID_ITEM_ID(query.lastInsertId().toInt(), itemType);
 	return newRowID;
 }
 
@@ -633,7 +636,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	QString queryString = QString(
 			"UPDATE " + name + 
 			"\nSET " + column->name + " = ?" +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey, itemType))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -665,7 +668,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	QString queryString = QString(
 			"UPDATE " + name + 
 			"\nSET " + setString +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
+			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey, itemType))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -694,7 +697,7 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 		const Column* column = primaryKeyColumns.at(i);
 		assert(column->table == this && column->isPrimaryKey());
 		
-		condition.append(column->name + " = " + QString::number(ID_GET(primaryKeys.at(i))));
+		condition.append(column->name + " = " + QString::number(ID_GET(primaryKeys.at(i), itemType)));
 	}
 	QString queryString = QString(
 			"DELETE FROM " + name +
@@ -709,19 +712,20 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 }
 
 /**
- * Removes all rows from the table in the SQL database where the given column has the given value.
+ * Removes all rows from the table in the SQL database where the given column matches the given
+ * primary key.
  * 
- * @param parent	The parent window.
- * @param column	The column to check.
- * @param key		The value to check for.
+ * @param parent		The parent window.
+ * @param column		The column to check.
+ * @param primaryKey	The primary key to check for.
  */
-void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key)
+void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID primaryKey)
 {
 	assert(getColumnList().contains(column));
 	
 	QString queryString = QString(
 			"DELETE FROM " + name +
-			"\nWHERE " + column->name + " = " + QString::number(ID_GET(key))
+		"\nWHERE " + column->name + " = " + QString::number(ID_GET(primaryKey, column->getTableItemType()))
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);

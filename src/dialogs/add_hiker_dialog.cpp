@@ -143,6 +143,6 @@ ItemID openAddHikerDialog(QWidget* parent, Database* db)
 	if (dialog.exec() == QDialog::Accepted) {
 		return dialog.extractHikerID();
 	} else {
-		return -1;
+		return ItemID(ItemTypeHiker);
 	}
 }

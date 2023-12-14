@@ -34,7 +34,7 @@
  * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
  */
 PeaksTable::PeaksTable(PrimaryKeyColumn* foreignRegionIDColumn) :
-	NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
+	NormalTable(ItemTypePeak, QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
 	//										name					uiName						type		nullable	foreignColumn
 	nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,		false)),
 	heightColumn	(new ValueColumn		(this,	"height",		tr("Height"),				Integer,	true)),
@@ -102,13 +102,13 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)		{ data = peak->name;					}
-		else if (column == heightColumn)	{ data = peak->getHeightAsQVariant();	}
-		else if (column == volcanoColumn)	{ data = peak->volcano;					}
-		else if (column == regionIDColumn)	{ data = peak->regionID.asQVariant();	}
-		else if (column == mapsLinkColumn)	{ data = peak->mapsLink;				}
-		else if (column == earthLinkColumn)	{ data = peak->earthLink;				}
-		else if (column == wikiLinkColumn)	{ data = peak->wikiLink;				}
+		     if (column == nameColumn)		{ data =				peak->name;							}
+		else if (column == heightColumn)	{ data =				peak->getHeightAsQVariant();		}
+		else if (column == volcanoColumn)	{ data =				peak->volcano;						}
+		else if (column == regionIDColumn)	{ data = ID_AS_QVARIANT(peak->regionID,	ItemTypeRegion);	}
+		else if (column == mapsLinkColumn)	{ data =				peak->mapsLink;						}
+		else if (column == earthLinkColumn)	{ data =				peak->earthLink;					}
+		else if (column == wikiLinkColumn)	{ data =				peak->wikiLink;						}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

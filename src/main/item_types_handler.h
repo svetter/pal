@@ -48,20 +48,6 @@
 
 
 /**
- * Item type enumerator, encoding the type of an item (like ascent, peak...).
- */
-enum PALItemType {
-	ItemTypeAscent,
-	ItemTypePeak,
-	ItemTypeTrip,
-	ItemTypeHiker,
-	ItemTypeRegion,
-	ItemTypeRange,
-	ItemTypeCountry
-};
-
-
-/**
  * A helper class for storing pointers to different kinds of item-specific members, like dialogs,
  * settings, buttons and other UI elements.
  * 

@@ -206,7 +206,7 @@ void populateItemCombo(NormalTable* table, const ValueColumn* displayAndSortColu
 		assert(filterColumn->table == table && filterColumn->type == ID);
 		for (int i = selectableItems.size() - 1; i >= 0; i--) {
 			const ValidItemID& itemID = selectableItems.at(i).first;
-			ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);
+			ItemID itemFilterColumnID = ItemID(filterColumn->getValueFor(itemID), filterColumn->table->itemType);
 			if (itemFilterColumnID != filterID) {
 				selectableItems.remove(i);
 			}

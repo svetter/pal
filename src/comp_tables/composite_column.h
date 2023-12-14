@@ -40,6 +40,7 @@ class CompositeTable;
  * in one or multiple base tables.
  */
 class CompositeColumn {
+protected:
 	/** The composite table this column belongs to. */
 	CompositeTable* const table;
 	

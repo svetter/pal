@@ -126,7 +126,7 @@ Range* RangeDialog::extractData()
 	QString	name		= parseLineEdit		(nameLineEdit);
 	int		continent	= parseEnumCombo	(continentCombo, true);
 	
-	Range* range = new Range(ItemID(), name, continent);
+	Range* range = new Range(ItemID(ItemTypeRange), name, continent);
 	return range;
 }
 
@@ -213,7 +213,7 @@ void openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypeRange);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->rangesTable, rangeIDs);
@@ -244,7 +244,7 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 	BufferRowIndex newRangeIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRange);
-		originalRange->rangeID = ItemID();
+		originalRange->rangeID = ItemID(ItemTypeRange);
 	}
 	
 	RangeDialog dialog(parent, db, purpose, originalRange);

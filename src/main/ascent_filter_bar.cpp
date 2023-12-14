@@ -251,7 +251,7 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 			}
 			assert(isInt);
 			
-			ItemID rangeID = value.toInt();
+			ItemID rangeID = ItemID(value.toInt(), ItemTypeRange);
 			if (rangeID.isInvalid()) {
 				rangeFilterCombo->setCurrentIndex(0);
 				continue;
@@ -291,7 +291,7 @@ void AscentFilterBar::insertFiltersIntoUI(QSet<Filter> filters)
 			}
 			assert(isInt);
 			
-			ItemID hikerID = value.toInt();
+			ItemID hikerID = ItemID(value.toInt(), ItemTypeHiker);
 			if (hikerID.isInvalid()) {
 				hikerFilterCombo->setCurrentIndex(0);
 				continue;
@@ -324,7 +324,7 @@ void AscentFilterBar::updateRangeCombo()
 {
 	temporarilyIgnoreChangeEvents = true;
 	
-	ItemID previouslySelectedRangeID = ItemID();
+	ItemID previouslySelectedRangeID = ItemID(ItemTypeRange);
 	int rangeComboIndex = rangeFilterCombo->currentIndex();
 	if (rangeComboIndex > 0) {
 		previouslySelectedRangeID = selectableRangeIDs.at(rangeComboIndex - 1);	// 0 is None
@@ -332,7 +332,7 @@ void AscentFilterBar::updateRangeCombo()
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeFilterCombo, selectableRangeIDs);
 	
 	int newRangeComboIndex = 0;
-	ItemID newlySelectedRangeID = ItemID();
+	ItemID newlySelectedRangeID = ItemID(ItemTypeRange);
 	if (selectableRangeIDs.contains(previouslySelectedRangeID)) {
 		newRangeComboIndex = selectableRangeIDs.indexOf(previouslySelectedRangeID) + 1;	// 0 is None
 		newlySelectedRangeID = previouslySelectedRangeID;
@@ -358,7 +358,7 @@ void AscentFilterBar::updateHikerCombo()
 {
 	temporarilyIgnoreChangeEvents = true;
 	
-	ItemID previouslySelectedHikerID = ItemID();
+	ItemID previouslySelectedHikerID = ItemID(ItemTypeHiker);
 	int hikerComboIndex = hikerFilterCombo->currentIndex();
 	if (hikerComboIndex > 0) {
 		previouslySelectedHikerID = selectableHikerIDs.at(hikerComboIndex - 1);	// 0 is None
@@ -366,7 +366,7 @@ void AscentFilterBar::updateHikerCombo()
 	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerFilterCombo, selectableHikerIDs);
 	
 	int newHikerComboIndex = 0;
-	ItemID newlySelectedHikerID = ItemID();
+	ItemID newlySelectedHikerID = ItemID(ItemTypeHiker);
 	if (selectableHikerIDs.contains(previouslySelectedHikerID)) {
 		newHikerComboIndex = selectableHikerIDs.indexOf(previouslySelectedHikerID) + 1;	// 0 is None
 		newlySelectedHikerID = previouslySelectedHikerID;
@@ -614,8 +614,8 @@ QSet<Filter> AscentFilterBar::collectFilters()
 	}
 	
 	if (rangeFilterBox->isChecked()) {
-		ItemID rangeID = parseItemCombo(rangeFilterCombo, selectableRangeIDs);
-		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
+		ItemID rangeID = parseItemCombo(rangeFilterCombo, selectableRangeIDs, ItemTypeRange);
+		filters.insert(Filter(compAscents->rangeIDColumn, ID_AS_QVARIANT(rangeID, ItemTypeRange)));
 	}
 	
 	if (hikeKindFilterBox->isChecked()) {
@@ -634,8 +634,8 @@ QSet<Filter> AscentFilterBar::collectFilters()
 	}
 	
 	if (hikerFilterBox->isChecked()) {
-		ItemID hikerID = parseItemCombo(hikerFilterCombo, selectableHikerIDs);
-		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
+		ItemID hikerID = parseItemCombo(hikerFilterCombo, selectableHikerIDs, ItemTypeHiker);
+		filters.insert(Filter(compAscents->hikerIDsColumn, ID_AS_QVARIANT(hikerID, ItemTypeHiker)));
 	}
 	
 	return filters;
@@ -704,8 +704,8 @@ void AscentFilterBar::saveFilters(const QSet<Filter> filters)
 		}
 		
 		if (column == compAscents->rangeIDColumn) {
-			ItemID rangeID = value.toInt();
-			db->projectSettings->ascentFilters_range.set(this, rangeID.isValid() ? rangeID.asQVariant() : -1);
+			ItemID rangeID = ItemID(value.toInt(), ItemTypeRange);
+			db->projectSettings->ascentFilters_range.set(this, rangeID.isValid() ? ID_AS_QVARIANT(rangeID, ItemTypeRange) : -1);
 			continue;
 		}
 		
@@ -723,8 +723,8 @@ void AscentFilterBar::saveFilters(const QSet<Filter> filters)
 		}
 		
 		if (column == compAscents->hikerIDsColumn) {
-			ItemID hikerID = value.toInt();
-			db->projectSettings->ascentFilters_hiker.set(this, hikerID.isValid() ? hikerID.asQVariant() : -1);
+			ItemID hikerID = ItemID(value.toInt(), ItemTypeHiker);
+			db->projectSettings->ascentFilters_hiker.set(this, hikerID.isValid() ? ID_AS_QVARIANT(hikerID, ItemTypeHiker) : -1);
 			continue;
 		}
 		
@@ -772,8 +772,8 @@ QSet<Filter> AscentFilterBar::parseFiltersFromProjectSettings()
 	}
 	
 	if (settings->ascentFilters_range.present()) {
-		ItemID rangeID = settings->ascentFilters_range.get();
-		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
+		ItemID rangeID = ItemID(settings->ascentFilters_range.get(), ItemTypeRange);
+		filters.insert(Filter(compAscents->rangeIDColumn, ID_AS_QVARIANT(rangeID, ItemTypeRange)));
 	}
 	
 	if (settings->ascentFilters_hikeKind.present()) {
@@ -789,8 +789,8 @@ QSet<Filter> AscentFilterBar::parseFiltersFromProjectSettings()
 	}
 	
 	if (settings->ascentFilters_hiker.present()) {
-		ItemID hikerID = settings->ascentFilters_hiker.get();
-		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
+		ItemID hikerID = ItemID(settings->ascentFilters_hiker.get(), ItemTypeHiker);
+		filters.insert(Filter(compAscents->hikerIDsColumn, ID_AS_QVARIANT(hikerID, ItemTypeHiker)));
 	}
 	
 	return filters;

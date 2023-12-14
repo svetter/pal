@@ -34,13 +34,14 @@
  * 
  * Immediately after construction, all columns should be created and added to the table.
  * 
+ * @param itemType					The type of item stored in the table, if applicable, otherwise -1.
  * @param name						The internal name of the table.
  * @param uiName					The name of the table as it should be displayed in the UI.
  * @param primaryKeyColumnName		The name of the primary key column.
  * @param primaryKeyColumnUIName	The name of the primary key column as it should be displayed in the UI.
  */
-NormalTable::NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
-	Table(name, uiName, false),
+NormalTable::NormalTable(PALItemType itemType, QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
+	Table(itemType, name, uiName, false),
 	primaryKeyColumn(new PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
 {}
 
@@ -66,7 +67,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
 {
 	BufferRowIndex index = BufferRowIndex(0);
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(0) == ID_GET(primaryKey)) return index;
+		if (bufferRow->at(0) == ID_GET(primaryKey, itemType)) return index;
 		index++;
 	}
 	return BufferRowIndex();
@@ -80,7 +81,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
  */
 ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
 {
-	return VALID_ITEM_ID(buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex()));
+	return VALID_ITEM_ID(buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex()), itemType);
 }
 
 /**
@@ -95,7 +96,7 @@ QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column
 	int columnIndex = column->getIndex();
 	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		pairs.append({VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
+		pairs.append({VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex), itemType), bufferRow->at(columnIndex)});
 	}
 	return pairs;
 }

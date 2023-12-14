@@ -92,7 +92,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	
 	
 	// Variables to carry information over from the first to the second phase
-	ItemID v1_2_0_defaultHikerToCarryOver;
+	ItemID v1_2_0_defaultHikerToCarryOver = ItemID(ItemTypeHiker);
 	
 	
 	
@@ -127,7 +127,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	if (isBelowVersion(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
-			db->projectSettings->defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
+			db->projectSettings->defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver, ItemTypeHiker));
 		}
 	}
 	
@@ -325,7 +325,7 @@ ItemID DatabaseUpgrader::extractDefaultHikerFromBeforeV1_2_0()
 	}
 	assert(query.next());
 	QVariant value = query.value(0);
-	return ItemID(value);
+	return ItemID(value, ItemTypeHiker);
 }
 
 /**

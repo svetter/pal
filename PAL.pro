@@ -122,6 +122,7 @@ HEADERS += \
 	src/data/range.h \
 	src/data/region.h \
 	src/data/trip.h \
+	src/data/types.h \
 	src/db/associative_table.h \
 	src/db/column.h \
 	src/db/database.h \

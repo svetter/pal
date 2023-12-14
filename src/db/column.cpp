@@ -116,6 +116,18 @@ int Column::getIndex() const
 	return table->getColumnIndex(this);
 }
 
+PALItemType Column::getTableItemType() const
+{
+	if (isForeignKey()) {
+		return foreignColumn->getTableItemType();
+	}
+	if (isPrimaryKey()) {
+		return table->itemType;
+	}
+	assert(false);
+	return ItemTypeNone;
+}
+
 
 
 /**

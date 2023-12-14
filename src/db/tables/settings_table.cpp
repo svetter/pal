@@ -31,7 +31,7 @@
  * Creates a new SettingsTable.
  */
 SettingsTable::SettingsTable() :
-	Table("ProjectSettings", tr("Project settings"), false),
+	Table(ItemTypeNone, "ProjectSettings", tr("Project settings"), false),
 	//													name				uiName							type	nullable
 	primaryKeyColumn	(new PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
 	settingKeyColumn	(new ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
@@ -81,7 +81,7 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting* setting, QWidget
 		columnDataPairs.append({settingKeyColumn,	setting->key});
 		columnDataPairs.append({settingValueColumn,	setting->defaultValue});
 		BufferRowIndex newBufferIndex = addRow(parent, columnDataPairs);
-		id = primaryKeyColumn->getValueAt(newBufferIndex);
+		id = ItemID(primaryKeyColumn->getValueAt(newBufferIndex), ItemTypeNone);
 	}
 	
 	return settingValueColumn->getValueFor(FORCE_VALID(id));
@@ -148,7 +148,7 @@ void SettingsTable::clearAllSettings(QWidget* parent, const QString& baseKey)
 	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
 		QString key = settingKeyColumn->getValueAt(rowIndex).toString();
 		if (key.startsWith(baseKey)) {
-			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex));
+			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex), ItemTypeNone);
 			removeMatchingRows(parent, primaryKeyColumn, settingID);
 		}
 	}
@@ -168,7 +168,7 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidge
 	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting->key);
 	
 	if (bufferRowIndices.size() == 0) {
-		return ItemID();
+		return ItemID(ItemTypeNone);
 	}
 	BufferRowIndex settingIndex = bufferRowIndices.last();
 	
@@ -181,11 +181,11 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidge
 		if (parent) {
 			for (const BufferRowIndex& rowIndex : bufferRowIndices) {
 				if (rowIndex == settingIndex) continue;	// Leave the last one in place
-				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex));
+				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex), ItemTypeNone);
 				removeMatchingRows(parent, settingKeyColumn, id);
 			}
 		}
 	}
 	
-	return VALID_ITEM_ID(primaryKeyColumn->getValueAt(settingIndex));
+	return VALID_ITEM_ID(primaryKeyColumn->getValueAt(settingIndex), ItemTypeNone);
 }

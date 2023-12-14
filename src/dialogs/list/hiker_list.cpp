@@ -136,7 +136,7 @@ QVariant HikersOnAscent::data(const QModelIndex& index, int role) const
 	if (role != Qt::DisplayRole) return QVariant();
 	switch (index.column()) {
 	case 0:
-		return list.at(index.row()).first.asQVariant();
+		return ID_AS_QVARIANT(list.at(index.row()).first, ItemTypeHiker);
 	case 1:
 		return list.at(index.row()).second;
 	}

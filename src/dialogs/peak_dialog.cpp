@@ -156,14 +156,14 @@ Peak* PeakDialog::extractData()
 	QString	name		= parseLineEdit		(nameLineEdit);
 	int		height		= parseSpinner		(heightSpinner);
 	bool	volcano		= parseCheckbox		(volcanoCheckbox);
-	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs);
+	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs, ItemTypeRegion);
 	QString	mapsLink	= parseLineEdit		(googleMapsLineEdit);
 	QString	earthLink	= parseLineEdit		(googleEarthLineEdit);
 	QString	wikiLink	= parseLineEdit		(wikipediaLineEdit);
 	
 	if (!heightCheckbox->isChecked())	height = -1;
 	
-	Peak* peak = new Peak(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
+	Peak* peak = new Peak(ItemID(ItemTypePeak), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 	return peak;
 }
 
@@ -291,7 +291,7 @@ void openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferR
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn->getValueAt(bufferRowIndex), ItemTypePeak);
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->peaksTable, peakIDs);
@@ -322,7 +322,7 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 	BufferRowIndex newPeakIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalPeak);
-		originalPeak->peakID = ItemID();
+		originalPeak->peakID = ItemID(ItemTypePeak);
 	}
 	
 	PeakDialog dialog(parent, db, purpose, originalPeak);
