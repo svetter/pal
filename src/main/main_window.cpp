@@ -24,7 +24,7 @@
 #include "main_window.h"
 
 #include "src/main/about_window.h"
-#include "src/main/item_types_handler.h"
+#include "src/data/item_types.h"
 #include "src/settings/project_settings_window.h"
 #include "src/settings/settings_window.h"
 #include "src/tools/relocate_photos_dialog.h"
@@ -887,7 +887,6 @@ void MainWindow::handle_tableSelectionChanged()
 {
 	const ItemTypeMapper* const mapper = getActiveMapper();
 	assert(mapper);
-	if (mapper->name != "trip") return;
 	
 	const QItemSelection selection = mapper->tableView->selectionModel()->selection();
 	QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
@@ -902,7 +901,7 @@ void MainWindow::handle_tableSelectionChanged()
 		selectedBufferRows.insert(bufferIndex);
 	}
 	
-	typesHandler->get(ItemTypeTrip)->stats->updateStatsPanel(selectedBufferRows);
+	mapper->stats->updateStatsPanel(selectedBufferRows);
 }
 
 /**

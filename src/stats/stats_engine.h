@@ -27,6 +27,8 @@
 #include "src/db/database.h"
 
 #include "chart.h"
+#include "src/data/item_types.h"
+#include "src/comp_tables/breadcrumbs.h"
 
 #include <QBoxLayout>
 
@@ -65,17 +67,21 @@ public:
 
 class ItemStatsEngine : public StatsEngine
 {
+	const PALItemType itemType;
 	QVBoxLayout* const statsFrameLayout;
 	
 	HistogramChart* peakHeightHistChart;
 	HistogramChart* elevGainHistChart;
 	
 public:
-	ItemStatsEngine(Database* db, QVBoxLayout* statsFrameLayout);
+	ItemStatsEngine(Database* db, PALItemType itemType, QVBoxLayout* statsFrameLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
+	
+private:
+	Breadcrumbs getBreadcrumbsFor(NormalTable* destinationTable);
 };
 
 

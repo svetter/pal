@@ -49,21 +49,6 @@
 
 
 /**
- * Item type enumerator, encoding the type of an item (like ascent, peak...).
- */
-enum PALItemType {
-	ItemTypeAscent,
-	ItemTypePeak,
-	ItemTypeTrip,
-	ItemTypeHiker,
-	ItemTypeRegion,
-	ItemTypeRange,
-	ItemTypeCountry
-};
-
-
-
-/**
  * A helper class for storing pointers to different kinds of item-specific members, like dialogs,
  * settings, buttons and other UI elements.
  * 
@@ -286,7 +271,7 @@ public:
 		ItemTypeMapper(ItemTypeAscent, "ascent",
 			db->ascentsTable,
 			new CompositeAscentsTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeAscent, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
 			&Settings::ascentsStats_splitterSizes,
@@ -321,7 +306,7 @@ public:
 		ItemTypeMapper(ItemTypePeak, "peak",
 			db->peaksTable,
 			new CompositePeaksTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypePeak, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
 			&Settings::peaksStats_splitterSizes,
@@ -356,7 +341,7 @@ public:
 		ItemTypeMapper(ItemTypeTrip, "trip",
 			db->tripsTable,
 			new CompositeTripsTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeTrip, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
 			&Settings::tripsStats_splitterSizes,
@@ -391,7 +376,7 @@ public:
 		ItemTypeMapper(ItemTypeHiker, "hiker",
 			db->hikersTable,
 			new CompositeHikersTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeHiker, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
 			&Settings::hikersStats_splitterSizes,
@@ -426,7 +411,7 @@ public:
 		ItemTypeMapper(ItemTypeRegion, "region",
 			db->regionsTable,
 			new CompositeRegionsTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeRegion, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
 			&Settings::regionsStats_splitterSizes,
@@ -461,7 +446,7 @@ public:
 		ItemTypeMapper(ItemTypeRange, "range",
 			db->rangesTable,
 			new CompositeRangesTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeRange, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
 			&Settings::rangesStats_splitterSizes,
@@ -496,7 +481,7 @@ public:
 		ItemTypeMapper(ItemTypeCountry, "country",
 			db->countriesTable,
 			new CompositeCountriesTable(db, tableView),
-			new ItemStatsEngine(db, statsScrollArea->findChild<QVBoxLayout*>()),
+			new ItemStatsEngine(db, ItemTypeCountry, statsScrollArea->findChild<QVBoxLayout*>()),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,
 			&Settings::countriesStats_splitterSizes,

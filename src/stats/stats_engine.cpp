@@ -23,8 +23,6 @@
 
 #include "stats_engine.h"
 
-#include "src/comp_tables/breadcrumbs.h"
-
 
 
 StatsEngine::StatsEngine(Database* db) :
@@ -167,8 +165,9 @@ void GeneralStatsEngine::updateStatsTab()
 
 
 
-ItemStatsEngine::ItemStatsEngine(Database* db, QVBoxLayout* statsFrameLayout) :
+ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, QVBoxLayout* statsFrameLayout) :
 	StatsEngine(db),
+	itemType(itemType),
 	statsFrameLayout(statsFrameLayout),
 	peakHeightHistChart(nullptr),
 	elevGainHistChart(nullptr)
@@ -201,11 +200,8 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 
 	// Peak height histogram
 	
-	const Breadcrumbs peakHeightCrumbs = Breadcrumbs({
-		{db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn},
-		{db->ascentsTable->peakIDColumn,	db->peaksTable->primaryKeyColumn}
-	});
-	QList<BufferRowIndex> peakBufferRows = peakHeightCrumbs.evaluateForStats(selectedBufferRows);
+	const Breadcrumbs peakCrumbs = getBreadcrumbsFor(db->peaksTable);
+	QList<BufferRowIndex> peakBufferRows = peakCrumbs.evaluateForStats(selectedBufferRows);
 	
 	QList<int> peakHeights = QList<int>();
 	for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
@@ -227,10 +223,8 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	
 	// Elevation gain histogram
 	
-	const Breadcrumbs elevGainCrumbs = Breadcrumbs({
-		{db->tripsTable->primaryKeyColumn,	db->ascentsTable->tripIDColumn}
-	});
-	QList<BufferRowIndex> ascentBufferRows = elevGainCrumbs.evaluateForStats(selectedBufferRows);
+	const Breadcrumbs ascentCrumbs = getBreadcrumbsFor(db->ascentsTable);
+	QList<BufferRowIndex> ascentBufferRows = ascentCrumbs.evaluateForStats(selectedBufferRows);
 	
 	QList<int> elevGains = QList<int>();
 	for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
@@ -249,4 +243,91 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	}
 	
 	elevGainHistChart->updateData(elevGainHistogram, elevGainMaxY);
+}
+
+
+
+Breadcrumbs ItemStatsEngine::getBreadcrumbsFor(NormalTable* destinationTable)
+{
+	if (destinationTable == db->ascentsTable) {
+		switch (itemType) {
+		case ItemTypeAscent:
+			return Breadcrumbs({
+				/* Empty */
+			});
+		case ItemTypePeak:
+			return Breadcrumbs({
+				{db->peaksTable->primaryKeyColumn,		db->ascentsTable->peakIDColumn}
+			});
+		case ItemTypeTrip:
+			return Breadcrumbs({
+				{db->tripsTable->primaryKeyColumn,		db->ascentsTable->tripIDColumn}
+			});
+		case ItemTypeHiker:
+			return Breadcrumbs({
+				{db->hikersTable->primaryKeyColumn,		db->participatedTable->hikerIDColumn},
+				{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn}
+			});
+		case ItemTypeRegion:
+			return Breadcrumbs({
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},
+				{db->peaksTable->primaryKeyColumn,		db->ascentsTable->peakIDColumn}
+			});
+		case ItemTypeRange:
+			return Breadcrumbs({
+				{db->rangesTable->primaryKeyColumn,		db->regionsTable->rangeIDColumn},
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},
+				{db->peaksTable->primaryKeyColumn,		db->ascentsTable->peakIDColumn}
+			});
+		case ItemTypeCountry:
+			return Breadcrumbs({
+				{db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn},
+				{db->peaksTable->primaryKeyColumn,		db->ascentsTable->peakIDColumn}
+			});
+		default: assert(false);
+		}
+	}
+	
+	if (destinationTable == db->peaksTable) {
+		switch (itemType) {
+		case ItemTypeAscent:
+			return Breadcrumbs({
+				{db->ascentsTable->peakIDColumn,		db->peaksTable->primaryKeyColumn}
+			});
+		case ItemTypePeak:
+			return Breadcrumbs({
+				/* Empty */
+			});
+		case ItemTypeTrip:
+			return Breadcrumbs({
+				{db->tripsTable->primaryKeyColumn,		db->ascentsTable->tripIDColumn},
+				{db->ascentsTable->peakIDColumn,		db->peaksTable->primaryKeyColumn}
+			});
+		case ItemTypeHiker:
+			return Breadcrumbs({
+				{db->hikersTable->primaryKeyColumn,		db->participatedTable->hikerIDColumn},
+				{db->participatedTable->ascentIDColumn,	db->ascentsTable->primaryKeyColumn},
+				{db->ascentsTable->peakIDColumn,		db->peaksTable->primaryKeyColumn}
+			});
+		case ItemTypeRegion:
+			return Breadcrumbs({
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn}
+			});
+		case ItemTypeRange:
+			return Breadcrumbs({
+				{db->rangesTable->primaryKeyColumn,		db->regionsTable->rangeIDColumn},
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn}
+			});
+		case ItemTypeCountry:
+			return Breadcrumbs({
+				{db->countriesTable->primaryKeyColumn,	db->regionsTable->countryIDColumn},
+				{db->regionsTable->primaryKeyColumn,	db->peaksTable->regionIDColumn}
+			});
+		default: assert(false);
+		}
+	}
+	
+	assert(false);
+	return Breadcrumbs({});
 }

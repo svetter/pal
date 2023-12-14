@@ -121,6 +121,7 @@ HEADERS += \
 	src/data/enum_names.h \
 	src/data/hiker.h \
 	src/data/item_id.h \
+	src/data/item_types.h \
 	src/data/peak.h \
 	src/data/photo.h \
 	src/data/range.h \

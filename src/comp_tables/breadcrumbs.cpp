@@ -111,13 +111,14 @@ bool Breadcrumb::isBackward() const
 Breadcrumbs::Breadcrumbs(std::initializer_list<Breadcrumb> initList) :
 	list(initList)
 {
-	assert(!list.isEmpty());
-	assert(!list.first().firstColumn->table->isAssociative);
-	
-	const Table* currentTable = list.first().firstColumn->table;
-	for (const auto& [firstColumn, secondColumn] : list) {
-		assert(firstColumn->table == currentTable);
-		currentTable = secondColumn->table;
+	if (!list.isEmpty()) {
+		assert(!list.first().firstColumn->table->isAssociative);
+		
+		const Table* currentTable = list.first().firstColumn->table;
+		for (const auto& [firstColumn, secondColumn] : list) {
+			assert(firstColumn->table == currentTable);
+			currentTable = secondColumn->table;
+		}
 	}
 }
 
