@@ -57,9 +57,9 @@ signals:
 class Chart : public QObject
 {
 protected:
-	inline static const int pixelsPerTick = 100;
-	inline static const qreal rangeBufferFactorX = 0.01;
-	inline static const qreal rangeBufferFactorY = 0.05;
+	inline static const int		pixelsPerTick		= 80;
+	inline static const qreal	rangeBufferFactorX	= 0.01;
+	inline static const qreal	rangeBufferFactorY	= 0.025;
 	
 	const QString chartTitle;
 	
