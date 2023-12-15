@@ -1360,6 +1360,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show filters</string>
    </property>
@@ -1475,6 +1478,9 @@
   </action>
   <action name="showItemStatsPanelAction">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">

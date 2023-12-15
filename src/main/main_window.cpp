@@ -165,8 +165,8 @@ void MainWindow::connectUI()
 	connect(projectSettingsAction,			&QAction::triggered,			this,	&MainWindow::handle_openProjectSettings);
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
 	// Menu "View"
-	connect(showFiltersAction,				&QAction::changed,				this,	&MainWindow::handle_showFiltersChanged);
-	connect(showItemStatsPanelAction,		&QAction::changed,				this,	&MainWindow::handle_showStatsPanelChanged);
+	connect(showFiltersAction,				&QAction::toggled,				this,	&MainWindow::handle_showFiltersChanged);
+	connect(showItemStatsPanelAction,		&QAction::toggled,				this,	&MainWindow::handle_showStatsPanelChanged);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
@@ -238,6 +238,9 @@ void MainWindow::setupStatsPanels()
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->statsScrollArea->setVisible(false);
+		// When defaulting the panels to invisible as long as no project is open, also uncheck the
+		// menu option to make sure the change signal is emitted when restoring the implicit setting
+		showItemStatsPanelAction->setChecked(false);
 		
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
@@ -494,15 +497,14 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		
 		// Build buffers and update size info
 		initCompositeBuffers();
-		updateTableSize();
+		projectOpen = true;
 		
-		handle_showFiltersChanged();
-		handle_showStatsPanelChanged();
+		updateTableSize();
+		handle_tableSelectionChanged();
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
 	}
-	projectOpen = dbOpened;
 }
 
 /**
@@ -855,19 +857,24 @@ void MainWindow::handle_tabChanged()
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(500);
 	
-	const ItemTypeMapper* const activeMapper = getActiveMapper();
+	ItemTypeMapper* const activeMapper = getActiveMapper();
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (mapper == activeMapper) {
-			progress.setMaximum(mapper->compTable->getNumberOfCellsToUpdate());
-			
-			mapper->compTable->setUpdateImmediately(true, &progress);
-			mapper->openingTab();
-		}
-		else {
-			mapper->compTable->setUpdateImmediately(false);
-		}
+		if (mapper == activeMapper) continue;
+		
+		mapper->compTable->setUpdateImmediately(false);
 	}
-	if (!activeMapper) {
+	
+	if (activeMapper) {
+		// Make sure active table is up to date
+		progress.setMaximum(activeMapper->compTable->getNumberOfCellsToUpdate());
+		activeMapper->compTable->setUpdateImmediately(true, &progress);
+		activeMapper->openingTab();
+		
+		// Reset selection (is not stored anyway but sometimes acts randomly)
+		activeMapper->tableView->clearSelection();
+		handle_tableSelectionChanged();	// Should be triggered by clearing the selection but isn't
+	}
+	else {
 		// Statistics tab is open
 		generalStatsEngine.updateStatsTab();
 	}
@@ -885,20 +892,34 @@ void MainWindow::handle_tabChanged()
  */
 void MainWindow::handle_tableSelectionChanged()
 {
+	bool statsPanelShown = showItemStatsPanelAction->isChecked();
+	if (!projectOpen || !statsPanelShown) return;
+	
 	const ItemTypeMapper* const mapper = getActiveMapper();
 	assert(mapper);
 	
 	const QItemSelection selection = mapper->tableView->selectionModel()->selection();
-	QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
-	for (const QItemSelectionRange& range : selection) {
-		for (const QModelIndex& index : range.indexes()) {
-			selectedViewRows.insert(ViewRowIndex(index.row()));
+	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
+	if (selection.isEmpty()) {
+		// Instead of showing an empty chart, show chart for all rows (except filtered out)
+		int numRowsShown = mapper->compTable->rowCount();
+		for (ViewRowIndex viewIndex = ViewRowIndex(0); viewIndex.isValid(numRowsShown); viewIndex++) {
+			BufferRowIndex bufferIndex = mapper->compTable->getBufferRowIndexForViewRow(viewIndex);
+			selectedBufferRows.insert(bufferIndex);
 		}
 	}
-	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
-	for (const ViewRowIndex& viewIndex : selectedViewRows) {
-		BufferRowIndex bufferIndex = mapper->compTable->getBufferRowIndexForViewRow(viewIndex);
-		selectedBufferRows.insert(bufferIndex);
+	else {
+		// One or more rows selected, find their buffer indices
+		QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
+		for (const QItemSelectionRange& range : selection) {
+			for (const QModelIndex& index : range.indexes()) {
+				selectedViewRows.insert(ViewRowIndex(index.row()));
+			}
+		}
+		for (const ViewRowIndex& viewIndex : selectedViewRows) {
+			BufferRowIndex bufferIndex = mapper->compTable->getBufferRowIndexForViewRow(viewIndex);
+			selectedBufferRows.insert(bufferIndex);
+		}
 	}
 	
 	mapper->stats->updateStatsPanel(selectedBufferRows);
@@ -1290,9 +1311,9 @@ void MainWindow::handle_showFiltersChanged()
 {
 	bool showFilters = showFiltersAction->isChecked();
 	ascentFilterBar->setVisible(showFilters);
-	if (!showFilters) ascentFilterBar->handle_clearFilters();
+	if (projectOpen && !showFilters) ascentFilterBar->handle_clearFilters();
 }
-	
+
 /**
  * Event handler for the "show statistics panel" action in the view menu.
  * 
@@ -1304,6 +1325,7 @@ void MainWindow::handle_showStatsPanelChanged()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->statsScrollArea->setVisible(showStatsPanel);
 	}
+	handle_tableSelectionChanged();
 }
 
 /**
@@ -1557,7 +1579,7 @@ QTableView* MainWindow::getCurrentTableView() const
  * 
  * @return	The active ItemTypeMapper.
  */
-const ItemTypeMapper* MainWindow::getActiveMapper() const
+ItemTypeMapper* MainWindow::getActiveMapper() const
 {
 	return typesHandler->getActiveMapper();
 }
