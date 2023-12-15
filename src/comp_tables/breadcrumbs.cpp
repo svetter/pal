@@ -380,6 +380,16 @@ BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferR
 	return currentRowIndex;
 }
 
+/**
+ * Evaluates the breadcrumb trail, keeping count of duplicated entries along the way, which is
+ * needed for calculating statistics.
+ * 
+ * This function is similar to evaluate(), but uses lists internally instead of sets. This allows
+ * counting items multiple times instead of only counting the number of unique items.
+ * 
+ * @param initialBufferRowIndices	The row indices to start from.
+ * @return							The set of row indices in the table of the first breadcrumb.
+ */
 QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& initialBufferRowIndices) const
 {
 	QList<BufferRowIndex> currentRowIndexList = QList<BufferRowIndex>();
@@ -389,15 +399,15 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 	
 	for (const Breadcrumb& crumb : list) {
 		// Look up keys stored in firstColumn at given row indices
-		QSet<ValidItemID> currentKeySet = QSet<ValidItemID>();
+		QList<ValidItemID> currentKeyList = QList<ValidItemID>();
 		for (const BufferRowIndex& bufferRowIndex : currentRowIndexList) {
 			ItemID key = crumb.firstColumn->getValueAt(bufferRowIndex);
 			if (key.isInvalid()) continue;
-			// Add new item ID to current set
-			currentKeySet.insert(FORCE_VALID(key));
+			// Add new item ID to current list
+			currentKeyList.append(FORCE_VALID(key));
 		}
 		
-		if (currentKeySet.isEmpty()) return QList<BufferRowIndex>();
+		if (currentKeyList.isEmpty()) return QList<BufferRowIndex>();
 		
 		currentRowIndexList.clear();
 		const Table* const table = crumb.secondColumn->table;
@@ -406,22 +416,19 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
 			// Find row matching each primary key
-			for (const ValidItemID& key : currentKeySet) {
+			for (const ValidItemID& key : currentKeyList) {
 				BufferRowIndex bufferRowIndex = table->getMatchingBufferRowIndex({ crumb.secondColumn }, { key });
-				// Add new buffer index to current set
+				// Add new buffer index to current list
 				currentRowIndexList.append(bufferRowIndex);
 			}
 		}
 		else {
-			// Backward reference (reference search, result for each input element is key set)
-			// Find rows in new table where key in secondColumn matches any key in current set
-			for (const ValidItemID& key : currentKeySet) {
-				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
-				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
-				// Add new buffer indices to current set
-				for (const BufferRowIndex& bufferIndex : matchingBufferRowIndices) {
-					currentRowIndexList.append(bufferIndex);
-				}
+			// Backward reference (reference search, result for each input element is key list)
+			// Find rows in new table where key in secondColumn matches any key in current list
+			for (const ValidItemID& key : currentKeyList) {
+				const QList<BufferRowIndex> matchingBufferRowIndices = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
+				// Add new buffer indices to current list
+				currentRowIndexList.append(matchingBufferRowIndices);
 			}
 		}
 		
