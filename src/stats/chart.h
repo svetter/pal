@@ -65,6 +65,7 @@ protected:
 	
 	QChart* chart;
 	SizeResponsiveChartView* chartView;
+	bool hasData;
 	
 public:
 	Chart(const QString& chartTitle);

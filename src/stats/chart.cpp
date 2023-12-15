@@ -31,7 +31,8 @@
 Chart::Chart(const QString& chartTitle) :
 	chartTitle(chartTitle),
 	chart		(nullptr),
-	chartView	(nullptr)
+	chartView	(nullptr),
+	hasData(false)
 {}
 
 Chart::~Chart()
@@ -223,12 +224,13 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 	this->maxYear = maxYear;
 	this->minY = minY;
 	this->maxY = maxY;
+	hasData = true;
 	updateView();
 }
 
 void YearChart::updateView()
 {
-	if (!chart) return;
+	if (!hasData) return;
 	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0);
 	adjustAxis(yAxis,	minY,		maxY,		chart->plotArea().height(),	rangeBufferFactorY);
 }
@@ -274,6 +276,7 @@ void HistogramChart::setup()
 void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 {
 	this->maxY = maxY;
+	hasData = true;
 	updateView();
 	
 	barSet->remove(0, barSet->count());
@@ -282,6 +285,6 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 
 void HistogramChart::updateView()
 {
-	if (!chart) return;
+	if (!hasData) return;
 	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
 }
