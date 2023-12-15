@@ -34,7 +34,27 @@
 
 
 
-class Chart
+class SizeResponsiveChartView : public QChartView
+{
+	Q_OBJECT
+	
+public:
+	inline SizeResponsiveChartView(QChart* chart) :
+		QChartView(chart)
+	{}
+	
+	virtual void inline resizeEvent(QResizeEvent* event) override
+	{
+		QChartView::resizeEvent(event);
+		Q_EMIT wasResized();
+	}
+signals:
+	void wasResized();
+};
+
+
+
+class Chart : public QObject
 {
 protected:
 	inline static const int pixelsPerTick = 100;
@@ -43,8 +63,8 @@ protected:
 	
 	const QString chartTitle;
 	
-	QChart*		chart;
-	QChartView*	chartView;
+	QChart* chart;
+	SizeResponsiveChartView* chartView;
 	
 public:
 	Chart(const QString& chartTitle);
@@ -61,7 +81,7 @@ protected:
 	static QValueAxis* createValueXAxis(QChart* chart, const QString& title = QString());
 	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const QStringList& categories, const Qt::AlignmentFlag alignment = Qt::AlignBottom);
 	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
-	static QChartView* createChartView(QChart* chart, int minimumHeight = -1);
+	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
 	
 	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
 	static QBarSet* createBarSet(const QString& name, QAbstractBarSeries* series);

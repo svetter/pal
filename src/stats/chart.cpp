@@ -96,11 +96,11 @@ QValueAxis* Chart::createValueYAxis(QChart* chart, const QString& title, const Q
 	return yAxis;
 }
 
-QChartView* Chart::createChartView(QChart* chart, int minimumHeight)
+SizeResponsiveChartView* Chart::createChartView(QChart* chart, int minimumHeight)
 {
 	assert(chart);
 	
-	QChartView* chartView = new QChartView(chart);
+	SizeResponsiveChartView* chartView = new SizeResponsiveChartView(chart);
 	chartView->setRenderHint(QPainter::Antialiasing);
 	if (minimumHeight >= 0) chartView->setMinimumHeight(minimumHeight);
 	return chartView;
@@ -155,6 +155,7 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 	int log10times3 = (int) std::round(std::log10(unroundedInterval) * 3);
 	int exp = log10times3 / 3;
 	int interval = std::pow(10, exp);
+	if (interval < 1) interval = 1;
 	int minorCount;
 	switch (log10times3 % 3) {
 	case 0:						minorCount = 1;	break;
@@ -204,6 +205,8 @@ void YearChart::setup()
 	xAxis		= createValueXAxis(chart);
 	yAxis		= createValueYAxis(chart, yAxisTitle);
 	chartView	= createChartView(chart);
+	
+	connect(chartView, &SizeResponsiveChartView::wasResized, this, &YearChart::updateView);
 }
 
 void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY)
@@ -225,6 +228,7 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 
 void YearChart::updateView()
 {
+	if (!chart) return;
 	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0);
 	adjustAxis(yAxis,	minY,		maxY,		chart->plotArea().height(),	rangeBufferFactorY);
 }
@@ -263,6 +267,8 @@ void HistogramChart::setup()
 	barSeries	= createHorizontalBarSeries(chart, xAxis, yAxis);
 	barSet		= createBarSet(barSetTitle, barSeries);
 	chartView	= createChartView(chart, 52 + 26 * xAxis->count());
+	
+	connect(chartView, &SizeResponsiveChartView::wasResized, this, &HistogramChart::updateView);
 }
 
 void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
@@ -276,5 +282,6 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 
 void HistogramChart::updateView()
 {
+	if (!chart) return;
 	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
 }
