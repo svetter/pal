@@ -1274,8 +1274,17 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="showFiltersAction"/>
+    <widget class="QMenu" name="statsPanelMenu">
+     <property name="title">
+      <string>Item statistics panel</string>
+     </property>
+     <addaction name="showAllStatsPanelsAction"/>
+     <addaction name="hideAllStatsPanelsAction"/>
+    </widget>
     <addaction name="showItemStatsPanelAction"/>
+    <addaction name="statsPanelMenu"/>
+    <addaction name="separator"/>
+    <addaction name="showFiltersAction"/>
     <addaction name="separator"/>
     <addaction name="autoResizeColumnsAction"/>
     <addaction name="resetColumnOrderAction"/>
@@ -1485,6 +1494,16 @@
    </property>
    <property name="text">
     <string>Show item statistics panel</string>
+   </property>
+  </action>
+  <action name="hideAllStatsPanelsAction">
+   <property name="text">
+    <string>Hide on all tabs</string>
+   </property>
+  </action>
+  <action name="showAllStatsPanelsAction">
+   <property name="text">
+    <string>Show on all tabs</string>
    </property>
   </action>
  </widget>

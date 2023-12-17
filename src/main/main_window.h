@@ -156,6 +156,8 @@ private slots:
 	// View menu action handlers
 	void handle_showFiltersChanged();
 	void handle_showStatsPanelChanged();
+	void handle_showAllStatsPanels();
+	void handle_hideAllStatsPanels();
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
 	void handle_restoreHiddenColumns();

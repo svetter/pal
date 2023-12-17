@@ -167,6 +167,8 @@ void MainWindow::connectUI()
 	// Menu "View"
 	connect(showFiltersAction,				&QAction::toggled,				this,	&MainWindow::handle_showFiltersChanged);
 	connect(showItemStatsPanelAction,		&QAction::toggled,				this,	&MainWindow::handle_showStatsPanelChanged);
+	connect(showAllStatsPanelsAction,		&QAction::triggered,			this,	&MainWindow::handle_showAllStatsPanels);
+	connect(hideAllStatsPanelsAction,		&QAction::triggered,			this,	&MainWindow::handle_hideAllStatsPanels);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
@@ -237,10 +239,8 @@ void MainWindow::setupTableViews()
 void MainWindow::setupStatsPanels()
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsScrollArea->setVisible(false);
-		// When defaulting the panels to invisible as long as no project is open, also uncheck the
-		// menu option to make sure the change signal is emitted when restoring the implicit setting
-		showItemStatsPanelAction->setChecked(false);
+		bool showStats = mapper->showStatsPanelSetting->get();
+		mapper->statsScrollArea->setVisible(showStats);
 		
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
@@ -467,14 +467,15 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		// Restore project-specific implicit settings:
 		// Filter bar
 		showFiltersAction->setChecked(db.projectSettings->mainWindow_showFilterBar.get(this));
-		// Item statistics panel
-		showItemStatsPanelAction->setChecked(db.projectSettings->mainWindow_showItemStatsPanel.get(this));
 		// Open tab
 		if (Settings::rememberTab.get()) {
 			int tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
 			mainAreaTabs->setCurrentIndex(tabIndex);
 			
-			if (tabIndex == mainAreaTabs->indexOf(statisticsTab)) {
+			ItemTypeMapper* activeMapper = getActiveMapper();
+			if (activeMapper) {
+				showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
+			} else {
 				generalStatsEngine.updateStatsTab();
 			}
 		}
@@ -870,6 +871,8 @@ void MainWindow::handle_tabChanged()
 		activeMapper->compTable->setUpdateImmediately(true, &progress);
 		activeMapper->openingTab();
 		
+		// Set item stats panel action state
+		showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
 		// Reset selection (is not stored anyway but sometimes acts randomly)
 		activeMapper->tableView->clearSelection();
 		handle_tableSelectionChanged();	// Should be triggered by clearing the selection but isn't
@@ -1317,15 +1320,43 @@ void MainWindow::handle_showFiltersChanged()
 /**
  * Event handler for the "show statistics panel" action in the view menu.
  * 
- * Shows or hides the item-related statistics panel.
+ * Shows or hides the active item-related statistics panel.
  */
 void MainWindow::handle_showStatsPanelChanged()
 {
+	if (!projectOpen) return;
 	bool showStatsPanel = showItemStatsPanelAction->isChecked();
+	getActiveMapper()->statsScrollArea->setVisible(showStatsPanel);
+	handle_tableSelectionChanged();
+}
+
+/**
+ * Event handler for the "show all statistics panels" action in the view menu.
+ * 
+ * Sets all item-related statistics panels to visible, sets the corresponding action to checked and
+ * triggers an update for the active statistics panel.
+ */
+void MainWindow::handle_showAllStatsPanels()
+{
+	showItemStatsPanelAction->setChecked(true);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsScrollArea->setVisible(showStatsPanel);
+		mapper->statsScrollArea->setVisible(true);
 	}
 	handle_tableSelectionChanged();
+}
+
+/**
+ * Event handler for the "hide all statistics panels" action in the view menu.
+ * 
+ * Sets all item-related statistics panels to invisible and sets the corresponding action to
+ * unchecked.
+ */
+void MainWindow::handle_hideAllStatsPanels()
+{
+	showItemStatsPanelAction->setChecked(false);
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->statsScrollArea->setVisible(false);
+	}
 }
 
 /**
@@ -1446,9 +1477,8 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings->mainWindow_currentTabIndex		.set(this, mainAreaTabs->currentIndex());
-	db.projectSettings->mainWindow_showFilterBar		.set(this, showFiltersAction->isChecked());
-	db.projectSettings->mainWindow_showItemStatsPanel	.set(this, showItemStatsPanelAction->isChecked());
+	db.projectSettings->mainWindow_currentTabIndex	.set(this, mainAreaTabs->currentIndex());
+	db.projectSettings->mainWindow_showFilterBar	.set(this, showFiltersAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
@@ -1466,10 +1496,9 @@ void MainWindow::saveGlobalImplicitSettings()
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (mapper->tabHasBeenOpened()) {
-			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
-		}
+		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
+		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 	}
 }
 

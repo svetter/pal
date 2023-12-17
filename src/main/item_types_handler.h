@@ -88,6 +88,9 @@ public:
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>* const			dialogGeometrySetting;
+	/** The setting storing whether the stats panel next to the UI table of this item type is visible. */
+	const Setting<bool>* const			showStatsPanelSetting;
+	/** The setting storing the splitter sizes for the stats panel next to the UI table of this item type. */
 	const Setting<QStringList>* const	statsPanelSplitterSizesSetting;
 	/** The setting storing the column widths for the UI table of this item type. */
 	ProjectMultiSetting<int>* const		columnWidthsSetting;
@@ -133,6 +136,7 @@ public:
 	 * @param hiddenColumnsSetting					The setting storing the column hidden states of the UI table.
 	 * @param sortingSetting						The setting storing the sorting of the UI table.
 	 * @param dialogGeometrySetting					The setting storing the geometry of the item dialog.
+	 * @param showStatsPanelSetting					The setting storing whether the stats panel next to the UI table is visible.
 	 * @param statsPanelSplitterSizesSetting		The setting storing the splitter sizes of the stats panel next to the UI table.
 	 * @param openNewItemDialogAndStoreMethod		The method opening the dialog for creating a new item.
 	 * @param openDuplicateItemDialogAndStoreMethod	The method opening the dialog for duplicating an item.
@@ -155,6 +159,7 @@ public:
 		ProjectMultiSetting<bool>*	hiddenColumnsSetting,
 		ProjectSetting<QString>*	sortingSetting,
 		const Setting<QRect>*		dialogGeometrySetting,
+		const Setting<bool>*		showStatsPanelSetting,
 		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
 		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
@@ -172,6 +177,7 @@ public:
 		newItemAction							(newItemAction),
 		newItemButton							(newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
+		showStatsPanelSetting					(showStatsPanelSetting),
 		statsPanelSplitterSizesSetting			(statsPanelSplitterSizesSetting),
 		columnWidthsSetting						(columnWidthsSetting),
 		columnOrderSetting						(columnOrderSetting),
@@ -190,6 +196,12 @@ public:
 	inline ~ItemTypeMapper()
 	{
 		delete compTable;
+	}
+	
+	
+	inline bool itemStatsPanelCurrentlySetVisible() const
+	{
+		return statsScrollArea->isVisibleTo(tab);
 	}
 	
 	/**
@@ -273,6 +285,7 @@ public:
 			new CompositeAscentsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
+			&Settings::ascentsStats_show,
 			&Settings::ascentsStats_splitterSizes,
 			&openNewAscentDialogAndStore,
 			&openDuplicateAscentDialogAndStore,
@@ -307,6 +320,7 @@ public:
 			new CompositePeaksTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
+			&Settings::peaksStats_show,
 			&Settings::peaksStats_splitterSizes,
 			&openNewPeakDialogAndStore,
 			&openDuplicatePeakDialogAndStore,
@@ -341,6 +355,7 @@ public:
 			new CompositeTripsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
+			&Settings::tripsStats_show,
 			&Settings::tripsStats_splitterSizes,
 			&openNewTripDialogAndStore,
 			nullptr,
@@ -375,6 +390,7 @@ public:
 			new CompositeHikersTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
+			&Settings::hikersStats_show,
 			&Settings::hikersStats_splitterSizes,
 			&openNewHikerDialogAndStore,
 			nullptr,
@@ -409,6 +425,7 @@ public:
 			new CompositeRegionsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
+			&Settings::regionsStats_show,
 			&Settings::regionsStats_splitterSizes,
 			&openNewRegionDialogAndStore,
 			nullptr,
@@ -443,6 +460,7 @@ public:
 			new CompositeRangesTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
+			&Settings::rangesStats_show,
 			&Settings::rangesStats_splitterSizes,
 			&openNewRangeDialogAndStore,
 			nullptr,
@@ -477,6 +495,7 @@ public:
 			new CompositeCountriesTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,
+			&Settings::countriesStats_show,
 			&Settings::countriesStats_splitterSizes,
 			&openNewCountryDialogAndStore,
 			nullptr,
