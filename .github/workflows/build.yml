@@ -1,0 +1,71 @@
+name: Build PAL
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+env:
+  QT_RELEASE_VER: 6.6
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: "6.6"
+          modules: "qtcharts"
+          cache: true
+
+      - name: Get number of CPU cores
+        if: runner.os != 'Windows'
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+
+      - name: Setup Visual Studio Tools
+        if: runner.os == 'Windows'
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Install jom
+        if: runner.os == 'Windows'
+        run: choco install jom
+
+      - name: Setup Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "DISTRIBUTION=AppImage" >> "$GITHUB_ENV"
+          sudo apt-get install libxkbcommon-dev libxkbcommon-x11-0 fuse libxcb-cursor-dev
+
+      - name: Run QMake
+        run: |
+          mkdir build
+          cd build
+          qmake ../PAL.pro "DISTRIBUTION=$DISTRIBUTION"
+
+      - name: Compile for Windows
+        if: runner.os == 'Windows'
+        run: |
+          cd build
+          jom
+
+      - name: Compile for Linux/macOS
+        if: runner.os != 'Windows'
+        run: |
+          cd build
+          make -j${{ steps.cpu-cores.outputs.count }}
