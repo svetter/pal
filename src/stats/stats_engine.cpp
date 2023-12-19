@@ -25,15 +25,30 @@
 
 
 
+/**
+ * Creates a StatsEngine.
+ * 
+ * @param db	The database.
+ */
 StatsEngine::StatsEngine(Database* db) :
 	db(db)
 {}
 
+/**
+ * Destroys the StatsEngine.
+ */
 StatsEngine::~StatsEngine()
 {}
 
 
 
+/**
+ * Adds the given charts to the given layout and sets stretch factors.
+ * 
+ * @param layout			The layout to add the charts to.
+ * @param charts			The charts to add.
+ * @param stretchFactors	The stretch factors to set for the layout. Can be empty, in which case all charts get a stretch factor of 1.
+ */
 void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors)
 {
 	assert(layout);
@@ -54,6 +69,12 @@ void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>
 
 
 
+/**
+ * Creates a GeneralStatsEngine.
+ * 
+ * @param db						The database.
+ * @param statisticsTabLayoutPtr	A double pointer to the layout of the statistics tab.
+ */
 GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr) :
 	StatsEngine(db),
 	statisticsTabLayoutPtr(statisticsTabLayoutPtr),
@@ -64,6 +85,9 @@ GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statist
 	assert(statisticsTabLayoutPtr);
 }
 
+/**
+ * Destroys the GeneralStatsEngine.
+ */
 GeneralStatsEngine::~GeneralStatsEngine()
 {
 	delete elevGainPerYearChart;
@@ -73,6 +97,9 @@ GeneralStatsEngine::~GeneralStatsEngine()
 
 
 
+/**
+ * Creates and initializes the charts for the statistics tab and sets up the layout.
+ */
 void GeneralStatsEngine::setupStatsTab()
 {
 	elevGainPerYearChart	= new YearChart("Elevation gain sum per year",						"km",				false);
@@ -91,6 +118,9 @@ void GeneralStatsEngine::setupStatsTab()
 	addChartsToLayout(statisticsTabLayout, {heightsScatterChart->getChartView()}, {2, 3});
 }
 
+/**
+ * Computes new data for the charts in the statistics tab and updates them.
+ */
 void GeneralStatsEngine::updateStatsTab()
 {
 	assert(elevGainPerYearChart);
@@ -165,6 +195,14 @@ void GeneralStatsEngine::updateStatsTab()
 
 
 
+/**
+ * Creates an ItemStatsEngine.
+ * 
+ * @param db				The database.
+ * @param itemType			The item type to compute and show statistics for and/or about.
+ * @param baseTable			The base table for the item type.
+ * @param statsFrameLayout	The layout in which to display the charts.
+ */
 ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsFrameLayout) :
 	StatsEngine(db),
 	itemType(itemType),
@@ -176,6 +214,9 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	assert(statsFrameLayout);
 }
 
+/**
+ * Destroys the ItemStatsEngine.
+ */
 ItemStatsEngine::~ItemStatsEngine()
 {
 	delete peakHeightHistChart;
@@ -184,6 +225,9 @@ ItemStatsEngine::~ItemStatsEngine()
 
 
 
+/**
+ * Creates and initializes the charts for the statistics panel.
+ */
 void ItemStatsEngine::setupStatsPanel()
 {
 	peakHeightHistChart	= new HistogramChart("Peak height distribution",	{"&lt;1000", "1000s", "2000s", "3000s", "4000s", "5000s", "6000s", "7000s", "8000s"},	"Peak heights");
@@ -193,6 +237,11 @@ void ItemStatsEngine::setupStatsPanel()
 	statsFrameLayout->addWidget(elevGainHistChart->getChartView());
 }
 
+/**
+ * Computes new data for the charts in the statistics panel and updates them.
+ * 
+ * @param selectedBufferRows	The buffer rows of all items currently selected in the UI table.
+ */
 void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows)
 {
 	assert(peakHeightHistChart);

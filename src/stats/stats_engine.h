@@ -34,9 +34,13 @@
 
 
 
+/**
+ * A base class for statistical analysis classes, general and specific to each item type.
+ */
 class StatsEngine
 {
 protected:
+	/** The database. */
 	Database* const db;
 	
 	StatsEngine(Database* db);
@@ -47,12 +51,19 @@ protected:
 
 
 
+/**
+ * A class for general statistical analysis of a project.
+ */
 class GeneralStatsEngine : public StatsEngine
 {
+	/** A double pointer to the layout of the statistics tab. */
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
+	/** A chart showing the elevation gain sum for each year since the first ascent. */
 	YearChart* elevGainPerYearChart;
+	/** A chart showing the number of ascents in each year since the first ascent. */
 	YearChart* numAscentsPerYearChart;
+	/** A chart showing elevation gain and peak height for every logged ascent. */
 	YearChart* heightsScatterChart;
 	
 public:
@@ -65,13 +76,21 @@ public:
 
 
 
+/**
+ * A class for statistical analysis related to a specific item type.
+ */
 class ItemStatsEngine : public StatsEngine
 {
+	/** The item type to compute and show statistics for and/or about. */
 	const PALItemType itemType;
+	/** The base table for the item type. */
 	const NormalTable* const baseTable;
-	QVBoxLayout* const statsFrameLayout;
+	/** The layout in which to display the charts. */
+	QVBoxLayout* const statsLayout;
 	
+	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
 	HistogramChart* peakHeightHistChart;
+	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
 	HistogramChart* elevGainHistChart;
 	
 public:
