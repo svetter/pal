@@ -28,6 +28,11 @@
 
 
 
+/**
+ * Creates a Chart.
+ * 
+ * @param chartTitle	The title of the chart, to be displayed above it.
+ */
 Chart::Chart(const QString& chartTitle) :
 	chartTitle(chartTitle),
 	chart		(nullptr),
@@ -35,6 +40,9 @@ Chart::Chart(const QString& chartTitle) :
 	hasData(false)
 {}
 
+/**
+ * Destroys the Chart.
+ */
 Chart::~Chart()
 {
 	//		chart		is deleted by chartView
@@ -43,6 +51,11 @@ Chart::~Chart()
 
 
 
+/**
+ * Returns the chart view object for the chart, e.g. for inserting into a layout.
+ * 
+ * @return	The chart view object for the chart.
+ */
 QChartView* Chart::getChartView() const
 {
 	return chartView;
@@ -50,6 +63,14 @@ QChartView* Chart::getChartView() const
 
 
 
+/**
+ * Creates and initializes a QChart object.
+ * 
+ * Initialization entails setting title text, font and size, margins, layout, and hiding the legend.
+ * 
+ * @param title	The title of the chart.
+ * @return		An initialized QChart object, of which the caller takes ownership.
+ */
 QChart* Chart::createChart(const QString& title)
 {
 	QChart* chart = new QChart();
@@ -65,6 +86,16 @@ QChart* Chart::createChart(const QString& title)
 	return chart;
 }
 
+/**
+ * Creates and initializes a QValueAxis object for a horizontal real-number x-axis.
+ * 
+ * Initialization entails setting title text, label formatting, tick type, and adding the axis to
+ * the given chart (horizontally).
+ * 
+ * @param chart	The chart to add the axis to.
+ * @param title	The title for the axis. Can be empty.
+ * @return		An initialized QValueAxis object, of which the caller takes ownership.
+ */
 QValueAxis* Chart::createValueXAxis(QChart* chart, const QString& title)
 {
 	assert(chart);
@@ -77,6 +108,16 @@ QValueAxis* Chart::createValueXAxis(QChart* chart, const QString& title)
 	return xAxis;
 }
 
+/**
+ * Creates and initializes a QBarCategoryAxis object.
+ * 
+ * Initialization entails setting category names and adding the axis to the given chart.
+ * 
+ * @param chart			The chart to add the axis to.
+ * @param categories	The list of category names for the axis.
+ * @param alignment		The alignment for the axis.
+ * @return				An initialized QBarCategoryAxis object, of which the caller takes ownership.
+ */
 QBarCategoryAxis* Chart::createBarCategoryXAxis(QChart* chart, const QStringList& categories, const Qt::AlignmentFlag alignment)
 {
 	QBarCategoryAxis* xAxis = new QBarCategoryAxis();
@@ -85,6 +126,17 @@ QBarCategoryAxis* Chart::createBarCategoryXAxis(QChart* chart, const QStringList
 	return xAxis;
 }
 
+/**
+ * Creates and initializes a QValueAxis object for a real-number y-axis.
+ * 
+ * Initialization entails setting title text, label formatting, tick type, and adding the axis to
+ * the given chart.
+ * 
+ * @param chart		The chart to add the axis to.
+ * @param title		The title for the axis. Can be empty.
+ * @param alignment	The alignment for the axis.
+ * @return			An initialized QValueAxis object, of which the caller takes ownership.
+ */
 QValueAxis* Chart::createValueYAxis(QChart* chart, const QString& title, const Qt::AlignmentFlag alignment)
 {
 	assert(chart);
@@ -97,6 +149,15 @@ QValueAxis* Chart::createValueYAxis(QChart* chart, const QString& title, const Q
 	return yAxis;
 }
 
+/**
+ * Creates and initializes a SizeResponsiveChartView object.
+ * 
+ * Initialization entails setting render hint and minimum height.
+ * 
+ * @param chart			The chart to display in the chart view.
+ * @param minimumHeight	The minimal height for the widget in pixels.
+ * @return				An initialized SizeResponsiveChartView object, of which the caller takes ownership.
+ */
 SizeResponsiveChartView* Chart::createChartView(QChart* chart, int minimumHeight)
 {
 	assert(chart);
@@ -108,6 +169,16 @@ SizeResponsiveChartView* Chart::createChartView(QChart* chart, int minimumHeight
 }
 
 
+/**
+ * Creates and initializes a QHorizontalBarSeries object.
+ * 
+ * Initialization entails adding the series to the given chart and attaching the given axes.
+ * 
+ * @param chart	The chart to display in the chart view.
+ * @param xAxis	The chart's x-axis.
+ * @param yAxis	The chart's y-axis.
+ * @return		An initialized QHorizontalBarSeries object, of which the caller takes ownership.
+ */
 QHorizontalBarSeries* Chart::createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis)
 {
 	QHorizontalBarSeries* series = new QHorizontalBarSeries();
@@ -117,6 +188,15 @@ QHorizontalBarSeries* Chart::createHorizontalBarSeries(QChart* chart, QAbstractA
 	return series;
 }
 
+/**
+ * Creates and initializes a QBarSet object.
+ * 
+ * Initialization entails setting the name and adding the bar set to the given bar series.
+ * 
+ * @param name		The label text for the bar set.
+ * @param series	The bar series to add the bar set to.
+ * @return			An initialized QBarSet object, of which the caller takes ownership.
+ */
 QBarSet* Chart::createBarSet(const QString& name, QAbstractBarSeries* series)
 {
 	QBarSet* barSet = new QBarSet(name);
@@ -126,6 +206,14 @@ QBarSet* Chart::createBarSet(const QString& name, QAbstractBarSeries* series)
 
 
 
+/**
+ * Creates and initializes a QLineSeries object.
+ * 
+ * Initialization entails setting the name.
+ * 
+ * @param name	The label text for the line series.
+ * @return		An initialized QLineSeries object, of which the caller takes ownership.
+ */
 QLineSeries* Chart::createLineSeries(const QString& name)
 {
 	QLineSeries* series = new QLineSeries();
@@ -133,17 +221,38 @@ QLineSeries* Chart::createLineSeries(const QString& name)
 	return series;
 }
 
-QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, QScatterSeries::MarkerShape marker)
+/**
+ * Creates and initializes a QScatterSeries object.
+ * 
+ * Initialization entails setting the name, and marker size, shape, and outline.
+ * 
+ * @param name			The label text for the scatter series.
+ * @param markerSize	The marker size for the scatter series.
+ * @param markerShape	The marker shape for the scatter series.
+ * @return				An initialized QScatterSeries object, of which the caller takes ownership.
+ */
+QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, QScatterSeries::MarkerShape markerShape)
 {
 	QScatterSeries* series = new QScatterSeries();
 	series->setName(name);
 	if (markerSize >= 0)	series->setMarkerSize(markerSize);
-	if (marker >= 0)		series->setMarkerShape(QScatterSeries::MarkerShapeTriangle);
+	if (markerShape >= 0)	series->setMarkerShape(markerShape);
 	series->setPen(QPen(Qt::transparent));
 	return series;
 }
 
 
+/**
+ * Adjusts the range and tick placement for the given axis, based on the given range information.
+ * 
+ * Responsive to size of the chart view widget.
+ * 
+ * @param axis				The axis to adjust range and tick placement for.
+ * @param minValue			The minimum value on the axis included in the current dataset.
+ * @param maxValue			The maximum value on the axis included in the current dataset.
+ * @param chartSize			The size of the chart's plot area in the direction of the given axis (h/v) in pixels.
+ * @param rangeBufferFactor	The fraction of the range to add to the edge on either side as a buffer. No buffer is added when that edge is equal to zero.
+ */
 void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor)
 {
 	assert(axis);
@@ -182,6 +291,13 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 
 
 
+/**
+ * Creates a YearChart.
+ * 
+ * @param chartTitle		The title of the chart, to be displayed above it.
+ * @param yAxisTitle		The label text for the y-axis.
+ * @param bufferXAxisRange	The fraction of the x-axis range to add as buffer.
+ */
 YearChart::YearChart(const QString& chartTitle, const QString& yAxisTitle, bool bufferXAxisRange) :
 	Chart(chartTitle),
 	yAxisTitle(yAxisTitle),
@@ -192,6 +308,9 @@ YearChart::YearChart(const QString& chartTitle, const QString& yAxisTitle, bool 
 	YearChart::setup();
 }
 
+/**
+ * Destroys the YearChart.
+ */
 YearChart::~YearChart()
 {
 	// xAxis	is deleted by chart
@@ -200,6 +319,11 @@ YearChart::~YearChart()
 
 
 
+/**
+ * Performs the setup for the YearChart during/after construction.
+ * 
+ * Not to be called more than once (will cause memory leaks).
+ */
 void YearChart::setup()
 {
 	chart		= createChart(chartTitle);
@@ -210,24 +334,39 @@ void YearChart::setup()
 	connect(chartView, &SizeResponsiveChartView::wasResized, this, &YearChart::updateView);
 }
 
+/**
+ * Replaces the displayed data and stores range information for future view updates.
+ * 
+ * Performs a view update before replacing the data and sets the legend to visible iff more than one
+ * series was added.
+ * 
+ * @param newSeries	A list of data series to display in the chart.
+ * @param minYear	The minimum x value among all given data series.
+ * @param maxYear	The maximum x value among all given data series.
+ * @param minY		The minimum y value among all given data series.
+ * @param maxY		The maximum y value among all given data series.
+ */
 void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY)
 {
-	chart->removeAllSeries();
-	for (QXYSeries* const series : newSeries) {
-		chart->addSeries(series);
-		series->attachAxis(xAxis);
-		series->attachAxis(yAxis);
-	}
-	chart->legend()->setVisible(newSeries.length() > 1);
-	
 	this->minYear = minYear;
 	this->maxYear = maxYear;
 	this->minY = minY;
 	this->maxY = maxY;
 	hasData = true;
 	updateView();
+	chart->legend()->setVisible(newSeries.length() > 1);
+	
+	chart->removeAllSeries();
+	for (QXYSeries* const series : newSeries) {
+		chart->addSeries(series);
+		series->attachAxis(xAxis);
+		series->attachAxis(yAxis);
+	}
 }
 
+/**
+ * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
+ */
 void YearChart::updateView()
 {
 	if (!hasData) return;
@@ -239,6 +378,13 @@ void YearChart::updateView()
 
 
 
+/**
+ * Creates a HistogramChart.
+ * 
+ * @param chartTitle		The title of the chart, to be displayed above it.
+ * @param xAxisCategories	The list of category names for the x-axis.
+ * @param barSetTitle		The title text for the bar set.
+ */
 HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories, const QString& barSetTitle) :
 	Chart(chartTitle),
 	xAxisCategories(xAxisCategories),
@@ -251,6 +397,9 @@ HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAx
 	HistogramChart::setup();
 }
 
+/**
+ * Destroys the HistogramChart.
+ */
 HistogramChart::~HistogramChart()
 {
 	// xAxis		is deleted by chart
@@ -261,6 +410,11 @@ HistogramChart::~HistogramChart()
 
 
 
+/**
+ * Performs the setup for the HistogramChart during/after construction.
+ * 
+ * Not to be called more than once (will cause memory leaks).
+ */
 void HistogramChart::setup()
 {
 	chart		= createChart(chartTitle);
@@ -273,6 +427,14 @@ void HistogramChart::setup()
 	connect(chartView, &SizeResponsiveChartView::wasResized, this, &HistogramChart::updateView);
 }
 
+/**
+ * Replaces the displayed data and stores range information for future view updates.
+ * 
+ * Performs a view update before replacing the data.
+ * 
+ * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ * @param maxY			The maximum y value in the given data.
+ */
 void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 {
 	this->maxY = maxY;
@@ -283,6 +445,9 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 	barSet->append(histogramData);
 }
 
+/**
+ * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
+ */
 void HistogramChart::updateView()
 {
 	if (!hasData) return;
