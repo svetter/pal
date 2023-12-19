@@ -891,7 +891,7 @@ void MainWindow::handle_tabChanged()
 /**
  * Event handler for changes in which rows of the active table view are selected.
  * 
- * Updates the item statistics panel.
+ * Collects selected rows and updates the item statistics panel.
  */
 void MainWindow::handle_tableSelectionChanged()
 {

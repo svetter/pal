@@ -526,7 +526,19 @@ public:
 	/** The base table for hiker participation in trips. */
 	ParticipatedTable* const participatedTable;
 	
-	/** Creates a new ItemTypesHandler instance. */
+	/**
+	 * Creates a new ItemTypesHandler instance.
+	 * 
+	 * @param ascentMapper		The mapper for item type ascent.
+	 * @param peakMapper		The mapper for item type peak.
+	 * @param tripMapper		The mapper for item type trip.
+	 * @param hikerMapper		The mapper for item type hiker.
+	 * @param regionMapper		The mapper for item type region.
+	 * @param rangeMapper		The mapper for item type range.
+	 * @param countryMapper		The mapper for item type country.
+	 * @param photosTable		The database's photos table.
+	 * @param participatedTable	The database's hiker participation table.
+	 */
 	inline ItemTypesHandler(
 		AscentMapper*		ascentMapper,
 		PeakMapper*			peakMapper,
@@ -551,6 +563,9 @@ public:
 		participatedTable(participatedTable)
 	{}
 	
+	/**
+	 * Destroys the ItemTypesHandler.
+	 */
 	inline ~ItemTypesHandler()
 	{
 		qDeleteAll(mappers);
