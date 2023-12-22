@@ -28,7 +28,6 @@
 
 #include "chart.h"
 #include "src/data/item_types.h"
-#include "src/comp_tables/breadcrumbs.h"
 
 #include <QBoxLayout>
 
@@ -46,7 +45,7 @@ protected:
 	StatsEngine(Database* db);
 	virtual ~StatsEngine();
 	
-	static void addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors = QList<int>());
+	static void addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& charts, QList<int> stretchFactors = QList<int>());
 	
 	static QStringList getHistCategories(int increment, int max, QString prefix, QString suffix);
 	static int classifyHistValue(int value, int increment, int max);
@@ -116,12 +115,25 @@ class ItemStatsEngine : public StatsEngine
 	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
 	YearChart* heightsScatterChart;
 	
+	/** A chart showing the items with the highest number of ascents. */
+	TopNChart* topTenNumAscentsChart;
+	/** A chart showing the items with the highest maximum peak heights. */
+	TopNChart* topTenMaxPeakHeightChart;
+	/** A chart showing the items with the highest maximum elevation gains. */
+	TopNChart* topTenMaxElevGainChart;
+	/** A chart showing the items with the highest elevation gain sums. */
+	TopNChart* topTenElevGainSumChart;
+	
 public:
 	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
+	
+private:
+	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows) const;
+	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
 };
 
 

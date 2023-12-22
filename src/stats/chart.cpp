@@ -119,10 +119,10 @@ QValueAxis* Chart::createValueXAxis(QChart* chart, const QString& title)
  * @param alignment		The alignment for the axis.
  * @return				An initialized QBarCategoryAxis object, of which the caller takes ownership.
  */
-QBarCategoryAxis* Chart::createBarCategoryXAxis(QChart* chart, const QStringList& categories, const Qt::AlignmentFlag alignment)
+QBarCategoryAxis* Chart::createBarCategoryXAxis(QChart* chart, const Qt::AlignmentFlag alignment, const QStringList& categories)
 {
 	QBarCategoryAxis* xAxis = new QBarCategoryAxis();
-	xAxis->setCategories(categories);
+	if (!categories.isEmpty()) xAxis->setCategories(categories);
 	chart->addAxis(xAxis, alignment);
 	return xAxis;
 }
@@ -383,13 +383,11 @@ void YearChart::updateView()
  * Creates a HistogramChart.
  * 
  * @param chartTitle		The title of the chart, to be displayed above it.
- * @param xAxisCategories	The list of category names for the x-axis.
- * @param barSetTitle		The title text for the bar set.
+ * @param xAxisCategories	The list of translated category names for the x-axis.
  */
-HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories, const QString& barSetTitle) :
+HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories) :
 	Chart(chartTitle),
 	xAxisCategories(xAxisCategories),
-	barSetTitle(barSetTitle),
 	xAxis		(nullptr),
 	yAxis		(nullptr),
 	barSeries	(nullptr),
@@ -419,10 +417,10 @@ HistogramChart::~HistogramChart()
 void HistogramChart::setup()
 {
 	chart		= createChart(chartTitle);
-	xAxis		= createBarCategoryXAxis(chart, xAxisCategories, Qt::AlignLeft);
+	xAxis		= createBarCategoryXAxis(chart, Qt::AlignLeft, xAxisCategories);
 	yAxis		= createValueYAxis(chart, QString(), Qt::AlignBottom);
 	barSeries	= createHorizontalBarSeries(chart, xAxis, yAxis);
-	barSet		= createBarSet(barSetTitle, barSeries);
+	barSet		= createBarSet(QString(), barSeries);
 	chartView	= createChartView(chart, 52 + 26 * xAxis->count());
 	
 	connect(chartView, &SizeResponsiveChartView::wasResized, this, &HistogramChart::updateView);
@@ -453,4 +451,117 @@ void HistogramChart::updateView()
 {
 	if (!hasData) return;
 	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
+}
+
+
+
+
+
+/**
+ * Creates a TopNChart.
+ * 
+ * @param n				The number of items to compare in the chart.
+ * @param chartTitle	The title of the chart, to be displayed above it.
+ * @param yAxisTitle	The label text for the y-axis.
+ */
+TopNChart::TopNChart(int n, const QString& chartTitle, const QString& yAxisTitle) :
+	Chart(chartTitle),
+	n(n),
+	yAxisTitle(yAxisTitle),
+	xAxis		(nullptr),
+	yAxis		(nullptr),
+	barSeries	(nullptr),
+	barSet		(nullptr)
+{
+	TopNChart::setup();
+}
+
+/**
+ * Destroys the TopNChart.
+ */
+TopNChart::~TopNChart()
+{
+	// xAxis		is deleted by chart
+	// yAxis		is deleted by chart
+	// barSeries	is deleted by chart
+	// barSet		is deleted by barSeries
+}
+
+
+
+/**
+ * Performs the setup for the TopNChart during/after construction.
+ * 
+ * Not to be called more than once (will cause memory leaks).
+ */
+void TopNChart::setup()
+{
+	chart		= createChart(chartTitle);
+	xAxis		= createBarCategoryXAxis(chart, Qt::AlignLeft);
+	yAxis		= createValueYAxis(chart, yAxisTitle, Qt::AlignBottom);
+	barSeries	= createHorizontalBarSeries(chart, xAxis, yAxis);
+	barSet		= createBarSet(QString(), barSeries);
+	chartView	= createChartView(chart, 52 + 26 * n);
+	
+	connect(chartView, &SizeResponsiveChartView::wasResized, this, &TopNChart::updateView);
+}
+
+/**
+ * Replaces the displayed data and stores range information for future view updates.
+ * 
+ * Performs a view update before replacing the data.
+ * 
+ * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ */
+void TopNChart::updateData(QStringList labels, QList<qreal> values)
+{
+	assert(labels.size() == values.size());
+	assert(labels.size() <= n);
+	
+	this->maxY = values.isEmpty() ? 0 : values.first();
+	
+	// Handle duplicate labels (otherwise the duplicates will be missing)
+	renameDuplicates(labels);
+	
+	// Reverse lists (because entries will be displayed bottom-to-top)
+	std::reverse(labels.begin(), labels.end());
+	std::reverse(values.begin(), values.end());
+	
+	barSet->remove(0, barSet->count());
+	xAxis->setCategories(labels);
+	barSet->append(values);
+	
+	hasData = true;
+	updateView();
+}
+
+/**
+ * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
+ */
+void TopNChart::updateView()
+{
+	if (!hasData) return;
+	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
+}
+
+
+
+/**
+ * Ensures that the given string list has no duplicates in it by appending " (1)" and so on.
+ * 
+ * @param list	List of strings to be manipulated in place.
+ */
+void TopNChart::renameDuplicates(QStringList& list)
+{
+	for (int i = 0; i < list.size(); i++) {
+		const QString originalLabel = list[i];
+		
+		int counter = 1;
+		for (int j = i + 1; j < list.size(); j++) {
+			if (list.at(j) == originalLabel) {
+				if (counter == 1) list[i] += " (1)";
+				list[j] += " (" + QString::number(++counter) + ")";
+			}
+		}
+	}
 }

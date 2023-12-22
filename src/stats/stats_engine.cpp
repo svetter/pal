@@ -46,19 +46,21 @@ StatsEngine::~StatsEngine()
  * Adds the given charts to the given layout and sets stretch factors.
  * 
  * @param layout			The layout to add the charts to.
- * @param charts			The charts to add.
+ * @param charts			The charts to add. Can contain nullptr, which will be ignored.
  * @param stretchFactors	The stretch factors to set for the layout. Can be empty, in which case all charts get a stretch factor of 1.
  */
-void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors)
+void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& charts, QList<int> stretchFactors)
 {
 	assert(layout);
 	
-	for (QChartView* const chart : charts) {
-		assert(chart);
-		layout->addWidget(chart);
+	int numCharts = 0;
+	for (Chart* const chart : charts) {
+		if (!chart) continue;
+		layout->addWidget(chart->getChartView());
+		numCharts++;
 	}
 	
-	if (stretchFactors.isEmpty()) stretchFactors = QList<int>(charts.length(), 1);
+	if (stretchFactors.isEmpty()) stretchFactors = QList<int>(numCharts, 1);
 	int stretchIndex = 0;
 	for (const int stretchFactor : stretchFactors) {
 		layout->setStretch(stretchIndex++, stretchFactor);
@@ -148,11 +150,11 @@ void GeneralStatsEngine::setupStatsTab()
 	statisticsTabLayout->addLayout(statisticsTabUpperLayout);
 	
 	addChartsToLayout(statisticsTabUpperLayout, {
-		elevGainPerYearChart->getChartView(),
-		numAscentsPerYearChart->getChartView()
+		elevGainPerYearChart,
+		numAscentsPerYearChart
 	});
 	addChartsToLayout(statisticsTabLayout, {
-		heightsScatterChart->getChartView()
+		heightsScatterChart
 	}, {2, 3});
 }
 
@@ -256,7 +258,11 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	numElevGainHistCategories(elevGainHistCategories.size()),
 	peakHeightHistChart(nullptr),
 	elevGainHistChart(nullptr),
-	heightsScatterChart(nullptr)
+	heightsScatterChart(nullptr),
+	topTenNumAscentsChart(nullptr),
+	topTenMaxPeakHeightChart(nullptr),
+	topTenMaxElevGainChart(nullptr),
+	topTenElevGainSumChart(nullptr)
 {
 	assert(statsLayout);
 }
@@ -277,16 +283,30 @@ ItemStatsEngine::~ItemStatsEngine()
  */
 void ItemStatsEngine::setupStatsPanel()
 {
-	peakHeightHistChart	= new HistogramChart("Peak height distribution", peakHeightHistCategories, "Peak heights");
-	elevGainHistChart	= new HistogramChart("Elevation gain distribution", elevGainHistCategories, "Elevation gains");
+	peakHeightHistChart	= new HistogramChart("Peak height distribution", peakHeightHistCategories);
+	elevGainHistChart	= new HistogramChart("Elevation gain distribution", elevGainHistCategories);
+	
 	heightsScatterChart	= new YearChart("Elevation gains and peak heights over time", QString(), true);
+	
+	if (itemType != ItemTypeAscent) {
+		topTenNumAscentsChart	= new TopNChart(10, "Most ascents");
+	}
+	topTenMaxPeakHeightChart	= new TopNChart(10, "Highest peak");
+	topTenMaxElevGainChart		= new TopNChart(10, "Highest elevation gain");
+	if (itemType != ItemTypeAscent) {
+		topTenElevGainSumChart	= new TopNChart(10, "Highest elevation gain sum [km]");
+	}
 	
 	heightsScatterChart->getChartView()->setMinimumHeight(250);
 	
 	addChartsToLayout(statsLayout, {
-		peakHeightHistChart->getChartView(),
-		elevGainHistChart->getChartView(),
-		heightsScatterChart->getChartView()
+		peakHeightHistChart,
+		elevGainHistChart,
+		heightsScatterChart,
+		itemType != ItemTypeAscent ? topTenNumAscentsChart : nullptr,
+		topTenMaxPeakHeightChart,
+		topTenMaxElevGainChart,
+		itemType != ItemTypeAscent ? topTenElevGainSumChart : nullptr
 	});
 }
 
@@ -299,86 +319,299 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 {
 	assert(peakHeightHistChart);
 	assert(elevGainHistChart);
+	assert(heightsScatterChart);
+	assert(topTenNumAscentsChart || itemType == ItemTypeAscent);
+	assert(topTenMaxPeakHeightChart);
+	assert(topTenMaxElevGainChart);
+	assert(topTenElevGainSumChart || itemType == ItemTypeAscent);
 	
 	
 	// Collect peak/ascent IDs
 	
-	const Breadcrumbs peakCrumbs = db->getBreadcrumbsFor(baseTable, db->peaksTable);
-	const QList<BufferRowIndex> peakBufferRows = peakCrumbs.evaluateForStats(selectedBufferRows);
-	
 	const Breadcrumbs ascentCrumbs = db->getBreadcrumbsFor(baseTable, db->ascentsTable);
 	const QList<BufferRowIndex> ascentBufferRows = ascentCrumbs.evaluateForStats(selectedBufferRows);
+	
+	const Breadcrumbs peakCrumbs = db->getBreadcrumbsFor(baseTable, db->peaksTable);
+	const QList<BufferRowIndex> peakBufferRows = peakCrumbs.evaluateForStats(selectedBufferRows);
 	
 	
 	// Peak height histogram
 	
-	QList<qreal> peakHeightHistogram = QList<qreal>(numPeakHeightHistCategories, 0);
-	qreal peakHeightMaxY = 0;
-	
-	for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
-		const QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueAt(peakBufferRow);
-		if (!peakHeightRaw.isValid()) continue;
+	if (peakHeightHistChart) {
+		QList<qreal> peakHeightHistogram = QList<qreal>(numPeakHeightHistCategories, 0);
+		qreal peakHeightMaxY = 0;
 		
-		const int peakHeight = peakHeightRaw.toInt();
-		int peakHeightClass = classifyHistValue(peakHeight, peakHeightHistCategoryIncrement, peakHeightHistCategoryMax);
-		qreal newValue = ++peakHeightHistogram[peakHeightClass];
-		if (newValue > peakHeightMaxY) peakHeightMaxY = newValue;
+		for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
+			const QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueAt(peakBufferRow);
+			if (!peakHeightRaw.isValid()) continue;
+			
+			const int peakHeight = peakHeightRaw.toInt();
+			int peakHeightClass = classifyHistValue(peakHeight, peakHeightHistCategoryIncrement, peakHeightHistCategoryMax);
+			qreal newValue = ++peakHeightHistogram[peakHeightClass];
+			if (newValue > peakHeightMaxY) peakHeightMaxY = newValue;
+		}
+		
+		peakHeightHistChart->updateData(peakHeightHistogram, peakHeightMaxY);
 	}
-	
-	peakHeightHistChart->updateData(peakHeightHistogram, peakHeightMaxY);
 	
 	
 	// Elevation gain histogram
 	
-	QList<qreal> elevGainHistogram = QList<qreal>(numElevGainHistCategories, 0);
-	qreal elevGainMaxY = 0;
-	
-	for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
-		QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
-		if (!elevGainRaw.isValid()) continue;
+	if (elevGainHistChart) {
+		QList<qreal> elevGainHistogram = QList<qreal>(numElevGainHistCategories, 0);
+		qreal elevGainMaxY = 0;
 		
-		int elevGain = elevGainRaw.toInt();
-		int elevGainClass = classifyHistValue(elevGain, elevGainHistCategoryIncrement, elevGainHistCategoryMax);
-		qreal newValue = ++elevGainHistogram[elevGainClass];
-		if (newValue > elevGainMaxY) elevGainMaxY = newValue;
-	}
-	
-	elevGainHistChart->updateData(elevGainHistogram, elevGainMaxY);
-	
-	
-	// Height scatterplot
-	
-	QScatterSeries*	peakHeightScatterSeries	= Chart::createScatterSeries("Peak heights",	5,	QScatterSeries::MarkerShapeTriangle);
-	QScatterSeries*	elevGainScatterSeries	= Chart::createScatterSeries("Elevation gains",	5,	QScatterSeries::MarkerShapeRotatedRectangle);
-	qreal minDate = 3000;
-	qreal maxDate = 0;
-	int heightsMaxY = 0;
-	
-	for (const BufferRowIndex& ascentBufferIndex : ascentBufferRows) {
-		Ascent* ascent = db->getAscentAt(ascentBufferIndex);
-		
-		if (ascent->dateSpecified()) {
-			qreal dateReal = (qreal) ascent->date.dayOfYear() / ascent->date.daysInYear() + ascent->date.year();
-			if (dateReal < minDate) minDate = dateReal;
-			if (dateReal > maxDate) maxDate = dateReal;
+		for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
+			QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
+			if (!elevGainRaw.isValid()) continue;
 			
-			if (ascent->elevationGainSpecified()) {
-				int elevGain = ascent->elevationGain;
-				elevGainScatterSeries->append(dateReal, elevGain);
-				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
-			}
-			if (ascent->peakID.isValid()) {
-				const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
-				if (peak->heightSpecified()) {
-					int peakHeight = peak->height;
-					peakHeightScatterSeries->append(dateReal, peakHeight);
-					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
-				}
-			}
+			int elevGain = elevGainRaw.toInt();
+			int elevGainClass = classifyHistValue(elevGain, elevGainHistCategoryIncrement, elevGainHistCategoryMax);
+			qreal newValue = ++elevGainHistogram[elevGainClass];
+			if (newValue > elevGainMaxY) elevGainMaxY = newValue;
 		}
 		
-		delete ascent;
+		elevGainHistChart->updateData(elevGainHistogram, elevGainMaxY);
 	}
 	
-	heightsScatterChart->updateData({peakHeightScatterSeries, elevGainScatterSeries}, minDate, maxDate, 0, heightsMaxY);
+	
+	// Heights scatterplot
+	
+	if (heightsScatterChart) {
+		QScatterSeries*	peakHeightScatterSeries	= Chart::createScatterSeries("Peak heights",	5,	QScatterSeries::MarkerShapeTriangle);
+		QScatterSeries*	elevGainScatterSeries	= Chart::createScatterSeries("Elevation gains",	5,	QScatterSeries::MarkerShapeRotatedRectangle);
+		qreal minDate = 3000;
+		qreal maxDate = 0;
+		int heightsMaxY = 0;
+		
+		for (const BufferRowIndex& ascentBufferIndex : ascentBufferRows) {
+			const Ascent* const ascent = db->getAscentAt(ascentBufferIndex);
+			
+			if (ascent->dateSpecified()) {
+				qreal dateReal = (qreal) ascent->date.dayOfYear() / ascent->date.daysInYear() + ascent->date.year();
+				if (dateReal < minDate) minDate = dateReal;
+				if (dateReal > maxDate) maxDate = dateReal;
+				
+				if (ascent->elevationGainSpecified()) {
+					int elevGain = ascent->elevationGain;
+					elevGainScatterSeries->append(dateReal, elevGain);
+					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+				}
+				if (ascent->peakID.isValid()) {
+					const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
+					if (peak->heightSpecified()) {
+						int peakHeight = peak->height;
+						peakHeightScatterSeries->append(dateReal, peakHeight);
+						if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
+					}
+					delete peak;
+				}
+			}
+			
+			delete ascent;
+		}
+		
+		heightsScatterChart->updateData({peakHeightScatterSeries, elevGainScatterSeries}, minDate, maxDate, 0, heightsMaxY);
+	}
+	
+	
+	// Top 10 with most ascents chart
+	
+	if (topTenNumAscentsChart) {
+		assert(itemType != ItemTypeAscent);
+		
+		auto numAscentsFromAscentBufferRows = [](const QList<BufferRowIndex>& ascentBufferRows) {
+			return ascentBufferRows.size();
+		};
+		
+		updateTopNChart(topTenNumAscentsChart, ascentCrumbs, selectedBufferRows, numAscentsFromAscentBufferRows);
+	}
+	
+	
+	// Top 10 with highest peaks chart
+	
+	if (topTenMaxPeakHeightChart) {
+		auto maxPeakHeightFromPeakBufferRows = [this](const QList<BufferRowIndex>& peakBufferRows) {
+			int maxPeakHeight = 0;
+			for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
+				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueAt(peakBufferRow);
+				if (!peakHeightRaw.isValid()) continue;
+				
+				int peakHeight = peakHeightRaw.toInt();
+				if (peakHeight > maxPeakHeight) maxPeakHeight = peakHeight;
+			}
+			return maxPeakHeight;
+		};
+		
+		updateTopNChart(topTenMaxPeakHeightChart, peakCrumbs, selectedBufferRows, maxPeakHeightFromPeakBufferRows);
+	}
+	
+	
+	// Top 10 with highest single elevation gain chart
+	
+	if (topTenMaxElevGainChart) {
+		auto maxElevGainFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
+			int maxElevGain = 0;
+			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
+				QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
+				if (!elevGainRaw.isValid()) continue;
+				
+				int elevGain = elevGainRaw.toInt();
+				if (elevGain > maxElevGain) maxElevGain = elevGain;
+			}
+			return maxElevGain;
+		};
+		
+		updateTopNChart(topTenMaxElevGainChart, ascentCrumbs, selectedBufferRows, maxElevGainFromAscentBufferRows);
+	}
+	
+	
+	// Top 10 with highest elevation gain sum chart
+	
+	if (topTenElevGainSumChart) {
+		assert(itemType != ItemTypeAscent);
+		
+		auto elevGainSumFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
+			int elevGainSum = 0;
+			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
+				QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
+				if (!elevGainRaw.isValid()) continue;
+				
+				int elevGain = elevGainRaw.toInt();
+				elevGainSum += elevGain;
+			}
+			return (qreal) elevGainSum / 1000;
+		};
+		
+		updateTopNChart(topTenElevGainSumChart, ascentCrumbs, selectedBufferRows, elevGainSumFromAscentBufferRows);
+	}
+}
+
+
+
+/**
+ * Compiles data for an update of a top N chart and updates it.
+ * 
+ * @param chart						The chart to update.
+ * @param crumbs					The breadcrumbs leading to the target table containing the data to be compared.
+ * @param selectedBufferRows		The buffer rows of all items currently selected in the UI table.
+ * @param valueFromTargetBufferRows	A function which returns a chart value for a given list of buffer rows in the target table.
+ */
+void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows) const
+{
+	assert(chart);
+	assert(valueFromTargetBufferRows);
+	
+	QList<QPair<BufferRowIndex, qreal>> indexValuePairs = QList<QPair<BufferRowIndex, qreal>>();
+	
+	// Find the desired value for every selected buffer row in the start table
+	for (const BufferRowIndex& currentStartBufferIndex : selectedBufferRows) {
+		const QList<BufferRowIndex> currentTargetBufferRows = crumbs.evaluateForStats({currentStartBufferIndex});
+		qreal valueForCurrentStartIndex = valueFromTargetBufferRows(currentTargetBufferRows);
+		
+		if (valueForCurrentStartIndex < 1) continue;
+		
+		indexValuePairs.append({currentStartBufferIndex, valueForCurrentStartIndex});
+	}
+	
+	// Sort by value to find the N items with the highest value
+	auto comparator = [](const QPair<BufferRowIndex, qreal>& pair1, const QPair<BufferRowIndex, qreal>& pair2) {
+		return pair1.second > pair2.second;
+	};
+	std::stable_sort(indexValuePairs.begin(), indexValuePairs.end(), comparator);
+	
+	int numItems = std::min(chart->n, (int) indexValuePairs.size());
+	QStringList itemLabels = QStringList();
+	QList<qreal> itemValues = QList<qreal>();
+	for (int i = 0; i < numItems; i++) {
+		const QString itemLabel = getItemLabelFor(indexValuePairs.at(i).first);
+		itemLabels.append(itemLabel);
+		const qreal itemValue = indexValuePairs.at(i).second;
+		itemValues.append(itemValue);
+	}
+	
+	chart->updateData(itemLabels, itemValues);
+}
+
+/**
+ * Returns a label for the item at the given buffer index, for use in a top N chart.
+ * 
+ * @param bufferIndex	The buffer index of the item.
+ * @return				A chart label for the item.
+ */
+QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) const
+{
+	QString result = QString();
+	
+	switch (itemType) {
+	case ItemTypeAscent: {
+		const Ascent* const ascent = db->getAscentAt(bufferIndex);
+		if (ascent->date.isValid()) {
+			result = ascent->date.toString("yyyy-MM-dd");
+		}
+		QString peakName = QString();
+		if (ascent->peakID.isValid()) {
+			const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
+			peakName = peak->name;
+			delete peak;
+		}
+		if (!peakName.isEmpty()) {
+			if (!result.isEmpty()) result.append(" ");
+			result.append(peakName);
+		}
+		delete ascent;
+		break;
+	}
+	case ItemTypePeak: {
+		const Peak* const peak = db->getPeakAt(bufferIndex);
+		result = peak->name;
+		if (result.length() > 25) {
+			result.chop(23);
+			result.append("…");
+		}
+		delete peak;
+		break;
+	}
+	case ItemTypeTrip: {
+		const Trip* const trip = db->getTripAt(bufferIndex);
+		result = trip->name;
+		if (trip->startDate.isValid()) {
+			result = trip->startDate.toString("yyyy-MM");
+		}
+		QString tripName = trip->name;
+		if (!tripName.isEmpty()) {
+			if (!result.isEmpty()) result.append(" ");
+			result.append(tripName);
+		}
+		delete trip;
+		break;
+	}
+	case ItemTypeHiker: {
+		const Hiker* const hiker = db->getHikerAt(bufferIndex);
+		result = hiker->name;
+		delete hiker;
+		break;
+	}
+	case ItemTypeRegion: {
+		const Region* const region = db->getRegionAt(bufferIndex);
+		result = region->name;
+		delete region;
+		break;
+	}
+	case ItemTypeRange: {
+		const Range* const range = db->getRangeAt(bufferIndex);
+		result = range->name;
+		delete range;
+		break;
+	}
+	case ItemTypeCountry: {
+		const Country* const country = db->getCountryAt(bufferIndex);
+		result = country->name;
+		delete country;
+		break;
+	}
+	default: assert(false);
+	}
+	
+	return result;
 }

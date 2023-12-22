@@ -117,7 +117,7 @@ protected:
 	// Setup helpers
 	static QChart* createChart(const QString& title);
 	static QValueAxis* createValueXAxis(QChart* chart, const QString& title = QString());
-	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const QStringList& categories, const Qt::AlignmentFlag alignment = Qt::AlignBottom);
+	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const Qt::AlignmentFlag alignment = Qt::AlignBottom, const QStringList& categories = {});
 	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
 	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
 	
@@ -144,7 +144,9 @@ protected:
 class YearChart : public Chart
 {
 protected:
+	/** The translated label for the chart's y-axis. */
 	const QString yAxisTitle;
+	/** Indicates whether to add a small buffer to the displayed range of the x-axis. */
 	const bool bufferXAxisRange;
 	
 	/** The x-axis for the chart. */
@@ -174,14 +176,14 @@ public:
 
 
 /**
- * A class representing a bar graph with a vertical x-axis which contains user-defined categories,
- * and a horizontal real-number y-axis.
-  */
+ * A class representing a bar graph with a vertical x-axis which contains categories, and a
+ * horizontal real-number y-axis.
+ */
 class HistogramChart : public Chart
 {
 protected:
+	/** The list of translated category names for the x-axis. */
 	const QStringList xAxisCategories;
-	const QString barSetTitle;
 	
 	/** The x-axis for the chart. */
 	QBarCategoryAxis*		xAxis;
@@ -197,12 +199,52 @@ protected:
 	qreal maxY;
 	
 public:
-	HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories, const QString& barSetTitle);
+	HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories);
 	virtual ~HistogramChart();
 	
 	virtual void setup() override;
 	void updateData(QList<qreal> histogramData, qreal maxY);
 	virtual void updateView() override;
+};
+
+
+
+/**
+ * A class representing a horizontal bar graph showing the n items currently in a filtered table
+ * with the highest value in some metric.
+ */
+class TopNChart : public Chart
+{
+public:
+	/** The number of items to show. */
+	const int n;
+protected:
+	/** The translated label for the chart's y-axis. */
+	const QString yAxisTitle;
+	
+	/** The x-axis for the chart. */
+	QBarCategoryAxis*		xAxis;
+	/** The y-axis for the chart. */
+	QValueAxis*				yAxis;
+	/** The bar series for the chart. A bar series represents a set of bars, each of which belongs to another category on the x-axis, but all of which share the same label. */
+	QHorizontalBarSeries*	barSeries;
+	/** The bar set for the chart. A bar set contains one data value for each x-axis category. */
+	QBarSet*				barSet;
+	
+	// Range data
+	/** The maximum y value of the current data set. */
+	qreal maxY;
+	
+public:
+	TopNChart(int n, const QString& chartTitle, const QString& yAxisTitle = QString());
+	virtual ~TopNChart();
+	
+	virtual void setup() override;
+	void updateData(QStringList labels, QList<qreal> values);
+	virtual void updateView() override;
+	
+private:
+	static void renameDuplicates(QStringList& list);
 };
 
 
