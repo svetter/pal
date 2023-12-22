@@ -1338,8 +1338,15 @@ void MainWindow::handle_showFiltersChanged()
 void MainWindow::handle_showStatsPanelChanged()
 {
 	if (!projectOpen) return;
+	ItemTypeMapper* const mapper = getActiveMapper();
+
 	bool showStatsPanel = showItemStatsPanelAction->isChecked();
-	getActiveMapper()->statsScrollArea->setVisible(showStatsPanel);
+	if (mapper->statsScrollArea->isVisible()) {
+		// Save splitter sizes before closing
+		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+	}
+	mapper->statsScrollArea->setVisible(showStatsPanel);
 	handle_tableSelectionChanged();
 }
 
@@ -1509,6 +1516,7 @@ void MainWindow::saveGlobalImplicitSettings()
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		if (!mapper->tabHasBeenOpened() || !mapper->itemStatsPanelCurrentlySetVisible()) continue;
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
