@@ -73,6 +73,7 @@ public:
 	virtual ~GeneralStatsEngine();
 	
 	void setupStatsTab();
+	void resetStatsTab();
 	void updateStatsTab();
 };
 
@@ -129,6 +130,7 @@ public:
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();
+	void resetStatsPanel();
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
 	
 private:

@@ -1289,7 +1289,9 @@ void MainWindow::handle_closeDatabase()
 	updateFilters();
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->compTable->resetBuffer();
+		mapper->stats->resetStatsPanel();
 	}
+	generalStatsEngine.resetStatsTab();
 	updateTableSize(true);
 	typesHandler->resetTabOpenedFlags();
 }

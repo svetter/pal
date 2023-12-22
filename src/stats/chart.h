@@ -107,6 +107,11 @@ public:
 	virtual void setup() = 0;
 	
 	/**
+	 * Removes all data from the chart.
+	 */
+	virtual void reset() = 0;
+	
+	/**
 	 * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
 	 */
 	virtual void updateView() = 0;
@@ -130,6 +135,7 @@ public:
 	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape markerShape = QScatterSeries::MarkerShape(-1));
 protected:
 	static void adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0);
+	static void resetAxis(QValueAxis* axis);
 };
 
 
@@ -169,6 +175,7 @@ public:
 	virtual ~YearChart();
 	
 	virtual void setup() override;
+	virtual void reset() override;
 	void updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY);
 	virtual void updateView() override;
 };
@@ -203,6 +210,7 @@ public:
 	virtual ~HistogramChart();
 	
 	virtual void setup() override;
+	virtual void reset() override;
 	void updateData(QList<qreal> histogramData, qreal maxY);
 	virtual void updateView() override;
 };
@@ -240,6 +248,7 @@ public:
 	virtual ~TopNChart();
 	
 	virtual void setup() override;
+	virtual void reset() override;
 	void updateData(QStringList labels, QList<qreal> values);
 	virtual void updateView() override;
 	

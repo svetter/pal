@@ -288,6 +288,17 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 	axis->setMinorTickCount(minorCount);
 }
 
+/**
+ * Resets range and tick placement for the given axis, so that it only shows the 0 tick.
+ */
+void Chart::resetAxis(QValueAxis* axis)
+{
+	axis->setRange(0, 1);
+	axis->setTickAnchor(0);
+	axis->setTickInterval(2);
+	axis->setMinorTickCount(0);
+}
+
 
 
 
@@ -304,9 +315,14 @@ YearChart::YearChart(const QString& chartTitle, const QString& yAxisTitle, bool 
 	yAxisTitle(yAxisTitle),
 	bufferXAxisRange(bufferXAxisRange),
 	xAxis	(nullptr),
-	yAxis	(nullptr)
+	yAxis	(nullptr),
+	minYear(0),
+	maxYear(0),
+	minY(0),
+	maxY(0)
 {
 	YearChart::setup();
+	YearChart::reset();
 }
 
 /**
@@ -336,6 +352,21 @@ void YearChart::setup()
 }
 
 /**
+ * Removes all data from the chart.
+ */
+void YearChart::reset()
+{
+	chart->removeAllSeries();
+	hasData = false;
+	this->minYear = 0;
+	this->maxYear = 0;
+	this->minY = 0;
+	this->maxY = 0;
+	resetAxis(xAxis);
+	resetAxis(yAxis);
+}
+
+/**
  * Replaces the displayed data and stores range information for future view updates.
  * 
  * Performs a view update before replacing the data and sets the legend to visible iff more than one
@@ -349,6 +380,20 @@ void YearChart::setup()
  */
 void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY)
 {
+	bool noData = true;
+	for (QXYSeries* const series : newSeries) {
+		if (!series->points().isEmpty()) {
+			noData = false;
+			break;
+		}
+	}
+	if (noData) {
+		reset();
+		return;
+	}
+	assert(minYear <= maxYear);
+	assert(minY <= maxY);
+	
 	this->minYear = minYear;
 	this->maxYear = maxYear;
 	this->minY = minY;
@@ -394,6 +439,7 @@ HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAx
 	barSet		(nullptr)
 {
 	HistogramChart::setup();
+	HistogramChart::reset();
 }
 
 /**
@@ -427,6 +473,17 @@ void HistogramChart::setup()
 }
 
 /**
+ * Removes all data from the chart.
+ */
+void HistogramChart::reset()
+{
+	barSet->remove(0, barSet->count());
+	hasData = false;
+	this->maxY = 0;
+	resetAxis(yAxis);
+}
+
+/**
  * Replaces the displayed data and stores range information for future view updates.
  * 
  * Performs a view update before replacing the data.
@@ -436,6 +493,21 @@ void HistogramChart::setup()
  */
 void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 {
+	bool noData = true;
+	if (!histogramData.isEmpty()) {
+		for (const qreal point : histogramData) {
+			if (point > 0) {
+				noData = false;
+				break;
+			}
+		}
+	}
+	if (noData) {
+		reset();
+		return;
+	}
+	assert(maxY > 0);
+	
 	this->maxY = maxY;
 	hasData = true;
 	updateView();
@@ -474,6 +546,7 @@ TopNChart::TopNChart(int n, const QString& chartTitle, const QString& yAxisTitle
 	barSet		(nullptr)
 {
 	TopNChart::setup();
+	TopNChart::reset();
 }
 
 /**
@@ -507,6 +580,18 @@ void TopNChart::setup()
 }
 
 /**
+ * Removes all data from the chart.
+ */
+void TopNChart::reset()
+{
+	barSet->remove(0, barSet->count());
+	xAxis->setCategories({});
+	hasData = false;
+	this->maxY = 0;
+	resetAxis(yAxis);
+}
+
+/**
  * Replaces the displayed data and stores range information for future view updates.
  * 
  * Performs a view update before replacing the data.
@@ -518,7 +603,13 @@ void TopNChart::updateData(QStringList labels, QList<qreal> values)
 	assert(labels.size() == values.size());
 	assert(labels.size() <= n);
 	
-	this->maxY = values.isEmpty() ? 0 : values.first();
+	if (values.isEmpty()) {
+		reset();
+		return;
+	}
+	
+	maxY = values.first();
+	assert(maxY >= 0);
 	
 	// Handle duplicate labels (otherwise the duplicates will be missing)
 	renameDuplicates(labels);

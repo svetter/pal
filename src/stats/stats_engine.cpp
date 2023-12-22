@@ -159,6 +159,20 @@ void GeneralStatsEngine::setupStatsTab()
 }
 
 /**
+ * Resets the charts in the statistics tab.
+ */
+void GeneralStatsEngine::resetStatsTab()
+{
+	assert(elevGainPerYearChart);
+	assert(numAscentsPerYearChart);
+	assert(heightsScatterChart);
+	
+	elevGainPerYearChart	->reset();
+	numAscentsPerYearChart	->reset();
+	heightsScatterChart		->reset();
+}
+
+/**
  * Computes new data for the charts in the statistics tab and updates them.
  */
 void GeneralStatsEngine::updateStatsTab()
@@ -308,6 +322,28 @@ void ItemStatsEngine::setupStatsPanel()
 		topTenMaxElevGainChart,
 		itemType != ItemTypeAscent ? topTenElevGainSumChart : nullptr
 	});
+}
+
+/**
+ * Resets the charts in the statistics panel.
+ */
+void ItemStatsEngine::resetStatsPanel()
+{
+	assert(peakHeightHistChart);
+	assert(elevGainHistChart);
+	assert(heightsScatterChart);
+	assert(topTenNumAscentsChart || itemType == ItemTypeAscent);
+	assert(topTenMaxPeakHeightChart);
+	assert(topTenMaxElevGainChart);
+	assert(topTenElevGainSumChart || itemType == ItemTypeAscent);
+	
+	peakHeightHistChart->reset();
+	elevGainHistChart->reset();
+	heightsScatterChart->reset();
+	if (topTenNumAscentsChart) topTenNumAscentsChart->reset();
+	topTenMaxPeakHeightChart->reset();
+	topTenMaxElevGainChart->reset();
+	if (topTenElevGainSumChart) topTenElevGainSumChart->reset();
 }
 
 /**
