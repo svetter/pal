@@ -686,6 +686,19 @@ void MainWindow::updateTableSize(bool reset)
 
 
 
+/**
+ * To be called externally after filters applied to the current composite table have changed.
+ * 
+ * Updates the table size info and item statistics, if shown.
+ */
+void MainWindow::currentFiltersChanged()
+{
+	updateTableSize();
+	handle_tableSelectionChanged();
+}
+
+
+
 // EXECUTE USER COMMANDS
 
 /**

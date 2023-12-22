@@ -112,8 +112,10 @@ private:
 	// UI updates
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
-public:
 	void updateTableSize(bool reset = false);
+	
+public:
+	void currentFiltersChanged();
 	
 private:
 	// Execute user commands
