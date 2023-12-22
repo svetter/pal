@@ -47,6 +47,9 @@ protected:
 	virtual ~StatsEngine();
 	
 	static void addChartsToLayout(QBoxLayout* layout, const QList<QChartView*>& charts, QList<int> stretchFactors = QList<int>());
+	
+	static QStringList getHistCategories(int increment, int max, QString prefix, QString suffix);
+	static int classifyHistValue(int value, int increment, int max);
 };
 
 
@@ -88,13 +91,33 @@ class ItemStatsEngine : public StatsEngine
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
 	
+	/** The value increment between categories in the peak height histogram. */
+	const int peakHeightHistCategoryIncrement;
+	/** The lower bound of the highest category in the peak height histogram. */
+	const int peakHeightHistCategoryMax;
+	/** The translated category names for the peak height histogram. */
+	const QStringList peakHeightHistCategories;
+	/** The number of categories in the peak height histogram. */
+	const int numPeakHeightHistCategories;
+	
+	/** The value increment between categories in the elevation gain histogram. */
+	const int elevGainHistCategoryIncrement;
+	/** The lower bound of the highest category in the elevation gain histogram. */
+	const int elevGainHistCategoryMax;
+	/** The translated category names for the elevation gain histogram. */
+	const QStringList elevGainHistCategories;
+	/** The number of categories in the elevation gain histogram. */
+	const int numElevGainHistCategories;
+	
 	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
 	HistogramChart* peakHeightHistChart;
 	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
 	HistogramChart* elevGainHistChart;
+	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
+	YearChart* heightsScatterChart;
 	
 public:
-	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsFrameLayout);
+	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();

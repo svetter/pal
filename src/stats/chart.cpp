@@ -76,6 +76,7 @@ QChart* Chart::createChart(const QString& title)
 	QChart* chart = new QChart();
 	chart->setMargins(QMargins(0, 0, 0, 0));
 	chart->layout()->setContentsMargins(0, 0, 0, 0);
+	chart->legend()->layout()->setContentsMargins(0, 0, 0, 0);
 	chart->setBackgroundRoundness(0);
 	chart->setTitle(title);
 	QFont titleFont = chart->titleFont();
