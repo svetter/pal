@@ -112,8 +112,10 @@ public:
 	
 	
 private:
-	/** Indicates whether during the current run of the application, the tab corresponding to the item type was ever opened and the table fully initialized. */
-	bool hasBeenOpened;
+	/** Indicates whether during the current complete runtime of the application, the tab corresponding to the item type was ever opened. */
+	bool hasBeenOpenedDuringRuntime;
+	/** Indicates whether since the current project was opened, the tab corresponding to the item type was ever opened and the table fully initialized. */
+	bool hasBeenOpenedInProject;
 	
 	
 	
@@ -187,7 +189,8 @@ public:
 		openDuplicateItemDialogAndStoreMethod	(openDuplicateItemDialogAndStoreMethod),
 		openEditItemDialogAndStoreMethod		(openEditItemDialogAndStoreMethod),
 		openDeleteItemsDialogAndExecuteMethod	(openDeleteItemsDialogAndExecuteMethod),
-		hasBeenOpened							(false)
+		hasBeenOpenedDuringRuntime				(false),
+		hasBeenOpenedInProject					(false)
 	{}
 	
 	/**
@@ -205,21 +208,34 @@ public:
 	}
 	
 	/**
-	 * Notifies the item type mapper that the tab corresponding to it is curerntly being opened and fully initialized.
+	 * Notifies the item type mapper that the tab corresponding to it is curerntly being opened and
+	 * fully initialized.
 	 */
 	inline void openingTab()
 	{
-		hasBeenOpened = true;
+		hasBeenOpenedDuringRuntime = true;
+		hasBeenOpenedInProject = true;
 	}
 	
 	/**
-	 * Whether during the runtime of the application, the tab corresponding to this mapper was ever opened.
+	 * Whether during the runtime of the application or since the current project was opened, the
+	 * tab corresponding to this mapper was ever opened.
 	 * 
-	 * @return	True if the tab has been open so far, false otherwise.
+	 * @param runtimeNotProject	Whether openings of the tab before the current project was opened should be regarded.
+	 * @return					True if the tab has been open so far, false otherwise.
 	 */
-	inline bool tabHasBeenOpened() const
+	inline bool tabHasBeenOpened(bool runtimeNotProject) const
 	{
-		return hasBeenOpened;
+		return runtimeNotProject ? hasBeenOpenedDuringRuntime : hasBeenOpenedInProject;
+	}
+	
+	/**
+	 * Resets stored bool indicating whether the tab corresponding to this mapper was ever opened
+	 * since the current project was opened.
+	 */
+	inline void resetTabHasBeenOpened()
+	{
+		hasBeenOpenedInProject = false;
 	}
 };
 
@@ -632,6 +648,19 @@ public:
 			}
 		}
 		return matchingMapper;
+	}
+	
+	/**
+	 * Resets the flags indicating whether the tabs corresponding to the item types were ever opened
+	 * since the current project was opened.
+	 * 
+	 * To be called before a new project is opened.
+	 */
+	inline void resetTabOpenedFlags() const
+	{
+		for (ItemTypeMapper* const mapper : mappers) {
+			mapper->resetTabHasBeenOpened();
+		}
 	}
 };
 

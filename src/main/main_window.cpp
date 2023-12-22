@@ -1291,6 +1291,7 @@ void MainWindow::handle_closeDatabase()
 		mapper->compTable->resetBuffer();
 	}
 	updateTableSize(true);
+	typesHandler->resetTabOpenedFlags();
 }
 
 
@@ -1516,7 +1517,7 @@ void MainWindow::saveGlobalImplicitSettings()
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (!mapper->tabHasBeenOpened() || !mapper->itemStatsPanelCurrentlySetVisible()) continue;
+		if (!mapper->tabHasBeenOpened(true) || !mapper->itemStatsPanelCurrentlySetVisible()) continue;
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
@@ -1530,7 +1531,7 @@ void MainWindow::saveGlobalImplicitSettings()
  */
 void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 {
-	if (!mapper->tabHasBeenOpened()) return;	// Only save if table was actually shown
+	if (!mapper->tabHasBeenOpened(false)) return;	// Only save if table was actually shown
 	QHeaderView* header = mapper->tableView->horizontalHeader();
 	
 	QMap<QString, int>	widthsMap;
