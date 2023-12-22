@@ -468,17 +468,20 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		// Filter bar
 		showFiltersAction->setChecked(db.projectSettings->mainWindow_showFilterBar.get(this));
 		// Open tab
+		int tabIndex = 0;
 		if (Settings::rememberTab.get()) {
-			int tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
-			mainAreaTabs->setCurrentIndex(tabIndex);
-			
-			ItemTypeMapper* activeMapper = getActiveMapper();
-			if (activeMapper) {
-				showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
-			} else {
-				generalStatsEngine.updateStatsTab();
-			}
+			tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
 		}
+		mainAreaTabs->setCurrentIndex(tabIndex);
+		
+		ItemTypeMapper* activeMapper = getActiveMapper();
+		if (activeMapper) {
+			activeMapper->openingTab();
+			showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
+		} else {
+			generalStatsEngine.updateStatsTab();
+		}
+		
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Column widths
 			if (Settings::rememberColumnWidths.get()) {
@@ -912,7 +915,7 @@ void MainWindow::handle_tableSelectionChanged()
 	if (!projectOpen || !statsPanelShown) return;
 	
 	const ItemTypeMapper* const mapper = getActiveMapper();
-	assert(mapper);
+	if (!mapper) return;
 	
 	const QItemSelection selection = mapper->tableView->selectionModel()->selection();
 	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
@@ -1158,8 +1161,14 @@ void MainWindow::handle_newDatabase()
 	
 	setWindowTitleFilename(filepath);
 	db.createNew(this, filepath);
+	
+	// Build buffers and update size info
+	initCompositeBuffers();
+	projectOpen = true;
+	
 	updateFilters();
 	updateTableSize();
+	handle_tableSelectionChanged();
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
@@ -1167,6 +1176,8 @@ void MainWindow::handle_newDatabase()
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
 		ProjectSettingsWindow(this, &db, true).exec();
 	}
+	
+	getActiveMapper()->openingTab();
 }
 
 /**
@@ -1293,6 +1304,7 @@ void MainWindow::handle_closeDatabase()
 	}
 	generalStatsEngine.resetStatsTab();
 	updateTableSize(true);
+	mainAreaTabs->setCurrentIndex(0);
 	typesHandler->resetTabOpenedFlags();
 }
 
@@ -1378,6 +1390,11 @@ void MainWindow::handle_hideAllStatsPanels()
 {
 	showItemStatsPanelAction->setChecked(false);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		if (mapper->tabHasBeenOpened(true) && mapper->statsScrollArea->isVisible()) {
+			// Save splitter sizes before closing
+			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		}
 		mapper->statsScrollArea->setVisible(false);
 	}
 }
