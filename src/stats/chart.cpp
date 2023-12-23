@@ -254,7 +254,7 @@ QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, 
  * @param chartSize			The size of the chart's plot area in the direction of the given axis (h/v) in pixels.
  * @param rangeBufferFactor	The fraction of the range to add to the edge on either side as a buffer. No buffer is added when that edge is equal to zero.
  */
-void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor)
+void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor, bool isTimeAxis)
 {
 	assert(axis);
 	assert(minValue <= maxValue);
@@ -274,7 +274,13 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 	case 2:		interval *= 5;	minorCount = 4;	break;
 	default:	interval = 1;	minorCount = 0;	break;
 	}
-	if (interval < 2) minorCount = 0;
+	if (interval < 2) {
+		if (isTimeAxis) {
+			minorCount = log10times3 < -1 ? 11 : 3;
+		} else {
+			minorCount = 0;
+		}
+	}
 	int anchor = (int) minValue / interval * interval;
 	
 	// Add buffer on the beginning and end of the range
@@ -400,11 +406,9 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 	assert(minY <= maxY);
 	
 	if (maxYear - minYear < 1) {
-		qDebug() << minYear << maxYear;
 		qreal buffer = 0.5 * (1 - (maxYear - minYear));
 		minYear -= buffer;
 		maxYear += buffer;
-		qDebug() << buffer << minYear << maxYear;
 	}
 	
 	this->minYear = minYear;
@@ -429,7 +433,7 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 void YearChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0);
+	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0, true);
 	adjustAxis(yAxis,	minY,		maxY,		chart->plotArea().height(),	rangeBufferFactorY);
 }
 
