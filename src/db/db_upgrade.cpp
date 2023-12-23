@@ -24,10 +24,11 @@
 #include "db_upgrade.h"
 
 #include "src/db/db_error.h"
-#include "src/settings/settings.h"
+#include "src/main/helpers.h"
 
 #include <QSqlQuery>
 #include <QMessageBox>
+#include <QFile>
 
 
 
@@ -203,15 +204,15 @@ bool DatabaseUpgrader::promptUserAboutUpgradeAndBackup(const QString& oldDbVersi
 	QString filepath = db->getCurrentFilepath();
 	QString windowTitle = Database::tr("Database upgrade necessary");
 	QString compatibilityStatement = claimOlderVersionsIncompatible
-			? Database::tr("After the upgrade, previous versions of PAL will no longer be able to open the file.")
-			: Database::tr("After the upgrade, previous versions of PAL might no longer be able to open the file.");
+		? Database::tr("After the upgrade, previous versions of PAL will no longer be able to open the file.")
+		: Database::tr("After the upgrade, previous versions of PAL might no longer be able to open the file.");
 	QString backupNote = Database::tr("Note: A copy of the project file in its current state will be created as a backup.");
 	QString message = filepath + "\n\n"
-			+ Database::tr("Opening this project requires upgrading its database from version %1 to version %2."
+		+ Database::tr("Opening this project requires upgrading its database from version %1 to version %2."
 			"\n%3"
 			"\n\nDo you want to perform the upgrade now?"
 			"\n\n%4")
-			.arg(oldDbVersion, getAppVersion(), compatibilityStatement, backupNote);
+		.arg(oldDbVersion, getAppVersion(), compatibilityStatement, backupNote);
 	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto defaultButton = QMessageBox::Cancel;
 	
@@ -221,7 +222,7 @@ bool DatabaseUpgrader::promptUserAboutUpgradeAndBackup(const QString& oldDbVersi
 	if (abort) return false;
 	
 	QString confirmationQuestion = Database::tr("Do you want to perform the upgrade anyway?");
-	abort = !createFileBackupCopy(confirmationQuestion);
+	abort = !createFileBackupCopy(confirmationQuestion, oldDbVersion);
 	return !abort;
 }
 
@@ -238,12 +239,12 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
 	QString backupNote = Database::tr("Note: A copy of the project file in its current state will be created as a backup.");
 	QString confirmationQuestion = Database::tr("Do you want to open the file anyway?");
 	QString message = db->getCurrentFilepath() + "\n\n"
-					  + Database::tr("This project file has version %1, while the app has version %2."
-									 "\nOpening a file with an older version of PAL can lead to errors, crashes and data corruption."
-									 "It is strongly recommended to only use PAL version %1 or newer to open this file."
-									 "\n\n%3"
-									 "\n\n%4")
-							.arg(dbVersion, getAppVersion(), confirmationQuestion, backupNote);
+		+ Database::tr("This project file has version %1, while the app has version %2."
+			"\nOpening a file with an older version of PAL can lead to errors, crashes and data corruption."
+			"It is strongly recommended to only use PAL version %1 or newer to open this file."
+			"\n\n%3"
+			"\n\n%4")
+		.arg(dbVersion, getAppVersion(), confirmationQuestion, backupNote);
 	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto defaultButton = QMessageBox::Cancel;
 	
@@ -251,7 +252,7 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
 	bool abort = response != QMessageBox::Yes;
 	if (abort) return false;
 	
-	abort = !createFileBackupCopy(confirmationQuestion);
+	abort = !createFileBackupCopy(confirmationQuestion, dbVersion);
 	return !abort;
 }
 
@@ -262,14 +263,16 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
  * @param confirmationQuestion	Translated string to insert into the message, asking the user whether to continue if the backup failed.
  * @return						True if the backup was created successfully or the user wants to continue anyway, false otherwise.
  */
-bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion)
+bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion, const QString& currentDbVersion)
 {
 	// Determine backup filename
 	QString filepath = db->getCurrentFilepath();
 	QString backupFilepath = filepath + ".bak";
 	int backupFileCounter = 1;
 	while (QFile(backupFilepath).exists()) {
-		backupFilepath = filepath + " (" + QString::number(backupFileCounter++) + ").bak";
+		QString oldVersionUnderscore = currentDbVersion;
+		oldVersionUnderscore.replace(".", "_");
+		backupFilepath = filepath + " (" + QString::number(backupFileCounter++) + ").v" + oldVersionUnderscore + ".bak";
 	}
 	
 	// Copy file
@@ -278,10 +281,10 @@ bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion)
 		// Ask user whether to continue
 		QString windowTitle = Database::tr("Error creating backup");
 		QString message = filepath + "\n\n"
-				+ Database::tr("An error occurred while trying to create a backup of the project file."
+			+ Database::tr("An error occurred while trying to create a backup of the project file."
 				"\n%1"
 				"\n\nNote: You can still create a backup manually before proceeding.")
-				.arg(confirmationQuestion);
+			.arg(confirmationQuestion);
 		auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 		auto defaultButton = QMessageBox::Cancel;
 		
