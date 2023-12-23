@@ -1536,10 +1536,11 @@ void MainWindow::saveGlobalImplicitSettings()
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (!mapper->tabHasBeenOpened(true) || !mapper->itemStatsPanelCurrentlySetVisible()) continue;
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
-		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		if (mapper->tabHasBeenOpened(true) && mapper->itemStatsPanelCurrentlySetVisible()) {
+			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		}
 	}
 }
 
