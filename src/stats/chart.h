@@ -131,7 +131,7 @@ protected:
 	
 	// Update helpers
 public:
-	static QLineSeries* createLineSeries(const QString& name);
+	static QLineSeries* createLineSeries(const QString& name = QString());
 	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape markerShape = QScatterSeries::MarkerShape(-1));
 protected:
 	static void adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0);

@@ -137,9 +137,9 @@ GeneralStatsEngine::~GeneralStatsEngine()
  */
 void GeneralStatsEngine::setupStatsTab()
 {
-	elevGainPerYearChart	= new YearChart("Elevation gain sum per year",						"km",				false);
-	numAscentsPerYearChart	= new YearChart("Number of scaled peaks per year",					"Number of peaks",	false);
-	heightsScatterChart		= new YearChart("All elevation gains and peak heights over time",	"m",				true);
+	elevGainPerYearChart	= new YearChart(tr("Elevation gain sum per year"),						tr("km"),					false);
+	numAscentsPerYearChart	= new YearChart(tr("Number of ascents per year"),						tr("Number of ascents"),	false);
+	heightsScatterChart		= new YearChart(tr("All elevation gains and peak heights over time"),	tr("m"),					true);
 	
 	// Set layout
 	QHBoxLayout* statisticsTabUpperLayout = new QHBoxLayout();
@@ -180,11 +180,11 @@ void GeneralStatsEngine::updateStatsTab()
 	assert(elevGainPerYearChart);
 	assert(numAscentsPerYearChart);
 	assert(heightsScatterChart);
-
-	QLineSeries*	elevGainPerYearSeries	= Chart::createLineSeries	("Elevation gain");
-	QLineSeries*	numAscentsPerYearSeries	= Chart::createLineSeries	("Number of ascended peaks");
-	QScatterSeries*	peakHeightSeries		= Chart::createScatterSeries("Peak heights",				6,	QScatterSeries::MarkerShapeTriangle);
-	QScatterSeries*	elevGainSeries			= Chart::createScatterSeries("Elevation gains",				6,	QScatterSeries::MarkerShapeRotatedRectangle);
+	
+	QLineSeries*	elevGainPerYearSeries	= Chart::createLineSeries();
+	QLineSeries*	numAscentsPerYearSeries	= Chart::createLineSeries();
+	QScatterSeries*	elevGainSeries			= Chart::createScatterSeries(tr("Elevation gains"),	6,	QScatterSeries::MarkerShapeRotatedRectangle);
+	QScatterSeries*	peakHeightSeries		= Chart::createScatterSeries(tr("Peak heights"),	6,	QScatterSeries::MarkerShapeTriangle);
 	
 	
 	QMap<int, int> yearElevGainSums	= QMap<int, int>();
@@ -242,7 +242,7 @@ void GeneralStatsEngine::updateStatsTab()
 	
 	elevGainPerYearChart	->updateData({elevGainPerYearSeries}, 				minYear,	maxYear,	0,	elevGainPerYearMaxY);
 	numAscentsPerYearChart	->updateData({numAscentsPerYearSeries},				minYear,	maxYear,	0,	numAscentsPerYearMaxY);
-	heightsScatterChart		->updateData({peakHeightSeries, elevGainSeries},	minDate,	maxDate,	0,	heightsMaxY);
+	heightsScatterChart		->updateData({elevGainSeries, peakHeightSeries},	minDate,	maxDate,	0,	heightsMaxY);
 }
 
 
@@ -264,7 +264,7 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	statsLayout(statsLayout),
 	peakHeightHistCategoryIncrement(1000),
 	peakHeightHistCategoryMax(8848),
-	peakHeightHistCategories(getHistCategories(peakHeightHistCategoryIncrement, peakHeightHistCategoryMax, "", "s")),
+	peakHeightHistCategories(getHistCategories(peakHeightHistCategoryIncrement, peakHeightHistCategoryMax, "", tr("s"))),
 	numPeakHeightHistCategories(peakHeightHistCategories.size()),
 	elevGainHistCategoryIncrement(250),
 	elevGainHistCategoryMax(1500),
@@ -297,18 +297,19 @@ ItemStatsEngine::~ItemStatsEngine()
  */
 void ItemStatsEngine::setupStatsPanel()
 {
-	peakHeightHistChart	= new HistogramChart("Peak height distribution", peakHeightHistCategories);
-	elevGainHistChart	= new HistogramChart("Elevation gain distribution", elevGainHistCategories);
+	peakHeightHistChart	= new HistogramChart(tr("Distribution of peak heights"),	peakHeightHistCategories);
+	elevGainHistChart	= new HistogramChart(tr("Distribution of elevation gains"),	elevGainHistCategories);
 	
-	heightsScatterChart	= new YearChart("Elevation gains and peak heights over time", QString(), true);
+	heightsScatterChart	= new YearChart(tr("Elevation gains and peak heights over time"), QString(), true);
 	
+	int n = 10;
 	if (itemType != ItemTypeAscent) {
-		topTenNumAscentsChart	= new TopNChart(10, "Most ascents");
+		topTenNumAscentsChart	= new TopNChart(n, tr("Top %1: Most ascents").arg(n));
 	}
-	topTenMaxPeakHeightChart	= new TopNChart(10, "Highest peak");
-	topTenMaxElevGainChart		= new TopNChart(10, "Highest elevation gain");
+	topTenMaxPeakHeightChart	= new TopNChart(n, tr("Top %1: Highest peak").arg(n));
+	topTenMaxElevGainChart		= new TopNChart(n, tr("Top %1: Highest single elevation gain").arg(n));
 	if (itemType != ItemTypeAscent) {
-		topTenElevGainSumChart	= new TopNChart(10, "Highest elevation gain sum [km]");
+		topTenElevGainSumChart	= new TopNChart(n, tr("Top %1: Highest elevation gain sum [km]").arg(n));
 	}
 	
 	heightsScatterChart->getChartView()->setMinimumHeight(250);
@@ -414,8 +415,8 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	// Heights scatterplot
 	
 	if (heightsScatterChart) {
-		QScatterSeries*	peakHeightScatterSeries	= Chart::createScatterSeries("Peak heights",	5,	QScatterSeries::MarkerShapeTriangle);
-		QScatterSeries*	elevGainScatterSeries	= Chart::createScatterSeries("Elevation gains",	5,	QScatterSeries::MarkerShapeRotatedRectangle);
+		QScatterSeries*	elevGainScatterSeries	= Chart::createScatterSeries(tr("Elevation gains"),	5,	QScatterSeries::MarkerShapeRotatedRectangle);
+		QScatterSeries*	peakHeightScatterSeries	= Chart::createScatterSeries(tr("Peak heights"),	5,	QScatterSeries::MarkerShapeTriangle);
 		qreal minDate = 3000;
 		qreal maxDate = 0;
 		int heightsMaxY = 0;
@@ -446,7 +447,7 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			}
 		}
 		
-		heightsScatterChart->updateData({peakHeightScatterSeries, elevGainScatterSeries}, minDate, maxDate, 0, heightsMaxY);
+		heightsScatterChart->updateData({elevGainScatterSeries, peakHeightScatterSeries}, minDate, maxDate, 0, heightsMaxY);
 	}
 	
 	

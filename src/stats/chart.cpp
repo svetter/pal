@@ -218,7 +218,7 @@ QBarSet* Chart::createBarSet(const QString& name, QAbstractBarSeries* series)
 QLineSeries* Chart::createLineSeries(const QString& name)
 {
 	QLineSeries* series = new QLineSeries();
-	series->setName(name);
+	if (!name.isEmpty()) series->setName(name);
 	return series;
 }
 

@@ -25,10 +25,10 @@
 #define STATS_ENGINE_H
 
 #include "src/db/database.h"
-
 #include "chart.h"
 #include "src/data/item_types.h"
 
+#include <QObject>
 #include <QBoxLayout>
 
 
@@ -36,8 +36,10 @@
 /**
  * A base class for statistical analysis classes, general and specific to each item type.
  */
-class StatsEngine
+class StatsEngine : protected QObject
 {
+	Q_OBJECT
+	
 protected:
 	/** The database. */
 	Database* const db;
@@ -58,6 +60,8 @@ protected:
  */
 class GeneralStatsEngine : public StatsEngine
 {
+	Q_OBJECT
+	
 	/** A double pointer to the layout of the statistics tab. */
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
@@ -84,6 +88,8 @@ public:
  */
 class ItemStatsEngine : public StatsEngine
 {
+	Q_OBJECT
+	
 	/** The item type to compute and show statistics for and/or about. */
 	const PALItemType itemType;
 	/** The base table for the item type. */
