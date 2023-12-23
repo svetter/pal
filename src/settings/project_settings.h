@@ -72,12 +72,6 @@ public:
 	T getDefault() const;
 };
 
-// List used types as compiler hints
-template class ProjectSetting<bool>;
-template class ProjectSetting<int>;
-template class ProjectSetting<QString>;
-template class ProjectSetting<QDate>;
-
 
 
 template<typename T>
@@ -110,10 +104,6 @@ public:
 private:
 	void createSettingIfMissing(const QString& subKey);
 };
-
-// List used types as compiler hints
-template class ProjectMultiSetting<int>;
-template class ProjectMultiSetting<bool>;
 
 
 

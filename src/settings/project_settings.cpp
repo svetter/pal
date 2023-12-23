@@ -157,6 +157,14 @@ T ProjectSetting<T>::getDefault() const
 
 
 
+// List used types as compiler hints
+template class ProjectSetting<bool>;
+template class ProjectSetting<int>;
+template class ProjectSetting<QString>;
+template class ProjectSetting<QDate>;
+
+
+
 
 
 /**
@@ -292,3 +300,9 @@ void ProjectMultiSetting<T>::createSettingIfMissing(const QString& subKey)
 		settings.insert(subKey, new ProjectSetting<T>(table, baseKey + "/" + subKey, defaultValue));
 	}
 }
+
+
+
+// List used types as compiler hints
+template class ProjectMultiSetting<int>;
+template class ProjectMultiSetting<bool>;
