@@ -83,13 +83,8 @@ class MainWindow : public QMainWindow, public Ui_MainWindow
 	/** The ItemTypesHandler singleton. */
 	const ItemTypesHandler* typesHandler;
 	
-	// Debugging table views
-	/** Whether the debugging table views are enabled. */
-	bool showDebugTableViews;
-	/** The debugging table view for the photos table. */
-	QTableView* photosDebugTableView;
-	/** The debugging table view for the ascents table. */
-	QTableView* participatedDebugTableView;
+	/** The stats engine instance for computing general statistics. */
+	GeneralStatsEngine generalStatsEngine;
 	
 public:
 	MainWindow();
@@ -97,11 +92,11 @@ public:
 	
 private:
 	// Initial setup
-	void setupMenuIcons();
 	void createTypesHandler();
+	void setupMenuIcons();
 	void connectUI();
 	void setupTableViews();
-	void setupDebugTableViews();
+	void setupStatsPanels();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
 	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);
@@ -117,8 +112,10 @@ private:
 	// UI updates
 	void setUIEnabled(bool enabled);
 	void updateRecentFilesMenu();
-public:
 	void updateTableSize(bool reset = false);
+	
+public:
+	void currentFiltersChanged();
 	
 private:
 	// Execute user commands
@@ -136,6 +133,7 @@ public:
 private slots:
 	// UI event handlers
 	void handle_tabChanged();
+	void handle_tableSelectionChanged();
 	void handle_rightClickOnColumnHeader(QPoint pos);
 	void handle_rightClickInTable(QPoint pos);
 	
@@ -159,6 +157,9 @@ private slots:
 	void handle_openSettings();
 	// View menu action handlers
 	void handle_showFiltersChanged();
+	void handle_showStatsPanelChanged();
+	void handle_showAllStatsPanels();
+	void handle_hideAllStatsPanels();
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
 	void handle_restoreHiddenColumns();
@@ -180,7 +181,7 @@ private:
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
-	const ItemTypeMapper* getActiveMapper() const;
+	ItemTypeMapper* getActiveMapper() const;
 	void addToRecentFilesList(const QString& filepath);
 	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);

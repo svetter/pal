@@ -554,7 +554,7 @@ void AscentFilterBar::handle_applyFilters()
 	compAscents->applyFilters(filters);
 	saveFilters(filters);
 	
-	mainWindow->updateTableSize();
+	mainWindow->currentFiltersChanged();
 }
 
 /**
@@ -570,7 +570,7 @@ void AscentFilterBar::handle_clearFilters()
 	
 	handle_filtersChanged();	// Potentially enable apply button
 	
-	mainWindow->updateTableSize();
+	mainWindow->currentFiltersChanged();
 }
 
 

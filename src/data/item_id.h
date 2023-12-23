@@ -18,7 +18,8 @@
 /**
  * @file ItemID.h
  * 
- * This file declares the ItemID class and its subclass ValidItemID.
+ * This file declares the ItemID class and its subclass ValidItemID, and defines
+ * the ItemIDPrivilegedFunctionAccessor class and corresponding macros.
  */
 
 #ifndef ITEM_ID_H
@@ -78,8 +79,8 @@ public:
 /**
  * A small wrapper class for a valid integer ID.
  *
- * Using this class only indicates that the ID index is valid, not whether a reference using this
- * ID is valid.
+ * Using this class only indicates that the ID index is valid, not whether a reference using this ID
+ * is valid.
  */
 class ValidItemID : public ItemID {
 private:
@@ -108,7 +109,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * 
  * Performs an assertion at caller level that the ItemID must be valid.
  * Always use this macro to make sure that assertions are performed at caller level first, to make
- * sure that violated assertion give a useful error message.
+ * sure that violated assertions give a useful error message.
  * 
  * @param item_id	The ItemID to get the integer index of.
  * @return			The integer index of the ItemID.
@@ -120,7 +121,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * 
  * Performs an assertion at caller level that the ItemID must be valid.
  * Always use this macro to make sure that assertions are performed at caller level first, to make
- * sure that violated assertion give a useful error message.
+ * sure that violated assertions give a useful error message.
  * 
  * @param item_id	The ItemID to force to be valid.
  * @return			The ValidItemID created from the ItemID.
@@ -132,7 +133,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * 
  * Performs an assertion at caller level that the integer must produce a valid ItemID.
  * Always use this macro to make sure that assertions are performed at caller level first, to make
- * sure that violated assertion give a useful error message.
+ * sure that violated assertions give a useful error message.
  * 
  * @param integer	The integer to create a ValidItemID from.
  * @return			The ValidItemID created from the integer.
@@ -144,13 +145,15 @@ size_t qHash(const ItemID& key, size_t seed);
  * A class which serves as an indirection tool to make functions of ItemID which require assertions
  * publicly accessible, but in a way that makes it clear that they should not be used directly.
  * 
- * Instead, the macros ID_GET, FORCE_VALID and VALID_ITEM_ID, which this is designed to work
- * with, should be used.
+ * Instead, the macros ID_GET, FORCE_VALID and VALID_ITEM_ID, which this is designed to work with,
+ * should be used.
  */
 class ItemIDPrivilegedFunctionAccessor
 {
 public:
+	/** Do NOT call directly! Use macro ID_GET(...) instead. */
 	inline static int			getValueForItemID	(ItemID itemID)	{ return itemID.get();			}
+	/** Do NOT call directly! Use macros FORCE_VALID(...) and VALID_ITEM_ID(...) instead. */
 	inline static ValidItemID	forceItemIDValid	(ItemID itemID)	{ return itemID.forceValid();	}
 };
 

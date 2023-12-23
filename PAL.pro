@@ -18,6 +18,7 @@
 QT += core gui
 QT += sql
 QT += svg svgwidgets
+QT += charts
 
 CONFIG += c++17
 CONFIG += lrelease
@@ -35,11 +36,10 @@ DEFINES += APP_VERSION_PATCH=0
 DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
-DEFINES += DEBUG_TABLE_TABS=false
-
 
 
 SOURCES += \
+	src/comp_tables/breadcrumbs.cpp \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/comp_tables/fold_composite_column.cpp \
@@ -86,12 +86,15 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/ascent_filter_bar.cpp \
+	src/main/helpers.cpp \
 	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
+	src/stats/chart.cpp \
+	src/stats/stats_engine.cpp \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
 	src/tools/export_writer.cpp \
@@ -101,6 +104,7 @@ SOURCES += \
 	src/viewer/scalable_image_label.cpp
 
 HEADERS += \
+	src/comp_tables/breadcrumbs.h \
 	src/comp_tables/comp_ascents_table.h \
 	src/comp_tables/comp_countries_table.h \
 	src/comp_tables/comp_hikers_table.h \
@@ -117,6 +121,7 @@ HEADERS += \
 	src/data/enum_names.h \
 	src/data/hiker.h \
 	src/data/item_id.h \
+	src/data/item_types.h \
 	src/data/peak.h \
 	src/data/photo.h \
 	src/data/range.h \
@@ -155,12 +160,15 @@ HEADERS += \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
 	src/main/ascent_filter_bar.h \
+	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
 	src/settings/project_settings.h \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/stats/chart.h \
+	src/stats/stats_engine.h \
 	src/tools/export_decls.h \
 	src/tools/export_dialog.h \
 	src/tools/export_thread.h \
@@ -211,6 +219,7 @@ resources.files = \
 	resources/icons/ico/range_multisize_square.ico \
 	resources/icons/ico/country_multisize_square.ico \
 	resources/icons/ico/ascent_viewer_multisize_square.ico \
+	resources/icons/ico/statistics_multisize_square.ico \
 	resources/gpl/gpl-v3-logo.svg
 resources.base = resources
 resources.prefix = /

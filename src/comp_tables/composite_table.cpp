@@ -32,7 +32,7 @@
  * @param baseTable	The database table this table is based on.
  * @param tableView	The view this table is displayed in.
  */
-CompositeTable::CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView) :
+CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTableView* tableView) :
 	QAbstractTableModel(),
 	db(db),
 	baseTable(baseTable),
@@ -1014,6 +1014,21 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 	QList<QVariant> cells = column->computeWholeColumn();
 	assert(cells.size() == buffer.numRows());
 	return cells;
+}
+
+
+
+/**
+ * Returns the breadcrumb trail from the base table to the given target table.
+ * 
+ * @param targetTable	The table to return the breadcrumb trail to.
+ * @return				The breadcrumb trail from the base table to the given destination table.
+ */
+Breadcrumbs CompositeTable::crumbsTo(const Database* db, const Table* targetTable) const
+{
+	assert(baseTable);
+	
+	return db->getBreadcrumbsFor(baseTable, targetTable);
 }
 
 

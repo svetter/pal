@@ -23,83 +23,6 @@
 
 #include "settings.h"
 
-#include "src/settings/settings_window.h"
-
-#include <QStyleFactory>
-
-
-
-/**
- * Lists all languages supported by the application and returns two lists of the language codes and
- * the native language names, respectively.
- * 
- * @return	A pair of two lists, the first containing the language codes and the second containing the native language names.
- */
-QPair<QStringList, QStringList> getSupportedLanguages()
-{
-	QStringList codes = QStringList("en");
-	QStringList names = QStringList("English");
-	
-	QDirIterator it = QDirIterator(":/i18n/", QDirIterator::Subdirectories);
-	while (it.hasNext()) {
-		QString code = it.next().split(".").at(0).split("/").at(2);
-		codes.append(code);
-		names.append(QLocale(code).nativeLanguageName());
-	}
-	
-	return {codes, names};
-}
-
-/**
- * Determines which language should be used by default for the application, based on the user's
- * system language and the languages supported by the application.
- * 
- * @return	The language code of the language that should be used by default on the current system.
- */
-QString getDefaultLanguageCode()
-{
-	QString language = "en";
-	QStringList uiLanguages = QLocale::system().uiLanguages();
-	QStringList supportedLanguages = getSupportedLanguages().first;
-	
-	for (const QString& locale : uiLanguages) {
-		const QString preferredLanguage = QLocale(locale).name();
-		if (supportedLanguages.contains(preferredLanguage)) {
-			language = preferredLanguage;
-			break;
-		}
-	}
-	return language;
-}
-
-
-
-/**
- * Lists all styles supported by the application and returns two lists of the style codes and the
- * translated style names, respectively.
- * 
- * @return	A pair of two lists, the first containing the style codes and the second containing the translated style names.
- */
-QPair<QStringList, QStringList> getSupportedStyles()
-{
-	QStringList codes = QStyleFactory::keys();
-	codes.insert(0, "");
-	QStringList names = QStringList();
-	
-	for (const QString& code : codes) {
-		     if (code == "")				names.append(SettingsWindow::tr("Default"));
-		else if (code == "Fusion")			names.append(SettingsWindow::tr("Qt Fusion"));
-		else if (code == "windowsvista")	names.append(SettingsWindow::tr("Modern Windows"));
-		else if (code == "Windows")			names.append(SettingsWindow::tr("Classic Windows"));
-		else if (code == "macOS")			names.append(SettingsWindow::tr("MacOS"));
-		else								names.append(code);
-	}
-	
-	return {codes, names};
-}
-
-
-
 
 
 /**
@@ -119,9 +42,8 @@ bool Settings::settingsOlderThan(QString version)
 /**
  * Updates the settings file to the current version of the application.
  * 
- * In this function, it is important to use string literals for old keys, since the update process
- * should still work in the future when keys will potentially change. For updated settings, the
- * current keys can be used.
+ * In this function, it is important to use string literals for all keys, since the update process
+ * should still work in the future when keys will potentially change.
  */
 void Settings::checkForVersionChange()
 {
@@ -139,11 +61,16 @@ void Settings::checkForVersionChange()
 		qSettings.remove("implicit/mainWindow/columnWidths");
 		qSettings.remove("implicit/mainWindow/sorting");
 		
-		// New splitter in ascent viewer => carry over and remove deprecated setting
-		QString oldSplitterKey = "implicit/ascentViewer/splitterSizes";
-		if (qSettings.contains(oldSplitterKey)) {
-			ascentViewer_rightSplitterSizes.set(qSettings.value(oldSplitterKey).toStringList());
-			qSettings.remove(oldSplitterKey);
+		// New splitter in ascent viewer => remove deprecated setting
+		qSettings.remove("implicit/ascentViewer/splitterSizes");
+
+		// Inconsistent key changed => move to new key
+		QString oldCountryDialogGeometryKey = "implicit/country/geometry";
+		QString newCountryDialogGeometryKey = "implicit/countryDialog/geometry";
+		if (qSettings.contains(oldCountryDialogGeometryKey)) {
+			QVariant value = qSettings.value(oldCountryDialogGeometryKey);
+			qSettings.setValue(newCountryDialogGeometryKey, value);
+			qSettings.remove(oldCountryDialogGeometryKey);
 		}
 	}
 	
@@ -153,47 +80,6 @@ void Settings::checkForVersionChange()
 		appVersion.set(currentAppVersion);
 		qDebug().noquote().nospace() << "Upgraded global settings from v" << appVersion.get() << " to v" << currentAppVersion;
 	}
-}
-
-
-
-
-
-/**
- * Returns a string containing the application's version number.
- * 
- * @return	The application's version number in string form.
- */
-QString getAppVersion()
-{
-	return QString("%1.%2.%3")
-		.arg(APP_VERSION_MAJOR)
-		.arg(APP_VERSION_MINOR)
-		.arg(APP_VERSION_PATCH);
-}
-
-/**
- * Compares two version strings and determines whether the first one is older than the second one.
- * 
- * @param settingsVersion	The version of the application that saved the settings file.
- * @param minimalVersion	The version of the application with which to compare the settings file version.
- * @return					True if the settings file is older than the given version, false otherwise.
- */
-bool isBelowVersion(QString versionToCheck, QString minimalVersion)
-{
-	QStringList checkSplit		= versionToCheck.split('.');
-	QStringList minimalSplit	= minimalVersion.split('.');
-	assert(checkSplit.size() == 3 && minimalSplit.size() == 3);
-	for (int i = 0; i < 3; i++) {
-		bool conversionOk = false;
-		int settingsNumber = checkSplit.at(i).toInt(&conversionOk);
-		assert(conversionOk);
-		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
-		assert(conversionOk);
-		if (settingsNumber > minimalNumber) return false;
-		if (settingsNumber < minimalNumber) return true;
-	}
-	return false;
 }
 
 
@@ -235,4 +121,56 @@ void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect
 	}
 	
 	dialog->setGeometry(savedGeometry);
+}
+
+
+
+/**
+ * Saves the current sizes of the given splitter to the given setting.
+ * 
+ * @param splitter				The splitter to save the sizes of.
+ * @param splitterSizesSetting	The setting to save the splitter sizes to.
+ */
+void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+{
+	QList<int> leftSplitterSizes = splitter->sizes();
+	QStringList stringList;
+	for (int size : leftSplitterSizes) {
+		stringList.append(QString::number(size));
+	}
+	splitterSizesSetting->set(stringList);
+}
+
+/**
+ * Restores the sizes of all splitters from settings.
+ * 
+ * @param splitter				The splitter to restore the sizes of.
+ * @param splitterSizesSetting	The setting to load the splitter sizes from.
+ */
+void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+{
+	QStringList splitterSizeStrings = splitterSizesSetting->get();
+	if (splitterSizeStrings.size() != splitter->sizes().size()) {
+		// Can't restore splitter sizes from settings
+		if (!splitterSizeStrings.isEmpty()) {
+			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Expected %1 numbers, but got %2")
+							.arg(splitter->sizes().size()).arg(splitterSizeStrings.size());
+		}
+		splitterSizesSetting->clear();
+		return;
+	}
+	
+	QList<int> splitterSizes = QList<int>();
+	for (const QString& sizeString : splitterSizeStrings) {
+		bool conversionOk = false;
+		int size = sizeString.toInt(&conversionOk);
+		if (!conversionOk) {
+			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Value(s) couldn't be converted to int");
+			splitterSizesSetting->clear();
+			return;
+		}
+		splitterSizes.append(size);
+	}
+	
+	splitter->setSizes(splitterSizes);
 }

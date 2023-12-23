@@ -118,6 +118,20 @@ QList<const Column*> Table::getPrimaryKeyColumnList() const
 }
 
 /**
+ * Returns a list of all foreign key columns in the table.
+ * 
+ * @return	A list of all foreign key columns in the table.
+ */
+QList<const Column*> Table::getForeignKeyColumnList() const
+{
+	QList<const Column*> foreignKeyColumns = QList<const Column*>();
+	for (const Column* column : columns) {
+		if (column->foreignColumn) foreignKeyColumns.append(column);
+	}
+	return foreignKeyColumns;
+}
+
+/**
  * Returns a list of all non-primary-key columns in the table.
  * 
  * @return	A list of all non-primary-key columns in the table.

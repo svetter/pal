@@ -24,6 +24,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "src/main/helpers.h"
+
 #include <QDate>
 #include <QTime>
 #include <QSettings>
@@ -37,16 +39,6 @@
 
 /** PAL uses QSettings with INI format to store general (not project-specific) settings. */
 inline QSettings qSettings = QSettings(QSettings::IniFormat, QSettings::UserScope, "PeakAscentLogger", "PeakAscentLogger");
-
-
-
-QPair<QStringList, QStringList> getSupportedLanguages();
-QString getDefaultLanguageCode();
-
-QPair<QStringList, QStringList> getSupportedStyles();
-
-QString getAppVersion();
-bool isBelowVersion(QString versionToCheck, QString minimalVersion);
 
 
 
@@ -401,9 +393,41 @@ public:
 	/** Remembered position and size of the range dialog. */
 	inline static const	Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
 	/** Remembered position and size of the country dialog. */
-	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/country/geometry");
+	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/countryDialog/geometry");
 	
-	// View state
+	// Item stats panel
+	/** Remembered visibility state for the statistics panel in the ascents tab of the main window. */
+	inline static const	Setting<bool>			ascentsStats_show						= Setting<bool>			("implicit/mainWindow/ascents/showStats");
+	/** Remembered visibility state for the statistics panel in the peaks tab of the main window. */
+	inline static const	Setting<bool>			peaksStats_show							= Setting<bool>			("implicit/mainWindow/peaks/showStats");
+	/** Remembered visibility state for the statistics panel in the trips tab of the main window. */
+	inline static const	Setting<bool>			tripsStats_show							= Setting<bool>			("implicit/mainWindow/trips/showStats");
+	/** Remembered visibility state for the statistics panel in the hikers tab of the main window. */
+	inline static const	Setting<bool>			hikersStats_show						= Setting<bool>			("implicit/mainWindow/hikers/showStats");
+	/** Remembered visibility state for the statistics panel in the regions tab of the main window. */
+	inline static const	Setting<bool>			regionsStats_show						= Setting<bool>			("implicit/mainWindow/regions/showStats");
+	/** Remembered visibility state for the statistics panel in the ranges tab of the main window. */
+	inline static const	Setting<bool>			rangesStats_show						= Setting<bool>			("implicit/mainWindow/ranges/showStats");
+	/** Remembered visibility state for the statistics panel in the countries tab of the main window. */
+	inline static const	Setting<bool>			countriesStats_show						= Setting<bool>			("implicit/mainWindow/countries/showStats");
+	
+	// Stats panel splitter sizes
+	/** Remembered sizes for the splitter between table and statistics frame in the ascents tab of the main window. */
+	inline static const	Setting<QStringList>	ascentsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ascents/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the peaks tab of the main window. */
+	inline static const	Setting<QStringList>	peaksStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/peaks/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the trips tab of the main window. */
+	inline static const	Setting<QStringList>	tripsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/trips/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the hikers tab of the main window. */
+	inline static const	Setting<QStringList>	hikersStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/hikers/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the regions tab of the main window. */
+	inline static const	Setting<QStringList>	regionsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/regions/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the ranges tab of the main window. */
+	inline static const	Setting<QStringList>	rangesStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ranges/splitterSizes");
+	/** Remembered sizes for the splitter between table and statistics frame in the countries tab of the main window. */
+	inline static const	Setting<QStringList>	countriesStats_splitterSizes			= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
+	
+	// Ascent viewer splitter sizes
 	/** Remembered sizes for the left splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */
@@ -446,8 +470,13 @@ public:
 
 
 
-void saveDialogGeometry   (QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
+// Saving/restoring implicit settings
+
+void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
 void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting);
+
+void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
+void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
 
 
 

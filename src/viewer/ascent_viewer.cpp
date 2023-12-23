@@ -437,9 +437,10 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
  */
 void AscentViewer::updateAscentNavigationNumbers()
 {
-	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(lastAscentViewRowIndex.get() + 1);
+	int numAscents = compAscents->rowCount();
+	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(numAscents);
 	allAscentsNumberLabel->setText(allAscentsNewText);
-	allAscentsNumberLabel->setEnabled(lastAscentViewRowIndex.get() > 0);
+	allAscentsNumberLabel->setEnabled(numAscents > 0);
 	
 	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
 	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
@@ -1125,61 +1126,10 @@ void AscentViewer::saveAllSplitterSizes()
 }
 
 /**
- * Saves the current sizes of the given splitter to the given setting.
- * 
- * @param splitter				The splitter to save the sizes of.
- * @param splitterSizesSetting	The setting to save the splitter sizes to.
- */
-void AscentViewer::saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
-{
-	QList<int> leftSplitterSizes = splitter->sizes();
-	QStringList stringList;
-	for (int size : leftSplitterSizes) {
-		stringList.append(QString::number(size));
-	}
-	splitterSizesSetting->set(stringList);
-}
-
-
-/**
  * Restores the sizes to a splitter from settings.
  */
 void AscentViewer::restoreAllSplitterSizes()
 {
 	restoreSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
 	restoreSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
-}
-
-/**
- * Restores the sizes of all splitters from settings.
- * 
- * @param splitter				The splitter to restore the sizes of.
- * @param splitterSizesSetting	The setting to load the splitter sizes from.
- */
-void AscentViewer::restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
-{
-	QStringList splitterSizeStrings = splitterSizesSetting->get();
-	if (splitterSizeStrings.size() != splitter->sizes().size()) {
-		// Can't restore splitter sizes from settings
-		if (!splitterSizeStrings.isEmpty()) {
-			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Expected %1 numbers, but got %2")
-					.arg(splitter->sizes().size()).arg(splitterSizeStrings.size());
-		}
-		splitterSizesSetting->clear();
-		return;
-	}
-	
-	QList<int> splitterSizes = QList<int>();
-	for (const QString& sizeString : splitterSizeStrings) {
-		bool conversionOk = false;
-		int size = sizeString.toInt(&conversionOk);
-		if (!conversionOk) {
-			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Value(s) couldn't be converted to int");
-			splitterSizesSetting->clear();
-			return;
-		}
-		splitterSizes.append(size);
-	}
-	
-	splitter->setSizes(splitterSizes);
 }

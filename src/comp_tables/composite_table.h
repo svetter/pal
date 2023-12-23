@@ -85,7 +85,7 @@ struct SortingPass {
  */
 class CompositeTable : public QAbstractTableModel {
 	/** The project database. */
-	Database* const db;
+	const Database* const db;
 	/** The database table this table is based on. */
 	const NormalTable* const baseTable;
 	/** The UI table view this table is displayed in. */
@@ -130,7 +130,7 @@ protected:
 	/** The suffix to append to all values given in meters. */
 	static inline QString mSuffix = " m";
 	
-	CompositeTable(Database* db, NormalTable* baseTable, QTableView* tableView);
+	CompositeTable(const Database* db, NormalTable* baseTable, QTableView* tableView);
 public:
 	~CompositeTable();
 	
@@ -196,6 +196,9 @@ private:
 	
 	QVariant computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const;
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
+	
+protected:
+	Breadcrumbs crumbsTo(const Database* db, const Table* destinationTable) const;
 	
 public:
 	ProjectSettings* getProjectSettings() const;
