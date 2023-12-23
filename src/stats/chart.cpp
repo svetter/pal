@@ -399,6 +399,14 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 	assert(minYear <= maxYear);
 	assert(minY <= maxY);
 	
+	if (maxYear - minYear < 1) {
+		qDebug() << minYear << maxYear;
+		qreal buffer = 0.5 * (1 - (maxYear - minYear));
+		minYear -= buffer;
+		maxYear += buffer;
+		qDebug() << buffer << minYear << maxYear;
+	}
+	
 	this->minYear = minYear;
 	this->maxYear = maxYear;
 	this->minY = minY;

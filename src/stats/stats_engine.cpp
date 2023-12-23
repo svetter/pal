@@ -426,13 +426,13 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			if (dateRaw.isValid()) {
 				QDate date = dateRaw.toDate();
 				qreal dateReal = (qreal) date.dayOfYear() / date.daysInYear() + date.year();
-				if (dateReal < minDate) minDate = dateReal;
-				if (dateReal > maxDate) maxDate = dateReal;
 				
+				bool pointAdded = false;
 				QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
 				if (elevGainRaw.isValid()) {
 					int elevGain = elevGainRaw.toInt();
 					elevGainScatterSeries->append(dateReal, elevGain);
+					pointAdded = true;
 					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
 				}
 				ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferIndex);
@@ -441,8 +441,14 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 					if (peakHeightRaw.isValid()) {
 						int peakHeight = peakHeightRaw.toInt();
 						peakHeightScatterSeries->append(dateReal, peakHeight);
+						pointAdded = true;
 						if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 					}
+				}
+				
+				if (pointAdded) {
+					if (dateReal < minDate) minDate = dateReal;
+					if (dateReal > maxDate) maxDate = dateReal;
 				}
 			}
 		}
