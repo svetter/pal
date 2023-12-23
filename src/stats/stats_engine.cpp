@@ -197,36 +197,36 @@ void GeneralStatsEngine::updateStatsTab()
 	int numAscentsPerYearMaxY = 0;
 	int heightsMaxY = 0;
 	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db->ascentsTable->getNumberOfRows()); bufferIndex++) {
-		Ascent* ascent = db->getAscentAt(bufferIndex);
-		
-		if (ascent->dateSpecified()) {
-			int year = ascent->date.year();
+		QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
+		if (dateRaw.isValid()) {
+			QDate date = dateRaw.toDate();
+			int year = date.year();
 			if (year < minYear) minYear = year;
 			if (year > maxYear) maxYear = year;
 			
 			yearNumAscents[year]++;
 			
-			qreal dateReal = (qreal) ascent->date.dayOfYear() / ascent->date.daysInYear() + ascent->date.year();
+			qreal dateReal = (qreal) date.dayOfYear() / date.daysInYear() + date.year();
 			if (dateReal < minDate) minDate = dateReal;
 			if (dateReal > maxDate) maxDate = dateReal;
 			
-			if (ascent->elevationGainSpecified()) {
-				int elevGain = ascent->elevationGain;
+			QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
+			if (elevGainRaw.isValid()) {
+				int elevGain = elevGainRaw.toInt();
 				elevGainSeries->append(dateReal, elevGain);
 				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
 				yearElevGainSums[year] += elevGain;
 			}
-			if (ascent->peakID.isValid()) {
-				const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
-				if (peak->heightSpecified()) {
-					int peakHeight = peak->height;
+			ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
+			if (peakID.isValid()) {
+				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+				if (peakHeightRaw.isValid()) {
+					int peakHeight = peakHeightRaw.toInt();
 					peakHeightSeries->append(dateReal, peakHeight);
 					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 				}
 			}
 		}
-		
-		delete ascent;
 	}
 	
 	for (int year = minYear; year <= maxYear; year++) {
@@ -421,30 +421,29 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 		int heightsMaxY = 0;
 		
 		for (const BufferRowIndex& ascentBufferIndex : ascentBufferRows) {
-			const Ascent* const ascent = db->getAscentAt(ascentBufferIndex);
-			
-			if (ascent->dateSpecified()) {
-				qreal dateReal = (qreal) ascent->date.dayOfYear() / ascent->date.daysInYear() + ascent->date.year();
+			QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(ascentBufferIndex);
+			if (dateRaw.isValid()) {
+				QDate date = dateRaw.toDate();
+				qreal dateReal = (qreal) date.dayOfYear() / date.daysInYear() + date.year();
 				if (dateReal < minDate) minDate = dateReal;
 				if (dateReal > maxDate) maxDate = dateReal;
 				
-				if (ascent->elevationGainSpecified()) {
-					int elevGain = ascent->elevationGain;
+				QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
+				if (elevGainRaw.isValid()) {
+					int elevGain = elevGainRaw.toInt();
 					elevGainScatterSeries->append(dateReal, elevGain);
 					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
 				}
-				if (ascent->peakID.isValid()) {
-					const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
-					if (peak->heightSpecified()) {
-						int peakHeight = peak->height;
+				ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferIndex);
+				if (peakID.isValid()) {
+					QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+					if (peakHeightRaw.isValid()) {
+						int peakHeight = peakHeightRaw.toInt();
 						peakHeightScatterSeries->append(dateReal, peakHeight);
 						if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 					}
-					delete peak;
 				}
 			}
-			
-			delete ascent;
 		}
 		
 		heightsScatterChart->updateData({peakHeightScatterSeries, elevGainScatterSeries}, minDate, maxDate, 0, heightsMaxY);
@@ -581,69 +580,53 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 	
 	switch (itemType) {
 	case ItemTypeAscent: {
-		const Ascent* const ascent = db->getAscentAt(bufferIndex);
-		if (ascent->date.isValid()) {
-			result = ascent->date.toString("yyyy-MM-dd");
+		QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
+		if (dateRaw.isValid()) {
+			QDate date = dateRaw.toDate();
+			result = date.toString("yyyy-MM-dd");
 		}
 		QString peakName = QString();
-		if (ascent->peakID.isValid()) {
-			const Peak* const peak = db->getPeak(FORCE_VALID(ascent->peakID));
-			peakName = peak->name;
-			delete peak;
+		ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
+		if (peakID.isValid()) {
+			peakName = db->peaksTable->nameColumn->getValueFor(FORCE_VALID(peakID)).toString();
 		}
 		if (!peakName.isEmpty()) {
 			if (!result.isEmpty()) result.append(" ");
 			result.append(peakName);
 		}
-		delete ascent;
 		break;
 	}
 	case ItemTypePeak: {
-		const Peak* const peak = db->getPeakAt(bufferIndex);
-		result = peak->name;
-		if (result.length() > 25) {
-			result.chop(23);
-			result.append("…");
-		}
-		delete peak;
+		result = db->peaksTable->nameColumn->getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeTrip: {
-		const Trip* const trip = db->getTripAt(bufferIndex);
-		result = trip->name;
-		if (trip->startDate.isValid()) {
-			result = trip->startDate.toString("yyyy-MM");
+		QVariant startDateRaw = db->tripsTable->startDateColumn->getValueAt(bufferIndex);
+		if (startDateRaw.isValid()) {
+			QDate startDate = startDateRaw.toDate();
+			result = startDate.toString("yyyy-MM");
 		}
-		QString tripName = trip->name;
+		QString tripName = db->tripsTable->nameColumn->getValueAt(bufferIndex).toString();
 		if (!tripName.isEmpty()) {
 			if (!result.isEmpty()) result.append(" ");
 			result.append(tripName);
 		}
-		delete trip;
 		break;
 	}
 	case ItemTypeHiker: {
-		const Hiker* const hiker = db->getHikerAt(bufferIndex);
-		result = hiker->name;
-		delete hiker;
+		result = db->hikersTable->nameColumn->getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeRegion: {
-		const Region* const region = db->getRegionAt(bufferIndex);
-		result = region->name;
-		delete region;
+		result = db->regionsTable->nameColumn->getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeRange: {
-		const Range* const range = db->getRangeAt(bufferIndex);
-		result = range->name;
-		delete range;
+		result = db->rangesTable->nameColumn->getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeCountry: {
-		const Country* const country = db->getCountryAt(bufferIndex);
-		result = country->name;
-		delete country;
+		result = db->countriesTable->nameColumn->getValueAt(bufferIndex).toString();
 		break;
 	}
 	default: assert(false);
