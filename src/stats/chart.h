@@ -63,11 +63,28 @@ public:
 		QChartView::resizeEvent(event);
 		Q_EMIT wasResized();
 	}
+	
+	/**
+	 * Event handler for mouse double-click events.
+	 * 
+	 * Calls the inherited event handler for the same purpose, then emits receivedDoubleClick().
+	 */
+	virtual void inline mouseDoubleClickEvent(QMouseEvent* event) override
+	{
+		QChartView::mouseDoubleClickEvent(event);
+		Q_EMIT receivedDoubleClick();
+	}
+	
 signals:
 	/**
 	 * Signal function which is called whenever the chart view has been resized.
 	 */
 	void wasResized();
+	
+	/**
+	 * Signal function which is called whenever the user double-clicks the chart view.
+	 */
+	void receivedDoubleClick();
 };
 
 
@@ -178,6 +195,7 @@ public:
 	virtual void reset() override;
 	void updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY);
 	virtual void updateView() override;
+	void resetZoom();
 };
 
 

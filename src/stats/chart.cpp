@@ -348,7 +348,12 @@ void YearChart::setup()
 	yAxis		= createValueYAxis(chart, yAxisTitle);
 	chartView	= createChartView(chart);
 	
-	connect(chartView, &SizeResponsiveChartView::wasResized, this, &YearChart::updateView);
+	// Interactivity
+	chartView->setInteractive(true);
+	chartView->setRubberBand(QChartView::RectangleRubberBand);
+	
+	connect(chartView, &SizeResponsiveChartView::wasResized,			this,	&YearChart::updateView);
+	connect(chartView, &SizeResponsiveChartView::receivedDoubleClick,	this,	&YearChart::resetZoom);
 }
 
 /**
@@ -418,6 +423,17 @@ void YearChart::updateView()
 	if (!hasData) return;
 	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0);
 	adjustAxis(yAxis,	minY,		maxY,		chart->plotArea().height(),	rangeBufferFactorY);
+}
+
+/**
+ * Resets zoom level set by user.
+ * 
+ * To be called when user requests to reset the chart view.
+ */
+void YearChart::resetZoom()
+{
+	if (!hasData) return;
+	chart->zoomReset();
 }
 
 
