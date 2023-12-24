@@ -410,12 +410,18 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
 {
 	QSet<const CompositeColumn*> columnsToUpdate = QSet<const CompositeColumn*>(dirtyColumns);
-	columnsToUpdate.subtract(hiddenColumns);
-	if (currentSorting.column) columnsToUpdate.insert(currentSorting.column);
+
+	QSet<const CompositeColumn*> canStayDirty = QSet<const CompositeColumn*>(hiddenColumns);
+	if (currentSorting.column) {
+		canStayDirty.remove(currentSorting.column);
+	}
 	for (const Filter& filter : currentFilters) {
 		assert(filter.column);
-		columnsToUpdate.insert(filter.column);
+		canStayDirty.remove(filter.column);
 	}
+	
+	columnsToUpdate.subtract(canStayDirty);
+	
 	return columnsToUpdate;
 }
 
