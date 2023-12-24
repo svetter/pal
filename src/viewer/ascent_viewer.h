@@ -82,6 +82,11 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** The index of the currently displayed photo in the photos list. -1 if no photo is displayed. */
 	int currentPhotoIndex;
 	
+	/** A timer used for the slideshow function. */
+	QTimer slideshowTimer;
+	/** Indicates whether the slideshow is currently running. */
+	bool slideshowRunning;
+	
 	/** The widget for displaying the image. */
 	ScalableImageLabel* imageLabel;
 	
@@ -124,10 +129,13 @@ private:
 	void loadPhotosList();
 	
 	// Photo change
-	void changeToPhoto(int photoIndex, bool saveDescriptionFirst = false);
+	void changeToPhoto(int photoIndex, bool saveDescriptionFirst);
 	void updateImageFrameProperties(bool imagePresent, bool imageReadable);
 	void updatePhotoIndexLabel();
 	void updatePhotoButtonsEnabled();
+	
+	// Slideshow
+	void restartSlideshowTimerIfRunning();
 	
 	// Editing photos
 	void moveCurrentPhoto(bool moveLeftNotRight);
@@ -156,6 +164,10 @@ private slots:
 	void handle_previousPhoto();
 	void handle_nextPhoto();
 	void handle_lastPhoto();
+	// Slideshow
+	void handle_startStopSlideshow();
+	void handle_slideshowTimerTrigger();
+	void handle_slideshowIntervalChanged();
 	// Changing photos
 	void handle_movePhotoLeft();
 	void handle_movePhotoRight();

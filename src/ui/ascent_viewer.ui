@@ -850,12 +850,6 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
                </spacer>
               </item>
               <item>
@@ -925,12 +919,6 @@
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
                </spacer>
               </item>
              </layout>
@@ -987,12 +975,6 @@
                <spacer name="ascentsOfPeakNavigationButtonLayoutLeftSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
                 </property>
                </spacer>
               </item>
@@ -1062,12 +1044,6 @@
                <spacer name="ascentsOfPeakNavigationButtonLayoutRightSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
                 </property>
                </spacer>
               </item>
@@ -1231,7 +1207,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>638</width>
-                   <height>404</height>
+                   <height>382</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="imageScrollAreaLayout">
@@ -1453,12 +1429,6 @@
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
                 </spacer>
                </item>
                <item>
@@ -1517,12 +1487,6 @@
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
                    </spacer>
                   </item>
                   <item>
@@ -1550,12 +1514,6 @@
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
                    </spacer>
                   </item>
                  </layout>
@@ -1565,12 +1523,6 @@
                 <spacer name="photoMoveControlsSpacer">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
                  </property>
                 </spacer>
                </item>
@@ -1668,10 +1620,108 @@
               </layout>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="photoAddRemoveControlsLayout" stretch="1,0,0">
+              <layout class="QHBoxLayout" name="photoSlideshowAndAddRemoveControlsLayout" stretch="1,0,1,0,0">
                <property name="spacing">
                 <number>10</number>
                </property>
+               <item>
+                <spacer name="slideshowSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="slideshowBox">
+                 <property name="title">
+                  <string>Slideshow</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout">
+                  <property name="spacing">
+                   <number>2</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout" name="slideshowBoxUpperLayout">
+                    <property name="spacing">
+                     <number>5</number>
+                    </property>
+                    <item>
+                     <widget class="QToolButton" name="slideshowStartStopButton">
+                      <property name="minimumSize">
+                       <size>
+                        <width>25</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Start/pause slideshow</string>
+                      </property>
+                      <property name="text">
+                       <string>&gt;||</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="slideshowIntervalSpinner">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>25</height>
+                       </size>
+                      </property>
+                      <property name="toolTip">
+                       <string>Time between photos</string>
+                      </property>
+                      <property name="suffix">
+                       <string>s</string>
+                      </property>
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="value">
+                       <number>6</number>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="slideshowAutostartCheckbox">
+                    <property name="toolTip">
+                     <string>Start slideshow automatically after changing to another ascent</string>
+                    </property>
+                    <property name="text">
+                     <string>Autostart</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
                <item>
                 <spacer name="photoAddRemoveControlsSpacer">
                  <property name="orientation">

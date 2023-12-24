@@ -54,6 +54,8 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	currentViewRowIndex(viewRowIndex),
 	currentAscentID(ItemID()),
 	photos(QList<Photo>()),
+	slideshowTimer(QTimer(this)),
+	slideshowRunning(false),
 	descriptionEditable(false),
 	photoDescriptionEditable(false),
 	infoContextMenu(QMenu(this))
@@ -116,6 +118,7 @@ void AscentViewer::additionalUISetup()
 	
 	firstPhotoButton		->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	lastPhotoButton			->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 	addPhotosButton			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
 	removePhotoButton		->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
@@ -131,6 +134,12 @@ void AscentViewer::additionalUISetup()
 	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
 	handle_descriptionEditableChanged();
 	handle_photoDescriptionEditableChanged();
+	
+	// Make QGroupBox titles turn gray when disabled (like on other widgets)
+	QColor disabledColor = QApplication::palette().color(QPalette::Disabled, QPalette::WindowText);
+	QPalette disabledPalette = QPalette();
+	disabledPalette.setColor(QPalette::Disabled, QPalette::WindowText, disabledColor);
+	slideshowBox->setPalette(disabledPalette);
 }
 
 /**
@@ -139,31 +148,35 @@ void AscentViewer::additionalUISetup()
 void AscentViewer::connectUI()
 {
 	// Ascent navigation
-	connect(firstAscentButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_firstAscent);
-	connect(previousAscentButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_previousAscent);
-	connect(nextAscentButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_nextAscent);
-	connect(lastAscentButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_lastAscent);
-	connect(firstAscentOfPeakButton,	&QToolButton::clicked,	this,	&AscentViewer::handle_firstAscentOfPeak);
-	connect(previousAscentOfPeakButton,	&QToolButton::clicked,	this,	&AscentViewer::handle_previousAscentOfPeak);
-	connect(nextAscentOfPeakButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_nextAscentOfPeak);
-	connect(lastAscentOfPeakButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_lastAscentOfPeak);
+	connect(firstAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscent);
+	connect(previousAscentButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscent);
+	connect(nextAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscent);
+	connect(lastAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscent);
+	connect(firstAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscentOfPeak);
+	connect(previousAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscentOfPeak);
+	connect(nextAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscentOfPeak);
+	connect(lastAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscentOfPeak);
 	// Photo navigation
-	connect(firstPhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_firstPhoto);
-	connect(previousPhotoButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_previousPhoto);
-	connect(nextPhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_nextPhoto);
-	connect(lastPhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_lastPhoto);
+	connect(firstPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_firstPhoto);
+	connect(previousPhotoButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousPhoto);
+	connect(nextPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextPhoto);
+	connect(lastPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastPhoto);
+	// Slideshow
+	connect(slideshowStartStopButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_startStopSlideshow);
+	connect(&slideshowTimer,			&QTimer::timeout,			this,	&AscentViewer::handle_slideshowTimerTrigger);
+	connect(slideshowIntervalSpinner,	&QSpinBox::valueChanged,	this,	&AscentViewer::handle_slideshowIntervalChanged);
 	// Changing photos
-	connect(movePhotoLeftButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoLeft);
-	connect(movePhotoRightButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_movePhotoRight);
-	connect(addPhotosButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_addPhotos);
-	connect(removePhotoButton,			&QToolButton::clicked,	this,	&AscentViewer::handle_removePhoto);
+	connect(movePhotoLeftButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoLeft);
+	connect(movePhotoRightButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoRight);
+	connect(addPhotosButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_addPhotos);
+	connect(removePhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_removePhoto);
 	// Image file error box
-	connect(imageErrorRemoveButton,		&QPushButton::clicked,	this,	&AscentViewer::handle_removePhoto);
-	connect(imageErrorReplaceButton,	&QPushButton::clicked,	this,	&AscentViewer::handle_replacePhoto);
-	connect(imageErrorRelocateButton,	&QPushButton::clicked,	this,	&AscentViewer::handle_relocatePhotos);
+	connect(imageErrorRemoveButton,		&QPushButton::clicked,		this,	&AscentViewer::handle_removePhoto);
+	connect(imageErrorReplaceButton,	&QPushButton::clicked,		this,	&AscentViewer::handle_replacePhoto);
+	connect(imageErrorRelocateButton,	&QPushButton::clicked,		this,	&AscentViewer::handle_relocatePhotos);
 	// Edit buttons
-	connect(editDescriptionButton,		&QToolButton::clicked,	this,	&AscentViewer::handle_descriptionEditableChanged);
-	connect(editPhotoDescriptionButton,	&QToolButton::clicked,	this,	&AscentViewer::handle_photoDescriptionEditableChanged);
+	connect(editDescriptionButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_descriptionEditableChanged);
+	connect(editPhotoDescriptionButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_photoDescriptionEditableChanged);
 	// Context menus
 	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
 	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
@@ -221,6 +234,8 @@ void AscentViewer::setupShortcuts()
  */
 void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
+	if (slideshowRunning) handle_startStopSlideshow();
+	
 	saveDescription();
 	savePhotoDescription();
 	
@@ -232,10 +247,14 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	
 	updateInfoArea();
 	loadPhotosList();
-	changeToPhoto(photos.isEmpty() ? -1 : 0);
+	changeToPhoto(photos.isEmpty() ? -1 : 0, false);
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 	updateAscentNavigationNumbers();
+	
+	if (slideshowAutostartCheckbox->isChecked() && photos.size() > 1) {
+		handle_startStopSlideshow();
+	}
 }
 
 /**
@@ -610,11 +629,28 @@ void AscentViewer::updatePhotoButtonsEnabled()
 	nextPhotoButton				->setEnabled(currentPhotoIndex < photos.size() - 1);
 	lastPhotoButton				->setEnabled(currentPhotoIndex < photos.size() - 1);
 	
+	slideshowBox				->setEnabled(photos.size() > 1);
+	
 	movePhotoLeftButton			->setEnabled(currentPhotoIndex > 0);
 	movePhotoRightButton		->setEnabled(currentPhotoIndex < photos.size() - 1);
 	
 	editPhotoDescriptionButton	->setEnabled(!photos.isEmpty());
 	removePhotoButton			->setEnabled(!photos.isEmpty());
+}
+
+
+
+// SLIDESHOW
+
+/**
+ * Resets the slideshow timer if the slideshow is currently running, else does nothing.
+ * 
+ * To be called when the user mannually changes the photo.
+ */
+void AscentViewer::restartSlideshowTimerIfRunning()
+{
+	if (!slideshowRunning) return;
+	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
 }
 
 
@@ -681,7 +717,7 @@ void AscentViewer::addPhotos(QStringList filepaths)
 	}
 	savePhotosList();
 	
-	changeToPhoto(currentPhotoIndex);
+	changeToPhoto(currentPhotoIndex, false);
 }
 
 /**
@@ -693,7 +729,7 @@ void AscentViewer::removeCurrentPhoto()
 	savePhotosList();
 	
 	int newPhotoIndex = std::min(currentPhotoIndex, (int) photos.size() - 1);
-	changeToPhoto(newPhotoIndex);
+	changeToPhoto(newPhotoIndex, false);
 }
 
 /**
@@ -713,7 +749,7 @@ void AscentViewer::replaceCurrentPhoto()
 	photos[currentPhotoIndex].filepath = filepath;
 	savePhotosList();
 	
-	changeToPhoto(currentPhotoIndex);
+	changeToPhoto(currentPhotoIndex, false);
 }
 
 /**
@@ -839,6 +875,7 @@ void AscentViewer::handle_lastAscentOfPeak()
 void AscentViewer::handle_firstPhoto()
 {
 	changeToPhoto(0, true);
+	restartSlideshowTimerIfRunning();
 }
 
 /**
@@ -847,6 +884,7 @@ void AscentViewer::handle_firstPhoto()
 void AscentViewer::handle_previousPhoto()
 {
 	changeToPhoto(currentPhotoIndex - 1, true);
+	restartSlideshowTimerIfRunning();
 }
 
 /**
@@ -855,6 +893,7 @@ void AscentViewer::handle_previousPhoto()
 void AscentViewer::handle_nextPhoto()
 {
 	changeToPhoto(currentPhotoIndex + 1, true);
+	restartSlideshowTimerIfRunning();
 }
 
 /**
@@ -863,6 +902,59 @@ void AscentViewer::handle_nextPhoto()
 void AscentViewer::handle_lastPhoto()
 {
 	changeToPhoto(photos.size() - 1, true);
+	restartSlideshowTimerIfRunning();
+}
+
+
+// SLIDESHOW
+
+/**
+ * Starts or stops the slideshow.
+ * 
+ * Disabled editing of the photo description, changes the slideshow button icon and starts or stops
+ * the timer.
+ */
+void AscentViewer::handle_startStopSlideshow()
+{
+	if (photoDescriptionEditable) {
+		editPhotoDescriptionButton->setChecked(false);
+		handle_photoDescriptionEditableChanged();
+	}
+	
+	QStyle::StandardPixmap newIcon;
+	
+	if (!slideshowRunning) {
+		// Slideshow not running, START
+		slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
+		newIcon = QStyle::SP_MediaStop;
+	}
+	else {
+		// Slideshow running, STOP
+		slideshowTimer.stop();
+		newIcon = QStyle::SP_MediaPlay;
+	}
+	
+	slideshowStartStopButton->setIcon(style()->standardIcon(newIcon));
+	slideshowRunning = !slideshowRunning;
+}
+
+/**
+ * Trigger function for the slideshow timer, to be called when the set time has passed.
+ */
+void AscentViewer::handle_slideshowTimerTrigger()
+{
+	if (photos.size() < 2) return;
+	int nextPhotoIndex = currentPhotoIndex + 1;
+	if (nextPhotoIndex >= photos.size()) nextPhotoIndex = 0;
+	changeToPhoto(nextPhotoIndex, true);
+}
+
+/**
+ * Event handler for changes in the slideshow interval spin box.
+ */
+void AscentViewer::handle_slideshowIntervalChanged()
+{
+	slideshowTimer.setInterval(slideshowIntervalSpinner->value() * 1000);
 }
 
 
@@ -916,7 +1008,7 @@ void AscentViewer::handle_relocatePhotos()
 	savePhotoDescription();
 	RelocatePhotosDialog(this, db).exec();
 	loadPhotosList();
-	changeToPhoto(currentPhotoIndex);
+	changeToPhoto(currentPhotoIndex, false);
 }
 
 
@@ -971,6 +1063,8 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 		photoDescriptionLabel->setText(photoDescriptionLineEdit->text());
 	} else {
 		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
+		
+		if (slideshowRunning) handle_startStopSlideshow();
 	}
 	
 	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
