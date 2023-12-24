@@ -68,6 +68,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	restoreImplicitSettings();
 	setupContextMenus();
 	setupShortcuts();
+	setupSlideshow();
 	
 	changeToAscent(viewRowIndex);
 }
@@ -159,7 +160,6 @@ void AscentViewer::connectUI()
 	connect(lastPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastPhoto);
 	// Slideshow
 	connect(slideshowStartStopButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_startStopSlideshow);
-	connect(&slideshowTimer,			&QTimer::timeout,			this,	&AscentViewer::handle_slideshowTimerTrigger);
 	connect(slideshowIntervalSpinner,	&QSpinBox::valueChanged,	this,	&AscentViewer::handle_slideshowIntervalChanged);
 	// Changing photos
 	connect(movePhotoLeftButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoLeft);
@@ -196,8 +196,8 @@ void AscentViewer::setupContextMenus()
 }
 
 /**
-* Creates keyboard shortcuts for UI buttons.
-*/
+ * Creates keyboard shortcuts for UI buttons.
+ */
 void AscentViewer::setupShortcuts()
 {
 	firstAscentButton			->setShortcut(QKeySequence(Qt::Key_8));
@@ -219,6 +219,15 @@ void AscentViewer::setupShortcuts()
 	movePhotoRightButton		->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_Right));
 }
 
+/**
+ * Prepares slideshow functionality.
+ */
+void AscentViewer::setupSlideshow()
+{
+	connect(&slideshowTimer, &QTimer::timeout, this, &AscentViewer::handle_slideshowTimerTrigger);
+	connect(imageLabel, &ScalableImageLabel::userInteracted, this, &AscentViewer::handle_userInteractedWithImageLabel);
+}
+
 
 
 // ASCENT CHANGE
@@ -230,7 +239,7 @@ void AscentViewer::setupShortcuts()
  */
 void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
-	if (slideshowRunning) handle_startStopSlideshow();
+	stopSlideshowIfRunning();
 	
 	saveDescription();
 	savePhotoDescription();
@@ -649,6 +658,15 @@ void AscentViewer::restartSlideshowTimerIfRunning()
 	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
 }
 
+/**
+ * Stops the slideshow if it is running, else does nothing.
+ */
+void AscentViewer::stopSlideshowIfRunning()
+{
+	if (!slideshowRunning) return;
+	handle_startStopSlideshow();
+}
+
 
 
 // EDITING PHOTOS
@@ -956,6 +974,14 @@ void AscentViewer::handle_slideshowIntervalChanged()
 	slideshowTimer.setInterval(slideshowIntervalSpinner->value() * 1000);
 }
 
+/**
+ * Event handler for user interaction with the image area.
+ */
+void AscentViewer::handle_userInteractedWithImageLabel()
+{
+	stopSlideshowIfRunning();
+}
+
 
 // CHANGING PHOTOS
 
@@ -982,6 +1008,7 @@ void AscentViewer::handle_movePhotoRight()
  */
 void AscentViewer::handle_addPhotos()
 {
+	stopSlideshowIfRunning();
 	addPhotosFromDialog();
 }
 
@@ -998,7 +1025,7 @@ void AscentViewer::handle_removePhoto()
  */
 void AscentViewer::handle_replacePhoto()
 {
-	if (slideshowRunning) handle_startStopSlideshow();
+	stopSlideshowIfRunning();
 	replaceCurrentPhoto();
 }
 
@@ -1008,7 +1035,7 @@ void AscentViewer::handle_replacePhoto()
 void AscentViewer::handle_relocatePhotos()
 {
 	savePhotoDescription();
-	if (slideshowRunning) handle_startStopSlideshow();
+	stopSlideshowIfRunning();
 	RelocatePhotosDialog(this, db).exec();
 	loadPhotosList();
 	changeToPhoto(currentPhotoIndex, false);
@@ -1067,7 +1094,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 	} else {
 		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
 		
-		if (slideshowRunning) handle_startStopSlideshow();
+		stopSlideshowIfRunning();
 	}
 	
 	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();

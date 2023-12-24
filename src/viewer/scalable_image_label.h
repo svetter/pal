@@ -82,6 +82,12 @@ private slots:
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	
+signals:
+	/**
+	 * Emitted when the user has interacted with the image by clicking or scrolling the mouse.
+	 */
+	void userInteracted();
+	
 	
 private:
 	void saveNewImageCenter();

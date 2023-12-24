@@ -118,6 +118,7 @@ private:
 	void connectUI();
 	void setupContextMenus();
 	void setupShortcuts();
+	void setupSlideshow();
 	
 	// Ascent change
 	void changeToAscent(ViewRowIndex viewRowIndex);
@@ -136,6 +137,7 @@ private:
 	
 	// Slideshow
 	void restartSlideshowTimerIfRunning();
+	void stopSlideshowIfRunning();
 	
 	// Editing photos
 	void moveCurrentPhoto(bool moveLeftNotRight);
@@ -168,6 +170,7 @@ private slots:
 	void handle_startStopSlideshow();
 	void handle_slideshowTimerTrigger();
 	void handle_slideshowIntervalChanged();
+	void handle_userInteractedWithImageLabel();
 	// Changing photos
 	void handle_movePhotoLeft();
 	void handle_movePhotoRight();

@@ -85,6 +85,8 @@ void ScalableImageLabel::clearImage()
  */
 void ScalableImageLabel::wheelEvent(QWheelEvent* event)
 {
+	Q_EMIT userInteracted();
+	
 	QSize availableArea = parent->maximumViewportSize();
 	QPoint oldScroll = getScroll();
 	// Mouse position here is measured from the top left corner of the available area in displayed pixels
@@ -163,7 +165,8 @@ void ScalableImageLabel::wheelEvent(QWheelEvent* event)
  */
 void ScalableImageLabel::mouseDoubleClickEvent(QMouseEvent* event)
 {
-	Q_UNUSED(event);
+	Q_EMIT userInteracted();
+	
 	if (!imageLoaded) {
 		event->ignore();
 		return;
@@ -267,6 +270,8 @@ void ScalableImageLabel::paintEvent(QPaintEvent* event)
  */
 void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
 {
+	Q_EMIT userInteracted();
+	
 	if (!imageLoaded) return;
 	setHandCursor(false);
 	if (fillMode) return;
@@ -284,6 +289,8 @@ void ScalableImageLabel::mousePressEvent(QMouseEvent* event)
  */
 void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 {
+	Q_EMIT userInteracted();
+	
 	if (!imageLoaded || fillMode || mousePressedAt.isNull()) return;
 	QPoint mouseMove = event->globalPosition().toPoint() - mousePressedAt;
 	scrollRelative(mouseMove);
@@ -302,6 +309,8 @@ void ScalableImageLabel::mouseMoveEvent(QMouseEvent* event)
 void ScalableImageLabel::mouseReleaseEvent(QMouseEvent* event)
 {
 	Q_UNUSED(event);
+	Q_EMIT userInteracted();
+	
 	if (!imageLoaded) return;
 	setHandCursor(true);
 	if (fillMode) return;
