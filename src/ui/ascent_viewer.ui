@@ -62,7 +62,7 @@
             <x>0</x>
             <y>0</y>
             <width>422</width>
-            <height>818</height>
+            <height>834</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -191,7 +191,7 @@
                <widget class="QLabel" name="peakNameLabel">
                 <property name="font">
                  <font>
-                  <pointsize>16</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -524,7 +524,7 @@
                <widget class="QLabel" name="ascentTitleLabel">
                 <property name="font">
                  <font>
-                  <pointsize>16</pointsize>
+                  <pointsize>20</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -1641,6 +1641,9 @@
                 <widget class="QGroupBox" name="slideshowBox">
                  <property name="title">
                   <string>Slideshow</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <property name="spacing">
