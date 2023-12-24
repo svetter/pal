@@ -267,11 +267,11 @@ bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion,
 {
 	// Determine backup filename
 	QString filepath = db->getCurrentFilepath();
-	QString backupFilepath = filepath + ".bak";
+	QString oldVersionUnderscore = currentDbVersion;
+	oldVersionUnderscore.replace(".", "_");
+	QString backupFilepath = filepath + ".v" + oldVersionUnderscore + ".bak";
 	int backupFileCounter = 1;
 	while (QFile(backupFilepath).exists()) {
-		QString oldVersionUnderscore = currentDbVersion;
-		oldVersionUnderscore.replace(".", "_");
 		backupFilepath = filepath + " (" + QString::number(backupFileCounter++) + ").v" + oldVersionUnderscore + ".bak";
 	}
 	
