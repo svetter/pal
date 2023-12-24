@@ -66,11 +66,11 @@ class GeneralStatsEngine : public StatsEngine
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
 	/** A chart showing the elevation gain sum for each year since the first ascent. */
-	YearChart* elevGainPerYearChart;
+	YearBarChart* elevGainPerYearChart;
 	/** A chart showing the number of ascents in each year since the first ascent. */
-	YearChart* numAscentsPerYearChart;
+	YearBarChart* numAscentsPerYearChart;
 	/** A chart showing elevation gain and peak height for every logged ascent. */
-	YearChart* heightsScatterChart;
+	TimeScatterChart* heightsScatterChart;
 	
 public:
 	GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr);
@@ -120,7 +120,7 @@ class ItemStatsEngine : public StatsEngine
 	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
 	HistogramChart* elevGainHistChart;
 	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
-	YearChart* heightsScatterChart;
+	TimeScatterChart* heightsScatterChart;
 	
 	/** A chart showing the items with the highest number of ascents. */
 	TopNChart* topTenNumAscentsChart;

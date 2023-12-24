@@ -28,6 +28,7 @@
 #include <QChartView>
 #include <QValueAxis>
 #include <QBarCategoryAxis>
+#include <QBarSeries>
 #include <QHorizontalBarSeries>
 #include <QLineSeries>
 #include <QScatterSeries>
@@ -143,6 +144,7 @@ protected:
 	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
 	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
 	
+	static QBarSeries* createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
 	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
 	static QBarSet* createBarSet(const QString& name, QAbstractBarSeries* series);
 	
@@ -158,19 +160,53 @@ protected:
 
 
 /**
- * A class representing a scatterplot and/or line chart with a horizontal x-axis which shows time,
- * and a vertical real-number y-axis.
- * 
- * The type of plot used for any data series is determined by the type of series put into
- * updateData() (either QScatterSeries or QLineSeries).
+ * A class representing a bar chart with a horizontal x-axis which shows years, and a vertical real-
+ * number y-axis.
  */
-class YearChart : public Chart
+class YearBarChart : public Chart
 {
 protected:
 	/** The translated label for the chart's y-axis. */
 	const QString yAxisTitle;
-	/** Indicates whether to add a small buffer to the displayed range of the x-axis. */
-	const bool bufferXAxisRange;
+	
+	/** The x-axis for the chart. */
+	QValueAxis*	xAxis;
+	/** The y-axis for the chart. */
+	QValueAxis*	yAxis;
+	/** The bar series for the chart. A bar series represents a set of bars, each of which belongs to another category on the x-axis, but all of which share the same label. */
+	QBarSeries*	barSeries;
+	/** The bar set for the chart. A bar set contains one data value for each x-axis category. */
+	QBarSet*	barSet;
+	
+	// Range data
+	/** The minimum x value of the current data set. */
+	int minYear;
+	/** The maximum x value of the current data set. */
+	int maxYear;
+	/** The maximum y value of the current data set. */
+	qreal maxY;
+	
+public:
+	YearBarChart(const QString& chartTitle, const QString& yAxisTitle = QString());
+	virtual ~YearBarChart();
+	
+	virtual void setup() override;
+	virtual void reset() override;
+	void updateData(const QList<qreal>& newData, int minYear, int maxYear, qreal maxY);
+	virtual void updateView() override;
+};
+
+
+
+/**
+ * A class representing a scatterplot with a horizontal x-axis which shows time, and a vertical
+ * real-number y-axis.
+ */
+class TimeScatterChart : public Chart
+{
+protected:
+	/** The translated label for the chart's y-axis. */
+	const QString yAxisTitle;
 	
 	/** The x-axis for the chart. */
 	QValueAxis*	xAxis;
@@ -182,18 +218,16 @@ protected:
 	qreal minYear;
 	/** The maximum x value of the current data sets. */
 	qreal maxYear;
-	/** The minimum y value of the current data sets. */
-	qreal minY;
 	/** The maximum y value of the current data sets. */
 	qreal maxY;
 	
 public:
-	YearChart(const QString& chartTitle, const QString& yAxisTitle, bool bufferXAxisRange);
-	virtual ~YearChart();
+	TimeScatterChart(const QString& chartTitle, const QString& yAxisTitle = QString());
+	virtual ~TimeScatterChart();
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY);
+	void updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal maxY);
 	virtual void updateView() override;
 	void resetZoom();
 };

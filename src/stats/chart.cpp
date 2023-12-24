@@ -171,6 +171,25 @@ SizeResponsiveChartView* Chart::createChartView(QChart* chart, int minimumHeight
 
 
 /**
+ * Creates and initializes a QBarSeries object.
+ * 
+ * Initialization entails adding the series to the given chart and attaching the given axes.
+ * 
+ * @param chart	The chart to display in the chart view.
+ * @param xAxis	The chart's x-axis.
+ * @param yAxis	The chart's y-axis.
+ * @return		An initialized QHorizontalBarSeries object, of which the caller takes ownership.
+ */
+QBarSeries* Chart::createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis)
+{
+	QBarSeries* series = new QBarSeries();
+	chart->addSeries(series);
+	series->attachAxis(xAxis);
+	series->attachAxis(yAxis);
+	return series;
+}
+
+/**
  * Creates and initializes a QHorizontalBarSeries object.
  * 
  * Initialization entails adding the series to the given chart and attaching the given axes.
@@ -310,31 +329,136 @@ void Chart::resetAxis(QValueAxis* axis)
 
 
 /**
- * Creates a YearChart.
+ * Creates a YearBarChart.
  * 
- * @param chartTitle		The title of the chart, to be displayed above it.
- * @param yAxisTitle		The label text for the y-axis.
- * @param bufferXAxisRange	The fraction of the x-axis range to add as buffer.
+ * @param chartTitle	The title of the chart, to be displayed above it.
+ * @param yAxisTitle	The label text for the y-axis.
  */
-YearChart::YearChart(const QString& chartTitle, const QString& yAxisTitle, bool bufferXAxisRange) :
+YearBarChart::YearBarChart(const QString& chartTitle, const QString& yAxisTitle) :
 	Chart(chartTitle),
 	yAxisTitle(yAxisTitle),
-	bufferXAxisRange(bufferXAxisRange),
+	xAxis		(nullptr),
+	yAxis		(nullptr),
+	barSeries	(nullptr),
+	barSet		(nullptr)
+{
+	YearBarChart::setup();
+	YearBarChart::reset();
+}
+
+/**
+ * Destroys the YearBarChart.
+ */
+YearBarChart::~YearBarChart()
+{
+	// xAxis		is deleted by chart
+	// yAxis		is deleted by chart
+	// barSeries	is deleted by chart
+	// barSet		is deleted by barSeries
+}
+
+
+
+/**
+ * Performs the setup for the YearBarChart during/after construction.
+ * 
+ * Not to be called more than once (will cause memory leaks).
+ */
+void YearBarChart::setup()
+{
+	chart		= createChart(chartTitle);
+	//xAxis		= createBarCategoryXAxis(chart, Qt::AlignBottom);
+	xAxis		= createValueXAxis(chart);
+	yAxis		= createValueYAxis(chart, yAxisTitle, Qt::AlignLeft);
+	barSeries	= createBarSeries(chart, xAxis, yAxis);
+	barSet		= createBarSet(QString(), barSeries);
+	chartView	= createChartView(chart);
+	
+	connect(chartView, &SizeResponsiveChartView::wasResized, this, &YearBarChart::updateView);
+}
+
+/**
+ * Removes all data from the chart.
+ */
+void YearBarChart::reset()
+{
+	barSet->remove(0, barSet->count());
+	hasData = false;
+	minYear = 0;
+	maxYear = 0;
+	maxY = 0;
+	resetAxis(yAxis);
+}
+
+/**
+ * Replaces the displayed data and stores range information for future view updates.
+ * 
+ * Performs a view update before replacing the data.
+ * 
+ * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ */
+void YearBarChart::updateData(const QList<qreal>& newData, int minYear, int maxYear, qreal maxY)
+{
+	if (newData.isEmpty()) {
+		reset();
+		return;
+	}
+	assert(newData.size() == maxYear - minYear + 1);
+	assert(maxY >= 0);
+	
+	QStringList years = QStringList();
+	for (int year = minYear; year <= maxYear; year++) {
+		years.append(QString::number(year));
+	}
+	
+	barSet->remove(0, barSet->count());
+	barSet->append(QList<qreal>(minYear, 0));
+	barSet->append(newData);
+	
+	this->minYear = minYear;
+	this->maxYear = maxYear;
+	this->maxY = maxY;
+	hasData = true;
+	updateView();
+}
+
+/**
+ * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
+ */
+void YearBarChart::updateView()
+{
+	if (!hasData) return;
+	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	rangeBufferFactorX);
+	adjustAxis(yAxis,	0,			maxY,		chart->plotArea().height(),	rangeBufferFactorY);
+}
+
+
+
+
+
+/**
+ * Creates a TimeScatterChart.
+ * 
+ * @param chartTitle	The title of the chart, to be displayed above it.
+ * @param yAxisTitle	The label text for the y-axis.
+ */
+TimeScatterChart::TimeScatterChart(const QString& chartTitle, const QString& yAxisTitle) :
+	Chart(chartTitle),
+	yAxisTitle(yAxisTitle),
 	xAxis	(nullptr),
 	yAxis	(nullptr),
 	minYear(0),
 	maxYear(0),
-	minY(0),
 	maxY(0)
 {
-	YearChart::setup();
-	YearChart::reset();
+	TimeScatterChart::setup();
+	TimeScatterChart::reset();
 }
 
 /**
- * Destroys the YearChart.
+ * Destroys the TimeScatterChart.
  */
-YearChart::~YearChart()
+TimeScatterChart::~TimeScatterChart()
 {
 	// xAxis	is deleted by chart
 	// yAxis	is deleted by chart
@@ -343,11 +467,11 @@ YearChart::~YearChart()
 
 
 /**
- * Performs the setup for the YearChart during/after construction.
+ * Performs the setup for the TimeScatterChart during/after construction.
  * 
  * Not to be called more than once (will cause memory leaks).
  */
-void YearChart::setup()
+void TimeScatterChart::setup()
 {
 	chart		= createChart(chartTitle);
 	xAxis		= createValueXAxis(chart);
@@ -358,20 +482,19 @@ void YearChart::setup()
 	chartView->setInteractive(true);
 	chartView->setRubberBand(QChartView::RectangleRubberBand);
 	
-	connect(chartView, &SizeResponsiveChartView::wasResized,			this,	&YearChart::updateView);
-	connect(chartView, &SizeResponsiveChartView::receivedDoubleClick,	this,	&YearChart::resetZoom);
+	connect(chartView, &SizeResponsiveChartView::wasResized,			this,	&TimeScatterChart::updateView);
+	connect(chartView, &SizeResponsiveChartView::receivedDoubleClick,	this,	&TimeScatterChart::resetZoom);
 }
 
 /**
  * Removes all data from the chart.
  */
-void YearChart::reset()
+void TimeScatterChart::reset()
 {
 	chart->removeAllSeries();
 	hasData = false;
 	this->minYear = 0;
 	this->maxYear = 0;
-	this->minY = 0;
 	this->maxY = 0;
 	resetAxis(xAxis);
 	resetAxis(yAxis);
@@ -389,7 +512,7 @@ void YearChart::reset()
  * @param minY		The minimum y value among all given data series.
  * @param maxY		The maximum y value among all given data series.
  */
-void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal minY, qreal maxY)
+void TimeScatterChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal maxY)
 {
 	bool noData = true;
 	for (QXYSeries* const series : newSeries) {
@@ -403,7 +526,7 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 		return;
 	}
 	assert(minYear <= maxYear);
-	assert(minY <= maxY);
+	assert(maxY >= 0);
 	
 	if (maxYear - minYear < 1) {
 		qreal buffer = 0.5 * (1 - (maxYear - minYear));
@@ -413,7 +536,6 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 	
 	this->minYear = minYear;
 	this->maxYear = maxYear;
-	this->minY = minY;
 	this->maxY = maxY;
 	hasData = true;
 	updateView();
@@ -430,11 +552,11 @@ void YearChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qr
 /**
  * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
  */
-void YearChart::updateView()
+void TimeScatterChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	bufferXAxisRange ? rangeBufferFactorX : 0, true);
-	adjustAxis(yAxis,	minY,		maxY,		chart->plotArea().height(),	rangeBufferFactorY);
+	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	rangeBufferFactorX, true);
+	adjustAxis(yAxis,	0,			maxY,		chart->plotArea().height(),	rangeBufferFactorY);
 }
 
 /**
@@ -442,7 +564,7 @@ void YearChart::updateView()
  * 
  * To be called when user requests to reset the chart view.
  */
-void YearChart::resetZoom()
+void TimeScatterChart::resetZoom()
 {
 	if (!hasData) return;
 	chart->zoomReset();
