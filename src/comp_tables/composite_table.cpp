@@ -928,6 +928,7 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	currentSorting = {column, order};
 	
 	performSort(previousSort, true);
+	Q_EMIT wasResorted();
 }
 
 /**

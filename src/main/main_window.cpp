@@ -197,14 +197,12 @@ void MainWindow::connectUI()
 	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	// Double clicks on table
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		auto openFunction = [this, mapper] (const QModelIndex& index) {
-			if (mapper->type == ItemTypeAscent) {
-				viewItem(mapper, ViewRowIndex(index.row()));
-			} else {
-				editItem(mapper, index);
-			}
-		};
-		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	openFunction);
+		auto handlerFunction = &MainWindow::handle_editSelectedItem;
+		if (mapper->type == ItemTypeAscent) {
+			handlerFunction = &MainWindow::handle_viewSelectedItem;
+		}
+		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	handlerFunction);
+		connect(mapper->compTable,			&CompositeTable::wasResorted,	this,	&MainWindow::scrollToTopAfterSorting);
 	}
 }
 
@@ -824,6 +822,16 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper* const mappe
 	if (numberOfEntriesChanged)	updateTableSize();
 	// Update filters
 	updateFilters();
+}
+
+/**
+ * Scrolls the active table to the top.
+ * 
+ * To be called after the table was sorted.
+ */
+void MainWindow::scrollToTopAfterSorting()
+{
+	getActiveMapper()->tableView->scrollToTop();
 }
 
 /**

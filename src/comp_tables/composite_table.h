@@ -84,6 +84,8 @@ struct SortingPass {
  * @see CompositeColumn
  */
 class CompositeTable : public QAbstractTableModel {
+	Q_OBJECT
+	
 	/** The project database. */
 	const Database* const db;
 	/** The database table this table is based on. */
@@ -202,6 +204,12 @@ protected:
 	
 public:
 	ProjectSettings* getProjectSettings() const;
+	
+signals:
+	/**
+	 * Emitted after the table was resorted.
+	 */
+	void wasResorted();
 };
 
 

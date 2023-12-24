@@ -126,6 +126,7 @@ private:
 	void deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
 	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
+	void scrollToTopAfterSorting();
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
