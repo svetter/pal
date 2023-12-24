@@ -358,8 +358,8 @@ void AscentViewer::updateInfoArea()
 		ascentTitleLabel		->setVisible(true);
 		ascentInfoLine			->setVisible(true);
 	}
-	ascentDateLabel				->setText	(compAscents->dateColumn			->getFormattedValueAt	(ascentBufferRowIndex).toString());
-	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt			(ascentBufferRowIndex).toString());
+	ascentDateLabel				->setText	(db->ascentsTable->dateColumn		->getValueAt			(ascentBufferRowIndex).toDate().toString("dd.MM.yyyy"));
+	ascentTimeLabel				->setText	(db->ascentsTable->timeColumn		->getValueAt			(ascentBufferRowIndex).toTime().toString("HH:mm"));
 	ascentPeakOnDayLabel		->setText	(db->ascentsTable->peakOnDayColumn	->getValueAt			(ascentBufferRowIndex).toString() + ".");
 	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	->getFormattedValueAt	(ascentBufferRowIndex).toString());
 	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		->getFormattedValueAt	(ascentBufferRowIndex).toString());
