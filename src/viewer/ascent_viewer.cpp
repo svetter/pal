@@ -65,6 +65,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	additionalUISetup();
 	
 	connectUI();
+	restoreImplicitSettings();
 	setupContextMenus();
 	setupShortcuts();
 	
@@ -94,11 +95,6 @@ void AscentViewer::additionalUISetup()
 	rightSplitter	->setStretchFactor(0, 1);
 	rightSplitter	->setStretchFactor(1, 2);
 	rightSplitter	->setSizes({ rightSplitter->size().width() / 2, rightSplitter->size().width() / 2 });
-	
-	if (Settings::rememberWindowPositions.get()) {
-		restoreDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
-		restoreAllSplitterSizes();
-	}
 	
 	
 	// Set icons for info boxes
@@ -1205,25 +1201,36 @@ void AscentViewer::reject()
 {
 	saveDescription();
 	savePhotoDescription();
-	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
-	saveAllSplitterSizes();
+	saveImplicitSettings();
 	QDialog::reject();
 }
 
 /**
- * Saves the current sizes of all splitters to settings.
+ * Saves all implicit settings for the ascent viewer to settings.
  */
-void AscentViewer::saveAllSplitterSizes()
+void AscentViewer::saveImplicitSettings()
 {
+	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+	
 	saveSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
 	saveSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+	
+	Settings::ascentViewer_slideshowInterval.set(slideshowIntervalSpinner->value());
+	Settings::ascentViewer_slideshowAutostart.set(slideshowAutostartCheckbox->isChecked());
 }
 
 /**
- * Restores the sizes to a splitter from settings.
+ * Restores all implicit settings to the ascent viewer.
  */
-void AscentViewer::restoreAllSplitterSizes()
+void AscentViewer::restoreImplicitSettings()
 {
+	if (Settings::rememberWindowPositions.get()) {
+		restoreDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+	}
+	
 	restoreSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
 	restoreSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+	
+	slideshowIntervalSpinner->setValue(Settings::ascentViewer_slideshowInterval.get());
+	slideshowAutostartCheckbox->setChecked(Settings::ascentViewer_slideshowAutostart.get());
 }

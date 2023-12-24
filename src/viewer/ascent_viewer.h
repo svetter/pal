@@ -198,8 +198,8 @@ private:
 	
 	// Exit behaviour
 	void reject() override;
-	void saveAllSplitterSizes();
-	void restoreAllSplitterSizes();
+	void saveImplicitSettings();
+	void restoreImplicitSettings();
 };
 
 

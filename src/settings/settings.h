@@ -427,6 +427,12 @@ public:
 	/** Remembered sizes for the splitter between table and statistics frame in the countries tab of the main window. */
 	inline static const	Setting<QStringList>	countriesStats_splitterSizes			= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
 	
+	// Ascent viewer
+	/** Remembered value of the spin box determining the interval (in seconds) for a slideshow in the ascent viewer. */
+	inline static const Setting<int>			ascentViewer_slideshowInterval			= Setting<int>			("implicit/ascentViewer/slideshowInterval", 6);
+	/** Remembered value of the checkbox determining whether the slideshow should be started automatically in the ascent viewer. */
+	inline static const Setting<bool>			ascentViewer_slideshowAutostart			= Setting<bool>			("implicit/ascentViewer/slideshowAutostart", false);
+	
 	// Ascent viewer splitter sizes
 	/** Remembered sizes for the left splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
