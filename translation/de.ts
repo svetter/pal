@@ -392,19 +392,19 @@ Soll sie trotzdem verwendet werden?</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="318"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="333"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="322"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="337"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="326"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="341"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -590,39 +590,69 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Zum letzten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1702"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1691"/>
+        <source>Slideshow</source>
+        <translation>Diashow</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1723"/>
+        <source>Start/stop slideshow</source>
+        <translation>Diashow starten/stoppen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1745"/>
+        <source>Time between photos in seconds</source>
+        <translation>Zeit zwischen Fotos in Sekunden</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1748"/>
+        <source>s</source>
+        <translation>s</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1763"/>
+        <source>Start slideshow automatically after changing to another ascent</source>
+        <translation>Bei jeder Besteigung Diashow automatisch starten</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1766"/>
+        <source>Autostart</source>
+        <translation>Autostart</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1800"/>
         <source>Add one or multiple photos</source>
         <translation>Ein oder mehrere Fotos hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1723"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1821"/>
         <source>Remove photo</source>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="180"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="189"/>
         <source>Edit ascent...</source>
         <translation>Besteigung bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="181"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="190"/>
         <source>Edit peak...</source>
         <translation>Gipfel bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="182"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="191"/>
         <source>Edit trip...</source>
         <translation>Urlaub bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="516"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="531"/>
         <source>
 More details: %1.</source>
         <translation>
 Mehr Details: &quot;%1.&quot;</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="526"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="541"/>
         <source>This image file cannot be shown:
 %1
 Reason: %2.%3
@@ -635,33 +665,33 @@ Grund: %2.%3
 Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="597"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="612"/>
         <source>No photos</source>
         <translation>Keine Fotos</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="599"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="614"/>
         <source>Photo %1 of %2</source>
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="708"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="740"/>
         <source>Replace %1</source>
         <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
         <translation>Bilddatei ersetzen: %1</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1086"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1176"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1087"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1177"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1088"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1178"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -1380,28 +1410,28 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
         <translation>Details:</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="204"/>
+        <location filename="../src/db/db_upgrade.cpp" line="205"/>
         <source>Database upgrade necessary</source>
         <translation>Datenbank muss aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="206"/>
+        <location filename="../src/db/db_upgrade.cpp" line="207"/>
         <source>After the upgrade, previous versions of PAL will no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="207"/>
+        <location filename="../src/db/db_upgrade.cpp" line="208"/>
         <source>After the upgrade, previous versions of PAL might no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei möglicherweise nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="208"/>
-        <location filename="../src/db/db_upgrade.cpp" line="238"/>
+        <location filename="../src/db/db_upgrade.cpp" line="209"/>
+        <location filename="../src/db/db_upgrade.cpp" line="239"/>
         <source>Note: A copy of the project file in its current state will be created as a backup.</source>
         <translation>Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="210"/>
+        <location filename="../src/db/db_upgrade.cpp" line="211"/>
         <source>Opening this project requires upgrading its database from version %1 to version %2.
 %3
 
@@ -1416,22 +1446,22 @@ Soll die Aktualisierung jetzt durchgeführt werden?
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="223"/>
+        <location filename="../src/db/db_upgrade.cpp" line="224"/>
         <source>Do you want to perform the upgrade anyway?</source>
         <translation>Soll die Aktualisierung trotzdem durchgeführt werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="237"/>
+        <location filename="../src/db/db_upgrade.cpp" line="238"/>
         <source>App version outdated</source>
         <translation>App-Version veraltet</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="239"/>
+        <location filename="../src/db/db_upgrade.cpp" line="240"/>
         <source>Do you want to open the file anyway?</source>
         <translation>Soll die Datei trotzdem geöffnet werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="241"/>
+        <location filename="../src/db/db_upgrade.cpp" line="242"/>
         <source>This project file has version %1, while the app has version %2.
 Opening a file with an older version of PAL can lead to errors, crashes and data corruption.It is strongly recommended to only use PAL version %1 or newer to open this file.
 
@@ -1446,7 +1476,7 @@ Eine Datei mit einer älteren Version von PAL zu öffnen, kann zu Fehlern, Abst�
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="281"/>
+        <location filename="../src/db/db_upgrade.cpp" line="284"/>
         <source>An error occurred while trying to create a backup of the project file.
 %1
 
@@ -1457,17 +1487,17 @@ Note: You can still create a backup manually before proceeding.</source>
 Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="279"/>
+        <location filename="../src/db/db_upgrade.cpp" line="282"/>
         <source>Error creating backup</source>
         <translation>Fehler beim Erstellen des Backups</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="303"/>
+        <location filename="../src/db/db_upgrade.cpp" line="306"/>
         <source>Database upgrade successful</source>
         <translation>Aktualisierung der Datenbank erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="304"/>
+        <location filename="../src/db/db_upgrade.cpp" line="307"/>
         <source>The database was successfully upgraded from version %1 to version %2.</source>
         <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
     </message>

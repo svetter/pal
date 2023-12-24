@@ -61,7 +61,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>438</width>
+            <width>422</width>
             <height>818</height>
            </rect>
           </property>
@@ -1206,7 +1206,7 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>638</width>
+                   <width>666</width>
                    <height>382</height>
                   </rect>
                  </property>
@@ -1672,10 +1672,10 @@
                        </size>
                       </property>
                       <property name="toolTip">
-                       <string>Start/pause slideshow</string>
+                       <string>Start/stop slideshow</string>
                       </property>
                       <property name="text">
-                       <string>&gt;||</string>
+                       <string notr="true">&gt;||</string>
                       </property>
                      </widget>
                     </item>
@@ -1694,7 +1694,7 @@
                        </size>
                       </property>
                       <property name="toolTip">
-                       <string>Time between photos</string>
+                       <string>Time between photos in seconds</string>
                       </property>
                       <property name="suffix">
                        <string>s</string>
