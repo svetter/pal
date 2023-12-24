@@ -283,7 +283,9 @@ void CsvExportWriter::writeCell(const QVariant& value, const ExportColumnInfo& c
 	}
 	default: assert(false);
 	}
-	assert(!formattedValue.isNull());
+	if (formattedValue.isNull()) {
+		qDebug() << "Warning: During CSV export, formatted null string from non-null QVariant:" << value;
+	}
 	
 	bool formattedValueContainsSeparator = formattedValue.contains(separator);
 	if (formattedValueContainsSeparator) *fileWriter << "\"";
