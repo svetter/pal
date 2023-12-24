@@ -205,6 +205,7 @@ void CsvExportWriter::beginRow()
 void CsvExportWriter::writeCell(const QVariant& value, const ExportColumnInfo& columnInfo)
 {
 	if (afterFirstItemInRow) *fileWriter << separator;
+	afterFirstItemInRow = true;
 	
 	if (!value.isValid() || value.isNull()) return;
 	
@@ -288,8 +289,6 @@ void CsvExportWriter::writeCell(const QVariant& value, const ExportColumnInfo& c
 	if (formattedValueContainsSeparator) *fileWriter << "\"";
 	*fileWriter << formattedValue.replace("\"", "\\\"");
 	if (formattedValueContainsSeparator) *fileWriter << "\"";
-	
-	afterFirstItemInRow = true;
 }
 
 /**
