@@ -1,4 +1,4 @@
-            ![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
+           ![PAL logo](resources/icons/ico/logo_peak_multisize_square.ico)
 
 PeakAscentLogger (PAL)
 ======================
@@ -10,11 +10,12 @@ It is focused on individual peaks as opposed to whole hikes.
 
 PAL consists of a main window, where stored information is shown in tables (for ascents, peaks and so on).
 Additionally, there is an ascent viewing window to browse logged ascents one by one, showing details about each one as well as a description and photos.
+PAL automatically generates a variety of interesting statistics from the user's data and displays it as extra columns or graphically.
 
 
 
 Screenshots
-----------
+-----------
 
 #### Main window with ascents table
 
@@ -34,14 +35,13 @@ Features
 For each peak ascent, the following data can be logged:
 
 - Peak (see below)
-- Date
-- Time
+- Date & time
 - Elevation gain
 - Kind of hike (normal, ski, snow, snowshoes)
 - Traverse (y/n)
 - Difficulty ([SAC hiking/SAC mountaineering/SAC ski/SAC snowshoe/UIAA](https://www.bergfreunde.eu/alpine-grades-calculator/))
 - Trip the hike was part of
-- Participants ("hikers")
+- Participants
 - Description/notes
 - Photos with descriptions
 
@@ -58,21 +58,23 @@ Each peak itself has the following associated fields:
 
 Other features:
 
+- Interactive statistics (selection-specific)
 - Filtering the ascents table by date, peak height, difficulty and more
-- Automatically created statistics about peaks, hikers, trips, regions and countries
-- Setting a default hiker which gets added to every new ascent automatically
 - Changing paths of referenced photos in bulk
+- Data export in multiple modes and formats
 - PAL supports dark mode with Qt's "Fusion" theme
-	- To enable, pass `fusion` as a program argument and set system theme to dark
+	- To enable, choose style "Fusion" in the settings and set system theme to dark
 
 The codebase is fully documented.
+
+PAL uses Qt's [SQLite](https://www.sqlite.org) driver, so its project files can be opened, inspected and manipulated with any compatible software.
 
 
 
 Building PAL
 ------------
 
-PAL is built on [Qt 6.6.0](https://wiki.qt.io/Qt_6.6_Release).
+PAL is built on [Qt 6.6.1](https://wiki.qt.io/Qt_6.6_Release).
 
 If there is no release suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt Creator, open the top-level project file [PAL.pro], let Qt Creator configure the project and click build.
 
