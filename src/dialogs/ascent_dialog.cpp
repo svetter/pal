@@ -297,7 +297,11 @@ bool AscentDialog::changesMade()
 void AscentDialog::handle_regionFilterChanged()
 {
 	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
-	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
+	if (regionID.isValid()) {
+		populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
+	} else {
+		populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
+	}
 }
 
 /**
