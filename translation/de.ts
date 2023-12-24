@@ -1194,7 +1194,7 @@ Will export an extended version of the ascents table.
 Note: Not all data from other tables will be included, nor will photos.</source>
         <translation>Empfohlen für die Verwendung in Tabellenkalkulationsprogrammen, wenn weiter Daten hinzugefügt werden sollen.
 Exportiert die Besteigungs-Tabelle mit zusätzlichen Spalten.
-Hinweis: Nicht alle Daten aus anderen Tabellen sind beinhaltet, genauso wie Foto-Daten.</translation>
+Hinweis: Nicht alle Daten aus anderen Tabellen sind beinhaltet (z.B. fehlen Foto-Daten).</translation>
     </message>
     <message>
         <location filename="../src/ui/export_dialog.ui" line="106"/>
