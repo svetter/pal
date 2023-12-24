@@ -256,6 +256,7 @@ void DataExportDialog::handle_callback_progressTextUpdate(const QString& progres
 void DataExportDialog::updateEnableUI(bool resetProgress)
 {
 	// Options
+	exportModeOneTableLabel			->setEnabled(exportModeOneTableRadio->isChecked());
 	exportModeAsShownLabel			->setEnabled(exportModeAsShownRadio	->isChecked());
 	exportModeAsShownStatsCheckbox	->setEnabled(exportModeAsShownRadio	->isChecked());
 	exportModeRawLabel				->setEnabled(exportModeRawRadio		->isChecked());
