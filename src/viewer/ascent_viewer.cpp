@@ -726,6 +726,9 @@ void AscentViewer::removeCurrentPhoto()
 	
 	int newPhotoIndex = std::min(currentPhotoIndex, (int) photos.size() - 1);
 	changeToPhoto(newPhotoIndex, false);
+	
+	if (slideshowRunning && photos.size() < 2) handle_startStopSlideshow();
+	restartSlideshowTimerIfRunning();
 }
 
 /**
@@ -961,6 +964,7 @@ void AscentViewer::handle_slideshowIntervalChanged()
  */
 void AscentViewer::handle_movePhotoLeft()
 {
+	restartSlideshowTimerIfRunning();
 	moveCurrentPhoto(true);
 }
 
@@ -969,6 +973,7 @@ void AscentViewer::handle_movePhotoLeft()
  */
 void AscentViewer::handle_movePhotoRight()
 {
+	restartSlideshowTimerIfRunning();
 	moveCurrentPhoto(false);
 }
 
@@ -993,6 +998,7 @@ void AscentViewer::handle_removePhoto()
  */
 void AscentViewer::handle_replacePhoto()
 {
+	if (slideshowRunning) handle_startStopSlideshow();
 	replaceCurrentPhoto();
 }
 
@@ -1002,6 +1008,7 @@ void AscentViewer::handle_replacePhoto()
 void AscentViewer::handle_relocatePhotos()
 {
 	savePhotoDescription();
+	if (slideshowRunning) handle_startStopSlideshow();
 	RelocatePhotosDialog(this, db).exec();
 	loadPhotosList();
 	changeToPhoto(currentPhotoIndex, false);
