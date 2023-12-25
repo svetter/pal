@@ -98,6 +98,13 @@ void AscentViewer::additionalUISetup()
 	rightSplitter	->setSizes({ rightSplitter->size().width() / 2, rightSplitter->size().width() / 2 });
 	
 	
+	// Move ascent title label if settings dictate
+	if (Settings::ascentViewer_ascentTitleUnderPeakName.get()) {
+		peakInfoBoxLayout->insertWidget(1, ascentInfoLine);
+		peakInfoBoxLayout->insertWidget(2, ascentTitleLabel);
+	}
+	
+	
 	// Set icons for info boxes
 	tripInfoBox				->setIcon(QIcon(":/icons/trip.svg"),	28, 28);
 	peakInfoBox				->setIcon(QIcon(":/icons/peak.svg"),	28, 28);

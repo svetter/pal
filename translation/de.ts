@@ -182,7 +182,7 @@
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="821"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="824"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -392,19 +392,19 @@ Soll sie trotzdem verwendet werden?</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="342"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="349"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="346"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="353"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="350"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="357"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -630,29 +630,29 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="189"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="196"/>
         <source>Edit ascent...</source>
         <translation>Besteigung bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="190"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="197"/>
         <source>Edit peak...</source>
         <translation>Gipfel bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="191"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="198"/>
         <source>Edit trip...</source>
         <translation>Urlaub bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="540"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="547"/>
         <source>
 More details: %1.</source>
         <translation>
 Mehr Details: &quot;%1.&quot;</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="550"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="557"/>
         <source>This image file cannot be shown:
 %1
 Reason: %2.%3
@@ -665,33 +665,33 @@ Grund: %2.%3
 Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="621"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="628"/>
         <source>No photos</source>
         <translation>Keine Fotos</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="623"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="630"/>
         <source>Photo %1 of %2</source>
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="761"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="768"/>
         <source>Replace %1</source>
         <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
         <translation>Bilddatei ersetzen: %1</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1210"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1217"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1211"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1218"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1212"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1219"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -787,92 +787,92 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="106"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="107"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="104"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="105"/>
         <source>Index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="108"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="109"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="110"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="111"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="111"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="112"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="120"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="121"/>
         <source>Nth ascent of peak</source>
         <translation>Nte Besteigung des Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="121"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="122"/>
         <source>Num. photos</source>
         <translation>Anzahl Fotos</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="134"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="135"/>
         <source>Range ID</source>
         <translation>Gebirgs-ID</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="135"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="136"/>
         <source>Hiker IDs</source>
         <translation>Wanderer-ID</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="129"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="130"/>
         <source>Trip start date</source>
         <translation>Datum Beginn Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="130"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="131"/>
         <source>Trip end date</source>
         <translation>Datum Ende Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="131"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="132"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="109"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="110"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="112"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="113"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="119"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="120"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="118"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="119"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="114"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="115"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_ascents_table.h" line="115"/>
+        <location filename="../src/comp_tables/comp_ascents_table.h" line="116"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
@@ -1136,7 +1136,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Land hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/country_dialog.ui" line="120"/>
+        <location filename="../src/ui/country_dialog.ui" line="123"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1985,7 +1985,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Wanderer hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/hiker_dialog.ui" line="120"/>
+        <location filename="../src/ui/hiker_dialog.ui" line="123"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -2443,18 +2443,18 @@ Trotzdem speichern?</translation>
         <translation>%1 gelöscht.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="879"/>
+        <location filename="../src/main/main_window.cpp" line="882"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="880"/>
+        <location filename="../src/main/main_window.cpp" line="883"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
         <location filename="../src/main/main_window.cpp" line="395"/>
-        <location filename="../src/main/main_window.cpp" line="1017"/>
+        <location filename="../src/main/main_window.cpp" line="1020"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -2469,54 +2469,54 @@ Trotzdem speichern?</translation>
         <translation>Spalte anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1160"/>
+        <location filename="../src/main/main_window.cpp" line="1163"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1200"/>
+        <location filename="../src/main/main_window.cpp" line="1203"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1203"/>
+        <location filename="../src/main/main_window.cpp" line="1206"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1203"/>
+        <location filename="../src/main/main_window.cpp" line="1206"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1256"/>
-        <location filename="../src/main/main_window.cpp" line="1266"/>
-        <location filename="../src/main/main_window.cpp" line="1280"/>
+        <location filename="../src/main/main_window.cpp" line="1259"/>
+        <location filename="../src/main/main_window.cpp" line="1269"/>
+        <location filename="../src/main/main_window.cpp" line="1283"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1267"/>
+        <location filename="../src/main/main_window.cpp" line="1270"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1268"/>
+        <location filename="../src/main/main_window.cpp" line="1271"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1268"/>
+        <location filename="../src/main/main_window.cpp" line="1271"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1281"/>
+        <location filename="../src/main/main_window.cpp" line="1284"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1283"/>
+        <location filename="../src/main/main_window.cpp" line="1286"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2599,32 +2599,32 @@ Trotzdem speichern?</translation>
         <translation>Gipfel hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="342"/>
+        <location filename="../src/ui/peak_dialog.ui" line="345"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="105"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="106"/>
         <source>Edit peak</source>
         <translation>Gipfel bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="222"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="223"/>
         <source>Can&apos;t save peak</source>
         <translation>Gipfel kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="223"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="224"/>
         <source>The peak needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="301"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="302"/>
         <source>Delete peak</source>
         <translation>Gipfel löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="301"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="302"/>
         <source>Delete peaks</source>
         <translation>Gipfel löschen</translation>
     </message>
@@ -2801,32 +2801,32 @@ Trotzdem speichern?</translation>
         <translation>Gebirge hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/range_dialog.ui" line="146"/>
+        <location filename="../src/ui/range_dialog.ui" line="149"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="92"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="93"/>
         <source>Edit mountain range</source>
         <translation>Gebirge bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="158"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="159"/>
         <source>Can&apos;t save mountain range</source>
         <translation>Gebirge kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="159"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="160"/>
         <source>The mountain range needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="223"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="224"/>
         <source>Delete mountain range</source>
         <translation>Gebirge löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="223"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="224"/>
         <source>Delete mountain ranges</source>
         <translation>Gebirge löschen</translation>
     </message>
@@ -2918,32 +2918,32 @@ Trotzdem speichern?</translation>
         <translation>Region hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="220"/>
+        <location filename="../src/ui/region_dialog.ui" line="223"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="98"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="99"/>
         <source>Edit region</source>
         <translation>Region bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="209"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="210"/>
         <source>Can&apos;t save region</source>
         <translation>Region kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="210"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="211"/>
         <source>The region needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="274"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="275"/>
         <source>Delete region</source>
         <translation>Region löschen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="274"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="275"/>
         <source>Delete regions</source>
         <translation>Regionen löschen</translation>
     </message>
@@ -3161,6 +3161,16 @@ Trotzdem speichern?</translation>
         <translation>Sortierung</translation>
     </message>
     <message>
+        <location filename="../src/ui/settings_window.ui" line="600"/>
+        <source>Ascent Viewer</source>
+        <translation>Besteigungs-Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="621"/>
+        <source>Show ascent title below peak name, not in ascent box</source>
+        <translation>Besteigungs-Titel unter Gipfelname statt unter Besteigung anzeigen</translation>
+    </message>
+    <message>
         <location filename="../src/ui/settings_window.ui" line="274"/>
         <source>Active filters</source>
         <translation>Aktive Filter</translation>
@@ -3236,12 +3246,12 @@ Trotzdem speichern?</translation>
         <translation>Start- und Enddatum angeben</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="215"/>
+        <location filename="../src/settings/settings_window.cpp" line="221"/>
         <source>Language setting changed</source>
         <translation>Spracheinstellung geändert</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="216"/>
+        <location filename="../src/settings/settings_window.cpp" line="222"/>
         <source>Changing the language requires a restart.</source>
         <translation>Die Änderung der Sprache erfordert einen Neustart.</translation>
     </message>
@@ -3294,7 +3304,7 @@ Trotzdem speichern?</translation>
         <translation>Urlaub hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/trip_dialog.ui" line="271"/>
+        <location filename="../src/ui/trip_dialog.ui" line="274"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>

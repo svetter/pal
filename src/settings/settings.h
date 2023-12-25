@@ -360,6 +360,10 @@ public:
 	/** Enable the start and end date fields for new trips by default. */
 	inline static const Setting<bool>	tripDialog_datesEnabledInitially			= Setting<bool>		("tripDialog/datesEnabledInitially",			true);
 	
+	// Ascent viewer
+	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
+	inline static const Setting<bool>	ascentViewer_ascentTitleUnderPeakName		= Setting<bool>		("ascentViewer/ascentTitleUnderPeakName",		false);
+	
 	
 	// === IMPLICIT ===
 	

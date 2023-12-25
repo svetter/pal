@@ -123,6 +123,8 @@ void SettingsWindow::loadSettings()
 	
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.get());
 	
+	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.get());
+	
 	updateEnabled();
 }
 
@@ -162,6 +164,8 @@ void SettingsWindow::loadDefaults()
 	peakHeightSpinner							->setValue		(peakDialog_initialHeight					.getDefault());
 	
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.getDefault());
+	
+	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.getDefault());
 	
 	updateEnabled();
 }
@@ -210,6 +214,8 @@ void SettingsWindow::saveSettings()
 	peakDialog_initialHeight					.set(peakHeightSpinner							->value());
 	
 	tripDialog_datesEnabledInitially			.set(tripDatesCheckbox							->isChecked());
+	
+	ascentViewer_ascentTitleUnderPeakName		.set(ascentTitleUnderPeakNameCheckbox			->isChecked());
 	
 	if (languageBefore != language.get()) {
 		QString title = tr("Language setting changed");
