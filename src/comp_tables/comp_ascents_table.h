@@ -70,6 +70,8 @@ public:
 	const ReferenceCompositeColumn*		volcanoColumn;
 	/** The peak ordinal indicates that this ascent was the nth one of the peak. */
 	const OrdinalCompositeColumn*		peakOrdinalColumn;
+	/** The number of photos added to this ascent. */
+	const NumericFoldCompositeColumn*	numPhotosColumn;
 	
 	
 	// === BACKEND COLUMNS ===
@@ -100,7 +102,7 @@ public:
 	inline CompositeAscentsTable(const Database* db, QTableView* tableView) :
 		CompositeTable(db, db->ascentsTable, tableView),
 		//																		name				uiName						suffix		fold op		[breadcrumbs +] content column
-		indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),				noSuffix,				{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,		Qt::AscendingOrder},	{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+		indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),				noSuffix,				{ {db->ascentsTable->dateColumn,			Qt::AscendingOrder},						{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},	{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
 		dateColumn				(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->dateColumn)),
 		peakColumn				(new const ReferenceCompositeColumn		(this,	"peak",				tr("Peak"),					noSuffix,				crumbsTo(db, db->peaksTable),				db->peaksTable->nameColumn)),
 		titleColumn				(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->titleColumn)),
@@ -116,7 +118,8 @@ public:
 		traverseColumn			(new const DirectCompositeColumn		(this,													noSuffix,				db->ascentsTable->traverseColumn)),
 		difficultyColumn		(new const DependentEnumCompositeColumn	(this,	"difficulty",		tr("Difficulty"),									db->ascentsTable->difficultySystemColumn,	db->ascentsTable->difficultyGradeColumn)),
 		volcanoColumn			(new const ReferenceCompositeColumn		(this,	"volcano",			tr("Volcano"),				noSuffix,				crumbsTo(db, db->peaksTable),				db->peaksTable->volcanoColumn)),
-		peakOrdinalColumn		(new const OrdinalCompositeColumn		(this,	"peakOrdinal",		tr("Nth ascent of peak"),	".",					{ {db->ascentsTable->peakIDColumn,			Qt::AscendingOrder},						{db->ascentsTable->dateColumn,			Qt::AscendingOrder},	{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},	{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+		peakOrdinalColumn		(new const OrdinalCompositeColumn		(this,	"peakOrdinal",		tr("Nth ascent of peak"),	".",					{ {db->ascentsTable->peakIDColumn,			Qt::AscendingOrder},						{db->ascentsTable->dateColumn,		Qt::AscendingOrder},	{db->ascentsTable->peakOnDayColumn,	Qt::AscendingOrder},	{db->ascentsTable->timeColumn,	Qt::AscendingOrder} })),
+		numPhotosColumn			(new const NumericFoldCompositeColumn	(this,	"numPhotos",		tr("Num. photos"),			noSuffix,	CountFold,	crumbsTo(db, db->photosTable))),
 		
 		// === BACKEND COLUMNS ===
 		
@@ -151,6 +154,7 @@ public:
 		addColumn(difficultyColumn);
 		addColumn(volcanoColumn);
 		addColumn(peakOrdinalColumn);
+		addColumn(numPhotosColumn);
 		addExportOnlyColumn(descriptionColumn);		// Export-only column
 		addExportOnlyColumn(tripStartDateColumn);	// Export-only column
 		addExportOnlyColumn(tripEndDateColumn);		// Export-only column
