@@ -831,7 +831,10 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper* const mappe
  */
 void MainWindow::scrollToTopAfterSorting()
 {
-	QTableView* const tableView = getActiveMapper()->tableView;
+	ItemTypeMapper* mapper = getActiveMapper();
+	if (!mapper) return;
+	
+	QTableView* const tableView = mapper->tableView;
 	const int horizontalScroll = tableView->horizontalScrollBar()->value();
 	tableView->scrollToTop();
 	tableView->horizontalScrollBar()->setValue(horizontalScroll);
