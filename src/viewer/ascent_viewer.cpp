@@ -58,7 +58,8 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 	slideshowRunning(false),
 	descriptionEditable(false),
 	photoDescriptionEditable(false),
-	infoContextMenu(QMenu(this))
+	infoContextMenu(QMenu(this)),
+	goToRandomAscentShortcut(nullptr)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));
@@ -79,6 +80,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHand
 AscentViewer::~AscentViewer()
 {
 	delete imageLabel;
+	delete goToRandomAscentShortcut;
 }
 
 
@@ -156,6 +158,7 @@ void AscentViewer::connectUI()
 	connect(previousAscentButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscent);
 	connect(nextAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscent);
 	connect(lastAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscent);
+	connect(goToRandomAscentLabel,		&QLabel::linkActivated,		this,	&AscentViewer::handle_randomAscent);
 	connect(firstAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscentOfPeak);
 	connect(previousAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscentOfPeak);
 	connect(nextAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscentOfPeak);
@@ -211,6 +214,8 @@ void AscentViewer::setupShortcuts()
 	previousAscentButton		->setShortcut(QKeySequence(Qt::Key_4));
 	nextAscentButton			->setShortcut(QKeySequence(Qt::Key_6));
 	lastAscentButton			->setShortcut(QKeySequence(Qt::Key_2));
+	
+	goToRandomAscentShortcut = new QShortcut(QKeySequence(Qt::Key_R), this, SLOT(handle_randomAscent()));
 	
 	firstAscentOfPeakButton		->setShortcut(QKeySequence(Qt::ALT | Qt::Key_8));
 	previousAscentOfPeakButton	->setShortcut(QKeySequence(Qt::ALT | Qt::Key_4));
@@ -856,6 +861,20 @@ void AscentViewer::handle_nextAscent()
 void AscentViewer::handle_lastAscent()
 {
 	changeToAscent(lastAscentViewRowIndex);
+}
+
+/**
+ * Event handler for the "Go to random ascent" button.
+ */
+void AscentViewer::handle_randomAscent()
+{
+	QRandomGenerator rand = QRandomGenerator();
+	rand.seed(QDateTime::currentMSecsSinceEpoch());
+	ViewRowIndex randomIndex = ViewRowIndex(rand.bounded(lastAscentViewRowIndex.get()));
+	if (randomIndex == currentViewRowIndex) {
+		randomIndex = lastAscentViewRowIndex;
+	}
+	changeToAscent(ViewRowIndex(randomIndex));
 }
 
 /**

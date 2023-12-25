@@ -104,6 +104,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** Context menu action for editing the current ascent's trip. */
 	QAction* editTripAction;
 	
+	/** Keyboard shortcut for going to a random ascent. */
+	QShortcut* goToRandomAscentShortcut;
+	
 private:
 	/** Temporary global static variable for error messages printed when loading images. */
 	inline static QString imageLoadErrorMessage = QString();
@@ -157,6 +160,7 @@ private slots:
 	void handle_previousAscent();
 	void handle_nextAscent();
 	void handle_lastAscent();
+	void handle_randomAscent();
 	void handle_firstAscentOfPeak();
 	void handle_previousAscentOfPeak();
 	void handle_nextAscentOfPeak();

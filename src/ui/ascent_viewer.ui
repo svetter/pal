@@ -47,7 +47,7 @@
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="leftOfLeftSplitterWidget">
-      <layout class="QVBoxLayout" name="infoAndNavigationLayout">
+      <layout class="QVBoxLayout" name="infoAndNavigationLayout" stretch="1,0">
        <property name="spacing">
         <number>20</number>
        </property>
@@ -923,6 +923,22 @@
               </item>
              </layout>
             </item>
+            <item>
+             <widget class="QLabel" name="goToRandomAscentLabel">
+              <property name="toolTip">
+               <string>You can also press R</string>
+              </property>
+              <property name="text">
+               <string>&lt;a href&gt;Go to random ascent&lt;/a&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::TextBrowserInteraction</set>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -1048,6 +1064,13 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item>
+             <spacer name="ascentsOfPeakSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
