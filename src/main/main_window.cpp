@@ -833,7 +833,7 @@ void MainWindow::scrollToTopAfterSorting()
 {
 	QTableView* const tableView = getActiveMapper()->tableView;
 	const int horizontalScroll = tableView->horizontalScrollBar()->value();
-	tableView->scrollToTop();	// Also scrolls left
+	tableView->scrollToTop();
 	tableView->horizontalScrollBar()->setValue(horizontalScroll);
 }
 

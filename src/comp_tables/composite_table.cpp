@@ -23,6 +23,8 @@
 
 #include "composite_table.h"
 
+#include "qscrollbar.h"
+
 
 
 /**
@@ -927,7 +929,13 @@ void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 	const SortingPass previousSort = currentSorting;
 	currentSorting = {column, order};
 	
+	// Remember horizontal scroll
+	const int horizontalScroll = tableView->horizontalScrollBar()->value();
+	
 	performSort(previousSort, true);
+	
+	// Restore horizontal scroll and emit signal
+	tableView->horizontalScrollBar()->setValue(horizontalScroll);
 	Q_EMIT wasResorted();
 }
 
