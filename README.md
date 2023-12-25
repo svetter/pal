@@ -10,7 +10,8 @@ It is focused on individual peaks as opposed to whole hikes.
 
 PAL consists of a main window, where stored information is shown in tables (for ascents, peaks and so on).
 Additionally, there is an ascent viewing window to browse logged ascents one by one, showing details about each one as well as a description and photos.
-PAL automatically generates a variety of interesting statistics from the user's data and displays it as extra columns or graphically.
+
+A variety of interesting statistics is automatically generated from the user's data and displayed as extra columns or charts.
 
 
 
