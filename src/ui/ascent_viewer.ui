@@ -1207,7 +1207,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>666</width>
-                   <height>382</height>
+                   <height>379</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="imageScrollAreaLayout">
@@ -1245,7 +1245,7 @@
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="title">
