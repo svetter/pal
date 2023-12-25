@@ -84,12 +84,14 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		return true;
 	}
 	
-	// Determine whether upgrading from the old version will definitely break compatibility
-	bool upgradeBreakCompatibility = isBelowVersion(currentDbVersion, "1.2.0");
-	
-	// Ask user to confirm upgrade and create backup
-	bool abort = !promptUserAboutUpgradeAndBackup(currentDbVersion, upgradeBreakCompatibility);
-	if (abort) return false;
+	if (isBelowVersion(currentDbVersion, "1.2.0")) {
+		// Determine whether upgrading from the old version will definitely break compatibility
+		bool upgradeBreakCompatibility = isBelowVersion(currentDbVersion, "1.2.0");
+		
+		// Ask user to confirm upgrade and create backup
+		bool abort = !promptUserAboutUpgradeAndBackup(currentDbVersion, upgradeBreakCompatibility);
+		if (abort) return false;
+	}
 	
 	
 	// Variables to carry information over from the first to the second phase
