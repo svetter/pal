@@ -801,6 +801,9 @@
        <property name="text">
         <string>Add ascent</string>
        </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>

@@ -55,6 +55,7 @@ RegionDialog::RegionDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	restoreDialogGeometry(this, parent, &Settings::regionDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
+	
 	populateComboBoxes();
 	
 	

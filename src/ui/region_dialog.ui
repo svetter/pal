@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
+    <width>428</width>
     <height>172</height>
    </rect>
   </property>
@@ -199,6 +199,9 @@
        </property>
        <property name="text">
         <string>Add region</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

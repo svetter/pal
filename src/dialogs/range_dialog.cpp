@@ -52,6 +52,7 @@ RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, R
 	restoreDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
+	
 	populateComboBoxes();
 	
 	

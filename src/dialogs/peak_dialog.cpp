@@ -53,6 +53,7 @@ PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Pea
 	restoreDialogGeometry(this, parent, &Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
+	
 	populateComboBoxes();
 	
 	
