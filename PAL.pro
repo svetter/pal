@@ -1,4 +1,4 @@
-# Copyright 2023 Simon Vetter
+# Copyright 2023-2024 Simon Vetter
 # 
 # This file is part of PeakAscentLogger.
 # 
@@ -33,7 +33,7 @@ DEFINES += APP_VERSION_MAJOR=1
 DEFINES += APP_VERSION_MINOR=2
 DEFINES += APP_VERSION_PATCH=1
 
-DEFINES += APP_COPYRIGHT='"\\\"2023 Simon Vetter\\\""'
+DEFINES += APP_COPYRIGHT='"\\\"2023-2024 Simon Vetter\\\""'
 DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
 

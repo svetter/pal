@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Simon Vetter
+ * Copyright 2023-2024 Simon Vetter
  * 
  * This file is part of PeakAscentLogger.
  * 
