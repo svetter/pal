@@ -641,7 +641,7 @@ void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesD
 		return (qreal) date.dayOfYear() / date.daysInYear() + date.year();
 	};
 	
-	lowRange = minDate.daysTo(maxDate) < 365;
+	lowRange = maxDate.year() - minDate.year() < 2;
 	
 	this->minDate = minDate;
 	this->maxDate = maxDate;
