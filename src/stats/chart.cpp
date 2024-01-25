@@ -25,6 +25,7 @@
 
 #include <QGraphicsLayout>
 #include <QBarSet>
+#include <QDateTime>
 
 
 
@@ -104,6 +105,27 @@ QValueAxis* Chart::createValueXAxis(QChart* chart, const QString& title)
 	QValueAxis* xAxis = new QValueAxis();
 	xAxis->setLabelFormat("%.0f");
 	xAxis->setTickType(QValueAxis::TicksDynamic);
+	if (!title.isEmpty()) xAxis->setTitleText(title);
+	chart->addAxis(xAxis, Qt::AlignBottom);
+	return xAxis;
+}
+
+/**
+ * Creates and initializes a QDateTimeAxis object for a horizontal date x-axis.
+ * 
+ * Initialization entails setting title text, label formatting, and adding the axis to the given
+ * chart (horizontally).
+ * 
+ * @param chart	The chart to add the axis to.
+ * @param title	The title for the axis. Can be empty.
+ * @return		An initialized QDateTimeAxis object, of which the caller takes ownership.
+ */
+QDateTimeAxis* Chart::createDateXAxis(QChart* chart, const QString& title)
+{
+	assert(chart);
+	
+	QDateTimeAxis* xAxis = new QDateTimeAxis();
+	xAxis->setFormat("dd.MM.yyyy");
 	if (!title.isEmpty()) xAxis->setTitleText(title);
 	chart->addAxis(xAxis, Qt::AlignBottom);
 	return xAxis;
@@ -263,7 +285,8 @@ QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, 
 
 
 /**
- * Adjusts the range and tick placement for the given axis, based on the given range information.
+ * Adjusts the range and tick placement for the given real-value axis, based on the given range
+ * information.
  * 
  * Responsive to size of the chart view widget.
  * 
@@ -314,14 +337,64 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 }
 
 /**
- * Resets range and tick placement for the given axis, so that it only shows the 0 tick.
+ * Adjusts the range and tick count for the given date axis, based on the given range information.
+ * 
+ * Responsive to size of the chart view widget.
+ * 
+ * @param axis		The axis to adjust range and tick placement for.
+ * @param minValue	The minimum value on the axis included in the current dataset.
+ * @param maxValue	The maximum value on the axis included in the current dataset.
+ * @param chartSize	The size of the chart's plot area in the direction of the given axis (h/v) in pixels.
  */
-void Chart::resetAxis(QValueAxis* axis)
+void Chart::adjustAxis(QDateTimeAxis* axis, QDate minValue, QDate maxValue, int chartSize)
+{
+	assert(axis);
+	assert(minValue <= maxValue);
+	if (chartSize <= 0) return;
+	
+	// Find appropriate number of ticks
+	const int numDays = minValue.daysTo(maxValue) + 1;
+	const int tickCountFromSize = chartSize / pixelsPerTick;
+	int tickCount = std::min(numDays, tickCountFromSize);
+	const int bufferDays = tickCountFromSize >= numDays + 2 ? 1 : 0;
+	tickCount += bufferDays * 2;
+	if (numDays == 1) tickCount = 3;
+	if (numDays > 1 && tickCount == 1) tickCount = 2;
+	
+	QDateTime rangeMin = QDateTime(minValue.addDays(-bufferDays), QTime());
+	QDateTime rangeMax = QDateTime(maxValue.addDays( bufferDays), QTime());
+	
+	axis->setRange(rangeMin, rangeMax);
+	axis->setTickCount(tickCount);
+	axis->setVisible(true);
+}
+
+/**
+ * Resets range and tick placement for the given axis, so that it only shows the 0 tick or no labels
+ * at all.
+ * 
+ * @param axis		The axis to reset.
+ * @param show0Tick	Whether to show the 0 tick.
+ */
+void Chart::resetAxis(QValueAxis* axis, bool show0Tick)
 {
 	axis->setRange(0, 1);
-	axis->setTickAnchor(0);
-	axis->setTickInterval(2);
+	axis->setTickAnchor(show0Tick ? 0 : -1);
+	axis->setTickInterval(3);
 	axis->setMinorTickCount(0);
+}
+
+/**
+ * Resets range and tick placement for the given axis and hides it.
+ * 
+ * @param axis	The axis to reset.
+ */
+void Chart::resetAxis(QDateTimeAxis* axis)
+{
+	QDateTime today = QDateTime(QDateTime::currentDateTime().date(), QTime());
+	axis->setRange(today.addDays(-1), today.addDays(1));
+	axis->setTickCount(3);
+	axis->setVisible(false);
 }
 
 
@@ -387,7 +460,7 @@ void YearBarChart::reset()
 	minYear = 0;
 	maxYear = 0;
 	maxY = 0;
-	resetAxis(yAxis);
+	resetAxis(yAxis, true);
 }
 
 /**
@@ -437,6 +510,36 @@ void YearBarChart::updateView()
 
 
 /**
+ * Creates a new DateScatterSeries.
+ *
+ * @param name			The translated label for the series.
+ * @param markerSize	The size of the markers for the series.
+ * @param markerShape	The shape of the markers for the series.
+ */
+DateScatterSeries::DateScatterSeries(const QString& name, int markerSize, QScatterSeries::MarkerShape markerShape) :
+	name(name),
+	markerSize(markerSize),
+	markerShape(markerShape),
+	data(QList<QPair<QDate, qreal>>())
+{}
+
+
+
+/**
+ * Returns a new QScatterSeries object with the properties stored in this DateScatterSeries.
+ * 
+ * @return	A new QScatterSeries object with the properties of this DateScatterSeries.
+ */
+QScatterSeries* DateScatterSeries::createScatterSeries() const
+{
+	return Chart::createScatterSeries(name, markerSize, markerShape);
+}
+
+
+
+
+
+/**
  * Creates a TimeScatterChart.
  * 
  * @param chartTitle	The title of the chart, to be displayed above it.
@@ -445,11 +548,15 @@ void YearBarChart::updateView()
 TimeScatterChart::TimeScatterChart(const QString& chartTitle, const QString& yAxisTitle) :
 	Chart(chartTitle),
 	yAxisTitle(yAxisTitle),
-	xAxis	(nullptr),
-	yAxis	(nullptr),
-	minYear(0),
-	maxYear(0),
-	maxY(0)
+	xAxisDate	(nullptr),
+	xAxisValue	(nullptr),
+	yAxis		(nullptr),
+	lowRange	(false),
+	minDate		(QDate()),
+	maxDate		(QDate()),
+	minRealYear	(0),
+	maxRealYear	(0),
+	maxY		(0)
 {
 	TimeScatterChart::setup();
 	TimeScatterChart::reset();
@@ -474,7 +581,8 @@ TimeScatterChart::~TimeScatterChart()
 void TimeScatterChart::setup()
 {
 	chart		= createChart(chartTitle);
-	xAxis		= createValueXAxis(chart);
+	xAxisDate	= createDateXAxis(chart);
+	xAxisValue	= createValueXAxis(chart);
 	yAxis		= createValueYAxis(chart, yAxisTitle);
 	chartView	= createChartView(chart);
 	
@@ -493,11 +601,13 @@ void TimeScatterChart::reset()
 {
 	chart->removeAllSeries();
 	hasData = false;
-	this->minYear = 0;
-	this->maxYear = 0;
+	this->minRealYear = 0;
+	this->maxRealYear = 0;
 	this->maxY = 0;
-	resetAxis(xAxis);
-	resetAxis(yAxis);
+	resetAxis(xAxisDate);
+	resetAxis(xAxisValue, false);
+	xAxisValue->setVisible(true);
+	resetAxis(yAxis, true);
 }
 
 /**
@@ -507,16 +617,15 @@ void TimeScatterChart::reset()
  * series was added.
  * 
  * @param newSeries	A list of data series to display in the chart.
- * @param minYear	The minimum x value among all given data series.
- * @param maxYear	The maximum x value among all given data series.
- * @param minY		The minimum y value among all given data series.
+ * @param minDate	The minimum x-value (date) among all given data series.
+ * @param maxDate	The maximum x-value (date) among all given data series.
  * @param maxY		The maximum y value among all given data series.
  */
-void TimeScatterChart::updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal maxY)
+void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY)
 {
 	bool noData = true;
-	for (QXYSeries* const series : newSeries) {
-		if (!series->points().isEmpty()) {
+	for (const DateScatterSeries* const series : seriesData) {
+		if (!series->data.isEmpty()) {
 			noData = false;
 			break;
 		}
@@ -525,26 +634,57 @@ void TimeScatterChart::updateData(const QList<QXYSeries*>& newSeries, qreal minY
 		reset();
 		return;
 	}
-	assert(minYear <= maxYear);
+	assert(minDate <= maxDate);
 	assert(maxY >= 0);
 	
-	if (maxYear - minYear < 1) {
-		qreal buffer = 0.5 * (1 - (maxYear - minYear));
-		minYear -= buffer;
-		maxYear += buffer;
-	}
+	auto getYearReal = [](QDate date) {
+		return (qreal) date.dayOfYear() / date.daysInYear() + date.year();
+	};
 	
-	this->minYear = minYear;
-	this->maxYear = maxYear;
+	lowRange = minDate.daysTo(maxDate) < 365;
+	
+	this->minDate = minDate;
+	this->maxDate = maxDate;
+	minRealYear = getYearReal(minDate);
+	maxRealYear = getYearReal(maxDate);
+	if (lowRange) {
+		qreal buffer = 0.5 * (1 - (maxRealYear - minRealYear));
+		minRealYear -= buffer;
+		maxRealYear += buffer;
+	}
 	this->maxY = maxY;
 	hasData = true;
+	
+	// Convert dates to real representation and create series
+	QList<QXYSeries*> qSeries = QList<QXYSeries*>();
+	for (const DateScatterSeries* const series : seriesData) {
+		QScatterSeries* newQSeries = createScatterSeries(series->name, series->markerSize, series->markerShape);
+		for (const auto& [date, yValue] : series->data) {
+			qreal xValue;
+			if (lowRange) {
+				QDateTime dateTime = QDateTime();
+				dateTime.setDate(date);
+				xValue = dateTime.toMSecsSinceEpoch();
+			} else {
+				xValue = getYearReal(date);
+			}
+			
+			newQSeries->append(xValue, yValue);
+		}
+		qSeries.append(newQSeries);
+	}
+	
 	updateView();
-	chart->legend()->setVisible(newSeries.length() > 1);
+	xAxisDate->setVisible(lowRange);
+	xAxisValue->setVisible(!lowRange);
+	
+	chart->legend()->setVisible(qSeries.length() > 1);
 	
 	chart->removeAllSeries();
-	for (QXYSeries* const series : newSeries) {
+	for (QXYSeries* const series : qSeries) {
 		chart->addSeries(series);
-		series->attachAxis(xAxis);
+		if (lowRange)	series->attachAxis(xAxisDate);
+		else			series->attachAxis(xAxisValue);
 		series->attachAxis(yAxis);
 	}
 }
@@ -555,8 +695,9 @@ void TimeScatterChart::updateData(const QList<QXYSeries*>& newSeries, qreal minY
 void TimeScatterChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	rangeBufferFactorX, true);
-	adjustAxis(yAxis,	0,			maxY,		chart->plotArea().height(),	rangeBufferFactorY);
+	adjustAxis(xAxisDate,	minDate,		maxDate,		chart->plotArea().width());
+	adjustAxis(xAxisValue,	minRealYear,	maxRealYear,	chart->plotArea().width(),	rangeBufferFactorX, true);
+	adjustAxis(yAxis,		0,				maxY,			chart->plotArea().height(),	rangeBufferFactorY);
 }
 
 /**
@@ -630,7 +771,7 @@ void HistogramChart::reset()
 	barSet->remove(0, barSet->count());
 	hasData = false;
 	this->maxY = 0;
-	resetAxis(yAxis);
+	resetAxis(yAxis, true);
 }
 
 /**
@@ -738,7 +879,7 @@ void TopNChart::reset()
 	xAxis->setCategories({});
 	hasData = false;
 	this->maxY = 0;
-	resetAxis(yAxis);
+	resetAxis(yAxis, true);
 }
 
 /**

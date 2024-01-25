@@ -183,51 +183,50 @@ void GeneralStatsEngine::updateStatsTab()
 	
 	QList<qreal>	elevGainPerYearSeries	= QList<qreal>();
 	QList<qreal>	numAscentsPerYearSeries	= QList<qreal>();
-	QScatterSeries*	elevGainSeries			= Chart::createScatterSeries(tr("Elevation gains"),	6,	QScatterSeries::MarkerShapeRotatedRectangle);
-	QScatterSeries*	peakHeightSeries		= Chart::createScatterSeries(tr("Peak heights"),	6,	QScatterSeries::MarkerShapeTriangle);
+	DateScatterSeries	elevGainSeries		= DateScatterSeries(tr("Elevation gains"),	6,	QScatterSeries::MarkerShapeRotatedRectangle);
+	DateScatterSeries	peakHeightSeries	= DateScatterSeries(tr("Peak heights"),		6,	QScatterSeries::MarkerShapeTriangle);
 	
 	
 	QMap<int, int> yearElevGainSums	= QMap<int, int>();
 	QMap<int, int> yearNumAscents	= QMap<int, int>();
-	int minYear = INT_MAX;
-	int maxYear = INT_MIN;
-	qreal minDate = 3000;
-	qreal maxDate = 0;
+	QDate minDate = QDate();
+	QDate maxDate = QDate();
 	qreal elevGainPerYearMaxY = 0;
 	int numAscentsPerYearMaxY = 0;
 	int heightsMaxY = 0;
+	
 	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db->ascentsTable->getNumberOfRows()); bufferIndex++) {
 		QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
-		if (dateRaw.isValid()) {
-			QDate date = dateRaw.toDate();
-			int year = date.year();
-			if (year < minYear) minYear = year;
-			if (year > maxYear) maxYear = year;
-			
-			yearNumAscents[year]++;
-			
-			qreal dateReal = (qreal) date.dayOfYear() / date.daysInYear() + date.year();
-			if (dateReal < minDate) minDate = dateReal;
-			if (dateReal > maxDate) maxDate = dateReal;
-			
-			QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
-			if (elevGainRaw.isValid()) {
-				int elevGain = elevGainRaw.toInt();
-				elevGainSeries->append(dateReal, elevGain);
-				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
-				yearElevGainSums[year] += elevGain;
-			}
-			ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
-			if (peakID.isValid()) {
-				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
-				if (peakHeightRaw.isValid()) {
-					int peakHeight = peakHeightRaw.toInt();
-					peakHeightSeries->append(dateReal, peakHeight);
-					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
-				}
+		if (!dateRaw.isValid()) continue;
+		
+		const QDate date = dateRaw.toDate();
+		if (date < minDate || !minDate.isValid()) minDate = date;
+		if (date > maxDate || !maxDate.isValid()) maxDate = date;
+		
+		const int year = date.year();
+		yearNumAscents[year]++;
+		
+		const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
+		if (elevGainRaw.isValid()) {
+			int elevGain = elevGainRaw.toInt();
+			elevGainSeries.data.append({date, elevGain});
+			if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+			yearElevGainSums[year] += elevGain;
+		}
+		
+		const ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
+		if (peakID.isValid()) {
+			QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+			if (peakHeightRaw.isValid()) {
+				int peakHeight = peakHeightRaw.toInt();
+				peakHeightSeries.data.append({date, peakHeight});
+				if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 			}
 		}
 	}
+	
+	int minYear = minDate.year();
+	int maxYear = maxDate.year();
 	
 	for (int year = minYear; year <= maxYear; year++) {
 		int elevGainSum	= yearElevGainSums	.contains(year) ? yearElevGainSums	[year] : 0;
@@ -240,9 +239,11 @@ void GeneralStatsEngine::updateStatsTab()
 	}
 	
 	
-	elevGainPerYearChart	->updateData(elevGainPerYearSeries, 				minYear,	maxYear,	elevGainPerYearMaxY);
-	numAscentsPerYearChart	->updateData(numAscentsPerYearSeries,				minYear,	maxYear,	numAscentsPerYearMaxY);
-	heightsScatterChart		->updateData({elevGainSeries, peakHeightSeries},	minDate,	maxDate,	heightsMaxY);
+	elevGainPerYearChart	->updateData(elevGainPerYearSeries, 	minYear,	maxYear,	elevGainPerYearMaxY);
+	numAscentsPerYearChart	->updateData(numAscentsPerYearSeries,	minYear,	maxYear,	numAscentsPerYearMaxY);
+	
+	QList<const DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
+	heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
 }
 
 
@@ -415,45 +416,40 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	// Heights scatterplot
 	
 	if (heightsScatterChart) {
-		QScatterSeries*	elevGainScatterSeries	= Chart::createScatterSeries(tr("Elevation gains"),	5,	QScatterSeries::MarkerShapeRotatedRectangle);
-		QScatterSeries*	peakHeightScatterSeries	= Chart::createScatterSeries(tr("Peak heights"),	5,	QScatterSeries::MarkerShapeTriangle);
-		qreal minDate = 3000;
-		qreal maxDate = 0;
+		DateScatterSeries elevGainScatterSeries		= DateScatterSeries(tr("Elevation gains"),	8,	QScatterSeries::MarkerShapeRotatedRectangle);
+		DateScatterSeries peakHeightScatterSeries	= DateScatterSeries(tr("Peak heights"),		8,	QScatterSeries::MarkerShapeTriangle);
+		QDate minDate = QDate();
+		QDate maxDate = QDate();
 		int heightsMaxY = 0;
 		
 		for (const BufferRowIndex& ascentBufferIndex : ascentBufferRows) {
 			QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(ascentBufferIndex);
-			if (dateRaw.isValid()) {
-				QDate date = dateRaw.toDate();
-				qreal dateReal = (qreal) date.dayOfYear() / date.daysInYear() + date.year();
-				
-				bool pointAdded = false;
-				QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
-				if (elevGainRaw.isValid()) {
-					int elevGain = elevGainRaw.toInt();
-					elevGainScatterSeries->append(dateReal, elevGain);
-					pointAdded = true;
-					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
-				}
-				ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferIndex);
-				if (peakID.isValid()) {
-					QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
-					if (peakHeightRaw.isValid()) {
-						int peakHeight = peakHeightRaw.toInt();
-						peakHeightScatterSeries->append(dateReal, peakHeight);
-						pointAdded = true;
-						if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
-					}
-				}
-				
-				if (pointAdded) {
-					if (dateReal < minDate) minDate = dateReal;
-					if (dateReal > maxDate) maxDate = dateReal;
+			if (!dateRaw.isValid()) continue;
+			
+			const QDate date = dateRaw.toDate();
+			if (date < minDate || !minDate.isValid()) minDate = date;
+			if (date > maxDate || !maxDate.isValid()) maxDate = date;
+			
+			const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
+			if (elevGainRaw.isValid()) {
+				int elevGain = elevGainRaw.toInt();
+				elevGainScatterSeries.data.append({date, elevGain});
+				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+			}
+			
+			const ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferIndex);
+			if (peakID.isValid()) {
+				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+				if (peakHeightRaw.isValid()) {
+					int peakHeight = peakHeightRaw.toInt();
+					peakHeightScatterSeries.data.append({date, peakHeight});
+					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 				}
 			}
 		}
 		
-		heightsScatterChart->updateData({elevGainScatterSeries, peakHeightScatterSeries}, minDate, maxDate, heightsMaxY);
+		QList<const DateScatterSeries*> series = {&elevGainScatterSeries, &peakHeightScatterSeries};
+		heightsScatterChart->updateData(series, minDate, maxDate, heightsMaxY);
 	}
 	
 	

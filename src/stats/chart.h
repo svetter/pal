@@ -27,11 +27,13 @@
 #include <QChart>
 #include <QChartView>
 #include <QValueAxis>
+#include <QDateTimeAxis>
 #include <QBarCategoryAxis>
 #include <QBarSeries>
 #include <QHorizontalBarSeries>
 #include <QLineSeries>
 #include <QScatterSeries>
+#include <QDate>
 
 
 
@@ -99,7 +101,7 @@ class Chart : public QObject
 {
 protected:
 	/** Constant controlling the targeted gap in pixels between two label ticks on a chart axis. */
-	inline static const int		pixelsPerTick		= 80;
+	inline static const int		pixelsPerTick		= 60;
 	/** Constant controlling how wide to make the range buffer on each side of an x-axis as a fraction of the total range. */
 	inline static const qreal	rangeBufferFactorX	= 0.01;
 	/** Constant controlling how wide to make the range buffer on each side of a y-axis as a fraction of the total range. */
@@ -140,6 +142,7 @@ protected:
 	// Setup helpers
 	static QChart* createChart(const QString& title);
 	static QValueAxis* createValueXAxis(QChart* chart, const QString& title = QString());
+	static QDateTimeAxis* createDateXAxis(QChart* chart, const QString& title = QString());
 	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const Qt::AlignmentFlag alignment = Qt::AlignBottom, const QStringList& categories = {});
 	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
 	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
@@ -154,7 +157,9 @@ public:
 	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape markerShape = QScatterSeries::MarkerShape(-1));
 protected:
 	static void adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0, bool isTimeAxis = false);
-	static void resetAxis(QValueAxis* axis);
+	static void adjustAxis(QDateTimeAxis* axis, QDate minValue, QDate maxValue, int chartSize);
+	static void resetAxis(QValueAxis* axis, bool show0Tick);
+	static void resetAxis(QDateTimeAxis* axis);
 };
 
 
@@ -199,6 +204,27 @@ public:
 
 
 /**
+ * A class containing raw data and configuration for a single series in a date-based scatterplot.
+ */
+class DateScatterSeries {
+public:
+	/** The translated label for the series. */
+	QString						name;
+	/** The size of the markers for the series. */
+	int							markerSize;
+	/** The shape of the markers for the series. */
+	QScatterSeries::MarkerShape	markerShape;
+	/** The data points for the series, consisting of a date and a real number. */
+	QList<QPair<QDate, qreal>>	data;
+	
+	DateScatterSeries(const QString& name, int markerSize, QScatterSeries::MarkerShape markerShape);
+
+	QScatterSeries* createScatterSeries() const;
+};
+
+
+
+/**
  * A class representing a scatterplot with a horizontal x-axis which shows time, and a vertical
  * real-number y-axis.
  */
@@ -208,16 +234,24 @@ protected:
 	/** The translated label for the chart's y-axis. */
 	const QString yAxisTitle;
 	
-	/** The x-axis for the chart. */
-	QValueAxis*	xAxis;
+	/** The date-based x-axis for the chart. */
+	QDateTimeAxis*	xAxisDate;
+	/** The real-value-based x-axis for the chart. */
+	QValueAxis*		xAxisValue;
 	/** The y-axis for the chart. */
-	QValueAxis*	yAxis;
+	QValueAxis*		yAxis;
 	
 	// Range data
-	/** The minimum x value of the current data sets. */
-	qreal minYear;
-	/** The maximum x value of the current data sets. */
-	qreal maxYear;
+	/** Indicates whether the current data sets have a range below the threshold, where a date-based x-axis is used. */
+	bool lowRange;
+	/** The minimum date of the current data sets. */
+	QDate minDate;
+	/** The maximum date of the current data sets. */
+	QDate maxDate;
+	/** The minimum real-value representaition of the minimum date (x-value) of the current data sets. */
+	qreal minRealYear;
+	/** The maximum real-value representaition of the minimum date (x-value) of the current data sets. */
+	qreal maxRealYear;
 	/** The maximum y value of the current data sets. */
 	qreal maxY;
 	
@@ -227,7 +261,7 @@ public:
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(const QList<QXYSeries*>& newSeries, qreal minYear, qreal maxYear, qreal maxY);
+	void updateData(const QList<const DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY);
 	virtual void updateView() override;
 	void resetZoom();
 };
