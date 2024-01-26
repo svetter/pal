@@ -196,12 +196,16 @@ void GeneralStatsEngine::updateStatsTab()
 	int heightsMaxY = 0;
 	
 	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db->ascentsTable->getNumberOfRows()); bufferIndex++) {
-		QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
+		const QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
 		if (!dateRaw.isValid()) continue;
 		
 		const QDate date = dateRaw.toDate();
 		if (date < minDate || !minDate.isValid()) minDate = date;
 		if (date > maxDate || !maxDate.isValid()) maxDate = date;
+		
+		const QVariant timeRaw = db->ascentsTable->timeColumn->getValueAt(bufferIndex);
+		const QTime time = timeRaw.isValid() ? timeRaw.toTime() : QTime(12, 0);
+		const QDateTime dateTime = QDateTime(date, time);
 		
 		const int year = date.year();
 		yearNumAscents[year]++;
@@ -209,7 +213,7 @@ void GeneralStatsEngine::updateStatsTab()
 		const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
 		if (elevGainRaw.isValid()) {
 			int elevGain = elevGainRaw.toInt();
-			elevGainSeries.data.append({date, elevGain});
+			elevGainSeries.data.append({dateTime, elevGain});
 			if (elevGain > heightsMaxY) heightsMaxY = elevGain;
 			yearElevGainSums[year] += elevGain;
 		}
@@ -219,7 +223,7 @@ void GeneralStatsEngine::updateStatsTab()
 			QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
 			if (peakHeightRaw.isValid()) {
 				int peakHeight = peakHeightRaw.toInt();
-				peakHeightSeries.data.append({date, peakHeight});
+				peakHeightSeries.data.append({dateTime, peakHeight});
 				if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 			}
 		}
@@ -430,10 +434,14 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			if (date < minDate || !minDate.isValid()) minDate = date;
 			if (date > maxDate || !maxDate.isValid()) maxDate = date;
 			
+			const QVariant timeRaw = db->ascentsTable->timeColumn->getValueAt(ascentBufferIndex);
+			const QTime time = timeRaw.isValid() ? timeRaw.toTime() : QTime(12, 0);
+			const QDateTime dateTime = QDateTime(date, time);
+			
 			const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
 			if (elevGainRaw.isValid()) {
 				int elevGain = elevGainRaw.toInt();
-				elevGainScatterSeries.data.append({date, elevGain});
+				elevGainScatterSeries.data.append({dateTime, elevGain});
 				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
 			}
 			
@@ -442,7 +450,7 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
 				if (peakHeightRaw.isValid()) {
 					int peakHeight = peakHeightRaw.toInt();
-					peakHeightScatterSeries.data.append({date, peakHeight});
+					peakHeightScatterSeries.data.append({dateTime, peakHeight});
 					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
 				}
 			}

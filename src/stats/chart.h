@@ -33,7 +33,7 @@
 #include <QHorizontalBarSeries>
 #include <QLineSeries>
 #include <QScatterSeries>
-#include <QDate>
+#include <QDateTime>
 
 
 
@@ -209,13 +209,13 @@ public:
 class DateScatterSeries {
 public:
 	/** The translated label for the series. */
-	QString						name;
+	QString							name;
 	/** The size of the markers for the series. */
-	int							markerSize;
+	int								markerSize;
 	/** The shape of the markers for the series. */
-	QScatterSeries::MarkerShape	markerShape;
-	/** The data points for the series, consisting of a date and a real number. */
-	QList<QPair<QDate, qreal>>	data;
+	QScatterSeries::MarkerShape		markerShape;
+	/** The data points for the series, consisting of a date-time and a real number. */
+	QList<QPair<QDateTime, qreal>>	data;
 	
 	DateScatterSeries(const QString& name, int markerSize, QScatterSeries::MarkerShape markerShape);
 

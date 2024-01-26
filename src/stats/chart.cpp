@@ -355,14 +355,10 @@ void Chart::adjustAxis(QDateTimeAxis* axis, QDate minValue, QDate maxValue, int 
 	// Find appropriate number of ticks
 	const int numDays = minValue.daysTo(maxValue) + 1;
 	const int tickCountFromSize = chartSize / pixelsPerTick;
-	int tickCount = std::min(numDays, tickCountFromSize);
-	const int bufferDays = tickCountFromSize >= numDays + 2 ? 1 : 0;
-	tickCount += bufferDays * 2;
-	if (numDays == 1) tickCount = 3;
-	if (numDays > 1 && tickCount == 1) tickCount = 2;
+	int tickCount = std::min(numDays + 1, tickCountFromSize);
 	
-	QDateTime rangeMin = QDateTime(minValue.addDays(-bufferDays), QTime());
-	QDateTime rangeMax = QDateTime(maxValue.addDays( bufferDays), QTime());
+	QDateTime rangeMin = QDateTime(minValue,			QTime(0, 0));
+	QDateTime rangeMax = QDateTime(maxValue.addDays(1),	QTime(0, 0));
 	
 	axis->setRange(rangeMin, rangeMax);
 	axis->setTickCount(tickCount);
@@ -520,7 +516,7 @@ DateScatterSeries::DateScatterSeries(const QString& name, int markerSize, QScatt
 	name(name),
 	markerSize(markerSize),
 	markerShape(markerShape),
-	data(QList<QPair<QDate, qreal>>())
+	data(QList<QPair<QDateTime, qreal>>())
 {}
 
 
@@ -637,16 +633,21 @@ void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesD
 	assert(minDate <= maxDate);
 	assert(maxY >= 0);
 	
-	auto getYearReal = [](QDate date) {
-		return (qreal) date.dayOfYear() / date.daysInYear() + date.year();
+	auto getYearReal = [](QDateTime dateTime) {
+		const QDateTime startOfYear		= QDateTime(QDate(dateTime.date().year(),		1, 1), QTime(0, 0));
+		const QDateTime startOfNextYear	= QDateTime(QDate(dateTime.date().year() + 1,	1, 1), QTime(0, 0));
+		const qint64 dateTimeSecs			= dateTime.toSecsSinceEpoch();
+		const qint64 startOfYearSecs		= startOfYear.toSecsSinceEpoch();
+		const qint64 startOfNextYearSecs	= startOfNextYear.toSecsSinceEpoch();
+		return (qreal) (dateTimeSecs - startOfYearSecs) / (startOfNextYearSecs - startOfYearSecs) + dateTime.date().year();
 	};
 	
 	lowRange = maxDate.year() - minDate.year() < 2;
 	
 	this->minDate = minDate;
 	this->maxDate = maxDate;
-	minRealYear = getYearReal(minDate);
-	maxRealYear = getYearReal(maxDate);
+	minRealYear = getYearReal(QDateTime(minDate,			QTime(0, 0)));
+	maxRealYear = getYearReal(QDateTime(maxDate.addDays(1),	QTime(0, 0)));
 	if (lowRange) {
 		qreal buffer = 0.5 * (1 - (maxRealYear - minRealYear));
 		minRealYear -= buffer;
@@ -659,14 +660,12 @@ void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesD
 	QList<QXYSeries*> qSeries = QList<QXYSeries*>();
 	for (const DateScatterSeries* const series : seriesData) {
 		QScatterSeries* newQSeries = createScatterSeries(series->name, series->markerSize, series->markerShape);
-		for (const auto& [date, yValue] : series->data) {
+		for (const auto& [dateTime, yValue] : series->data) {
 			qreal xValue;
 			if (lowRange) {
-				QDateTime dateTime = QDateTime();
-				dateTime.setDate(date);
 				xValue = dateTime.toMSecsSinceEpoch();
 			} else {
-				xValue = getYearReal(date);
+				xValue = getYearReal(dateTime);
 			}
 			
 			newQSeries->append(xValue, yValue);
@@ -675,8 +674,6 @@ void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesD
 	}
 	
 	updateView();
-	xAxisDate->setVisible(lowRange);
-	xAxisValue->setVisible(!lowRange);
 	
 	chart->legend()->setVisible(qSeries.length() > 1);
 	
@@ -695,9 +692,13 @@ void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesD
 void TimeScatterChart::updateView()
 {
 	if (!hasData) return;
+	
 	adjustAxis(xAxisDate,	minDate,		maxDate,		chart->plotArea().width());
 	adjustAxis(xAxisValue,	minRealYear,	maxRealYear,	chart->plotArea().width(),	rangeBufferFactorX, true);
 	adjustAxis(yAxis,		0,				maxY,			chart->plotArea().height(),	rangeBufferFactorY);
+	
+	xAxisDate->setVisible(lowRange);
+	xAxisValue->setVisible(!lowRange);
 }
 
 /**
