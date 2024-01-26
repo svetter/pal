@@ -352,16 +352,33 @@ void Chart::adjustAxis(QDateTimeAxis* axis, QDate minValue, QDate maxValue, int 
 	assert(minValue <= maxValue);
 	if (chartSize <= 0) return;
 	
-	// Find appropriate number of ticks
+	// Find appropriate number of ticks (not counting the rightmost tick for now)
 	const int numDays = minValue.daysTo(maxValue) + 1;
 	const int tickCountFromSize = chartSize / pixelsPerTick;
-	int tickCount = std::min(numDays + 1, tickCountFromSize);
+	int tickCount = std::min(numDays, tickCountFromSize);
 	
-	QDateTime rangeMin = QDateTime(minValue,			QTime(0, 0));
-	QDateTime rangeMax = QDateTime(maxValue.addDays(1),	QTime(0, 0));
+	// Make sure that all ticks are at midnight
+	int bufferDays = 0;
+	if (numDays > tickCount) {
+		// Days per tick should be an integer
+		bufferDays = tickCount - numDays % tickCount;
+	}
+	assert((numDays + bufferDays) % tickCount == 0);
+	const int daysPerTick = (numDays + bufferDays) / tickCount;
+	
+	// Reduce buffer and number of ticks if there are ticks which only mark buffer days
+	const int onlyBufferTicks = bufferDays / daysPerTick;
+	bufferDays -= onlyBufferTicks * daysPerTick;
+	tickCount -= onlyBufferTicks;
+	
+	const int bufferDaysLeft	= bufferDays / 2;
+	const int bufferDaysRight	= (bufferDays + 1) / 2;	// Put odd buffer day on the right
+	
+	QDateTime rangeMin = QDateTime(minValue.addDays(-bufferDaysLeft),		QTime(0, 0));
+	QDateTime rangeMax = QDateTime(maxValue.addDays( bufferDaysRight + 1),	QTime(0, 0));
 	
 	axis->setRange(rangeMin, rangeMax);
-	axis->setTickCount(tickCount);
+	axis->setTickCount(tickCount + 1);
 	axis->setVisible(true);
 }
 

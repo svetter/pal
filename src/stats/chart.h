@@ -101,7 +101,7 @@ class Chart : public QObject
 {
 protected:
 	/** Constant controlling the targeted gap in pixels between two label ticks on a chart axis. */
-	inline static const int		pixelsPerTick		= 60;
+	inline static const int		pixelsPerTick		= 70;
 	/** Constant controlling how wide to make the range buffer on each side of an x-axis as a fraction of the total range. */
 	inline static const qreal	rangeBufferFactorX	= 0.01;
 	/** Constant controlling how wide to make the range buffer on each side of a y-axis as a fraction of the total range. */
