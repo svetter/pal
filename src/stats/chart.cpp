@@ -260,6 +260,7 @@ QLineSeries* Chart::createLineSeries(const QString& name)
 {
 	QLineSeries* series = new QLineSeries();
 	if (!name.isEmpty()) series->setName(name);
+	series->setUseOpenGL(false);	// Enabling OpenGL causes severe slowdowns when adding series to chart
 	return series;
 }
 
@@ -280,6 +281,7 @@ QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, 
 	if (markerSize >= 0)	series->setMarkerSize(markerSize);
 	if (markerShape >= 0)	series->setMarkerShape(markerShape);
 	series->setPen(QPen(Qt::transparent));
+	series->setUseOpenGL(false);	// Enabling OpenGL causes severe slowdowns when adding series to chart
 	return series;
 }
 
