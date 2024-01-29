@@ -981,15 +981,13 @@ void AscentViewer::handle_lastPhoto()
 
 /**
  * Starts the slideshow if it is not running and stops it otherwise.
- * 
- * @param nextPhotoImmediately	Whether to change to the next photo immediately when starting the slideshow.
  */
-void AscentViewer::handle_toggleSlideshow(bool nextPhotoImmediately)
+void AscentViewer::handle_toggleSlideshow()
 {
 	if (slideshowRunning) {
 		stopSlideshow();
 	} else {
-		startSlideshow(nextPhotoImmediately);
+		startSlideshow(true);
 	}
 }
 
