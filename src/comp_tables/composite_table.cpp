@@ -1036,10 +1036,10 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 /**
  * Returns the breadcrumb trail from the base table to the given target table.
  * 
- * @param targetTable	The table to return the breadcrumb trail to.
+ * @param targetTable	The normal table to return the breadcrumb trail to.
  * @return				The breadcrumb trail from the base table to the given destination table.
  */
-Breadcrumbs CompositeTable::crumbsTo(const Database* db, const Table* targetTable) const
+Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable* targetTable) const
 {
 	assert(baseTable);
 	

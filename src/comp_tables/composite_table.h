@@ -200,7 +200,7 @@ private:
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
 protected:
-	Breadcrumbs crumbsTo(const Database* db, const Table* destinationTable) const;
+	Breadcrumbs crumbsTo(const Database* db, const NormalTable* destinationTable) const;
 	
 public:
 	ProjectSettings* getProjectSettings() const;
