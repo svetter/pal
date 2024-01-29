@@ -171,7 +171,9 @@ private slots:
 	void handle_nextPhoto();
 	void handle_lastPhoto();
 	// Slideshow
-	void handle_startStopSlideshow();
+	void handle_startSlideshow(bool nextPhotoImmediately);
+	void handle_stopSlideshow();
+	void handle_toggleSlideshow(bool nextPhotoImmediately = true);
 	void handle_slideshowTimerTrigger();
 	void handle_slideshowIntervalChanged();
 	void handle_userInteractedWithImageLabel();

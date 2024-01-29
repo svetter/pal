@@ -169,7 +169,7 @@ void AscentViewer::connectUI()
 	connect(nextPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextPhoto);
 	connect(lastPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastPhoto);
 	// Slideshow
-	connect(slideshowStartStopButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_startStopSlideshow);
+	connect(slideshowStartStopButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_toggleSlideshow);
 	connect(slideshowIntervalSpinner,	&QSpinBox::valueChanged,	this,	&AscentViewer::handle_slideshowIntervalChanged);
 	// Changing photos
 	connect(movePhotoLeftButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoLeft);
@@ -251,7 +251,7 @@ void AscentViewer::setupSlideshow()
  */
 void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
-	stopSlideshowIfRunning();
+	stopSlideshow();
 	
 	saveDescription();
 	savePhotoDescription();
@@ -270,7 +270,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	updateAscentNavigationNumbers();
 	
 	if (slideshowAutostartCheckbox->isChecked() && photos.size() > 1) {
-		handle_startStopSlideshow();
+		handle_startSlideshow(false);
 	}
 }
 
@@ -670,15 +670,6 @@ void AscentViewer::restartSlideshowTimerIfRunning()
 	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
 }
 
-/**
- * Stops the slideshow if it is running, else does nothing.
- */
-void AscentViewer::stopSlideshowIfRunning()
-{
-	if (!slideshowRunning) return;
-	handle_startStopSlideshow();
-}
-
 
 
 // EDITING PHOTOS
@@ -952,33 +943,54 @@ void AscentViewer::handle_lastPhoto()
 // SLIDESHOW
 
 /**
- * Starts or stops the slideshow.
+ * Starts the slideshow unless it is already running.
  * 
- * Disabled editing of the photo description, changes the slideshow button icon and starts or stops
- * the timer.
+ * Disables editing of the photo description, changes the slideshow button icon and starts the timer.
+ * 
+ * @param nextPhotoImmediately	Whether to change to the next photo immediately, skipping the first waiting interval.
  */
-void AscentViewer::handle_startStopSlideshow()
+void AscentViewer::handle_startSlideshow(bool nextPhotoImmediately)
 {
+	if (slideshowRunning) return;
+	
 	if (photoDescriptionEditable) {
 		editPhotoDescriptionButton->setChecked(false);
 		handle_photoDescriptionEditableChanged();
 	}
 	
-	QStyle::StandardPixmap newIcon;
+	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
+	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+	slideshowRunning = true;
 	
-	if (!slideshowRunning) {
-		// Slideshow not running, START
-		slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
-		newIcon = QStyle::SP_MediaStop;
-	}
-	else {
-		// Slideshow running, STOP
-		slideshowTimer.stop();
-		newIcon = QStyle::SP_MediaPlay;
-	}
+	if (nextPhotoImmediately) handle_slideshowTimerTrigger();
+}
+
+/**
+ * Stops the slideshow if it is running.
+ * 
+ * Changes the slideshow button icon and stops the timer.
+ */
+void AscentViewer::handle_stopSlideshow()
+{
+	if (!slideshowRunning) return;
 	
-	slideshowStartStopButton->setIcon(style()->standardIcon(newIcon));
-	slideshowRunning = !slideshowRunning;
+	slideshowTimer.stop();
+	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+	slideshowRunning = false;
+}
+
+/**
+ * Starts the slideshow if it is not running and stops it otherwise.
+ * 
+ * @param nextPhotoImmediately	Whether to change to the next photo immediately when starting the slideshow.
+ */
+void AscentViewer::handle_toggleSlideshow(bool nextPhotoImmediately)
+{
+	if (slideshowRunning) {
+		stopSlideshow();
+	} else {
+		startSlideshow(nextPhotoImmediately);
+	}
 }
 
 /**
@@ -1005,7 +1017,7 @@ void AscentViewer::handle_slideshowIntervalChanged()
  */
 void AscentViewer::handle_userInteractedWithImageLabel()
 {
-	stopSlideshowIfRunning();
+	stopSlideshow();
 }
 
 
@@ -1034,7 +1046,7 @@ void AscentViewer::handle_movePhotoRight()
  */
 void AscentViewer::handle_addPhotos()
 {
-	stopSlideshowIfRunning();
+	stopSlideshow();
 	addPhotosFromDialog();
 }
 
@@ -1051,7 +1063,7 @@ void AscentViewer::handle_removePhoto()
  */
 void AscentViewer::handle_replacePhoto()
 {
-	stopSlideshowIfRunning();
+	stopSlideshow();
 	replaceCurrentPhoto();
 }
 
@@ -1061,7 +1073,7 @@ void AscentViewer::handle_replacePhoto()
 void AscentViewer::handle_relocatePhotos()
 {
 	savePhotoDescription();
-	stopSlideshowIfRunning();
+	stopSlideshow();
 	RelocatePhotosDialog(this, db).exec();
 	loadPhotosList();
 	changeToPhoto(currentPhotoIndex, false);
@@ -1120,7 +1132,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 	} else {
 		photoDescriptionLineEdit->setText(photoDescriptionLabel->text());
 		
-		stopSlideshowIfRunning();
+		stopSlideshow();
 	}
 	
 	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
