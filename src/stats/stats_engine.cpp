@@ -555,7 +555,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs&
 		const QList<BufferRowIndex> currentTargetBufferRows = crumbs.evaluateForStats({currentStartBufferIndex});
 		qreal valueForCurrentStartIndex = valueFromTargetBufferRows(currentTargetBufferRows);
 		
-		if (valueForCurrentStartIndex < 1) continue;
+		if (valueForCurrentStartIndex <= 0) continue;
 		
 		indexValuePairs.append({currentStartBufferIndex, valueForCurrentStartIndex});
 	}

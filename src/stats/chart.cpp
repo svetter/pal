@@ -335,7 +335,7 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 	axis->setTickAnchor(anchor);
 	axis->setTickInterval(interval);
 	axis->setMinorTickCount(minorCount);
-	// New tick count MUST BE set before range to avoid huge performance tank when increasing range
+	// New tick count MUST BE set BEFORE range to avoid huge performance tank when increasing range
 	axis->setRange(rangeMin, rangeMax);
 }
 
