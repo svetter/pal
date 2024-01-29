@@ -270,7 +270,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	updateAscentNavigationNumbers();
 	
 	if (slideshowAutostartCheckbox->isChecked() && photos.size() > 1) {
-		handle_startSlideshow(false);
+		startSlideshow(false);
 	}
 }
 
@@ -660,6 +660,43 @@ void AscentViewer::updatePhotoButtonsEnabled()
 // SLIDESHOW
 
 /**
+ * Starts the slideshow unless it is already running.
+ * 
+ * Disables editing of the photo description, changes the slideshow button icon and starts the timer.
+ * 
+ * @param nextPhotoImmediately	Whether to change to the next photo immediately, skipping the first waiting interval.
+ */
+void AscentViewer::startSlideshow(bool nextPhotoImmediately)
+{
+	if (slideshowRunning) return;
+	
+	if (photoDescriptionEditable) {
+		editPhotoDescriptionButton->setChecked(false);
+		handle_photoDescriptionEditableChanged();
+	}
+	
+	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
+	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+	slideshowRunning = true;
+	
+	if (nextPhotoImmediately) handle_slideshowTimerTrigger();
+}
+
+/**
+ * Stops the slideshow if it is running.
+ * 
+ * Changes the slideshow button icon and stops the timer.
+ */
+void AscentViewer::stopSlideshow()
+{
+	if (!slideshowRunning) return;
+	
+	slideshowTimer.stop();
+	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+	slideshowRunning = false;
+}
+
+/**
  * Resets the slideshow timer if the slideshow is currently running, else does nothing.
  * 
  * To be called when the user mannually changes the photo.
@@ -748,7 +785,7 @@ void AscentViewer::removeCurrentPhoto()
 	int newPhotoIndex = std::min(currentPhotoIndex, (int) photos.size() - 1);
 	changeToPhoto(newPhotoIndex, false);
 	
-	if (slideshowRunning && photos.size() < 2) handle_startStopSlideshow();
+	if (slideshowRunning && photos.size() < 2) stopSlideshow();
 	restartSlideshowTimerIfRunning();
 }
 
@@ -941,43 +978,6 @@ void AscentViewer::handle_lastPhoto()
 
 
 // SLIDESHOW
-
-/**
- * Starts the slideshow unless it is already running.
- * 
- * Disables editing of the photo description, changes the slideshow button icon and starts the timer.
- * 
- * @param nextPhotoImmediately	Whether to change to the next photo immediately, skipping the first waiting interval.
- */
-void AscentViewer::handle_startSlideshow(bool nextPhotoImmediately)
-{
-	if (slideshowRunning) return;
-	
-	if (photoDescriptionEditable) {
-		editPhotoDescriptionButton->setChecked(false);
-		handle_photoDescriptionEditableChanged();
-	}
-	
-	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
-	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
-	slideshowRunning = true;
-	
-	if (nextPhotoImmediately) handle_slideshowTimerTrigger();
-}
-
-/**
- * Stops the slideshow if it is running.
- * 
- * Changes the slideshow button icon and stops the timer.
- */
-void AscentViewer::handle_stopSlideshow()
-{
-	if (!slideshowRunning) return;
-	
-	slideshowTimer.stop();
-	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-	slideshowRunning = false;
-}
 
 /**
  * Starts the slideshow if it is not running and stops it otherwise.
