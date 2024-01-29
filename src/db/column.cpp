@@ -55,13 +55,21 @@ Column::Column(const Table* table, QString name, QString uiName, bool primaryKey
 	nullable(nullable),
 	enumNames(enumNames),
 	enumNameLists(enumNameLists),
-	changeListeners(QSet<const CompositeColumn*>())
+	changeListeners(QSet<const ColumnChangeListener*>())
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
 	assert(table->isAssociative == (primaryKey && foreignColumn));
 	if (primaryKey)						assert(!nullable);
 	if (primaryKey || foreignColumn)	assert(type == ID && name.endsWith("ID"));
 	if (name.endsWith("ID"))			assert((type == ID) && (primaryKey || foreignColumn));
+}
+
+/**
+ * Destroys the Column.
+ */
+Column::~Column()
+{
+	qDeleteAll(changeListeners);
 }
 
 
@@ -195,21 +203,21 @@ QString Column::getSqlSpecificationString() const
 
 
 /**
- * Registers the given CompositeColumn as a listener for changes in this column.
+ * Registers the given column change listener for this column.
  * 
- * @param compositeColumn	The CompositeColumn to register as a change listener.
+ * The Column takes ownership of the listener.
+ * 
+ * @param newListener	The change listener to register.
  */
-void Column::registerChangeListener(const CompositeColumn* compositeColumn)
+void Column::registerChangeListener(const ColumnChangeListener* newListener)
 {
-	changeListeners.insert(compositeColumn);
+	changeListeners.insert(newListener);
 }
 
 /**
- * Returns the set of all composite columns registered as change listeners for this column.
- * 
- * @param compositeColumn	The CompositeColumn to unregister as a change listener.
+ * Returns the set of all change listeners registered for this column.
  */
-QSet<const CompositeColumn*> Column::getChangeListeners() const
+QSet<const ColumnChangeListener*> Column::getChangeListeners() const
 {
 	return changeListeners;
 }

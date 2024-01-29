@@ -132,6 +132,7 @@ HEADERS += \
 	src/db/database.h \
 	src/db/db_error.h \
 	src/db/db_upgrade.h \
+	src/db/listeners.h \
 	src/db/normal_table.h \
 	src/db/row_index.h \
 	src/db/table.h \

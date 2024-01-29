@@ -243,4 +243,20 @@ public:
 
 
 
+/**
+ * A column change listener which notifies a CompositeColumn about changes in a base table column.
+ */
+class ColumnChangeListenerCompositeColumn : public ColumnChangeListener {
+	/** The CompositeColumn to notify about column changes. */
+	const CompositeColumn* const listener;
+	
+public:
+	ColumnChangeListenerCompositeColumn(const CompositeColumn* listener);
+	virtual ~ColumnChangeListenerCompositeColumn();
+	
+	virtual void columnDataChanged() const;
+};
+
+
+
 #endif // COMPOSITE_COLUMN_H

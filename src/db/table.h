@@ -32,8 +32,6 @@
 #include <QString>
 #include <QWidget>
 
-class CompositeTable;
-
 typedef QPair<const Column* const, QVariant> ColumnDataPair;
 
 
@@ -47,9 +45,9 @@ class Table : public QAbstractItemModel {
 	/** The columns of this table. */
 	QList<const Column*> columns;
 	
-	/** The composite table which is based on this table and needs to be notified of row changes. */
-	CompositeTable* rowChangeListener;
-
+	/** The row change listener which needs to be notified of row changes. */
+	const RowChangeListener* rowChangeListener;
+	
 public:
 	/** The internal name of the table. */
 	const QString	name;
@@ -93,7 +91,7 @@ public:
 	void printBuffer() const;
 	
 	// Change propagation
-	void setRowChangeListener(CompositeTable* compositeTable);
+	void setRowChangeListener(const RowChangeListener* newListener);
 private:
 	void notifyAllColumns();
 	

@@ -54,7 +54,7 @@ CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTabl
 	name(baseTable->name),
 	uiName(baseTable->uiName)
 {
-	baseTable->setRowChangeListener(this);
+	baseTable->setRowChangeListener(new RowChangeListenerCompositeTable(this));
 }
 
 /**
@@ -82,7 +82,7 @@ void CompositeTable::addColumn(const CompositeColumn* column)
 	// Register as change listener at all underlying columns
 	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(column);
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
 	}
 }
 
@@ -114,7 +114,7 @@ void CompositeTable::addFilterColumn(const CompositeColumn* column)
 	// Register as change listener at all underlying columns
 	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(column);
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
 	}
 }
 
@@ -1056,4 +1056,46 @@ Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable* targ
 ProjectSettings* CompositeTable::getProjectSettings() const
 {
 	return db->projectSettings;
+}
+
+
+
+
+
+/**
+ * Creates a new ColumnChangeListenerCompositeColumn.
+ * 
+ * @param listener	The composite column to notify of changes.
+ */
+RowChangeListenerCompositeTable::RowChangeListenerCompositeTable(CompositeTable* listener) :
+	RowChangeListener(),
+	listener(listener)
+{}
+
+/**
+ * Destroys this ColumnChangeListenerCompositeColumn.
+ */
+RowChangeListenerCompositeTable::~RowChangeListenerCompositeTable()
+{}
+
+
+
+/**
+ * Notifies the listening CompositeTable that a row has been inserted into its base table.
+ *
+ * @param bufferRowIndex	The index in the buffer of the new row.
+ */
+void RowChangeListenerCompositeTable::bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const
+{
+	listener->bufferRowJustInserted(bufferRowIndex);
+}
+
+/**
+ * Notifies the listening CompositeTable that a row is about to be removed from its base table.
+ *
+ * @param bufferRowIndex	The index in the buffer of the row which will be removed.
+ */
+void RowChangeListenerCompositeTable::bufferRowAboutToBeRemoved(const BufferRowIndex& bufferRowIndex) const
+{
+	listener->bufferRowAboutToBeRemoved(bufferRowIndex);
 }

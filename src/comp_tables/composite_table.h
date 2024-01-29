@@ -214,4 +214,21 @@ signals:
 
 
 
+/**
+ * A row change listener which notifies a CompositeTable about row changes in a base table.
+ */
+class RowChangeListenerCompositeTable : public RowChangeListener {
+	/** The CompositeTable to notify about row changes. */
+	CompositeTable* listener;
+	
+public:
+	RowChangeListenerCompositeTable(CompositeTable* listener);
+	virtual ~RowChangeListenerCompositeTable();
+	
+	virtual void bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const;
+	virtual void bufferRowAboutToBeRemoved(const BufferRowIndex& bufferRowIndex) const;
+};
+
+
+
 #endif // COMPOSITE_TABLE_H

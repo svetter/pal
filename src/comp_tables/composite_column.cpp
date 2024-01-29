@@ -820,3 +820,33 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	
 	return ordinals;
 }
+
+
+
+
+
+/**
+ * Creates a ColumnChangeListenerCompositeColumn.
+ * 
+ * @param listener	The CompositeColumn to notify about changes.
+ */
+ColumnChangeListenerCompositeColumn::ColumnChangeListenerCompositeColumn(const CompositeColumn* listener) :
+	ColumnChangeListener(),
+	listener(listener)
+{}
+
+/**
+ * Destroys the ColumnChangeListenerCompositeColumn.
+ */
+ColumnChangeListenerCompositeColumn::~ColumnChangeListenerCompositeColumn()
+{}
+
+
+
+/**
+ * Notifies the listening CompositeColumn that the data in the column has changed.
+ */
+void ColumnChangeListenerCompositeColumn::columnDataChanged() const
+{
+	listener->announceChangedData();
+}

@@ -24,7 +24,6 @@
 #include "table.h"
 
 #include "db_error.h"
-#include "src/comp_tables/composite_table.h"
 
 #include <QSqlQuery>
 
@@ -51,6 +50,7 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
 Table::~Table()
 {
 	qDeleteAll(columns);
+	delete rowChangeListener;
 }
 
 
@@ -317,25 +317,28 @@ void Table::printBuffer() const
 /**
  * Registers the given composite table as the listener for row changes.
  * 
- * @param compositeTable	The composite table to register as the listener for row changes.
+ * The Table takes ownership of the listener.
+ * 
+ * @param newListener	The row change listener to register.
  */
-void Table::setRowChangeListener(CompositeTable* compositeTable)
+void Table::setRowChangeListener(const RowChangeListener* newListener)
 {
-	rowChangeListener = compositeTable;
+	if (rowChangeListener) delete rowChangeListener;
+	rowChangeListener = newListener;
 }
 
 /**
- * Notifies all change listeners of all columns that the data in the columns has changed.
+ * Notifies all column change listeners of all columns that the data in the columns has changed.
  */
 void Table::notifyAllColumns()
 {
 	// Collect change listeners and notify them
-	QSet<const CompositeColumn*> changeListeners = QSet<const CompositeColumn*>();
+	QSet<const ColumnChangeListener*> changeListeners = QSet<const ColumnChangeListener*>();
 	for (const Column* column : columns) {
 		changeListeners.unite(column->getChangeListeners());
 	}
-	for (const CompositeColumn* changeListener : changeListeners) {
-		changeListener->announceChangedData();
+	for (const ColumnChangeListener* changeListener : changeListeners) {
+		changeListener->columnDataChanged();
 	}
 }
 
@@ -411,9 +414,9 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them
-	QSet<const CompositeColumn*> changeListeners = column->getChangeListeners();
-	for (const CompositeColumn* changeListener : changeListeners) {
-		changeListener->announceChangedData();
+	QSet<const ColumnChangeListener*> changeListeners = column->getChangeListeners();
+	for (const ColumnChangeListener* changeListener : changeListeners) {
+		changeListener->columnDataChanged();
 	}
 }
 
