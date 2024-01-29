@@ -62,8 +62,8 @@ class Database {
 	/** The (functionally static) list of tables in any project database. Caution: Contains the project settings table! */
 	QList<Table*> tables;
 	
-	/** A precomputed matrix of breadcrumb connections from any normal table to any table in the project (settings table always excluded). */
-	QMap<const NormalTable*, QMap<const Table*, Breadcrumbs>> breadcrumbMatrix;
+	/** A precomputed matrix of breadcrumb connections from any normal table to any other normal table in the project (settings table always excluded). */
+	QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>> breadcrumbMatrix;
 	
 	/** A pointer to the status bar of the main window, used to display status messages. */
 	QStatusBar* mainWindowStatusBar;
@@ -131,7 +131,7 @@ private:
 	
 	void computeBreadcrumbMatrix();
 public:
-	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const Table* targetTable) const;
+	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* targetTable) const;
 	
 	static QString tr(const QString& string);
 	

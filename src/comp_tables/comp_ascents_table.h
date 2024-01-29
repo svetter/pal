@@ -133,7 +133,7 @@ public:
 		
 		// Filter-only columns
 		rangeIDColumn			(new const ReferenceCompositeColumn		(this,	"rangeID",			tr("Range ID"),				noSuffix,				crumbsTo(db, db->rangesTable),				db->rangesTable->primaryKeyColumn)),
-		hikerIDsColumn			(new const NumericFoldCompositeColumn	(this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	crumbsTo(db, db->participatedTable),		db->participatedTable->hikerIDColumn))
+		hikerIDsColumn			(new const NumericFoldCompositeColumn	(this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	crumbsTo(db, db->hikersTable),				db->participatedTable->hikerIDColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(dateColumn);

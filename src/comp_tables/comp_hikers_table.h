@@ -62,7 +62,7 @@ public:
 		CompositeTable(db, db->hikersTable, tableView),
 		//																		name				uiName					suffix		fold op			[breadcrumbs +] content column
 		nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,					db->hikersTable->nameColumn)),
-		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->participatedTable))),
+		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable))),
 		numTripsColumn			(new const NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		crumbsTo(db, db->tripsTable))),
 		avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
 		maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
