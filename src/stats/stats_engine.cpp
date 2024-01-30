@@ -70,34 +70,21 @@ void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& cha
 
 
 /**
- * Returns a list of translated category names for the x-axis of a histogram.
+ * Returns a list of translated class names for the x-axis of a histogram.
  * 
- * @param increment	The value increment between categories.
- * @param max		The lower bound of the highest category.
- * @param prefix	The prefix for the translated category names (before the number).
- * @param suffix	The suffix for the translated category names (after the number).
- * @return			A list of translated category names.
+ * @param increment	The value increment between classes.
+ * @param max		The lower bound of the highest class.
+ * @param prefix	The prefix for the translated class names (before the number).
+ * @param suffix	The suffix for the translated class names (after the number).
+ * @return			A list of translated class names.
  */
-QStringList StatsEngine::getHistCategories(int increment, int max, QString prefix, QString suffix)
+QStringList StatsEngine::getHistogramClassNames(int increment, int max, QString prefix, QString suffix)
 {
-	QStringList categories = QStringList("&lt;" + QString::number(increment));
+	QStringList classNames = QStringList("&lt;" + QString::number(increment));
 	for (int i = increment; i <= max; i += increment) {
-		categories.append(prefix + QString::number(i) + suffix);
+		classNames.append(prefix + QString::number(i) + suffix);
 	}
-	return categories;
-}
-
-/**
- * Assigns a class or category index to a given value for compiling a histogram.
- * 
- * @param value		The value to classify.
- * @param increment	The value increment between categories.
- * @param max		The lower bound of the highest category.
- * @return			An integer representing the class or category the given value belongs to.
- */
-int StatsEngine::classifyHistValue(int value, int increment, int max)
-{
-	return std::min(value, max) / increment;
+	return classNames;
 }
 
 
@@ -267,14 +254,6 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	itemType(itemType),
 	baseTable(baseTable),
 	statsLayout(statsLayout),
-	peakHeightHistCategoryIncrement	(1000),
-	peakHeightHistCategoryMax		(8848),
-	peakHeightHistCategories		(getHistCategories(peakHeightHistCategoryIncrement, peakHeightHistCategoryMax, "", tr("s"))),
-	numPeakHeightHistCategories		(peakHeightHistCategories.size()),
-	elevGainHistCategoryIncrement	(250),
-	elevGainHistCategoryMax			(1500),
-	elevGainHistCategories			(getHistCategories(elevGainHistCategoryIncrement, elevGainHistCategoryMax, "&ge;", "")),
-	numElevGainHistCategories		(elevGainHistCategories.size()),
 	peakHeightHistChart		(nullptr),
 	elevGainHistChart		(nullptr),
 	heightsScatterChart		(nullptr),
@@ -313,19 +292,34 @@ ItemStatsEngine::~ItemStatsEngine()
  */
 void ItemStatsEngine::setupStatsPanel()
 {
-	peakHeightHistChart	= new HistogramChart(tr("Distribution of peak heights"),	peakHeightHistCategories);
-	elevGainHistChart	= new HistogramChart(tr("Distribution of elevation gains"),	elevGainHistCategories);
-	
-	heightsScatterChart	= new TimeScatterChart(tr("Elevation gains and peak heights over time"));
-	
-	const int n = 10;
-	if (itemType != ItemTypeAscent) {
-		topNumAscentsChart	= new TopNChart(n, tr("Top %1: Most ascents").arg(n));
+	// Peak height histogram
+	{
+		QString chartTitle		= tr("Distribution of peak heights");
+		int classIncrement		= 1000;
+		int classMax			= 8848;
+		QStringList classNames	= getHistogramClassNames(classIncrement, classMax, "", tr("s"));
+		int numClasses			= classNames.size();
+		peakHeightHistChart = new HistogramChart(chartTitle, numClasses, classIncrement, classMax, classNames);
 	}
-	topMaxPeakHeightChart	= new TopNChart(n, tr("Top %1: Highest peak").arg(n));
-	topMaxElevGainChart		= new TopNChart(n, tr("Top %1: Highest single elevation gain").arg(n));
+	
+	{
+		QString chartTitle		= tr("Distribution of elevation gains");
+		int classIncrement		= 250;
+		int classMax			= 1500;
+		QStringList classNames	= getHistogramClassNames(classIncrement, classMax, "&ge;", "");
+		int numClasses			= classNames.size();
+		elevGainHistChart = new HistogramChart(chartTitle, numClasses, classIncrement, classMax, classNames);
+	}
+	
+	heightsScatterChart = new TimeScatterChart(tr("Elevation gains and peak heights over time"));
+	
 	if (itemType != ItemTypeAscent) {
-		topElevGainSumChart	= new TopNChart(n, tr("Top %1: Highest elevation gain sum [km]").arg(n));
+		topNumAscentsChart	= new TopNChart(topN, tr("Top %1: Most ascents").arg(topN));
+	}
+	topMaxPeakHeightChart	= new TopNChart(topN, tr("Top %1: Highest peak").arg(topN));
+	topMaxElevGainChart		= new TopNChart(topN, tr("Top %1: Highest single elevation gain").arg(topN));
+	if (itemType != ItemTypeAscent) {
+		topElevGainSumChart	= new TopNChart(topN, tr("Top %1: Highest elevation gain sum [km]").arg(topN));
 	}
 	
 	heightsScatterChart->getChartView()->setMinimumHeight(250);
@@ -415,10 +409,10 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			if (!peakHeightRaw.isValid()) return -1;
 			
 			const int peakHeight = peakHeightRaw.toInt();
-			return classifyHistValue(peakHeight, peakHeightHistCategoryIncrement, peakHeightHistCategoryMax);
+			return peakHeightHistChart->classifyValue(peakHeight);
 		};
 		
-		updateHistogramChart(peakHeightHistChart, numPeakHeightHistCategories, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
+		updateHistogramChart(peakHeightHistChart, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
 	}
 	
 	
@@ -430,10 +424,10 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			if (!elevGainRaw.isValid()) return -1;
 			
 			const int elevGain = elevGainRaw.toInt();
-			return classifyHistValue(elevGain, elevGainHistCategoryIncrement, elevGainHistCategoryMax);
+			return elevGainHistChart->classifyValue(elevGain);
 		};
 		
-		updateHistogramChart(elevGainHistChart, numElevGainHistCategories, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
+		updateHistogramChart(elevGainHistChart, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
 	}
 	
 	
@@ -590,17 +584,16 @@ QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& c
  * cache.
  * 
  * @param chart								The chart to update.
- * @param numCategories						The number of categories in the histogram.
  * @param targetBufferRows					The buffer rows of the target table which are associated with the relevant base table rows, in other words, the result of breadcruumb evaluation.
  * @param histogramClassFromTargetBufferRow	A function which returns the histogram class index for a given buffer row in the target table.
  * @param cache								The cache to use.
  */
-void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const int numCategories, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const
+void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const
 {
 	assert(chart);
 	assert(histogramClassFromTargetBufferRow);
 	
-	QList<qreal> histogramData = QList<qreal>(numCategories, 0);
+	QList<qreal> histogramData = QList<qreal>(chart->numClasses, 0);
 	qreal maxY = 0;
 	
 	for (const BufferRowIndex& targetBufferRow : targetBufferRows) {

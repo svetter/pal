@@ -49,8 +49,8 @@ protected:
 	
 	static void addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& charts, QList<int> stretchFactors = QList<int>());
 	
-	static QStringList getHistCategories(int increment, int max, QString prefix, QString suffix);
-	static int classifyHistValue(int value, int increment, int max);
+	static QStringList getHistogramClassNames(int increment, int max, QString prefix, QString suffix);
+	static int classifyHistogramValue(int value, int increment, int max);
 };
 
 
@@ -97,25 +97,9 @@ class ItemStatsEngine : public StatsEngine
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
 	
-	// Parameters for peak height histogram
-	/** The value increment between categories in the peak height histogram. */
-	const int peakHeightHistCategoryIncrement;
-	/** The lower bound of the highest category in the peak height histogram. */
-	const int peakHeightHistCategoryMax;
-	/** The translated category names for the peak height histogram. */
-	const QStringList peakHeightHistCategories;
-	/** The number of categories in the peak height histogram. */
-	const int numPeakHeightHistCategories;
-	
-	// Parameters for elevation gain histogram
-	/** The value increment between categories in the elevation gain histogram. */
-	const int elevGainHistCategoryIncrement;
-	/** The lower bound of the highest category in the elevation gain histogram. */
-	const int elevGainHistCategoryMax;
-	/** The translated category names for the elevation gain histogram. */
-	const QStringList elevGainHistCategories;
-	/** The number of categories in the elevation gain histogram. */
-	const int numElevGainHistCategories;
+	// Constants
+	/** The number of items to show in the top N charts. */
+	static inline const int topN = 10;
 	
 	// Charts
 	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
@@ -173,7 +157,7 @@ public:
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
 private:
 	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const;
-	void updateHistogramChart(HistogramChart* const chart, int numCategories, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
+	void updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
 	void updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const;
 	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
 	

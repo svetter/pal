@@ -178,7 +178,7 @@ protected:
 	QValueAxis*	xAxis;
 	/** The y-axis for the chart. */
 	QValueAxis*	yAxis;
-	/** The bar series for the chart. A bar series represents a set of bars, each of which belongs to another category on the x-axis, but all of which share the same label. */
+	/** The bar series for the chart. */
 	QBarSeries*	barSeries;
 	/** The bar set for the chart. A bar set contains one data value for each x-axis category. */
 	QBarSet*	barSet;
@@ -274,17 +274,24 @@ public:
  */
 class HistogramChart : public Chart
 {
-protected:
-	/** The list of translated category names for the x-axis. */
-	const QStringList xAxisCategories;
+public:
+	/** The number of classes in the histogram. */
+	const int numClasses;
+	/** The value increment between classes in the histogram. */
+	const int classIncrement;
+	/** The lower bound of the highest class in the histogram. */
+	const int classMax;
+	/** The list of translated class names for the x-axis. */
+	const QStringList classNames;
 	
+protected:
 	/** The x-axis for the chart. */
 	QBarCategoryAxis*		xAxis;
 	/** The y-axis for the chart. */
 	QValueAxis*				yAxis;
-	/** The bar series for the chart. A bar series represents a set of bars, each of which belongs to another category on the x-axis, but all of which share the same label. */
+	/** The bar series for the chart. */
 	QHorizontalBarSeries*	barSeries;
-	/** The bar set for the chart. A bar set contains one data value for each x-axis category. */
+	/** The bar set for the chart. A bar set contains one data value for each class. */
 	QBarSet*				barSet;
 	
 	// Range data
@@ -292,11 +299,12 @@ protected:
 	qreal maxY;
 	
 public:
-	HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories);
+	HistogramChart(const QString& chartTitle, int numClasses, int classIncrement, int classMax, const QStringList& classNames);
 	virtual ~HistogramChart();
 	
 	virtual void setup() override;
 	virtual void reset() override;
+	int classifyValue(int value) const;
 	void updateData(QList<qreal> histogramData, qreal maxY);
 	virtual void updateView() override;
 };
@@ -320,7 +328,7 @@ protected:
 	QBarCategoryAxis*		xAxis;
 	/** The y-axis for the chart. */
 	QValueAxis*				yAxis;
-	/** The bar series for the chart. A bar series represents a set of bars, each of which belongs to another category on the x-axis, but all of which share the same label. */
+	/** The bar series for the chart. */
 	QHorizontalBarSeries*	barSeries;
 	/** The bar set for the chart. A bar set contains one data value for each x-axis category. */
 	QBarSet*				barSet;

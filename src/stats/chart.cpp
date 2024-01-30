@@ -740,11 +740,17 @@ void TimeScatterChart::resetZoom()
  * Creates a HistogramChart.
  * 
  * @param chartTitle		The title of the chart, to be displayed above it.
- * @param xAxisCategories	The list of translated category names for the x-axis.
+ * @param numClasses		The number of classes in the histogram.
+ * @param classIncrement	The value increment between classes in the histogram.
+ * @param classMax			The lower bound of the highest class in the histogram.
+ * @param classNames		The list of translated class names for the x-axis.
  */
-HistogramChart::HistogramChart(const QString& chartTitle, const QStringList& xAxisCategories) :
+HistogramChart::HistogramChart(const QString& chartTitle, int numClasses, int classIncrement, int classMax, const QStringList& classNames) :
 	Chart(chartTitle),
-	xAxisCategories(xAxisCategories),
+	numClasses		(numClasses),
+	classIncrement	(classIncrement),
+	classMax		(classMax),
+	classNames		(classNames),
 	xAxis		(nullptr),
 	yAxis		(nullptr),
 	barSeries	(nullptr),
@@ -775,7 +781,7 @@ HistogramChart::~HistogramChart()
 void HistogramChart::setup()
 {
 	chart		= createChart(chartTitle);
-	xAxis		= createBarCategoryXAxis(chart, Qt::AlignLeft, xAxisCategories);
+	xAxis		= createBarCategoryXAxis(chart, Qt::AlignLeft, classNames);
 	yAxis		= createValueYAxis(chart, QString(), Qt::AlignBottom);
 	barSeries	= createHorizontalBarSeries(chart, xAxis, yAxis);
 	barSet		= createBarSet(QString(), barSeries);
@@ -796,11 +802,22 @@ void HistogramChart::reset()
 }
 
 /**
+ * Assigns a class index to a given value.
+ * 
+ * @param value	The value to classify.
+ * @return		An integer representing the class the given value belongs to.
+ */
+int HistogramChart::classifyValue(int value) const
+{
+	return std::min(value, classMax) / classIncrement;
+}
+
+/**
  * Replaces the displayed data and stores range information for future view updates.
  * 
  * Performs a view update before replacing the data.
  * 
- * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of classes.
  * @param maxY			The maximum y value in the given data.
  */
 void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
@@ -908,7 +925,7 @@ void TopNChart::reset()
  * 
  * Performs a view update before replacing the data.
  * 
- * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ * @param histogramData	A list of data points to display in the chart. The length of the list must match N.
  */
 void TopNChart::updateData(QStringList labels, QList<qreal> values)
 {
