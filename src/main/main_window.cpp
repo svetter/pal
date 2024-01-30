@@ -226,7 +226,7 @@ void MainWindow::setupTableViews()
 		// Connect selection change listener
 		connect(mapper->tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
 		
-		mapper->compTable->setUpdateImmediately(mapper->tableView == getCurrentTableView());
+		mapper->compTable->setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
 	}
 }
 
