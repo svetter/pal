@@ -903,9 +903,6 @@ void MainWindow::handle_tabChanged()
 		
 		// Set item stats panel action state
 		showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
-		// Reset selection (is not stored anyway but sometimes acts randomly)
-		activeMapper->tableView->clearSelection();
-		handle_tableSelectionChanged();	// Should be triggered by clearing the selection but isn't
 	}
 	else {
 		// Statistics tab is open
