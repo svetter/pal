@@ -261,7 +261,7 @@ public:
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(const QList<const DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY);
+	void updateData(const QList<DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY);
 	virtual void updateView() override;
 	void resetZoom();
 };

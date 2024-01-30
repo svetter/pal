@@ -246,7 +246,7 @@ void GeneralStatsEngine::updateStatsTab()
 	elevGainPerYearChart	->updateData(elevGainPerYearSeries, 	minYear,	maxYear,	elevGainPerYearMaxY);
 	numAscentsPerYearChart	->updateData(numAscentsPerYearSeries,	minYear,	maxYear,	numAscentsPerYearMaxY);
 	
-	QList<const DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
+	const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
 	heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
 }
 
@@ -267,21 +267,32 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	itemType(itemType),
 	baseTable(baseTable),
 	statsLayout(statsLayout),
-	peakHeightHistCategoryIncrement(1000),
-	peakHeightHistCategoryMax(8848),
-	peakHeightHistCategories(getHistCategories(peakHeightHistCategoryIncrement, peakHeightHistCategoryMax, "", tr("s"))),
-	numPeakHeightHistCategories(peakHeightHistCategories.size()),
-	elevGainHistCategoryIncrement(250),
-	elevGainHistCategoryMax(1500),
-	elevGainHistCategories(getHistCategories(elevGainHistCategoryIncrement, elevGainHistCategoryMax, "&ge;", "")),
-	numElevGainHistCategories(elevGainHistCategories.size()),
-	peakHeightHistChart(nullptr),
-	elevGainHistChart(nullptr),
-	heightsScatterChart(nullptr),
-	topTenNumAscentsChart(nullptr),
-	topTenMaxPeakHeightChart(nullptr),
-	topTenMaxElevGainChart(nullptr),
-	topTenElevGainSumChart(nullptr)
+	peakHeightHistCategoryIncrement	(1000),
+	peakHeightHistCategoryMax		(8848),
+	peakHeightHistCategories		(getHistCategories(peakHeightHistCategoryIncrement, peakHeightHistCategoryMax, "", tr("s"))),
+	numPeakHeightHistCategories		(peakHeightHistCategories.size()),
+	elevGainHistCategoryIncrement	(250),
+	elevGainHistCategoryMax			(1500),
+	elevGainHistCategories			(getHistCategories(elevGainHistCategoryIncrement, elevGainHistCategoryMax, "&ge;", "")),
+	numElevGainHistCategories		(elevGainHistCategories.size()),
+	peakHeightHistChart		(nullptr),
+	elevGainHistChart		(nullptr),
+	heightsScatterChart		(nullptr),
+	topNumAscentsChart		(nullptr),
+	topMaxPeakHeightChart	(nullptr),
+	topMaxElevGainChart		(nullptr),
+	topElevGainSumChart		(nullptr),
+	ascentCrumbs	(db->getBreadcrumbsFor(baseTable, db->ascentsTable)),
+	peakCrumbs		(db->getBreadcrumbsFor(baseTable, db->peaksTable)),
+	ascentCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
+	peakCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
+	peakHeightHistCache		(QMap<BufferRowIndex, int>()),
+	elevGainHistCache		(QMap<BufferRowIndex, int>()),
+	heightsScatterCache		(QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>()),
+	topNumAscentsCache		(QMap<BufferRowIndex, qreal>()),
+	topMaxPeakHeightCache	(QMap<BufferRowIndex, qreal>()),
+	topMaxElevGainCache		(QMap<BufferRowIndex, qreal>()),
+	topElevGainSumCache		(QMap<BufferRowIndex, qreal>())
 {
 	assert(statsLayout);
 }
@@ -307,14 +318,14 @@ void ItemStatsEngine::setupStatsPanel()
 	
 	heightsScatterChart	= new TimeScatterChart(tr("Elevation gains and peak heights over time"));
 	
-	int n = 10;
+	const int n = 10;
 	if (itemType != ItemTypeAscent) {
-		topTenNumAscentsChart	= new TopNChart(n, tr("Top %1: Most ascents").arg(n));
+		topNumAscentsChart	= new TopNChart(n, tr("Top %1: Most ascents").arg(n));
 	}
-	topTenMaxPeakHeightChart	= new TopNChart(n, tr("Top %1: Highest peak").arg(n));
-	topTenMaxElevGainChart		= new TopNChart(n, tr("Top %1: Highest single elevation gain").arg(n));
+	topMaxPeakHeightChart	= new TopNChart(n, tr("Top %1: Highest peak").arg(n));
+	topMaxElevGainChart		= new TopNChart(n, tr("Top %1: Highest single elevation gain").arg(n));
 	if (itemType != ItemTypeAscent) {
-		topTenElevGainSumChart	= new TopNChart(n, tr("Top %1: Highest elevation gain sum [km]").arg(n));
+		topElevGainSumChart	= new TopNChart(n, tr("Top %1: Highest elevation gain sum [km]").arg(n));
 	}
 	
 	heightsScatterChart->getChartView()->setMinimumHeight(250);
@@ -323,10 +334,10 @@ void ItemStatsEngine::setupStatsPanel()
 		peakHeightHistChart,
 		elevGainHistChart,
 		heightsScatterChart,
-		itemType != ItemTypeAscent ? topTenNumAscentsChart : nullptr,
-		topTenMaxPeakHeightChart,
-		topTenMaxElevGainChart,
-		itemType != ItemTypeAscent ? topTenElevGainSumChart : nullptr
+		itemType != ItemTypeAscent ? topNumAscentsChart : nullptr,
+		topMaxPeakHeightChart,
+		topMaxElevGainChart,
+		itemType != ItemTypeAscent ? topElevGainSumChart : nullptr
 	});
 }
 
@@ -338,19 +349,41 @@ void ItemStatsEngine::resetStatsPanel()
 	assert(peakHeightHistChart);
 	assert(elevGainHistChart);
 	assert(heightsScatterChart);
-	assert(topTenNumAscentsChart || itemType == ItemTypeAscent);
-	assert(topTenMaxPeakHeightChart);
-	assert(topTenMaxElevGainChart);
-	assert(topTenElevGainSumChart || itemType == ItemTypeAscent);
+	assert((topNumAscentsChart != nullptr) != (itemType == ItemTypeAscent));
+	assert(topMaxPeakHeightChart);
+	assert(topMaxElevGainChart);
+	assert((topElevGainSumChart != nullptr) != (itemType == ItemTypeAscent));
 	
 	peakHeightHistChart->reset();
 	elevGainHistChart->reset();
 	heightsScatterChart->reset();
-	if (topTenNumAscentsChart) topTenNumAscentsChart->reset();
-	topTenMaxPeakHeightChart->reset();
-	topTenMaxElevGainChart->reset();
-	if (topTenElevGainSumChart) topTenElevGainSumChart->reset();
+	if (topNumAscentsChart) topNumAscentsChart->reset();
+	topMaxPeakHeightChart->reset();
+	topMaxElevGainChart->reset();
+	if (topElevGainSumChart) topElevGainSumChart->reset();
 }
+
+
+
+/**
+ * Resets all caches for breadcrumb results and chart data.
+ * 
+ * To be called when the underlying data has changed.
+ */
+void ItemStatsEngine::resetCaches()
+{
+	ascentCrumbsResultCache	.clear();
+	peakCrumbsResultCache	.clear();
+	peakHeightHistCache		.clear();
+	elevGainHistCache		.clear();
+	heightsScatterCache		.clear();
+	topNumAscentsCache		.clear();
+	topMaxPeakHeightCache	.clear();
+	topMaxElevGainCache		.clear();
+	topElevGainSumCache		.clear();
+}
+
+
 
 /**
  * Computes new data for the charts in the statistics panel and updates them.
@@ -362,58 +395,45 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	assert(peakHeightHistChart);
 	assert(elevGainHistChart);
 	assert(heightsScatterChart);
-	assert(topTenNumAscentsChart || itemType == ItemTypeAscent);
-	assert(topTenMaxPeakHeightChart);
-	assert(topTenMaxElevGainChart);
-	assert(topTenElevGainSumChart || itemType == ItemTypeAscent);
+	assert((topNumAscentsChart != nullptr) != (itemType == ItemTypeAscent));
+	assert(topMaxPeakHeightChart);
+	assert(topMaxElevGainChart);
+	assert((topElevGainSumChart != nullptr) != (itemType == ItemTypeAscent));
 	
 	
 	// Collect peak/ascent IDs
 	
-	const Breadcrumbs ascentCrumbs = db->getBreadcrumbsFor(baseTable, db->ascentsTable);
-	const QList<BufferRowIndex> ascentBufferRows = ascentCrumbs.evaluateForStats(selectedBufferRows);
-	
-	const Breadcrumbs peakCrumbs = db->getBreadcrumbsFor(baseTable, db->peaksTable);
-	const QList<BufferRowIndex> peakBufferRows = peakCrumbs.evaluateForStats(selectedBufferRows);
+	QList<BufferRowIndex> ascentBufferRows	= evaluateCrumbsCached(ascentCrumbs,	selectedBufferRows, ascentCrumbsResultCache);
+	QList<BufferRowIndex> peakBufferRows	= evaluateCrumbsCached(peakCrumbs,		selectedBufferRows, peakCrumbsResultCache);
 	
 	
 	// Peak height histogram
 	
 	if (peakHeightHistChart) {
-		QList<qreal> peakHeightHistogram = QList<qreal>(numPeakHeightHistCategories, 0);
-		qreal peakHeightMaxY = 0;
-		
-		for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
+		auto peakHeightClassFromPeakBufferRow = [this](const BufferRowIndex& peakBufferRow) {
 			const QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueAt(peakBufferRow);
-			if (!peakHeightRaw.isValid()) continue;
+			if (!peakHeightRaw.isValid()) return -1;
 			
 			const int peakHeight = peakHeightRaw.toInt();
-			int peakHeightClass = classifyHistValue(peakHeight, peakHeightHistCategoryIncrement, peakHeightHistCategoryMax);
-			qreal newValue = ++peakHeightHistogram[peakHeightClass];
-			if (newValue > peakHeightMaxY) peakHeightMaxY = newValue;
-		}
+			return classifyHistValue(peakHeight, peakHeightHistCategoryIncrement, peakHeightHistCategoryMax);
+		};
 		
-		peakHeightHistChart->updateData(peakHeightHistogram, peakHeightMaxY);
+		updateHistogramChart(peakHeightHistChart, numPeakHeightHistCategories, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
 	}
 	
 	
 	// Elevation gain histogram
 	
 	if (elevGainHistChart) {
-		QList<qreal> elevGainHistogram = QList<qreal>(numElevGainHistCategories, 0);
-		qreal elevGainMaxY = 0;
-		
-		for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
-			QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
-			if (!elevGainRaw.isValid()) continue;
+		auto elevGainClassFromAscentBufferRow = [this](const BufferRowIndex& ascentBufferRow) {
+			const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferRow);
+			if (!elevGainRaw.isValid()) return -1;
 			
-			int elevGain = elevGainRaw.toInt();
-			int elevGainClass = classifyHistValue(elevGain, elevGainHistCategoryIncrement, elevGainHistCategoryMax);
-			qreal newValue = ++elevGainHistogram[elevGainClass];
-			if (newValue > elevGainMaxY) elevGainMaxY = newValue;
-		}
+			const int elevGain = elevGainRaw.toInt();
+			return classifyHistValue(elevGain, elevGainHistCategoryIncrement, elevGainHistCategoryMax);
+		};
 		
-		elevGainHistChart->updateData(elevGainHistogram, elevGainMaxY);
+		updateHistogramChart(elevGainHistChart, numElevGainHistCategories, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
 	}
 	
 	
@@ -422,61 +442,56 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	if (heightsScatterChart) {
 		DateScatterSeries elevGainScatterSeries		= DateScatterSeries(tr("Elevation gains"),	8,	QScatterSeries::MarkerShapeRotatedRectangle);
 		DateScatterSeries peakHeightScatterSeries	= DateScatterSeries(tr("Peak heights"),		8,	QScatterSeries::MarkerShapeTriangle);
-		QDate minDate = QDate();
-		QDate maxDate = QDate();
-		int heightsMaxY = 0;
 		
-		for (const BufferRowIndex& ascentBufferIndex : ascentBufferRows) {
+		auto xyValuesFromTargetBufferRow = [this](const BufferRowIndex& ascentBufferIndex) {
 			QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(ascentBufferIndex);
-			if (!dateRaw.isValid()) continue;
+			if (!dateRaw.isValid()) return QPair<QDateTime, QList<qreal>>();
 			
 			const QDate date = dateRaw.toDate();
-			if (date < minDate || !minDate.isValid()) minDate = date;
-			if (date > maxDate || !maxDate.isValid()) maxDate = date;
-			
 			const QVariant timeRaw = db->ascentsTable->timeColumn->getValueAt(ascentBufferIndex);
 			const QTime time = timeRaw.isValid() ? timeRaw.toTime() : QTime(12, 0);
 			const QDateTime dateTime = QDateTime(date, time);
 			
+			qreal elevGain		= -1;
+			qreal peakHeight	= -1;
+			
 			const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(ascentBufferIndex);
 			if (elevGainRaw.isValid()) {
-				int elevGain = elevGainRaw.toInt();
-				elevGainScatterSeries.data.append({dateTime, elevGain});
-				if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+				elevGain = elevGainRaw.toInt();
 			}
 			
 			const ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(ascentBufferIndex);
 			if (peakID.isValid()) {
-				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+				const QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
 				if (peakHeightRaw.isValid()) {
-					int peakHeight = peakHeightRaw.toInt();
-					peakHeightScatterSeries.data.append({dateTime, peakHeight});
-					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
+					peakHeight = peakHeightRaw.toInt();
 				}
 			}
-		}
+			
+			return QPair<QDateTime, QList<qreal>>(dateTime, {elevGain, peakHeight});
+		};
 		
-		QList<const DateScatterSeries*> series = {&elevGainScatterSeries, &peakHeightScatterSeries};
-		heightsScatterChart->updateData(series, minDate, maxDate, heightsMaxY);
+		QList<DateScatterSeries*> seriesList = {&elevGainScatterSeries, &peakHeightScatterSeries};
+		updateTimeScatterChart(heightsScatterChart, seriesList, ascentBufferRows, xyValuesFromTargetBufferRow, heightsScatterCache);
 	}
 	
 	
-	// Top 10 with most ascents chart
+	// Top N with most ascents chart
 	
-	if (topTenNumAscentsChart) {
+	if (topNumAscentsChart) {
 		assert(itemType != ItemTypeAscent);
 		
 		auto numAscentsFromAscentBufferRows = [](const QList<BufferRowIndex>& ascentBufferRows) {
 			return ascentBufferRows.size();
 		};
 		
-		updateTopNChart(topTenNumAscentsChart, ascentCrumbs, selectedBufferRows, numAscentsFromAscentBufferRows);
+		updateTopNChart(topNumAscentsChart, ascentCrumbs, selectedBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
 	}
 	
 	
-	// Top 10 with highest peaks chart
+	// Top N with highest peaks chart
 	
-	if (topTenMaxPeakHeightChart) {
+	if (topMaxPeakHeightChart) {
 		auto maxPeakHeightFromPeakBufferRows = [this](const QList<BufferRowIndex>& peakBufferRows) {
 			int maxPeakHeight = 0;
 			for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
@@ -489,13 +504,13 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return maxPeakHeight;
 		};
 		
-		updateTopNChart(topTenMaxPeakHeightChart, peakCrumbs, selectedBufferRows, maxPeakHeightFromPeakBufferRows);
+		updateTopNChart(topMaxPeakHeightChart, peakCrumbs, selectedBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
 	}
 	
 	
-	// Top 10 with highest single elevation gain chart
+	// Top N with highest single elevation gain chart
 	
-	if (topTenMaxElevGainChart) {
+	if (topMaxElevGainChart) {
 		auto maxElevGainFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
 			int maxElevGain = 0;
 			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
@@ -508,13 +523,13 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return maxElevGain;
 		};
 		
-		updateTopNChart(topTenMaxElevGainChart, ascentCrumbs, selectedBufferRows, maxElevGainFromAscentBufferRows);
+		updateTopNChart(topMaxElevGainChart, ascentCrumbs, selectedBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
 	}
 	
 	
-	// Top 10 with highest elevation gain sum chart
+	// Top N with highest elevation gain sum chart
 	
-	if (topTenElevGainSumChart) {
+	if (topElevGainSumChart) {
 		assert(itemType != ItemTypeAscent);
 		
 		auto elevGainSumFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
@@ -529,11 +544,152 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return (qreal) elevGainSum / 1000;
 		};
 		
-		updateTopNChart(topTenElevGainSumChart, ascentCrumbs, selectedBufferRows, elevGainSumFromAscentBufferRows);
+		updateTopNChart(topElevGainSumChart, ascentCrumbs, selectedBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
 	}
 }
 
 
+/**
+ * Returns the evaluation of the given breadcrumbs for the given selected buffer rows, using or
+ * updating the given cache.
+ * 
+ * @param crumbs				The breadcrumbs to evaluate.
+ * @param selectedBufferRows	The buffer rows of all items currently selected in the UI table.
+ * @param crumbsResultCache		The cache to use.
+ * @return						The evaluation of the given breadcrumbs for the given selected buffer rows.
+ */
+QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const
+{
+	QList<BufferRowIndex> targetBufferRows = QList<BufferRowIndex>();
+	
+	for (const BufferRowIndex& currentBufferRow : selectedBufferRows) {
+		QList<BufferRowIndex> newTargetBufferRows;
+		
+		// Check cache
+		if (crumbsResultCache.contains(currentBufferRow)) {
+			// Cache hit
+			newTargetBufferRows = crumbsResultCache.value(currentBufferRow);
+		}
+		else {
+			// Cache miss
+			newTargetBufferRows = crumbs.evaluateForStats({currentBufferRow});
+			
+			// Write to cache
+			crumbsResultCache.insert(currentBufferRow, newTargetBufferRows);
+		}
+		
+		targetBufferRows.append(newTargetBufferRows);
+	}
+	
+	return targetBufferRows;
+}
+
+
+/**
+ * Compiles data for an update of a histogram chart and updates it, using or updating the given
+ * cache.
+ * 
+ * @param chart								The chart to update.
+ * @param numCategories						The number of categories in the histogram.
+ * @param targetBufferRows					The buffer rows of the target table which are associated with the relevant base table rows, in other words, the result of breadcruumb evaluation.
+ * @param histogramClassFromTargetBufferRow	A function which returns the histogram class index for a given buffer row in the target table.
+ * @param cache								The cache to use.
+ */
+void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const int numCategories, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const
+{
+	assert(chart);
+	assert(histogramClassFromTargetBufferRow);
+	
+	QList<qreal> histogramData = QList<qreal>(numCategories, 0);
+	qreal maxY = 0;
+	
+	for (const BufferRowIndex& targetBufferRow : targetBufferRows) {
+		int histogramClass;
+		
+		// Check cache
+		if (cache.contains(targetBufferRow)) {
+			// Cache hit
+			histogramClass = cache.value(targetBufferRow);
+		}
+		else {
+			// Cache miss
+			histogramClass = histogramClassFromTargetBufferRow(targetBufferRow);
+			
+			// Write class to cache
+			cache.insert(targetBufferRow, histogramClass);
+		}
+		
+		if (histogramClass < 0) continue;
+		
+		const qreal newClassCount = ++histogramData[histogramClass];
+		if (newClassCount > maxY) maxY = newClassCount;
+	}
+	
+	chart->updateData(histogramData, maxY);
+}
+
+/**
+ * Compiles data for an update of a time scatter chart and updates it, using or updating the given
+ * cache.
+ *
+ * @param chart							The chart to update.
+ * @param allSeries						A prepared list of DateScatterSeries to use for the chart update. It is assumed that the series are empty, but all configuration values are set.
+ * @param targetBufferRows				The buffer rows of the target table which are associated with the relevant base table rows, in other words, the result of breadcruumb evaluation.
+ * @param xyValuesFromTargetBufferRow	A function which returns a date and a list of y values for a given buffer row in the target table.
+ * @param cache							The cache to use.
+ */
+void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const
+{
+	assert(chart);
+	
+	QDate minDate = QDate();
+	QDate maxDate = QDate();
+	int maxY = 0;
+	
+	for (const BufferRowIndex& targetBufferIndex : targetBufferRows) {
+		QDateTime dateTime;
+		QDate date;
+		QList<qreal> yValues = QList<qreal>(allSeries.size(), -1);
+		
+		// Check cache
+		if (cache.contains(targetBufferIndex)) {
+			// Cache hit
+			const QPair<QDateTime, QList<qreal>>& cached = cache.value(targetBufferIndex);
+			dateTime = cached.first;
+			if (!dateTime.isValid()) continue;
+			
+			yValues = cached.second;
+			assert(yValues.size() == allSeries.size());
+		}
+		else {
+			// Cache miss
+			QPair<QDateTime, QList<qreal>> xyValues = xyValuesFromTargetBufferRow(targetBufferIndex);
+			dateTime = xyValues.first;
+			if (!dateTime.isValid()) continue;
+			
+			yValues = xyValues.second;
+			assert(yValues.size() == allSeries.size());
+			
+			// Write to cache
+			cache.insert(targetBufferIndex, {dateTime, yValues});
+		}
+		
+		// Append data and update minima/maxima
+		for (int i = 0; i < allSeries.size(); i++) {
+			const int yValue = yValues.at(i);
+			if (yValue == -1) continue;
+			
+			allSeries[i]->data.append({dateTime, yValue});
+			if (yValue > maxY) maxY = yValue;
+		}
+		
+		date = dateTime.date();
+		if (date < minDate || !minDate.isValid()) minDate = date;
+		if (date > maxDate || !maxDate.isValid()) maxDate = date;
+	}
+	
+	chart->updateData(allSeries, minDate, maxDate, maxY);
+}
 
 /**
  * Compiles data for an update of a top N chart and updates it.
@@ -542,8 +698,9 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
  * @param crumbs					The breadcrumbs leading to the target table containing the data to be compared.
  * @param selectedBufferRows		The buffer rows of all items currently selected in the UI table.
  * @param valueFromTargetBufferRows	A function which returns a chart value for a given list of buffer rows in the target table.
+ * @param cache						The cache to use.
  */
-void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows) const
+void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const
 {
 	assert(chart);
 	assert(valueFromTargetBufferRows);
@@ -552,8 +709,21 @@ void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs&
 	
 	// Find the desired value for every selected buffer row in the start table
 	for (const BufferRowIndex& currentStartBufferIndex : selectedBufferRows) {
-		const QList<BufferRowIndex> currentTargetBufferRows = crumbs.evaluateForStats({currentStartBufferIndex});
-		qreal valueForCurrentStartIndex = valueFromTargetBufferRows(currentTargetBufferRows);
+		qreal valueForCurrentStartIndex;
+		
+		// Check cache
+		if (cache.contains(currentStartBufferIndex)) {
+			// Cache hit
+			valueForCurrentStartIndex = cache.value(currentStartBufferIndex);
+		}
+		else {
+			// Cache miss
+			const QList<BufferRowIndex> currentTargetBufferRows = crumbs.evaluateForStats({currentStartBufferIndex});
+			valueForCurrentStartIndex = valueFromTargetBufferRows(currentTargetBufferRows);
+			
+			// Write to cache
+			cache.insert(currentStartBufferIndex, valueForCurrentStartIndex);
+		}
 		
 		if (valueForCurrentStartIndex <= 0) continue;
 		
@@ -644,4 +814,63 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 	}
 	
 	return result;
+}
+
+
+/**
+ * Returns the set of columns used by this ItemStatsEngine for any of its charts.
+ * 
+ * Result is specific to the item type.
+ * 
+ * @return	The set of columns used by this ItemStatsEngine.
+ */
+QSet<Column* const> ItemStatsEngine::getUsedColumnSet() const
+{
+	QSet<Column* const> underlyingColumns = QSet<Column* const>();
+	
+	underlyingColumns.unite(ascentCrumbs.getColumnSet());
+	underlyingColumns.unite(peakCrumbs.getColumnSet());
+	
+	underlyingColumns.insert(db->ascentsTable->dateColumn);
+	underlyingColumns.insert(db->ascentsTable->timeColumn);
+	underlyingColumns.insert(db->ascentsTable->elevationGainColumn);
+	underlyingColumns.insert(db->ascentsTable->peakIDColumn);
+	underlyingColumns.insert(db->peaksTable->heightColumn);
+	
+	switch (itemType) {
+	case ItemTypeAscent: {
+		underlyingColumns.insert(db->ascentsTable->dateColumn);
+		underlyingColumns.insert(db->ascentsTable->peakIDColumn);
+		underlyingColumns.insert(db->peaksTable->nameColumn);
+		break;
+	}
+	case ItemTypePeak: {
+		underlyingColumns.insert(db->peaksTable->nameColumn);
+		break;
+	}
+	case ItemTypeTrip: {
+		underlyingColumns.insert(db->tripsTable->startDateColumn);
+		underlyingColumns.insert(db->tripsTable->nameColumn);
+		break;
+	}
+	case ItemTypeHiker: {
+		underlyingColumns.insert(db->hikersTable->nameColumn);
+		break;
+	}
+	case ItemTypeRegion: {
+		underlyingColumns.insert(db->regionsTable->nameColumn);
+		break;
+	}
+	case ItemTypeRange: {
+		underlyingColumns.insert(db->rangesTable->nameColumn);
+		break;
+	}
+	case ItemTypeCountry: {
+		underlyingColumns.insert(db->countriesTable->nameColumn);
+		break;
+	}
+	default: assert(false);
+	}
+	
+	return underlyingColumns;
 }
