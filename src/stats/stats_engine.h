@@ -97,6 +97,7 @@ class ItemStatsEngine : public StatsEngine
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
 	
+	// Parameters for peak height histogram
 	/** The value increment between categories in the peak height histogram. */
 	const int peakHeightHistCategoryIncrement;
 	/** The lower bound of the highest category in the peak height histogram. */
@@ -106,6 +107,7 @@ class ItemStatsEngine : public StatsEngine
 	/** The number of categories in the peak height histogram. */
 	const int numPeakHeightHistCategories;
 	
+	// Parameters for elevation gain histogram
 	/** The value increment between categories in the elevation gain histogram. */
 	const int elevGainHistCategoryIncrement;
 	/** The lower bound of the highest category in the elevation gain histogram. */
@@ -115,21 +117,49 @@ class ItemStatsEngine : public StatsEngine
 	/** The number of categories in the elevation gain histogram. */
 	const int numElevGainHistCategories;
 	
+	// Charts
 	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
 	HistogramChart* peakHeightHistChart;
 	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
 	HistogramChart* elevGainHistChart;
 	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
 	TimeScatterChart* heightsScatterChart;
-	
 	/** A chart showing the items with the highest number of ascents. */
-	TopNChart* topTenNumAscentsChart;
+	TopNChart* topNumAscentsChart;
 	/** A chart showing the items with the highest maximum peak heights. */
-	TopNChart* topTenMaxPeakHeightChart;
+	TopNChart* topMaxPeakHeightChart;
 	/** A chart showing the items with the highest maximum elevation gains. */
-	TopNChart* topTenMaxElevGainChart;
+	TopNChart* topMaxElevGainChart;
 	/** A chart showing the items with the highest elevation gain sums. */
-	TopNChart* topTenElevGainSumChart;
+	TopNChart* topElevGainSumChart;
+	
+	// Breadcrumbs
+	/** The crumbs from the base table to the ascent table. */
+	const Breadcrumbs ascentCrumbs;
+	/** The crumbs from the base table to the peak table. */
+	const Breadcrumbs peakCrumbs;
+	
+	// Caching
+	// Breadcrumb caches
+	/** A cache which holds the results of evaluating the ascent crumbs for individual base table buffer rows. */
+	QMap<BufferRowIndex, QList<BufferRowIndex>>	ascentCrumbsResultCache;
+	/** A cache which holds the results of evaluating the peak crumbs for individual base table buffer rows. */
+	QMap<BufferRowIndex, QList<BufferRowIndex>>	peakCrumbsResultCache;
+	// Chart caches
+	/** A cache which holds peak height histogram class values for individual peaks table buffer rows. */
+	QMap<BufferRowIndex, int>								peakHeightHistCache;
+	/** A cache which holds elevation gain histogram class values for individual ascents table buffer rows. */
+	QMap<BufferRowIndex, int>								elevGainHistCache;
+	/** A cache which holds height scatterplot x and y values for individual ascents table buffer rows. */
+	QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>	heightsScatterCache;
+	/** A cache which holds the associated number of ascents for individual base table buffer rows. */
+	QMap<BufferRowIndex, qreal>								topNumAscentsCache;
+	/** A cache which holds the associated maximum peak height for individual base table buffer rows. */
+	QMap<BufferRowIndex, qreal>								topMaxPeakHeightCache;
+	/** A cache which holds the associated maximum elevation gain for individual base table buffer rows. */
+	QMap<BufferRowIndex, qreal>								topMaxElevGainCache;
+	/** A cache which holds the associated elevation gain sum for individual base table buffer rows. */
+	QMap<BufferRowIndex, qreal>								topElevGainSumCache;
 	
 public:
 	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsLayout);
@@ -137,11 +167,18 @@ public:
 	
 	void setupStatsPanel();
 	void resetStatsPanel();
-	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
 	
+	void resetCaches();
+	
+	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
 private:
-	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows) const;
+	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const;
+	void updateHistogramChart(HistogramChart* const chart, int numCategories, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
+	void updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const;
+	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
+	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
+	QSet<Column* const> getUsedColumnSet() const;
 };
 
 

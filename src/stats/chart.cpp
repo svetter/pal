@@ -637,7 +637,7 @@ void TimeScatterChart::reset()
  * @param maxDate	The maximum x-value (date) among all given data series.
  * @param maxY		The maximum y value among all given data series.
  */
-void TimeScatterChart::updateData(const QList<const DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY)
+void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY)
 {
 	bool noData = true;
 	for (const DateScatterSeries* const series : seriesData) {
