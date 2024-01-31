@@ -1289,6 +1289,8 @@
     <addaction name="autoResizeColumnsAction"/>
     <addaction name="resetColumnOrderAction"/>
     <addaction name="restoreHiddenColumnsAction"/>
+    <addaction name="separator"/>
+    <addaction name="clearTableSelectionAction"/>
    </widget>
    <widget class="QMenu" name="newMenu">
     <property name="title">
@@ -1504,6 +1506,14 @@
   <action name="showAllStatsPanelsAction">
    <property name="text">
     <string>Show on all tabs</string>
+   </property>
+  </action>
+  <action name="clearTableSelectionAction">
+   <property name="text">
+    <string>Clear table selection</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Esc</string>
    </property>
   </action>
  </widget>
