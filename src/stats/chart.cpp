@@ -332,11 +332,20 @@ void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int cha
 	qreal rangeMin = minValue == 0 ? 0 : (minValue - rangeBuffer);
 	qreal rangeMax = maxValue == 0 ? 0 : (maxValue + rangeBuffer);
 	
+	// Determine order in which to best set new parameters
+	const bool setRangeFirst = (axis->max() - axis->min()) / interval > (rangeMax - rangeMin) / axis->tickInterval();
+	
+	axis->setMinorTickCount(0);
+	if (setRangeFirst) {
+		axis->setRange(rangeMin, rangeMax);
+	}
 	axis->setTickAnchor(anchor);
 	axis->setTickInterval(interval);
+	if (!setRangeFirst) {
+		// New tick count MUST BE set BEFORE range to avoid huge performance tank when increasing range
+		axis->setRange(rangeMin, rangeMax);
+	}
 	axis->setMinorTickCount(minorCount);
-	// New tick count MUST BE set BEFORE range to avoid huge performance tank when increasing range
-	axis->setRange(rangeMin, rangeMax);
 }
 
 /**
