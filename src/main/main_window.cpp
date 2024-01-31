@@ -172,6 +172,7 @@ void MainWindow::connectUI()
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
+	connect(clearTableSelectionAction,		&QAction::triggered,			this,	&MainWindow::handle_clearTableSelection);
 	// Menu "New"
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		auto newFunction = [this, mapper] () {
@@ -1462,6 +1463,19 @@ void MainWindow::handle_restoreHiddenColumns()
 	}
 	mapper->compTable->markAllColumnsUnhidden();
 	mapper->compTable->updateBothBuffers();
+}
+
+/**
+ * Event handler for the "clear table selection" action in the view menu.
+ * 
+ * Clears the selection of the currently active table.
+ */
+void MainWindow::handle_clearTableSelection()
+{
+	const ItemTypeMapper* const mapper = getActiveMapper();
+	assert(mapper);
+	
+	mapper->tableView->selectionModel()->clearSelection();
 }
 
 

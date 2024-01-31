@@ -164,6 +164,7 @@ private slots:
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
 	void handle_restoreHiddenColumns();
+	void handle_clearTableSelection();
 	// Tools menu action handlers
 	void handle_relocatePhotos();
 	void handle_exportData();
