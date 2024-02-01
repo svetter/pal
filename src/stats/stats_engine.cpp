@@ -273,6 +273,11 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	topElevGainSumCache		(QMap<BufferRowIndex, qreal>())
 {
 	assert(statsLayout);
+	
+	const QSet<Column* const> underlyingColumns = getUsedColumnSet();
+	for (Column* const underlyingColumn : underlyingColumns) {
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerItemStatsEngine(this));
+	}
 }
 
 /**
@@ -862,4 +867,35 @@ QSet<Column* const> ItemStatsEngine::getUsedColumnSet() const
 	}
 	
 	return underlyingColumns;
+}
+
+
+
+
+
+/**
+ * Creates a ColumnChangeListenerColumnChangeListenerItemStatsEngine.
+ *
+ * @param listener	The ColumnChangeListenerItemStatsEngine to notify about changes.
+ */
+ColumnChangeListenerItemStatsEngine::ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener) :
+	ColumnChangeListener(),
+	listener(listener)
+{}
+
+/**
+ * Destroys the ColumnChangeListenerColumnChangeListenerItemStatsEngine.
+ */
+ColumnChangeListenerItemStatsEngine::~ColumnChangeListenerItemStatsEngine()
+{}
+
+
+
+/**
+ * Notifies the listening ColumnChangeListenerItemStatsEngine that the data in the column has
+ * changed.
+ */
+void ColumnChangeListenerItemStatsEngine::columnDataChanged() const
+{
+	listener->resetCaches();
 }

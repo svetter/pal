@@ -167,4 +167,20 @@ private:
 
 
 
+/**
+ * A column change listener which notifies a ItemStatsEngine about changes in an underlying column.
+ */
+class ColumnChangeListenerItemStatsEngine : public ColumnChangeListener {
+	/** The ColumnChangeListenerItemStatsEngine to notify about column changes. */
+	ItemStatsEngine* const listener;
+	
+public:
+	ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener);
+	virtual ~ColumnChangeListenerItemStatsEngine();
+	
+	virtual void columnDataChanged() const;
+};
+
+
+
 #endif // STATS_ENGINE_H
