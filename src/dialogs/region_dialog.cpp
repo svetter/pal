@@ -245,11 +245,13 @@ BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, Database* db)
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the region to edit in the database's region table buffer.
+ * @return					True if any changes were made, false otherwise.
  */
-void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Region* originalRegion = db->getRegionAt(bufferRowIndex);
-	openRegionDialogAndStore(parent, db, editItem, originalRegion);
+	BufferRowIndex editedIndex = openRegionDialogAndStore(parent, db, editItem, originalRegion);
+	return editedIndex.isValid();
 }
 
 /**
@@ -258,10 +260,11 @@ void openEditRegionDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the regions to delete in the database's region table buffer.
+ * @return					True if any items were deleted, false otherwise.
  */
-void openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	if (bufferRowIndices.isEmpty()) return;
+	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> regionIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -274,10 +277,11 @@ void openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
 		bool plural = regionIDs.size() > 1;
 		QString windowTitle = plural ? RegionDialog::tr("Delete regions") : RegionDialog::tr("Delete region");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-		if (!proceed) return;
+		if (!proceed) return false;
 	}
 
 	db->removeRows(parent, db->regionsTable, regionIDs);
+	return true;
 }
 
 
@@ -289,7 +293,7 @@ void openDeleteRegionsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalRegion	The region data to initialize the dialog with and store as initial data. Region takes ownership of this pointer.
- * @return					The index of the new region in the database's region table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ * @return					The index of the new region in the database's region table buffer, or existing index of edited region. Invalid if the dialog was cancelled.
  */
 static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Region* originalRegion)
 {
@@ -310,6 +314,9 @@ static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, Di
 			break;
 		case editItem:
 			db->regionsTable->updateRow(parent, FORCE_VALID(originalRegion->regionID), extractedRegion);
+			
+			// Set result to existing buffer row to signal that changes were made
+			newRegionIndex = db->regionsTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedRegion->regionID));
 			break;
 		default:
 			assert(false);

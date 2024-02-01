@@ -106,9 +106,9 @@ public:
 	/** The method opening the dialog for duplicating an item of this type. */
 	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex);
 	/** The method opening the dialog for editing an item of this type. */
-	void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex);
+	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex);
 	/** The method opening the dialog for deleting an item of this type. */
-	void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>);
+	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>);
 	
 	
 private:
@@ -165,8 +165,8 @@ public:
 		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
 		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, Database*),
 		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, Database*, BufferRowIndex),
-		void			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
-		void			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>)
+		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, Database*, BufferRowIndex),
+		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, Database*, QSet<BufferRowIndex>)
 	) :
 		type									(type),
 		name									(name),

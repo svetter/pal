@@ -63,8 +63,8 @@ private:
 
 
 BufferRowIndex	openNewHikerDialogAndStore			(QWidget* parent, Database* db);
-void			openEditHikerDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteHikersDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openEditHikerDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+bool			openDeleteHikersDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

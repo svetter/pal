@@ -614,11 +614,13 @@ BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, 
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
+ * @return					True if any changes were made, false otherwise.
  */
-void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
-	openAscentDialogAndStore(parent, db, editItem, originalAscent);
+	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, db, editItem, originalAscent);
+	return editedIndex.isValid();
 }
 
 /**
@@ -627,10 +629,11 @@ void openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
+ * @return					True if any items were deleted, false otherwise.
  */
-void openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	if (bufferRowIndices.isEmpty()) return;
+	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -643,10 +646,11 @@ void openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
 		bool plural = ascentIDs.size() > 1;
 		QString windowTitle = plural ? AscentDialog::tr("Delete ascents") : AscentDialog::tr("Delete ascent");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-		if (!proceed) return;
+		if (!proceed) return false;
 	}
 	
 	db->removeRows(parent, db->ascentsTable, ascentIDs);
+	return true;
 }
 
 
@@ -658,7 +662,7 @@ void openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
- * @return					The index of the new ascent in the database's ascent table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
  */
 static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
 {
@@ -689,6 +693,9 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 			if (originalAscent->photos != extractedAscent->photos) {
 				db->photosTable->updateRows(parent, extractedAscent);
 			}
+			
+			// Set result to existing buffer row to signal that changes were made
+			newAscentIndex = db->ascentsTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedAscent->ascentID));
 			break;
 		default:
 			assert(false);

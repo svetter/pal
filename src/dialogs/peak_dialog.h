@@ -70,8 +70,8 @@ private:
 
 BufferRowIndex	openNewPeakDialogAndStore		(QWidget* parent, Database* db);
 BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openEditPeakDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeletePeaksDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openEditPeakDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+bool			openDeletePeaksDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

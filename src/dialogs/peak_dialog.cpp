@@ -272,11 +272,13 @@ BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, Bu
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
+ * @return					True if any changes were made, false otherwise.
  */
-void openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
-	openPeakDialogAndStore(parent, db, editItem, originalPeak);
+	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, db, editItem, originalPeak);
+	return editedIndex.isValid();
 }
 
 /**
@@ -285,10 +287,11 @@ void openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
+ * @return					True if any items were deleted, false otherwise.
  */
-void openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	if (bufferRowIndices.isEmpty()) return;
+	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -301,10 +304,11 @@ void openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferR
 		bool plural = peakIDs.size() > 1;
 		QString windowTitle = plural ? PeakDialog::tr("Delete peaks") : PeakDialog::tr("Delete peak");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-		if (!proceed) return;
+		if (!proceed) return false;
 	}
 
 	db->removeRows(parent, db->peaksTable, peakIDs);
+	return true;
 }
 
 
@@ -316,7 +320,7 @@ void openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferR
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
- * @return				The index of the new peak in the database's peak table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
 static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak)
 {
@@ -337,6 +341,9 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 			break;
 		case editItem:
 			db->peaksTable->updateRow(parent, FORCE_VALID(originalPeak->peakID), extractedPeak);
+			
+			// Set result to existing buffer row to signal that changes were made
+			newPeakIndex = db->peaksTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedPeak->peakID));
 			break;
 		default:
 			assert(false);

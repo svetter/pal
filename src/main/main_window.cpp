@@ -767,7 +767,8 @@ void MainWindow::editItem(const ItemTypeMapper* const mapper, const QModelIndex&
 {
 	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
 	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	mapper->openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	bool changesMade = mapper->openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	if (!changesMade) return;
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
 	setStatusLine(tr("Saved changes in %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
@@ -794,7 +795,8 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
 	}
 	
-	mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
+	bool deleted = mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
+	if (!deleted) return;
 	
 	if (minViewIndex.get() >= mapper->compTable->rowCount()) {
 		minViewIndex = ViewRowIndex(mapper->compTable->rowCount());
