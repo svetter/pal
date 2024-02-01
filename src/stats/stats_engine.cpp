@@ -183,15 +183,14 @@ void GeneralStatsEngine::updateStatsTab()
 	int heightsMaxY = 0;
 	
 	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db->ascentsTable->getNumberOfRows()); bufferIndex++) {
-		const QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
-		if (!dateRaw.isValid()) continue;
+		const QDate date = db->ascentsTable->dateColumn->getValueAt(bufferIndex).toDate();
+		if (!date.isValid()) continue;
 		
-		const QDate date = dateRaw.toDate();
 		if (date < minDate || !minDate.isValid()) minDate = date;
 		if (date > maxDate || !maxDate.isValid()) maxDate = date;
 		
-		const QVariant timeRaw = db->ascentsTable->timeColumn->getValueAt(bufferIndex);
-		const QTime time = timeRaw.isValid() ? timeRaw.toTime() : QTime(12, 0);
+		QTime time = db->ascentsTable->timeColumn->getValueAt(bufferIndex).toTime();
+		if (!time.isValid()) time = QTime(12, 0);
 		const QDateTime dateTime = QDateTime(date, time);
 		
 		const int year = date.year();
@@ -438,12 +437,11 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 		DateScatterSeries peakHeightScatterSeries	= DateScatterSeries(tr("Peak heights"),		8,	QScatterSeries::MarkerShapeTriangle);
 		
 		auto xyValuesFromTargetBufferRow = [this](const BufferRowIndex& ascentBufferIndex) {
-			QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(ascentBufferIndex);
-			if (!dateRaw.isValid()) return QPair<QDateTime, QList<qreal>>();
+			const QDate date = db->ascentsTable->dateColumn->getValueAt(ascentBufferIndex).toDate();
+			if (!date.isValid()) return QPair<QDateTime, QList<qreal>>();
 			
-			const QDate date = dateRaw.toDate();
-			const QVariant timeRaw = db->ascentsTable->timeColumn->getValueAt(ascentBufferIndex);
-			const QTime time = timeRaw.isValid() ? timeRaw.toTime() : QTime(12, 0);
+			QTime time = db->ascentsTable->timeColumn->getValueAt(ascentBufferIndex).toTime();
+			if (!time.isValid()) time = QTime(12, 0);
 			const QDateTime dateTime = QDateTime(date, time);
 			
 			qreal elevGain		= -1;
@@ -754,9 +752,8 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 	
 	switch (itemType) {
 	case ItemTypeAscent: {
-		QVariant dateRaw = db->ascentsTable->dateColumn->getValueAt(bufferIndex);
-		if (dateRaw.isValid()) {
-			QDate date = dateRaw.toDate();
+		const QDate date = db->ascentsTable->dateColumn->getValueAt(bufferIndex).toDate();
+		if (date.isValid()) {
 			result = date.toString("yyyy-MM-dd");
 		}
 		QString peakName = QString();
@@ -775,9 +772,8 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 		break;
 	}
 	case ItemTypeTrip: {
-		QVariant startDateRaw = db->tripsTable->startDateColumn->getValueAt(bufferIndex);
-		if (startDateRaw.isValid()) {
-			QDate startDate = startDateRaw.toDate();
+		const QDate startDate = db->tripsTable->startDateColumn->getValueAt(bufferIndex).toDate();
+		if (startDate.isValid()) {
 			result = startDate.toString("yyyy-MM");
 		}
 		QString tripName = db->tripsTable->nameColumn->getValueAt(bufferIndex).toString();
