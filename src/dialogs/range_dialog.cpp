@@ -194,11 +194,13 @@ BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, Database* db)
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the range to edit in the database's range table buffer.
+ * @return					True if any changes were made, false otherwise.
  */
-void openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Range* originalRange = db->getRangeAt(bufferRowIndex);
-	openRangeDialogAndStore(parent, db, editItem, originalRange);
+	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, db, editItem, originalRange);
+	return editedIndex.isValid();
 }
 
 /**
@@ -207,10 +209,11 @@ void openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
  * @param parent			The parent window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
+ * @return					True if any items were deleted, false otherwise.
  */
-void openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
-	if (bufferRowIndices.isEmpty()) return;
+	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
@@ -223,10 +226,11 @@ void openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
 		bool plural = rangeIDs.size() > 1;
 		QString windowTitle = plural ? RangeDialog::tr("Delete mountain ranges") : RangeDialog::tr("Delete mountain range");
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
-		if (!proceed) return;
+		if (!proceed) return false;
 	}
 
 	db->removeRows(parent, db->rangesTable, rangeIDs);
+	return true;
 }
 
 
@@ -238,7 +242,7 @@ void openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
- * @return				The index of the new range in the database's range table buffer. Invalid if the dialog was canceled or the purpose was editItem.
+ * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
  */
 static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange)
 {
@@ -259,6 +263,9 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 			break;
 		case editItem:
 			db->rangesTable->updateRow(parent, FORCE_VALID(originalRange->rangeID), extractedRange);
+			
+			// Set result to existing buffer row to signal that changes were made
+			newRangeIndex = db->rangesTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedRange->rangeID));
 			break;
 		default:
 			assert(false);

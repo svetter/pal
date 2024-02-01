@@ -41,8 +41,7 @@
 Database::Database() :
 	databaseLoaded(false),
 	tables(QList<Table*>()),
-	breadcrumbMatrix(QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>>()),
-	mainWindowStatusBar(nullptr)
+	breadcrumbMatrix(QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>>())
 {
 	tripsTable			= new TripsTable();
 	hikersTable			= new HikersTable();

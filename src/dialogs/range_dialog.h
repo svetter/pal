@@ -63,8 +63,8 @@ private:
 
 
 BufferRowIndex	openNewRangeDialogAndStore			(QWidget* parent, Database* db);
-void			openEditRangeDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteRangesDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openEditRangeDialogAndStore			(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+bool			openDeleteRangesDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

@@ -66,8 +66,8 @@ private:
 
 
 BufferRowIndex	openNewTripDialogAndStore		(QWidget* parent, Database* db);
-void			openEditTripDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-void			openDeleteTripsDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openEditTripDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
+bool			openDeleteTripsDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
 
 
 

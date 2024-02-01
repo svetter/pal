@@ -43,7 +43,6 @@
 #include "src/db/tables/trips_table.h"
 #include "src/settings/project_settings.h"
 
-#include <QStatusBar>
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -64,9 +63,6 @@ class Database {
 	
 	/** A precomputed matrix of breadcrumb connections from any normal table to any other normal table in the project (settings table always excluded). */
 	QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>> breadcrumbMatrix;
-	
-	/** A pointer to the status bar of the main window, used to display status messages. */
-	QStatusBar* mainWindowStatusBar;
 	
 public:
 	/** The ascents table. */
