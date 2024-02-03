@@ -151,7 +151,6 @@ public:
 	
 	void setupStatsPanel();
 	void resetStatsPanel();
-	
 	void resetCaches();
 	
 	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);

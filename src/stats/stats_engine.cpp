@@ -344,14 +344,6 @@ void ItemStatsEngine::setupStatsPanel()
  */
 void ItemStatsEngine::resetStatsPanel()
 {
-	assert(peakHeightHistChart);
-	assert(elevGainHistChart);
-	assert(heightsScatterChart);
-	assert((topNumAscentsChart != nullptr) != (itemType == ItemTypeAscent));
-	assert(topMaxPeakHeightChart);
-	assert(topMaxElevGainChart);
-	assert((topElevGainSumChart != nullptr) != (itemType == ItemTypeAscent));
-	
 	peakHeightHistChart->reset();
 	elevGainHistChart->reset();
 	heightsScatterChart->reset();
@@ -359,9 +351,9 @@ void ItemStatsEngine::resetStatsPanel()
 	topMaxPeakHeightChart->reset();
 	topMaxElevGainChart->reset();
 	if (topElevGainSumChart) topElevGainSumChart->reset();
+	
+	resetCaches();
 }
-
-
 
 /**
  * Resets all caches for breadcrumb results and chart data.
