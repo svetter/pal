@@ -195,16 +195,22 @@ SizeResponsiveChartView* Chart::createChartView(QChart* chart, int minimumHeight
 /**
  * Creates and initializes a QBarSeries object.
  * 
- * Initialization entails adding the series to the given chart and attaching the given axes.
+ * Initialization entails setting label visibility, adding the series to the given chart and
+ * attaching the given axes.
  * 
- * @param chart	The chart to display in the chart view.
- * @param xAxis	The chart's x-axis.
- * @param yAxis	The chart's y-axis.
- * @return		An initialized QHorizontalBarSeries object, of which the caller takes ownership.
+ * @param chart				The chart to display in the chart view.
+ * @param xAxis				The chart's x-axis.
+ * @param yAxis				The chart's y-axis.
+ * @param showValueLabels	Whether to show labels stating the value of each bar.
+ * @return					An initialized QHorizontalBarSeries object, of which the caller takes ownership.
  */
-QBarSeries* Chart::createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis)
+QBarSeries* Chart::createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels)
 {
 	QBarSeries* series = new QBarSeries();
+	series->setLabelsVisible(showValueLabels);
+	series->setLabelsPosition(QAbstractBarSeries::LabelsInsideEnd);
+	series->setLabelsAngle(-90);
+	series->setLabelsPrecision(4);
 	chart->addSeries(series);
 	series->attachAxis(xAxis);
 	series->attachAxis(yAxis);
@@ -214,16 +220,20 @@ QBarSeries* Chart::createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstrac
 /**
  * Creates and initializes a QHorizontalBarSeries object.
  * 
- * Initialization entails adding the series to the given chart and attaching the given axes.
+ * Initialization entails setting label visibility, adding the series to the given chart and
+ * attaching the given axes.
  * 
- * @param chart	The chart to display in the chart view.
- * @param xAxis	The chart's x-axis.
- * @param yAxis	The chart's y-axis.
- * @return		An initialized QHorizontalBarSeries object, of which the caller takes ownership.
+ * @param chart				The chart to display in the chart view.
+ * @param xAxis				The chart's x-axis.
+ * @param yAxis				The chart's y-axis.
+ * @param showValueLabels	Whether to show labels stating the value of each bar.
+ * @return					An initialized QHorizontalBarSeries object, of which the caller takes ownership.
  */
-QHorizontalBarSeries* Chart::createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis)
+QHorizontalBarSeries* Chart::createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels)
 {
 	QHorizontalBarSeries* series = new QHorizontalBarSeries();
+	series->setLabelsVisible(showValueLabels);
+	series->setLabelsPosition(QAbstractBarSeries::LabelsInsideEnd);
 	chart->addSeries(series);
 	series->attachAxis(xAxis);
 	series->attachAxis(yAxis);

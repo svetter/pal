@@ -147,8 +147,8 @@ protected:
 	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
 	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
 	
-	static QBarSeries* createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
-	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis);
+	static QBarSeries* createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
+	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
 	static QBarSet* createBarSet(const QString& name, QAbstractBarSeries* series);
 	
 	// Update helpers
