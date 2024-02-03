@@ -23,6 +23,8 @@
 
 #include "settings.h"
 
+#include <QScreen>
+
 
 
 /**
@@ -97,7 +99,7 @@ void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* 
 {
 	QRect absoluteGeometry = dialog->geometry();
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		absoluteGeometry.adjust(- parent->x(), - parent->y(), 0, 0);
+		absoluteGeometry.translate(-parent->pos());
 	}
 	geometrySetting->set(absoluteGeometry);
 }
@@ -117,7 +119,23 @@ void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect
 	if (savedGeometry.isEmpty()) return;
 	
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		savedGeometry.adjust(parent->x(), parent->y(), 0, 0);
+		savedGeometry.translate(parent->pos());
+		
+		// Change size if bigger than screen
+		const QScreen* screen = QGuiApplication::screenAt(savedGeometry.center());
+		if (!screen) screen = parent->screen();
+		assert(screen);
+		QRect screenGeometry = screen->availableGeometry();
+		const int frameTopHeight = 30;	// Extra space for window top bar
+		screenGeometry.setTop(screenGeometry.top() + frameTopHeight);
+		if (savedGeometry.width () > screenGeometry.width ())	savedGeometry.setWidth  (screenGeometry.width ());
+		if (savedGeometry.height() > screenGeometry.height())	savedGeometry.setHeight (screenGeometry.height());
+		
+		// Move if (partly) out of bounds
+		if (savedGeometry.left  () < screenGeometry.left  ())	savedGeometry.moveLeft  (screenGeometry.left  ());
+		if (savedGeometry.right () > screenGeometry.right ())	savedGeometry.moveRight (screenGeometry.right ());
+		if (savedGeometry.top   () < screenGeometry.top   ())	savedGeometry.moveTop   (screenGeometry.top   ());
+		if (savedGeometry.bottom() > screenGeometry.bottom())	savedGeometry.moveBottom(screenGeometry.bottom());
 	}
 	
 	dialog->setGeometry(savedGeometry);
