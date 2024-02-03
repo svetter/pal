@@ -757,18 +757,15 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 	
 	switch (itemType) {
 	case ItemTypeAscent: {
-		const QDate date = db->ascentsTable->dateColumn->getValueAt(bufferIndex).toDate();
-		if (date.isValid()) {
-			result = date.toString("yyyy-MM-dd");
-		}
-		QString peakName = QString();
 		ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
 		if (peakID.isValid()) {
-			peakName = db->peaksTable->nameColumn->getValueFor(FORCE_VALID(peakID)).toString();
+			result = db->peaksTable->nameColumn->getValueFor(FORCE_VALID(peakID)).toString();
 		}
-		if (!peakName.isEmpty()) {
-			if (!result.isEmpty()) result.append(" ");
-			result.append(peakName);
+		if (result.isEmpty()) {
+			const QDate date = db->ascentsTable->dateColumn->getValueAt(bufferIndex).toDate();
+			if (date.isValid()) {
+				result = date.toString("yyyy-MM-dd");
+			}
 		}
 		break;
 	}
@@ -833,8 +830,6 @@ QSet<Column* const> ItemStatsEngine::getUsedColumnSet() const
 	
 	switch (itemType) {
 	case ItemTypeAscent: {
-		underlyingColumns.insert(db->ascentsTable->dateColumn);
-		underlyingColumns.insert(db->ascentsTable->peakIDColumn);
 		underlyingColumns.insert(db->peaksTable->nameColumn);
 		break;
 	}
