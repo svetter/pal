@@ -40,12 +40,24 @@ class StatsEngine : protected QObject
 {
 	Q_OBJECT
 	
+	/** Whether the statistics are currently visible to the user and thus need to be kept up to date. */
+	bool currentlyVisible;
+	
 protected:
 	/** The database. */
-	Database* const db;
+	const Database* const db;
 	
 	StatsEngine(Database* db);
 	virtual ~StatsEngine();
+	
+public:
+	void setCurrentlyVisible(bool visible);
+	bool isCurrentlyVisible();
+protected:
+	/**
+	 * Regenerates all charts from scratch or from (partial) caches.
+	 */
+	virtual void updateCharts() = 0;
 	
 	static void addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& charts, QList<int> stretchFactors = QList<int>());
 	
@@ -66,11 +78,15 @@ class GeneralStatsEngine : public StatsEngine
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
 	/** A chart showing the elevation gain sum for each year since the first ascent. */
-	YearBarChart* elevGainPerYearChart;
+	YearBarChart*		elevGainPerYearChart;
 	/** A chart showing the number of ascents in each year since the first ascent. */
-	YearBarChart* numAscentsPerYearChart;
+	YearBarChart*		numAscentsPerYearChart;
 	/** A chart showing elevation gain and peak height for every logged ascent. */
-	TimeScatterChart* heightsScatterChart;
+	TimeScatterChart*	heightsScatterChart;
+	
+	// Charts state
+	/** Whether the charts are currently dirty and need to be updated before being shown. */
+	bool dirty;
 	
 public:
 	GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr);
@@ -78,7 +94,11 @@ public:
 	
 	void setupStatsTab();
 	void resetStatsTab();
-	void updateStatsTab();
+	
+	virtual void updateCharts();
+	
+protected:
+	QSet<Column* const> getUsedColumnSet() const;
 };
 
 
@@ -101,27 +121,33 @@ class ItemStatsEngine : public StatsEngine
 	/** The number of items to show in the top N charts. */
 	static inline const int topN = 10;
 	
-	// Charts
-	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
-	HistogramChart* peakHeightHistChart;
-	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
-	HistogramChart* elevGainHistChart;
-	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
-	TimeScatterChart* heightsScatterChart;
-	/** A chart showing the items with the highest number of ascents. */
-	TopNChart* topNumAscentsChart;
-	/** A chart showing the items with the highest maximum peak heights. */
-	TopNChart* topMaxPeakHeightChart;
-	/** A chart showing the items with the highest maximum elevation gains. */
-	TopNChart* topMaxElevGainChart;
-	/** A chart showing the items with the highest elevation gain sums. */
-	TopNChart* topElevGainSumChart;
-	
 	// Breadcrumbs
 	/** The crumbs from the base table to the ascent table. */
 	const Breadcrumbs ascentCrumbs;
 	/** The crumbs from the base table to the peak table. */
 	const Breadcrumbs peakCrumbs;
+	
+	// Charts
+	/** A chart showing the distribution of peak heights for the selected items as a histogram. */
+	HistogramChart*		peakHeightHistChart;
+	/** A chart showing the distribution of elevation gains for the selected items as a histogram. */
+	HistogramChart*		elevGainHistChart;
+	/** A chart showing the peak heights and elevation gains for the selected items as a scatterplot. */
+	TimeScatterChart*	heightsScatterChart;
+	/** A chart showing the items with the highest number of ascents. */
+	TopNChart*			topNumAscentsChart;
+	/** A chart showing the items with the highest maximum peak heights. */
+	TopNChart*			topMaxPeakHeightChart;
+	/** A chart showing the items with the highest maximum elevation gains. */
+	TopNChart*			topMaxElevGainChart;
+	/** A chart showing the items with the highest elevation gain sums. */
+	TopNChart*			topElevGainSumChart;
+	
+	// Charts source data & state
+	/** The current set of buffer rows to build statistics for. */
+	QSet<BufferRowIndex> currentStartBufferRows;
+	/** Whether the charts are currently dirty and need to be updated before being shown. */
+	bool dirty;
 	
 	// Caching
 	// Breadcrumb caches
@@ -151,9 +177,11 @@ public:
 	
 	void setupStatsPanel();
 	void resetStatsPanel();
-	void resetCaches();
+	void resetCachesAndMarkDirty();
 	
-	void updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows);
+	void setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows);
+	virtual void updateCharts();
+	
 private:
 	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const;
 	void updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
@@ -161,7 +189,25 @@ private:
 	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
 	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
+protected:
 	QSet<Column* const> getUsedColumnSet() const;
+};
+
+
+
+/**
+ * A column change listener which notifies a GeneralStatsEngine about changes in an underlying
+ * column.
+ */
+class ColumnChangeListenerGeneralStatsEngine : public ColumnChangeListener {
+	/** The ColumnChangeListenerGeneralStatsEngine to notify about column changes. */
+	GeneralStatsEngine* const listener;
+	
+public:
+	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener);
+	virtual ~ColumnChangeListenerGeneralStatsEngine();
+	
+	virtual void columnDataChanged() const;
 };
 
 

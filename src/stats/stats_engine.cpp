@@ -31,6 +31,7 @@
  * @param db	The database.
  */
 StatsEngine::StatsEngine(Database* db) :
+	currentlyVisible(false),
 	db(db)
 {}
 
@@ -39,6 +40,33 @@ StatsEngine::StatsEngine(Database* db) :
  */
 StatsEngine::~StatsEngine()
 {}
+
+
+
+/**
+ * Sets the visibility flag and triggers an update via updateCharts() if the statistics tab is now
+ * visible.
+ * 
+ * @param visible	Whether the charts are currently visible.
+ */
+void StatsEngine::setCurrentlyVisible(bool visible)
+{
+	currentlyVisible = visible;
+	
+	if (currentlyVisible) {
+		updateCharts();
+	}
+}
+
+/**
+ * Indicates whether the charts are currently visible.
+ * 
+ * @return	Whether the charts are currently visible.
+ */
+bool StatsEngine::isCurrentlyVisible()
+{
+	return currentlyVisible;
+}
 
 
 
@@ -102,9 +130,16 @@ GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statist
 	statisticsTabLayoutPtr(statisticsTabLayoutPtr),
 	elevGainPerYearChart(nullptr),
 	numAscentsPerYearChart(nullptr),
-	heightsScatterChart(nullptr)
+	heightsScatterChart(nullptr),
+	dirty(true)
 {
 	assert(statisticsTabLayoutPtr);
+	
+	// Create and register change listeners
+	const QSet<Column* const> underlyingColumns = getUsedColumnSet();
+	for (Column* const underlyingColumn : underlyingColumns) {
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerGeneralStatsEngine(this));
+	}
 }
 
 /**
@@ -157,13 +192,18 @@ void GeneralStatsEngine::resetStatsTab()
 	elevGainPerYearChart	->reset();
 	numAscentsPerYearChart	->reset();
 	heightsScatterChart		->reset();
+	
+	setCurrentlyVisible(false);
+	dirty = true;
 }
 
 /**
- * Computes new data for the charts in the statistics tab and updates them.
+ * Regenerates all charts from scratch if the dirty flag is set.
  */
-void GeneralStatsEngine::updateStatsTab()
+void GeneralStatsEngine::updateCharts()
 {
+	if (!dirty) return;
+
 	assert(elevGainPerYearChart);
 	assert(numAscentsPerYearChart);
 	assert(heightsScatterChart);
@@ -234,6 +274,29 @@ void GeneralStatsEngine::updateStatsTab()
 	
 	const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
 	heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
+
+	// Done, charts no longer dirty
+	dirty = false;
+}
+
+
+
+/**
+ * Returns the set of columns used by this GeneralStatsEngine for any of its charts.
+ * 
+ * @return	The set of columns used by this GeneralStatsEngine.
+ */
+QSet<Column* const> GeneralStatsEngine::getUsedColumnSet() const
+{
+	QSet<Column* const> underlyingColumns = QSet<Column* const>();
+	
+	underlyingColumns.insert(db->ascentsTable->dateColumn);
+	underlyingColumns.insert(db->ascentsTable->timeColumn);
+	underlyingColumns.insert(db->ascentsTable->elevationGainColumn);
+	underlyingColumns.insert(db->ascentsTable->peakIDColumn);
+	underlyingColumns.insert(db->peaksTable->heightColumn);
+	
+	return underlyingColumns;
 }
 
 
@@ -250,9 +313,11 @@ void GeneralStatsEngine::updateStatsTab()
  */
 ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsLayout) :
 	StatsEngine(db),
-	itemType(itemType),
-	baseTable(baseTable),
-	statsLayout(statsLayout),
+	itemType	(itemType),
+	baseTable	(baseTable),
+	statsLayout	(statsLayout),
+	ascentCrumbs	(db->getBreadcrumbsFor(baseTable, db->ascentsTable)),
+	peakCrumbs		(db->getBreadcrumbsFor(baseTable, db->peaksTable)),
 	peakHeightHistChart		(nullptr),
 	elevGainHistChart		(nullptr),
 	heightsScatterChart		(nullptr),
@@ -260,8 +325,8 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	topMaxPeakHeightChart	(nullptr),
 	topMaxElevGainChart		(nullptr),
 	topElevGainSumChart		(nullptr),
-	ascentCrumbs	(db->getBreadcrumbsFor(baseTable, db->ascentsTable)),
-	peakCrumbs		(db->getBreadcrumbsFor(baseTable, db->peaksTable)),
+	currentStartBufferRows	(QSet<BufferRowIndex>()),
+	dirty					(true),
 	ascentCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
 	peakCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
 	peakHeightHistCache		(QMap<BufferRowIndex, int>()),
@@ -274,6 +339,7 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 {
 	assert(statsLayout);
 	
+	// Create and register change listeners
 	const QSet<Column* const> underlyingColumns = getUsedColumnSet();
 	for (Column* const underlyingColumn : underlyingColumns) {
 		underlyingColumn->registerChangeListener(new ColumnChangeListenerItemStatsEngine(this));
@@ -352,15 +418,17 @@ void ItemStatsEngine::resetStatsPanel()
 	topMaxElevGainChart->reset();
 	if (topElevGainSumChart) topElevGainSumChart->reset();
 	
-	resetCaches();
+	setCurrentlyVisible(false);
+	resetCachesAndMarkDirty();
 }
 
 /**
- * Resets all caches for breadcrumb results and chart data.
+ * Resets all caches for breadcrumb results and chart data, sets the dirty flag and updates the
+ * charts if the stats panel is currently visible.
  * 
  * To be called when the underlying data has changed.
  */
-void ItemStatsEngine::resetCaches()
+void ItemStatsEngine::resetCachesAndMarkDirty()
 {
 	ascentCrumbsResultCache	.clear();
 	peakCrumbsResultCache	.clear();
@@ -371,17 +439,40 @@ void ItemStatsEngine::resetCaches()
 	topMaxPeakHeightCache	.clear();
 	topMaxElevGainCache		.clear();
 	topElevGainSumCache		.clear();
+	
+	dirty = true;
+	if (isCurrentlyVisible()) updateCharts();
 }
 
 
 
 /**
- * Computes new data for the charts in the statistics panel and updates them.
+ * Sets the buffer row set on which to base the statistics and triggers an update of the charts if
+ * the set has changed.
+ * 
+ * @param newBufferRows	The buffer rows of all items currently selected in the UI table.
+ */
+void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows)
+{
+	const bool setChanged = currentStartBufferRows != newBufferRows;
+	
+	currentStartBufferRows = newBufferRows;
+	
+	if (setChanged) {
+		dirty = true;
+		updateCharts();
+	}
+}
+
+/**
+ * Regenerates all charts from scratch or from (partial) caches if the dirty flag is set.
  * 
  * @param selectedBufferRows	The buffer rows of all items currently selected in the UI table.
  */
-void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBufferRows)
+void ItemStatsEngine::updateCharts()
 {
+	if (!dirty) return;
+
 	assert(peakHeightHistChart);
 	assert(elevGainHistChart);
 	assert(heightsScatterChart);
@@ -393,8 +484,8 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 	
 	// Collect peak/ascent IDs
 	
-	QList<BufferRowIndex> ascentBufferRows	= evaluateCrumbsCached(ascentCrumbs,	selectedBufferRows, ascentCrumbsResultCache);
-	QList<BufferRowIndex> peakBufferRows	= evaluateCrumbsCached(peakCrumbs,		selectedBufferRows, peakCrumbsResultCache);
+	QList<BufferRowIndex> ascentBufferRows	= evaluateCrumbsCached(ascentCrumbs,	currentStartBufferRows, ascentCrumbsResultCache);
+	QList<BufferRowIndex> peakBufferRows	= evaluateCrumbsCached(peakCrumbs,		currentStartBufferRows, peakCrumbsResultCache);
 	
 	
 	// Peak height histogram
@@ -474,7 +565,7 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return ascentBufferRows.size();
 		};
 		
-		updateTopNChart(topNumAscentsChart, ascentCrumbs, selectedBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
+		updateTopNChart(topNumAscentsChart, ascentCrumbs, currentStartBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
 	}
 	
 	
@@ -493,7 +584,7 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return maxPeakHeight;
 		};
 		
-		updateTopNChart(topMaxPeakHeightChart, peakCrumbs, selectedBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
+		updateTopNChart(topMaxPeakHeightChart, peakCrumbs, currentStartBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
 	}
 	
 	
@@ -512,7 +603,7 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return maxElevGain;
 		};
 		
-		updateTopNChart(topMaxElevGainChart, ascentCrumbs, selectedBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
+		updateTopNChart(topMaxElevGainChart, ascentCrumbs, currentStartBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
 	}
 	
 	
@@ -533,8 +624,12 @@ void ItemStatsEngine::updateStatsPanel(const QSet<BufferRowIndex>& selectedBuffe
 			return (qreal) elevGainSum / 1000;
 		};
 		
-		updateTopNChart(topElevGainSumChart, ascentCrumbs, selectedBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
+		updateTopNChart(topElevGainSumChart, ascentCrumbs, currentStartBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
 	}
+	
+	
+	// Done, charts no longer dirty
+	dirty = false;
 }
 
 
@@ -861,9 +956,40 @@ QSet<Column* const> ItemStatsEngine::getUsedColumnSet() const
 
 
 /**
- * Creates a ColumnChangeListenerColumnChangeListenerItemStatsEngine.
+ * Creates a ColumnChangeListenerGeneralStatsEngine.
  *
- * @param listener	The ColumnChangeListenerItemStatsEngine to notify about changes.
+ * @param listener	The ItemStatsEngine to notify about changes.
+ */
+ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener) :
+	ColumnChangeListener(),
+	listener(listener)
+{}
+
+/**
+ * Destroys the ColumnChangeListenerGeneralStatsEngine.
+ */
+ColumnChangeListenerGeneralStatsEngine::~ColumnChangeListenerGeneralStatsEngine()
+{}
+
+
+
+/**
+ * Notifies the listening GeneralStatsEngine that the data in the column has
+ * changed.
+ */
+void ColumnChangeListenerGeneralStatsEngine::columnDataChanged() const
+{
+	listener->updateCharts();
+}
+
+
+
+
+
+/**
+ * Creates a ColumnChangeListenerItemStatsEngine.
+ *
+ * @param listener	The ItemStatsEngine to notify about changes.
  */
 ColumnChangeListenerItemStatsEngine::ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener) :
 	ColumnChangeListener(),
@@ -871,7 +997,7 @@ ColumnChangeListenerItemStatsEngine::ColumnChangeListenerItemStatsEngine(ItemSta
 {}
 
 /**
- * Destroys the ColumnChangeListenerColumnChangeListenerItemStatsEngine.
+ * Destroys the ColumnChangeListenerItemStatsEngine.
  */
 ColumnChangeListenerItemStatsEngine::~ColumnChangeListenerItemStatsEngine()
 {}
@@ -879,10 +1005,10 @@ ColumnChangeListenerItemStatsEngine::~ColumnChangeListenerItemStatsEngine()
 
 
 /**
- * Notifies the listening ColumnChangeListenerItemStatsEngine that the data in the column has
+ * Notifies the listening ItemStatsEngine that the data in the column has
  * changed.
  */
 void ColumnChangeListenerItemStatsEngine::columnDataChanged() const
 {
-	listener->resetCaches();
+	listener->resetCachesAndMarkDirty();
 }

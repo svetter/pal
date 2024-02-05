@@ -95,8 +95,7 @@ private:
 	void createTypesHandler();
 	void setupMenuIcons();
 	void connectUI();
-	void setupTableViews();
-	void setupStatsPanels();
+	void setupTableTabs();
 	void restoreColumnWidths(const ItemTypeMapper* const mapper);
 	void restoreColumnOrder(const ItemTypeMapper* const mapper);
 	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);

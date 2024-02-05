@@ -76,8 +76,7 @@ MainWindow::MainWindow() :
 	
 	
 	connectUI();
-	setupTableViews();
-	setupStatsPanels();
+	setupTableTabs();
 	generalStatsEngine.setupStatsTab();
 	initColumnContextMenu();
 	initTableContextMenuAndShortcuts();
@@ -208,13 +207,15 @@ void MainWindow::connectUI()
 }
 
 /**
- * Connects each table view to the underlying CompositeTable and to the table context menu.
+ * Connects each table view to the underlying CompositeTable and to the table context menu, as well
+ * as set up the item statistics panels.
  */
-void MainWindow::setupTableViews()
+void MainWindow::setupTableTabs()
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		// Set model
 		mapper->tableView->setModel(mapper->compTable);
+		mapper->compTable->setUpdateImmediately(false);
 		
 		// Enable column header reordering
 		mapper->tableView->horizontalHeader()->setSectionsMovable(true);
@@ -227,26 +228,18 @@ void MainWindow::setupTableViews()
 		// Connect selection change listener
 		connect(mapper->tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
 		
-		mapper->compTable->setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
-	}
-}
-
-/**
- * Resets visibility of stats panels to false, sets stretch factors and remembered sizes of the
- * stats panel splitters, and initializes stats panel content.
- */
-void MainWindow::setupStatsPanels()
-{
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		bool showStats = mapper->showStatsPanelSetting->get();
-		mapper->statsScrollArea->setVisible(showStats);
-		
+		// Stats visibility
+		const bool statsEnabled = mapper->showStatsPanelSetting->get();
+		mapper->statsScrollArea->setVisible(statsEnabled);
+		// Restore splitter sizes
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
 		splitter->setStretchFactor(1, 1);
 		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 		
-		mapper->stats->setupStatsPanel();
+		// Setup stats panels
+		mapper->statsEngine->setupStatsPanel();
+		mapper->statsEngine->setCurrentlyVisible(false);
 	}
 }
 
@@ -481,9 +474,9 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		if (activeMapper) {
 			activeMapper->openingTab();
 			showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
-		} else {
-			generalStatsEngine.updateStatsTab();
+			activeMapper->statsEngine->setCurrentlyVisible(true);
 		}
+		generalStatsEngine.setCurrentlyVisible(!activeMapper);
 		
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Column widths
@@ -695,7 +688,6 @@ void MainWindow::updateTableSize(bool reset)
 	// Set number of filtered rows
 	const int numAscentsShown = typesHandler->get(ItemTypeAscent)->compTable->rowCount();
 	ascentCounterFilteredSegmentNumber->setProperty("value", QVariant(numAscentsShown));
-	const bool ascentsShown = mapper != nullptr && mapper->type == ItemTypeAscent;
 }
 
 
@@ -945,6 +937,7 @@ void MainWindow::handle_tabChanged()
 		if (mapper == activeMapper) continue;
 		
 		mapper->compTable->setUpdateImmediately(false);
+		mapper->statsEngine->setCurrentlyVisible(false);
 	}
 	
 	if (activeMapper) {
@@ -953,16 +946,16 @@ void MainWindow::handle_tabChanged()
 		activeMapper->compTable->setUpdateImmediately(true, &progress);
 		activeMapper->openingTab();
 		
-		// Set item stats panel action state
-		showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
+		// Item stats panel visibility
+		const bool statsShown = activeMapper->itemStatsPanelCurrentlySetVisible();
+		showItemStatsPanelAction->setChecked(statsShown);
+		activeMapper->statsEngine->setCurrentlyVisible(statsShown);
 	}
-	else {
-		// Statistics tab is open
-		generalStatsEngine.updateStatsTab();
-	}
+	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	
 	updateTableSize();
 	updateTableContextMenuIcons();
+	handle_tableSelectionChanged();
 	
 	setUIEnabled(true);
 }
@@ -1004,7 +997,7 @@ void MainWindow::handle_tableSelectionChanged()
 		}
 	}
 	
-	mapper->stats->updateStatsPanel(selectedBufferRows);
+	mapper->statsEngine->setStartBufferRows(selectedBufferRows);
 }
 
 /**
@@ -1363,7 +1356,7 @@ void MainWindow::handle_closeDatabase()
 	updateFilters();
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->compTable->resetBuffer();
-		mapper->stats->resetStatsPanel();
+		mapper->statsEngine->resetStatsPanel();
 	}
 	generalStatsEngine.resetStatsTab();
 	updateTableSize(true);
@@ -1417,15 +1410,16 @@ void MainWindow::handle_showStatsPanelChanged()
 {
 	if (!projectOpen) return;
 	ItemTypeMapper* const mapper = getActiveMapper();
-
-	bool showStatsPanel = showItemStatsPanelAction->isChecked();
+	
 	if (mapper->statsScrollArea->isVisible()) {
 		// Save splitter sizes before closing
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 	}
+	
+	const bool showStatsPanel = showItemStatsPanelAction->isChecked();
 	mapper->statsScrollArea->setVisible(showStatsPanel);
-	handle_tableSelectionChanged();
+	mapper->statsEngine->setCurrentlyVisible(showStatsPanel);
 }
 
 /**
@@ -1440,7 +1434,7 @@ void MainWindow::handle_showAllStatsPanels()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->statsScrollArea->setVisible(true);
 	}
-	handle_tableSelectionChanged();
+	getActiveMapper()->statsEngine->setCurrentlyVisible(true);
 }
 
 /**
@@ -1459,6 +1453,7 @@ void MainWindow::handle_hideAllStatsPanels()
 			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
 		}
 		mapper->statsScrollArea->setVisible(false);
+		mapper->statsEngine->setCurrentlyVisible(false);
 	}
 }
 

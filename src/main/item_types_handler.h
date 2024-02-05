@@ -72,7 +72,7 @@ public:
 	CompositeTable* const	compTable;
 	
 	/** The item-specific statistics engine for this item type. */
-	ItemStatsEngine* const	stats;
+	ItemStatsEngine* const	statsEngine;
 	
 	/** The tab in the main window corresponding to this item type. */
 	QWidget* const			tab;
@@ -172,7 +172,7 @@ public:
 		name									(name),
 		baseTable								(baseTable),
 		compTable								(compTable),
-		stats									(new ItemStatsEngine(db, type, baseTable, statsScrollArea->findChild<QVBoxLayout*>())),
+		statsEngine								(new ItemStatsEngine(db, type, baseTable, statsScrollArea->findChild<QVBoxLayout*>())),
 		tab										(tab),
 		tableView								(tableView),
 		statsScrollArea							(statsScrollArea),
