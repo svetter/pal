@@ -61,7 +61,7 @@
      <number>10</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="topBarLayout">
+     <layout class="QHBoxLayout" name="topBarLayout" stretch="0,0,0,0,0,0,0,1,0,0,0,0,0">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -237,9 +237,54 @@
         <property name="sizeType">
          <enum>QSizePolicy::Expanding</enum>
         </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="ascentCounterFilteredLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Number of ascents currently shown in the table with filters applied</string>
+        </property>
+        <property name="text">
+         <string>Shown ascents:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLCDNumber" name="ascentCounterFilteredSegmentNumber">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="digitCount">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="ascentCounterSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>0</width>
+          <width>5</width>
           <height>0</height>
          </size>
         </property>

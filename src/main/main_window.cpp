@@ -456,7 +456,10 @@ void MainWindow::updateTableContextMenuIcons()
 void MainWindow::attemptToOpenFile(const QString& filepath)
 {
 	assert(!projectOpen);
+	
 	setVisible(true);
+	updateTopBarButtonVisibilities();
+	
 	bool dbOpened = db.openExisting(this, filepath);
 	
 	if (dbOpened) {
@@ -472,6 +475,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
 		}
 		mainAreaTabs->setCurrentIndex(tabIndex);
+		setFilteredAscentsCounterVisible(tabIndex == 0);
 		
 		ItemTypeMapper* activeMapper = getActiveMapper();
 		if (activeMapper) {
@@ -602,9 +606,11 @@ void MainWindow::setUIEnabled(bool enabled)
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->newItemButton->setEnabled(enabled);
 	}
-	mainAreaTabs				->setEnabled(enabled);
-	ascentCounterSegmentNumber	->setEnabled(enabled);
-	ascentCounterLabel			->setEnabled(enabled);
+	mainAreaTabs						->setEnabled(enabled);
+	ascentCounterSegmentNumber			->setEnabled(enabled);
+	ascentCounterLabel					->setEnabled(enabled);
+	ascentCounterFilteredSegmentNumber	->setEnabled(enabled);
+	ascentCounterFilteredLabel			->setEnabled(enabled);
 }
 
 /**
@@ -651,6 +657,7 @@ void MainWindow::updateTableSize(bool reset)
 		statusBarTableSizeLabel->setText("");
 		statusBarFiltersLabel->setText("");
 		ascentCounterSegmentNumber->setProperty("value", QVariant());
+		ascentCounterFilteredSegmentNumber->setProperty("value", QVariant());
 		return;
 	}
 	
@@ -658,7 +665,7 @@ void MainWindow::updateTableSize(bool reset)
 	
 	QString countText = QString();
 	if (mapper) {
-		int total = mapper->baseTable->getNumberOfRows();
+		const int total = mapper->baseTable->getNumberOfRows();
 		if (total == 0) {
 			countText = tr("Table is empty");
 		}
@@ -684,6 +691,11 @@ void MainWindow::updateTableSize(bool reset)
 	statusBarFiltersLabel->setText(filterText);
 	
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
+	
+	// Set number of filtered rows
+	const int numAscentsShown = typesHandler->get(ItemTypeAscent)->compTable->rowCount();
+	ascentCounterFilteredSegmentNumber->setProperty("value", QVariant(numAscentsShown));
+	const bool ascentsShown = mapper != nullptr && mapper->type == ItemTypeAscent;
 }
 
 
@@ -808,6 +820,40 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 
 
 /**
+ * Sets the visibility for the filtered ascents counter in the top bar.
+ * 
+ * @param visible	Whether the filtered ascents counter should be visible.
+ */
+void MainWindow::setFilteredAscentsCounterVisible(bool visible)
+{
+	setUpdatesEnabled(false);
+	
+	ascentCounterFilteredSegmentNumber->setVisible(visible);
+	ascentCounterFilteredLabel->setVisible(visible);
+	
+	updateTopBarButtonVisibilities();
+}
+
+/**
+ * Updates the visibility of the new item buttons in the top bar according to how much space there
+ * is to the left of the ascent counter labels.
+ */
+void MainWindow::updateTopBarButtonVisibilities()
+{
+	if (!isVisible()) return;
+	
+	const QLabel* const leftmostCounterLabel = ascentCounterFilteredLabel->isVisible() ? ascentCounterFilteredLabel : ascentCounterLabel;
+	
+	setUpdatesEnabled(false);
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		QPushButton* const button = mapper->newItemButton;
+		const bool buttonVisible = button->x() + button->width() < leftmostCounterLabel->x() - 40;
+		button->setVisible(buttonVisible);
+	}
+	setUpdatesEnabled(true);
+}
+
+/**
  * Updates selection, table size info and filters after an item was added, edited or removed.
  * 
  * @param mapper					The ItemTypeMapper for the table that was changed.
@@ -882,6 +928,10 @@ void MainWindow::handle_tabChanged()
 {
 	if (!projectOpen) return;
 	
+	ItemTypeMapper* const activeMapper = getActiveMapper();
+	const bool ascentsActive = activeMapper && activeMapper == typesHandler->get(ItemTypeAscent);
+	setFilteredAscentsCounterVisible(ascentsActive);
+	
 	QProgressDialog progress(this);
 	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
 	progress.setWindowModality(Qt::WindowModal);
@@ -891,7 +941,6 @@ void MainWindow::handle_tabChanged()
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(500);
 	
-	ItemTypeMapper* const activeMapper = getActiveMapper();
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		if (mapper == activeMapper) continue;
 		
@@ -1640,17 +1689,12 @@ void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
  */
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-	Q_UNUSED(event);
-	if (!isVisible()) {		// Window is still being initialized
+	if (!isVisible()) {	// Window is still being initialized
 		event->ignore();
 		return;
 	}
 	
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		QPushButton* button = mapper->newItemButton;
-		bool buttonVisible = button->x() + button->width() < ascentCounterLabel->x() - 40;
-		button->setVisible(buttonVisible);
-	}
+	updateTopBarButtonVisibilities();
 	event->accept();
 }
 
