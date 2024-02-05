@@ -125,6 +125,8 @@ private:
 	void editItem(const ItemTypeMapper* const mapper, const QModelIndex& index);
 	void deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
+	void setFilteredAscentsCounterVisible(bool visible);
+	void updateTopBarButtonVisibilities();
 	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void scrollToTopAfterSorting();
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
