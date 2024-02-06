@@ -450,7 +450,7 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> DirectCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { contentColumn };
 }
@@ -505,9 +505,9 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> ReferenceCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column* const> result = { contentColumn };
+	QSet<Column*> result = { contentColumn };
 	result.unite(breadcrumbs.getColumnSet());
 	return result;
 }
@@ -582,7 +582,7 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> DifferenceCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { minuendColumn, subtrahendColumn };
 }
@@ -643,7 +643,7 @@ QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { discerningEnumColumn, displayedEnumColumn };
 }
@@ -742,9 +742,9 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> IndexCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column* const> columns = QSet<Column* const>();
+	QSet<Column*> columns = QSet<Column*>();
 	for (const auto& [column, order] : sortingPasses) {
 		columns += column;
 	}

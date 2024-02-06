@@ -114,7 +114,7 @@ public:
 	 * 
 	 * @return	A set of all base table columns which are used to compute contents of this column.
 	 */
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const = 0;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const = 0;
 	
 protected:
 	ProjectSettings* getProjectSettings() const;
@@ -134,7 +134,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -154,7 +154,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -174,7 +174,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -194,7 +194,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -223,7 +223,7 @@ public:
 	QList<QVariant> computeWholeColumn() const override;
 	QList<BufferRowIndex> getRowIndexOrderList() const;
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 /**

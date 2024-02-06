@@ -48,7 +48,7 @@ protected:
 public:
 	FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
-	virtual const QSet<Column* const> getAllUnderlyingColumns() const override;
+	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
 };
 
 

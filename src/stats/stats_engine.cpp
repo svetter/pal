@@ -136,8 +136,8 @@ GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statist
 	assert(statisticsTabLayoutPtr);
 	
 	// Create and register change listeners
-	const QSet<Column* const> underlyingColumns = getUsedColumnSet();
-	for (Column* const underlyingColumn : underlyingColumns) {
+	const QSet<Column*> underlyingColumns = getUsedColumnSet();
+	for (Column* underlyingColumn : underlyingColumns) {
 		underlyingColumn->registerChangeListener(new ColumnChangeListenerGeneralStatsEngine(this));
 	}
 }
@@ -286,9 +286,9 @@ void GeneralStatsEngine::updateCharts()
  * 
  * @return	The set of columns used by this GeneralStatsEngine.
  */
-QSet<Column* const> GeneralStatsEngine::getUsedColumnSet() const
+QSet<Column*> GeneralStatsEngine::getUsedColumnSet() const
 {
-	QSet<Column* const> underlyingColumns = QSet<Column* const>();
+	QSet<Column*> underlyingColumns = QSet<Column*>();
 	
 	underlyingColumns.insert(db->ascentsTable->dateColumn);
 	underlyingColumns.insert(db->ascentsTable->timeColumn);
@@ -340,7 +340,7 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	assert(statsLayout);
 	
 	// Create and register change listeners
-	const QSet<Column* const> underlyingColumns = getUsedColumnSet();
+	const QSet<Column*> underlyingColumns = getUsedColumnSet();
 	for (Column* const underlyingColumn : underlyingColumns) {
 		underlyingColumn->registerChangeListener(new ColumnChangeListenerItemStatsEngine(this));
 	}
@@ -902,9 +902,9 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
  * 
  * @return	The set of columns used by this ItemStatsEngine.
  */
-QSet<Column* const> ItemStatsEngine::getUsedColumnSet() const
+QSet<Column*> ItemStatsEngine::getUsedColumnSet() const
 {
-	QSet<Column* const> underlyingColumns = QSet<Column* const>();
+	QSet<Column*> underlyingColumns = QSet<Column*>();
 	
 	underlyingColumns.unite(ascentCrumbs.getColumnSet());
 	underlyingColumns.unite(peakCrumbs.getColumnSet());

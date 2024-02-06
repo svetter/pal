@@ -98,7 +98,7 @@ public:
 	virtual void updateCharts();
 	
 protected:
-	QSet<Column* const> getUsedColumnSet() const;
+	QSet<Column*> getUsedColumnSet() const;
 };
 
 
@@ -190,7 +190,7 @@ private:
 	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
 protected:
-	QSet<Column* const> getUsedColumnSet() const;
+	QSet<Column*> getUsedColumnSet() const;
 };
 
 

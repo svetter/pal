@@ -52,9 +52,9 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString name, QS
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column* const> FoldCompositeColumn::getAllUnderlyingColumns() const
+const QSet<Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column* const> result = breadcrumbs.getColumnSet();
+	QSet<Column*> result = breadcrumbs.getColumnSet();
 	if (contentColumn) result.insert(contentColumn);
 	return result;
 }

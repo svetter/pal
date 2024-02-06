@@ -71,7 +71,7 @@ public:
 	Breadcrumbs(std::initializer_list<Breadcrumb> initList);
 	Breadcrumbs(const QList<Breadcrumb>& initList);
 	
-	const QSet<Column* const> getColumnSet() const;
+	const QSet<Column*> getColumnSet() const;
 	const Table* getTargetTable() const;
 	bool isEmpty() const;
 	int length() const;

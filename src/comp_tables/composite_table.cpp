@@ -80,7 +80,7 @@ void CompositeTable::addColumn(const CompositeColumn* column)
 	columns.append(column);
 	
 	// Register as change listener at all underlying columns
-	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
+	const QSet<Column*> underlyingColumns = column->getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
 		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
 	}
@@ -112,7 +112,7 @@ void CompositeTable::addFilterColumn(const CompositeColumn* column)
 	columns.append(column);
 	
 	// Register as change listener at all underlying columns
-	const QSet<Column* const> underlyingColumns = column->getAllUnderlyingColumns();
+	const QSet<Column*> underlyingColumns = column->getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
 		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
 	}
