@@ -334,11 +334,13 @@ void Table::notifyAllColumns()
 {
 	// Collect change listeners and notify them
 	QSet<const ColumnChangeListener*> changeListeners = QSet<const ColumnChangeListener*>();
+	QSet<const Column*> columnSet = QSet<const Column*>();
 	for (const Column* column : columns) {
 		changeListeners.unite(column->getChangeListeners());
+		columnSet.insert(column);
 	}
 	for (const ColumnChangeListener* changeListener : changeListeners) {
-		changeListener->columnDataChanged();
+		changeListener->columnDataChanged(columnSet);
 	}
 }
 
@@ -416,7 +418,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	// Collect column's change listeners and notify them
 	QSet<const ColumnChangeListener*> changeListeners = column->getChangeListeners();
 	for (const ColumnChangeListener* changeListener : changeListeners) {
-		changeListener->columnDataChanged();
+		changeListener->columnDataChanged({column});
 	}
 }
 

@@ -26,6 +26,10 @@
 
 #include "src/db/row_index.h"
 
+#include <QSet>
+
+class Column;
+
 
 
 /**
@@ -47,8 +51,10 @@ public:
 	
 	/**
 	 * Called when any data in the column owning this listener has changed.
+	 * 
+	 * @param affectedColumns	The columns whose contents have changed.
 	 */
-	virtual void columnDataChanged() const = 0;
+	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const = 0;
 };
 
 

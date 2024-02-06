@@ -31,6 +31,8 @@
 #include <QObject>
 #include <QBoxLayout>
 
+class ColumnChangeListenerItemStatsEngine;
+
 
 
 /**
@@ -47,12 +49,19 @@ protected:
 	/** The database. */
 	const Database* const db;
 	
+	/** A set of all charts managed by this stats engine. */
+	QSet<Chart*> charts;
+	/** Whether each of the charts is currently dirty and needs to be updated before being shown. */
+	QMap<Chart*, bool> dirty;
+	
 	StatsEngine(Database* db);
 	virtual ~StatsEngine();
 	
 public:
 	void setCurrentlyVisible(bool visible, bool noUpdate = false);
 	bool isCurrentlyVisible();
+	bool anyChartsDirty();
+	
 protected:
 	/**
 	 * Regenerates all charts from scratch or from (partial) caches.
@@ -62,7 +71,6 @@ protected:
 	static void addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& charts, QList<int> stretchFactors = QList<int>());
 	
 	static QStringList getHistogramClassNames(int increment, int max, QString prefix, QString suffix);
-	static int classifyHistogramValue(int value, int increment, int max);
 };
 
 
@@ -77,16 +85,12 @@ class GeneralStatsEngine : public StatsEngine
 	/** A double pointer to the layout of the statistics tab. */
 	QVBoxLayout** const statisticsTabLayoutPtr;
 	
-	/** A chart showing the elevation gain sum for each year since the first ascent. */
-	YearBarChart*		elevGainPerYearChart;
 	/** A chart showing the number of ascents in each year since the first ascent. */
 	YearBarChart*		numAscentsPerYearChart;
+	/** A chart showing the elevation gain sum for each year since the first ascent. */
+	YearBarChart*		elevGainPerYearChart;
 	/** A chart showing elevation gain and peak height for every logged ascent. */
 	TimeScatterChart*	heightsScatterChart;
-	
-	// Charts state
-	/** Whether the charts are currently dirty and need to be updated before being shown. */
-	bool dirty;
 	
 public:
 	GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr);
@@ -94,11 +98,14 @@ public:
 	
 	void setupStatsTab();
 	void resetStatsTab();
+	void markChartsDirty(const QSet<Chart*>& dirtyCharts);
 	
 	virtual void updateCharts();
 	
 protected:
-	QSet<Column*> getUsedColumnSet() const;
+	QHash<Chart*, QSet<Column*>> getUsedColumnSets() const;
+private:
+	QHash<Column*, QSet<Chart*>> getAffectedChartsPerColumn() const;
 };
 
 
@@ -116,6 +123,9 @@ class ItemStatsEngine : public StatsEngine
 	const NormalTable* const baseTable;
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
+	
+	/** The column change listener used to keep charts up to date. */
+	ColumnChangeListenerItemStatsEngine* listener;
 	
 	// Constants
 	/** The number of items to show in the top N charts. */
@@ -146,8 +156,6 @@ class ItemStatsEngine : public StatsEngine
 	// Charts source data & state
 	/** The current set of buffer rows to build statistics for. */
 	QSet<BufferRowIndex> currentStartBufferRows;
-	/** Whether the charts are currently dirty and need to be updated before being shown. */
-	bool dirty;
 	
 	// Caching
 	// Breadcrumb caches
@@ -177,7 +185,7 @@ public:
 	
 	void setupStatsPanel();
 	void resetStatsPanel();
-	void resetCachesAndMarkDirty();
+	void announceColumnChanges(const QSet<const Column*>& changedColumns);
 	
 	void setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows);
 	virtual void updateCharts();
@@ -189,7 +197,14 @@ private:
 	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
 	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
-protected:
+	
+	void clearBreadcrumbCacheFor(const Breadcrumbs* const breadcrumbs);
+	void clearChartCacheFor(Chart* const chart);
+	
+	QHash<const Breadcrumbs*, QSet<Chart*>> getBreadcrumbDependencyMap() const;
+	QHash<Chart*, QSet<Column*>> getPostCrumbsUnderlyingColumnSetPerChart() const;
+	QSet<Column*> getItemLabelUnderlyingColumnSet() const;
+	QHash<Chart*, QSet<Column*>> getItemLabelUnderlyingColumnSetPerChart() const;
 	QSet<Column*> getUsedColumnSet() const;
 };
 
@@ -202,12 +217,14 @@ protected:
 class ColumnChangeListenerGeneralStatsEngine : public ColumnChangeListener {
 	/** The ColumnChangeListenerGeneralStatsEngine to notify about column changes. */
 	GeneralStatsEngine* const listener;
+	/** The charts affected by the column changes. */
+	QSet<Chart*> affectedCharts;
 	
 public:
-	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener);
+	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener, const QSet<Chart*>& affectedCharts);
 	virtual ~ColumnChangeListenerGeneralStatsEngine();
 	
-	virtual void columnDataChanged() const;
+	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
 };
 
 
@@ -223,7 +240,7 @@ public:
 	ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener);
 	virtual ~ColumnChangeListenerItemStatsEngine();
 	
-	virtual void columnDataChanged() const;
+	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
 };
 
 

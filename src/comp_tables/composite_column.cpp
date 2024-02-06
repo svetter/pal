@@ -845,8 +845,11 @@ ColumnChangeListenerCompositeColumn::~ColumnChangeListenerCompositeColumn()
 
 /**
  * Notifies the listening CompositeColumn that the data in the column has changed.
+ * 
+ * @param affectedColumns	The columns whose contents have changed.
  */
-void ColumnChangeListenerCompositeColumn::columnDataChanged() const
+void ColumnChangeListenerCompositeColumn::columnDataChanged(QSet<const Column*> affectedColumns) const
 {
+	Q_UNUSED(affectedColumns);
 	listener->announceChangedData();
 }

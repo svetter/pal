@@ -26,7 +26,6 @@
 #include "src/db/row_index.h"
 #include "table.h"
 #include "database.h"
-#include "src/comp_tables/composite_column.h"
 
 #include <QCoreApplication>
 
@@ -68,9 +67,7 @@ Column::Column(const Table* table, QString name, QString uiName, bool primaryKey
  * Destroys the Column.
  */
 Column::~Column()
-{
-	qDeleteAll(changeListeners);
-}
+{}
 
 
 
@@ -204,8 +201,6 @@ QString Column::getSqlSpecificationString() const
 
 /**
  * Registers the given column change listener for this column.
- * 
- * The Column takes ownership of the listener.
  * 
  * @param newListener	The change listener to register.
  */

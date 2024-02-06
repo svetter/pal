@@ -254,7 +254,7 @@ public:
 	ColumnChangeListenerCompositeColumn(const CompositeColumn* listener);
 	virtual ~ColumnChangeListenerCompositeColumn();
 	
-	virtual void columnDataChanged() const;
+	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
 };
 
 

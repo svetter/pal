@@ -32,7 +32,9 @@
  */
 StatsEngine::StatsEngine(Database* db) :
 	currentlyVisible(false),
-	db(db)
+	db(db),
+	charts(QSet<Chart*>()),
+	dirty(QMap<Chart*, bool>())
 {}
 
 /**
@@ -67,6 +69,21 @@ void StatsEngine::setCurrentlyVisible(bool visible, bool noUpdate)
 bool StatsEngine::isCurrentlyVisible()
 {
 	return currentlyVisible;
+}
+
+/**
+ * Indicates whether any of the charts are currently dirty.
+ * 
+ * @return	Tre if any of the charts are currently dirty, false otherwise.
+ */
+bool StatsEngine::anyChartsDirty()
+{
+	for (Chart* const chart : qAsConst(charts)) {
+		if (dirty.contains(chart) && dirty.value(chart) == true) {
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -129,18 +146,11 @@ QStringList StatsEngine::getHistogramClassNames(int increment, int max, QString 
 GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr) :
 	StatsEngine(db),
 	statisticsTabLayoutPtr(statisticsTabLayoutPtr),
-	elevGainPerYearChart(nullptr),
 	numAscentsPerYearChart(nullptr),
-	heightsScatterChart(nullptr),
-	dirty(true)
+	elevGainPerYearChart(nullptr),
+	heightsScatterChart(nullptr)
 {
 	assert(statisticsTabLayoutPtr);
-	
-	// Create and register change listeners
-	const QSet<Column*> underlyingColumns = getUsedColumnSet();
-	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerGeneralStatsEngine(this));
-	}
 }
 
 /**
@@ -156,12 +166,13 @@ GeneralStatsEngine::~GeneralStatsEngine()
 
 
 /**
- * Creates and initializes the charts for the statistics tab and sets up the layout.
+ * Creates and initializes the charts for the statistics tab and sets up the layout, populates the
+ * set of all charts and marks them as dirty, and registers change listeners.
  */
 void GeneralStatsEngine::setupStatsTab()
 {
-	elevGainPerYearChart	= new YearBarChart		(tr("Elevation gain sum per year"),						tr("km"));
 	numAscentsPerYearChart	= new YearBarChart		(tr("Number of ascents per year"),						tr("Number of ascents"));
+	elevGainPerYearChart	= new YearBarChart		(tr("Elevation gain sum per year"),						tr("km"));
 	heightsScatterChart		= new TimeScatterChart	(tr("All elevation gains and peak heights over time"),	tr("m"));
 	
 	// Set layout
@@ -173,46 +184,82 @@ void GeneralStatsEngine::setupStatsTab()
 	statisticsTabLayout->addLayout(statisticsTabUpperLayout);
 	
 	addChartsToLayout(statisticsTabUpperLayout, {
-		elevGainPerYearChart,
-		numAscentsPerYearChart
+		numAscentsPerYearChart,
+		elevGainPerYearChart
 	});
 	addChartsToLayout(statisticsTabLayout, {
 		heightsScatterChart
 	}, {2, 3});
+	
+	// Create set of all charts
+	charts.insert(numAscentsPerYearChart);
+	charts.insert(elevGainPerYearChart);
+	charts.insert(heightsScatterChart);
+	// Mark all charts as dirty
+	for (Chart* const chart : qAsConst(charts)) {
+		dirty[chart] = true;
+	}
+	
+	// Create and register change listeners
+	const QHash<Column*, QSet<Chart*>> chartsPerColumn = getAffectedChartsPerColumn();
+	const QList<Column*> columns = chartsPerColumn.keys();
+	for (Column* const column : columns) {
+		const QSet<Chart*> affectedCharts = chartsPerColumn.value(column);
+		column->registerChangeListener(new ColumnChangeListenerGeneralStatsEngine(this, affectedCharts));
+	}
 }
 
 /**
- * Resets the charts in the statistics tab.
+ * Resets the charts in the statistics tab and marks them as dirty.
  */
 void GeneralStatsEngine::resetStatsTab()
 {
-	assert(elevGainPerYearChart);
 	assert(numAscentsPerYearChart);
+	assert(elevGainPerYearChart);
 	assert(heightsScatterChart);
 	
-	elevGainPerYearChart	->reset();
 	numAscentsPerYearChart	->reset();
+	elevGainPerYearChart	->reset();
 	heightsScatterChart		->reset();
 	
 	setCurrentlyVisible(false);
-	dirty = true;
+	for (Chart* const chart : qAsConst(charts)) {
+		dirty[chart] = true;
+	}
 }
+
+/**
+ * Sets the dirty flag for the given charts and updates the charts if the stats tab is currently
+ * visible.
+ * 
+ * To be called when the underlying data has changed.
+ * 
+ * @param dirtyCharts	A set of all charts to be marked dirty.
+ */
+void GeneralStatsEngine::markChartsDirty(const QSet<Chart*>& dirtyCharts)
+{
+	for (Chart* const chart : dirtyCharts) {
+		dirty[chart] = true;
+	}
+}
+
+
 
 /**
  * Regenerates all charts from scratch if the dirty flag is set.
  */
 void GeneralStatsEngine::updateCharts()
 {
-	if (!dirty) return;
-
-	assert(elevGainPerYearChart);
+	if (!anyChartsDirty()) return;
+	
 	assert(numAscentsPerYearChart);
+	assert(elevGainPerYearChart);
 	assert(heightsScatterChart);
 	
-	QList<qreal>	elevGainPerYearSeries	= QList<qreal>();
-	QList<qreal>	numAscentsPerYearSeries	= QList<qreal>();
-	DateScatterSeries	elevGainSeries		= DateScatterSeries(tr("Elevation gains"),	6,	QScatterSeries::MarkerShapeRotatedRectangle);
-	DateScatterSeries	peakHeightSeries	= DateScatterSeries(tr("Peak heights"),		6,	QScatterSeries::MarkerShapeTriangle);
+	QList<qreal> elevGainPerYearSeries		= QList<qreal>();
+	QList<qreal> numAscentsPerYearSeries	= QList<qreal>();
+	DateScatterSeries elevGainSeries	= DateScatterSeries(tr("Elevation gains"),	6,	QScatterSeries::MarkerShapeRotatedRectangle);
+	DateScatterSeries peakHeightSeries	= DateScatterSeries(tr("Peak heights"),		6,	QScatterSeries::MarkerShapeTriangle);
 	
 	
 	QMap<int, int> yearElevGainSums	= QMap<int, int>();
@@ -227,77 +274,131 @@ void GeneralStatsEngine::updateCharts()
 		const QDate date = db->ascentsTable->dateColumn->getValueAt(bufferIndex).toDate();
 		if (!date.isValid()) continue;
 		
+		const int year = date.year();
 		if (date < minDate || !minDate.isValid()) minDate = date;
 		if (date > maxDate || !maxDate.isValid()) maxDate = date;
 		
-		QTime time = db->ascentsTable->timeColumn->getValueAt(bufferIndex).toTime();
-		if (!time.isValid()) time = QTime(12, 0);
-		const QDateTime dateTime = QDateTime(date, time);
-		
-		const int year = date.year();
-		yearNumAscents[year]++;
-		
-		const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
-		if (elevGainRaw.isValid()) {
-			int elevGain = elevGainRaw.toInt();
-			elevGainSeries.data.append({dateTime, elevGain});
-			if (elevGain > heightsMaxY) heightsMaxY = elevGain;
-			yearElevGainSums[year] += elevGain;
+		QDateTime dateTime;
+		if (dirty.value(heightsScatterChart)) {
+			QTime time = db->ascentsTable->timeColumn->getValueAt(bufferIndex).toTime();
+			if (!time.isValid()) time = QTime(12, 0);
+			dateTime = QDateTime(date, time);
 		}
 		
-		const ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
-		if (peakID.isValid()) {
-			QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
-			if (peakHeightRaw.isValid()) {
-				int peakHeight = peakHeightRaw.toInt();
-				peakHeightSeries.data.append({dateTime, peakHeight});
-				if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
+		if (dirty.value(numAscentsPerYearChart)) {
+			yearNumAscents[year]++;
+		}
+		
+		if (dirty.value(elevGainPerYearChart) || dirty.value(heightsScatterChart)) {
+			const QVariant elevGainRaw = db->ascentsTable->elevationGainColumn->getValueAt(bufferIndex);
+			if (elevGainRaw.isValid()) {
+				const int elevGain = elevGainRaw.toInt();
+				
+				if (dirty.value(elevGainPerYearChart)) {
+					yearElevGainSums[year] += elevGain;
+				}
+				if (dirty.value(heightsScatterChart)) {
+					elevGainSeries.data.append({dateTime, elevGain});
+					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+				}
+			}
+		}
+		
+		if (dirty.value(heightsScatterChart)) {
+			const ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferIndex);
+			if (peakID.isValid()) {
+				QVariant peakHeightRaw = db->peaksTable->heightColumn->getValueFor(FORCE_VALID(peakID));
+				if (peakHeightRaw.isValid()) {
+					const int peakHeight = peakHeightRaw.toInt();
+					peakHeightSeries.data.append({dateTime, peakHeight});
+					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
+				}
 			}
 		}
 	}
 	
-	int minYear = minDate.year();
-	int maxYear = maxDate.year();
+	const int minYear = minDate.year();
+	const int maxYear = maxDate.year();
 	
-	for (int year = minYear; year <= maxYear; year++) {
-		int elevGainSum	= yearElevGainSums	.contains(year) ? yearElevGainSums	[year] : 0;
-		int numAscents	= yearNumAscents	.contains(year) ? yearNumAscents	[year] : 0;
-		qreal elevGainSumKm = (qreal) elevGainSum / 1000;
-		elevGainPerYearSeries	.append(elevGainSumKm);
-		numAscentsPerYearSeries	.append(numAscents);
-		if (elevGainSumKm > elevGainPerYearMaxY) elevGainPerYearMaxY = elevGainSumKm;
-		if (numAscents > numAscentsPerYearMaxY) numAscentsPerYearMaxY = numAscents;
+	if (dirty.value(numAscentsPerYearChart) || dirty.value(elevGainPerYearChart)) {
+		for (int year = minYear; year <= maxYear; year++) {
+			if (dirty.value(numAscentsPerYearChart)) {
+				const int numAscents = yearNumAscents.contains(year) ? yearNumAscents[year] : 0;
+				numAscentsPerYearSeries.append(numAscents);
+				if (numAscents > numAscentsPerYearMaxY) numAscentsPerYearMaxY = numAscents;
+			}
+			if (dirty.value(elevGainPerYearChart)) {
+				const int elevGainSum = yearElevGainSums.contains(year) ? yearElevGainSums[year] : 0;
+				const qreal elevGainSumKm = (qreal) elevGainSum / 1000;
+				elevGainPerYearSeries.append(elevGainSumKm);
+				if (elevGainSumKm > elevGainPerYearMaxY) elevGainPerYearMaxY = elevGainSumKm;
+			}
+		}
 	}
 	
 	
-	elevGainPerYearChart	->updateData(elevGainPerYearSeries, 	minYear,	maxYear,	elevGainPerYearMaxY);
-	numAscentsPerYearChart	->updateData(numAscentsPerYearSeries,	minYear,	maxYear,	numAscentsPerYearMaxY);
-	
-	const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
-	heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
-
-	// Done, charts no longer dirty
-	dirty = false;
+	if (dirty.value(numAscentsPerYearChart)) {
+		numAscentsPerYearChart->updateData(numAscentsPerYearSeries, minYear, maxYear, numAscentsPerYearMaxY);
+		dirty[numAscentsPerYearChart] = false;
+	}
+	if (dirty.value(elevGainPerYearChart)) {
+		elevGainPerYearChart->updateData(elevGainPerYearSeries, minYear, maxYear, elevGainPerYearMaxY);
+		dirty[elevGainPerYearChart] = false;
+	}
+	if (dirty.value(heightsScatterChart)) {
+		const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
+		heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
+		dirty[heightsScatterChart] = false;
+	}
 }
 
 
 
 /**
- * Returns the set of columns used by this GeneralStatsEngine for any of its charts.
+ * Returns a set of columns used by this GeneralStatsEngine for all of its charts.
  * 
- * @return	The set of columns used by this GeneralStatsEngine.
+ * @return	A set of underlying columns for each chart in this stats engine.
  */
-QSet<Column*> GeneralStatsEngine::getUsedColumnSet() const
+QHash<Chart*, QSet<Column*>> GeneralStatsEngine::getUsedColumnSets() const
 {
-	QSet<Column*> underlyingColumns = QSet<Column*>();
+	return {
+		{numAscentsPerYearChart, {
+			db->ascentsTable->dateColumn
+		}},
+		{elevGainPerYearChart, {
+			db->ascentsTable->dateColumn,
+			db->ascentsTable->elevationGainColumn
+		}},
+		{heightsScatterChart, {
+			db->ascentsTable->dateColumn,
+			db->ascentsTable->timeColumn,
+			db->ascentsTable->elevationGainColumn,
+			db->ascentsTable->peakIDColumn,
+			db->peaksTable->heightColumn
+		}}
+	};
+}
+
+
+/**
+ * Returns a map of columns and sets of charts affected by changes to each column.
+ * 
+ * @return	A map of columns and sets of charts affected by changes to each column.
+ */
+QHash<Column*, QSet<Chart*>> GeneralStatsEngine::getAffectedChartsPerColumn() const
+{
+	auto usedColumnsPerChart = getUsedColumnSets();
+	QHash<Column*, QSet<Chart*>> chartsPerColumn = QHash<Column*, QSet<Chart*>>();
 	
-	underlyingColumns.insert(db->ascentsTable->dateColumn);
-	underlyingColumns.insert(db->ascentsTable->timeColumn);
-	underlyingColumns.insert(db->ascentsTable->elevationGainColumn);
-	underlyingColumns.insert(db->ascentsTable->peakIDColumn);
-	underlyingColumns.insert(db->peaksTable->heightColumn);
+	for (auto iter = usedColumnsPerChart.constBegin(); iter != usedColumnsPerChart.constEnd(); iter++) {
+		Chart* const chart = iter.key();
+		const QSet<Column*>& columns = iter.value();
+		for (Column* const column : columns) {
+			chartsPerColumn[column].insert(chart);
+		}
+	}
 	
-	return underlyingColumns;
+	return chartsPerColumn;
 }
 
 
@@ -327,7 +428,6 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	topMaxElevGainChart		(nullptr),
 	topElevGainSumChart		(nullptr),
 	currentStartBufferRows	(QSet<BufferRowIndex>()),
-	dirty					(true),
 	ascentCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
 	peakCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
 	peakHeightHistCache		(QMap<BufferRowIndex, int>()),
@@ -341,9 +441,10 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	assert(statsLayout);
 	
 	// Create and register change listeners
+	listener = new ColumnChangeListenerItemStatsEngine(this);
 	const QSet<Column*> underlyingColumns = getUsedColumnSet();
-	for (Column* const underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerItemStatsEngine(this));
+	for (Column* const column : underlyingColumns) {
+		column->registerChangeListener(listener);
 	}
 }
 
@@ -354,16 +455,23 @@ ItemStatsEngine::~ItemStatsEngine()
 {
 	delete peakHeightHistChart;
 	delete elevGainHistChart;
+	delete heightsScatterChart;
+	if (itemType != ItemTypeAscent) delete topNumAscentsChart;
+	delete topMaxPeakHeightChart;
+	delete topMaxElevGainChart;
+	if (itemType != ItemTypeAscent) delete topElevGainSumChart;
+	
+	delete listener;
 }
 
 
 
 /**
- * Creates and initializes the charts for the statistics panel.
+ * Creates and initializes the charts for the statistics panel, populates the set of all charts and
+ * marks them as dirty.
  */
 void ItemStatsEngine::setupStatsPanel()
 {
-	// Peak height histogram
 	{
 		QString chartTitle		= tr("Distribution of peak heights");
 		int classIncrement		= 1000;
@@ -399,11 +507,25 @@ void ItemStatsEngine::setupStatsPanel()
 		peakHeightHistChart,
 		elevGainHistChart,
 		heightsScatterChart,
-		itemType != ItemTypeAscent ? topNumAscentsChart : nullptr,
+		topNumAscentsChart,
 		topMaxPeakHeightChart,
 		topMaxElevGainChart,
-		itemType != ItemTypeAscent ? topElevGainSumChart : nullptr
+		topElevGainSumChart
 	});
+	
+	// Create set of all charts
+	charts.insert(peakHeightHistChart);
+	charts.insert(elevGainHistChart);
+	charts.insert(heightsScatterChart);
+	charts.insert(topNumAscentsChart);
+	charts.insert(topMaxPeakHeightChart);
+	charts.insert(topMaxElevGainChart);
+	charts.insert(topElevGainSumChart);
+	charts.remove(nullptr);
+	// Mark all charts as dirty
+	for (Chart* const chart : qAsConst(charts)) {
+		dirty[chart] = true;
+	}
 }
 
 /**
@@ -420,17 +542,7 @@ void ItemStatsEngine::resetStatsPanel()
 	if (topElevGainSumChart) topElevGainSumChart->reset();
 	
 	setCurrentlyVisible(false);
-	resetCachesAndMarkDirty();
-}
-
-/**
- * Resets all caches for breadcrumb results and chart data, sets the dirty flag and updates the
- * charts if the stats panel is currently visible.
- * 
- * To be called when the underlying data has changed.
- */
-void ItemStatsEngine::resetCachesAndMarkDirty()
-{
+	
 	ascentCrumbsResultCache	.clear();
 	peakCrumbsResultCache	.clear();
 	peakHeightHistCache		.clear();
@@ -441,8 +553,66 @@ void ItemStatsEngine::resetCachesAndMarkDirty()
 	topMaxElevGainCache		.clear();
 	topElevGainSumCache		.clear();
 	
-	dirty = true;
-	if (isCurrentlyVisible()) updateCharts();
+	// Mark all charts as dirty
+	for (Chart* const chart : qAsConst(charts)) {
+		dirty[chart] = true;
+	}
+}
+
+/**
+ * Depending on which columns have changed, resets affected caches and marks affected charts as
+ * dirty.
+ * 
+ * To be called when the underlying data has changed.
+ */
+void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedColumns)
+{
+	auto intersect = [](const QSet<Column*>& set1, const QSet<const Column*>& set2) {
+		for (const Column* const column : set1) {
+			if (set2.contains(column)) return true;
+		}
+		return false;
+	};
+	
+	// === LEVEL 1 ===
+	// Changes under breadcrumbs always require breadcrumb and derivative chart cache reset
+	const QHash<const Breadcrumbs*, QSet<Chart*>> breadcrumbDependencies = getBreadcrumbDependencyMap();
+	const QList<const Breadcrumbs*> allBreadcrumbs = breadcrumbDependencies.keys();
+	for (const Breadcrumbs* const breadcrumbs : allBreadcrumbs) {
+		if (!intersect(breadcrumbs->getColumnSet(), changedColumns)) continue;
+		
+		clearBreadcrumbCacheFor(breadcrumbs);
+		
+		// Mark all dependent charts dirty and reset their caches
+		const QSet<Chart*> charts = breadcrumbDependencies.value(breadcrumbs);
+		for (Chart* const chart : charts) {
+			dirty[chart] = true;
+			clearChartCacheFor(chart);
+		}
+	}
+	
+	// === LEVEL 2 ===
+	// Changes under columns used for chart-specific caches require resetting those caches
+	const QHash<Chart*, QSet<Column*>> columnsPerChart = getPostCrumbsUnderlyingColumnSetPerChart();
+	QList<Chart*> charts = columnsPerChart.keys();
+	for (Chart* const chart : charts) {
+		const QSet<Column*> columns = columnsPerChart.value(chart);
+		if (!intersect(columns, changedColumns)) continue;
+		
+		dirty[chart] = true;
+		clearChartCacheFor(chart);
+	}
+	
+	// === LEVEL 3 ===
+	// Changes under columns used only for item labels only require chart regeneration without any cache resets (only relevant for top-n charts)
+	const QHash<Chart*, QSet<Column*>> labelColumnsPerChart = getItemLabelUnderlyingColumnSetPerChart();
+	charts = labelColumnsPerChart.keys();
+	for (Chart* const chart : charts) {
+		const QSet<Column*> columns = labelColumnsPerChart.value(chart);
+		if (!intersect(columns, changedColumns)) continue;
+		
+		dirty[chart] = true;
+	}
 }
 
 
@@ -460,8 +630,10 @@ void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRo
 	currentStartBufferRows = newBufferRows;
 	
 	if (setChanged) {
-		dirty = true;
-		updateCharts();
+		for (Chart* const chart : qAsConst(charts)) {
+			dirty[chart] = true;
+		}
+		if (isCurrentlyVisible()) updateCharts();
 	}
 }
 
@@ -472,8 +644,8 @@ void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRo
  */
 void ItemStatsEngine::updateCharts()
 {
-	if (!dirty) return;
-
+	if (!anyChartsDirty()) return;
+	
 	assert(peakHeightHistChart);
 	assert(elevGainHistChart);
 	assert(heightsScatterChart);
@@ -501,6 +673,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateHistogramChart(peakHeightHistChart, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
+		dirty[peakHeightHistChart] = false;
 	}
 	
 	
@@ -516,6 +689,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateHistogramChart(elevGainHistChart, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
+		dirty[elevGainHistChart] = false;
 	}
 	
 	
@@ -554,6 +728,7 @@ void ItemStatsEngine::updateCharts()
 		
 		QList<DateScatterSeries*> seriesList = {&elevGainScatterSeries, &peakHeightScatterSeries};
 		updateTimeScatterChart(heightsScatterChart, seriesList, ascentBufferRows, xyValuesFromTargetBufferRow, heightsScatterCache);
+		dirty[heightsScatterChart] = false;
 	}
 	
 	
@@ -567,6 +742,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateTopNChart(topNumAscentsChart, ascentCrumbs, currentStartBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
+		dirty[topNumAscentsChart] = false;
 	}
 	
 	
@@ -586,6 +762,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateTopNChart(topMaxPeakHeightChart, peakCrumbs, currentStartBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
+		dirty[topMaxPeakHeightChart] = false;
 	}
 	
 	
@@ -605,6 +782,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateTopNChart(topMaxElevGainChart, ascentCrumbs, currentStartBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
+		dirty[topMaxElevGainChart] = false;
 	}
 	
 	
@@ -626,11 +804,8 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		updateTopNChart(topElevGainSumChart, ascentCrumbs, currentStartBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
+		dirty[topElevGainSumChart] = false;
 	}
-	
-	
-	// Done, charts no longer dirty
-	dirty = false;
 }
 
 
@@ -896,6 +1071,149 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 }
 
 
+
+/**
+ * Clears the cache for the given breadcrumbs trail.
+ * 
+ * @param breadcrumbs	The breadcrumbs for which to clear the cache.
+ */
+void ItemStatsEngine::clearBreadcrumbCacheFor(const Breadcrumbs* const breadcrumbs)
+{
+	if (breadcrumbs == &ascentCrumbs) {
+		ascentCrumbsResultCache.clear();
+	}
+	else if (breadcrumbs == &peakCrumbs) {
+		peakCrumbsResultCache.clear();
+	}
+}
+
+/**
+ * Clears the cache for the given chart.
+ * 
+ * @param chart	The chart for which to clear the cache.
+ */
+void ItemStatsEngine::clearChartCacheFor(Chart* const chart)
+{
+	if (chart == peakHeightHistChart) {
+		peakHeightHistCache.clear();
+	}
+	else if (chart == elevGainHistChart) {
+		elevGainHistCache.clear();
+	}
+	else if (chart == heightsScatterChart) {
+		heightsScatterCache.clear();
+	}
+	else if (chart == topNumAscentsChart) {
+		topNumAscentsCache.clear();
+	}
+	else if (chart == topMaxPeakHeightChart) {
+		topMaxPeakHeightCache.clear();
+	}
+	else if (chart == topMaxElevGainChart) {
+		topMaxElevGainCache.clear();
+	}
+	else if (chart == topElevGainSumChart) {
+		topElevGainSumCache.clear();
+	}
+}
+
+
+/**
+ * Returns a map of breadcrumbs pointers and the sets of charts affected by changes to each
+ * breadcrumbs trail.
+ * 
+ * @return	A map of breadcrumbs sets of dependent charts.
+ */
+QHash<const Breadcrumbs*, QSet<Chart*>> ItemStatsEngine::getBreadcrumbDependencyMap() const
+{
+	return {
+		{&ascentCrumbs, {
+			elevGainHistChart,
+			heightsScatterChart,
+			topNumAscentsChart,
+			topMaxElevGainChart,
+			topElevGainSumChart
+		}},
+		{&peakCrumbs, {
+			peakHeightHistChart,
+			topMaxPeakHeightChart
+		}}
+	};
+}
+
+/**
+ * Returns a map of charts and the sets of columns on which they depend.
+ * 
+ * @return	A map of charts and the sets of columns on which they depend.
+ */
+QHash<Chart*, QSet<Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPerChart() const
+{
+	return {
+		{peakHeightHistChart, {
+			db->peaksTable->heightColumn
+		}},
+		{elevGainHistChart, {
+			db->ascentsTable->elevationGainColumn
+		}},
+		{heightsScatterChart, {
+			db->ascentsTable->dateColumn,
+			db->ascentsTable->timeColumn,
+			db->ascentsTable->elevationGainColumn,
+			db->ascentsTable->peakIDColumn,
+			db->peaksTable->heightColumn
+		}},
+		{topNumAscentsChart, {}},
+		{topMaxPeakHeightChart, {
+			db->peaksTable->heightColumn
+		}},
+		{topMaxElevGainChart, {
+			db->ascentsTable->elevationGainColumn
+		}},
+		{topElevGainSumChart, {
+			db->ascentsTable->elevationGainColumn
+		}}
+	};
+}
+
+/**
+ * Returns the set of columns used for the item labels, specific to the item type.
+ * 
+ * @return	The set of columns used for the item labels.
+ */
+QSet<Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
+{
+	switch (itemType) {
+	case ItemTypeAscent:	return {db->ascentsTable->peakIDColumn, db->peaksTable->nameColumn, db->ascentsTable->dateColumn};
+	case ItemTypePeak:		return {db->peaksTable->nameColumn};
+	case ItemTypeTrip:		return {db->tripsTable->startDateColumn, db->tripsTable->nameColumn};
+	case ItemTypeHiker:		return {db->hikersTable->nameColumn};
+	case ItemTypeRegion:	return {db->regionsTable->nameColumn};
+	case ItemTypeRange:		return {db->rangesTable->nameColumn};
+	case ItemTypeCountry:	return {db->countriesTable->nameColumn};
+	default: assert(false);
+	}
+	return QSet<Column*>();
+}
+
+/**
+ * Returns a map of charts and the sets of columns on which they depend for the item labels.
+ * 
+ * @return	A map of charts and the sets of columns on which they depend for the item labels.
+ */
+QHash<Chart*, QSet<Column*>> ItemStatsEngine::getItemLabelUnderlyingColumnSetPerChart() const
+{
+	const QSet<Column*> labelColumns = getItemLabelUnderlyingColumnSet();
+	return {
+		{peakHeightHistChart,	{}},
+		{elevGainHistChart,		{}},
+		{heightsScatterChart,	{}},
+		{topNumAscentsChart,	labelColumns},
+		{topMaxPeakHeightChart,	labelColumns},
+		{topMaxElevGainChart,	labelColumns},
+		{topElevGainSumChart,	labelColumns},
+	};
+}
+
 /**
  * Returns the set of columns used by this ItemStatsEngine for any of its charts.
  * 
@@ -910,44 +1228,12 @@ QSet<Column*> ItemStatsEngine::getUsedColumnSet() const
 	underlyingColumns.unite(ascentCrumbs.getColumnSet());
 	underlyingColumns.unite(peakCrumbs.getColumnSet());
 	
-	underlyingColumns.insert(db->ascentsTable->dateColumn);
-	underlyingColumns.insert(db->ascentsTable->timeColumn);
-	underlyingColumns.insert(db->ascentsTable->elevationGainColumn);
-	underlyingColumns.insert(db->ascentsTable->peakIDColumn);
-	underlyingColumns.insert(db->peaksTable->heightColumn);
+	const QHash<Chart*, QSet<Column*>> columnsUnderCaches = getPostCrumbsUnderlyingColumnSetPerChart();
+	for (const QSet<Column*>& columns : columnsUnderCaches) {
+		underlyingColumns.unite(columns);
+	}
 	
-	switch (itemType) {
-	case ItemTypeAscent: {
-		underlyingColumns.insert(db->peaksTable->nameColumn);
-		break;
-	}
-	case ItemTypePeak: {
-		underlyingColumns.insert(db->peaksTable->nameColumn);
-		break;
-	}
-	case ItemTypeTrip: {
-		underlyingColumns.insert(db->tripsTable->startDateColumn);
-		underlyingColumns.insert(db->tripsTable->nameColumn);
-		break;
-	}
-	case ItemTypeHiker: {
-		underlyingColumns.insert(db->hikersTable->nameColumn);
-		break;
-	}
-	case ItemTypeRegion: {
-		underlyingColumns.insert(db->regionsTable->nameColumn);
-		break;
-	}
-	case ItemTypeRange: {
-		underlyingColumns.insert(db->rangesTable->nameColumn);
-		break;
-	}
-	case ItemTypeCountry: {
-		underlyingColumns.insert(db->countriesTable->nameColumn);
-		break;
-	}
-	default: assert(false);
-	}
+	underlyingColumns.unite(getItemLabelUnderlyingColumnSet());
 	
 	return underlyingColumns;
 }
@@ -959,11 +1245,13 @@ QSet<Column*> ItemStatsEngine::getUsedColumnSet() const
 /**
  * Creates a ColumnChangeListenerGeneralStatsEngine.
  *
- * @param listener	The ItemStatsEngine to notify about changes.
+ * @param listener			The ItemStatsEngine to notify about changes.
+ * @param affectedCharts	The set of charts affected by changes to the column.
  */
-ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener) :
+ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener, const QSet<Chart*>& affectedCharts) :
 	ColumnChangeListener(),
-	listener(listener)
+	listener(listener),
+	affectedCharts(affectedCharts)
 {}
 
 /**
@@ -977,10 +1265,13 @@ ColumnChangeListenerGeneralStatsEngine::~ColumnChangeListenerGeneralStatsEngine(
 /**
  * Notifies the listening GeneralStatsEngine that the data in the column has
  * changed.
+ * 
+ * @param affectedColumns	The set of columns whose contents have changed.
  */
-void ColumnChangeListenerGeneralStatsEngine::columnDataChanged() const
+void ColumnChangeListenerGeneralStatsEngine::columnDataChanged(QSet<const Column*> affectedColumns) const
 {
-	listener->updateCharts();
+	Q_UNUSED(affectedColumns);
+	listener->markChartsDirty(affectedCharts);
 }
 
 
@@ -1006,10 +1297,11 @@ ColumnChangeListenerItemStatsEngine::~ColumnChangeListenerItemStatsEngine()
 
 
 /**
- * Notifies the listening ItemStatsEngine that the data in the column has
- * changed.
+ * Notifies the listening ItemStatsEngine that the data in the column has changed.
+ * 
+ * @param affectedColumns	The set of columns whose contents have changed.
  */
-void ColumnChangeListenerItemStatsEngine::columnDataChanged() const
+void ColumnChangeListenerItemStatsEngine::columnDataChanged(QSet<const Column*> affectedColumns) const
 {
-	listener->resetCachesAndMarkDirty();
+	listener->announceColumnChanges(affectedColumns);
 }
