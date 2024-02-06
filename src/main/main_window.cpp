@@ -474,7 +474,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		if (activeMapper) {
 			activeMapper->openingTab();
 			showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
-			activeMapper->statsEngine->setCurrentlyVisible(true);
+			activeMapper->statsEngine->setCurrentlyVisible(true, true);
 		}
 		generalStatsEngine.setCurrentlyVisible(!activeMapper);
 		
@@ -949,7 +949,7 @@ void MainWindow::handle_tabChanged()
 		// Item stats panel visibility
 		const bool statsShown = activeMapper->itemStatsPanelCurrentlySetVisible();
 		showItemStatsPanelAction->setChecked(statsShown);
-		activeMapper->statsEngine->setCurrentlyVisible(statsShown);
+		activeMapper->statsEngine->setCurrentlyVisible(statsShown, true);
 	}
 	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	

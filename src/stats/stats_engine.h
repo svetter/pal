@@ -51,7 +51,7 @@ protected:
 	virtual ~StatsEngine();
 	
 public:
-	void setCurrentlyVisible(bool visible);
+	void setCurrentlyVisible(bool visible, bool noUpdate = false);
 	bool isCurrentlyVisible();
 protected:
 	/**

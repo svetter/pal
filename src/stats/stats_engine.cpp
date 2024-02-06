@@ -48,12 +48,13 @@ StatsEngine::~StatsEngine()
  * visible.
  * 
  * @param visible	Whether the charts are currently visible.
+ * @param noUpdate	Whether to suppress the chart update which can be triggered by the visibility change.
  */
-void StatsEngine::setCurrentlyVisible(bool visible)
+void StatsEngine::setCurrentlyVisible(bool visible, bool noUpdate)
 {
 	currentlyVisible = visible;
 	
-	if (currentlyVisible) {
+	if (currentlyVisible && !noUpdate) {
 		updateCharts();
 	}
 }
