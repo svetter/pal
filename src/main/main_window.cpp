@@ -215,7 +215,7 @@ void MainWindow::setupTableTabs()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		// Set model
 		mapper->tableView->setModel(mapper->compTable);
-		mapper->compTable->setUpdateImmediately(false);
+		mapper->compTable->setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
 		
 		// Enable column header reordering
 		mapper->tableView->horizontalHeader()->setSectionsMovable(true);
