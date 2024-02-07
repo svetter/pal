@@ -116,7 +116,7 @@
      <item>
       <widget class="QLabel" name="codeLabel">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Complete source code available on GitHub: &lt;a href=&quot;$CODE_LINK$&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;$CODE_LINK$&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Complete source code available on GitHub:&lt;br/&gt;&lt;a href=&quot;$CODE_LINK$&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;$CODE_LINK$&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
