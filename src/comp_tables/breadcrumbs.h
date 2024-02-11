@@ -24,7 +24,8 @@
 #ifndef BREADCRUMBS_H
 #define BREADCRUMBS_H
 
-#include "src/db/column.h"
+#include "src/db/normal_table.h"
+#include "src/db/associative_table.h"
 
 
 
@@ -72,9 +73,11 @@ public:
 	Breadcrumbs(const QList<Breadcrumb>& initList);
 	
 	const QSet<Column*> getColumnSet() const;
-	const Table* getTargetTable() const;
+	const NormalTable* getStartTable() const;
+	const NormalTable* getTargetTable() const;
 	bool isEmpty() const;
 	int length() const;
+	bool goesVia(const Table* table) const;
 	
 	bool operator==(const Breadcrumbs& other) const;
 	bool operator!=(const Breadcrumbs& other) const;

@@ -144,6 +144,7 @@ Breadcrumbs::Breadcrumbs(const QList<Breadcrumb>& breadcrumbs) :
 {
 	if (!list.isEmpty()) {
 		assert(!list.first().firstColumn->table->isAssociative);
+		assert(!list.last().secondColumn->table->isAssociative);
 		
 		const Table* previousTable = nullptr;
 		const Table* currentTable = list.first().firstColumn->table;
@@ -185,16 +186,29 @@ const QSet<Column*> Breadcrumbs::getColumnSet() const
 }
 
 /**
+ * Returns the table which the first breadcrumb references with its first column.
+ * 
+ * @pre The list of breadcrumbs is not empty.
+ * 
+ * @return	The first table in the breadcrumb trail.
+ */
+const NormalTable* Breadcrumbs::getStartTable() const
+{
+	assert(!list.isEmpty());
+	return (NormalTable*) list.first().firstColumn->table;
+}
+
+/**
  * Returns the table which the last breadcrumb references with its second column.
  * 
  * @pre The list of breadcrumbs is not empty.
  * 
- * @return	The table which the last breadcrumb references.
+ * @return	The last table in the breadcrumb trail.
  */
-const Table* Breadcrumbs::getTargetTable() const
+const NormalTable* Breadcrumbs::getTargetTable() const
 {
 	assert(!list.isEmpty());
-	return list.last().secondColumn->table;
+	return (NormalTable*) list.last().secondColumn->table;
 }
 
 
@@ -216,6 +230,23 @@ bool Breadcrumbs::isEmpty() const
 int Breadcrumbs::length() const
 {
 	return list.size();
+}
+
+/**
+ * Indicates whether the breadcrumb trail includes a given table.
+ * 
+ * @param table	The table to check for.
+ * @return		True if the breadcrumb trail includes the given table, false otherwise.
+ */
+bool Breadcrumbs::goesVia(const Table* table) const
+{
+	for (int i = 1; i < list.size(); i++) {
+		const Breadcrumb& crumb = list.at(i);
+		if (crumb.firstColumn->table == table) {
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -385,7 +416,8 @@ BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferR
  * needed for calculating statistics.
  * 
  * This function is similar to evaluate(), but uses lists internally instead of sets. This allows
- * counting items multiple times instead of only counting the number of unique items.
+ * counting items multiple times instead of only counting the number of unique items. As an
+ * exception, all duplicates are removed after an associative table has been traversed.
  * 
  * @param initialBufferRowIndices	The row indices to start from.
  * @return							The set of row indices in the table of the first breadcrumb.
@@ -430,6 +462,13 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 				// Add new buffer indices to current list
 				currentRowIndexList.append(matchingBufferRowIndices);
 			}
+		}
+		
+		if (crumb.firstColumn->table->isAssociative && initialBufferRowIndices.size() > 1) {
+			// Coming out of associative table => Remove all duplicates
+			const QSet<BufferRowIndex> currentRowIndexSet = QSet<BufferRowIndex>(currentRowIndexList.constBegin(), currentRowIndexList.constEnd());
+			currentRowIndexList.clear();
+			currentRowIndexList = QList<BufferRowIndex>(currentRowIndexSet.constBegin(), currentRowIndexSet.constEnd());
 		}
 		
 		if (currentRowIndexList.isEmpty()) return QList<BufferRowIndex>();

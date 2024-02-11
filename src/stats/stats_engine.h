@@ -160,9 +160,14 @@ class ItemStatsEngine : public StatsEngine
 	// Caching
 	// Breadcrumb caches
 	/** A cache which holds the results of evaluating the ascent crumbs for individual base table buffer rows. */
-	QMap<BufferRowIndex, QList<BufferRowIndex>>	ascentCrumbsResultCache;
+	QMap<BufferRowIndex, QList<BufferRowIndex>>	ascentCrumbsSingleRowResultCache;
+	/** A cache which holds the results of evaluating the ascent crumbs for whole sets of base table buffer rows. */
+	QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>> ascentCrumbsWholeSetResultCache;
 	/** A cache which holds the results of evaluating the peak crumbs for individual base table buffer rows. */
-	QMap<BufferRowIndex, QList<BufferRowIndex>>	peakCrumbsResultCache;
+	QMap<BufferRowIndex, QList<BufferRowIndex>>	peakCrumbsSingleRowResultCache;
+	/** A cache which holds the results of evaluating the peak crumbs for whole sets of base table buffer rows. */
+	QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>> peakCrumbsWholeSetResultCache;
+	
 	// Chart caches
 	/** A cache which holds peak height histogram class values for individual peaks table buffer rows. */
 	QMap<BufferRowIndex, int>								peakHeightHistCache;
@@ -191,14 +196,14 @@ public:
 	virtual void updateCharts();
 	
 private:
-	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const;
+	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsSingleRowResultCache, QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>& crumbsWholeSetResultCache) const;
 	void updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
 	void updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const;
 	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
 	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
 	
-	void clearBreadcrumbCacheFor(const Breadcrumbs* const breadcrumbs);
+	void clearBreadcrumbCachesFor(const Breadcrumbs* const breadcrumbs);
 	void clearChartCacheFor(Chart* const chart);
 	
 	QHash<const Breadcrumbs*, QSet<Chart*>> getBreadcrumbDependencyMap() const;

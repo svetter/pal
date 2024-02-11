@@ -428,8 +428,10 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	topMaxElevGainChart		(nullptr),
 	topElevGainSumChart		(nullptr),
 	currentStartBufferRows	(QSet<BufferRowIndex>()),
-	ascentCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
-	peakCrumbsResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
+	ascentCrumbsSingleRowResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
+	ascentCrumbsWholeSetResultCache		(QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>()),
+	peakCrumbsSingleRowResultCache		(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
+	peakCrumbsWholeSetResultCache		(QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>()),
 	peakHeightHistCache		(QMap<BufferRowIndex, int>()),
 	elevGainHistCache		(QMap<BufferRowIndex, int>()),
 	heightsScatterCache		(QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>()),
@@ -543,8 +545,11 @@ void ItemStatsEngine::resetStatsPanel()
 	
 	setCurrentlyVisible(false);
 	
-	ascentCrumbsResultCache	.clear();
-	peakCrumbsResultCache	.clear();
+	ascentCrumbsSingleRowResultCache	.clear();
+	ascentCrumbsWholeSetResultCache		.clear();
+	peakCrumbsSingleRowResultCache		.clear();
+	peakCrumbsWholeSetResultCache		.clear();
+	
 	peakHeightHistCache		.clear();
 	elevGainHistCache		.clear();
 	heightsScatterCache		.clear();
@@ -581,7 +586,7 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 	for (const Breadcrumbs* const breadcrumbs : allBreadcrumbs) {
 		if (!intersect(breadcrumbs->getColumnSet(), changedColumns)) continue;
 		
-		clearBreadcrumbCacheFor(breadcrumbs);
+		clearBreadcrumbCachesFor(breadcrumbs);
 		
 		// Mark all dependent charts dirty and reset their caches
 		const QSet<Chart*> charts = breadcrumbDependencies.value(breadcrumbs);
@@ -657,8 +662,8 @@ void ItemStatsEngine::updateCharts()
 	
 	// Collect peak/ascent IDs
 	
-	QList<BufferRowIndex> ascentBufferRows	= evaluateCrumbsCached(ascentCrumbs,	currentStartBufferRows, ascentCrumbsResultCache);
-	QList<BufferRowIndex> peakBufferRows	= evaluateCrumbsCached(peakCrumbs,		currentStartBufferRows, peakCrumbsResultCache);
+	QList<BufferRowIndex> ascentBufferRows	= evaluateCrumbsCached(ascentCrumbs,	currentStartBufferRows,	ascentCrumbsSingleRowResultCache,	ascentCrumbsWholeSetResultCache);
+	QList<BufferRowIndex> peakBufferRows	= evaluateCrumbsCached(peakCrumbs,		currentStartBufferRows,	peakCrumbsSingleRowResultCache,		peakCrumbsWholeSetResultCache);
 	
 	
 	// Peak height histogram
@@ -813,29 +818,100 @@ void ItemStatsEngine::updateCharts()
  * Returns the evaluation of the given breadcrumbs for the given selected buffer rows, using or
  * updating the given cache.
  * 
- * @param crumbs				The breadcrumbs to evaluate.
- * @param selectedBufferRows	The buffer rows of all items currently selected in the UI table.
- * @param crumbsResultCache		The cache to use.
- * @return						The evaluation of the given breadcrumbs for the given selected buffer rows.
+ * Duplication in breadcrumb evaluation
+ * 
+ * While following a breadcrumb trail, the algorithm can come across duplicate entries. Where this
+ * can occur depends on the type of crumb as well as the number of starting items (buffer rows):
+ * ┌──────────────────────────┬───────────────────┬───────────────────┐
+ * │           Starting from: │    Single item    │      M items      │
+ * ├──────────────────────────┼───────────┬───────┼───────────┬───────┤
+ * │                          │ # Results │ Dupl. │ # Results │ Dupl. │
+ * ├──────────────────────────┼───────────┼───────┼───────────┼───────┤
+ * │ Forward reference        │ 0 - 1     │ No    │ 0 - M     │ Yes   │
+ * │ Backward reference       │ 0 - n     │ No    │ 0 - n     │ No    │
+ * │ Across associative table │ 0 - n     │ No    │ 0 - n     │ Yes   │
+ * └──────────────────────────┴───────────┴───────┴───────────┴───────┘
+ * When following a trail which is composed ONLY of forward-referencing crumbs, there can only be
+ * zero or one results when starting with a single item, while starting with multiple items can
+ * lead to duplicated items on the target side.
+ * Any trail composed only of backward-referencing crumbs will not produce additional duplication,
+ * even when starting with multiple items. This is because following a backwards reference means
+ * traversing a 1-to-n relation between classes, and this process could only add duplication if an
+ * item on the n side corresponded to multiple items on the 1 side, which it cannot do by
+ * definition.
+ * Lastly, when traversing an associative table, duplicate results can occur, but only when starting
+ * from multiple elements. Duplication from a single element would require multiple entries for one
+ * key where the other key is also the same, which is not possible since both keys combine to form
+ * the primary key for the associative table. Traversing an associative table amounts to a backward
+ * reference followed by a forward reference, which fits with the above observations.
+ * 
+ * For any trail where duplication can occur, it needs to be determined in which mode breadcrumb
+ * steps should be evaluated. There are two possibilities for every crumb in a trail:
+ * 1. Discard all duplicates (by using a set).
+ * 2. Record every row, even if it has already been added (by using a list).
+ * 
+ * Regarding the database scheme in this project more specifically, there are four trails which need
+ * to be evaluated in this method where duplication can occur:
+ * 1. Ascent -> peak
+ *    Trivial because the trail only consists of one step. Duplication is wanted and can be
+ *    performed after separate evaluation of single items.
+ * 2. Trip   -> peak
+ *    Duplication only possible during the second of two steps. Again, duplication is wanted and is
+ *    compatible with separate evaluation of single items.
+ * 3. Hiker  -> ascent
+ *    Duplication is NOT wanted here but can be performed at first and discarded after the fact.
+ * 4. Hiker  -> peak
+ *    Duplication is not wanted for the step from hiker to ascent, but IS wanted for the last step
+ *    from ascent to peak. This is NOT compatible with separate evaluation of single items. Instead,
+ *    the first step needs to be performed with ALL starting items while ignoring or discarding
+ *    duplicates, followed by the second step where duplicates are now recorded.
+ * 
+ * In order to satisfy these constraints, the solution employed here is to always work with lists to
+ * record all duplicates, EXCEPT when traversing an associative table, where duplication is
+ * circumvented ONLY for that step, also throwing away any previous duplicates.
+ * 
+ * @param crumbs						The breadcrumbs to evaluate.
+ * @param selectedBufferRows			The buffer rows of all items currently selected in the UI table.
+ * @param crumbsSingleRowResultCache	The cache to use for evaluation results of single buffer rows.
+ * @param crumbsWholeSetResultCache		The cache to use for evaluation results of entire sets of buffer rows.
+ * @return								The evaluation of the given breadcrumbs for the given selected buffer rows.
  */
-QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsResultCache) const
+QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsSingleRowResultCache, QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>& crumbsWholeSetResultCache) const
 {
 	QList<BufferRowIndex> targetBufferRows = QList<BufferRowIndex>();
+	
+	if (crumbs.goesVia(db->participatedTable)) {
+		// Crumbs traverse an associative table, can't use caches for separately evaluated single rows
+		// Use cache for whole set of requested buffer rows instead
+		
+		// Check cache
+		if (crumbsWholeSetResultCache.contains(selectedBufferRows)) {
+			// Cache hit
+			targetBufferRows = crumbsWholeSetResultCache.value(selectedBufferRows);
+		}
+		else {
+			// Cache miss
+			targetBufferRows = crumbs.evaluateForStats(selectedBufferRows);
+			// Write to cache
+			crumbsWholeSetResultCache.insert(selectedBufferRows, targetBufferRows);
+		}
+		
+		return targetBufferRows;
+	}
 	
 	for (const BufferRowIndex& currentBufferRow : selectedBufferRows) {
 		QList<BufferRowIndex> newTargetBufferRows;
 		
 		// Check cache
-		if (crumbsResultCache.contains(currentBufferRow)) {
+		if (crumbsSingleRowResultCache.contains(currentBufferRow)) {
 			// Cache hit
-			newTargetBufferRows = crumbsResultCache.value(currentBufferRow);
+			newTargetBufferRows = crumbsSingleRowResultCache.value(currentBufferRow);
 		}
 		else {
 			// Cache miss
-			newTargetBufferRows = crumbs.evaluateForStats({currentBufferRow});
-			
+			newTargetBufferRows = crumbs.evaluateForStats({ currentBufferRow });
 			// Write to cache
-			crumbsResultCache.insert(currentBufferRow, newTargetBufferRows);
+			crumbsSingleRowResultCache.insert(currentBufferRow, newTargetBufferRows);
 		}
 		
 		targetBufferRows.append(newTargetBufferRows);
@@ -1073,17 +1149,19 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 
 
 /**
- * Clears the cache for the given breadcrumbs trail.
+ * Clears both caches for the given breadcrumbs trail.
  * 
- * @param breadcrumbs	The breadcrumbs for which to clear the cache.
+ * @param breadcrumbs	The breadcrumbs for which to clear the caches.
  */
-void ItemStatsEngine::clearBreadcrumbCacheFor(const Breadcrumbs* const breadcrumbs)
+void ItemStatsEngine::clearBreadcrumbCachesFor(const Breadcrumbs* const breadcrumbs)
 {
 	if (breadcrumbs == &ascentCrumbs) {
-		ascentCrumbsResultCache.clear();
+		ascentCrumbsSingleRowResultCache.clear();
+		ascentCrumbsWholeSetResultCache.clear();
 	}
 	else if (breadcrumbs == &peakCrumbs) {
-		peakCrumbsResultCache.clear();
+		peakCrumbsSingleRowResultCache.clear();
+		peakCrumbsWholeSetResultCache.clear();
 	}
 }
 

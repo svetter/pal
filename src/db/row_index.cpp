@@ -341,6 +341,21 @@ bool operator==(int index1, const BufferRowIndex& index2)
 
 
 
+/**
+ * Hashes the given BufferRowIndex.
+ * 
+ * This implementation is required for using BufferRowIndex as keys in a QHash.
+ * 
+ * @param key	The BufferRowIndex to hash.
+ * @return		The hash value.
+ */
+size_t qHash(const BufferRowIndex& key)
+{
+	return qHashMulti(key.isValid(), key.isValid() ? key.get() : 0);
+}
+
+
+
 
 
 /**

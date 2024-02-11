@@ -98,6 +98,8 @@ public:
 bool operator==(const BufferRowIndex& index1, int index2);
 bool operator==(int index1, const BufferRowIndex& index2);
 
+size_t qHash(const BufferRowIndex& key);
+
 
 
 
