@@ -591,7 +591,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="peaksStatsScrollAreaLayout">
@@ -721,7 +721,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="tripsStatsScrollAreaLayout">
@@ -848,7 +848,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="hikersStatsScrollAreaLayout">
@@ -975,7 +975,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="regionsStatsScrollAreaLayout">
@@ -1102,7 +1102,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="rangesStatsScrollAreaLayout">
@@ -1229,7 +1229,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>248</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="countriesStatsScrollAreaLayout">
@@ -1325,6 +1325,8 @@
      </property>
      <addaction name="showAllStatsPanelsAction"/>
      <addaction name="hideAllStatsPanelsAction"/>
+     <addaction name="separator"/>
+     <addaction name="pinStatsRangesAction"/>
     </widget>
     <addaction name="showItemStatsPanelAction"/>
     <addaction name="statsPanelMenu"/>
@@ -1551,6 +1553,20 @@
   <action name="showAllStatsPanelsAction">
    <property name="text">
     <string>Show on all tabs</string>
+   </property>
+  </action>
+  <action name="pinStatsRangesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fix axes on selection-specific charts</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">F8</string>
    </property>
   </action>
   <action name="clearTableSelectionAction">

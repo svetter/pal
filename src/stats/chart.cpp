@@ -38,7 +38,8 @@ Chart::Chart(const QString& chartTitle) :
 	chartTitle(chartTitle),
 	chart		(nullptr),
 	chartView	(nullptr),
-	hasData(false)
+	hasData			(false),
+	usePinnedRanges	(false)
 {}
 
 /**
@@ -48,6 +49,24 @@ Chart::~Chart()
 {
 	//		chart		is deleted by chartView
 	delete	chartView;
+}
+
+
+
+/**
+ * Sets the flag for whether the pinned ranges should currently be used for the chart.
+ * 
+ * If data is already set, the view is updated after a change.
+ * 
+ * @param pinned	Whether to use the pinned ranges.
+ */
+void Chart::setUsePinnedRanges(bool pinned)
+{
+	if (pinned == usePinnedRanges) return;
+	
+	usePinnedRanges = pinned;
+	
+	if (hasData) updateView();
 }
 
 
@@ -307,6 +326,7 @@ QScatterSeries* Chart::createScatterSeries(const QString& name, int markerSize, 
  * @param maxValue			The maximum value on the axis included in the current dataset.
  * @param chartSize			The size of the chart's plot area in the direction of the given axis (h/v) in pixels.
  * @param rangeBufferFactor	The fraction of the range to add to the edge on either side as a buffer. No buffer is added when that edge is equal to zero.
+ * @param isTimeAxis		Whether the axis is a time axis. If true, the axis will show minor ticks for every month at small ranges.
  */
 void Chart::adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor, bool isTimeAxis)
 {
@@ -448,7 +468,10 @@ YearBarChart::YearBarChart(const QString& chartTitle, const QString& yAxisTitle)
 	xAxis		(nullptr),
 	yAxis		(nullptr),
 	barSeries	(nullptr),
-	barSet		(nullptr)
+	barSet		(nullptr),
+	minYear	{0, 0},
+	maxYear	{0, 0},
+	maxY	{0, 0}
 {
 	YearBarChart::setup();
 	YearBarChart::reset();
@@ -492,40 +515,48 @@ void YearBarChart::reset()
 {
 	barSet->remove(0, barSet->count());
 	hasData = false;
-	minYear = 0;
-	maxYear = 0;
-	maxY = 0;
+	for (const bool p : {false, true}) {
+		minYear	[p] = 0;
+		maxYear	[p] = 0;
+		maxY	[p] = 0;
+	}
 	resetAxis(yAxis, true);
 }
 
 /**
  * Replaces the displayed data and stores range information for future view updates.
  * 
- * Performs a view update before replacing the data.
+ * Performs a view update after replacing the data.
  * 
- * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of categories.
+ * @param newData			The data to display in the chart. The length of the list must match the number of years between newMinYear and newMaxYear.
+ * @param newMinYear		The minimum year in the data.
+ * @param newMaxYear		The maximum year in the data.
+ * @param newMaxY			The maximum y value in the given data.
+ * @param setPinnedRanges	Whether to store the given range information as pinned range data.
  */
-void YearBarChart::updateData(const QList<qreal>& newData, int minYear, int maxYear, qreal maxY)
+void YearBarChart::updateData(const QList<qreal>& newData, int newMinYear, int newMaxYear, qreal newMaxY, bool setPinnedRanges)
 {
 	if (newData.isEmpty()) {
 		reset();
 		return;
 	}
-	assert(newData.size() == maxYear - minYear + 1);
-	assert(maxY >= 0);
+	assert(newData.size() == newMaxYear - newMinYear + 1);
+	assert(newMaxY >= 0);
 	
 	QStringList years = QStringList();
-	for (int year = minYear; year <= maxYear; year++) {
+	for (int year = newMinYear; year <= newMaxYear; year++) {
 		years.append(QString::number(year));
 	}
 	
 	barSet->remove(0, barSet->count());
-	barSet->append(QList<qreal>(minYear, 0));
+	barSet->append(QList<qreal>(newMinYear, 0));
 	barSet->append(newData);
 	
-	this->minYear = minYear;
-	this->maxYear = maxYear;
-	this->maxY = maxY;
+	for (int p = 0; p < (setPinnedRanges ? 2 : 1); p++) {
+		minYear	[p] = newMinYear;
+		maxYear	[p] = newMaxYear;
+		maxY	[p] = newMaxY;
+	}
 	hasData = true;
 	updateView();
 }
@@ -536,8 +567,10 @@ void YearBarChart::updateData(const QList<qreal>& newData, int minYear, int maxY
 void YearBarChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(xAxis,	minYear,	maxYear,	chart->plotArea().width(),	rangeBufferFactorX);
-	adjustAxis(yAxis,	0,			maxY,		chart->plotArea().height(),	rangeBufferFactorY);
+	
+	const bool p = usePinnedRanges;
+	adjustAxis(xAxis,	minYear[p],	maxYear[p],	chart->plotArea().width(),	rangeBufferFactorX);
+	adjustAxis(yAxis,	0,			maxY[p],	chart->plotArea().height(),	rangeBufferFactorY);
 }
 
 
@@ -586,12 +619,13 @@ TimeScatterChart::TimeScatterChart(const QString& chartTitle, const QString& yAx
 	xAxisDate	(nullptr),
 	xAxisValue	(nullptr),
 	yAxis		(nullptr),
-	lowRange	(false),
-	minDate		(QDate()),
-	maxDate		(QDate()),
-	minRealYear	(0),
-	maxRealYear	(0),
-	maxY		(0)
+	xySeries	{QList<QXYSeries*>(), QList<QXYSeries*>()},
+	lowRange	{false, false},
+	minDate		{QDate(), QDate()},
+	maxDate		{QDate(), QDate()},
+	minRealYear	{0, 0},
+	maxRealYear	{0, 0},
+	maxY		{0, 0}
 {
 	TimeScatterChart::setup();
 	TimeScatterChart::reset();
@@ -636,9 +670,14 @@ void TimeScatterChart::reset()
 {
 	chart->removeAllSeries();
 	hasData = false;
-	this->minRealYear = 0;
-	this->maxRealYear = 0;
-	this->maxY = 0;
+	for (const bool p : {false, true}) {
+		xySeries	[p].clear();
+		minDate		[p] = QDate();
+		maxDate		[p] = QDate();
+		minRealYear	[p] = 0;
+		maxRealYear	[p] = 0;
+		maxY		[p] = 0;
+	}
 	resetAxis(xAxisDate);
 	resetAxis(xAxisValue, false);
 	xAxisValue->setVisible(true);
@@ -648,15 +687,15 @@ void TimeScatterChart::reset()
 /**
  * Replaces the displayed data and stores range information for future view updates.
  * 
- * Performs a view update before replacing the data and sets the legend to visible iff more than one
- * series was added.
+ * Performs a view update after generating and storing the new data series.
  * 
- * @param newSeries	A list of data series to display in the chart.
- * @param minDate	The minimum x-value (date) among all given data series.
- * @param maxDate	The maximum x-value (date) among all given data series.
- * @param maxY		The maximum y value among all given data series.
+ * @param newSeries			A list of data series to display in the chart.
+ * @param newMinDate		The minimum x-value (date) among all given data series.
+ * @param newMaxDate		The maximum x-value (date) among all given data series.
+ * @param newMaxY			The maximum y value among all given data series.
+ * @param setPinnedRanges	Whether to store the given range information as pinned range data.
  */
-void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY)
+void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, QDate newMinDate, QDate newMaxDate, qreal newMaxY, bool setPinnedRanges)
 {
 	bool noData = true;
 	for (const DateScatterSeries* const series : seriesData) {
@@ -669,8 +708,8 @@ void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, Q
 		reset();
 		return;
 	}
-	assert(minDate <= maxDate);
-	assert(maxY >= 0);
+	assert(newMinDate <= newMaxDate);
+	assert(newMaxY >= 0);
 	
 	auto getYearReal = [](QDateTime dateTime) {
 		const QDateTime startOfYear		= QDateTime(QDate(dateTime.date().year(),		1, 1), QTime(0, 0));
@@ -681,63 +720,88 @@ void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, Q
 		return (qreal) (dateTimeSecs - startOfYearSecs) / (startOfNextYearSecs - startOfYearSecs) + dateTime.date().year();
 	};
 	
-	lowRange = maxDate.year() - minDate.year() < 2;
-	
-	this->minDate = minDate;
-	this->maxDate = maxDate;
-	minRealYear = getYearReal(QDateTime(minDate,			QTime(0, 0)));
-	maxRealYear = getYearReal(QDateTime(maxDate.addDays(1),	QTime(0, 0)));
-	if (lowRange) {
-		qreal buffer = 0.5 * (1 - (maxRealYear - minRealYear));
-		minRealYear -= buffer;
-		maxRealYear += buffer;
+	for (int p = 0; p < (setPinnedRanges ? 2 : 1); p++) {
+		lowRange[p] = newMaxDate.year() - newMinDate.year() < 2;
+		
+		minDate[p] = newMinDate;
+		maxDate[p] = newMaxDate;
+		minRealYear[p] = getYearReal(QDateTime(newMinDate,				QTime(0, 0)));
+		maxRealYear[p] = getYearReal(QDateTime(newMaxDate.addDays(1),	QTime(0, 0)));
+		if (lowRange[p]) {
+			const qreal buffer = 0.5 * (2 - (maxRealYear[p] - minRealYear[p]));
+			if (buffer < 0)
+			assert(buffer >= 0);
+			minRealYear[p] -= buffer;
+			maxRealYear[p] += buffer;
+		}
+		assert(minRealYear[p] <= maxRealYear[p]);
+		maxY[p] = newMaxY;
 	}
-	this->maxY = maxY;
-	hasData = true;
 	
 	// Convert dates to real representation and create series
-	QList<QXYSeries*> qSeries = QList<QXYSeries*>();
+	for (int p = 0; p < 2; p++) {
+		qDeleteAll(xySeries[p]);
+		xySeries[p].clear();
+	}
 	for (const DateScatterSeries* const series : seriesData) {
-		QScatterSeries* newQSeries = createScatterSeries(series->name, series->markerSize, series->markerShape);
+		QScatterSeries* newQSeries[2] {
+			createScatterSeries(series->name, series->markerSize, series->markerShape),
+			createScatterSeries(series->name, series->markerSize, series->markerShape)
+		};
+		
 		for (const auto& [dateTime, yValue] : series->data) {
-			qreal xValue;
-			if (lowRange) {
-				xValue = dateTime.toMSecsSinceEpoch();
-			} else {
-				xValue = getYearReal(dateTime);
+			for (int p = 0; p < 2; p++) {
+				qreal xValue;
+				if (lowRange[p]) {
+					xValue = dateTime.toMSecsSinceEpoch();
+				} else {
+					xValue = getYearReal(dateTime);
+				}
+				
+				newQSeries[p]->append(xValue, yValue);
 			}
-			
-			newQSeries->append(xValue, yValue);
 		}
-		qSeries.append(newQSeries);
+		
+		xySeries[0].append(newQSeries[0]);
+		xySeries[1].append(newQSeries[1]);
 	}
 	
+	hasData = true;
 	updateView();
-	
-	chart->legend()->setVisible(qSeries.length() > 1);
-	
-	chart->removeAllSeries();
-	for (QXYSeries* const series : qSeries) {
-		chart->addSeries(series);
-		if (lowRange)	series->attachAxis(xAxisDate);
-		else			series->attachAxis(xAxisValue);
-		series->attachAxis(yAxis);
-	}
 }
 
 /**
  * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
+ * 
+ * Removes all series from the chart and adds them again, according to the current range settings.
  */
 void TimeScatterChart::updateView()
 {
 	if (!hasData) return;
 	
-	adjustAxis(xAxisDate,	minDate,		maxDate,		chart->plotArea().width());
-	adjustAxis(xAxisValue,	minRealYear,	maxRealYear,	chart->plotArea().width(),	rangeBufferFactorX, true);
-	adjustAxis(yAxis,		0,				maxY,			chart->plotArea().height(),	rangeBufferFactorY);
+	chartView->setUpdatesEnabled(false);
 	
-	xAxisDate->setVisible(lowRange);
-	xAxisValue->setVisible(!lowRange);
+	const bool p = usePinnedRanges;
+	adjustAxis(xAxisDate,	minDate[p],		maxDate[p],		chart->plotArea().width());
+	adjustAxis(xAxisValue,	minRealYear[p],	maxRealYear[p],	chart->plotArea().width(),	rangeBufferFactorX, true);
+	adjustAxis(yAxis,		0,				maxY[p],		chart->plotArea().height(),	rangeBufferFactorY);
+	
+	xAxisDate->setVisible(lowRange[p]);
+	xAxisValue->setVisible(!lowRange[p]);
+	
+	for (QAbstractSeries* const series : chart->series()) {
+		chart->removeSeries(series);
+	}
+	for (QXYSeries* const series : xySeries[p]) {
+		chart->addSeries(series);
+		if (lowRange[p])	series->attachAxis(xAxisDate);
+		else				series->attachAxis(xAxisValue);
+		series->attachAxis(yAxis);
+	}
+	
+	chart->legend()->setVisible(xySeries[p].length() > 1);
+	
+	chartView->setUpdatesEnabled(true);
 }
 
 /**
@@ -773,7 +837,8 @@ HistogramChart::HistogramChart(const QString& chartTitle, int numClasses, int cl
 	xAxis		(nullptr),
 	yAxis		(nullptr),
 	barSeries	(nullptr),
-	barSet		(nullptr)
+	barSet		(nullptr),
+	maxY	{0, 0}
 {
 	HistogramChart::setup();
 	HistogramChart::reset();
@@ -816,7 +881,9 @@ void HistogramChart::reset()
 {
 	barSet->remove(0, barSet->count());
 	hasData = false;
-	this->maxY = 0;
+	for (const bool p : {false, true}) {
+		maxY	[p] = 0;
+	}
 	resetAxis(yAxis, true);
 }
 
@@ -836,10 +903,11 @@ int HistogramChart::classifyValue(int value) const
  * 
  * Performs a view update before replacing the data.
  * 
- * @param histogramData	A list of data points to display in the chart. The length of the list must match the number of classes.
- * @param maxY			The maximum y value in the given data.
+ * @param histogramData		A list of data points to display in the chart. The length of the list must match the number of classes.
+ * @param newMaxY			The maximum y value in the given data.
+ * @param setPinnedRanges	Whether to store the given range information as pinned range data.
  */
-void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
+void HistogramChart::updateData(QList<qreal> histogramData, qreal newMaxY, bool setPinnedRanges)
 {
 	bool noData = true;
 	if (!histogramData.isEmpty()) {
@@ -854,9 +922,12 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 		reset();
 		return;
 	}
-	assert(maxY > 0);
+	assert(newMaxY > 0);
 	
-	this->maxY = maxY;
+	for (int p = 0; p < (setPinnedRanges ? 2 : 1); p++) {
+		maxY[p] = newMaxY;
+	}
+
 	hasData = true;
 	updateView();
 	
@@ -870,7 +941,9 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal maxY)
 void HistogramChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
+	
+	const bool p = usePinnedRanges;
+	adjustAxis(yAxis,	0,	maxY[p],	chart->plotArea().width(),	rangeBufferFactorY);
 }
 
 
@@ -891,7 +964,8 @@ TopNChart::TopNChart(int n, const QString& chartTitle, const QString& yAxisTitle
 	xAxis		(nullptr),
 	yAxis		(nullptr),
 	barSeries	(nullptr),
-	barSet		(nullptr)
+	barSet		(nullptr),
+	maxY	{0, 0}
 {
 	TopNChart::setup();
 	TopNChart::reset();
@@ -935,18 +1009,22 @@ void TopNChart::reset()
 	barSet->remove(0, barSet->count());
 	xAxis->setCategories({});
 	hasData = false;
-	this->maxY = 0;
+	for (const bool p : {false, true}) {
+		maxY	[p] = 0;
+	}
 	resetAxis(yAxis, true);
 }
 
 /**
  * Replaces the displayed data and stores range information for future view updates.
  * 
- * Performs a view update before replacing the data.
+ * Performs a view update after replacing the data.
  * 
- * @param histogramData	A list of data points to display in the chart. The length of the list must match N.
+ * @param labels			The labels for the data points to display in the chart. The length of the list must be n or less.
+ * @param values			The values for the data points to display in the chart. The length of the list must match the length of the labels list.
+ * @param setPinnedRanges	Whether to store the given range information as pinned range data.
  */
-void TopNChart::updateData(QStringList labels, QList<qreal> values)
+void TopNChart::updateData(QStringList labels, QList<qreal> values, bool setPinnedRanges)
 {
 	assert(labels.size() == values.size());
 	assert(labels.size() <= n);
@@ -956,8 +1034,9 @@ void TopNChart::updateData(QStringList labels, QList<qreal> values)
 		return;
 	}
 	
-	maxY = values.first();
-	assert(maxY >= 0);
+	for (int p = 0; p < (setPinnedRanges ? 2 : 1); p++) {
+		maxY[p] = values.first();
+	}
 	
 	// Handle duplicate labels (otherwise the duplicates will be missing)
 	renameDuplicates(labels);
@@ -980,7 +1059,9 @@ void TopNChart::updateData(QStringList labels, QList<qreal> values)
 void TopNChart::updateView()
 {
 	if (!hasData) return;
-	adjustAxis(yAxis,	0,	maxY,	chart->plotArea().width(),	rangeBufferFactorY);
+	
+	const bool p = usePinnedRanges;
+	adjustAxis(yAxis,	0,	maxY[p],	chart->plotArea().width(),	rangeBufferFactorY);
 }
 
 

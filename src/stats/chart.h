@@ -116,6 +116,8 @@ protected:
 	SizeResponsiveChartView* chartView;
 	/** Indicates whether the chart is currently displaying any data and that range values have been set. */
 	bool hasData;
+	/** Indicates whether the chart should use the range data for pinned ranges. Can be used as an array index for all range information variables which are length-2 arrays. */
+	bool usePinnedRanges;
 	
 public:
 	Chart(const QString& chartTitle);
@@ -130,6 +132,8 @@ public:
 	 * Removes all data from the chart.
 	 */
 	virtual void reset() = 0;
+	
+	void setUsePinnedRanges(bool pinned);
 	
 	/**
 	 * Updates the chart layout, e.g. tick spacing, without changing the displayed data.
@@ -184,12 +188,12 @@ protected:
 	QBarSet*	barSet;
 	
 	// Range data
-	/** The minimum x value of the current data set. */
-	int minYear;
-	/** The maximum x value of the current data set. */
-	int maxYear;
-	/** The maximum y value of the current data set. */
-	qreal maxY;
+	/** The minimum x value of the current data set, for the current and the pinned range. */
+	int minYear[2];
+	/** The maximum x value of the current data set, for the current and the pinned range. */
+	int maxYear[2];
+	/** The maximum y value of the current data set, for the current and the pinned range. */
+	qreal maxY[2];
 	
 public:
 	YearBarChart(const QString& chartTitle, const QString& yAxisTitle = QString());
@@ -197,7 +201,7 @@ public:
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(const QList<qreal>& newData, int minYear, int maxYear, qreal maxY);
+	void updateData(const QList<qreal>& newData, int newMinYear, int newMaxYear, qreal newMaxY, bool setPinnedRanges);
 	virtual void updateView() override;
 };
 
@@ -241,19 +245,22 @@ protected:
 	/** The y-axis for the chart. */
 	QValueAxis*		yAxis;
 	
+	/** The lists of scatter series for the chart, for the current and the pinned range. */
+	QList<QXYSeries*> xySeries[2];
+	
 	// Range data
-	/** Indicates whether the current data sets have a range below the threshold, where a date-based x-axis is used. */
-	bool lowRange;
-	/** The minimum date of the current data sets. */
-	QDate minDate;
-	/** The maximum date of the current data sets. */
-	QDate maxDate;
-	/** The minimum real-value representaition of the minimum date (x-value) of the current data sets. */
-	qreal minRealYear;
-	/** The maximum real-value representaition of the minimum date (x-value) of the current data sets. */
-	qreal maxRealYear;
-	/** The maximum y value of the current data sets. */
-	qreal maxY;
+	/** Indicates whether the current data sets have a range below the threshold, where a date-based x-axis is used - for the current and the pinned range. */
+	bool lowRange[2];
+	/** The minimum date of the current data sets, for the current and the pinned range. */
+	QDate minDate[2];
+	/** The maximum date of the current data sets, for the current and the pinned range. */
+	QDate maxDate[2];
+	/** The minimum real-value representaition of the minimum date (x-value) of the current data sets, for the current and the pinned range. */
+	qreal minRealYear[2];
+	/** The maximum real-value representation of the minimum date (x-value) of the current data sets, for the current and the pinned range. */
+	qreal maxRealYear[2];
+	/** The maximum y value of the current data sets, for the current and the pinned range. */
+	qreal maxY[2];
 	
 public:
 	TimeScatterChart(const QString& chartTitle, const QString& yAxisTitle = QString());
@@ -261,7 +268,7 @@ public:
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(const QList<DateScatterSeries*>& seriesData, QDate minDate, QDate maxDate, qreal maxY);
+	void updateData(const QList<DateScatterSeries*>& seriesData, QDate newMinDate, QDate newMaxDate, qreal newMaxY, bool setPinnedRanges);
 	virtual void updateView() override;
 	void resetZoom();
 };
@@ -295,8 +302,8 @@ protected:
 	QBarSet*				barSet;
 	
 	// Range data
-	/** The maximum y value of the current data sets. */
-	qreal maxY;
+	/** The maximum y value of the current data sets, for the current and the pinned range. */
+	qreal maxY[2];
 	
 public:
 	HistogramChart(const QString& chartTitle, int numClasses, int classIncrement, int classMax, const QStringList& classNames);
@@ -305,7 +312,7 @@ public:
 	virtual void setup() override;
 	virtual void reset() override;
 	int classifyValue(int value) const;
-	void updateData(QList<qreal> histogramData, qreal maxY);
+	void updateData(QList<qreal> histogramData, qreal newMaxY, bool setPinnedRanges);
 	virtual void updateView() override;
 };
 
@@ -334,8 +341,8 @@ protected:
 	QBarSet*				barSet;
 	
 	// Range data
-	/** The maximum y value of the current data set. */
-	qreal maxY;
+	/** The maximum y value of the current data set, for the current and the pinned range. */
+	qreal maxY[2];
 	
 public:
 	TopNChart(int n, const QString& chartTitle, const QString& yAxisTitle = QString());
@@ -343,7 +350,7 @@ public:
 	
 	virtual void setup() override;
 	virtual void reset() override;
-	void updateData(QStringList labels, QList<qreal> values);
+	void updateData(QStringList labels, QList<qreal> values, bool setPinnedRanges);
 	virtual void updateView() override;
 	
 private:

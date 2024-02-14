@@ -338,16 +338,16 @@ void GeneralStatsEngine::updateCharts()
 	
 	
 	if (dirty.value(numAscentsPerYearChart)) {
-		numAscentsPerYearChart->updateData(numAscentsPerYearSeries, minYear, maxYear, numAscentsPerYearMaxY);
+		numAscentsPerYearChart->updateData(numAscentsPerYearSeries, minYear, maxYear, numAscentsPerYearMaxY, false);
 		dirty[numAscentsPerYearChart] = false;
 	}
 	if (dirty.value(elevGainPerYearChart)) {
-		elevGainPerYearChart->updateData(elevGainPerYearSeries, minYear, maxYear, elevGainPerYearMaxY);
+		elevGainPerYearChart->updateData(elevGainPerYearSeries, minYear, maxYear, elevGainPerYearMaxY, false);
 		dirty[elevGainPerYearChart] = false;
 	}
 	if (dirty.value(heightsScatterChart)) {
 		const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
-		heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY);
+		heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY, false);
 		dirty[heightsScatterChart] = false;
 	}
 }
@@ -428,6 +428,7 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	topMaxElevGainChart		(nullptr),
 	topElevGainSumChart		(nullptr),
 	currentStartBufferRows	(QSet<BufferRowIndex>()),
+	currentlyAllRowsSelected(false),
 	ascentCrumbsSingleRowResultCache	(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
 	ascentCrumbsWholeSetResultCache		(QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>()),
 	peakCrumbsSingleRowResultCache		(QMap<BufferRowIndex, QList<BufferRowIndex>>()),
@@ -627,18 +628,38 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
  * the set has changed.
  * 
  * @param newBufferRows	The buffer rows of all items currently selected in the UI table.
+ * @param allRows		Whether all displayed rows are currently selected in the table.
  */
-void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows)
+void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows, bool allRows)
 {
-	const bool setChanged = currentStartBufferRows != newBufferRows;
+	if (currentStartBufferRows == newBufferRows && currentlyAllRowsSelected == allRows) return;
 	
 	currentStartBufferRows = newBufferRows;
+	currentlyAllRowsSelected = allRows;
 	
-	if (setChanged) {
-		for (Chart* const chart : qAsConst(charts)) {
-			dirty[chart] = true;
-		}
-		if (isCurrentlyVisible()) updateCharts();
+	for (Chart* const chart : qAsConst(charts)) {
+		dirty[chart] = true;
+	}
+	if (isCurrentlyVisible()) updateCharts();
+}
+
+/**
+ * Sets the ranges pinned flag for all charts.
+ * 
+ * @param rangesPinned	Whether to pin the ranges of all charts.
+ */
+void ItemStatsEngine::setRangesPinned(bool rangesPinned)
+{
+	peakHeightHistChart		->setUsePinnedRanges(rangesPinned);
+	elevGainHistChart		->setUsePinnedRanges(rangesPinned);
+	heightsScatterChart		->setUsePinnedRanges(rangesPinned);
+	if (topNumAscentsChart) {
+		topNumAscentsChart	->setUsePinnedRanges(rangesPinned);
+	}
+	topMaxPeakHeightChart	->setUsePinnedRanges(rangesPinned);
+	topMaxElevGainChart		->setUsePinnedRanges(rangesPinned);
+	if (topElevGainSumChart) {
+		topElevGainSumChart	->setUsePinnedRanges(rangesPinned);
 	}
 }
 
@@ -960,7 +981,7 @@ void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const QL
 		if (newClassCount > maxY) maxY = newClassCount;
 	}
 	
-	chart->updateData(histogramData, maxY);
+	chart->updateData(histogramData, maxY, currentlyAllRowsSelected);
 }
 
 /**
@@ -1023,7 +1044,7 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart* const chart, QLis
 		if (date > maxDate || !maxDate.isValid()) maxDate = date;
 	}
 	
-	chart->updateData(allSeries, minDate, maxDate, maxY);
+	chart->updateData(allSeries, minDate, maxDate, maxY, currentlyAllRowsSelected);
 }
 
 /**
@@ -1081,7 +1102,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs&
 		itemValues.append(itemValue);
 	}
 	
-	chart->updateData(itemLabels, itemValues);
+	chart->updateData(itemLabels, itemValues, currentlyAllRowsSelected);
 }
 
 /**

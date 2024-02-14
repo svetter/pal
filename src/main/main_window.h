@@ -162,6 +162,7 @@ private slots:
 	void handle_showStatsPanelChanged();
 	void handle_showAllStatsPanels();
 	void handle_hideAllStatsPanels();
+	void handle_chartRangesPinnedChanged();
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
 	void handle_restoreHiddenColumns();

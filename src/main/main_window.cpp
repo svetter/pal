@@ -71,6 +71,7 @@ MainWindow::MainWindow() :
 		}
 	}
 	
+	pinStatsRangesAction->setChecked(Settings::itemStats_pinRanges.get());
 	
 	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(ItemTypeAscent)->compTable);
 	
@@ -168,6 +169,7 @@ void MainWindow::connectUI()
 	connect(showItemStatsPanelAction,		&QAction::toggled,				this,	&MainWindow::handle_showStatsPanelChanged);
 	connect(showAllStatsPanelsAction,		&QAction::triggered,			this,	&MainWindow::handle_showAllStatsPanels);
 	connect(hideAllStatsPanelsAction,		&QAction::triggered,			this,	&MainWindow::handle_hideAllStatsPanels);
+	connect(pinStatsRangesAction,			&QAction::triggered,			this,	&MainWindow::handle_chartRangesPinnedChanged);
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
@@ -240,6 +242,7 @@ void MainWindow::setupTableTabs()
 		// Setup stats panels
 		mapper->statsEngine->setupStatsPanel();
 		mapper->statsEngine->setCurrentlyVisible(false);
+		mapper->statsEngine->setRangesPinned(pinStatsRangesAction->isChecked());
 	}
 }
 
@@ -700,6 +703,7 @@ void MainWindow::updateTableSize(bool reset)
 void MainWindow::currentFiltersChanged()
 {
 	updateTableSize();
+	handle_clearTableSelection();	// Have to clear table selection for chart range pinning to work correctly
 	handle_tableSelectionChanged();
 }
 
@@ -997,7 +1001,8 @@ void MainWindow::handle_tableSelectionChanged()
 		}
 	}
 	
-	mapper->statsEngine->setStartBufferRows(selectedBufferRows);
+	const bool allSelected = mapper->compTable->rowCount() == selectedBufferRows.size();
+	mapper->statsEngine->setStartBufferRows(selectedBufferRows, allSelected);
 }
 
 /**
@@ -1458,6 +1463,19 @@ void MainWindow::handle_hideAllStatsPanels()
 }
 
 /**
+ * Event handler for the "pin chart ranges" action in the view menu.
+ * 
+ * Pins or unpins the chart ranges of all item-related statistics panels.
+ */
+void MainWindow::handle_chartRangesPinnedChanged()
+{
+	const bool pin = pinStatsRangesAction->isChecked();
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->statsEngine->setRangesPinned(pin);
+	}
+}
+
+/**
  * Event handler for the "auto-resize columns" action in the view menu.
  * 
  * Resizes all columns in the currently active table to fit their contents.
@@ -1605,6 +1623,8 @@ void MainWindow::saveGlobalImplicitSettings()
 	bool maximized = windowState() == Qt::WindowMaximized;
 	Settings::mainWindow_maximized.set(maximized);
 	if (!maximized) Settings::mainWindow_geometry.set(geometry());
+	
+	Settings::itemStats_pinRanges.set(pinStatsRangesAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());

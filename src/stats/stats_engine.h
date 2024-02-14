@@ -156,6 +156,8 @@ class ItemStatsEngine : public StatsEngine
 	// Charts source data & state
 	/** The current set of buffer rows to build statistics for. */
 	QSet<BufferRowIndex> currentStartBufferRows;
+	/** Whether the current set of buffer rows is the complete set of buffer rows currently displayed in the table. */
+	bool currentlyAllRowsSelected;
 	
 	// Caching
 	// Breadcrumb caches
@@ -192,7 +194,8 @@ public:
 	void resetStatsPanel();
 	void announceColumnChanges(const QSet<const Column*>& changedColumns);
 	
-	void setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows);
+	void setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows, bool allRows);
+	void setRangesPinned(bool rangesPinned);
 	virtual void updateCharts();
 	
 private:

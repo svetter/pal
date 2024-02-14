@@ -400,6 +400,8 @@ public:
 	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/countryDialog/geometry");
 	
 	// Item stats panel
+	/** Remembered state of the view setting to pin the axis ranges in the item-related statistics panels. */
+	inline static const Setting<bool>			itemStats_pinRanges						= Setting<bool>			("implicit/mainWindow/itemStats/pinRanges",	false);
 	/** Remembered visibility state for the statistics panel in the ascents tab of the main window. */
 	inline static const	Setting<bool>			ascentsStats_show						= Setting<bool>			("implicit/mainWindow/ascents/showStats",	true);
 	/** Remembered visibility state for the statistics panel in the peaks tab of the main window. */
