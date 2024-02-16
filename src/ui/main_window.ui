@@ -1563,7 +1563,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fix axes on selection-specific charts</string>
+    <string>Always use maximum axis ranges</string>
    </property>
    <property name="shortcut">
     <string notr="true">F8</string>
