@@ -194,7 +194,7 @@ void AscentDialog::insertInitData()
 	dateCheckbox->setChecked(dateSpecified);
 	if (dateSpecified) {
 		dateWidget->setDate(init->date);
-	}	
+	}
 	handle_dateSpecifiedChanged();
 	// Peak on day
 	peakIndexSpinner->setValue(init->perDayIndex);
@@ -203,7 +203,7 @@ void AscentDialog::insertInitData()
 	timeCheckbox->setChecked(timeSpecified);
 	if (timeSpecified) {
 		timeWidget->setTime(init->time);
-	}	
+	}
 	handle_timeSpecifiedChanged();
 	// Elevation gain
 	bool elevationGainSpecified = init->elevationGainSpecified();

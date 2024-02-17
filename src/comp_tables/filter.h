@@ -48,8 +48,8 @@ public:
 	/**
 	 * Creates a new filter with one value.
 	 * 
-	 * @param column		The column to use for filtering rows.
-	 * @param value			The value to use for filtering rows.
+	 * @param column	The column to use for filtering rows.
+	 * @param value		The value to use for filtering rows.
 	 */
 	inline Filter(const CompositeColumn* column, QVariant value) :
 		column(column),

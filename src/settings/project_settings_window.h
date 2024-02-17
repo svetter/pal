@@ -61,7 +61,7 @@ private:
 	void loadSettings();
 	void saveSettings();
 	
-private slots:	
+private slots:
 	void handle_newHiker();
 	
 	void handle_save();

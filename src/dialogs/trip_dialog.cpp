@@ -51,8 +51,8 @@ TripDialog::TripDialog(QWidget* parent, Database* db, DialogPurpose purpose, Tri
 	restoreDialogGeometry(this, parent, &Settings::tripDialog_geometry);
 	
 	
-	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);	
-	connect(startDateWidget,			&QDateEdit::dateChanged,	this,	&TripDialog::handle_startDateChanged);	
+	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
+	connect(startDateWidget,			&QDateEdit::dateChanged,	this,	&TripDialog::handle_startDateChanged);
 	connect(endDateWidget,				&QDateEdit::dateChanged,	this,	&TripDialog::handle_endDateChanged);
 	
 	connect(okButton,					&QPushButton::clicked,		this,	&TripDialog::handle_ok);
@@ -115,7 +115,7 @@ void TripDialog::insertInitData()
 	if (datesSpecified) {
 		startDateWidget->setDate(init->startDate);
 		endDateWidget->setDate(init->endDate);
-	}	
+	}
 	handle_datesSpecifiedChanged();
 	// Description
 	descriptionEditor->setPlainText(init->description);
@@ -134,7 +134,7 @@ Trip* TripDialog::extractData()
 	QDate	endDate		= parseDateWidget		(endDateWidget);
 	QString	description	= parsePlainTextEdit	(descriptionEditor);
 	
-	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();	
+	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();
 	if (datesUnspecifiedCheckbox->isChecked())	endDate = QDate();
 	
 	Trip* trip = new Trip(ItemID(), name, startDate, endDate, description);

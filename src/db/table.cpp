@@ -356,7 +356,7 @@ void Table::notifyAllColumns()
  * @return					The index of the newly added row in the buffer.
  */
 BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
-{	
+{
 	// Announce row insertion
 	BufferRowIndex newItemBufferRowIndex = BufferRowIndex(buffer.numRows());
 	beginInsertRows(getNormalRootModelIndex(),		newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
@@ -650,7 +650,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	const Column* primaryKeyColumn = primaryKeyColumns.first();
 	
 	QString queryString = QString(
-			"UPDATE " + name + 
+			"UPDATE " + name +
 			"\nSET " + column->name + " = ?" +
 			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
 	);
@@ -682,7 +682,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 		setString.append(column->name).append(" = ?");
 	}
 	QString queryString = QString(
-			"UPDATE " + name + 
+			"UPDATE " + name +
 			"\nSET " + setString +
 			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
 	);

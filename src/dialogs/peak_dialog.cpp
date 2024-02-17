@@ -130,7 +130,7 @@ void PeakDialog::insertInitData()
 	heightCheckbox->setChecked(heightSpecified);
 	if (heightSpecified) {
 		heightSpinner->setValue(init->height);
-	}	
+	}
 	handle_heightSpecifiedChanged();
 	// Volcano
 	volcanoCheckbox->setChecked(init->volcano);
