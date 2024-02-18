@@ -214,16 +214,10 @@ void GeneralStatsEngine::setupStatsTab()
  */
 void GeneralStatsEngine::resetStatsTab()
 {
-	assert(numAscentsPerYearChart);
-	assert(elevGainPerYearChart);
-	assert(heightsScatterChart);
-	
-	numAscentsPerYearChart	->reset();
-	elevGainPerYearChart	->reset();
-	heightsScatterChart		->reset();
-	
 	setCurrentlyVisible(false);
 	for (Chart* const chart : qAsConst(charts)) {
+		assert(chart);
+		chart->reset();
 		dirty[chart] = true;
 	}
 }

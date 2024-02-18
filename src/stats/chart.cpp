@@ -543,11 +543,6 @@ void YearBarChart::updateData(const QList<qreal>& newData, int newMinYear, int n
 	assert(newData.size() == newMaxYear - newMinYear + 1);
 	assert(newMaxY >= 0);
 	
-	QStringList years = QStringList();
-	for (int year = newMinYear; year <= newMaxYear; year++) {
-		years.append(QString::number(year));
-	}
-	
 	barSet->remove(0, barSet->count());
 	barSet->append(QList<qreal>(newMinYear, 0));
 	barSet->append(newData);
@@ -569,8 +564,8 @@ void YearBarChart::updateView()
 	if (!hasData) return;
 	
 	const bool p = usePinnedRanges;
-	adjustAxis(xAxis,	minYear[p],	maxYear[p],	chart->plotArea().width(),	rangeBufferFactorX);
-	adjustAxis(yAxis,	0,			maxY[p],	chart->plotArea().height(),	rangeBufferFactorY);
+	adjustAxis(xAxis,	minYear[p] - 0.5,	maxYear[p] + 0.5,	chart->plotArea().width(),	rangeBufferFactorX);
+	adjustAxis(yAxis,	0,					maxY[p],			chart->plotArea().height(),	rangeBufferFactorY);
 }
 
 
