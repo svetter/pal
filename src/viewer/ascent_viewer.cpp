@@ -402,8 +402,9 @@ void AscentViewer::updateInfoArea()
  */
 void AscentViewer::updateAscentNavigationTargets()
 {
-	ViewRowIndex minViewRowIndex	= ViewRowIndex(0);
-	ViewRowIndex maxViewRowIndex	= ViewRowIndex(compAscents->rowCount() - 1);
+	numShownAscents = compAscents->rowCount();
+	const ViewRowIndex minViewRowIndex	= ViewRowIndex(0);
+	const ViewRowIndex maxViewRowIndex	= ViewRowIndex(numShownAscents - 1);
 	
 	firstAscentViewRowIndex		= (currentViewRowIndex == minViewRowIndex) ? ViewRowIndex() : minViewRowIndex;
 	previousAscentViewRowIndex	= (currentViewRowIndex == minViewRowIndex) ? ViewRowIndex() : (currentViewRowIndex - 1);
@@ -473,10 +474,9 @@ void AscentViewer::updateAscentNavigationButtonsEnabled()
  */
 void AscentViewer::updateAscentNavigationNumbers()
 {
-	int numAscents = compAscents->rowCount();
-	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(numAscents);
+	QString allAscentsNewText = QString::number(currentViewRowIndex.get() + 1) + " / " + QString::number(numShownAscents);
 	allAscentsNumberLabel->setText(allAscentsNewText);
-	allAscentsNumberLabel->setEnabled(numAscents > 0);
+	allAscentsNumberLabel->setEnabled(numShownAscents > 0);
 	
 	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
 	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
@@ -864,6 +864,7 @@ void AscentViewer::saveDescription()
  */
 void AscentViewer::handle_firstAscent()
 {
+	assert(firstAscentViewRowIndex.isValid(numShownAscents));
 	changeToAscent(firstAscentViewRowIndex);
 }
 
@@ -872,6 +873,7 @@ void AscentViewer::handle_firstAscent()
  */
 void AscentViewer::handle_previousAscent()
 {
+	assert(previousAscentViewRowIndex.isValid(numShownAscents));
 	changeToAscent(previousAscentViewRowIndex);
 }
 
@@ -880,6 +882,7 @@ void AscentViewer::handle_previousAscent()
  */
 void AscentViewer::handle_nextAscent()
 {
+	assert(nextAscentViewRowIndex.isValid(numShownAscents));
 	changeToAscent(nextAscentViewRowIndex);
 }
 
@@ -888,6 +891,7 @@ void AscentViewer::handle_nextAscent()
  */
 void AscentViewer::handle_lastAscent()
 {
+	assert(lastAscentViewRowIndex.isValid(numShownAscents));
 	changeToAscent(lastAscentViewRowIndex);
 }
 
@@ -898,9 +902,11 @@ void AscentViewer::handle_randomAscent()
 {
 	QRandomGenerator rand = QRandomGenerator();
 	rand.seed(QDateTime::currentMSecsSinceEpoch());
-	ViewRowIndex randomIndex = ViewRowIndex(rand.bounded(lastAscentViewRowIndex.get()));
+	// Generate random ViewRowIndex between 0 and numShownAscents - 2 (excluding the last ascent)
+	ViewRowIndex randomIndex = ViewRowIndex(rand.bounded(numShownAscents - 1));
+	// If the random index is the same as the current one, use the last ascent instead
 	if (randomIndex == currentViewRowIndex) {
-		randomIndex = lastAscentViewRowIndex;
+		randomIndex = ViewRowIndex(numShownAscents - 1);
 	}
 	changeToAscent(ViewRowIndex(randomIndex));
 }
@@ -910,6 +916,7 @@ void AscentViewer::handle_randomAscent()
  */
 void AscentViewer::handle_firstAscentOfPeak()
 {
+	assert(firstAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
 	changeToAscent(firstAscentOfPeakViewRowIndex);
 }
 
@@ -918,6 +925,7 @@ void AscentViewer::handle_firstAscentOfPeak()
  */
 void AscentViewer::handle_previousAscentOfPeak()
 {
+	assert(previousAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
 	changeToAscent(previousAscentOfPeakViewRowIndex);
 }
 
@@ -926,6 +934,7 @@ void AscentViewer::handle_previousAscentOfPeak()
  */
 void AscentViewer::handle_nextAscentOfPeak()
 {
+	assert(nextAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
 	changeToAscent(nextAscentOfPeakViewRowIndex);
 }
 
@@ -934,6 +943,7 @@ void AscentViewer::handle_nextAscentOfPeak()
  */
 void AscentViewer::handle_lastAscentOfPeak()
 {
+	assert(lastAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
 	changeToAscent(lastAscentOfPeakViewRowIndex);
 }
 
