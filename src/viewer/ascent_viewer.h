@@ -62,6 +62,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	ViewRowIndex     nextAscentViewRowIndex;
 	/** The view row index of the last ascent in the composite ascents table. */
 	ViewRowIndex     lastAscentViewRowIndex;
+	
+	/** The number of ascents shown in the composite ascents table. */
+	int numShownAscents;
 
 	/** The view row index of the first ascent of the current ascent's peak in the composite ascents table. */
 	ViewRowIndex    firstAscentOfPeakViewRowIndex;
