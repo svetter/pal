@@ -417,7 +417,7 @@ void AscentViewer::updateAscentNavigationTargets()
 	lastAscentOfPeakViewRowIndex		= ViewRowIndex();
 	
 	currentAscentOfPeakIndex	= -1;
-	numAscentsOfPeak			= -1;
+	numAscentsOfPeak			= 0;
 	
 	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ItemID peakID = db->ascentsTable->peakIDColumn->getValueAt(bufferRowIndex);
