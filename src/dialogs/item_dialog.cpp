@@ -33,15 +33,17 @@
 /**
  * Creates a new base item dialog.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
  */
-ItemDialog::ItemDialog(QWidget* parent, Database* db, DialogPurpose purpose):
-		QDialog(parent),
-		parent(parent),
-		db(db),
-		purpose(purpose)
+ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose):
+	QDialog(parent),
+	parent(parent),
+	mainWindow(mainWindow),
+	db(db),
+	purpose(purpose)
 {}
 
 

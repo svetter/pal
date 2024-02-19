@@ -35,18 +35,18 @@
  * Restores geometry if the setting is enabled, handles signal connections, populates the language
  * combo box and loads the settings into the UI.
  * 
- * @param parent The parent window.
+ * @param mainWindow	The application's main window.
  */
-SettingsWindow::SettingsWindow(QWidget* parent) :
-	QDialog(parent),
-	parent(parent),
+SettingsWindow::SettingsWindow(QMainWindow* mainWindow) :
+	QDialog(mainWindow),
+	mainWindow(mainWindow),
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
 	liveStyleUpdates(false)
 {
 	setupUi(this);
 	
-	restoreDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
 	
 	
 	connect(styleCombo,							&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedStyle);
@@ -309,7 +309,7 @@ void SettingsWindow::handle_peakHeightCheckboxChanged()
 void SettingsWindow::handle_save()
 {
 	saveSettings();
-	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
 	accept();
 }
 
@@ -330,7 +330,7 @@ void SettingsWindow::handle_apply()
  */
 void SettingsWindow::handle_cancel()
 {
-	saveDialogGeometry(this, parent, &Settings::settingsWindow_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
 	setVisible(false);
 	applyStoredStyle();
 	QDialog::reject();

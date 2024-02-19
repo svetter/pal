@@ -44,7 +44,7 @@ class PeakDialog : public ItemDialog, public Ui_PeakDialog
 	QList<ValidItemID> selectableRegionIDs;
 	
 public:
-	PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init);
+	PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* init);
 	~PeakDialog();
 	
 	virtual QString getEditWindowTitle() override;
@@ -68,10 +68,12 @@ private:
 
 
 
-BufferRowIndex	openNewPeakDialogAndStore		(QWidget* parent, Database* db);
-BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-bool			openEditPeakDialogAndStore		(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex);
-bool			openDeletePeaksDialogAndExecute	(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+BufferRowIndex	openNewPeakDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db);
+BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
+bool			openEditPeakDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
+bool			openDeletePeaksDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+
+BufferRowIndex	openPeakDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* originalPeak);
 
 
 

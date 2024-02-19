@@ -37,19 +37,20 @@
  * Sets up the UI, restores geometry, populates combo boxes, connects interactive UI elements, and
  * performs purpose-specific preparations.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
- * @param init		The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param init			The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
-RangeDialog::RangeDialog(QWidget* parent, Database* db, DialogPurpose purpose, Range* init) :
-	ItemDialog(parent, db, purpose),
+RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* init) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -167,39 +168,39 @@ void RangeDialog::handle_ok()
  */
 void RangeDialog::aboutToClose()
 {
-	saveDialogGeometry(this, parent, &Settings::rangeDialog_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::rangeDialog_geometry);
 }
 
 
 
 
 
-static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange);
-
 /**
  * Opens a new range dialog and saves the new range to the database.
  *
- * @param parent	The parent window.
- * @param db		The project database.
- * @return			The index of the new range in the database's range table buffer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @return				The index of the new range in the database's range table buffer.
  */
-BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	return openRangeDialogAndStore(parent, db, newItem, nullptr);
+	return openRangeDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
 
 /**
  * Opens an edit range dialog and saves the changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the range to edit in the database's range table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Range* originalRange = db->getRangeAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, db, editItem, originalRange);
+	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, mainWindow, db, editItem, originalRange);
 	return editedIndex.isValid();
 }
 
@@ -207,12 +208,14 @@ bool openEditRangeDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
  * Opens a delete range dialog and deletes the range from the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
+	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
@@ -239,12 +242,13 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
  * Opens a purpose-generic range dialog and applies the resulting changes to the database.
  *
  * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
  */
-static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Range* originalRange)
+BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* originalRange)
 {
 	BufferRowIndex newRangeIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -252,7 +256,7 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 		originalRange->rangeID = ItemID();
 	}
 	
-	RangeDialog dialog(parent, db, purpose, originalRange);
+	RangeDialog dialog(parent, mainWindow, db, purpose, originalRange);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		const ValidItemID originalRangeID = FORCE_VALID(originalRange->rangeID);
 		Range* const extractedRange = dialog.extractData();

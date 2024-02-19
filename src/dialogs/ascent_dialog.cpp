@@ -45,13 +45,14 @@
  * models, connects interactive UI elements, sets initial values, and performs purpose-specific
  * preparations.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
- * @param init		The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
-AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* init) :
-	ItemDialog(parent, db, purpose),
+AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* init) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(init),
 	selectableRegionIDs(QList<ValidItemID>()),
 	selectablePeakIDs(QList<ValidItemID>()),
@@ -62,7 +63,7 @@ AscentDialog::AscentDialog(QWidget* parent, Database* db, DialogPurpose purpose,
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
 	
 	
 	populateComboBoxes();
@@ -311,7 +312,7 @@ void AscentDialog::handle_regionFilterChanged()
  */
 void AscentDialog::handle_newPeak()
 {
-	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, db);
+	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
@@ -382,7 +383,7 @@ void AscentDialog::handle_difficultySystemChanged()
  */
 void AscentDialog::handle_newTrip()
 {
-	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, db);
+	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
 	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
@@ -397,7 +398,7 @@ void AscentDialog::handle_newTrip()
  */
 void AscentDialog::handle_addHiker()
 {
-	ItemID hikerID = openAddHikerDialog(this, db);
+	ItemID hikerID = openAddHikerDialog(this, mainWindow, db);
 	if (hikerID.isInvalid()) return;
 	if (hikersModel.containsHiker(FORCE_VALID(hikerID))) return;
 	Hiker* hiker = db->getHiker(FORCE_VALID(hikerID));
@@ -518,7 +519,7 @@ void AscentDialog::handle_ok()
  */
 void AscentDialog::aboutToClose()
 {
-	saveDialogGeometry(this, parent, &Settings::ascentDialog_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
 	
 	savePhotoDescriptionToList();
 }
@@ -580,46 +581,47 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
 
 
 
-static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent);
-
 /**
  * Opens a new ascent dialog and saves the new ascent to the database.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @return			The index of the new ascent in the database's ascent table buffer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @return				The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	return openAscentDialogAndStore(parent, db, newItem, nullptr);
+	return openAscentDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
 
 /**
  * Opens a duplicate ascent dialog and saves the new ascent to the database.
  * 
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
  * @return					The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
-	return openAscentDialogAndStore(parent, db, duplicateItem, originalAscent);
+	return openAscentDialogAndStore(parent, mainWindow, db, duplicateItem, originalAscent);
 }
 
 /**
  * Opens an edit ascent dialog and saves the changes to the database.
  * 
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, db, editItem, originalAscent);
+	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, mainWindow, db, editItem, originalAscent);
 	return editedIndex.isValid();
 }
 
@@ -627,12 +629,14 @@ bool openEditAscentDialogAndStore(QWidget* parent, Database* db, BufferRowIndex 
  * Opens a delete ascent dialog and deletes the ascent from the database.
  * 
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
+	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
@@ -659,12 +663,13 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, Database* db, QSet<Buffe
  * Opens a purpose-generic ascent dialog and applies the resulting changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
  */
-static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Ascent* originalAscent)
+BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* originalAscent)
 {
 	BufferRowIndex newAscentIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -672,7 +677,7 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 		originalAscent->ascentID = ItemID();
 	}
 	
-	AscentDialog dialog(parent, db, purpose, originalAscent);
+	AscentDialog dialog(parent, mainWindow, db, purpose, originalAscent);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		const ValidItemID originalAscentID = FORCE_VALID(originalAscent->ascentID);
 		Ascent* const extractedAscent = dialog.extractData();

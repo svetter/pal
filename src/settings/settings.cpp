@@ -92,14 +92,14 @@ void Settings::checkForVersionChange()
  * Stores implicit settings about position and geometry for the given dialog.
  * 
  * @param dialog			The dialog for which to store the geometry.
- * @param parent			The parent widget of the dialog (for determining relative position).
+ * @param mainWindow		The application's main window (for determining relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
+void saveDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
 {
 	QRect absoluteGeometry = dialog->geometry();
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		absoluteGeometry.translate(-parent->pos());
+		absoluteGeometry.translate(- mainWindow->pos());
 	}
 	geometrySetting->set(absoluteGeometry);
 }
@@ -108,10 +108,10 @@ void saveDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* 
  * Restores implicit settings about position and geometry for the given dialog.
  * 
  * @param dialog			The dialog for which to restore the geometry.
- * @param parent			The parent widget of the dialog (for restoring relative position).
+ * @param mainWindow		The application's main window (for restoring relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect>* geometrySetting)
+void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
 {
 	if (!Settings::rememberWindowPositions.present()) return;
 	
@@ -119,11 +119,11 @@ void restoreDialogGeometry(QWidget* dialog, QWidget* parent, const Setting<QRect
 	if (savedGeometry.isEmpty()) return;
 	
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		savedGeometry.translate(parent->pos());
+		savedGeometry.translate(mainWindow->pos());
 		
 		// Change size if bigger than screen
 		const QScreen* screen = QGuiApplication::screenAt(savedGeometry.center());
-		if (!screen) screen = parent->screen();
+		if (!screen) screen = mainWindow->screen();
 		assert(screen);
 		QRect screenGeometry = screen->availableGeometry();
 		const int frameTopHeight = 30;	// Extra space for window top bar

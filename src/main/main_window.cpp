@@ -741,7 +741,7 @@ void MainWindow::viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewR
  */
 void MainWindow::newItem(const ItemTypeMapper* const mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper->openNewItemDialogAndStoreMethod(this, &db);
+	BufferRowIndex newBufferRowIndex = mapper->openNewItemDialogAndStoreMethod(this, this, &db);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -760,7 +760,7 @@ void MainWindow::newItem(const ItemTypeMapper* const mapper)
 void MainWindow::duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex)
 {
 	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	BufferRowIndex newBufferRowIndex = mapper->openDuplicateItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	BufferRowIndex newBufferRowIndex = mapper->openDuplicateItemDialogAndStoreMethod(this, this, &db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -779,7 +779,7 @@ void MainWindow::editItem(const ItemTypeMapper* const mapper, const QModelIndex&
 {
 	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
 	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	bool changesMade = mapper->openEditItemDialogAndStoreMethod(this, &db, bufferRowIndex);
+	bool changesMade = mapper->openEditItemDialogAndStoreMethod(this, this, &db, bufferRowIndex);
 	if (!changesMade) return;
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
@@ -807,7 +807,7 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
 	}
 	
-	bool deleted = mapper->openDeleteItemsDialogAndExecuteMethod(this, &db, bufferRowIndices);
+	bool deleted = mapper->openDeleteItemsDialogAndExecuteMethod(this, this, &db, bufferRowIndices);
 	if (!deleted) return;
 	
 	if (minViewIndex.get() >= mapper->compTable->rowCount()) {
@@ -1239,7 +1239,7 @@ void MainWindow::handle_newDatabase()
 	addToRecentFilesList(filepath);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow(this, &db, true).exec();
+		ProjectSettingsWindow(this, this, &db, true).exec();
 	}
 	
 	getActiveMapper()->openingTab();
@@ -1381,7 +1381,7 @@ void MainWindow::handle_closeDatabase()
  */
 void MainWindow::handle_openProjectSettings()
 {
-	ProjectSettingsWindow(this, &db).exec();
+	ProjectSettingsWindow(this, this, &db).exec();
 }
 
 /**

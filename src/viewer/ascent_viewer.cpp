@@ -1156,7 +1156,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 void AscentViewer::handle_editAscent()
 {
 	BufferRowIndex oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	openEditAscentDialogAndStore(this, db, oldBufferRowIndex);
+	openEditAscentDialogAndStore(this, mainWindow, db, oldBufferRowIndex);
 	handleChangesToUnderlyingData(oldBufferRowIndex);
 }
 
@@ -1168,7 +1168,7 @@ void AscentViewer::handle_editPeak()
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID peakID = VALID_ITEM_ID(db->ascentsTable->peakIDColumn->getValueAt(oldAscentBufferRowIndex).toInt());
 	BufferRowIndex peakBufferRowIndex = db->peaksTable->getBufferIndexForPrimaryKey(peakID);
-	openEditPeakDialogAndStore(this, db, peakBufferRowIndex);
+	openEditPeakDialogAndStore(this, mainWindow, db, peakBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
 
@@ -1180,7 +1180,7 @@ void AscentViewer::handle_editTrip()
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID tripID = VALID_ITEM_ID(db->ascentsTable->tripIDColumn->getValueAt(oldAscentBufferRowIndex).toInt());
 	BufferRowIndex tripBufferRowIndex = db->tripsTable->getBufferIndexForPrimaryKey(tripID);
-	openEditTripDialogAndStore(this, db, tripBufferRowIndex);
+	openEditTripDialogAndStore(this, mainWindow, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
 

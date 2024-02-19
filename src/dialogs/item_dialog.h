@@ -29,6 +29,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QMainWindow>
 
 
 
@@ -52,14 +53,16 @@ class ItemDialog : public QDialog
 	
 protected:
 	/** The parent window. */
-	QWidget* parent;
+	QWidget* const parent;
+	/** The application's main window. */
+	QMainWindow* const mainWindow;
 	
 	/** The project database. */
-	Database* db;
+	Database* const db;
 	/** The purpose of the dialog. */
-	DialogPurpose purpose;
+	const DialogPurpose purpose;
 	
-	ItemDialog(QWidget* parent, Database* db, DialogPurpose purpose);
+	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose);
 	
 	/**
 	 * Returns the window title to use when the dialog is used to edit an item.

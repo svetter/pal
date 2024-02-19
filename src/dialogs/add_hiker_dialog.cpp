@@ -34,11 +34,13 @@
  * 
  * Sets up UI, populates combo boxes and connects interactive elements.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
  */
-AddHikerDialog::AddHikerDialog(QWidget* parent, Database* db) :
+AddHikerDialog::AddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database* db) :
 	QDialog(parent),
+	mainWindow(mainWindow),
 	db(db),
 	selectableHikerIDs(QList<ValidItemID>())
 {
@@ -97,7 +99,7 @@ bool AddHikerDialog::hikerSelected()
  */
 void AddHikerDialog::handle_newHiker()
 {
-	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
+	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, mainWindow, db);
 	if (newHikerIndex.isInvalid()) return;
 	
 	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerCombo, selectableHikerIDs);
@@ -138,10 +140,14 @@ void AddHikerDialog::handle_cancel()
 /**
  * Opens a new add hiker dialog and returns the ID of the selected hiker or an invalid ItemID if
  * the dialog was cancelled.
+ * 
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
  */
-ItemID openAddHikerDialog(QWidget* parent, Database* db)
+ItemID openAddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	AddHikerDialog dialog(parent, db);
+	AddHikerDialog dialog(parent, mainWindow, db);
 	if (dialog.exec() == QDialog::Accepted) {
 		return dialog.extractHikerID();
 	} else {

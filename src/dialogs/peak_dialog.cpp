@@ -37,20 +37,21 @@
  * Sets up the UI, restores geometry, populates combo boxes, connects interactive UI elements, sets
  * initial values, and performs purpose-specific preparations.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
- * @param init		The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget* parent, Database* db, DialogPurpose purpose, Peak* init) :
-	ItemDialog(parent, db, purpose),
+PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* init) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(init),
 	selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, parent, &Settings::peakDialog_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -202,7 +203,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
  */
 void PeakDialog::handle_newRegion()
 {
-	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, db);
+	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
 	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
@@ -231,53 +232,54 @@ void PeakDialog::handle_ok()
  */
 void PeakDialog::aboutToClose()
 {
-	saveDialogGeometry(this, parent, &Settings::peakDialog_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
 }
 
 
 
 
 
-static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak);
-
 /**
  * Opens a new peak dialog and saves the new peak to the database.
  *
- * @param parent	The parent window.
- * @param db		The project database.
- * @return			The index of the new peak in the database's peak table buffer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @return				The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	return openPeakDialogAndStore(parent, db, newItem, nullptr);
+	return openPeakDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
 
 /**
  * Opens a duplicate peak dialog and saves the new peak to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the peak to duplicate in the database's peak table buffer.
  * @return					The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
-	return openPeakDialogAndStore(parent, db, duplicateItem, originalPeak);
+	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, originalPeak);
 }
 
 /**
  * Opens an edit peak dialog and saves the changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, db, editItem, originalPeak);
+	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, originalPeak);
 	return editedIndex.isValid();
 }
 
@@ -285,12 +287,14 @@ bool openEditPeakDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bu
  * Opens a delete peak dialog and deletes the peak from the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
+	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
@@ -317,12 +321,13 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, Database* db, QSet<BufferR
  * Opens a purpose-generic peak dialog and applies the resulting changes to the database.
  *
  * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
-static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Peak* originalPeak)
+BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* originalPeak)
 {
 	BufferRowIndex newPeakIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -330,7 +335,7 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 		originalPeak->peakID = ItemID();
 	}
 	
-	PeakDialog dialog(parent, db, purpose, originalPeak);
+	PeakDialog dialog(parent, mainWindow, db, purpose, originalPeak);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		const ValidItemID originalPeakID = FORCE_VALID(originalPeak->peakID);
 		Peak* const extractedPeak = dialog.extractData();

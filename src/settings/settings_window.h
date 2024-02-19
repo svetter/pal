@@ -36,8 +36,8 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 {
 	Q_OBJECT
 	
-	/** The parent window. */
-	QWidget* parent;
+	/** The application's main window. */
+	QMainWindow* mainWindow;
 	
 	/** Lists of avalable languages, as codes and native names. */
 	QPair<QStringList, QStringList> languages;
@@ -46,7 +46,7 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	bool liveStyleUpdates;
 	
 public:
-	SettingsWindow(QWidget* parent);
+	SettingsWindow(QMainWindow* mainWindow);
 	
 private:
 	void loadSettings();

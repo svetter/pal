@@ -36,13 +36,15 @@
 /**
  * Creates a new ProjectSettingsWindow.
  * 
- * @param parent	The parent widow.
- * @param db		The project database.
- * @param firstOpen	Indicates that the window is being opened as part of the project creation process.
+ * @param parent		The parent widow.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param firstOpen		Indicates that the window is being opened as part of the project creation process.
  */
-ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool firstOpen) :
+ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database* db, bool firstOpen) :
 	QDialog(parent),
 	parent(parent),
+	mainWindow(mainWindow),
 	db(db),
 	firstOpen(firstOpen),
 	selectableHikerIDs(QList<ValidItemID>())
@@ -58,7 +60,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, Database* db, bool
 		newDefaultHikerLineEdit->setVisible(false);
 	}
 	
-	restoreDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	
 	
 	repopulateHikerCombo();
@@ -135,7 +137,7 @@ void ProjectSettingsWindow::saveSettings()
  */
 void ProjectSettingsWindow::handle_newHiker()
 {
-	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
+	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, mainWindow, db);
 	if (newHikerIndex.isInvalid()) return;
 	
 	repopulateHikerCombo();
@@ -153,7 +155,7 @@ void ProjectSettingsWindow::handle_newHiker()
 void ProjectSettingsWindow::handle_save()
 {
 	saveSettings();
-	saveDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	accept();
 }
 
@@ -174,7 +176,7 @@ void ProjectSettingsWindow::handle_apply()
  */
 void ProjectSettingsWindow::handle_cancel()
 {
-	saveDialogGeometry(this, parent, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	QDialog::reject();
 }
 

@@ -36,19 +36,20 @@
  * Sets up the UI, restores geometry, connects interactive UI elements, and performs purpose-
  * specific preparations.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
- * @param init		The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param init			The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  */
-CountryDialog::CountryDialog(QWidget* parent, Database* db, DialogPurpose purpose, Country* init) :
-	ItemDialog(parent, db, purpose),
+CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* init) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, parent, &Settings::countryDialog_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::countryDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -150,39 +151,39 @@ void CountryDialog::handle_ok()
  */
 void CountryDialog::aboutToClose()
 {
-	saveDialogGeometry(this, parent, &Settings::countryDialog_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::countryDialog_geometry);
 }
 
 
 
 
 
-static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry);
-
 /**
  * Opens a new country dialog and saves the new country to the database.
  *
- * @param parent	The parent window.
- * @param db		The project database.
- * @return			The index of the new country in the database's country table buffer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @return				The index of the new country in the database's country table buffer.
  */
-BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	return openCountryDialogAndStore(parent, db, newItem, nullptr);
+	return openCountryDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
 
 /**
  * Opens an edit country dialog and saves the changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the country to edit in the database's country table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditCountryDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Country* originalCountry = db->getCountryAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, db, editItem, originalCountry);
+	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, mainWindow, db, editItem, originalCountry);
 	return editedIndex.isValid();
 }
 
@@ -190,12 +191,14 @@ bool openEditCountryDialogAndStore(QWidget* parent, Database* db, BufferRowIndex
  * Opens a delete country dialog and deletes the country from the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the countries to delete in the database's country table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteCountriesDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
+	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> countryIDs = QSet<ValidItemID>();
@@ -222,12 +225,13 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, Database* db, QSet<Buf
  * Opens a purpose-generic country dialog and applies the resulting changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalCountry	The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  * @return					The index of the new country in the database's country table buffer, or existing index of edited country. Invalid if the dialog was cancelled.
  */
-static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Country* originalCountry)
+BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* originalCountry)
 {
 	BufferRowIndex newCountryIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -235,7 +239,7 @@ static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, D
 		originalCountry->countryID = ItemID();
 	}
 	
-	CountryDialog dialog(parent, db, purpose, originalCountry);
+	CountryDialog dialog(parent, mainWindow, db, purpose, originalCountry);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		const ValidItemID originalCountryID = FORCE_VALID(originalCountry->countryID);
 		Country* const extractedCountry = dialog.extractData();

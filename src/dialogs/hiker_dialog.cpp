@@ -36,19 +36,20 @@
  * Sets up the UI, restores geometry, connects interactive UI elements, and performs purpose-
  * specific preparations.
  * 
- * @param parent	The parent window.
- * @param db		The project database.
- * @param purpose	The purpose of the dialog.
- * @param init		The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @param purpose		The purpose of the dialog.
+ * @param init			The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  */
-HikerDialog::HikerDialog(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* init) :
-	ItemDialog(parent, db, purpose),
+HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Hiker* init) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
+	restoreDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -150,39 +151,39 @@ void HikerDialog::handle_ok()
  */
 void HikerDialog::aboutToClose()
 {
-	saveDialogGeometry(this, parent, &Settings::hikerDialog_geometry);
+	saveDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
 }
 
 
 
 
 
-static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker);
-
 /**
  * Opens a new hiker dialog and saves the new hiker to the database.
  *
- * @param parent	The parent window.
- * @param db		The project database.
- * @return			The index of the new hiker in the database's hiker table buffer.
+ * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
+ * @param db			The project database.
+ * @return				The index of the new hiker in the database's hiker table buffer.
  */
-BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, Database* db)
+BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
 {
-	return openHikerDialogAndStore(parent, db, newItem, nullptr);
+	return openHikerDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
 
 /**
  * Opens an edit hiker dialog and saves the changes to the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the hiker to edit in the database's hiker table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
 {
 	Hiker* originalHiker = db->getHikerAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, db, editItem, originalHiker);
+	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, mainWindow, db, editItem, originalHiker);
 	return editedIndex.isValid();
 }
 
@@ -190,12 +191,14 @@ bool openEditHikerDialogAndStore(QWidget* parent, Database* db, BufferRowIndex b
  * Opens a delete hiker dialog and deletes the hiker from the database.
  *
  * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndices	The indices of the hikers to delete in the database's hiker table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
 {
+	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> hikerIDs = QSet<ValidItemID>();
@@ -229,12 +232,13 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, Database* db, QSet<Buffer
  * Opens a purpose-generic hiker dialog and applies the resulting changes to the database.
  *
  * @param parent		The parent window.
+ * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  * @param originalHiker	The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  * @return				The index of the new hiker in the database's hiker table buffer, or existing index of edited hiker. Invalid if the dialog was cancelled.
  */
-static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, DialogPurpose purpose, Hiker* originalHiker)
+BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Hiker* originalHiker)
 {
 	BufferRowIndex newHikerIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -242,7 +246,7 @@ static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, Dia
 		originalHiker->hikerID = ItemID();
 	}
 	
-	HikerDialog dialog(parent, db, purpose, originalHiker);
+	HikerDialog dialog(parent, mainWindow, db, purpose, originalHiker);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		const ValidItemID originalHikerID = FORCE_VALID(originalHiker->hikerID);
 		Hiker* const extractedHiker = dialog.extractData();
