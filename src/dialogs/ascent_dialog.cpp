@@ -315,9 +315,9 @@ void AscentDialog::handle_newPeak()
 	if (newPeakIndex.isInvalid()) return;
 	
 	populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
-	ValidItemID peakID = db->peaksTable->getPrimaryKeyAt(newPeakIndex);
+	const ValidItemID newPeakID = db->peaksTable->getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
-	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(peakID) + 1);	// 0 is None
+	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None
 }
 
 /**
@@ -386,8 +386,8 @@ void AscentDialog::handle_newTrip()
 	if (newTripIndex.isInvalid()) return;
 	
 	populateItemCombo(db->tripsTable, db->tripsTable->nameColumn, true, tripCombo, selectableTripIDs);
-	ValidItemID tripID = db->tripsTable->getPrimaryKeyAt(newTripIndex);
-	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(tripID) + 1);	// 0 is None
+	const ValidItemID newTripID = db->tripsTable->getPrimaryKeyAt(newTripIndex);
+	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(newTripID) + 1);	// 0 is None
 }
 
 /**

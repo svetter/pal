@@ -139,8 +139,8 @@ void ProjectSettingsWindow::handle_newHiker()
 	if (newHikerIndex.isInvalid()) return;
 	
 	repopulateHikerCombo();
-	ValidItemID hikerID = db->hikersTable->getPrimaryKeyAt(newHikerIndex);
-	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
+	const ValidItemID newHikerID = db->hikersTable->getPrimaryKeyAt(newHikerIndex);
+	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
 }
 
 

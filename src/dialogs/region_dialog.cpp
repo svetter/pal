@@ -178,8 +178,8 @@ void RegionDialog::handle_newRange()
 	if (newRangeIndex.isInvalid()) return;
 	
 	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeCombo, selectableRangeIDs);
-	ValidItemID rangeID = db->rangesTable->getPrimaryKeyAt(newRangeIndex);
-	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(rangeID) + 1);	// 0 is None
+	const ValidItemID newRangeID = db->rangesTable->getPrimaryKeyAt(newRangeIndex);
+	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(newRangeID) + 1);	// 0 is None
 }
 
 /**
@@ -193,8 +193,8 @@ void RegionDialog::handle_newCountry()
 	if (newCountryIndex.isInvalid()) return;
 	
 	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, true, countryCombo, selectableCountryIDs);
-	ValidItemID countryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
-	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(countryID) + 1);	// 0 is None
+	const ValidItemID newCountryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
+	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(newCountryID) + 1);	// 0 is None
 }
 
 

@@ -98,9 +98,11 @@ bool AddHikerDialog::hikerSelected()
 void AddHikerDialog::handle_newHiker()
 {
 	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, db);
-	if (newHikerIndex.isValid()) {
-		hikerCombo->setCurrentIndex(newHikerIndex.get() + 1);	// 0 is None
-	}
+	if (newHikerIndex.isInvalid()) return;
+	
+	populateItemCombo(db->hikersTable, db->hikersTable->nameColumn, true, hikerCombo, selectableHikerIDs);
+	const ValidItemID newHikerID = db->hikersTable->getPrimaryKeyAt(newHikerIndex);
+	hikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
 }
 
 
