@@ -25,6 +25,7 @@
 
 #include "main_window.h"
 #include "src/dialogs/parse_helper.h"
+#include "src/data/enum_names.h"
 
 #include <QCalendarWidget>
 

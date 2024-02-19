@@ -23,7 +23,7 @@
 
 #include "about_window.h"
 
-#include "src/settings/settings.h"
+#include "src/main/helpers.h"
 
 #include <QtSvg>
 #include <QSvgWidget>
