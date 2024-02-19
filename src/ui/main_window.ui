@@ -1319,17 +1319,10 @@
     <property name="title">
      <string>View</string>
     </property>
-    <widget class="QMenu" name="statsPanelMenu">
-     <property name="title">
-      <string>Item statistics panel</string>
-     </property>
-     <addaction name="showAllStatsPanelsAction"/>
-     <addaction name="hideAllStatsPanelsAction"/>
-     <addaction name="separator"/>
-     <addaction name="pinStatsRangesAction"/>
-    </widget>
     <addaction name="showItemStatsPanelAction"/>
-    <addaction name="statsPanelMenu"/>
+    <addaction name="showAllStatsPanelsAction"/>
+    <addaction name="hideAllStatsPanelsAction"/>
+    <addaction name="pinStatsRangesAction"/>
     <addaction name="separator"/>
     <addaction name="showFiltersAction"/>
     <addaction name="separator"/>
@@ -1542,7 +1535,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show item statistics panel</string>
+    <string>Show statistics panel in this tab</string>
    </property>
    <property name="shortcut">
     <string notr="true">F7</string>
@@ -1550,12 +1543,12 @@
   </action>
   <action name="hideAllStatsPanelsAction">
    <property name="text">
-    <string>Hide on all tabs</string>
+    <string>Hide statistics in all tabs</string>
    </property>
   </action>
   <action name="showAllStatsPanelsAction">
    <property name="text">
-    <string>Show on all tabs</string>
+    <string>Show statistics in all tabs</string>
    </property>
   </action>
   <action name="pinStatsRangesAction">

@@ -138,11 +138,15 @@ void MainWindow::setupMenuIcons()
 	projectSettingsAction		->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 	settingsAction				->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 	// View menu
+	// showItemStatsPanelAction is checkable
+	showAllStatsPanelsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	hideAllStatsPanelsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	// pinStatsRangesAction is checkable
 	// showFiltersAction is checkable
 	autoResizeColumnsAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	resetColumnOrderAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	restoreHiddenColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	// New menu: no fitting icons
+	// New menu: using own icons
 	// Tools menu
 	relocatePhotosAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	exportDataAction			->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
