@@ -22,7 +22,9 @@
  */
 
 #include "export_writer.h"
+
 #include "export_thread.h"
+#include "src/data/enum_names.h"
 
 #include <QFileInfo>
 
