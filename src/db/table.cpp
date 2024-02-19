@@ -442,8 +442,8 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
 	}
 	
 	// Announce changed data
-	QModelIndex updateIndexLeft		= index(bufferRowIndex.get(), 0, getNormalRootModelIndex());
-	QModelIndex updateIndexRight	= index(bufferRowIndex.get(), getNumberOfColumns(), getNormalRootModelIndex());
+	QModelIndex updateIndexLeft		= index(bufferRowIndex.get(), 0,						getNormalRootModelIndex());
+	QModelIndex updateIndexRight	= index(bufferRowIndex.get(), getNumberOfColumns() - 1,	getNormalRootModelIndex());
 	const QList<int> updatedDatumRoles = { Qt::CheckStateRole, Qt::DisplayRole };
 	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, updatedDatumRoles);
 	// Whole row was updated, all columns affected => Notify all column-attached change listeners
