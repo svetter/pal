@@ -332,7 +332,8 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 	
 	PeakDialog dialog(parent, db, purpose, originalPeak);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Peak* extractedPeak = dialog.extractData();
+		const ValidItemID originalPeakID = FORCE_VALID(originalPeak->peakID);
+		Peak* const extractedPeak = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -340,10 +341,10 @@ static BufferRowIndex openPeakDialogAndStore(QWidget* parent, Database* db, Dial
 			newPeakIndex = db->peaksTable->addRow(parent, extractedPeak);
 			break;
 		case editItem:
-			db->peaksTable->updateRow(parent, FORCE_VALID(originalPeak->peakID), extractedPeak);
+			db->peaksTable->updateRow(parent, originalPeakID, extractedPeak);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newPeakIndex = db->peaksTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedPeak->peakID));
+			newPeakIndex = db->peaksTable->getBufferIndexForPrimaryKey(originalPeakID);
 			break;
 		default:
 			assert(false);

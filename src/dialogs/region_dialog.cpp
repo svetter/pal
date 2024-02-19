@@ -305,7 +305,8 @@ static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, Di
 	
 	RegionDialog dialog(parent, db, purpose, originalRegion);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Region* extractedRegion = dialog.extractData();
+		const ValidItemID originalRegionID = FORCE_VALID(originalRegion->regionID);
+		Region* const extractedRegion = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -313,10 +314,10 @@ static BufferRowIndex openRegionDialogAndStore(QWidget* parent, Database* db, Di
 			newRegionIndex = db->regionsTable->addRow(parent, extractedRegion);
 			break;
 		case editItem:
-			db->regionsTable->updateRow(parent, FORCE_VALID(originalRegion->regionID), extractedRegion);
+			db->regionsTable->updateRow(parent, originalRegionID, extractedRegion);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRegionIndex = db->regionsTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedRegion->regionID));
+			newRegionIndex = db->regionsTable->getBufferIndexForPrimaryKey(originalRegionID);
 			break;
 		default:
 			assert(false);

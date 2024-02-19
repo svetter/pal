@@ -254,7 +254,8 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 	
 	RangeDialog dialog(parent, db, purpose, originalRange);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Range* extractedRange = dialog.extractData();
+		const ValidItemID originalRangeID = FORCE_VALID(originalRange->rangeID);
+		Range* const extractedRange = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -262,10 +263,10 @@ static BufferRowIndex openRangeDialogAndStore(QWidget* parent, Database* db, Dia
 			newRangeIndex = db->rangesTable->addRow(parent, extractedRange);
 			break;
 		case editItem:
-			db->rangesTable->updateRow(parent, FORCE_VALID(originalRange->rangeID), extractedRange);
+			db->rangesTable->updateRow(parent, originalRangeID, extractedRange);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRangeIndex = db->rangesTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedRange->rangeID));
+			newRangeIndex = db->rangesTable->getBufferIndexForPrimaryKey(originalRangeID);
 			break;
 		default:
 			assert(false);

@@ -244,7 +244,8 @@ static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, Dia
 	
 	HikerDialog dialog(parent, db, purpose, originalHiker);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Hiker* extractedHiker = dialog.extractData();
+		const ValidItemID originalHikerID = FORCE_VALID(originalHiker->hikerID);
+		Hiker* const extractedHiker = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -252,10 +253,10 @@ static BufferRowIndex openHikerDialogAndStore(QWidget* parent, Database* db, Dia
 			newHikerIndex = db->hikersTable->addRow(parent, extractedHiker);
 			break;
 		case editItem:
-			db->hikersTable->updateRow(parent, FORCE_VALID(originalHiker->hikerID), extractedHiker);
+			db->hikersTable->updateRow(parent, originalHikerID, extractedHiker);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newHikerIndex = db->hikersTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedHiker->hikerID));
+			newHikerIndex = db->hikersTable->getBufferIndexForPrimaryKey(originalHikerID);
 			break;
 		default:
 			assert(false);

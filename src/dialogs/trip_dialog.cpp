@@ -304,7 +304,8 @@ static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, Dial
 	
 	TripDialog dialog(parent, db, purpose, originalTrip);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Trip* extractedTrip = dialog.extractData();
+		const ValidItemID originalTripID = FORCE_VALID(originalTrip->tripID);
+		Trip* const extractedTrip = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -312,10 +313,10 @@ static BufferRowIndex openTripDialogAndStore(QWidget* parent, Database* db, Dial
 			newTripIndex = db->tripsTable->addRow(parent, extractedTrip);
 			break;
 		case editItem:
-			db->tripsTable->updateRow(parent, FORCE_VALID(originalTrip->tripID), extractedTrip);
+			db->tripsTable->updateRow(parent, originalTripID, extractedTrip);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newTripIndex = db->tripsTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedTrip->tripID));
+			newTripIndex = db->tripsTable->getBufferIndexForPrimaryKey(originalTripID);
 			break;
 		default:
 			assert(false);

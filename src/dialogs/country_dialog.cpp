@@ -237,7 +237,8 @@ static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, D
 	
 	CountryDialog dialog(parent, db, purpose, originalCountry);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Country* extractedCountry = dialog.extractData();
+		const ValidItemID originalCountryID = FORCE_VALID(originalCountry->countryID);
+		Country* const extractedCountry = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -245,10 +246,10 @@ static BufferRowIndex openCountryDialogAndStore(QWidget* parent, Database* db, D
 			newCountryIndex = db->countriesTable->addRow(parent, extractedCountry);
 			break;
 		case editItem:
-			db->countriesTable->updateRow(parent, FORCE_VALID(originalCountry->countryID), extractedCountry);
+			db->countriesTable->updateRow(parent, originalCountryID, extractedCountry);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newCountryIndex = db->countriesTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedCountry->countryID));
+			newCountryIndex = db->countriesTable->getBufferIndexForPrimaryKey(originalCountryID);
 			break;
 		default:
 			assert(false);

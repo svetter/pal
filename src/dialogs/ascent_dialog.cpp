@@ -674,7 +674,8 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 	
 	AscentDialog dialog(parent, db, purpose, originalAscent);
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		Ascent* extractedAscent = dialog.extractData();
+		const ValidItemID originalAscentID = FORCE_VALID(originalAscent->ascentID);
+		Ascent* const extractedAscent = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
@@ -695,7 +696,7 @@ static BufferRowIndex openAscentDialogAndStore(QWidget* parent, Database* db, Di
 			}
 			
 			// Set result to existing buffer row to signal that changes were made
-			newAscentIndex = db->ascentsTable->getBufferIndexForPrimaryKey(FORCE_VALID(extractedAscent->ascentID));
+			newAscentIndex = db->ascentsTable->getBufferIndexForPrimaryKey(originalAscentID);
 			break;
 		default:
 			assert(false);
