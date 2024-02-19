@@ -76,6 +76,12 @@ void Settings::checkForVersionChange()
 		}
 	}
 	
+	// 1.3.0
+	if (settingsOlderThan("1.3.0")) {
+		// Geometry saving and restoring fixed/changed => reset
+		resetGeometrySettings();
+	}
+	
 	// Update settings version
 	QString currentAppVersion = getAppVersion();
 	if (settingsOlderThan(currentAppVersion)) {
