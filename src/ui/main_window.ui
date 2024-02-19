@@ -1544,6 +1544,9 @@
    <property name="text">
     <string>Show item statistics panel</string>
    </property>
+   <property name="shortcut">
+    <string notr="true">F7</string>
+   </property>
   </action>
   <action name="hideAllStatsPanelsAction">
    <property name="text">
