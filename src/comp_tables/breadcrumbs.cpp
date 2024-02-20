@@ -397,9 +397,9 @@ BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferR
 		if (key.isInvalid()) return BufferRowIndex();
 		
 		// Get referenced primary key column of other table
-		const PrimaryKeyColumn* referencedColumn = currentColumn.getReferencedForeignColumn();
-		assert(!referencedColumn->table->isAssociative);
-		const NormalTable* currentTable = (NormalTable*) referencedColumn->table;
+		const PrimaryKeyColumn& referencedColumn = *currentColumn.getReferencedForeignColumn();
+		assert(!referencedColumn.table->isAssociative);
+		const NormalTable* currentTable = (NormalTable*) referencedColumn.table;
 		
 		// Find row index that contains the current primary key
 		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(FORCE_VALID(key));

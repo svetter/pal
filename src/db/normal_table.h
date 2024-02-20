@@ -46,7 +46,7 @@ public:
 	// Buffer access
 	BufferRowIndex getBufferIndexForPrimaryKey(ValidItemID primaryKey) const;
 	ValidItemID getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const;
-	QList<QPair<ValidItemID, QVariant>> pairIDWith(const Column* column) const;
+	QList<QPair<ValidItemID, QVariant>> pairIDWith(const Column& column) const;
 	
 	// Modifications (passthrough)
 	BufferRowIndex addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);

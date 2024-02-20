@@ -91,10 +91,10 @@ ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
  * @param column	The column to get the values of, aside from the primary keys.
  * @return			A list of pairs of primary keys and values of the given column.
  */
-QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column) const
+QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column& column) const
 {
 	int primaryKeyColumnIndex = primaryKeyColumn.getIndex();
-	int columnIndex = column->getIndex();
+	int columnIndex = column.getIndex();
 	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
 		pairs.append({VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
@@ -181,12 +181,12 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 			}
 			continue;
 		}
-		const Column* column = getColumnByIndex(columnIndex);
+		const Column& column = getColumnByIndex(columnIndex);
 		
 		QVariant bufferValue = rowIndex.isInvalid() ? QVariant() : buffer.getCell(rowIndex, columnIndex);
 		QVariant result = QVariant();
 		
-		switch (column->type) {
+		switch (column.type) {
 		case Integer:
 		case ID:
 		case Enum:

@@ -43,7 +43,7 @@ typedef QPair<const Column* const, QVariant> ColumnDataPair;
  */
 class Table : public QAbstractItemModel {
 	/** The columns of this table. */
-	QList<const Column> columns;
+	QList<const Column*> columns;
 	
 	/** The row change listener which needs to be notified of row changes. */
 	const RowChangeListener* rowChangeListener;
@@ -77,8 +77,8 @@ public:
 	QList<const Column*> getNonPrimaryKeyColumnList() const;
 	QString getColumnListString() const;
 	QString getPrimaryKeyColumnListString() const;
-	int getColumnIndex(const Column* column) const;
-	const Column* getColumnByIndex(int index) const;
+	int getColumnIndex(const Column& column) const;
+	const Column& getColumnByIndex(int index) const;
 
 	// Buffer access
 	void initBuffer(QWidget* parent);

@@ -201,7 +201,7 @@ void populateItemCombo(NormalTable* table, const ValueColumn& displayAndSortColu
 	combo->addItem(noneString);
 	
 	// Get pairs of ID and display/sort field
-	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(&displayAndSortColumn);
+	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(displayAndSortColumn);
 	
 	if (filterColumn) {
 		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it

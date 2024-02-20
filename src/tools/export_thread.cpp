@@ -338,7 +338,7 @@ void DataExportThread::exportRaw()
 			
 			// FOR ALL CELLS IN ROW
 			for (const ExportColumnInfo& columnInfo : columnInfos) {
-				QVariant value = baseTable->getColumnByIndex(columnInfo.indexInTable)->getValueAt(rowIndex);
+				QVariant value = baseTable->getColumnByIndex(columnInfo.indexInTable).getValueAt(rowIndex);
 				writer->writeCell(value, columnInfo);
 				
 				emit callback_reportProgress(++progress);

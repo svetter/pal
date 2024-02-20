@@ -170,9 +170,9 @@ QString Table::getPrimaryKeyColumnListString() const
  * @param column	The column whose index to return.
  * @return			The index of the given column.
  */
-int Table::getColumnIndex(const Column* column) const
+int Table::getColumnIndex(const Column& column) const
 {
-	return columns.indexOf(column);
+	return columns.indexOf(&column);
 }
 
 /**
@@ -181,10 +181,10 @@ int Table::getColumnIndex(const Column* column) const
  * @param index	The index of the column to return.
  * @return		The column with the given index.
  */
-const Column* Table::getColumnByIndex(int index) const
+const Column& Table::getColumnByIndex(int index) const
 {
 	assert(index >= 0 && index < columns.size());
-	return columns.at(index);
+	return *columns.at(index);
 }
 
 
@@ -646,12 +646,12 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	assert(!isAssociative);
 	
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
-	const Column* primaryKeyColumn = primaryKeyColumns.first();
+	const Column& primaryKeyColumn = *primaryKeyColumns.first();
 	
 	QString queryString = QString(
 			"UPDATE " + name +
 			"\nSET " + column.name + " = ?" +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
+			"\nWHERE " + primaryKeyColumn.name + " = " + QString::number(ID_GET(primaryKey))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -673,7 +673,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
-	const Column* primaryKeyColumn = primaryKeyColumns.first();
+	const Column& primaryKeyColumn = *primaryKeyColumns.first();
 	
 	QString setString = "";
 	for (const auto& [column, data] : columnDataPairs) {
@@ -683,7 +683,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
 	QString queryString = QString(
 			"UPDATE " + name +
 			"\nSET " + setString +
-			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
+			"\nWHERE " + primaryKeyColumn.name + " = " + QString::number(ID_GET(primaryKey))
 	);
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString))
@@ -709,10 +709,10 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	QString condition = "";
 	for (int i = 0; i < primaryKeys.size(); i++) {
 		if (i > 0) condition.append(" AND ");
-		const Column* column = primaryKeyColumns.at(i);
-		assert(column->table == this && column->isPrimaryKey());
+		const Column& column = *primaryKeyColumns.at(i);
+		assert(column.table == this && column.isPrimaryKey());
 		
-		condition.append(column->name + " = " + QString::number(ID_GET(primaryKeys.at(i))));
+		condition.append(column.name + " = " + QString::number(ID_GET(primaryKeys.at(i))));
 	}
 	QString queryString = QString(
 			"DELETE FROM " + name +
@@ -878,8 +878,8 @@ QVariant Table::headerData(int section, Qt::Orientation orientation, int role) c
 	case Qt::Orientation::Horizontal: {
 		switch (role) {
 		case Qt::DisplayRole: {
-			QString result = getColumnByIndex(section)->uiName;
-			if (result.isEmpty()) result = getColumnByIndex(section)->name;
+			QString result = getColumnByIndex(section).uiName;
+			if (result.isEmpty()) result = getColumnByIndex(section).name;
 			return result;
 		}
 		default: return QVariant();

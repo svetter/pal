@@ -231,7 +231,7 @@ void AssociativeTable::removeMatchingRows(QWidget* parent, const Column& column,
  */
 void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const
 {
-	assert(getColumnByIndex(index.column())->type == ID);
+	assert(getColumnByIndex(index.column()).type == ID);
 	
 	for (QModelRoleData& roleData : roleDataSpan) {
 		int role = roleData.role();

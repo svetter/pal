@@ -118,7 +118,7 @@ PrimaryKeyColumn* Column::getReferencedForeignColumn() const
  */
 int Column::getIndex() const
 {
-	return table->getColumnIndex(this);
+	return table->getColumnIndex(*this);
 }
 
 
