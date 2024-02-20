@@ -49,7 +49,6 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
  */
 Table::~Table()
 {
-	qDeleteAll(columns);
 	delete rowChangeListener;
 }
 

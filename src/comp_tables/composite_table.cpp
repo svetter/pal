@@ -62,7 +62,6 @@ CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTabl
  */
 CompositeTable::~CompositeTable()
 {
-	qDeleteAll(columns);
 	qDeleteAll(buffer);
 }
 
