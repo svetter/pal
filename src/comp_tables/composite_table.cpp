@@ -25,6 +25,8 @@
 
 #include "qscrollbar.h"
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -54,7 +56,8 @@ CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTabl
 	name(baseTable->name),
 	uiName(baseTable->uiName)
 {
-	baseTable->setRowChangeListener(new RowChangeListenerCompositeTable(this));
+	unique_ptr changeListener = make_unique<const RowChangeListenerCompositeTable>(RowChangeListenerCompositeTable(this));
+	baseTable->setRowChangeListener(std::move(changeListener));
 }
 
 /**
@@ -81,7 +84,8 @@ void CompositeTable::addColumn(const CompositeColumn& column)
 	// Register as change listener at all underlying columns
 	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(&column));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(&column));
+		underlyingColumn->registerChangeListener(std::move(changeListener));
 	}
 }
 
@@ -113,7 +117,8 @@ void CompositeTable::addFilterColumn(const CompositeColumn& column)
 	// Register as change listener at all underlying columns
 	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(&column));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(&column));
+		underlyingColumn->registerChangeListener(std::move(changeListener));
 	}
 }
 

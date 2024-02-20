@@ -32,7 +32,9 @@
 #include <QString>
 #include <QWidget>
 
-typedef QPair<const Column* const, QVariant> ColumnDataPair;
+using std::unique_ptr;
+
+typedef QPair<const Column*, QVariant> ColumnDataPair;
 
 
 
@@ -46,7 +48,7 @@ class Table : public QAbstractItemModel {
 	QList<const Column*> columns;
 	
 	/** The row change listener which needs to be notified of row changes. */
-	const RowChangeListener* rowChangeListener;
+	unique_ptr<const RowChangeListener> rowChangeListener;
 	
 public:
 	/** The internal name of the table. */
@@ -91,7 +93,7 @@ public:
 	void printBuffer() const;
 	
 	// Change propagation
-	void setRowChangeListener(const RowChangeListener* newListener);
+	void setRowChangeListener(unique_ptr<const RowChangeListener> newListener);
 private:
 	void notifyAllColumns();
 	

@@ -23,6 +23,8 @@
 
 #include "stats_engine.h"
 
+using std::unique_ptr, std::make_unique, std::make_shared;
+
 
 
 /**
@@ -205,7 +207,8 @@ void GeneralStatsEngine::setupStatsTab()
 	const QList<Column*> columns = chartsPerColumn.keys();
 	for (Column* const column : columns) {
 		const QSet<Chart*> affectedCharts = chartsPerColumn.value(column);
-		column->registerChangeListener(new ColumnChangeListenerGeneralStatsEngine(this, affectedCharts));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerGeneralStatsEngine>(ColumnChangeListenerGeneralStatsEngine(this, affectedCharts));
+		column->registerChangeListener(std::move(changeListener));
 	}
 }
 
@@ -438,7 +441,7 @@ ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const Norma
 	assert(statsLayout);
 	
 	// Create and register change listeners
-	listener = new ColumnChangeListenerItemStatsEngine(this);
+	listener = make_shared<const ColumnChangeListenerItemStatsEngine>(ColumnChangeListenerItemStatsEngine(this));
 	const QSet<Column*> underlyingColumns = getUsedColumnSet();
 	for (Column* const column : underlyingColumns) {
 		column->registerChangeListener(listener);
@@ -457,8 +460,6 @@ ItemStatsEngine::~ItemStatsEngine()
 	delete topMaxPeakHeightChart;
 	delete topMaxElevGainChart;
 	if (itemType != ItemTypeAscent) delete topElevGainSumChart;
-	
-	delete listener;
 }
 
 

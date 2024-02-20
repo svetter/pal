@@ -27,6 +27,8 @@
 
 #include <QSqlQuery>
 
+using std::unique_ptr, std::shared_ptr;
+
 
 
 /**
@@ -48,9 +50,7 @@ Table::Table(QString name, QString uiName, bool isAssociative) :
  * Destroys the Table.
  */
 Table::~Table()
-{
-	delete rowChangeListener;
-}
+{}
 
 
 
@@ -320,10 +320,9 @@ void Table::printBuffer() const
  * 
  * @param newListener	The row change listener to register.
  */
-void Table::setRowChangeListener(const RowChangeListener* newListener)
+void Table::setRowChangeListener(unique_ptr<const RowChangeListener> newListener)
 {
-	if (rowChangeListener) delete rowChangeListener;
-	rowChangeListener = newListener;
+	rowChangeListener = std::move(newListener);
 }
 
 /**
@@ -332,13 +331,13 @@ void Table::setRowChangeListener(const RowChangeListener* newListener)
 void Table::notifyAllColumns()
 {
 	// Collect change listeners and notify them
-	QSet<const ColumnChangeListener*> changeListeners = QSet<const ColumnChangeListener*>();
+	QSet<shared_ptr<const ColumnChangeListener>> changeListeners = QSet<shared_ptr<const ColumnChangeListener>>();
 	QSet<const Column*> columnSet = QSet<const Column*>();
 	for (const Column* column : columns) {
 		changeListeners.unite(column->getChangeListeners());
 		columnSet.insert(column);
 	}
-	for (const ColumnChangeListener* changeListener : changeListeners) {
+	for (const shared_ptr<const ColumnChangeListener>& changeListener : changeListeners) {
 		changeListener->columnDataChanged(columnSet);
 	}
 }
@@ -415,8 +414,8 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them
-	QSet<const ColumnChangeListener*> changeListeners = column.getChangeListeners();
-	for (const ColumnChangeListener* changeListener : changeListeners) {
+	QSet<shared_ptr<const ColumnChangeListener>> changeListeners = column.getChangeListeners();
+	for (const shared_ptr<const ColumnChangeListener>& changeListener : changeListeners) {
 		changeListener->columnDataChanged({&column});
 	}
 }

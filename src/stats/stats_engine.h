@@ -31,6 +31,8 @@
 #include <QObject>
 #include <QBoxLayout>
 
+using std::shared_ptr;
+
 class ColumnChangeListenerItemStatsEngine;
 
 
@@ -125,7 +127,7 @@ class ItemStatsEngine : public StatsEngine
 	QVBoxLayout* const statsLayout;
 	
 	/** The column change listener used to keep charts up to date. */
-	ColumnChangeListenerItemStatsEngine* listener;
+	shared_ptr<const ColumnChangeListenerItemStatsEngine> listener;
 	
 	// Constants
 	/** The number of items to show in the top N charts. */

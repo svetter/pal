@@ -30,6 +30,8 @@
 
 #include <QSet>
 
+using std::shared_ptr;
+
 class PrimaryKeyColumn;
 class Table;
 struct WhatIfDeleteResult;
@@ -75,7 +77,7 @@ public:
 	
 private:
 	/** The column change listeners registered to be notified when data in this column changes. */
-	QSet<const ColumnChangeListener*> changeListeners;
+	QSet<shared_ptr<const ColumnChangeListener>> changeListeners;
 	
 protected:
 	Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignKey, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
@@ -94,8 +96,8 @@ public:
 	
 	QString getSqlSpecificationString() const;
 	
-	void registerChangeListener(const ColumnChangeListener* newListener);
-	QSet<const ColumnChangeListener*> getChangeListeners() const;
+	void registerChangeListener(shared_ptr<const ColumnChangeListener> newListener);
+	QSet<shared_ptr<const ColumnChangeListener>> getChangeListeners() const;
 };
 
 

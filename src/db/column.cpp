@@ -29,6 +29,8 @@
 
 #include <QCoreApplication>
 
+using std::shared_ptr;
+
 
 
 /**
@@ -54,7 +56,7 @@ Column::Column(const Table* table, QString name, QString uiName, bool primaryKey
 	nullable(nullable),
 	enumNames(enumNames),
 	enumNameLists(enumNameLists),
-	changeListeners(QSet<const ColumnChangeListener*>())
+	changeListeners(QSet<shared_ptr<const ColumnChangeListener>>())
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
 	assert(table->isAssociative == (primaryKey && foreignColumn));
@@ -204,7 +206,7 @@ QString Column::getSqlSpecificationString() const
  * 
  * @param newListener	The change listener to register.
  */
-void Column::registerChangeListener(const ColumnChangeListener* newListener)
+void Column::registerChangeListener(shared_ptr<const ColumnChangeListener> newListener)
 {
 	changeListeners.insert(newListener);
 }
@@ -212,7 +214,7 @@ void Column::registerChangeListener(const ColumnChangeListener* newListener)
 /**
  * Returns the set of all change listeners registered for this column.
  */
-QSet<const ColumnChangeListener*> Column::getChangeListeners() const
+QSet<shared_ptr<const ColumnChangeListener>> Column::getChangeListeners() const
 {
 	return changeListeners;
 }
