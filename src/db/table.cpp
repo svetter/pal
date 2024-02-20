@@ -60,9 +60,9 @@ Table::~Table()
  * 
  * @param column	The column to add. The table takes ownership of the column.
  */
-void Table::addColumn(const Column* column)
+void Table::addColumn(const Column& column)
 {
-	columns.append(column);
+	columns.append(&column);
 }
 
 
@@ -246,13 +246,13 @@ const QList<QVariant>* Table::getBufferRow(BufferRowIndex bufferRowIndex) const
  * @param content	The value to check for.
  * @return			A list of all row indices in the table where the given column has the given value.
  */
-QList<BufferRowIndex> Table::getMatchingBufferRowIndices(const Column* column, const QVariant& content) const
+QList<BufferRowIndex> Table::getMatchingBufferRowIndices(const Column& column, const QVariant& content) const
 {
-	assert(getColumnList().contains(column));
+	assert(getColumnList().contains(&column));
 	
 	QList<BufferRowIndex> result = QList<BufferRowIndex>();
 	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(buffer.numRows()); rowIndex++) {
-		if (column->getValueAt(rowIndex) == content) {
+		if (column.getValueAt(rowIndex) == content) {
 			result.append(rowIndex);
 		}
 	}
@@ -395,30 +395,30 @@ BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& colum
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
-	assert(column->table == this);
+	assert(column.table == this);
 	
 	// Update cell in SQL database
 	updateCellOfNormalTableInSql(parent, primaryKey, column, data);
 	
 	// Update buffer
 	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	buffer.replaceCell(bufferRowIndex, column->getIndex(), data);
+	buffer.replaceCell(bufferRowIndex, column.getIndex(), data);
 	
 	// Announce changed data
-	QModelIndex updateIndexNormal	= index(bufferRowIndex.get(), column->getIndex(), getNormalRootModelIndex());
-	QModelIndex updateIndexNullable	= index(bufferRowIndex.get(), column->getIndex(), getNullableRootModelIndex());
-	const QList<int> updatedDatumRoles = { column->type == Bit ? Qt::CheckStateRole : Qt::DisplayRole };
+	QModelIndex updateIndexNormal	= index(bufferRowIndex.get(), column.getIndex(), getNormalRootModelIndex());
+	QModelIndex updateIndexNullable	= index(bufferRowIndex.get(), column.getIndex(), getNullableRootModelIndex());
+	const QList<int> updatedDatumRoles = { column.type == Bit ? Qt::CheckStateRole : Qt::DisplayRole };
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them
-	QSet<const ColumnChangeListener*> changeListeners = column->getChangeListeners();
+	QSet<const ColumnChangeListener*> changeListeners = column.getChangeListeners();
 	for (const ColumnChangeListener* changeListener : changeListeners) {
-		changeListener->columnDataChanged({column});
+		changeListener->columnDataChanged({&column});
 	}
 }
 
@@ -494,10 +494,10 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
  * @param column	The column to check.
  * @param key		The value to check for.
  */
-void Table::removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key)
+void Table::removeMatchingRows(QWidget* parent, const Column& column, ValidItemID key)
 {
-	assert(getColumnList().contains(column));
-	assert(column->isKey());
+	assert(getColumnList().contains(&column));
+	assert(column.isKey());
 	
 	// Remove rows from SQL database
 	removeMatchingRowsFromSql(parent, column, key);
@@ -642,7 +642,7 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
 	assert(!isAssociative);
 	
@@ -651,7 +651,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
 	
 	QString queryString = QString(
 			"UPDATE " + name +
-			"\nSET " + column->name + " = ?" +
+			"\nSET " + column.name + " = ?" +
 			"\nWHERE " + primaryKeyColumn->name + " = " + QString::number(ID_GET(primaryKey))
 	);
 	QSqlQuery query = QSqlQuery();
@@ -734,13 +734,13 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
  * @param column	The column to check.
  * @param key		The value to check for.
  */
-void Table::removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key)
+void Table::removeMatchingRowsFromSql(QWidget* parent, const Column& column, ValidItemID key)
 {
-	assert(getColumnList().contains(column));
+	assert(getColumnList().contains(&column));
 	
 	QString queryString = QString(
 			"DELETE FROM " + name +
-			"\nWHERE " + column->name + " = " + QString::number(ID_GET(key))
+			"\nWHERE " + column.name + " = " + QString::number(ID_GET(key))
 	);
 	QSqlQuery query = QSqlQuery();
 	query.setForwardOnly(true);

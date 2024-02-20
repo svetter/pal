@@ -209,7 +209,7 @@ void TripDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save trip");
 	QString emptyNameWindowMessage	= tr("The trip needs a name.");
-	const ValueColumn* nameColumn = db->tripsTable->nameColumn;
+	const ValueColumn& nameColumn = db->tripsTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -270,7 +270,7 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 	
 	QSet<ValidItemID> tripIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->tripsTable, tripIDs);

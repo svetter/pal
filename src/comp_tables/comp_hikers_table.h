@@ -37,17 +37,17 @@ class CompositeHikersTable : public CompositeTable {
 	
 public:
 	/** The name of the hiker. */
-	const DirectCompositeColumn*	nameColumn;
+	const DirectCompositeColumn			nameColumn;
 	/** The number of ascents logged in which this hiker participated. */
-	const FoldCompositeColumn*		numAscentsColumn;
+	const NumericFoldCompositeColumn	numAscentsColumn;
 	/** The number of trips logged in which this hiker participated. */
-	const FoldCompositeColumn*		numTripsColumn;
+	const NumericFoldCompositeColumn	numTripsColumn;
 	/** The average elevation gain of all ascents logged in which this hiker participated. */
-	const FoldCompositeColumn*		avgElevationGainColumn;
+	const NumericFoldCompositeColumn	avgElevationGainColumn;
 	/** The maximum elevation gain of all ascents logged in which this hiker participated. */
-	const FoldCompositeColumn*		maxElevationGainColumn;
+	const NumericFoldCompositeColumn	maxElevationGainColumn;
 	/** The sum of the elevation gains of all ascents logged in which this hiker participated. */
-	const FoldCompositeColumn*		sumElevationGainColumn;
+	const NumericFoldCompositeColumn	sumElevationGainColumn;
 	
 public:
 	/**
@@ -60,13 +60,13 @@ public:
 	 */
 	inline CompositeHikersTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->hikersTable, tableView),
-		//																		name				uiName					suffix		fold op			[breadcrumbs +] content column
-		nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,					db->hikersTable->nameColumn)),
-		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable))),
-		numTripsColumn			(new const NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		crumbsTo(db, db->tripsTable))),
-		avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
-		maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
-		sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn))
+		//															name				uiName					suffix		fold op			[breadcrumbs +] content column
+		nameColumn				(DirectCompositeColumn		(this,												noSuffix,					db->hikersTable->nameColumn)),
+		numAscentsColumn		(NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable))),
+		numTripsColumn			(NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		crumbsTo(db, db->tripsTable))),
+		avgElevationGainColumn	(NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
+		maxElevationGainColumn	(NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
+		sumElevationGainColumn	(NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(numAscentsColumn);
@@ -77,7 +77,7 @@ public:
 	}
 	
 	
-
+	
 	/**
 	 * Returns the default sorting for the table.
 	 *
@@ -85,7 +85,7 @@ public:
 	 */
 	virtual SortingPass getDefaultSorting() const override
 	{
-		return {numAscentsColumn, Qt::DescendingOrder};
+		return {&numAscentsColumn, Qt::DescendingOrder};
 	}
 };
 

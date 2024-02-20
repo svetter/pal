@@ -41,8 +41,10 @@
  */
 NormalTable::NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
 	Table(name, uiName, false),
-	primaryKeyColumn(new PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
-{}
+	primaryKeyColumn(PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
+{
+	addColumn(primaryKeyColumn);
+}
 
 /**
  * Destroys the NormalTable.
@@ -80,7 +82,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
  */
 ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
 {
-	return VALID_ITEM_ID(buffer.getCell(bufferRowIndex, primaryKeyColumn->getIndex()));
+	return VALID_ITEM_ID(buffer.getCell(bufferRowIndex, primaryKeyColumn.getIndex()));
 }
 
 /**
@@ -91,7 +93,7 @@ ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
  */
 QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column* column) const
 {
-	int primaryKeyColumnIndex = primaryKeyColumn->getIndex();
+	int primaryKeyColumnIndex = primaryKeyColumn.getIndex();
 	int columnIndex = column->getIndex();
 	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
@@ -127,7 +129,7 @@ BufferRowIndex NormalTable::addRow(QWidget* parent, const QList<ColumnDataPair>&
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data)
+void NormalTable::updateCell(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
 	return Table::updateCellInNormalTable(parent, primaryKey, column, data);
 }
@@ -173,7 +175,7 @@ void NormalTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDat
 		
 		if (role == PrimaryKeyRole) {
 			if (rowIndex.isValid()) {
-				roleData.setData(buffer.getCell(rowIndex, primaryKeyColumn->getIndex()));
+				roleData.setData(buffer.getCell(rowIndex, primaryKeyColumn.getIndex()));
 			} else {
 				roleData.setData(-1);
 			}

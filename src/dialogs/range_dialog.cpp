@@ -159,7 +159,7 @@ void RangeDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save mountain range");
 	QString emptyNameWindowMessage	= tr("The mountain range needs a name.");
-	const ValueColumn* nameColumn = db->rangesTable->nameColumn;
+	const ValueColumn& nameColumn = db->rangesTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -220,7 +220,7 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->rangesTable, rangeIDs);

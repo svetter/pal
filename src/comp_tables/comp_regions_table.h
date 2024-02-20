@@ -37,21 +37,21 @@ class CompositeRegionsTable : public CompositeTable {
 	
 public:
 	/** The name of the region. */
-	const DirectCompositeColumn*	nameColumn;
+	const DirectCompositeColumn			nameColumn;
 	/** The name of the mountain range the region is assigned to. */
-	const ReferenceCompositeColumn*	rangeColumn;
+	const ReferenceCompositeColumn		rangeColumn;
 	/** The name of the country the region is assigned to. */
-	const ReferenceCompositeColumn*	countryColumn;
+	const ReferenceCompositeColumn		countryColumn;
 	/** The continent the region is assigned to. */
-	const ReferenceCompositeColumn*	continentColumn;
+	const ReferenceCompositeColumn		continentColumn;
 	/** The number of peaks assigned to this region. */
-	const FoldCompositeColumn*		numPeaksColumn;
+	const NumericFoldCompositeColumn	numPeaksColumn;
 	/** The average height of all peaks assigned to this region. */
-	const FoldCompositeColumn*		avgPeakHeightColumn;
+	const NumericFoldCompositeColumn	avgPeakHeightColumn;
 	/** The height of the highest peak assigned to this region. */
-	const FoldCompositeColumn*		maxPeakHeightColumn;
+	const NumericFoldCompositeColumn	maxPeakHeightColumn;
 	/** The number of ascents assigned to this region. */
-	const FoldCompositeColumn*		numAscentsColumn;
+	const NumericFoldCompositeColumn	numAscentsColumn;
 	
 public:
 	/**
@@ -64,15 +64,15 @@ public:
 	 */
 	inline CompositeRegionsTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->regionsTable, tableView),
-		//																	name				uiName					suffix		fold op			[breadcrumbs +] content column
-		nameColumn			(new const DirectCompositeColumn		(this,												noSuffix,					db->regionsTable->nameColumn)),
-		rangeColumn			(new const ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),	noSuffix,					crumbsTo(db, db->rangesTable),		db->rangesTable->nameColumn)),
-		countryColumn		(new const ReferenceCompositeColumn		(this,	"country",			tr("Country"),			noSuffix,					crumbsTo(db, db->countriesTable),	db->countriesTable->nameColumn)),
-		continentColumn		(new const ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),		noSuffix,					crumbsTo(db, db->rangesTable),		db->rangesTable->continentColumn)),
-		numPeaksColumn		(new const NumericFoldCompositeColumn	(this,	"numPeaks",			tr("Num. peaks"),		noSuffix,	CountFold,		crumbsTo(db, db->peaksTable))),
-		avgPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	"avgPeakHeight",	tr("Avg. peak height"),	mSuffix,	AverageFold,	crumbsTo(db, db->peaksTable),		db->peaksTable->heightColumn)),
-		maxPeakHeightColumn	(new const NumericFoldCompositeColumn	(this,	"maxPeakHeight",	tr("Max. peak height"),	mSuffix,	MaxFold,		crumbsTo(db, db->peaksTable),		db->peaksTable->heightColumn)),
-		numAscentsColumn	(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable)))
+		//														name				uiName					suffix		fold op			[breadcrumbs +] content column
+		nameColumn			(DirectCompositeColumn		(this,												noSuffix,					db->regionsTable->nameColumn)),
+		rangeColumn			(ReferenceCompositeColumn	(this,	"range",			tr("Mountain range"),	noSuffix,					crumbsTo(db, db->rangesTable),		db->rangesTable->nameColumn)),
+		countryColumn		(ReferenceCompositeColumn	(this,	"country",			tr("Country"),			noSuffix,					crumbsTo(db, db->countriesTable),	db->countriesTable->nameColumn)),
+		continentColumn		(ReferenceCompositeColumn	(this,	"continent",		tr("Continent"),		noSuffix,					crumbsTo(db, db->rangesTable),		db->rangesTable->continentColumn)),
+		numPeaksColumn		(NumericFoldCompositeColumn	(this,	"numPeaks",			tr("Num. peaks"),		noSuffix,	CountFold,		crumbsTo(db, db->peaksTable))),
+		avgPeakHeightColumn	(NumericFoldCompositeColumn	(this,	"avgPeakHeight",	tr("Avg. peak height"),	mSuffix,	AverageFold,	crumbsTo(db, db->peaksTable),		db->peaksTable->heightColumn)),
+		maxPeakHeightColumn	(NumericFoldCompositeColumn	(this,	"maxPeakHeight",	tr("Max. peak height"),	mSuffix,	MaxFold,		crumbsTo(db, db->peaksTable),		db->peaksTable->heightColumn)),
+		numAscentsColumn	(NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable)))
 	{
 		addColumn(nameColumn);
 		addColumn(rangeColumn);
@@ -85,7 +85,7 @@ public:
 	}
 	
 	
-
+	
 	/**
 	 * Returns the default sorting for the table.
 	 *
@@ -93,7 +93,7 @@ public:
 	 */
 	virtual SortingPass getDefaultSorting() const override
 	{
-		return {nameColumn, Qt::AscendingOrder};
+		return {&nameColumn, Qt::AscendingOrder};
 	}
 };
 

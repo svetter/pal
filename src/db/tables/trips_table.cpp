@@ -33,13 +33,12 @@
  */
 TripsTable::TripsTable() :
 	NormalTable(QString("Trips"), tr("Trips"), "tripID", tr("Trip ID")),
-	//											name			uiName				type	nullable
-	nameColumn			(new ValueColumn(this,	"name",			tr("Name"),			String,	false)),
-	startDateColumn		(new ValueColumn(this,	"startDate",	tr("Start date"),	Date,	true)),
-	endDateColumn		(new ValueColumn(this,	"endDate",		tr("End date"),		Date,	true)),
-	descriptionColumn	(new ValueColumn(this,	"description",	tr("Description"),	String,	true))
+	//										name			uiName				type	nullable
+	nameColumn			(ValueColumn(this,	"name",			tr("Name"),			String,	false)),
+	startDateColumn		(ValueColumn(this,	"startDate",	tr("Start date"),	Date,	true)),
+	endDateColumn		(ValueColumn(this,	"endDate",		tr("End date"),		Date,	true)),
+	descriptionColumn	(ValueColumn(this,	"description",	tr("Description"),	String,	true))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(startDateColumn);
 	addColumn(endDateColumn);
@@ -94,10 +93,10 @@ const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<con
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)			{ data = trip->name;		}
-		else if (column == startDateColumn)		{ data = trip->startDate;	}
-		else if (column == endDateColumn)		{ data = trip->endDate;		}
-		else if (column == descriptionColumn)	{ data = trip->description;	}
+		     if (column == &nameColumn)			{ data = trip->name;		}
+		else if (column == &startDateColumn)	{ data = trip->startDate;	}
+		else if (column == &endDateColumn)		{ data = trip->endDate;		}
+		else if (column == &descriptionColumn)	{ data = trip->description;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

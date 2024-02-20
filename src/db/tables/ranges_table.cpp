@@ -35,11 +35,10 @@
  */
 RangesTable::RangesTable() :
 	NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
-	//											name			uiName				type	nullable	enumNames
-	nameColumn		(new ValueColumn	(this,	"name",			tr("Name"),			String,	false)),
-	continentColumn	(new ValueColumn	(this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))
+	//										name			uiName				type	nullable	enumNames
+	nameColumn		(ValueColumn	(this,	"name",			tr("Name"),			String,	false)),
+	continentColumn	(ValueColumn	(this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(continentColumn);
 }
@@ -92,8 +91,8 @@ const QList<ColumnDataPair> RangesTable::mapDataToColumnDataPairs(const QList<co
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)		{ data = range->name;		}
-		else if (column == continentColumn)	{ data = range->continent;	}
+		     if (column == &nameColumn)			{ data = range->name;		}
+		else if (column == &continentColumn)	{ data = range->continent;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

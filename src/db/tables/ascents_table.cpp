@@ -36,23 +36,22 @@
  * @param foreignPeakIDColumn	The primary key column of the PeaksTable.
  * @param foreignTripIDColumn	The primary key column of the TripsTable.
  */
-AscentsTable::AscentsTable(PrimaryKeyColumn* foreignPeakIDColumn,  PrimaryKeyColumn* foreignTripIDColumn) :
+AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyColumn& foreignTripIDColumn) :
 	NormalTable(QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
-	//														name				uiName				type		nullable	foreignColumn/enumNames/enumNameLists
-	titleColumn				(new ValueColumn		(this,	"title",			tr("Title"),		String,		true)),
-	peakIDColumn			(new ForeignKeyColumn	(this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),
-	dateColumn				(new ValueColumn		(this,	"date",				tr("Date"),			Date,		true)),
-	peakOnDayColumn			(new ValueColumn		(this,	"peakOnDay",		tr("Peak/day"),		Integer,	false)),
-	timeColumn				(new ValueColumn		(this,	"time",				tr("Local time"),	Time,		true)),
-	elevationGainColumn		(new ValueColumn		(this,	"elevationGain",	tr("Elev. gain"),	Integer,	true)),
-	hikeKindColumn			(new ValueColumn		(this,	"hikeKind",			tr("Kind of hike"),	Enum,		false,		&EnumNames::hikeKindNames)),
-	traverseColumn			(new ValueColumn		(this,	"traverse",			tr("Traverse"),		Bit,		false)),
-	difficultySystemColumn	(new ValueColumn		(this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
-	difficultyGradeColumn	(new ValueColumn		(this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
-	tripIDColumn			(new ForeignKeyColumn	(this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
-	descriptionColumn		(new ValueColumn		(this,	"description",		tr("Description"),	String,		true))
+	//													name				uiName				type		nullable	foreignColumn/enumNames/enumNameLists
+	titleColumn				(ValueColumn		(this,	"title",			tr("Title"),		String,		true)),
+	peakIDColumn			(ForeignKeyColumn	(this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),
+	dateColumn				(ValueColumn		(this,	"date",				tr("Date"),			Date,		true)),
+	peakOnDayColumn			(ValueColumn		(this,	"peakOnDay",		tr("Peak/day"),		Integer,	false)),
+	timeColumn				(ValueColumn		(this,	"time",				tr("Local time"),	Time,		true)),
+	elevationGainColumn		(ValueColumn		(this,	"elevationGain",	tr("Elev. gain"),	Integer,	true)),
+	hikeKindColumn			(ValueColumn		(this,	"hikeKind",			tr("Kind of hike"),	Enum,		false,		&EnumNames::hikeKindNames)),
+	traverseColumn			(ValueColumn		(this,	"traverse",			tr("Traverse"),		Bit,		false)),
+	difficultySystemColumn	(ValueColumn		(this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+	difficultyGradeColumn	(ValueColumn		(this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+	tripIDColumn			(ForeignKeyColumn	(this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
+	descriptionColumn		(ValueColumn		(this,	"description",		tr("Description"),	String,		true))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(titleColumn);
 	addColumn(peakIDColumn);
 	addColumn(dateColumn);
@@ -115,18 +114,18 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == titleColumn)				{ data = ascent->title;							}
-		else if (column == peakIDColumn)			{ data = ascent->peakID.asQVariant();			}
-		else if (column == dateColumn)				{ data = ascent->date;							}
-		else if (column == peakOnDayColumn)			{ data = ascent->perDayIndex;					}
-		else if (column == timeColumn)				{ data = ascent->time;							}
-		else if (column == elevationGainColumn)		{ data = ascent->getElevationGainAsQVariant();	}
-		else if (column == hikeKindColumn)			{ data = ascent->hikeKind;						}
-		else if (column == traverseColumn)			{ data = ascent->traverse;						}
-		else if (column == difficultySystemColumn)	{ data = ascent->difficultySystem;				}
-		else if (column == difficultyGradeColumn)	{ data = ascent->difficultyGrade;				}
-		else if (column == tripIDColumn)			{ data = ascent->tripID.asQVariant();			}
-		else if (column == descriptionColumn)		{ data = ascent->description;					}
+		     if (column == &titleColumn)			{ data = ascent->title;							}
+		else if (column == &peakIDColumn)			{ data = ascent->peakID.asQVariant();			}
+		else if (column == &dateColumn)				{ data = ascent->date;							}
+		else if (column == &peakOnDayColumn)		{ data = ascent->perDayIndex;					}
+		else if (column == &timeColumn)				{ data = ascent->time;							}
+		else if (column == &elevationGainColumn)	{ data = ascent->getElevationGainAsQVariant();	}
+		else if (column == &hikeKindColumn)			{ data = ascent->hikeKind;						}
+		else if (column == &traverseColumn)			{ data = ascent->traverse;						}
+		else if (column == &difficultySystemColumn)	{ data = ascent->difficultySystem;				}
+		else if (column == &difficultyGradeColumn)	{ data = ascent->difficultyGrade;				}
+		else if (column == &tripIDColumn)			{ data = ascent->tripID.asQVariant();			}
+		else if (column == &descriptionColumn)		{ data = ascent->description;					}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

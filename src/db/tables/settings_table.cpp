@@ -32,10 +32,10 @@
  */
 SettingsTable::SettingsTable() :
 	Table("ProjectSettings", tr("Project settings"), false),
-	//													name				uiName							type	nullable
-	primaryKeyColumn	(new PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
-	settingKeyColumn	(new ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
-	settingValueColumn	(new ValueColumn		(this,	"settingValue",		tr("Project setting value"),	String,	true))
+	//												name				uiName							type	nullable
+	primaryKeyColumn	(PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
+	settingKeyColumn	(ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
+	settingValueColumn	(ValueColumn		(this,	"settingValue",		tr("Project setting value"),	String,	true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(settingKeyColumn);
@@ -55,7 +55,7 @@ bool SettingsTable::settingIsPresent(const GenericProjectSetting* setting, QWidg
 {
 	ItemID settingID = findSettingID(setting, parent);
 	if (settingID.isInvalid()) return false;
-	QVariant value = settingValueColumn->getValueFor(FORCE_VALID(settingID));
+	QVariant value = settingValueColumn.getValueFor(FORCE_VALID(settingID));
 	return value.isValid();
 }
 
@@ -78,13 +78,13 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting* setting, QWidget
 		}
 		
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
-		columnDataPairs.append({settingKeyColumn,	setting->key});
-		columnDataPairs.append({settingValueColumn,	setting->defaultValue});
+		columnDataPairs.append({&settingKeyColumn,	setting->key});
+		columnDataPairs.append({&settingValueColumn,	setting->defaultValue});
 		BufferRowIndex newBufferIndex = addRow(parent, columnDataPairs);
-		id = primaryKeyColumn->getValueAt(newBufferIndex);
+		id = primaryKeyColumn.getValueAt(newBufferIndex);
 	}
 	
-	return settingValueColumn->getValueFor(FORCE_VALID(id));
+	return settingValueColumn.getValueFor(FORCE_VALID(id));
 }
 
 
@@ -104,8 +104,8 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* set
 	} else {
 		// Add setting
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
-		columnDataPairs.append({settingKeyColumn,	setting->key});
-		columnDataPairs.append({settingValueColumn,	value});
+		columnDataPairs.append({&settingKeyColumn,		setting->key});
+		columnDataPairs.append({&settingValueColumn,	value});
 		addRow(parent, columnDataPairs);
 	}
 }
@@ -146,9 +146,9 @@ void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting* 
 void SettingsTable::clearAllSettings(QWidget* parent, const QString& baseKey)
 {
 	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
-		QString key = settingKeyColumn->getValueAt(rowIndex).toString();
+		QString key = settingKeyColumn.getValueAt(rowIndex).toString();
 		if (key.startsWith(baseKey)) {
-			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex));
+			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
 			removeMatchingRows(parent, primaryKeyColumn, settingID);
 		}
 	}
@@ -181,11 +181,11 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidge
 		if (parent) {
 			for (const BufferRowIndex& rowIndex : bufferRowIndices) {
 				if (rowIndex == settingIndex) continue;	// Leave the last one in place
-				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn->getValueAt(rowIndex));
+				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
 				removeMatchingRows(parent, settingKeyColumn, id);
 			}
 		}
 	}
 	
-	return VALID_ITEM_ID(primaryKeyColumn->getValueAt(settingIndex));
+	return VALID_ITEM_ID(primaryKeyColumn.getValueAt(settingIndex));
 }

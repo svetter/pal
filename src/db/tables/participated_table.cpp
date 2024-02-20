@@ -33,7 +33,7 @@
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  * @param foreignHikerIDColumn	The primary key column of the HikersTable.
  */
-ParticipatedTable::ParticipatedTable(PrimaryKeyColumn* foreignAscentIDColumn, PrimaryKeyColumn* foreignHikerIDColumn) :
+ParticipatedTable::ParticipatedTable(PrimaryKeyColumn& foreignAscentIDColumn, PrimaryKeyColumn& foreignHikerIDColumn) :
 	AssociativeTable(QString("Participated"), tr("Ascent participation of hikers"), foreignAscentIDColumn, foreignHikerIDColumn),
 	ascentIDColumn(getColumn1()),
 	hikerIDColumn(getColumn2())
@@ -88,8 +88,8 @@ const QList<ColumnDataPair> ParticipatedTable::mapDataToColumnDataPairs(const QL
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == ascentIDColumn)	{ data = ascentID.asQVariant();	}
-		else if (column == hikerIDColumn)	{ data = hikerID.asQVariant();	}
+		     if (column == &ascentIDColumn)	{ data = ascentID.asQVariant();	}
+		else if (column == &hikerIDColumn)	{ data = hikerID.asQVariant();	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

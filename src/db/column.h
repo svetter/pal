@@ -64,7 +64,7 @@ public:
 	/** Whether the column contains primary keys. */
 	const bool primaryKey;
 	/** The foreign column referenced by this column if it contains foreign keys. */
-	PrimaryKeyColumn* const	foreignColumn;
+	PrimaryKeyColumn* const foreignColumn;
 	/** Whether the column can contain null values. */
 	const bool nullable;
 	
@@ -128,7 +128,7 @@ public:
 class ForeignKeyColumn : public Column
 {
 public:
-	ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn* foreignColumn, bool primaryKey = false);
+	ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey = false);
 };
 
 
@@ -139,7 +139,7 @@ public:
 class PrimaryForeignKeyColumn : public ForeignKeyColumn
 {
 public:
-	PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn* foreignColumn);
+	PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn);
 };
 
 

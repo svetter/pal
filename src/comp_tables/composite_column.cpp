@@ -422,12 +422,10 @@ ProjectSettings* CompositeColumn::getProjectSettings() const
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
  */
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString suffix, Column* contentColumn) :
-	CompositeColumn(table, contentColumn->name, contentColumn->uiName, contentColumn->type, false, false, suffix, contentColumn->enumNames),
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString suffix, Column& contentColumn) :
+	CompositeColumn(table, contentColumn.name, contentColumn.uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	contentColumn(contentColumn)
-{
-	assert(contentColumn);
-}
+{}
 
 
 
@@ -439,7 +437,7 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable* table, QString suff
  */
 QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	return contentColumn->getValueAt(rowIndex);
+	return contentColumn.getValueAt(rowIndex);
 }
 
 
@@ -452,7 +450,7 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  */
 const QSet<Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
-	return { contentColumn };
+	return { &contentColumn };
 }
 
 
@@ -468,13 +466,12 @@ const QSet<Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param foreignKeyColumnSequence	The sequence of foreign key columns to follow to get to the content column's table.
  * @param contentColumn				The column from which to take the actual cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column* contentColumn) :
-	CompositeColumn(table, name, uiName, contentColumn->type, false, false, suffix, contentColumn->enumNames),
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn) :
+	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
 {
-	assert(contentColumn);
-	assert(contentColumn->table == breadcrumbs.getTargetTable());
+	assert(contentColumn.table == breadcrumbs.getTargetTable());
 }
 
 
@@ -492,7 +489,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 	if (targetRowIndex.isInvalid()) return QVariant();
 	
 	// Look up content column at last row index
-	QVariant content = contentColumn->getValueAt(targetRowIndex);
+	QVariant content = contentColumn.getValueAt(targetRowIndex);
 	
 	return content;
 }
@@ -507,7 +504,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  */
 const QSet<Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column*> result = { contentColumn };
+	QSet<Column*> result = { &contentColumn };
 	result.unite(breadcrumbs.getColumnSet());
 	return result;
 }
@@ -525,17 +522,16 @@ const QSet<Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
  * @param minuendColumn		The column from which to take the minuends.
  * @param subtrahendColumn	The column from which to take the subtrahends.
  */
-DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn* minuendColumn, ValueColumn* subtrahendColumn) :
+DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn& minuendColumn, ValueColumn& subtrahendColumn) :
 	CompositeColumn(table, name, uiName, Integer, false, true, suffix),
 	minuendColumn(minuendColumn),
 	subtrahendColumn(subtrahendColumn)
 {
-	assert(minuendColumn && subtrahendColumn);
-	assert(minuendColumn->table == subtrahendColumn->table);
-	assert(!minuendColumn->isKey() && !subtrahendColumn->isKey());
-	assert(minuendColumn->type == subtrahendColumn->type);
-	assert(minuendColumn != subtrahendColumn);
-	assert(minuendColumn->type == Integer || minuendColumn->type == Date);
+	assert(minuendColumn.table == subtrahendColumn.table);
+	assert(!minuendColumn.isKey() && !subtrahendColumn.isKey());
+	assert(minuendColumn.type == subtrahendColumn.type);
+	assert(&minuendColumn != &subtrahendColumn);
+	assert(minuendColumn.type == Integer || minuendColumn.type == Date);
 }
 
 
@@ -548,12 +544,12 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable* table, QStr
  */
 QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QVariant minuendContent = minuendColumn->getValueAt(rowIndex);
-	QVariant subtrahendContent = subtrahendColumn->getValueAt(rowIndex);
+	QVariant minuendContent = minuendColumn.getValueAt(rowIndex);
+	QVariant subtrahendContent = subtrahendColumn.getValueAt(rowIndex);
 	
 	if (!minuendContent.isValid() || !subtrahendContent.isValid()) return QVariant();
 	
-	switch (minuendColumn->type) {
+	switch (minuendColumn.type) {
 	case Integer: {
 		assert(minuendContent.canConvert<int>() && subtrahendContent.canConvert<int>());
 		int minuend = minuendContent.toInt();
@@ -584,7 +580,7 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
  */
 const QSet<Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
 {
-	return { minuendColumn, subtrahendColumn };
+	return { &minuendColumn, &subtrahendColumn };
 }
 
 
@@ -600,17 +596,16 @@ const QSet<Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
  * @param displayedEnumColumn	The column from which to take the displayed enum.
  * @param enumNameLists			An optional list of enum name lists with which to replace the raw cell content.
  */
-DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn* discerningEnumColumn, ValueColumn* displayedEnumColumn) :
-	CompositeColumn(table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn->enumNameLists),
+DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn) :
+	CompositeColumn(table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn.enumNameLists),
 	discerningEnumColumn(discerningEnumColumn),
 	displayedEnumColumn(displayedEnumColumn)
 {
-	assert(discerningEnumColumn && displayedEnumColumn);
-	assert(discerningEnumColumn->table == displayedEnumColumn->table);
-	assert(!discerningEnumColumn->isKey() && !displayedEnumColumn->isKey());
-	assert(discerningEnumColumn->type == DualEnum && displayedEnumColumn->type == DualEnum);
-	assert(discerningEnumColumn->enumNameLists == displayedEnumColumn->enumNameLists);
-	assert(discerningEnumColumn != displayedEnumColumn);
+	assert(discerningEnumColumn.table == displayedEnumColumn.table);
+	assert(!discerningEnumColumn.isKey() && !displayedEnumColumn.isKey());
+	assert(discerningEnumColumn.type == DualEnum && displayedEnumColumn.type == DualEnum);
+	assert(discerningEnumColumn.enumNameLists == displayedEnumColumn.enumNameLists);
+	assert(&discerningEnumColumn != &displayedEnumColumn);
 }
 
 
@@ -623,8 +618,8 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable* table
  */
 QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	QVariant discerningContent = discerningEnumColumn->getValueAt(rowIndex);
-	QVariant displayedContent = displayedEnumColumn->getValueAt(rowIndex);
+	QVariant discerningContent = discerningEnumColumn.getValueAt(rowIndex);
+	QVariant displayedContent = displayedEnumColumn.getValueAt(rowIndex);
 	
 	assert(discerningContent.canConvert<int>() && displayedContent.canConvert<int>());
 	int discerning = discerningContent.toInt();
@@ -645,7 +640,7 @@ QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
  */
 const QSet<Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
 {
-	return { discerningEnumColumn, displayedEnumColumn };
+	return { &discerningEnumColumn, &displayedEnumColumn };
 }
 
 
@@ -666,7 +661,7 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, 
 {
 	assert(!sortingPasses.isEmpty());
 	for (const auto& [column, order] : sortingPasses) {
-		assert(column->table == table->getBaseTable());
+		assert(column.table == table->getBaseTable());
 		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
 }
@@ -707,7 +702,7 @@ QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
 
 QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 {
-	int numberOfRows = sortingPasses.at(0).column->table->getNumberOfRows();
+	int numberOfRows = sortingPasses.at(0).column.table->getNumberOfRows();
 	// Local order buffer which represents the ordered list of row indices
 	QList<BufferRowIndex> order = QList<BufferRowIndex>();
 	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(numberOfRows); index++) {
@@ -718,13 +713,13 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 		const BaseSortingPass sorting = sortingPasses.at(i);
 		
 		auto comparator = [&sorting](BufferRowIndex i1, BufferRowIndex i2) {
-			QVariant value1 = sorting.column->getValueAt(i1);
-			QVariant value2 = sorting.column->getValueAt(i2);
+			QVariant value1 = sorting.column.getValueAt(i1);
+			QVariant value2 = sorting.column.getValueAt(i2);
 			
 			if (sorting.order == Qt::AscendingOrder) {
-				return compareCells(sorting.column->type, value1, value2);
+				return compareCells(sorting.column.type, value1, value2);
 			} else {
-				return compareCells(sorting.column->type, value2, value1);
+				return compareCells(sorting.column.type, value2, value1);
 			}
 		};
 		
@@ -746,7 +741,7 @@ const QSet<Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<Column*> columns = QSet<Column*>();
 	for (const auto& [column, order] : sortingPasses) {
-		columns += column;
+		columns += &column;
 	}
 	return columns;
 }
@@ -767,7 +762,7 @@ OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable* table, QString na
 	IndexCompositeColumn(table, name, uiName, suffix, sortingPasses),
 	separatingColumn(sortingPasses.first().column)
 {
-	assert(sortingPasses.first().column->isForeignKey());
+	assert(sortingPasses.first().column.isForeignKey());
 }
 
 
@@ -800,7 +795,7 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	ItemID lastKey = ItemID();
 	int ordinal = 1;
 	for (const BufferRowIndex& rowIndex : order) {
-		ItemID currentKey = separatingColumn->getValueAt(rowIndex);
+		ItemID currentKey = separatingColumn.getValueAt(rowIndex);
 		if (!currentKey.isValid()) {
 			// No key, reset ordinal and append empty
 			ordinal = 1;

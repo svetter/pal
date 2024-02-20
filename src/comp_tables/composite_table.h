@@ -137,9 +137,9 @@ public:
 	~CompositeTable();
 	
 protected:
-	void addColumn(const CompositeColumn* column);
-	void addExportOnlyColumn(const CompositeColumn* column);
-	void addFilterColumn(const CompositeColumn* column);
+	void addColumn(const CompositeColumn& column);
+	void addExportOnlyColumn(const CompositeColumn& column);
+	void addFilterColumn(const CompositeColumn& column);
 public:
 	int getNumberOfNormalColumns() const;
 	int getNumberOfColumnsForCompleteExport() const;

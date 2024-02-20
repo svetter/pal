@@ -39,9 +39,9 @@ class RangesTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	ValueColumn* const nameColumn;
+	ValueColumn nameColumn;
 	/** The continent column. */
-	ValueColumn* const continentColumn;
+	ValueColumn continentColumn;
 	
 	RangesTable();
 	

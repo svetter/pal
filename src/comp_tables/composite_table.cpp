@@ -73,16 +73,16 @@ CompositeTable::~CompositeTable()
  * 
  * @param column	The composite column to add.
  */
-void CompositeTable::addColumn(const CompositeColumn* column)
+void CompositeTable::addColumn(const CompositeColumn& column)
 {
 	assert(firstFilterColumnIndex < 0);
 	
-	columns.append(column);
+	columns.append(&column);
 	
 	// Register as change listener at all underlying columns
-	const QSet<Column*> underlyingColumns = column->getAllUnderlyingColumns();
+	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(&column));
 	}
 }
 
@@ -91,11 +91,11 @@ void CompositeTable::addColumn(const CompositeColumn* column)
  *
  * @param column	The composite column to add as an export-only column.
  */
-void CompositeTable::addExportOnlyColumn(const CompositeColumn* column)
+void CompositeTable::addExportOnlyColumn(const CompositeColumn& column)
 {
 	assert(firstFilterColumnIndex < 0);
 	
-	exportColumns.append({columns.size(), column});
+	exportColumns.append({columns.size(), &column});
 }
 
 /**
@@ -105,16 +105,16 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn* column)
  *
  * @param column	The composite column to add as a filter-only column.
  */
-void CompositeTable::addFilterColumn(const CompositeColumn* column)
+void CompositeTable::addFilterColumn(const CompositeColumn& column)
 {
 	if (firstFilterColumnIndex < 0) firstFilterColumnIndex = columns.size();
 	
-	columns.append(column);
+	columns.append(&column);
 	
 	// Register as change listener at all underlying columns
-	const QSet<Column*> underlyingColumns = column->getAllUnderlyingColumns();
+	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(column));
+		underlyingColumn->registerChangeListener(new ColumnChangeListenerCompositeColumn(&column));
 	}
 }
 

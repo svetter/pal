@@ -33,18 +33,17 @@
  * 
  * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
  */
-PeaksTable::PeaksTable(PrimaryKeyColumn* foreignRegionIDColumn) :
+PeaksTable::PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn) :
 	NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
 	//										name					uiName						type		nullable	foreignColumn
-	nameColumn		(new ValueColumn		(this,	"name",			tr("Name"),					String,		false)),
-	heightColumn	(new ValueColumn		(this,	"height",		tr("Height"),				Integer,	true)),
-	volcanoColumn	(new ValueColumn		(this,	"volcano",		tr("Volcano"),				Bit,		false)),
-	regionIDColumn	(new ForeignKeyColumn	(this,	"regionID",		tr("Region ID"),						true,		foreignRegionIDColumn)),
-	mapsLinkColumn	(new ValueColumn		(this,	"mapsLink",		tr("Google Maps link"),		String,		true)),
-	earthLinkColumn	(new ValueColumn		(this,	"earthLink",	tr("Google Earth link"),	String,		true)),
-	wikiLinkColumn	(new ValueColumn		(this,	"wikiLink",		tr("Wikipedia link"),		String,		true))
+	nameColumn		(ValueColumn		(this,	"name",			tr("Name"),					String,		false)),
+	heightColumn	(ValueColumn		(this,	"height",		tr("Height"),				Integer,	true)),
+	volcanoColumn	(ValueColumn		(this,	"volcano",		tr("Volcano"),				Bit,		false)),
+	regionIDColumn	(ForeignKeyColumn	(this,	"regionID",		tr("Region ID"),						true,		foreignRegionIDColumn)),
+	mapsLinkColumn	(ValueColumn		(this,	"mapsLink",		tr("Google Maps link"),		String,		true)),
+	earthLinkColumn	(ValueColumn		(this,	"earthLink",	tr("Google Earth link"),	String,		true)),
+	wikiLinkColumn	(ValueColumn		(this,	"wikiLink",		tr("Wikipedia link"),		String,		true))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 	addColumn(heightColumn);
 	addColumn(volcanoColumn);
@@ -102,13 +101,13 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)		{ data = peak->name;					}
-		else if (column == heightColumn)	{ data = peak->getHeightAsQVariant();	}
-		else if (column == volcanoColumn)	{ data = peak->volcano;					}
-		else if (column == regionIDColumn)	{ data = peak->regionID.asQVariant();	}
-		else if (column == mapsLinkColumn)	{ data = peak->mapsLink;				}
-		else if (column == earthLinkColumn)	{ data = peak->earthLink;				}
-		else if (column == wikiLinkColumn)	{ data = peak->wikiLink;				}
+		     if (column == &nameColumn)			{ data = peak->name;					}
+		else if (column == &heightColumn)		{ data = peak->getHeightAsQVariant();	}
+		else if (column == &volcanoColumn)		{ data = peak->volcano;					}
+		else if (column == &regionIDColumn)		{ data = peak->regionID.asQVariant();	}
+		else if (column == &mapsLinkColumn)		{ data = peak->mapsLink;				}
+		else if (column == &earthLinkColumn)	{ data = peak->earthLink;				}
+		else if (column == &wikiLinkColumn)		{ data = peak->wikiLink;				}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

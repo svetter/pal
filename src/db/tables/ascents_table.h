@@ -39,31 +39,31 @@ class AscentsTable : public NormalTable {
 	
 public:
 	/** The ascent title column. */
-	ValueColumn* const titleColumn;
+	ValueColumn titleColumn;
 	/** The peak ID column. */
-	ForeignKeyColumn* const peakIDColumn;
+	ForeignKeyColumn peakIDColumn;
 	/** The date column. */
-	ValueColumn* const dateColumn;
+	ValueColumn dateColumn;
 	/** The peak on day column, specifying that this ascent was the nth ascent on the day of the ascent. */
-	ValueColumn* const peakOnDayColumn;
+	ValueColumn peakOnDayColumn;
 	/** The time column. */
-	ValueColumn* const timeColumn;
+	ValueColumn timeColumn;
 	/** The elevation gain column. */
-	ValueColumn* const elevationGainColumn;
+	ValueColumn elevationGainColumn;
 	/** The hike kind column. */
-	ValueColumn* const hikeKindColumn;
+	ValueColumn hikeKindColumn;
 	/** The traverse column. */
-	ValueColumn* const traverseColumn;
+	ValueColumn traverseColumn;
 	/** The difficulty system column. */
-	ValueColumn* const difficultySystemColumn;
+	ValueColumn difficultySystemColumn;
 	/** The difficulty grade column. */
-	ValueColumn* const difficultyGradeColumn;
+	ValueColumn difficultyGradeColumn;
 	/** The trip ID column. */
-	ForeignKeyColumn* const tripIDColumn;
+	ForeignKeyColumn tripIDColumn;
 	/** The ascent description column. */
-	ValueColumn* const descriptionColumn;
+	ValueColumn descriptionColumn;
 	
-	AscentsTable(PrimaryKeyColumn* foreignPeakIDColumn, PrimaryKeyColumn* foreignTripIDColumn);
+	AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn, PrimaryKeyColumn& foreignTripIDColumn);
 	
 	BufferRowIndex addRow(QWidget* parent, Ascent* ascent);
 	void updateRow(QWidget* parent, const Ascent* ascent);

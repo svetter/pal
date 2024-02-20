@@ -33,10 +33,9 @@
  */
 CountriesTable::CountriesTable() :
 	NormalTable(QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
-	//										name	uiName		type	nullable
-	nameColumn	(new ValueColumn	(this,	"name",	tr("Name"),	String,	false))
+	//									name	uiName		type	nullable
+	nameColumn	(ValueColumn	(this,	"name",	tr("Name"),	String,	false))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(nameColumn);
 }
 
@@ -88,7 +87,7 @@ const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == nameColumn)	{ data = country->name;	}
+		     if (column == &nameColumn)	{ data = country->name;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

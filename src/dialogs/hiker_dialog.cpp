@@ -142,7 +142,7 @@ void HikerDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save hiker");
 	QString emptyNameWindowMessage	= tr("The hiker needs a name.");
-	const ValueColumn* nameColumn = db->hikersTable->nameColumn;
+	const ValueColumn& nameColumn = db->hikersTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -203,7 +203,7 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	
 	QSet<ValidItemID> hikerIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->hikersTable, hikerIDs);

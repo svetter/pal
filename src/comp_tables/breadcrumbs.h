@@ -37,15 +37,15 @@
 class Breadcrumb {
 public:
 	/** The first column in the breadcrumb pair. */
-	Column* const firstColumn;
+	Column& firstColumn;
 	/** The second column in the breadcrumb pair. */
-	Column* const secondColumn;
+	Column& secondColumn;
 	
 protected:
-	Breadcrumb(Column* firstColumn, Column* secondColumn);
+	Breadcrumb(Column& firstColumn, Column& secondColumn);
 public:
-	Breadcrumb(ForeignKeyColumn* firstColumn, PrimaryKeyColumn* secondColumn);
-	Breadcrumb(PrimaryKeyColumn* firstColumn, ForeignKeyColumn* secondColumn);
+	Breadcrumb(ForeignKeyColumn& firstColumn, PrimaryKeyColumn& secondColumn);
+	Breadcrumb(PrimaryKeyColumn& firstColumn, ForeignKeyColumn& secondColumn);
 	
 	bool isForward() const;
 	bool isBackward() const;

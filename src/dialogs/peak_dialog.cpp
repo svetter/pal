@@ -223,7 +223,7 @@ void PeakDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save peak");
 	QString emptyNameWindowMessage	= tr("The peak needs a name.");
-	const ValueColumn* nameColumn = db->peaksTable->nameColumn;
+	const ValueColumn& nameColumn = db->peaksTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -299,7 +299,7 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->peaksTable, peakIDs);

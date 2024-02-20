@@ -37,29 +37,29 @@
  */
 class AssociativeTable : public Table {
 	/** The first primary and foreign key column of the table. */
-	PrimaryForeignKeyColumn* const column1;
+	PrimaryForeignKeyColumn column1;
 	/** The second primary and foreign key column of the table. */
-	PrimaryForeignKeyColumn* const column2;
+	PrimaryForeignKeyColumn column2;
 	
 public:
-	AssociativeTable(QString name, QString uiName, PrimaryKeyColumn* foreignKeyColumn1, PrimaryKeyColumn* foreignKeyColumn2);
+	AssociativeTable(QString name, QString uiName, PrimaryKeyColumn& foreignKeyColumn1, PrimaryKeyColumn& foreignKeyColumn2);
 	virtual ~AssociativeTable();
 	
 	// Column info
-	PrimaryForeignKeyColumn* getColumn1() const;
-	PrimaryForeignKeyColumn* getColumn2() const;
-	const PrimaryForeignKeyColumn* getOtherColumn(const PrimaryForeignKeyColumn* column) const;
-	const PrimaryForeignKeyColumn* getOwnColumnReferencing(const PrimaryKeyColumn* column) const;
-	const NormalTable* traverseAssociativeRelation(const PrimaryKeyColumn* foreignColumn) const;
+	PrimaryForeignKeyColumn& getColumn1();
+	PrimaryForeignKeyColumn& getColumn2();
+	const PrimaryForeignKeyColumn* getOtherColumn(const PrimaryForeignKeyColumn& column) const;
+	const PrimaryForeignKeyColumn* getOwnColumnReferencing(const PrimaryKeyColumn& column) const;
+	const NormalTable* traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const;
 	
 	// Buffer access
-	int getNumberOfMatchingRows(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const;
-	QSet<ValidItemID> getMatchingEntries(const PrimaryForeignKeyColumn* column, ValidItemID primaryKey) const;
+	int getNumberOfMatchingRows(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const;
+	QSet<ValidItemID> getMatchingEntries(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const;
 	
 	// Modifications (passthrough)
 	void addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
-	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID primaryKey);
+	void removeMatchingRows(QWidget* parent, const Column& column, ValidItemID primaryKey);
 	
 	// QAbstractItemModel implementation (completes implementation in Table)
 	void multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const override;

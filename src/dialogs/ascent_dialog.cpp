@@ -299,7 +299,7 @@ void AscentDialog::handle_regionFilterChanged()
 {
 	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
 	if (regionID.isValid()) {
-		populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), db->peaksTable->regionIDColumn, regionID);
+		populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db->peaksTable->regionIDColumn, regionID);
 	} else {
 		populateItemCombo(db->peaksTable, db->peaksTable->nameColumn, true, peakCombo, selectablePeakIDs);
 	}
@@ -641,7 +641,7 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 	
 	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		ascentIDs += VALID_ITEM_ID(db->ascentsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		ascentIDs += VALID_ITEM_ID(db->ascentsTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->ascentsTable, ascentIDs);

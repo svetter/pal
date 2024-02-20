@@ -39,7 +39,7 @@ class HikersTable : public NormalTable {
 	
 public:
 	/** The name column. */
-	ValueColumn* const nameColumn;
+	ValueColumn nameColumn;
 	
 	HikersTable();
 	

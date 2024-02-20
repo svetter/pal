@@ -34,13 +34,13 @@
  * 
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  */
-PhotosTable::PhotosTable(PrimaryKeyColumn* foreignAscentIDColumn) :
+PhotosTable::PhotosTable(PrimaryKeyColumn& foreignAscentIDColumn) :
 	NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
-	//													name			uiName				type		nullable	foreignColumn
-	ascentIDColumn		(new ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
-	sortIndexColumn		(new ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
-	filepathColumn		(new ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
-	descriptionColumn	(new ValueColumn		(this,	"description",	tr("Description"),	String,		true))
+	//												name			uiName				type		nullable	foreignColumn
+	ascentIDColumn		(ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
+	sortIndexColumn		(ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
+	filepathColumn		(ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
+	descriptionColumn	(ValueColumn		(this,	"description",	tr("Description"),	String,		true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);
@@ -63,9 +63,9 @@ QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 	
 	QMap<int, Photo> photosMap = QMap<int, Photo>();
 	for (BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		int sortIndex		= sortIndexColumn	->getValueAt(bufferRowIndex).toInt();
-		QString filepath	= filepathColumn	->getValueAt(bufferRowIndex).toString();
-		QString description	= descriptionColumn	->getValueAt(bufferRowIndex).toString();
+		int sortIndex		= sortIndexColumn	.getValueAt(bufferRowIndex).toInt();
+		QString filepath	= filepathColumn	.getValueAt(bufferRowIndex).toString();
+		QString description	= descriptionColumn	.getValueAt(bufferRowIndex).toString();
 		
 		Photo newPhoto = Photo(ItemID(), ascentID, sortIndex, filepath, description);
 		photosMap.insert(sortIndex, newPhoto);
@@ -162,10 +162,10 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == ascentIDColumn)		{ data = ascentID.asQVariant();	}
-		else if (column == sortIndexColumn)		{ data = sortIndex;				}
-		else if (column == filepathColumn)		{ data = filepath;				}
-		else if (column == descriptionColumn)	{ data = description;			}
+		     if (column == &ascentIDColumn)		{ data = ascentID.asQVariant();	}
+		else if (column == &sortIndexColumn)	{ data = sortIndex;				}
+		else if (column == &filepathColumn)		{ data = filepath;				}
+		else if (column == &descriptionColumn)	{ data = description;			}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

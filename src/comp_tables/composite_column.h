@@ -127,10 +127,10 @@ protected:
  */
 class DirectCompositeColumn : public CompositeColumn {
 	/** The column in the base table from which to take the content. */
-	Column* const contentColumn;
+	Column& contentColumn;
 	
 public:
-	DirectCompositeColumn(CompositeTable* table, QString suffix, Column* contentColumn);
+	DirectCompositeColumn(CompositeTable* table, QString suffix, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -147,10 +147,10 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	/** The breadcrumb trail (chain of foreign key columns) to follow to the target table containing the content. */
 	Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
-	Column* const contentColumn;
+	Column& contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column* contentColumn);
+	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -165,12 +165,12 @@ public:
  */
 class DifferenceCompositeColumn : public CompositeColumn {
 	/** The column containing the minuend. */
-	ValueColumn* const minuendColumn;
+	ValueColumn& minuendColumn;
 	/** The column containing the subtrahend. */
-	ValueColumn* const subtrahendColumn;
+	ValueColumn& subtrahendColumn;
 	
 public:
-	DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn* minuendColumn, ValueColumn* subtrahendColumn);
+	DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn& minuendColumn, ValueColumn& subtrahendColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -185,12 +185,12 @@ public:
  */
 class DependentEnumCompositeColumn : public CompositeColumn {
 	/** The first base table column, which determines the first dimension in the lookup. */
-	ValueColumn* const discerningEnumColumn;
+	ValueColumn& discerningEnumColumn;
 	/** The second base table column, which determines the second second dimension in the lookup. */
-	ValueColumn* const displayedEnumColumn;
+	ValueColumn& displayedEnumColumn;
 	
 public:
-	DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn* discerningEnumColumn, ValueColumn* displayedEnumColumn);
+	DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -203,7 +203,7 @@ public:
  * A struct representing a single pass of sorting base tables according to a column and sort order.
  */
 struct BaseSortingPass {
-	Column* const column;
+	Column& column;
 	const Qt::SortOrder order;
 };
 
@@ -232,7 +232,7 @@ public:
  */
 class OrdinalCompositeColumn : public IndexCompositeColumn {
 	/** The column to use for separating the rows into groups. */
-	const Column* const separatingColumn;
+	const Column& separatingColumn;
 	
 public:
 	OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);

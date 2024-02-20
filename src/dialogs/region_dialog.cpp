@@ -210,7 +210,7 @@ void RegionDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save region");
 	QString emptyNameWindowMessage	= tr("The region needs a name.");
-	const ValueColumn* nameColumn = db->regionsTable->nameColumn;
+	const ValueColumn& nameColumn = db->regionsTable->nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -271,7 +271,7 @@ bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 	
 	QSet<ValidItemID> regionIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn->getValueAt(bufferRowIndex));
+		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->regionsTable, regionIDs);

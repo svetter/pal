@@ -43,7 +43,7 @@ typedef QPair<const Column* const, QVariant> ColumnDataPair;
  */
 class Table : public QAbstractItemModel {
 	/** The columns of this table. */
-	QList<const Column*> columns;
+	QList<const Column> columns;
 	
 	/** The row change listener which needs to be notified of row changes. */
 	const RowChangeListener* rowChangeListener;
@@ -65,7 +65,7 @@ public:
 	virtual ~Table();
 	
 protected:
-	void addColumn(const Column* column);
+	void addColumn(const Column& column);
 	
 public:
 	// Column info
@@ -85,7 +85,7 @@ public:
 	void resetBuffer();
 	int getNumberOfRows() const;
 	const QList<QVariant>* getBufferRow(BufferRowIndex bufferRowIndex) const;
-	QList<BufferRowIndex> getMatchingBufferRowIndices(const Column* column, const QVariant& content) const;
+	QList<BufferRowIndex> getMatchingBufferRowIndices(const Column& column, const QVariant& content) const;
 	BufferRowIndex getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
 	// Debugging
 	void printBuffer() const;
@@ -98,20 +98,20 @@ private:
 protected:
 	// Modifications
 	BufferRowIndex addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
-	void updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
+	void updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data);
 	void updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
-	void removeMatchingRows(QWidget* parent, const Column* column, ValidItemID key);
+	void removeMatchingRows(QWidget* parent, const Column& column, ValidItemID key);
 	
 private:
 	// SQL
 	void createTableInSql(QWidget* parent);
 	QList<QList<QVariant>*> getAllEntriesFromSql(QWidget* parent) const;
 	ValidItemID addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs);
-	void updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column* column, const QVariant& data);
+	void updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data);
 	void updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
-	void removeMatchingRowsFromSql(QWidget* parent, const Column* column, ValidItemID key);
+	void removeMatchingRowsFromSql(QWidget* parent, const Column& column, ValidItemID key);
 	QString getColumnListStringFrom(const QList<ColumnDataPair>& columnDataPairs);
 	
 public:

@@ -280,25 +280,26 @@ void Database::computeBreadcrumbMatrix()
 	for (const Table* const table : tables) {
 		if (table->isAssociative) {
 			// Associative table
-			const AssociativeTable* const associativeTable = (AssociativeTable*) table;
-			PrimaryForeignKeyColumn* const column1 = associativeTable->getColumn1();
-			PrimaryForeignKeyColumn* const column2 = associativeTable->getColumn2();
-			PrimaryKeyColumn* const foreignColumn1 = column1->getReferencedForeignColumn();
-			PrimaryKeyColumn* const foreignColumn2 = column2->getReferencedForeignColumn();
+			AssociativeTable* const associativeTable = (AssociativeTable*) table;
+			PrimaryForeignKeyColumn& column1 = associativeTable->getColumn1();
+			PrimaryForeignKeyColumn& column2 = associativeTable->getColumn2();
+			PrimaryKeyColumn* const foreignColumn1 = column1.getReferencedForeignColumn();
+			PrimaryKeyColumn* const foreignColumn2 = column2.getReferencedForeignColumn();
 			const NormalTable* const foreignTable1 = (NormalTable*) foreignColumn1->table;
 			const NormalTable* const foreignTable2 = (NormalTable*) foreignColumn2->table;
+			assert(foreignColumn1 && foreignColumn2 && foreignTable1 && foreignTable2);
 			
 			assert(breadcrumbMatrix[foreignTable1][foreignTable2].isEmpty());
 			assert(breadcrumbMatrix[foreignTable2][foreignTable1].isEmpty());
 			
 			// Foreign table to other foreign table via associative table (either side)
 			breadcrumbMatrix[foreignTable1][foreignTable2] = Breadcrumbs({
-				{foreignColumn1,	column1},
-				{column2,			foreignColumn2}
+				{*foreignColumn1,	column1},
+				{column2,			*foreignColumn2}
 			});
 			breadcrumbMatrix[foreignTable2][foreignTable1] = Breadcrumbs({
-				{foreignColumn2,	column2},
-				{column1,			foreignColumn1}
+				{*foreignColumn2,	column2},
+				{column1,			*foreignColumn1}
 			});
 			numFilled += 2;
 		}
@@ -308,18 +309,18 @@ void Database::computeBreadcrumbMatrix()
 			const NormalTable* const normalTable = (NormalTable*) table;
 			QList<const Column*> foreignKeyColumns = normalTable->getForeignKeyColumnList();
 			for (const Column* const column : foreignKeyColumns) {
-				ForeignKeyColumn* localColumn = (ForeignKeyColumn*) column;
-				PrimaryKeyColumn* foreignColumn = column->getReferencedForeignColumn();
+				ForeignKeyColumn* const localColumn = (ForeignKeyColumn*) column;
+				PrimaryKeyColumn* const foreignColumn = column->getReferencedForeignColumn();
 				const NormalTable* const foreignTable = (NormalTable*) foreignColumn->table;
 				
 				assert(breadcrumbMatrix[normalTable][foreignTable].isEmpty());
 				assert(breadcrumbMatrix[foreignTable][normalTable].isEmpty());
 				
 				breadcrumbMatrix[normalTable][foreignTable] = Breadcrumbs({
-					{localColumn, foreignColumn}
+					{*localColumn, *foreignColumn}
 				});
 				breadcrumbMatrix[foreignTable][normalTable] = Breadcrumbs({
-					{foreignColumn, localColumn}
+					{*foreignColumn, *localColumn}
 				});
 				numFilled += 2;
 			}
@@ -549,19 +550,19 @@ Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = ascentsTable->getBufferRow(rowIndex);
 	assert(row->size() == ascentsTable->getNumberOfColumns());
 	
-	ValidItemID ascentID = VALID_ITEM_ID(row->at(ascentsTable->primaryKeyColumn->getIndex()));
-	QString	title				= row->at(ascentsTable->titleColumn->getIndex()).toString();
-	ItemID	peakID				= row->at(ascentsTable->peakIDColumn->getIndex());
-	QDate	date				= row->at(ascentsTable->dateColumn->getIndex()).toDate();
-	int		perDayIndex			= row->at(ascentsTable->peakOnDayColumn->getIndex()).toInt();
-	QTime	time				= row->at(ascentsTable->timeColumn->getIndex()).toTime();
-	int		elevationGain		= row->at(ascentsTable->elevationGainColumn->getIndex()).toInt();
-	int		hikeKind			= row->at(ascentsTable->hikeKindColumn->getIndex()).toInt();
-	bool	traverse			= row->at(ascentsTable->traverseColumn->getIndex()).toBool();
-	int		difficultySystem	= row->at(ascentsTable->difficultySystemColumn->getIndex()).toInt();
-	int		difficultyGrade		= row->at(ascentsTable->difficultyGradeColumn->getIndex()).toInt();
-	ItemID	tripID				= row->at(ascentsTable->tripIDColumn->getIndex());
-	QString	description			= row->at(ascentsTable->descriptionColumn->getIndex()).toString();
+	ValidItemID ascentID = VALID_ITEM_ID(row->at(ascentsTable->primaryKeyColumn.getIndex()));
+	QString	title				= row->at(ascentsTable->titleColumn				.getIndex()).toString();
+	ItemID	peakID				= row->at(ascentsTable->peakIDColumn			.getIndex());
+	QDate	date				= row->at(ascentsTable->dateColumn				.getIndex()).toDate();
+	int		perDayIndex			= row->at(ascentsTable->peakOnDayColumn			.getIndex()).toInt();
+	QTime	time				= row->at(ascentsTable->timeColumn				.getIndex()).toTime();
+	int		elevationGain		= row->at(ascentsTable->elevationGainColumn		.getIndex()).toInt();
+	int		hikeKind			= row->at(ascentsTable->hikeKindColumn			.getIndex()).toInt();
+	bool	traverse			= row->at(ascentsTable->traverseColumn			.getIndex()).toBool();
+	int		difficultySystem	= row->at(ascentsTable->difficultySystemColumn	.getIndex()).toInt();
+	int		difficultyGrade		= row->at(ascentsTable->difficultyGradeColumn	.getIndex()).toInt();
+	ItemID	tripID				= row->at(ascentsTable->tripIDColumn			.getIndex());
+	QString	description			= row->at(ascentsTable->descriptionColumn		.getIndex()).toString();
 	
 	QSet<ValidItemID>	hikerIDs	= participatedTable->getMatchingEntries(participatedTable->ascentIDColumn, ascentID);
 	QList<Photo>		photos		= photosTable->getPhotosForAscent(ascentID);
@@ -585,14 +586,14 @@ Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = peaksTable->getBufferRow(rowIndex);
 	assert(row->size() == peaksTable->getNumberOfColumns());
 	
-	ValidItemID peakID = VALID_ITEM_ID(row->at(peaksTable->primaryKeyColumn->getIndex()));
-	QString	name		= row->at(peaksTable->nameColumn->getIndex()).toString();
-	int		height		= row->at(peaksTable->heightColumn->getIndex()).toInt();
-	bool	volcano		= row->at(peaksTable->volcanoColumn->getIndex()).toBool();
-	ItemID	regionID	= row->at(peaksTable->regionIDColumn->getIndex()).toInt();
-	QString	mapsLink	= row->at(peaksTable->mapsLinkColumn->getIndex()).toString();
-	QString	earthLink	= row->at(peaksTable->earthLinkColumn->getIndex()).toString();
-	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn->getIndex()).toString();
+	ValidItemID peakID = VALID_ITEM_ID(row->at(peaksTable->primaryKeyColumn	.getIndex()));
+	QString	name		= row->at(peaksTable->nameColumn		.getIndex()).toString();
+	int		height		= row->at(peaksTable->heightColumn		.getIndex()).toInt();
+	bool	volcano		= row->at(peaksTable->volcanoColumn		.getIndex()).toBool();
+	ItemID	regionID	= row->at(peaksTable->regionIDColumn	.getIndex()).toInt();
+	QString	mapsLink	= row->at(peaksTable->mapsLinkColumn	.getIndex()).toString();
+	QString	earthLink	= row->at(peaksTable->earthLinkColumn	.getIndex()).toString();
+	QString	wikiLink	= row->at(peaksTable->wikiLinkColumn	.getIndex()).toString();
 	
 	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
@@ -613,11 +614,11 @@ Trip* Database::getTripAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = tripsTable->getBufferRow(rowIndex);
 	assert(row->size() == tripsTable->getNumberOfColumns());
 	
-	ValidItemID tripID = VALID_ITEM_ID(row->at(tripsTable->primaryKeyColumn->getIndex()));
-	QString	name		= row->at(tripsTable->nameColumn->getIndex()).toString();
-	QDate	startDate	= row->at(tripsTable->startDateColumn->getIndex()).toDate();
-	QDate	endDate		= row->at(tripsTable->endDateColumn->getIndex()).toDate();
-	QString	description	= row->at(tripsTable->descriptionColumn->getIndex()).toString();
+	ValidItemID tripID = VALID_ITEM_ID(row->at(tripsTable->primaryKeyColumn.getIndex()));
+	QString	name		= row->at(tripsTable->nameColumn		.getIndex()).toString();
+	QDate	startDate	= row->at(tripsTable->startDateColumn	.getIndex()).toDate();
+	QDate	endDate		= row->at(tripsTable->endDateColumn		.getIndex()).toDate();
+	QString	description	= row->at(tripsTable->descriptionColumn	.getIndex()).toString();
 	
 	return new Trip(tripID, name, startDate, endDate, description);
 }
@@ -638,8 +639,8 @@ Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = hikersTable->getBufferRow(rowIndex);
 	assert(row->size() == hikersTable->getNumberOfColumns());
 	
-	ValidItemID hikerID = VALID_ITEM_ID(row->at(hikersTable->primaryKeyColumn->getIndex()));
-	QString	name	= row->at(hikersTable->nameColumn->getIndex()).toString();
+	ValidItemID hikerID = VALID_ITEM_ID(row->at(hikersTable->primaryKeyColumn.getIndex()));
+	QString	name	= row->at(hikersTable->nameColumn.getIndex()).toString();
 	
 	return new Hiker(hikerID, name);
 }
@@ -660,10 +661,10 @@ Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = regionsTable->getBufferRow(rowIndex);
 	assert(row->size() == regionsTable->getNumberOfColumns());
 	
-	ValidItemID regionID = VALID_ITEM_ID(row->at(regionsTable->primaryKeyColumn->getIndex()));
-	QString	name		= row->at(regionsTable->nameColumn->getIndex()).toString();
-	ItemID	rangeID		= row->at(regionsTable->rangeIDColumn->getIndex()).toInt();
-	ItemID	countryID	= row->at(regionsTable->countryIDColumn->getIndex()).toInt();
+	ValidItemID regionID = VALID_ITEM_ID(row->at(regionsTable->primaryKeyColumn.getIndex()));
+	QString	name		= row->at(regionsTable->nameColumn		.getIndex()).toString();
+	ItemID	rangeID		= row->at(regionsTable->rangeIDColumn	.getIndex()).toInt();
+	ItemID	countryID	= row->at(regionsTable->countryIDColumn	.getIndex()).toInt();
 	
 	return new Region(regionID, name, rangeID, countryID);
 }
@@ -684,9 +685,9 @@ Range* Database::getRangeAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = rangesTable->getBufferRow(rowIndex);
 	assert(row->size() == rangesTable->getNumberOfColumns());
 	
-	ValidItemID rangeID = VALID_ITEM_ID(row->at(rangesTable->primaryKeyColumn->getIndex()));
-	QString	name		= row->at(rangesTable->nameColumn->getIndex()).toString();
-	int		continent	= row->at(rangesTable->continentColumn->getIndex()).toInt();
+	ValidItemID rangeID = VALID_ITEM_ID(row->at(rangesTable->primaryKeyColumn.getIndex()));
+	QString	name		= row->at(rangesTable->nameColumn		.getIndex()).toString();
+	int		continent	= row->at(rangesTable->continentColumn	.getIndex()).toInt();
 	
 	return new Range(rangeID, name, continent);
 }
@@ -707,8 +708,8 @@ Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 	const QList<QVariant>* row = countriesTable->getBufferRow(rowIndex);
 	assert(row->size() == countriesTable->getNumberOfColumns());
 	
-	ValidItemID countryID = VALID_ITEM_ID(row->at(countriesTable->primaryKeyColumn->getIndex()));
-	QString	name	= row->at(countriesTable->nameColumn->getIndex()).toString();
+	ValidItemID countryID = VALID_ITEM_ID(row->at(countriesTable->primaryKeyColumn.getIndex()));
+	QString	name	= row->at(countriesTable->nameColumn.getIndex()).toString();
 	
 	return new Country(countryID, name);
 }
@@ -761,7 +762,7 @@ void Database::removeRows(QWidget* parent, NormalTable* table, QSet<ValidItemID>
 	Database::removeRows_referenceSearch(parent, false, table, primaryKeys);
 	
 	for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
-		table->removeRow(parent, {table->primaryKeyColumn}, {primaryKey});
+		table->removeRow(parent, {&table->primaryKeyColumn}, {primaryKey});
 	}
 }
 
@@ -783,7 +784,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 {
 	assert(databaseLoaded);
 	
-	const PrimaryKeyColumn* const primaryKeyColumn = table->primaryKeyColumn;
+	const PrimaryKeyColumn& primaryKeyColumn = table->primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
 	for (Table* candidateTable : tables) {
 		if (candidateTable == table) continue;
@@ -800,7 +801,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			if (searchNotExecute) {
 				int numAffectedRowIndices = 0;
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					numAffectedRowIndices += candidateAssociativeTable->getNumberOfMatchingRows(matchingColumn, primaryKey);
+					numAffectedRowIndices += candidateAssociativeTable->getNumberOfMatchingRows(*matchingColumn, primaryKey);
 				}
 				if (numAffectedRowIndices > 0) {
 					const NormalTable* itemTable = candidateAssociativeTable->traverseAssociativeRelation(primaryKeyColumn);
@@ -810,7 +811,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			// EXECUTE
 			else {
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					candidateAssociativeTable->removeMatchingRows(parent, matchingColumn, primaryKey);
+					candidateAssociativeTable->removeMatchingRows(parent, *matchingColumn, primaryKey);
 				}
 			}
 		}
@@ -823,10 +824,10 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			QList<QPair<const Column*, QList<BufferRowIndex>>> affectedCells = QList<QPair<const Column*, QList<BufferRowIndex>>>();
 			
 			for (const Column* otherTableColumn : candidateNormalTable->getColumnList()) {
-				if (otherTableColumn->getReferencedForeignColumn() != primaryKeyColumn) continue;
+				if (otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
 				
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(otherTableColumn, ID_GET(primaryKey));
+					QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(*otherTableColumn, ID_GET(primaryKey));
 					QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
 					
 					affectedRowIndices.unite(rowIndexSet);
@@ -844,12 +845,12 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			else {
 				for (const auto& [affectedColumn, rowIndices] : affectedCells) {
 					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
-					const PrimaryKeyColumn* affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
+					const PrimaryKeyColumn& affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
 					
 					for (const BufferRowIndex& rowIndex : rowIndices) {
-						ValidItemID primaryKey = VALID_ITEM_ID(affectedPrimaryKeyColumn->getValueAt(rowIndex));
+						ValidItemID primaryKey = VALID_ITEM_ID(affectedPrimaryKeyColumn.getValueAt(rowIndex));
 						// Remove single instance of reference to the key about to be removed
-						candidateNormalTable->updateCell(parent, primaryKey, affectedColumn, ItemID().asQVariant());
+						candidateNormalTable->updateCell(parent, primaryKey, *affectedColumn, ItemID().asQVariant());
 					}
 				}
 			}

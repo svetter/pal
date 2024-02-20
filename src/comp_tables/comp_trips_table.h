@@ -37,25 +37,25 @@ class CompositeTripsTable : public CompositeTable {
 	
 public:
 	/** The trip index numbers all trips chronologically and is always kept consistent with the data. */
-	const IndexCompositeColumn*			indexColumn;
+	const IndexCompositeColumn			indexColumn;
 	/** The name of the trip. */
-	const DirectCompositeColumn*		nameColumn;
+	const DirectCompositeColumn			nameColumn;
 	/** The start date of the trip. */
-	const DirectCompositeColumn*		startDateColumn;
+	const DirectCompositeColumn			startDateColumn;
 	/** The end date of the trip. */
-	const DirectCompositeColumn*		endDateColumn;
+	const DirectCompositeColumn			endDateColumn;
 	/** The length of the trip. */
-	const DifferenceCompositeColumn*	lengthColumn;
+	const DifferenceCompositeColumn		lengthColumn;
 	/** The number of ascents logged for this trip. */
-	const FoldCompositeColumn*			numAscentsColumn;
+	const NumericFoldCompositeColumn	numAscentsColumn;
 	/** The average elevation gain of all ascents logged for this trip. */
-	const FoldCompositeColumn*			avgElevationGainColumn;
+	const NumericFoldCompositeColumn	avgElevationGainColumn;
 	/** The maximum elevation gain of all ascents logged for this trip. */
-	const FoldCompositeColumn*			maxElevationGainColumn;
+	const NumericFoldCompositeColumn	maxElevationGainColumn;
 	/** The sum of the elevation gains of all ascents logged for this trip. */
-	const FoldCompositeColumn*			sumElevationGainColumn;
+	const NumericFoldCompositeColumn	sumElevationGainColumn;
 	/** The list of hikers who participated in any ascent logged for this trip. */
-	const FoldCompositeColumn*			listHikersColumn;
+	const HikerListFoldCompositeColumn	listHikersColumn;
 	
 public:
 	/**
@@ -68,17 +68,17 @@ public:
 	 */
 	inline CompositeTripsTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->tripsTable, tableView),
-		//																		name				uiName					suffix			fold op			[breadcrumbs +] content column
-		indexColumn				(new const IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db->tripsTable->startDateColumn,	Qt::AscendingOrder},					{db->tripsTable->endDateColumn,	Qt::AscendingOrder} })),
-		nameColumn				(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->nameColumn)),
-		startDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->startDateColumn)),
-		endDateColumn			(new const DirectCompositeColumn		(this,												noSuffix,						db->tripsTable->endDateColumn)),
-		lengthColumn			(new const DifferenceCompositeColumn	(this,	"length",			tr("Length"),			tr(" days"),					db->tripsTable->endDateColumn,		db->tripsTable->startDateColumn)),
-		numAscentsColumn		(new const NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		crumbsTo(db, db->ascentsTable))),
-		avgElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
-		maxElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
-		sumElevationGainColumn	(new const NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
-		listHikersColumn		(new const HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Participants"),										crumbsTo(db, db->hikersTable),		db->hikersTable->nameColumn))
+		//																name				uiName					suffix			fold op			[breadcrumbs +] content column
+		indexColumn				(IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db->tripsTable->startDateColumn,	Qt::AscendingOrder},					{db->tripsTable->endDateColumn,	Qt::AscendingOrder} })),
+		nameColumn				(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable->nameColumn)),
+		startDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable->startDateColumn)),
+		endDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable->endDateColumn)),
+		lengthColumn			(DifferenceCompositeColumn		(this,	"length",			tr("Length"),			tr(" days"),					db->tripsTable->endDateColumn,		db->tripsTable->startDateColumn)),
+		numAscentsColumn		(NumericFoldCompositeColumn		(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		crumbsTo(db, db->ascentsTable))),
+		avgElevationGainColumn	(NumericFoldCompositeColumn		(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
+		maxElevationGainColumn	(NumericFoldCompositeColumn		(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
+		sumElevationGainColumn	(NumericFoldCompositeColumn		(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
+		listHikersColumn		(HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Participants"),										crumbsTo(db, db->hikersTable),		db->hikersTable->nameColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(nameColumn);
@@ -93,7 +93,7 @@ public:
 	}
 	
 	
-
+	
 	/**
 	 * Returns the default sorting for the table.
 	 *
@@ -101,7 +101,7 @@ public:
 	 */
 	virtual SortingPass getDefaultSorting() const override
 	{
-		return {indexColumn, Qt::AscendingOrder};
+		return {&indexColumn, Qt::AscendingOrder};
 	}
 };
 

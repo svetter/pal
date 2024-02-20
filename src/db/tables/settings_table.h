@@ -38,11 +38,11 @@ class GenericProjectSetting;
  */
 class SettingsTable : public Table {
 	/** The primary key column. */
-	PrimaryKeyColumn* primaryKeyColumn;
+	PrimaryKeyColumn primaryKeyColumn;
 	/** The column for key strings which identify settings. */
-	ValueColumn* settingKeyColumn;
+	ValueColumn settingKeyColumn;
 	/** The column for setting values, encoded as strings. */
-	ValueColumn* settingValueColumn;
+	ValueColumn settingValueColumn;
 	
 public:
 	SettingsTable();

@@ -261,8 +261,8 @@ PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiN
  * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  * @param primaryKey	Whether the column contains primary keys.
  */
-ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn* foreignColumn, bool primaryKey) :
-	Column(table, name, uiName, primaryKey, foreignColumn, ID, nullable)
+ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey) :
+	Column(table, name, uiName, primaryKey, &foreignColumn, ID, nullable)
 {}
 
 
@@ -275,7 +275,7 @@ ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiN
  * @param uiName	The name of the column as it should be displayed in the UI.
  * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  */
-PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn* foreignColumn) :
+PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn) :
 	ForeignKeyColumn(table, name, uiName, false, foreignColumn, true)
 {}
 
