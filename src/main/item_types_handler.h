@@ -67,7 +67,7 @@ public:
 	const QString			name;
 	
 	/** The SQL buffer (base) table containing data of this item type. */
-	NormalTable* const		baseTable;
+	NormalTable&			baseTable;
 	/** The UI buffer (composite) table containing data of this item type. */
 	CompositeTable* const	compTable;
 	
@@ -149,7 +149,7 @@ public:
 		PALItemType					type,
 		QString						name,
 		Database*					db,
-		NormalTable*				baseTable,
+		NormalTable&				baseTable,
 		CompositeTable*				compTable,
 		QWidget*					tab,
 		QTableView*					tableView,
@@ -538,9 +538,9 @@ public:
 	const QMap<PALItemType, ItemTypeMapper*> mappers;
 	
 	/** The base table for photos. */
-	PhotosTable* const photosTable;
+	PhotosTable& photosTable;
 	/** The base table for hiker participation in trips. */
-	ParticipatedTable* const participatedTable;
+	ParticipatedTable& participatedTable;
 	
 	/**
 	 * Creates a new ItemTypesHandler instance.
@@ -563,8 +563,8 @@ public:
 		RegionMapper*		regionMapper,
 		RangeMapper*		rangeMapper,
 		CountryMapper*		countryMapper,
-		PhotosTable*		photosTable,
-		ParticipatedTable*	participatedTable
+		PhotosTable&		photosTable,
+		ParticipatedTable&	participatedTable
 	) :
 		mappers({
 			{ItemTypeAscent,	ascentMapper},
@@ -623,10 +623,10 @@ public:
 	{
 		QList<Table*> tables = QList<Table*>();
 		for (const ItemTypeMapper* const mapper : mappers) {
-			tables += mapper->baseTable;
+			tables += &mapper->baseTable;
 		}
-		tables.append(photosTable);
-		tables.append(participatedTable);
+		tables.append(&photosTable);
+		tables.append(&participatedTable);
 		return tables;
 	}
 	

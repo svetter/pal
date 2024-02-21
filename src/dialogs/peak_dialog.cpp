@@ -114,7 +114,7 @@ QString PeakDialog::getEditWindowTitle()
  */
 void PeakDialog::populateComboBoxes()
 {
-	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
+	populateItemCombo(db->regionsTable, db->regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
 }
 
 
@@ -206,8 +206,8 @@ void PeakDialog::handle_newRegion()
 	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
-	populateItemCombo(db->regionsTable, db->regionsTable->nameColumn, true, regionCombo, selectableRegionIDs);
-	const ValidItemID newRegionID = db->regionsTable->getPrimaryKeyAt(newRegionIndex);
+	populateItemCombo(db->regionsTable, db->regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
+	const ValidItemID newRegionID = db->regionsTable.getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(newRegionID) + 1);	// 0 is None
 }
 
@@ -223,7 +223,7 @@ void PeakDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save peak");
 	QString emptyNameWindowMessage	= tr("The peak needs a name.");
-	const ValueColumn& nameColumn = db->peaksTable->nameColumn;
+	const ValueColumn& nameColumn = db->peaksTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -299,7 +299,7 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		peakIDs += VALID_ITEM_ID(db->peaksTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		peakIDs += VALID_ITEM_ID(db->peaksTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->peaksTable, peakIDs);
@@ -343,13 +343,13 @@ BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, 
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newPeakIndex = db->peaksTable->addRow(parent, extractedPeak);
+			newPeakIndex = db->peaksTable.addRow(parent, extractedPeak);
 			break;
 		case editItem:
-			db->peaksTable->updateRow(parent, originalPeakID, extractedPeak);
+			db->peaksTable.updateRow(parent, originalPeakID, extractedPeak);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newPeakIndex = db->peaksTable->getBufferIndexForPrimaryKey(originalPeakID);
+			newPeakIndex = db->peaksTable.getBufferIndexForPrimaryKey(originalPeakID);
 			break;
 		default:
 			assert(false);

@@ -117,7 +117,7 @@ public:
 	virtual const QSet<Column*> getAllUnderlyingColumns() const = 0;
 	
 protected:
-	ProjectSettings* getProjectSettings() const;
+	const ProjectSettings& getProjectSettings() const;
 };
 
 

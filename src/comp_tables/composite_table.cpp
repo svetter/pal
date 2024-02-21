@@ -36,7 +36,7 @@ using std::unique_ptr, std::make_unique;
  * @param baseTable	The database table this table is based on.
  * @param tableView	The view this table is displayed in.
  */
-CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTableView* tableView) :
+CompositeTable::CompositeTable(const Database* db, NormalTable& baseTable, QTableView* tableView) :
 	QAbstractTableModel(),
 	db(db),
 	baseTable(baseTable),
@@ -53,11 +53,11 @@ CompositeTable::CompositeTable(const Database* db, NormalTable* baseTable, QTabl
 	hiddenColumns(QSet<const CompositeColumn*>()),
 	updateImmediately(false),
 	tableToAutoResizeAfterCompute(nullptr),
-	name(baseTable->name),
-	uiName(baseTable->uiName)
+	name(baseTable.name),
+	uiName(baseTable.uiName)
 {
 	unique_ptr changeListener = make_unique<const RowChangeListenerCompositeTable>(RowChangeListenerCompositeTable(this));
-	baseTable->setRowChangeListener(std::move(changeListener));
+	baseTable.setRowChangeListener(std::move(changeListener));
 }
 
 /**
@@ -284,7 +284,7 @@ QSet<QString> CompositeTable::getNormalColumnNameSet() const
  * 
  * @return	The database table this composite table is based on.
  */
-const NormalTable* CompositeTable::getBaseTable() const
+const NormalTable& CompositeTable::getBaseTable() const
 {
 	return baseTable;
 }
@@ -299,7 +299,7 @@ const NormalTable* CompositeTable::getBaseTable() const
 int CompositeTable::getNumberOfCellsToInit() const
 {
 	assert(!bufferInitialized);
-	return baseTable->getNumberOfRows() * columns.size();
+	return baseTable.getNumberOfRows() * columns.size();
 }
 
 /**
@@ -323,7 +323,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
 	
 	// Initialize cells and compute their contents for most columns
-	int numberOfRows = baseTable->getNumberOfRows();
+	int numberOfRows = baseTable.getNumberOfRows();
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(numberOfRows); bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (const CompositeColumn* const column : columns) {
@@ -348,7 +348,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 		if (noUpdateColumn || !computeWholeColumn) continue;
 		
 		QList<QVariant> cells = computeWholeColumnContent(column->getIndex());
-		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
+		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable.getNumberOfRows()); bufferRowIndex++) {
 			buffer.replaceCell(bufferRowIndex, column->getIndex(), cells.at(bufferRowIndex.get()));
 			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
 		}
@@ -475,7 +475,7 @@ void CompositeTable::updateBufferColumns(QSet<const CompositeColumn*> columnsToU
 		}
 		else {
 			QList<QVariant> cells = computeWholeColumnContent(columnIndex);
-			for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable->getNumberOfRows()); bufferRowIndex++) {
+			for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable.getNumberOfRows()); bufferRowIndex++) {
 				buffer.replaceCell(bufferRowIndex, columnIndex, cells.at(bufferRowIndex.get()));
 				
 				runAfterEachCellUpdate();
@@ -1008,7 +1008,7 @@ void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReve
  */
 QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const
 {
-	assert(bufferRowIndex.isValid(baseTable->getNumberOfRows()));
+	assert(bufferRowIndex.isValid(baseTable.getNumberOfRows()));
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
 	const CompositeColumn* column = columns.at(columnIndex);
@@ -1043,10 +1043,8 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
  * @param targetTable	The normal table to return the breadcrumb trail to.
  * @return				The breadcrumb trail from the base table to the given destination table.
  */
-Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable* targetTable) const
+Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable& targetTable) const
 {
-	assert(baseTable);
-	
 	return db->getBreadcrumbsFor(baseTable, targetTable);
 }
 
@@ -1057,7 +1055,7 @@ Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable* targ
  * 
  * @return	The project settings object.
  */
-ProjectSettings* CompositeTable::getProjectSettings() const
+const ProjectSettings& CompositeTable::getProjectSettings() const
 {
 	return db->projectSettings;
 }

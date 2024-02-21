@@ -112,7 +112,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		// Remove old project settings table
 		removeSettingsTableFromBeforeV1_2_0();
 		// Create new project settings table
-		db->settingsTable->createTableInSql(parent);
+		db->settingsTable.createTableInSql(parent);
 	}
 	
 	
@@ -130,7 +130,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	if (isBelowVersion(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
-			db->projectSettings->defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
+			db->projectSettings.defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
 		}
 	}
 	
@@ -138,7 +138,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	// Set new version
 	if (isBelowVersion(currentDbVersion, appVersion)) {
 		qDebug().noquote().nospace() << "Upgraded database from v" << currentDbVersion << " to v" << appVersion;
-		db->projectSettings->databaseVersion.set(parent, appVersion);
+		db->projectSettings.databaseVersion.set(parent, appVersion);
 		
 		showUpgradeSuccessMessage(currentDbVersion, appVersion);
 	}
@@ -180,7 +180,7 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 	// Settings table has current format, get version
 	queryString = QString(
 		"SELECT settingValue FROM ProjectSettings"
-		"\nWHERE settingKey='%1'").arg(db->projectSettings->databaseVersion.key);
+		"\nWHERE settingKey='%1'").arg(db->projectSettings.databaseVersion.key);
 	query = QSqlQuery();
 	if (!query.prepare(queryString) || !query.exec()) {
 		displayError(parent, query.lastError(), queryString);

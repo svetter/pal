@@ -236,11 +236,11 @@ int Breadcrumbs::length() const
  * @param table	The table to check for.
  * @return		True if the breadcrumb trail includes the given table, false otherwise.
  */
-bool Breadcrumbs::goesVia(const Table* table) const
+bool Breadcrumbs::goesVia(const Table& table) const
 {
 	for (int i = 1; i < list.size(); i++) {
 		const Breadcrumb& crumb = list.at(i);
-		if (crumb.firstColumn.table == table) {
+		if (crumb.firstColumn.table == &table) {
 			return true;
 		}
 	}

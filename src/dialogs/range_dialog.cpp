@@ -159,7 +159,7 @@ void RangeDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save mountain range");
 	QString emptyNameWindowMessage	= tr("The mountain range needs a name.");
-	const ValueColumn& nameColumn = db->rangesTable->nameColumn;
+	const ValueColumn& nameColumn = db->rangesTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -220,7 +220,7 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		rangeIDs += VALID_ITEM_ID(db->rangesTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		rangeIDs += VALID_ITEM_ID(db->rangesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->rangesTable, rangeIDs);
@@ -264,13 +264,13 @@ BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow,
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newRangeIndex = db->rangesTable->addRow(parent, extractedRange);
+			newRangeIndex = db->rangesTable.addRow(parent, extractedRange);
 			break;
 		case editItem:
-			db->rangesTable->updateRow(parent, originalRangeID, extractedRange);
+			db->rangesTable.updateRow(parent, originalRangeID, extractedRange);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRangeIndex = db->rangesTable->getBufferIndexForPrimaryKey(originalRangeID);
+			newRangeIndex = db->rangesTable.getBufferIndexForPrimaryKey(originalRangeID);
 			break;
 		default:
 			assert(false);

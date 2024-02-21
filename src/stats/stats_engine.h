@@ -49,7 +49,7 @@ class StatsEngine : protected QObject
 	
 protected:
 	/** The database. */
-	const Database* const db;
+	Database* const db;
 	
 	/** A set of all charts managed by this stats engine. */
 	QSet<Chart*> charts;
@@ -122,7 +122,7 @@ class ItemStatsEngine : public StatsEngine
 	/** The item type to compute and show statistics for and/or about. */
 	const PALItemType itemType;
 	/** The base table for the item type. */
-	const NormalTable* const baseTable;
+	const NormalTable& baseTable;
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
 	
@@ -189,7 +189,7 @@ class ItemStatsEngine : public StatsEngine
 	QMap<BufferRowIndex, qreal>								topElevGainSumCache;
 	
 public:
-	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable* baseTable, QVBoxLayout* statsLayout);
+	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable& baseTable, QVBoxLayout* statsLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();

@@ -209,7 +209,7 @@ void TripDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save trip");
 	QString emptyNameWindowMessage	= tr("The trip needs a name.");
-	const ValueColumn& nameColumn = db->tripsTable->nameColumn;
+	const ValueColumn& nameColumn = db->tripsTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -270,7 +270,7 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 	
 	QSet<ValidItemID> tripIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		tripIDs += VALID_ITEM_ID(db->tripsTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		tripIDs += VALID_ITEM_ID(db->tripsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->tripsTable, tripIDs);
@@ -314,13 +314,13 @@ BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, 
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newTripIndex = db->tripsTable->addRow(parent, extractedTrip);
+			newTripIndex = db->tripsTable.addRow(parent, extractedTrip);
 			break;
 		case editItem:
-			db->tripsTable->updateRow(parent, originalTripID, extractedTrip);
+			db->tripsTable.updateRow(parent, originalTripID, extractedTrip);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newTripIndex = db->tripsTable->getBufferIndexForPrimaryKey(originalTripID);
+			newTripIndex = db->tripsTable.getBufferIndexForPrimaryKey(originalTripID);
 			break;
 		default:
 			assert(false);

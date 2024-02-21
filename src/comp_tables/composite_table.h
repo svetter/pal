@@ -89,7 +89,7 @@ class CompositeTable : public QAbstractTableModel {
 	/** The project database. */
 	const Database* const db;
 	/** The database table this table is based on. */
-	const NormalTable* const baseTable;
+	const NormalTable& baseTable;
 	/** The UI table view this table is displayed in. */
 	QTableView* const tableView;
 	
@@ -132,7 +132,7 @@ protected:
 	/** The suffix to append to all values given in meters. */
 	static inline QString mSuffix = " m";
 	
-	CompositeTable(const Database* db, NormalTable* baseTable, QTableView* tableView);
+	CompositeTable(const Database* db, NormalTable& baseTable, QTableView* tableView);
 public:
 	~CompositeTable();
 	
@@ -151,7 +151,7 @@ public:
 	int getIndexOf(const CompositeColumn* column) const;
 	int getExportIndexOf(const CompositeColumn* column) const;
 	QSet<QString> getNormalColumnNameSet() const;
-	const NormalTable* getBaseTable() const;
+	const NormalTable& getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
 	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
@@ -200,10 +200,10 @@ private:
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
 protected:
-	Breadcrumbs crumbsTo(const Database* db, const NormalTable* destinationTable) const;
+	Breadcrumbs crumbsTo(const Database* db, const NormalTable& destinationTable) const;
 	
 public:
-	ProjectSettings* getProjectSettings() const;
+	const ProjectSettings& getProjectSettings() const;
 	
 signals:
 	/**

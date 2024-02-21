@@ -61,12 +61,12 @@ public:
 	inline CompositeHikersTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->hikersTable, tableView),
 		//															name				uiName					suffix		fold op			[breadcrumbs +] content column
-		nameColumn				(DirectCompositeColumn		(this,												noSuffix,					db->hikersTable->nameColumn)),
+		nameColumn				(DirectCompositeColumn		(this,												noSuffix,					db->hikersTable.nameColumn)),
 		numAscentsColumn		(NumericFoldCompositeColumn	(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db, db->ascentsTable))),
 		numTripsColumn			(NumericFoldCompositeColumn	(this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		crumbsTo(db, db->tripsTable))),
-		avgElevationGainColumn	(NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
-		maxElevationGainColumn	(NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn)),
-		sumElevationGainColumn	(NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable->elevationGainColumn))
+		avgElevationGainColumn	(NumericFoldCompositeColumn	(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	crumbsTo(db, db->ascentsTable),	db->ascentsTable.elevationGainColumn)),
+		maxElevationGainColumn	(NumericFoldCompositeColumn	(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable.elevationGainColumn)),
+		sumElevationGainColumn	(NumericFoldCompositeColumn	(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		crumbsTo(db, db->ascentsTable),	db->ascentsTable.elevationGainColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(numAscentsColumn);

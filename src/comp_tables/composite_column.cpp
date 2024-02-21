@@ -179,7 +179,7 @@ bool CompositeColumn::isFilterOnlyColumn() const
 QList<QVariant> CompositeColumn::computeWholeColumn() const
 {
 	QList<QVariant> cells = QList<QVariant>();
-	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(table->getBaseTable()->getNumberOfRows()); rowIndex++) {
+	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(table->getBaseTable().getNumberOfRows()); rowIndex++) {
 		cells.append(computeValueAt(rowIndex));
 	}
 	return cells;
@@ -405,7 +405,7 @@ void CompositeColumn::announceChangedData() const
  * 
  * @return	The project settings.
  */
-ProjectSettings* CompositeColumn::getProjectSettings() const
+const ProjectSettings& CompositeColumn::getProjectSettings() const
 {
 	return table->getProjectSettings();
 }
@@ -661,7 +661,7 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable* table, QString name, 
 {
 	assert(!sortingPasses.isEmpty());
 	for (const auto& [column, order] : sortingPasses) {
-		assert(column.table == table->getBaseTable());
+		assert(column.table == &table->getBaseTable());
 		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
 }

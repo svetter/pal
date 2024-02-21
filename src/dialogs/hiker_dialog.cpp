@@ -142,7 +142,7 @@ void HikerDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save hiker");
 	QString emptyNameWindowMessage	= tr("The hiker needs a name.");
-	const ValueColumn& nameColumn = db->hikersTable->nameColumn;
+	const ValueColumn& nameColumn = db->hikersTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -203,7 +203,7 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	
 	QSet<ValidItemID> hikerIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		hikerIDs += VALID_ITEM_ID(db->hikersTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		hikerIDs += VALID_ITEM_ID(db->hikersTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->hikersTable, hikerIDs);
@@ -216,8 +216,8 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	}
 	
 	for (const ItemID& hikerID : qAsConst(hikerIDs)) {
-		if (db->projectSettings->defaultHiker.get() == ID_GET(hikerID)) {
-			db->projectSettings->defaultHiker.clear(parent);
+		if (db->projectSettings.defaultHiker.get() == ID_GET(hikerID)) {
+			db->projectSettings.defaultHiker.clear(parent);
 			break;
 		}
 	}
@@ -254,13 +254,13 @@ BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow,
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newHikerIndex = db->hikersTable->addRow(parent, extractedHiker);
+			newHikerIndex = db->hikersTable.addRow(parent, extractedHiker);
 			break;
 		case editItem:
-			db->hikersTable->updateRow(parent, originalHikerID, extractedHiker);
+			db->hikersTable.updateRow(parent, originalHikerID, extractedHiker);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newHikerIndex = db->hikersTable->getBufferIndexForPrimaryKey(originalHikerID);
+			newHikerIndex = db->hikersTable.getBufferIndexForPrimaryKey(originalHikerID);
 			break;
 		default:
 			assert(false);

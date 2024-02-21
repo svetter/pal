@@ -204,7 +204,7 @@ void RelocatePhotosDialog::handle_callback_progressUpdate(int processed, int upd
  */
 void RelocatePhotosDialog::handle_callback_updateFilepath(BufferRowIndex bufferRowIndex, QString newFilepath)
 {
-	return db->photosTable->updateFilepathAt(this, bufferRowIndex, newFilepath);
+	return db->photosTable.updateFilepathAt(this, bufferRowIndex, newFilepath);
 }
 
 

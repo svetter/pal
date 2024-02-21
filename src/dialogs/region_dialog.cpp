@@ -107,9 +107,9 @@ QString RegionDialog::getEditWindowTitle()
  */
 void RegionDialog::populateComboBoxes()
 {
-	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeCombo, selectableRangeIDs);
+	populateItemCombo(db->rangesTable, db->rangesTable.nameColumn, true, rangeCombo, selectableRangeIDs);
 	
-	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, true, countryCombo, selectableCountryIDs);
+	populateItemCombo(db->countriesTable, db->countriesTable.nameColumn, true, countryCombo, selectableCountryIDs);
 }
 
 
@@ -178,8 +178,8 @@ void RegionDialog::handle_newRange()
 	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(this, mainWindow, db);
 	if (newRangeIndex.isInvalid()) return;
 	
-	populateItemCombo(db->rangesTable, db->rangesTable->nameColumn, true, rangeCombo, selectableRangeIDs);
-	const ValidItemID newRangeID = db->rangesTable->getPrimaryKeyAt(newRangeIndex);
+	populateItemCombo(db->rangesTable, db->rangesTable.nameColumn, true, rangeCombo, selectableRangeIDs);
+	const ValidItemID newRangeID = db->rangesTable.getPrimaryKeyAt(newRangeIndex);
 	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(newRangeID) + 1);	// 0 is None
 }
 
@@ -193,8 +193,8 @@ void RegionDialog::handle_newCountry()
 	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(this, mainWindow, db);
 	if (newCountryIndex.isInvalid()) return;
 	
-	populateItemCombo(db->countriesTable, db->countriesTable->nameColumn, true, countryCombo, selectableCountryIDs);
-	const ValidItemID newCountryID = db->countriesTable->getPrimaryKeyAt(newCountryIndex);
+	populateItemCombo(db->countriesTable, db->countriesTable.nameColumn, true, countryCombo, selectableCountryIDs);
+	const ValidItemID newCountryID = db->countriesTable.getPrimaryKeyAt(newCountryIndex);
 	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(newCountryID) + 1);	// 0 is None
 }
 
@@ -210,7 +210,7 @@ void RegionDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save region");
 	QString emptyNameWindowMessage	= tr("The region needs a name.");
-	const ValueColumn& nameColumn = db->regionsTable->nameColumn;
+	const ValueColumn& nameColumn = db->regionsTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -271,7 +271,7 @@ bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 	
 	QSet<ValidItemID> regionIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		regionIDs += VALID_ITEM_ID(db->regionsTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		regionIDs += VALID_ITEM_ID(db->regionsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->regionsTable, regionIDs);
@@ -315,13 +315,13 @@ BufferRowIndex openRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newRegionIndex = db->regionsTable->addRow(parent, extractedRegion);
+			newRegionIndex = db->regionsTable.addRow(parent, extractedRegion);
 			break;
 		case editItem:
-			db->regionsTable->updateRow(parent, originalRegionID, extractedRegion);
+			db->regionsTable.updateRow(parent, originalRegionID, extractedRegion);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRegionIndex = db->regionsTable->getBufferIndexForPrimaryKey(originalRegionID);
+			newRegionIndex = db->regionsTable.getBufferIndexForPrimaryKey(originalRegionID);
 			break;
 		default:
 			assert(false);

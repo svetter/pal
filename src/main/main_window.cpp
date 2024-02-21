@@ -113,13 +113,13 @@ MainWindow::~MainWindow()
 void MainWindow::createTypesHandler()
 {
 	typesHandler = new ItemTypesHandler(
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings->columnWidths_ascentsTable,		&db.projectSettings->columnOrder_ascentsTable,		&db.projectSettings->hiddenColumns_ascentsTable,	&db.projectSettings->sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings->columnWidths_peaksTable,		&db.projectSettings->columnOrder_peaksTable,		&db.projectSettings->hiddenColumns_peaksTable,		&db.projectSettings->sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings->columnWidths_tripsTable,		&db.projectSettings->columnOrder_tripsTable,		&db.projectSettings->hiddenColumns_tripsTable,		&db.projectSettings->sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings->columnWidths_hikersTable,		&db.projectSettings->columnOrder_hikersTable,		&db.projectSettings->hiddenColumns_hikersTable,		&db.projectSettings->sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings->columnWidths_regionsTable,		&db.projectSettings->columnOrder_regionsTable,		&db.projectSettings->hiddenColumns_regionsTable,	&db.projectSettings->sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings->columnWidths_rangesTable,		&db.projectSettings->columnOrder_rangesTable,		&db.projectSettings->hiddenColumns_rangesTable,		&db.projectSettings->sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings->columnWidths_countriesTable,	&db.projectSettings->columnOrder_countriesTable,	&db.projectSettings->hiddenColumns_countriesTable,	&db.projectSettings->sorting_countriesTable),
+		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable),
+		new PeakMapper		(&db, peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable),
+		new TripMapper		(&db, tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable),
+		new HikerMapper		(&db, hikersTab,	hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable),
+		new RegionMapper	(&db, regionsTab,	regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable),
+		new RangeMapper		(&db, rangesTab,	rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable),
+		new CountryMapper	(&db, countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
@@ -468,11 +468,11 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		
 		// Restore project-specific implicit settings:
 		// Filter bar
-		showFiltersAction->setChecked(db.projectSettings->mainWindow_showFilterBar.get(this));
+		showFiltersAction->setChecked(db.projectSettings.mainWindow_showFilterBar.get(this));
 		// Open tab
 		int tabIndex = 0;
 		if (Settings::rememberTab.get()) {
-			tabIndex = db.projectSettings->mainWindow_currentTabIndex.get(this);
+			tabIndex = db.projectSettings.mainWindow_currentTabIndex.get(this);
 		}
 		mainAreaTabs->setCurrentIndex(tabIndex);
 		setFilteredAscentsCounterVisible(tabIndex == 0);
@@ -561,7 +561,7 @@ void MainWindow::initCompositeBuffers()
 	typesHandler->get(ItemTypeAscent)->compTable->setInitialFilters(ascentFilters);
 	
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		progress.setLabelText(tr("Preparing table %1...").arg(mapper->baseTable->uiName));
+		progress.setLabelText(tr("Preparing table %1...").arg(mapper->baseTable.uiName));
 		
 		bool isOpen = mapper->tableView == currentTableView;
 		bool prepareThisTable = prepareAll || isOpen;
@@ -665,7 +665,7 @@ void MainWindow::updateTableSize(bool reset)
 	
 	QString countText = QString();
 	if (mapper) {
-		const int total = mapper->baseTable->getNumberOfRows();
+		const int total = mapper->baseTable.getNumberOfRows();
 		if (total == 0) {
 			countText = tr("Table is empty");
 		}
@@ -690,7 +690,7 @@ void MainWindow::updateTableSize(bool reset)
 	}
 	statusBarFiltersLabel->setText(filterText);
 	
-	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable->getNumberOfRows()));
+	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable.getNumberOfRows()));
 	
 	// Set number of filtered rows
 	const int numAscentsShown = typesHandler->get(ItemTypeAscent)->compTable->rowCount();
@@ -745,7 +745,7 @@ void MainWindow::newItem(const ItemTypeMapper* const mapper)
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
-	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable.getItemNameSingularLowercase()));
 }
 
 /**
@@ -764,7 +764,7 @@ void MainWindow::duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRo
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
-	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved new %1.").arg(mapper->baseTable.getItemNameSingularLowercase()));
 }
 
 /**
@@ -783,7 +783,7 @@ void MainWindow::editItem(const ItemTypeMapper* const mapper, const QModelIndex&
 	if (!changesMade) return;
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
-	setStatusLine(tr("Saved changes in %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Saved changes in %1.").arg(mapper->baseTable.getItemNameSingularLowercase()));
 }
 
 /**
@@ -815,7 +815,7 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 	}
 	BufferRowIndex bufferRowToSelect = mapper->compTable->getBufferRowIndexForViewRow(minViewIndex);
 	performUpdatesAfterUserAction(mapper, true, bufferRowToSelect);
-	setStatusLine(tr("Deleted %1.").arg(mapper->baseTable->getItemNameSingularLowercase()));
+	setStatusLine(tr("Deleted %1.").arg(mapper->baseTable.getItemNameSingularLowercase()));
 }
 
 
@@ -1610,8 +1610,8 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings->mainWindow_currentTabIndex	.set(this, mainAreaTabs->currentIndex());
-	db.projectSettings->mainWindow_showFilterBar	.set(this, showFiltersAction->isChecked());
+	db.projectSettings.mainWindow_currentTabIndex	.set(this, mainAreaTabs->currentIndex());
+	db.projectSettings.mainWindow_showFilterBar		.set(this, showFiltersAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);

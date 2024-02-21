@@ -190,22 +190,22 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * @param filterColumn			If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
  * @param filterID				The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
  */
-void populateItemCombo(NormalTable* table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const ForeignKeyColumn* filterColumn, ItemID filterID)
+void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const ForeignKeyColumn* filterColumn, ItemID filterID)
 {
 	assert(!(!filterColumn && filterID.isValid()));
 	
 	combo->clear();
 	idList.clear();
-	QString noneString = table->getNoneString();
+	QString noneString = table.getNoneString();
 	if (!overrideFirstLine.isEmpty()) noneString = overrideFirstLine;
 	combo->addItem(noneString);
 	
 	// Get pairs of ID and display/sort field
-	QList<QPair<ValidItemID, QVariant>> selectableItems = table->pairIDWith(displayAndSortColumn);
+	QList<QPair<ValidItemID, QVariant>> selectableItems = table.pairIDWith(displayAndSortColumn);
 	
 	if (filterColumn) {
 		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it
-		assert(filterColumn->table == table && filterColumn->type == ID);
+		assert(filterColumn->table == &table && filterColumn->type == ID);
 		for (int i = selectableItems.size() - 1; i >= 0; i--) {
 			const ValidItemID& itemID = selectableItems.at(i).first;
 			ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);

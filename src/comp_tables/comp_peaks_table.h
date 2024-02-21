@@ -69,16 +69,16 @@ public:
 	inline CompositePeaksTable(Database* db, QTableView* tableView) :
 		CompositeTable(db, db->peaksTable, tableView),
 		//																name				uiName					suffix		fold op		[breadcrumbs +] content column
-		nameColumn				(DirectCompositeColumn			(this,												noSuffix,				db->peaksTable->nameColumn)),
-		heightColumn			(DirectCompositeColumn			(this,												mSuffix,				db->peaksTable->heightColumn)),
-		countryColumn			(ReferenceCompositeColumn		(this,	"country",			tr("Country"),			noSuffix,				crumbsTo(db, db->countriesTable),	db->countriesTable->nameColumn)),
-		regionColumn			(ReferenceCompositeColumn		(this,	"region",			tr("Region"),			noSuffix,				crumbsTo(db, db->regionsTable),		db->regionsTable->nameColumn)),
-		rangeColumn				(ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),	noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable->nameColumn)),
-		continentColumn			(ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),		noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable->continentColumn)),
+		nameColumn				(DirectCompositeColumn			(this,												noSuffix,				db->peaksTable.nameColumn)),
+		heightColumn			(DirectCompositeColumn			(this,												mSuffix,				db->peaksTable.heightColumn)),
+		countryColumn			(ReferenceCompositeColumn		(this,	"country",			tr("Country"),			noSuffix,				crumbsTo(db, db->countriesTable),	db->countriesTable.nameColumn)),
+		regionColumn			(ReferenceCompositeColumn		(this,	"region",			tr("Region"),			noSuffix,				crumbsTo(db, db->regionsTable),		db->regionsTable.nameColumn)),
+		rangeColumn				(ReferenceCompositeColumn		(this,	"range",			tr("Mountain range"),	noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable.nameColumn)),
+		continentColumn			(ReferenceCompositeColumn		(this,	"continent",		tr("Continent"),		noSuffix,				crumbsTo(db, db->rangesTable),		db->rangesTable.continentColumn)),
 		numAscentsColumn		(NumericFoldCompositeColumn		(this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,	crumbsTo(db, db->ascentsTable))),
-		listHikersColumn		(HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Scaled by"),								crumbsTo(db, db->hikersTable),		db->hikersTable->nameColumn)),
-		sumElevationGainColumn	(NumericFoldCompositeColumn		(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable->elevationGainColumn)),
-		volcanoColumn			(DirectCompositeColumn			(this,												noSuffix,				db->peaksTable->volcanoColumn))
+		listHikersColumn		(HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Scaled by"),								crumbsTo(db, db->hikersTable),		db->hikersTable.nameColumn)),
+		sumElevationGainColumn	(NumericFoldCompositeColumn		(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable.elevationGainColumn)),
+		volcanoColumn			(DirectCompositeColumn			(this,												noSuffix,				db->peaksTable.volcanoColumn))
 	{
 		addColumn(nameColumn);
 		addColumn(heightColumn);

@@ -142,7 +142,7 @@ void CountryDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save country");
 	QString emptyNameWindowMessage	= tr("The country needs a name.");
-	const ValueColumn& nameColumn = db->countriesTable->nameColumn;
+	const ValueColumn& nameColumn = db->countriesTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -203,7 +203,7 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindo
 	
 	QSet<ValidItemID> countryIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		countryIDs += VALID_ITEM_ID(db->countriesTable->primaryKeyColumn.getValueAt(bufferRowIndex));
+		countryIDs += VALID_ITEM_ID(db->countriesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
 	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->countriesTable, countryIDs);
@@ -247,13 +247,13 @@ BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindo
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newCountryIndex = db->countriesTable->addRow(parent, extractedCountry);
+			newCountryIndex = db->countriesTable.addRow(parent, extractedCountry);
 			break;
 		case editItem:
-			db->countriesTable->updateRow(parent, originalCountryID, extractedCountry);
+			db->countriesTable.updateRow(parent, originalCountryID, extractedCountry);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newCountryIndex = db->countriesTable->getBufferIndexForPrimaryKey(originalCountryID);
+			newCountryIndex = db->countriesTable.getBufferIndexForPrimaryKey(originalCountryID);
 			break;
 		default:
 			assert(false);

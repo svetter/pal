@@ -41,13 +41,13 @@
 class GenericProjectSetting {
 public:
 	/** The project settings table. */
-	SettingsTable* const table;
+	SettingsTable& table;
 	/** The key string which is used to identify this setting. */
 	const QString key;
 	/** The default value for the setting. */
 	const QVariant defaultValue;
 	
-	GenericProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue);
+	GenericProjectSetting(SettingsTable& table, const QString& key, QVariant defaultValue);
 	
 	bool present(QWidget* parent = nullptr) const;
 	QVariant getAsQVariant(QWidget* parent = nullptr) const;
@@ -66,7 +66,7 @@ public:
 template<typename T>
 class ProjectSetting : public GenericProjectSetting {
 public:
-	ProjectSetting(SettingsTable* table, const QString& key, QVariant defaultValue = T());
+	ProjectSetting(SettingsTable& table, const QString& key, QVariant defaultValue = T());
 	
 	T get(QWidget* parent = nullptr) const;
 	T getDefault() const;
@@ -81,14 +81,14 @@ class ProjectMultiSetting
 	QMap<QString, ProjectSetting<T>*> settings;
 	
 	/** The project settings table. */
-	SettingsTable* const table;
+	SettingsTable& table;
 	/** The part of the key which all settings share. */
 	const QString baseKey;
 	/** The default value of all the settings. */
 	const QVariant defaultValue;
 	
 public:
-	ProjectMultiSetting(SettingsTable* table, const QString baseKey, QVariant defaultValue = T());
+	ProjectMultiSetting(SettingsTable& table, const QString baseKey, QVariant defaultValue = T());
 	~ProjectMultiSetting();
 	
 	bool anyPresent(const QSet<QString>& subKeys);
@@ -224,7 +224,7 @@ public:
 	 * settings objects do not neet to be changed, destroyed or recreated when a project is closed
 	 * or opened.
 	 */
-	inline ProjectSettings(SettingsTable* table) :
+	inline ProjectSettings(SettingsTable& table) :
 		//															key																		default value
 		databaseVersion					(ProjectSetting<QString>	(table,	"databaseVersion")),
 		

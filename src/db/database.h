@@ -65,30 +65,30 @@ class Database {
 	QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>> breadcrumbMatrix;
 	
 public:
-	/** The ascents table. */
-	AscentsTable*		ascentsTable;
-	/** The peaks table. */
-	PeaksTable*			peaksTable;
 	/** The trips table. */
-	TripsTable*			tripsTable;
+	TripsTable			tripsTable;
 	/** The hikers table. */
-	HikersTable*		hikersTable;
-	/** The regions table. */
-	RegionsTable*		regionsTable;
+	HikersTable			hikersTable;
 	/** The ranges table. */
-	RangesTable*		rangesTable;
+	RangesTable			rangesTable;
 	/** The countries table. */
-	CountriesTable*		countriesTable;
+	CountriesTable		countriesTable;
+	/** The regions table. */
+	RegionsTable		regionsTable;
+	/** The peaks table. */
+	PeaksTable			peaksTable;
+	/** The ascents table. */
+	AscentsTable		ascentsTable;
 	/** The photos table. */
-	PhotosTable*		photosTable;
+	PhotosTable			photosTable;
 	/** The participated table. */
-	ParticipatedTable*	participatedTable;
+	ParticipatedTable	participatedTable;
 
 	/** The project settings table. */
-	SettingsTable*		settingsTable;
+	SettingsTable		settingsTable;
 	
 	/** The project settings, based on a table. */
-	ProjectSettings*	projectSettings;
+	ProjectSettings		projectSettings;
 	
 	Database();
 	~Database();
@@ -118,16 +118,16 @@ public:
 	Range*		getRangeAt		(BufferRowIndex rowIndex) const;
 	Country*	getCountryAt	(BufferRowIndex rowIndex) const;
 	
-	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable* table, QSet<ValidItemID> primaryKeys);
-	void removeRows(QWidget* parent, NormalTable* table, QSet<ValidItemID> primaryKeys);
+	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable& table, QSet<ValidItemID> primaryKeys);
+	void removeRows(QWidget* parent, NormalTable& table, QSet<ValidItemID> primaryKeys);
 private:
-	QList<WhatIfDeleteResult> removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable* table, QSet<ValidItemID> primaryKeys);
+	QList<WhatIfDeleteResult> removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable& table, QSet<ValidItemID> primaryKeys);
 	
 	void populateBuffers(QWidget* parent);
 	
 	void computeBreadcrumbMatrix();
 public:
-	Breadcrumbs getBreadcrumbsFor(const NormalTable* startTable, const NormalTable* targetTable) const;
+	Breadcrumbs getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const;
 	
 	static QString tr(const QString& string);
 	

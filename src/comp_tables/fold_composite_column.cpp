@@ -274,7 +274,7 @@ QStringList HikerListFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buffe
 	QStringList stringList;
 	
 	QString defaultHikerString = QString();
-	ProjectSetting<int>& defaultHiker = getProjectSettings()->defaultHiker;
+	const ProjectSetting<int>& defaultHiker = getProjectSettings().defaultHiker;
 	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
