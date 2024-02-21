@@ -41,7 +41,7 @@ QT_END_NAMESPACE
 /**
  * Control class for the main window of the application.
  */
-class MainWindow : public QMainWindow, public Ui_MainWindow
+class MainWindow : public QMainWindow, private Ui_MainWindow
 {
 	Q_OBJECT
 	
@@ -118,19 +118,19 @@ public:
 	
 private:
 	// Execute user commands
-	void viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
-	void newItem(const ItemTypeMapper* const mapper);
-	void duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
-	void editItem(const ItemTypeMapper* const mapper, const QModelIndex& index);
-	void deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowIndex> viewRowIndices);
+	void viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
+	void newItem(const ItemTypeMapper& mapper);
+	void duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
+	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
+	void deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices);
 	// Helpers
 	void setFilteredAscentsCounterVisible(bool visible);
 	void updateTopBarButtonVisibilities();
-	void performUpdatesAfterUserAction(const ItemTypeMapper* const mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
+	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void scrollToTopAfterSorting();
 	void updateFilters(const ItemTypeMapper* mapper = nullptr);
 public:
-	void updateSelectionAfterUserAction(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex);
+	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	
 private slots:
 	// UI event handlers
@@ -185,7 +185,8 @@ private:
 	
 	// General helpers
 	QTableView* getCurrentTableView() const;
-	ItemTypeMapper* getActiveMapper() const;
+	ItemTypeMapper* getActiveMapperOrNull() const;
+	ItemTypeMapper& getActiveMapper() const;
 	void addToRecentFilesList(const QString& filepath);
 	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);

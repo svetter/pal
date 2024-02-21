@@ -242,6 +242,23 @@ public:
 
 
 /**
+ * A helper struct for passing pointers to item-specific UI elements to the constructor of
+ * ItemTypeMapper subtypes.
+ */
+struct TypeMapperPointers {
+	/** The item type's tab in the main window. */
+	QWidget*		tab;
+	/** The item type's table view in the main window. */
+	QTableView*		tableView;
+	/** The item type's stats scroll area in the main window. */
+	QScrollArea*	statsScrollArea;
+	/** The item type's action in the main window's menu bar for creating a new item. */
+	QAction*		newItemAction;
+	/** The item type's button in the main window for creating a new item. */
+	QPushButton*	newItemButton;
+};
+
+/**
  * The arguments passed to the constructor of each ItemTypeMapper subtype.
  * 
  * These arguments are dynamic, i.e. only known at runtime, so they have to be passed to the
@@ -249,11 +266,7 @@ public:
  */
 #define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
 	Database&					db, \
-	QWidget*					tab, \
-	QTableView*					tableView, \
-	QScrollArea*				statsScrollArea, \
-	QAction*					newItemAction, \
-	QPushButton*				newItemButton, \
+	TypeMapperPointers&&		pointerSupply, \
 	ProjectMultiSetting<int>*	columnWidthsSetting, \
 	ProjectMultiSetting<int>*	columnOrderSetting, \
 	ProjectMultiSetting<bool>*	hiddenColumnsSetting, \
@@ -264,11 +277,11 @@ public:
  * ItemTypeMapper constructor.
  */
 #define TYPE_MAPPER_DYNAMIC_ARG_NAMES \
-	tab, \
-	tableView, \
-	statsScrollArea, \
-	newItemAction, \
-	newItemButton, \
+	pointerSupply.tab, \
+	pointerSupply.tableView, \
+	pointerSupply.statsScrollArea, \
+	pointerSupply.newItemAction, \
+	pointerSupply.newItemButton, \
 	columnWidthsSetting, \
 	columnOrderSetting, \
 	hiddenColumnsSetting, \
@@ -285,11 +298,7 @@ public:
 	 * Creates a new AscentMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -298,7 +307,7 @@ public:
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeAscent, "ascent", db,
 			db.ascentsTable,
-			new CompositeAscentsTable(db, tableView),
+			new CompositeAscentsTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
 			&Settings::ascentsStats_show,
@@ -320,11 +329,7 @@ public:
 	 * Creates a new PeakMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -333,7 +338,7 @@ public:
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypePeak, "peak", db,
 			db.peaksTable,
-			new CompositePeaksTable(db, tableView),
+			new CompositePeaksTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
 			&Settings::peaksStats_show,
@@ -355,11 +360,7 @@ public:
 	 * Creates a new TripMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -368,7 +369,7 @@ public:
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeTrip, "trip", db,
 			db.tripsTable,
-			new CompositeTripsTable(db, tableView),
+			new CompositeTripsTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
 			&Settings::tripsStats_show,
@@ -390,11 +391,7 @@ public:
 	 * Creates a new HikerMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -403,7 +400,7 @@ public:
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeHiker, "hiker", db,
 			db.hikersTable,
-			new CompositeHikersTable(db, tableView),
+			new CompositeHikersTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
 			&Settings::hikersStats_show,
@@ -425,11 +422,7 @@ public:
 	 * Creates a new RegionMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -438,7 +431,7 @@ public:
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRegion, "region", db,
 			db.regionsTable,
-			new CompositeRegionsTable(db, tableView),
+			new CompositeRegionsTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
 			&Settings::regionsStats_show,
@@ -460,11 +453,7 @@ public:
 	 * Creates a new RangeMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -473,7 +462,7 @@ public:
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRange, "range", db,
 			db.rangesTable,
-			new CompositeRangesTable(db, tableView),
+			new CompositeRangesTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
 			&Settings::rangesStats_show,
@@ -495,11 +484,7 @@ public:
 	 * Creates a new CountryMapper instance.
 	 * 
 	 * @param db					The database.
-	 * @param tab					The tab in the main window.
-	 * @param tableView				The table view in the main window showing the composite table.
-	 * @param statsScrollArea		The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction			The action in the main window menu for creating a new ascent.
-	 * @param newItemButton			The button in the main window for creating a new ascent.
+	 * @param pointerSupply			Pointers to item-specific UI elements.
 	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting	The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
@@ -508,7 +493,7 @@ public:
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeCountry, "country", db,
 			db.countriesTable,
-			new CompositeCountriesTable(db, tableView),
+			new CompositeCountriesTable(db, pointerSupply.tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,
 			&Settings::countriesStats_show,
@@ -534,6 +519,21 @@ public:
  */
 class ItemTypesHandler {
 public:
+	/** The ItemTypeMapper instance for the ascent item type. */
+	AscentMapper	ascentMapper;
+	/** The ItemTypeMapper instance for the peak item type. */
+	PeakMapper		peakMapper;
+	/** The ItemTypeMapper instance for the trip item type. */
+	TripMapper		tripMapper;
+	/** The ItemTypeMapper instance for the hiker item type. */
+	HikerMapper		hikerMapper;
+	/** The ItemTypeMapper instance for the region item type. */
+	RegionMapper	regionMapper;
+	/** The ItemTypeMapper instance for the range item type. */
+	RangeMapper		rangeMapper;
+	/** The ItemTypeMapper instance for the country item type. */
+	CountryMapper	countryMapper;
+	
 	/** The ItemTypeMapper instances for all item types. */
 	const QMap<PALItemType, ItemTypeMapper*> mappers;
 	
@@ -543,49 +543,37 @@ public:
 	ParticipatedTable& participatedTable;
 	
 	/**
-	 * Creates a new ItemTypesHandler instance.
+	 * Creates the ItemTypesHandler instance.
 	 * 
-	 * @param ascentMapper		The mapper for item type ascent.
-	 * @param peakMapper		The mapper for item type peak.
-	 * @param tripMapper		The mapper for item type trip.
-	 * @param hikerMapper		The mapper for item type hiker.
-	 * @param regionMapper		The mapper for item type region.
-	 * @param rangeMapper		The mapper for item type range.
-	 * @param countryMapper		The mapper for item type country.
-	 * @param photosTable		The database's photos table.
-	 * @param participatedTable	The database's hiker participation table.
+	 * @param db				The database.
+	 * @param pointerSupply		A map of pointer supply structs for each item type.
 	 */
-	inline ItemTypesHandler(
-		AscentMapper*		ascentMapper,
-		PeakMapper*			peakMapper,
-		TripMapper*			tripMapper,
-		HikerMapper*		hikerMapper,
-		RegionMapper*		regionMapper,
-		RangeMapper*		rangeMapper,
-		CountryMapper*		countryMapper,
-		PhotosTable&		photosTable,
-		ParticipatedTable&	participatedTable
-	) :
+	inline ItemTypesHandler(Database& db, QMap<PALItemType, TypeMapperPointers>&& pointerSupply) :
+		ascentMapper	(AscentMapper	(db, pointerSupply.value(ItemTypeAscent),	&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable)),
+		peakMapper		(PeakMapper		(db, pointerSupply.value(ItemTypePeak),		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable)),
+		tripMapper		(TripMapper		(db, pointerSupply.value(ItemTypeTrip),		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable)),
+		hikerMapper		(HikerMapper	(db, pointerSupply.value(ItemTypeHiker),	&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable)),
+		regionMapper	(RegionMapper	(db, pointerSupply.value(ItemTypeRegion),	&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable)),
+		rangeMapper		(RangeMapper	(db, pointerSupply.value(ItemTypeRange),	&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable)),
+		countryMapper	(CountryMapper	(db, pointerSupply.value(ItemTypeCountry),	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable)),
 		mappers({
-			{ItemTypeAscent,	ascentMapper},
-			{ItemTypePeak,		peakMapper},
-			{ItemTypeTrip,		tripMapper},
-			{ItemTypeHiker,		hikerMapper},
-			{ItemTypeRegion,	regionMapper},
-			{ItemTypeRange,		rangeMapper},
-			{ItemTypeCountry,	countryMapper},
+			{ItemTypeAscent,	(&ascentMapper)},
+			{ItemTypePeak,		(&peakMapper)},
+			{ItemTypeTrip,		(&tripMapper)},
+			{ItemTypeHiker,		(&hikerMapper)},
+			{ItemTypeRegion,	(&regionMapper)},
+			{ItemTypeRange,		(&rangeMapper)},
+			{ItemTypeCountry,	(&countryMapper)}
 		}),
-		photosTable(photosTable),
-		participatedTable(participatedTable)
+		photosTable(db.photosTable),
+		participatedTable(db.participatedTable)
 	{}
 	
 	/**
 	 * Destroys the ItemTypesHandler.
 	 */
 	inline ~ItemTypesHandler()
-	{
-		qDeleteAll(mappers);
-	}
+	{}
 	
 	
 	/**
@@ -596,7 +584,7 @@ public:
 	inline const QList<ItemTypeMapper*> getAllMappers() const
 	{
 		QList<ItemTypeMapper*> list = QList<ItemTypeMapper*>();
-		for (ItemTypeMapper* mapper : mappers) {
+		for (ItemTypeMapper* const mapper : mappers) {
 			list += mapper;
 		}
 		return list;
@@ -608,9 +596,11 @@ public:
 	 * @param type	The item type.
 	 * @return		The ItemTypeMapper instance for the given item type.
 	 */
-	inline const ItemTypeMapper* get(PALItemType type) const
+	inline const ItemTypeMapper& get(PALItemType type) const
 	{
-		return mappers.value(type);
+		ItemTypeMapper* mapper = mappers.value(type);
+		assert(mapper);
+		return *mapper;
 	}
 	
 	/**
@@ -631,14 +621,12 @@ public:
 	}
 	
 	/**
-	 * Returns the ItemTypeMapper for the item type to which the given table view belongs.
+	 * Returns the ItemTypeMapper which belongs to the currently active tab in the main window, or
+	 * nullptr if no tab is active.
 	 * 
-	 * Optionally, writes back a bool via pointer to indicate whether the given table view belongs
-	 * to a debug table.
-	 * 
-	 * @return	The ItemTypeMapper for the item type to which the given table view belongs, or nullptr if no table tab is open.
+	 * @return	The ItemTypeMapper for the currently active tab, or nullptr if no tab is active.
 	 */
-	inline ItemTypeMapper* getActiveMapper() const
+	inline ItemTypeMapper* getActiveMapperOrNull() const
 	{
 		ItemTypeMapper* matchingMapper = nullptr;
 		for (ItemTypeMapper* const mapper : mappers) {
@@ -648,6 +636,20 @@ public:
 			}
 		}
 		return matchingMapper;
+	}
+	
+	/**
+	 * Returns the ItemTypeMapper which belongs to the currently active tab in the main window.
+	 * 
+	 * @pre An item tab must currently be active.
+	 * 
+	 * @return	The ItemTypeMapper for the currently active tab.
+	 */
+	inline ItemTypeMapper& getActiveMapper() const
+	{
+		ItemTypeMapper* mapper = getActiveMapperOrNull();
+		assert(mapper);
+		return *mapper;
 	}
 	
 	/**

@@ -119,12 +119,12 @@ void DataExportThread::abort() {
 void DataExportThread::exportOneTable()
 {
 	// Assemble column info list
-	const ItemTypeMapper* const mapper = typesHandler->get(ItemTypeAscent);
-	CompositeTable* const compTable = mapper->compTable;
+	const ItemTypeMapper& mapper = typesHandler->get(ItemTypeAscent);
+	CompositeTable* const compTable = mapper.compTable;
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	{
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper->compTable->getCompleteExportColumnList()) {
+		for (const CompositeColumn* column : mapper.compTable->getCompleteExportColumnList()) {
 			// Determine whether to skip this column
 			bool skipColumn = false;
 			skipColumn |= column->isFilterOnlyColumn();
