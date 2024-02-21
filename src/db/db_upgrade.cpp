@@ -38,7 +38,7 @@
  * @param db		The database object.
  * @param parent	The parent window.
  */
-DatabaseUpgrader::DatabaseUpgrader(Database* db, QWidget* parent) :
+DatabaseUpgrader::DatabaseUpgrader(Database& db, QWidget* parent) :
 	db(db),
 	parent(parent)
 {}
@@ -66,7 +66,7 @@ DatabaseUpgrader::DatabaseUpgrader(Database* db, QWidget* parent) :
  */
 bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> executeAfterStructuralUpgrade)
 {
-	assert(db->databaseLoaded);
+	assert(db.databaseLoaded);
 	
 	const QString currentDbVersion	= determineCurrentDbVersion();
 	const QString appVersion		= getAppVersion();
@@ -112,7 +112,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		// Remove old project settings table
 		removeSettingsTableFromBeforeV1_2_0();
 		// Create new project settings table
-		db->settingsTable.createTableInSql(parent);
+		db.settingsTable.createTableInSql(parent);
 	}
 	
 	
@@ -130,7 +130,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	if (isBelowVersion(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
-			db->projectSettings.defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
+			db.projectSettings.defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
 		}
 	}
 	
@@ -138,7 +138,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	// Set new version
 	if (isBelowVersion(currentDbVersion, appVersion)) {
 		qDebug().noquote().nospace() << "Upgraded database from v" << currentDbVersion << " to v" << appVersion;
-		db->projectSettings.databaseVersion.set(parent, appVersion);
+		db.projectSettings.databaseVersion.set(parent, appVersion);
 		
 		showUpgradeSuccessMessage(currentDbVersion, appVersion);
 	}
@@ -180,7 +180,7 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 	// Settings table has current format, get version
 	queryString = QString(
 		"SELECT settingValue FROM ProjectSettings"
-		"\nWHERE settingKey='%1'").arg(db->projectSettings.databaseVersion.key);
+		"\nWHERE settingKey='%1'").arg(db.projectSettings.databaseVersion.key);
 	query = QSqlQuery();
 	if (!query.prepare(queryString) || !query.exec()) {
 		displayError(parent, query.lastError(), queryString);
@@ -203,7 +203,7 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
  */
 bool DatabaseUpgrader::promptUserAboutUpgradeAndBackup(const QString& oldDbVersion, bool claimOlderVersionsIncompatible)
 {
-	QString filepath = db->getCurrentFilepath();
+	QString filepath = db.getCurrentFilepath();
 	QString windowTitle = Database::tr("Database upgrade necessary");
 	QString compatibilityStatement = claimOlderVersionsIncompatible
 		? Database::tr("After the upgrade, previous versions of PAL will no longer be able to open the file.")
@@ -240,7 +240,7 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
 	QString windowTitle = Database::tr("App version outdated");
 	QString backupNote = Database::tr("Note: A copy of the project file in its current state will be created as a backup.");
 	QString confirmationQuestion = Database::tr("Do you want to open the file anyway?");
-	QString message = db->getCurrentFilepath() + "\n\n"
+	QString message = db.getCurrentFilepath() + "\n\n"
 		+ Database::tr("This project file has version %1, while the app has version %2."
 			"\nOpening a file with an older version of PAL can lead to errors, crashes and data corruption."
 			"It is strongly recommended to only use PAL version %1 or newer to open this file."
@@ -268,7 +268,7 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
 bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion, const QString& currentDbVersion)
 {
 	// Determine backup filename
-	QString filepath = db->getCurrentFilepath();
+	QString filepath = db.getCurrentFilepath();
 	QString oldVersionUnderscore = currentDbVersion;
 	oldVersionUnderscore.replace(".", "_");
 	QString backupFilepath = filepath + ".v" + oldVersionUnderscore + ".bak";

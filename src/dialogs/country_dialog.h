@@ -41,7 +41,7 @@ class CountryDialog : public ItemDialog, public Ui_CountryDialog
 	const Country* init;
 	
 public:
-	CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* init);
+	CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* init);
 	~CountryDialog();
 	
 	virtual QString getEditWindowTitle() override;
@@ -61,11 +61,11 @@ private:
 
 
 
-BufferRowIndex	openNewCountryDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db);
-bool			openEditCountryDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
-bool			openDeleteCountriesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+BufferRowIndex	openNewCountryDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db);
+bool			openEditCountryDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openDeleteCountriesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openCountryDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* originalCountry);
+BufferRowIndex	openCountryDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* originalCountry);
 
 
 

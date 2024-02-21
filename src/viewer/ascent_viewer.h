@@ -39,7 +39,7 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** The application's main window. */
 	MainWindow* const mainWindow;
 	/** The project's database. */
-	Database* const db;
+	Database& db;
 	/** The application's item types handler. */
 	const ItemTypesHandler* typesHandler;
 	/** The composite ascents table. */
@@ -115,7 +115,7 @@ private:
 	inline static QString imageLoadErrorMessage = QString();
 	
 public:
-	AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
+	AscentViewer(MainWindow* parent, Database& db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
 	
 private:

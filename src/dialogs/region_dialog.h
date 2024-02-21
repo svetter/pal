@@ -46,7 +46,7 @@ class RegionDialog : public ItemDialog, public Ui_RegionDialog
 	QList<ValidItemID> selectableCountryIDs;
 	
 public:
-	RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Region* init);
+	RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* init);
 	~RegionDialog();
 	
 	virtual QString getEditWindowTitle() override;
@@ -70,11 +70,11 @@ private:
 
 
 
-BufferRowIndex	openNewRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db);
-bool			openEditRegionDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
-bool			openDeleteRegionsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+BufferRowIndex	openNewRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db);
+bool			openEditRegionDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openDeleteRegionsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Region* originalRegion);
+BufferRowIndex	openRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* originalRegion);
 
 
 

@@ -41,7 +41,7 @@ class RangeDialog : public ItemDialog, public Ui_RangeDialog
 	const Range* init;
 	
 public:
-	RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* init);
+	RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* init);
 	~RangeDialog();
 	
 	virtual QString getEditWindowTitle() override;
@@ -62,11 +62,11 @@ private:
 
 
 
-BufferRowIndex	openNewRangeDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db);
-bool			openEditRangeDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
-bool			openDeleteRangesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+BufferRowIndex	openNewRangeDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db);
+bool			openEditRangeDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openDeleteRangesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openRangeDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* originalRange);
+BufferRowIndex	openRangeDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* originalRange);
 
 
 

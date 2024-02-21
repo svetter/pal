@@ -51,7 +51,7 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
-AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* init) :
+AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(init),
 	selectableRegionIDs(QList<ValidItemID>()),
@@ -105,9 +105,9 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database* d
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	// Set initial hiker
-	ItemID defaultHikerID = db->projectSettings.defaultHiker.get();
+	ItemID defaultHikerID = db.projectSettings.defaultHiker.get();
 	if (defaultHikerID.isValid()) {
-		Hiker* hiker = db->getHiker(FORCE_VALID(defaultHikerID));
+		Hiker* hiker = db.getHiker(FORCE_VALID(defaultHikerID));
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
@@ -156,8 +156,8 @@ QString AscentDialog::getEditWindowTitle()
  */
 void AscentDialog::populateComboBoxes()
 {
-	populateItemCombo(db->regionsTable, db->regionsTable.nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"));
-	populateItemCombo(db->peaksTable, db->peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"));
+	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
@@ -172,7 +172,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	populateItemCombo(db->tripsTable, db->tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
 }
 
 
@@ -229,7 +229,7 @@ void AscentDialog::insertInitData()
 	// Hikers
 	hikersModel.clear();
 	for (const ValidItemID& hikerID : init->hikerIDs) {
-		Hiker* hiker = db->getHiker(hikerID);
+		Hiker* hiker = db.getHiker(hikerID);
 		hikersModel.addHiker(hiker);
 		delete hiker;
 	}
@@ -299,9 +299,9 @@ void AscentDialog::handle_regionFilterChanged()
 {
 	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
 	if (regionID.isValid()) {
-		populateItemCombo(db->peaksTable, db->peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db->peaksTable.regionIDColumn, regionID);
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, regionID);
 	} else {
-		populateItemCombo(db->peaksTable, db->peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
 	}
 }
 
@@ -315,8 +315,8 @@ void AscentDialog::handle_newPeak()
 	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
-	populateItemCombo(db->peaksTable, db->peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
-	const ValidItemID newPeakID = db->peaksTable.getPrimaryKeyAt(newPeakIndex);
+	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+	const ValidItemID newPeakID = db.peaksTable.getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None
 }
@@ -386,8 +386,8 @@ void AscentDialog::handle_newTrip()
 	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
-	populateItemCombo(db->tripsTable, db->tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
-	const ValidItemID newTripID = db->tripsTable.getPrimaryKeyAt(newTripIndex);
+	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+	const ValidItemID newTripID = db.tripsTable.getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(newTripID) + 1);	// 0 is None
 }
 
@@ -401,7 +401,7 @@ void AscentDialog::handle_addHiker()
 	ItemID hikerID = openAddHikerDialog(this, mainWindow, db);
 	if (hikerID.isInvalid()) return;
 	if (hikersModel.containsHiker(FORCE_VALID(hikerID))) return;
-	Hiker* hiker = db->getHiker(FORCE_VALID(hikerID));
+	Hiker* hiker = db.getHiker(FORCE_VALID(hikerID));
 	hikersModel.addHiker(hiker);
 	delete hiker;
 }
@@ -589,7 +589,7 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
  * @param db			The project database.
  * @return				The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
+BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	return openAscentDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -603,9 +603,9 @@ BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWin
  * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
  * @return					The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
+	Ascent* originalAscent = db.getAscentAt(bufferRowIndex);
 	return openAscentDialogAndStore(parent, mainWindow, db, duplicateItem, originalAscent);
 }
 
@@ -618,9 +618,9 @@ BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* m
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Ascent* originalAscent = db->getAscentAt(bufferRowIndex);
+	Ascent* originalAscent = db.getAscentAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, mainWindow, db, editItem, originalAscent);
 	return editedIndex.isValid();
 }
@@ -634,17 +634,17 @@ bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Data
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		ascentIDs += VALID_ITEM_ID(db->ascentsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
+		ascentIDs += VALID_ITEM_ID(db.ascentsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->ascentsTable, ascentIDs);
+	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.ascentsTable, ascentIDs);
 	
 	if (Settings::confirmDelete.get()) {
 		bool plural = ascentIDs.size() > 1;
@@ -653,7 +653,7 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 		if (!proceed) return false;
 	}
 	
-	db->removeRows(parent, db->ascentsTable, ascentIDs);
+	db.removeRows(parent, db.ascentsTable, ascentIDs);
 	return true;
 }
 
@@ -669,7 +669,7 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
  * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* originalAscent)
+BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* originalAscent)
 {
 	BufferRowIndex newAscentIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -685,23 +685,23 @@ BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newAscentIndex = db->ascentsTable.addRow(parent, extractedAscent);
-			db->participatedTable.addRows(parent, extractedAscent);
-			db->photosTable.addRows(parent, extractedAscent);
+			newAscentIndex = db.ascentsTable.addRow(parent, extractedAscent);
+			db.participatedTable.addRows(parent, extractedAscent);
+			db.photosTable.addRows(parent, extractedAscent);
 			break;
 		case editItem:
 			extractedAscent->ascentID = originalAscent->ascentID;
 			
-			db->ascentsTable.updateRow(parent, extractedAscent);
+			db.ascentsTable.updateRow(parent, extractedAscent);
 			if (originalAscent->hikerIDs != extractedAscent->hikerIDs) {
-				db->participatedTable.updateRows(parent, extractedAscent);
+				db.participatedTable.updateRows(parent, extractedAscent);
 			}
 			if (originalAscent->photos != extractedAscent->photos) {
-				db->photosTable.updateRows(parent, extractedAscent);
+				db.photosTable.updateRows(parent, extractedAscent);
 			}
 			
 			// Set result to existing buffer row to signal that changes were made
-			newAscentIndex = db->ascentsTable.getBufferIndexForPrimaryKey(originalAscentID);
+			newAscentIndex = db.ascentsTable.getBufferIndexForPrimaryKey(originalAscentID);
 			break;
 		default:
 			assert(false);

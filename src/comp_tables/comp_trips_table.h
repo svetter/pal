@@ -66,19 +66,19 @@ public:
 	 * @param db		The project database
 	 * @param tableView	The trips table view in the main window
 	 */
-	inline CompositeTripsTable(Database* db, QTableView* tableView) :
-		CompositeTable(db, db->tripsTable, tableView),
+	inline CompositeTripsTable(Database& db, QTableView* tableView) :
+		CompositeTable(db, db.tripsTable, tableView),
 		//																name				uiName					suffix			fold op			[breadcrumbs +] content column
-		indexColumn				(IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db->tripsTable.startDateColumn,	Qt::AscendingOrder},					{db->tripsTable.endDateColumn,	Qt::AscendingOrder} })),
-		nameColumn				(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable.nameColumn)),
-		startDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable.startDateColumn)),
-		endDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db->tripsTable.endDateColumn)),
-		lengthColumn			(DifferenceCompositeColumn		(this,	"length",			tr("Length"),			tr(" days"),					db->tripsTable.endDateColumn,		db->tripsTable.startDateColumn)),
-		numAscentsColumn		(NumericFoldCompositeColumn		(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		crumbsTo(db, db->ascentsTable))),
-		avgElevationGainColumn	(NumericFoldCompositeColumn		(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	crumbsTo(db, db->ascentsTable),		db->ascentsTable.elevationGainColumn)),
-		maxElevationGainColumn	(NumericFoldCompositeColumn		(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable.elevationGainColumn)),
-		sumElevationGainColumn	(NumericFoldCompositeColumn		(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		crumbsTo(db, db->ascentsTable),		db->ascentsTable.elevationGainColumn)),
-		listHikersColumn		(HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Participants"),										crumbsTo(db, db->hikersTable),		db->hikersTable.nameColumn))
+		indexColumn				(IndexCompositeColumn			(this,	"index",			tr("Index"),			noSuffix,						{ {db.tripsTable.startDateColumn,	Qt::AscendingOrder},					{db.tripsTable.endDateColumn,	Qt::AscendingOrder} })),
+		nameColumn				(DirectCompositeColumn			(this,												noSuffix,						db.tripsTable.nameColumn)),
+		startDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db.tripsTable.startDateColumn)),
+		endDateColumn			(DirectCompositeColumn			(this,												noSuffix,						db.tripsTable.endDateColumn)),
+		lengthColumn			(DifferenceCompositeColumn		(this,	"length",			tr("Length"),			tr(" days"),					db.tripsTable.endDateColumn,		db.tripsTable.startDateColumn)),
+		numAscentsColumn		(NumericFoldCompositeColumn		(this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		crumbsTo(db, db.ascentsTable))),
+		avgElevationGainColumn	(NumericFoldCompositeColumn		(this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	crumbsTo(db, db.ascentsTable),		db.ascentsTable.elevationGainColumn)),
+		maxElevationGainColumn	(NumericFoldCompositeColumn		(this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		crumbsTo(db, db.ascentsTable),		db.ascentsTable.elevationGainColumn)),
+		sumElevationGainColumn	(NumericFoldCompositeColumn		(this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		crumbsTo(db, db.ascentsTable),		db.ascentsTable.elevationGainColumn)),
+		listHikersColumn		(HikerListFoldCompositeColumn	(this,	"listHikers",		tr("Participants"),										crumbsTo(db, db.hikersTable),		db.hikersTable.nameColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(nameColumn);

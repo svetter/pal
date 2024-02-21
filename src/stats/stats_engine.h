@@ -49,14 +49,14 @@ class StatsEngine : protected QObject
 	
 protected:
 	/** The database. */
-	Database* const db;
+	Database& db;
 	
 	/** A set of all charts managed by this stats engine. */
 	QSet<Chart*> charts;
 	/** Whether each of the charts is currently dirty and needs to be updated before being shown. */
 	QMap<Chart*, bool> dirty;
 	
-	StatsEngine(Database* db);
+	StatsEngine(Database& db);
 	virtual ~StatsEngine();
 	
 public:
@@ -95,7 +95,7 @@ class GeneralStatsEngine : public StatsEngine
 	TimeScatterChart*	heightsScatterChart;
 	
 public:
-	GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr);
+	GeneralStatsEngine(Database& db, QVBoxLayout** const statisticsTabLayoutPtr);
 	virtual ~GeneralStatsEngine();
 	
 	void setupStatsTab();
@@ -189,7 +189,7 @@ class ItemStatsEngine : public StatsEngine
 	QMap<BufferRowIndex, qreal>								topElevGainSumCache;
 	
 public:
-	ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable& baseTable, QVBoxLayout* statsLayout);
+	ItemStatsEngine(Database& db, PALItemType itemType, const NormalTable& baseTable, QVBoxLayout* statsLayout);
 	virtual ~ItemStatsEngine();
 	
 	void setupStatsPanel();

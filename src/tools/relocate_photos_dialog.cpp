@@ -38,7 +38,7 @@
  * @param parent	The parent window.
  * @param db		The project database.
  */
-RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database* db) :
+RelocatePhotosDialog::RelocatePhotosDialog(QWidget* parent, Database& db) :
 	QDialog(parent),
 	db(db),
 	running(false)
@@ -204,7 +204,7 @@ void RelocatePhotosDialog::handle_callback_progressUpdate(int processed, int upd
  */
 void RelocatePhotosDialog::handle_callback_updateFilepath(BufferRowIndex bufferRowIndex, QString newFilepath)
 {
-	return db->photosTable.updateFilepathAt(this, bufferRowIndex, newFilepath);
+	return db.photosTable.updateFilepathAt(this, bufferRowIndex, newFilepath);
 }
 
 

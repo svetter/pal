@@ -87,7 +87,7 @@ class CompositeTable : public QAbstractTableModel {
 	Q_OBJECT
 	
 	/** The project database. */
-	const Database* const db;
+	const Database& db;
 	/** The database table this table is based on. */
 	const NormalTable& baseTable;
 	/** The UI table view this table is displayed in. */
@@ -132,7 +132,7 @@ protected:
 	/** The suffix to append to all values given in meters. */
 	static inline QString mSuffix = " m";
 	
-	CompositeTable(const Database* db, NormalTable& baseTable, QTableView* tableView);
+	CompositeTable(const Database& db, NormalTable& baseTable, QTableView* tableView);
 public:
 	~CompositeTable();
 	
@@ -200,7 +200,7 @@ private:
 	QList<QVariant> computeWholeColumnContent(int columnIndex) const;
 	
 protected:
-	Breadcrumbs crumbsTo(const Database* db, const NormalTable& destinationTable) const;
+	Breadcrumbs crumbsTo(const Database& db, const NormalTable& destinationTable) const;
 	
 public:
 	const ProjectSettings& getProjectSettings() const;

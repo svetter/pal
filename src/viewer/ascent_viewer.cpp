@@ -43,7 +43,7 @@
  * @param typesHandler	The application's ItemTypesHandler.
  * @param viewRowIndex	The view row index of the ascent to open in the viewer.
  */
-AscentViewer::AscentViewer(MainWindow* parent, Database* db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex) :
+AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex) :
 	QDialog(parent),
 	mainWindow(parent),
 	db(db),
@@ -258,7 +258,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	
 	currentViewRowIndex	= viewRowIndex;
 	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
-	currentAscentID = db->ascentsTable.getPrimaryKeyAt(bufferRowIndex);
+	currentAscentID = db.ascentsTable.getPrimaryKeyAt(bufferRowIndex);
 	// Update main window selection
 	mainWindow->updateSelectionAfterUserAction(typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
@@ -322,9 +322,9 @@ void AscentViewer::updateInfoArea()
 	
 	BufferRowIndex ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	
-	ItemID tripID = db->ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
+	ItemID tripID = db.ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
 	if (tripID.isValid()) {
-		BufferRowIndex tripBufferRowIndex = db->tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
+		BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
 		tripNameLabel			->setText	(compAscents->tripColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		QString startDate					= compTrips->startDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
 		QString endDate						= compTrips->endDateColumn			.getFormattedValueAt(tripBufferRowIndex).toString();
@@ -336,9 +336,9 @@ void AscentViewer::updateInfoArea()
 		tripDatesLabel			->setText	(dateRange);
 	}
 	
-	ItemID peakID = db->ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
+	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
 	if (peakID.isValid()) {
-		BufferRowIndex peakBufferRowIndex = db->peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
+		BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
 		peakNameLabel			->setText	(compAscents->peakColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakHeightLabel			->setText	(compAscents->peakHeightColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakVolcanoCheckbox		->setChecked(compAscents->volcanoColumn			.getRawValueAt(ascentBufferRowIndex).toBool());
@@ -346,9 +346,9 @@ void AscentViewer::updateInfoArea()
 		peakRangeLabel			->setText	(compAscents->rangeColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakCountryLabel		->setText	(compAscents->countryColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakContinentLabel		->setText	(compAscents->continentColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
-		QString mapsLink					= db->peaksTable.mapsLinkColumn		.getValueAt(peakBufferRowIndex).toString();
-		QString earthLink					= db->peaksTable.earthLinkColumn	.getValueAt(peakBufferRowIndex).toString();
-		QString wikiLink					= db->peaksTable.wikiLinkColumn		.getValueAt(peakBufferRowIndex).toString();
+		QString mapsLink					= db.peaksTable.mapsLinkColumn		.getValueAt(peakBufferRowIndex).toString();
+		QString earthLink					= db.peaksTable.earthLinkColumn		.getValueAt(peakBufferRowIndex).toString();
+		QString wikiLink					= db.peaksTable.wikiLinkColumn		.getValueAt(peakBufferRowIndex).toString();
 		if (!mapsLink.isEmpty() || !earthLink.isEmpty() || !wikiLink.isEmpty()) peakLinksBox->setVisible(true);
 		if (!mapsLink.isEmpty()) {
 			peakMapsLinkLabel		->setText("[" + tr("Google Maps") + "](" + mapsLink + ")");
@@ -370,9 +370,9 @@ void AscentViewer::updateInfoArea()
 		ascentTitleLabel		->setVisible(true);
 		ascentInfoLine			->setVisible(true);
 	}
-	ascentDateLabel				->setText	(db->ascentsTable.dateColumn		.getValueAt			(ascentBufferRowIndex).toDate().toString("dd.MM.yyyy"));
-	ascentTimeLabel				->setText	(db->ascentsTable.timeColumn		.getValueAt			(ascentBufferRowIndex).toTime().toString("HH:mm"));
-	ascentPeakOnDayLabel		->setText	(db->ascentsTable.peakOnDayColumn	.getValueAt			(ascentBufferRowIndex).toString() + ".");
+	ascentDateLabel				->setText	(db.ascentsTable.dateColumn			.getValueAt				(ascentBufferRowIndex).toDate().toString("dd.MM.yyyy"));
+	ascentTimeLabel				->setText	(db.ascentsTable.timeColumn			.getValueAt				(ascentBufferRowIndex).toTime().toString("HH:mm"));
+	ascentPeakOnDayLabel		->setText	(db.ascentsTable.peakOnDayColumn	.getValueAt				(ascentBufferRowIndex).toString() + ".");
 	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
 	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		.getFormattedValueAt	(ascentBufferRowIndex).toString());
 	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		.getRawValueAt			(ascentBufferRowIndex).toBool());
@@ -385,7 +385,7 @@ void AscentViewer::updateInfoArea()
 		ascentParticipantsBox->setVisible(true);
 	}
 	
-	descriptionTextBrowser->setText(db->ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString());
+	descriptionTextBrowser->setText(db.ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString());
 }
 
 /**
@@ -420,9 +420,9 @@ void AscentViewer::updateAscentNavigationTargets()
 	numAscentsOfPeak			= 0;
 	
 	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	ItemID peakID = db->ascentsTable.peakIDColumn.getValueAt(bufferRowIndex);
+	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
-		QList<BufferRowIndex> matchingBufferRowIndices = db->ascentsTable.getMatchingBufferRowIndices(db->ascentsTable.peakIDColumn, peakID.asQVariant());
+		QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, peakID.asQVariant());
 		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
 		QList<ViewRowIndex> ascentOfPeakViewRowIndices = QList<ViewRowIndex>();
 		for (const BufferRowIndex& matchingBufferRowIndex : matchingBufferRowIndices) {
@@ -492,7 +492,7 @@ void AscentViewer::loadPhotosList()
 {
 	photos.clear();
 	
-	QList<Photo> savedPhotos = db->photosTable.getPhotosForAscent(FORCE_VALID(currentAscentID));
+	QList<Photo> savedPhotos = db.photosTable.getPhotosForAscent(FORCE_VALID(currentAscentID));
 	if (!savedPhotos.isEmpty()) {
 		photos = savedPhotos;
 	}
@@ -832,7 +832,7 @@ void AscentViewer::savePhotosList()
 	for (int i = 0; i < photos.size(); i++) {
 		photos[0].sortIndex = i;
 	}
-	db->photosTable.updateRows(this, FORCE_VALID(currentAscentID), photos);
+	db.photosTable.updateRows(this, FORCE_VALID(currentAscentID), photos);
 }
 
 
@@ -847,9 +847,9 @@ void AscentViewer::saveDescription()
 	if (currentAscentID.isInvalid() || !descriptionEditable) return;
 	
 	QString newDescription = descriptionTextBrowser->toPlainText();
-	bool descriptionChanged = db->ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
+	bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
 	if (descriptionChanged) {
-		db->ascentsTable.updateCell(this, FORCE_VALID(currentAscentID), db->ascentsTable.descriptionColumn, newDescription);
+		db.ascentsTable.updateCell(this, FORCE_VALID(currentAscentID), db.ascentsTable.descriptionColumn, newDescription);
 	}
 }
 
@@ -1166,8 +1166,8 @@ void AscentViewer::handle_editAscent()
 void AscentViewer::handle_editPeak()
 {
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	ValidItemID peakID = VALID_ITEM_ID(db->ascentsTable.peakIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
-	BufferRowIndex peakBufferRowIndex = db->peaksTable.getBufferIndexForPrimaryKey(peakID);
+	ValidItemID peakID = VALID_ITEM_ID(db.ascentsTable.peakIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
+	BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(peakID);
 	openEditPeakDialogAndStore(this, mainWindow, db, peakBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
@@ -1178,8 +1178,8 @@ void AscentViewer::handle_editPeak()
 void AscentViewer::handle_editTrip()
 {
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	ValidItemID tripID = VALID_ITEM_ID(db->ascentsTable.tripIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
-	BufferRowIndex tripBufferRowIndex = db->tripsTable.getBufferIndexForPrimaryKey(tripID);
+	ValidItemID tripID = VALID_ITEM_ID(db.ascentsTable.tripIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
+	BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(tripID);
 	openEditTripDialogAndStore(this, mainWindow, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
@@ -1226,9 +1226,9 @@ void AscentViewer::imageErrorMessageOccurred(const QString& message)
  */
 void AscentViewer::popupInfoContextMenu(QPoint pos)
 {
-	ItemID peakID = db->ascentsTable.peakIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
+	ItemID peakID = db.ascentsTable.peakIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
 	editPeakAction->setEnabled(peakID.isValid());
-	ItemID tripID = db->ascentsTable.tripIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
+	ItemID tripID = db.ascentsTable.tripIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
 	editTripAction->setEnabled(tripID.isValid());
 	
 	infoContextMenu.popup(pos);

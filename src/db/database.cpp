@@ -156,7 +156,7 @@ bool Database::openExisting(QWidget* parent, const QString& filepath)
 	databaseLoaded = true;
 	
 	// Upgrade database version
-	DatabaseUpgrader upgrader = DatabaseUpgrader(this, parent);
+	DatabaseUpgrader upgrader = DatabaseUpgrader(*this, parent);
 	bool abort = !upgrader.checkDatabaseVersionAndUpgrade([this, parent] () {
 		// After database structure was updated if needed:
 		populateBuffers(parent);

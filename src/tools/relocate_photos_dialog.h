@@ -41,7 +41,7 @@ class RelocatePhotosDialog : public QDialog, public Ui_RelocatePhotosDialog
 	Q_OBJECT
 	
 	/** The project database. */
-	Database* db;
+	Database& db;
 	
 	/** Indicates whether the worker thread is running. */
 	bool running;
@@ -49,7 +49,7 @@ class RelocatePhotosDialog : public QDialog, public Ui_RelocatePhotosDialog
 	PhotoRelocationThread* workerThread;
 	
 public:
-	RelocatePhotosDialog(QWidget* parent, Database* db);
+	RelocatePhotosDialog(QWidget* parent, Database& db);
 	
 private slots:
 	void handle_browseOldPath();

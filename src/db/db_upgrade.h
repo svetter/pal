@@ -36,12 +36,12 @@
 class DatabaseUpgrader
 {
 	/** The database object. */
-	Database* const db;
+	Database& db;
 	/** The parent window. */
 	QWidget* const parent;
 	
 public:
-	DatabaseUpgrader(Database* db, QWidget* parent);
+	DatabaseUpgrader(Database& db, QWidget* parent);
 	
 	bool checkDatabaseVersionAndUpgrade(std::function<void ()> executeAfterStructuralUpgrade);
 	

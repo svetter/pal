@@ -102,13 +102,13 @@ public:
 	ProjectSetting<QString>* const		sortingSetting;
 
 	/** The method opening the dialog for creating a new item of this type. */
-	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database*);
+	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&);
 	/** The method opening the dialog for duplicating an item of this type. */
-	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database*, BufferRowIndex);
+	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database&, BufferRowIndex);
 	/** The method opening the dialog for editing an item of this type. */
-	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database*, BufferRowIndex);
+	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&, BufferRowIndex);
 	/** The method opening the dialog for deleting an item of this type. */
-	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database*, QSet<BufferRowIndex>);
+	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database&, QSet<BufferRowIndex>);
 	
 	
 private:
@@ -148,7 +148,7 @@ public:
 	inline ItemTypeMapper(
 		PALItemType					type,
 		QString						name,
-		Database*					db,
+		Database&					db,
 		NormalTable&				baseTable,
 		CompositeTable*				compTable,
 		QWidget*					tab,
@@ -163,10 +163,10 @@ public:
 		const Setting<QRect>*		dialogGeometrySetting,
 		const Setting<bool>*		showStatsPanelSetting,
 		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
-		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database*),
-		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database*, BufferRowIndex),
-		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database*, BufferRowIndex),
-		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database*, QSet<BufferRowIndex>)
+		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&),
+		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database&, BufferRowIndex),
+		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&, BufferRowIndex),
+		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database&, QSet<BufferRowIndex>)
 	) :
 		type									(type),
 		name									(name),
@@ -248,7 +248,7 @@ public:
  * constructor by code with access to the dynamic elements.
  */
 #define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
-	Database*					db, \
+	Database&					db, \
 	QWidget*					tab, \
 	QTableView*					tableView, \
 	QScrollArea*				statsScrollArea, \
@@ -297,7 +297,7 @@ public:
 	 */
 	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeAscent, "ascent", db,
-			db->ascentsTable,
+			db.ascentsTable,
 			new CompositeAscentsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::ascentDialog_geometry,
@@ -332,7 +332,7 @@ public:
 	 */
 	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypePeak, "peak", db,
-			db->peaksTable,
+			db.peaksTable,
 			new CompositePeaksTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::peakDialog_geometry,
@@ -367,7 +367,7 @@ public:
 	 */
 	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeTrip, "trip", db,
-			db->tripsTable,
+			db.tripsTable,
 			new CompositeTripsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::tripDialog_geometry,
@@ -402,7 +402,7 @@ public:
 	 */
 	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeHiker, "hiker", db,
-			db->hikersTable,
+			db.hikersTable,
 			new CompositeHikersTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::hikerDialog_geometry,
@@ -437,7 +437,7 @@ public:
 	 */
 	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRegion, "region", db,
-			db->regionsTable,
+			db.regionsTable,
 			new CompositeRegionsTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::regionDialog_geometry,
@@ -472,7 +472,7 @@ public:
 	 */
 	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeRange, "range", db,
-			db->rangesTable,
+			db.rangesTable,
 			new CompositeRangesTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::rangeDialog_geometry,
@@ -507,7 +507,7 @@ public:
 	 */
 	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
 		ItemTypeMapper(ItemTypeCountry, "country", db,
-			db->countriesTable,
+			db.countriesTable,
 			new CompositeCountriesTable(db, tableView),
 			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
 			&Settings::countryDialog_geometry,

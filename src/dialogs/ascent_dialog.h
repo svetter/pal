@@ -56,7 +56,7 @@ class AscentDialog : public ItemDialog, public Ui_AscentDialog
 	PhotosOfAscent photosModel;
 	
 public:
-	AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* init);
+	AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* init);
 	~AscentDialog();
 	
 	virtual QString getEditWindowTitle() override;
@@ -92,12 +92,12 @@ private:
 
 
 
-BufferRowIndex	openNewAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db);
-BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
-bool			openEditAscentDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex);
-bool			openDeleteAscentsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices);
+BufferRowIndex	openNewAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db);
+BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openEditAscentDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openDeleteAscentsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Ascent* originalAscent);
+BufferRowIndex	openAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* originalAscent);
 
 
 QString		openFileDialogForSinglePhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());

@@ -58,11 +58,11 @@ protected:
 	QMainWindow* const mainWindow;
 	
 	/** The project database. */
-	Database* const db;
+	Database& db;
 	/** The purpose of the dialog. */
 	const DialogPurpose purpose;
 	
-	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose);
+	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose);
 	
 	/**
 	 * Returns the window title to use when the dialog is used to edit an item.

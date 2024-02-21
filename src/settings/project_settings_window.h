@@ -47,7 +47,7 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	QMainWindow* mainWindow;
 	
 	/** The project database. */
-	Database* db;
+	Database& db;
 	/** Indicates whether the window is opened as part of the project creation process. */
 	bool firstOpen;
 	
@@ -55,7 +55,7 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	QList<ValidItemID> selectableHikerIDs;
 	
 public:
-	ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database* db, bool firstOpen = false);
+	ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database& db, bool firstOpen = false);
 private:
 	void repopulateHikerCombo();
 	

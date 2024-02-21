@@ -41,7 +41,7 @@
  * @param db			The project database.
  * @param firstOpen		Indicates that the window is being opened as part of the project creation process.
  */
-ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database* db, bool firstOpen) :
+ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database& db, bool firstOpen) :
 	QDialog(parent),
 	parent(parent),
 	mainWindow(mainWindow),
@@ -90,7 +90,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainW
 
 void ProjectSettingsWindow::repopulateHikerCombo()
 {
-	populateItemCombo(db->hikersTable, db->hikersTable.nameColumn, true, defaultHikerCombo, selectableHikerIDs);
+	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, defaultHikerCombo, selectableHikerIDs);
 }
 
 
@@ -100,7 +100,7 @@ void ProjectSettingsWindow::repopulateHikerCombo()
  */
 void ProjectSettingsWindow::loadSettings()
 {
-	ItemID hikerID = db->projectSettings.defaultHiker.get();
+	ItemID hikerID = db.projectSettings.defaultHiker.get();
 	if (hikerID.isValid()) {
 		defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(hikerID) + 1);	// 0 is None
 	} else {
@@ -118,13 +118,13 @@ void ProjectSettingsWindow::saveSettings()
 		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
 		Hiker* newDefaultHiker = new Hiker(ItemID(), newDefaultHikerName);
-		db->hikersTable.addRow(this, newDefaultHiker);
+		db.hikersTable.addRow(this, newDefaultHiker);
 		
-		db->projectSettings.defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
+		db.projectSettings.defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
 		delete newDefaultHiker;
 	}
 	else {
-		db->projectSettings.defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+		db.projectSettings.defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
 	}
 }
 
@@ -141,7 +141,7 @@ void ProjectSettingsWindow::handle_newHiker()
 	if (newHikerIndex.isInvalid()) return;
 	
 	repopulateHikerCombo();
-	const ValidItemID newHikerID = db->hikersTable.getPrimaryKeyAt(newHikerIndex);
+	const ValidItemID newHikerID = db.hikersTable.getPrimaryKeyAt(newHikerIndex);
 	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
 }
 

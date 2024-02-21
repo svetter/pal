@@ -43,7 +43,7 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* init) :
+PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(init),
 	selectableRegionIDs(QList<ValidItemID>())
@@ -114,7 +114,7 @@ QString PeakDialog::getEditWindowTitle()
  */
 void PeakDialog::populateComboBoxes()
 {
-	populateItemCombo(db->regionsTable, db->regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
 }
 
 
@@ -206,8 +206,8 @@ void PeakDialog::handle_newRegion()
 	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
-	populateItemCombo(db->regionsTable, db->regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
-	const ValidItemID newRegionID = db->regionsTable.getPrimaryKeyAt(newRegionIndex);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
+	const ValidItemID newRegionID = db.regionsTable.getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(newRegionID) + 1);	// 0 is None
 }
 
@@ -223,7 +223,7 @@ void PeakDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save peak");
 	QString emptyNameWindowMessage	= tr("The peak needs a name.");
-	const ValueColumn& nameColumn = db->peaksTable.nameColumn;
+	const ValueColumn& nameColumn = db.peaksTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -247,7 +247,7 @@ void PeakDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
+BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	return openPeakDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -261,9 +261,9 @@ BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  * @param bufferRowIndex	The index of the peak to duplicate in the database's peak table buffer.
  * @return					The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
+	Peak* originalPeak = db.getPeakAt(bufferRowIndex);
 	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, originalPeak);
 }
 
@@ -276,9 +276,9 @@ BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mai
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Peak* originalPeak = db->getPeakAt(bufferRowIndex);
+	Peak* originalPeak = db.getPeakAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, originalPeak);
 	return editedIndex.isValid();
 }
@@ -292,17 +292,17 @@ bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Databa
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> peakIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		peakIDs += VALID_ITEM_ID(db->peaksTable.primaryKeyColumn.getValueAt(bufferRowIndex));
+		peakIDs += VALID_ITEM_ID(db.peaksTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->peaksTable, peakIDs);
+	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.peaksTable, peakIDs);
 	
 	if (Settings::confirmDelete.get()) {
 		bool plural = peakIDs.size() > 1;
@@ -311,7 +311,7 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 		if (!proceed) return false;
 	}
 
-	db->removeRows(parent, db->peaksTable, peakIDs);
+	db.removeRows(parent, db.peaksTable, peakIDs);
 	return true;
 }
 
@@ -327,7 +327,7 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Peak* originalPeak)
+BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* originalPeak)
 {
 	BufferRowIndex newPeakIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -343,13 +343,13 @@ BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, 
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newPeakIndex = db->peaksTable.addRow(parent, extractedPeak);
+			newPeakIndex = db.peaksTable.addRow(parent, extractedPeak);
 			break;
 		case editItem:
-			db->peaksTable.updateRow(parent, originalPeakID, extractedPeak);
+			db.peaksTable.updateRow(parent, originalPeakID, extractedPeak);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newPeakIndex = db->peaksTable.getBufferIndexForPrimaryKey(originalPeakID);
+			newPeakIndex = db.peaksTable.getBufferIndexForPrimaryKey(originalPeakID);
 			break;
 		default:
 			assert(false);

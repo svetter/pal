@@ -38,7 +38,7 @@
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  */
-ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose):
+ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose):
 	QDialog(parent),
 	parent(parent),
 	mainWindow(mainWindow),

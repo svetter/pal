@@ -33,7 +33,7 @@
  * @param oldPrefix	The prefix which to replace in the paths.
  * @param newPrefix	The new prefix to insert in the paths.
  */
-PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QString oldPrefix, QString newPrefix) :
+PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database& db, QString oldPrefix, QString newPrefix) :
 	QThread(parent),
 	db(db),
 	oldPrefix(oldPrefix),
@@ -58,7 +58,7 @@ PhotoRelocationThread::PhotoRelocationThread(QDialog* parent, Database* db, QStr
  */
 void PhotoRelocationThread::run()
 {
-	workloadSize = db->photosTable.getNumberOfRows();
+	workloadSize = db.photosTable.getNumberOfRows();
 	emit callback_reportWorkloadSize(workloadSize);
 	
 	int updatedPaths = 0;
@@ -66,7 +66,7 @@ void PhotoRelocationThread::run()
 	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(workloadSize); index++) {
 		if (abortWasCalled) break;
 		
-		QString currentPath = db->photosTable.filepathColumn.getValueAt(index).toString();
+		QString currentPath = db.photosTable.filepathColumn.getValueAt(index).toString();
 		
 		if (currentPath.startsWith(oldPrefix)) {
 			QString newPath = currentPath.replace(0, oldPrefix.size(), newPrefix);

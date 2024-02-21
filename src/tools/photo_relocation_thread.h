@@ -39,7 +39,7 @@ class PhotoRelocationThread : public QThread
 	Q_OBJECT
 	
 	/** The project database. */
-	Database* db;
+	Database& db;
 	/** The old prefix to replace in the photo filepaths. */
 	QString oldPrefix;
 	/** The new prefix for the photo filepaths. */
@@ -51,7 +51,7 @@ class PhotoRelocationThread : public QThread
 	bool abortWasCalled;
 	
 public:
-	PhotoRelocationThread(QDialog* parent, Database* db, QString oldPrefix, QString newPrefix);
+	PhotoRelocationThread(QDialog* parent, Database& db, QString oldPrefix, QString newPrefix);
 	
 	void run() override;
 	void abort();

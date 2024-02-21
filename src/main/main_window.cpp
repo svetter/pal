@@ -52,7 +52,7 @@ MainWindow::MainWindow() :
 	statusBarTableSizeLabel(new QLabel(statusbar)),
 	statusBarFiltersLabel(new QLabel(statusbar)),
 	typesHandler(nullptr),
-	generalStatsEngine(GeneralStatsEngine(&db, &statisticsTabLayout))
+	generalStatsEngine(GeneralStatsEngine(db, &statisticsTabLayout))
 {
 	setupUi(this);
 	createTypesHandler();
@@ -113,13 +113,13 @@ MainWindow::~MainWindow()
 void MainWindow::createTypesHandler()
 {
 	typesHandler = new ItemTypesHandler(
-		new AscentMapper	(&db, ascentsTab,	ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable),
-		new PeakMapper		(&db, peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable),
-		new TripMapper		(&db, tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable),
-		new HikerMapper		(&db, hikersTab,	hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable),
-		new RegionMapper	(&db, regionsTab,	regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable),
-		new RangeMapper		(&db, rangesTab,	rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable),
-		new CountryMapper	(&db, countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable),
+		new AscentMapper	(db, ascentsTab,	ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton,	&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable),
+		new PeakMapper		(db, peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton,		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable),
+		new TripMapper		(db, tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton,		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable),
+		new HikerMapper		(db, hikersTab,		hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton,		&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable),
+		new RegionMapper	(db, regionsTab,	regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton,	&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable),
+		new RangeMapper		(db, rangesTab,		rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton,		&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable),
+		new CountryMapper	(db, countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton,	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable),
 		db.photosTable,
 		db.participatedTable
 	);
@@ -725,7 +725,7 @@ void MainWindow::viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewR
 {
 	switch (mapper->type) {
 	case ItemTypeAscent:
-		AscentViewer(this, &db, typesHandler, viewRowIndex).exec();
+		AscentViewer(this, db, typesHandler, viewRowIndex).exec();
 		return;
 	default:
 		assert(false);
@@ -741,7 +741,7 @@ void MainWindow::viewItem(const ItemTypeMapper* const mapper, ViewRowIndex viewR
  */
 void MainWindow::newItem(const ItemTypeMapper* const mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper->openNewItemDialogAndStoreMethod(this, this, &db);
+	BufferRowIndex newBufferRowIndex = mapper->openNewItemDialogAndStoreMethod(this, this, db);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -760,7 +760,7 @@ void MainWindow::newItem(const ItemTypeMapper* const mapper)
 void MainWindow::duplicateAndEditItem(const ItemTypeMapper* const mapper, ViewRowIndex viewRowIndex)
 {
 	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	BufferRowIndex newBufferRowIndex = mapper->openDuplicateItemDialogAndStoreMethod(this, this, &db, bufferRowIndex);
+	BufferRowIndex newBufferRowIndex = mapper->openDuplicateItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -779,7 +779,7 @@ void MainWindow::editItem(const ItemTypeMapper* const mapper, const QModelIndex&
 {
 	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
 	BufferRowIndex bufferRowIndex = mapper->compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	bool changesMade = mapper->openEditItemDialogAndStoreMethod(this, this, &db, bufferRowIndex);
+	bool changesMade = mapper->openEditItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
 	if (!changesMade) return;
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
@@ -807,7 +807,7 @@ void MainWindow::deleteItems(const ItemTypeMapper* const mapper, QSet<ViewRowInd
 		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
 	}
 	
-	bool deleted = mapper->openDeleteItemsDialogAndExecuteMethod(this, this, &db, bufferRowIndices);
+	bool deleted = mapper->openDeleteItemsDialogAndExecuteMethod(this, this, db, bufferRowIndices);
 	if (!deleted) return;
 	
 	if (minViewIndex.get() >= mapper->compTable->rowCount()) {
@@ -1239,7 +1239,7 @@ void MainWindow::handle_newDatabase()
 	addToRecentFilesList(filepath);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow(this, this, &db, true).exec();
+		ProjectSettingsWindow(this, this, db, true).exec();
 	}
 	
 	getActiveMapper()->openingTab();
@@ -1381,7 +1381,7 @@ void MainWindow::handle_closeDatabase()
  */
 void MainWindow::handle_openProjectSettings()
 {
-	ProjectSettingsWindow(this, this, &db).exec();
+	ProjectSettingsWindow(this, this, db).exec();
 }
 
 /**
@@ -1557,7 +1557,7 @@ void MainWindow::handle_clearTableSelection()
  */
 void MainWindow::handle_relocatePhotos()
 {
-	RelocatePhotosDialog(this, &db).exec();
+	RelocatePhotosDialog(this, db).exec();
 }
 
 /**

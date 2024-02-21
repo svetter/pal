@@ -32,7 +32,7 @@ using std::unique_ptr, std::make_unique, std::make_shared;
  * 
  * @param db	The database.
  */
-StatsEngine::StatsEngine(Database* db) :
+StatsEngine::StatsEngine(Database& db) :
 	currentlyVisible(false),
 	db(db),
 	charts(QSet<Chart*>()),
@@ -145,7 +145,7 @@ QStringList StatsEngine::getHistogramClassNames(int increment, int max, QString 
  * @param db						The database.
  * @param statisticsTabLayoutPtr	A double pointer to the layout of the statistics tab.
  */
-GeneralStatsEngine::GeneralStatsEngine(Database* db, QVBoxLayout** const statisticsTabLayoutPtr) :
+GeneralStatsEngine::GeneralStatsEngine(Database& db, QVBoxLayout** const statisticsTabLayoutPtr) :
 	StatsEngine(db),
 	statisticsTabLayoutPtr(statisticsTabLayoutPtr),
 	numAscentsPerYearChart(nullptr),
@@ -267,8 +267,8 @@ void GeneralStatsEngine::updateCharts()
 	int numAscentsPerYearMaxY = 0;
 	int heightsMaxY = 0;
 	
-	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db->ascentsTable.getNumberOfRows()); bufferIndex++) {
-		const QDate date = db->ascentsTable.dateColumn.getValueAt(bufferIndex).toDate();
+	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db.ascentsTable.getNumberOfRows()); bufferIndex++) {
+		const QDate date = db.ascentsTable.dateColumn.getValueAt(bufferIndex).toDate();
 		if (!date.isValid()) continue;
 		
 		const int year = date.year();
@@ -277,7 +277,7 @@ void GeneralStatsEngine::updateCharts()
 		
 		QDateTime dateTime;
 		if (dirty.value(heightsScatterChart)) {
-			QTime time = db->ascentsTable.timeColumn.getValueAt(bufferIndex).toTime();
+			QTime time = db.ascentsTable.timeColumn.getValueAt(bufferIndex).toTime();
 			if (!time.isValid()) time = QTime(12, 0);
 			dateTime = QDateTime(date, time);
 		}
@@ -287,7 +287,7 @@ void GeneralStatsEngine::updateCharts()
 		}
 		
 		if (dirty.value(elevGainPerYearChart) || dirty.value(heightsScatterChart)) {
-			const QVariant elevGainRaw = db->ascentsTable.elevationGainColumn.getValueAt(bufferIndex);
+			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(bufferIndex);
 			if (elevGainRaw.isValid()) {
 				const int elevGain = elevGainRaw.toInt();
 				
@@ -302,9 +302,9 @@ void GeneralStatsEngine::updateCharts()
 		}
 		
 		if (dirty.value(heightsScatterChart)) {
-			const ItemID peakID = db->ascentsTable.peakIDColumn.getValueAt(bufferIndex);
+			const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferIndex);
 			if (peakID.isValid()) {
-				QVariant peakHeightRaw = db->peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
+				QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
 				if (peakHeightRaw.isValid()) {
 					const int peakHeight = peakHeightRaw.toInt();
 					peakHeightSeries.data.append({dateTime, peakHeight});
@@ -360,18 +360,18 @@ QHash<Chart*, QSet<Column*>> GeneralStatsEngine::getUsedColumnSets() const
 {
 	return {
 		{numAscentsPerYearChart, {
-			&db->ascentsTable.dateColumn
+			&db.ascentsTable.dateColumn
 		}},
 		{elevGainPerYearChart, {
-			&db->ascentsTable.dateColumn,
-			&db->ascentsTable.elevationGainColumn
+			&db.ascentsTable.dateColumn,
+			&db.ascentsTable.elevationGainColumn
 		}},
 		{heightsScatterChart, {
-			&db->ascentsTable.dateColumn,
-			&db->ascentsTable.timeColumn,
-			&db->ascentsTable.elevationGainColumn,
-			&db->ascentsTable.peakIDColumn,
-			&db->peaksTable.heightColumn
+			&db.ascentsTable.dateColumn,
+			&db.ascentsTable.timeColumn,
+			&db.ascentsTable.elevationGainColumn,
+			&db.ascentsTable.peakIDColumn,
+			&db.peaksTable.heightColumn
 		}}
 	};
 }
@@ -410,13 +410,13 @@ QHash<Column*, QSet<Chart*>> GeneralStatsEngine::getAffectedChartsPerColumn() co
  * @param baseTable		The base table for the item type.
  * @param statsLayout	The layout in which to display the charts.
  */
-ItemStatsEngine::ItemStatsEngine(Database* db, PALItemType itemType, const NormalTable& baseTable, QVBoxLayout* statsLayout) :
+ItemStatsEngine::ItemStatsEngine(Database& db, PALItemType itemType, const NormalTable& baseTable, QVBoxLayout* statsLayout) :
 	StatsEngine(db),
 	itemType	(itemType),
 	baseTable	(baseTable),
 	statsLayout	(statsLayout),
-	ascentCrumbs	(db->getBreadcrumbsFor(baseTable, db->ascentsTable)),
-	peakCrumbs		(db->getBreadcrumbsFor(baseTable, db->peaksTable)),
+	ascentCrumbs	(db.getBreadcrumbsFor(baseTable, db.ascentsTable)),
+	peakCrumbs		(db.getBreadcrumbsFor(baseTable, db.peaksTable)),
 	peakHeightHistChart		(nullptr),
 	elevGainHistChart		(nullptr),
 	heightsScatterChart		(nullptr),
@@ -686,7 +686,7 @@ void ItemStatsEngine::updateCharts()
 	
 	if (peakHeightHistChart) {
 		auto peakHeightClassFromPeakBufferRow = [this](const BufferRowIndex& peakBufferRow) {
-			const QVariant peakHeightRaw = db->peaksTable.heightColumn.getValueAt(peakBufferRow);
+			const QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueAt(peakBufferRow);
 			if (!peakHeightRaw.isValid()) return -1;
 			
 			const int peakHeight = peakHeightRaw.toInt();
@@ -702,7 +702,7 @@ void ItemStatsEngine::updateCharts()
 	
 	if (elevGainHistChart) {
 		auto elevGainClassFromAscentBufferRow = [this](const BufferRowIndex& ascentBufferRow) {
-			const QVariant elevGainRaw = db->ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
+			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
 			if (!elevGainRaw.isValid()) return -1;
 			
 			const int elevGain = elevGainRaw.toInt();
@@ -721,24 +721,24 @@ void ItemStatsEngine::updateCharts()
 		DateScatterSeries peakHeightScatterSeries	= DateScatterSeries(tr("Peak heights"),		8,	QScatterSeries::MarkerShapeTriangle);
 		
 		auto xyValuesFromTargetBufferRow = [this](const BufferRowIndex& ascentBufferIndex) {
-			const QDate date = db->ascentsTable.dateColumn.getValueAt(ascentBufferIndex).toDate();
+			const QDate date = db.ascentsTable.dateColumn.getValueAt(ascentBufferIndex).toDate();
 			if (!date.isValid()) return QPair<QDateTime, QList<qreal>>();
 			
-			QTime time = db->ascentsTable.timeColumn.getValueAt(ascentBufferIndex).toTime();
+			QTime time = db.ascentsTable.timeColumn.getValueAt(ascentBufferIndex).toTime();
 			if (!time.isValid()) time = QTime(12, 0);
 			const QDateTime dateTime = QDateTime(date, time);
 			
 			qreal elevGain		= -1;
 			qreal peakHeight	= -1;
 			
-			const QVariant elevGainRaw = db->ascentsTable.elevationGainColumn.getValueAt(ascentBufferIndex);
+			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferIndex);
 			if (elevGainRaw.isValid()) {
 				elevGain = elevGainRaw.toInt();
 			}
 			
-			const ItemID peakID = db->ascentsTable.peakIDColumn.getValueAt(ascentBufferIndex);
+			const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferIndex);
 			if (peakID.isValid()) {
-				const QVariant peakHeightRaw = db->peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
+				const QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
 				if (peakHeightRaw.isValid()) {
 					peakHeight = peakHeightRaw.toInt();
 				}
@@ -773,7 +773,7 @@ void ItemStatsEngine::updateCharts()
 		auto maxPeakHeightFromPeakBufferRows = [this](const QList<BufferRowIndex>& peakBufferRows) {
 			int maxPeakHeight = 0;
 			for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
-				QVariant peakHeightRaw = db->peaksTable.heightColumn.getValueAt(peakBufferRow);
+				QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueAt(peakBufferRow);
 				if (!peakHeightRaw.isValid()) continue;
 				
 				int peakHeight = peakHeightRaw.toInt();
@@ -793,7 +793,7 @@ void ItemStatsEngine::updateCharts()
 		auto maxElevGainFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
 			int maxElevGain = 0;
 			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
-				QVariant elevGainRaw = db->ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
+				QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
 				if (!elevGainRaw.isValid()) continue;
 				
 				int elevGain = elevGainRaw.toInt();
@@ -815,7 +815,7 @@ void ItemStatsEngine::updateCharts()
 		auto elevGainSumFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
 			int elevGainSum = 0;
 			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
-				QVariant elevGainRaw = db->ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
+				QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
 				if (!elevGainRaw.isValid()) continue;
 				
 				int elevGain = elevGainRaw.toInt();
@@ -896,7 +896,7 @@ QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& c
 {
 	QList<BufferRowIndex> targetBufferRows = QList<BufferRowIndex>();
 	
-	if (crumbs.goesVia(db->participatedTable)) {
+	if (crumbs.goesVia(db.participatedTable)) {
 		// Crumbs traverse an associative table, can't use caches for separately evaluated single rows
 		// Use cache for whole set of requested buffer rows instead
 		
@@ -1112,12 +1112,12 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 	
 	switch (itemType) {
 	case ItemTypeAscent: {
-		ItemID peakID = db->ascentsTable.peakIDColumn.getValueAt(bufferIndex);
+		ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferIndex);
 		if (peakID.isValid()) {
-			result = db->peaksTable.nameColumn.getValueFor(FORCE_VALID(peakID)).toString();
+			result = db.peaksTable.nameColumn.getValueFor(FORCE_VALID(peakID)).toString();
 		}
 		if (result.isEmpty()) {
-			const QDate date = db->ascentsTable.dateColumn.getValueAt(bufferIndex).toDate();
+			const QDate date = db.ascentsTable.dateColumn.getValueAt(bufferIndex).toDate();
 			if (date.isValid()) {
 				result = date.toString("yyyy-MM-dd");
 			}
@@ -1125,15 +1125,15 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 		break;
 	}
 	case ItemTypePeak: {
-		result = db->peaksTable.nameColumn.getValueAt(bufferIndex).toString();
+		result = db.peaksTable.nameColumn.getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeTrip: {
-		const QDate startDate = db->tripsTable.startDateColumn.getValueAt(bufferIndex).toDate();
+		const QDate startDate = db.tripsTable.startDateColumn.getValueAt(bufferIndex).toDate();
 		if (startDate.isValid()) {
 			result = startDate.toString("yyyy-MM");
 		}
-		QString tripName = db->tripsTable.nameColumn.getValueAt(bufferIndex).toString();
+		QString tripName = db.tripsTable.nameColumn.getValueAt(bufferIndex).toString();
 		if (!tripName.isEmpty()) {
 			if (!result.isEmpty()) result.append(" ");
 			result.append(tripName);
@@ -1141,19 +1141,19 @@ QString ItemStatsEngine::getItemLabelFor(const BufferRowIndex& bufferIndex) cons
 		break;
 	}
 	case ItemTypeHiker: {
-		result = db->hikersTable.nameColumn.getValueAt(bufferIndex).toString();
+		result = db.hikersTable.nameColumn.getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeRegion: {
-		result = db->regionsTable.nameColumn.getValueAt(bufferIndex).toString();
+		result = db.regionsTable.nameColumn.getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeRange: {
-		result = db->rangesTable.nameColumn.getValueAt(bufferIndex).toString();
+		result = db.rangesTable.nameColumn.getValueAt(bufferIndex).toString();
 		break;
 	}
 	case ItemTypeCountry: {
-		result = db->countriesTable.nameColumn.getValueAt(bufferIndex).toString();
+		result = db.countriesTable.nameColumn.getValueAt(bufferIndex).toString();
 		break;
 	}
 	default: assert(false);
@@ -1244,27 +1244,27 @@ QHash<Chart*, QSet<Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPe
 {
 	return {
 		{peakHeightHistChart, {
-			&db->peaksTable.heightColumn
+			&db.peaksTable.heightColumn
 		}},
 		{elevGainHistChart, {
-			&db->ascentsTable.elevationGainColumn
+			&db.ascentsTable.elevationGainColumn
 		}},
 		{heightsScatterChart, {
-			&db->ascentsTable.dateColumn,
-			&db->ascentsTable.timeColumn,
-			&db->ascentsTable.elevationGainColumn,
-			&db->ascentsTable.peakIDColumn,
-			&db->peaksTable.heightColumn
+			&db.ascentsTable.dateColumn,
+			&db.ascentsTable.timeColumn,
+			&db.ascentsTable.elevationGainColumn,
+			&db.ascentsTable.peakIDColumn,
+			&db.peaksTable.heightColumn
 		}},
 		{topNumAscentsChart, {}},
 		{topMaxPeakHeightChart, {
-			&db->peaksTable.heightColumn
+			&db.peaksTable.heightColumn
 		}},
 		{topMaxElevGainChart, {
-			&db->ascentsTable.elevationGainColumn
+			&db.ascentsTable.elevationGainColumn
 		}},
 		{topElevGainSumChart, {
-			&db->ascentsTable.elevationGainColumn
+			&db.ascentsTable.elevationGainColumn
 		}}
 	};
 }
@@ -1277,13 +1277,13 @@ QHash<Chart*, QSet<Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPe
 QSet<Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
 {
 	switch (itemType) {
-	case ItemTypeAscent:	return {&db->ascentsTable.peakIDColumn, &db->peaksTable.nameColumn, &db->ascentsTable.dateColumn};
-	case ItemTypePeak:		return {&db->peaksTable.nameColumn};
-	case ItemTypeTrip:		return {&db->tripsTable.startDateColumn, &db->tripsTable.nameColumn};
-	case ItemTypeHiker:		return {&db->hikersTable.nameColumn};
-	case ItemTypeRegion:	return {&db->regionsTable.nameColumn};
-	case ItemTypeRange:		return {&db->rangesTable.nameColumn};
-	case ItemTypeCountry:	return {&db->countriesTable.nameColumn};
+	case ItemTypeAscent:	return {&db.ascentsTable.peakIDColumn,	&db.peaksTable.nameColumn,	&db.ascentsTable.dateColumn};
+	case ItemTypePeak:		return {&db.peaksTable.nameColumn};
+	case ItemTypeTrip:		return {&db.tripsTable.startDateColumn,	&db.tripsTable.nameColumn};
+	case ItemTypeHiker:		return {&db.hikersTable.nameColumn};
+	case ItemTypeRegion:	return {&db.regionsTable.nameColumn};
+	case ItemTypeRange:		return {&db.rangesTable.nameColumn};
+	case ItemTypeCountry:	return {&db.countriesTable.nameColumn};
 	default: assert(false);
 	}
 	return QSet<Column*>();

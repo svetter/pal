@@ -42,7 +42,7 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  */
-CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* init) :
+CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
@@ -142,7 +142,7 @@ void CountryDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save country");
 	QString emptyNameWindowMessage	= tr("The country needs a name.");
-	const ValueColumn& nameColumn = db->countriesTable.nameColumn;
+	const ValueColumn& nameColumn = db.countriesTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -166,7 +166,7 @@ void CountryDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new country in the database's country table buffer.
  */
-BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
+BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	return openCountryDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -180,9 +180,9 @@ BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, QMainWindow* mainWi
  * @param bufferRowIndex	The index of the country to edit in the database's country table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Country* originalCountry = db->getCountryAt(bufferRowIndex);
+	Country* originalCountry = db.getCountryAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, mainWindow, db, editItem, originalCountry);
 	return editedIndex.isValid();
 }
@@ -196,17 +196,17 @@ bool openEditCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Dat
  * @param bufferRowIndices	The indices of the countries to delete in the database's country table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> countryIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		countryIDs += VALID_ITEM_ID(db->countriesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
+		countryIDs += VALID_ITEM_ID(db.countriesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->countriesTable, countryIDs);
+	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.countriesTable, countryIDs);
 	
 	if (Settings::confirmDelete.get()) {
 		bool plural = countryIDs.size() > 1;
@@ -215,7 +215,7 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindo
 		if (!proceed) return false;
 	}
 	
-	db->removeRows(parent, db->countriesTable, countryIDs);
+	db.removeRows(parent, db.countriesTable, countryIDs);
 	return true;
 }
 
@@ -231,7 +231,7 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindo
  * @param originalCountry	The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  * @return					The index of the new country in the database's country table buffer, or existing index of edited country. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Country* originalCountry)
+BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* originalCountry)
 {
 	BufferRowIndex newCountryIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -247,13 +247,13 @@ BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindo
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newCountryIndex = db->countriesTable.addRow(parent, extractedCountry);
+			newCountryIndex = db.countriesTable.addRow(parent, extractedCountry);
 			break;
 		case editItem:
-			db->countriesTable.updateRow(parent, originalCountryID, extractedCountry);
+			db.countriesTable.updateRow(parent, originalCountryID, extractedCountry);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newCountryIndex = db->countriesTable.getBufferIndexForPrimaryKey(originalCountryID);
+			newCountryIndex = db.countriesTable.getBufferIndexForPrimaryKey(originalCountryID);
 			break;
 		default:
 			assert(false);

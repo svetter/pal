@@ -43,7 +43,7 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
-RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* init) :
+RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
@@ -159,7 +159,7 @@ void RangeDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save mountain range");
 	QString emptyNameWindowMessage	= tr("The mountain range needs a name.");
-	const ValueColumn& nameColumn = db->rangesTable.nameColumn;
+	const ValueColumn& nameColumn = db.rangesTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -183,7 +183,7 @@ void RangeDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new range in the database's range table buffer.
  */
-BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
+BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	return openRangeDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -197,9 +197,9 @@ BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWind
  * @param bufferRowIndex	The index of the range to edit in the database's range table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Range* originalRange = db->getRangeAt(bufferRowIndex);
+	Range* originalRange = db.getRangeAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, mainWindow, db, editItem, originalRange);
 	return editedIndex.isValid();
 }
@@ -213,17 +213,17 @@ bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Datab
  * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> rangeIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		rangeIDs += VALID_ITEM_ID(db->rangesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
+		rangeIDs += VALID_ITEM_ID(db.rangesTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->rangesTable, rangeIDs);
+	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.rangesTable, rangeIDs);
 	
 	if (Settings::confirmDelete.get()) {
 		bool plural = rangeIDs.size() > 1;
@@ -232,7 +232,7 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 		if (!proceed) return false;
 	}
 
-	db->removeRows(parent, db->rangesTable, rangeIDs);
+	db.removeRows(parent, db.rangesTable, rangeIDs);
 	return true;
 }
 
@@ -248,7 +248,7 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Range* originalRange)
+BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* originalRange)
 {
 	BufferRowIndex newRangeIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -264,13 +264,13 @@ BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow,
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newRangeIndex = db->rangesTable.addRow(parent, extractedRange);
+			newRangeIndex = db.rangesTable.addRow(parent, extractedRange);
 			break;
 		case editItem:
-			db->rangesTable.updateRow(parent, originalRangeID, extractedRange);
+			db.rangesTable.updateRow(parent, originalRangeID, extractedRange);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRangeIndex = db->rangesTable.getBufferIndexForPrimaryKey(originalRangeID);
+			newRangeIndex = db.rangesTable.getBufferIndexForPrimaryKey(originalRangeID);
 			break;
 		default:
 			assert(false);

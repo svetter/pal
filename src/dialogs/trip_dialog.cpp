@@ -42,7 +42,7 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  */
-TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Trip* init) :
+TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(init)
 {
@@ -209,7 +209,7 @@ void TripDialog::handle_ok()
 {
 	QString emptyNameWindowTitle	= tr("Can't save trip");
 	QString emptyNameWindowMessage	= tr("The trip needs a name.");
-	const ValueColumn& nameColumn = db->tripsTable.nameColumn;
+	const ValueColumn& nameColumn = db.tripsTable.nameColumn;
 	ItemDialog::handle_ok(nameLineEdit, init->name, emptyNameWindowTitle, emptyNameWindowMessage, nameColumn);
 }
 
@@ -233,7 +233,7 @@ void TripDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new trip in the database's trip table buffer.
  */
-BufferRowIndex openNewTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db)
+BufferRowIndex openNewTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	return openTripDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -247,9 +247,9 @@ BufferRowIndex openNewTripDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  * @param bufferRowIndex	The index of the trip to edit in the database's trip table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, BufferRowIndex bufferRowIndex)
+bool openEditTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Trip* originalTrip = db->getTripAt(bufferRowIndex);
+	Trip* originalTrip = db.getTripAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openTripDialogAndStore(parent, mainWindow, db, editItem, originalTrip);
 	return editedIndex.isValid();
 }
@@ -263,17 +263,17 @@ bool openEditTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Databa
  * @param bufferRowIndices	The indices of the trips to delete in the database's trip table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database* db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
 	
 	QSet<ValidItemID> tripIDs = QSet<ValidItemID>();
 	for (const BufferRowIndex& bufferRowIndex : bufferRowIndices) {
-		tripIDs += VALID_ITEM_ID(db->tripsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
+		tripIDs += VALID_ITEM_ID(db.tripsTable.primaryKeyColumn.getValueAt(bufferRowIndex));
 	}
 	
-	QList<WhatIfDeleteResult> whatIfResults = db->whatIf_removeRows(db->tripsTable, tripIDs);
+	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.tripsTable, tripIDs);
 	
 	if (Settings::confirmDelete.get()) {
 		bool plural = tripIDs.size() > 1;
@@ -282,7 +282,7 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 		if (!proceed) return false;
 	}
 
-	db->removeRows(parent, db->tripsTable, tripIDs);
+	db.removeRows(parent, db.tripsTable, tripIDs);
 	return true;
 }
 
@@ -298,7 +298,7 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  * @param originalTrip	The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  * @return				The index of the new trip in the database's trip table buffer, or existing index of edited trip. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database* db, DialogPurpose purpose, Trip* originalTrip)
+BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* originalTrip)
 {
 	BufferRowIndex newTripIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
@@ -314,13 +314,13 @@ BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, 
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newTripIndex = db->tripsTable.addRow(parent, extractedTrip);
+			newTripIndex = db.tripsTable.addRow(parent, extractedTrip);
 			break;
 		case editItem:
-			db->tripsTable.updateRow(parent, originalTripID, extractedTrip);
+			db.tripsTable.updateRow(parent, originalTripID, extractedTrip);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newTripIndex = db->tripsTable.getBufferIndexForPrimaryKey(originalTripID);
+			newTripIndex = db.tripsTable.getBufferIndexForPrimaryKey(originalTripID);
 			break;
 		default:
 			assert(false);

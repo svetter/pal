@@ -36,7 +36,7 @@ using std::unique_ptr, std::make_unique;
  * @param baseTable	The database table this table is based on.
  * @param tableView	The view this table is displayed in.
  */
-CompositeTable::CompositeTable(const Database* db, NormalTable& baseTable, QTableView* tableView) :
+CompositeTable::CompositeTable(const Database& db, NormalTable& baseTable, QTableView* tableView) :
 	QAbstractTableModel(),
 	db(db),
 	baseTable(baseTable),
@@ -1043,9 +1043,9 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
  * @param targetTable	The normal table to return the breadcrumb trail to.
  * @return				The breadcrumb trail from the base table to the given destination table.
  */
-Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable& targetTable) const
+Breadcrumbs CompositeTable::crumbsTo(const Database& db, const NormalTable& targetTable) const
 {
-	return db->getBreadcrumbsFor(baseTable, targetTable);
+	return db.getBreadcrumbsFor(baseTable, targetTable);
 }
 
 
@@ -1057,7 +1057,7 @@ Breadcrumbs CompositeTable::crumbsTo(const Database* db, const NormalTable& targ
  */
 const ProjectSettings& CompositeTable::getProjectSettings() const
 {
-	return db->projectSettings;
+	return db.projectSettings;
 }
 
 

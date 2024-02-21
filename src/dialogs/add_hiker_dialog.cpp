@@ -38,7 +38,7 @@
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  */
-AddHikerDialog::AddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database* db) :
+AddHikerDialog::AddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db) :
 	QDialog(parent),
 	mainWindow(mainWindow),
 	db(db),
@@ -63,7 +63,7 @@ AddHikerDialog::AddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Databas
  */
 void AddHikerDialog::populateComboBoxes()
 {
-	populateItemCombo(db->hikersTable, db->hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
+	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
 }
 
 
@@ -102,8 +102,8 @@ void AddHikerDialog::handle_newHiker()
 	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, mainWindow, db);
 	if (newHikerIndex.isInvalid()) return;
 	
-	populateItemCombo(db->hikersTable, db->hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
-	const ValidItemID newHikerID = db->hikersTable.getPrimaryKeyAt(newHikerIndex);
+	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
+	const ValidItemID newHikerID = db.hikersTable.getPrimaryKeyAt(newHikerIndex);
 	hikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
 }
 
@@ -145,7 +145,7 @@ void AddHikerDialog::handle_cancel()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  */
-ItemID openAddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database* db)
+ItemID openAddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db)
 {
 	AddHikerDialog dialog(parent, mainWindow, db);
 	if (dialog.exec() == QDialog::Accepted) {
