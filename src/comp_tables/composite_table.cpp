@@ -64,9 +64,7 @@ CompositeTable::CompositeTable(const Database& db, NormalTable& baseTable, QTabl
  * Destroys this CompositeTable.
  */
 CompositeTable::~CompositeTable()
-{
-	qDeleteAll(buffer);
-}
+{}
 
 
 
