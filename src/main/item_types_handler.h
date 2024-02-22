@@ -49,6 +49,25 @@
 
 
 /**
+ * A helper struct for passing pointers to item-specific UI elements to the constructor of
+ * ItemTypeMapper subtypes.
+ */
+struct TypeMapperPointers {
+	/** The item type's tab in the main window. */
+	QWidget*		tab;
+	/** The item type's table view in the main window. */
+	QTableView*		tableView;
+	/** The item type's stats scroll area in the main window. */
+	QScrollArea*	statsScrollArea;
+	/** The item type's action in the main window's menu bar for creating a new item. */
+	QAction*		newItemAction;
+	/** The item type's button in the main window for creating a new item. */
+	QPushButton*	newItemButton;
+};
+
+
+
+/**
  * A helper class for storing pointers to different kinds of item-specific members, like dialogs,
  * settings, buttons and other UI elements.
  * 
@@ -122,17 +141,13 @@ private:
 public:
 	/**
 	 * Creates a new ItemTypeMapper instance.
-	 * 
+	 *
+	 * @param db									The database.
 	 * @param type									The type of item for this mapper.
 	 * @param name									The name of the item type for this mapper.
-	 * @param db									The database.
 	 * @param baseTable								The SQL buffer (base) table.
 	 * @param compTable								The UI buffer (composite) table.
-	 * @param tab									The tab in the main window.
-	 * @param tableView								The table view in the main window showing the composite table.
-	 * @param statsScrollArea						The scroll area for displaying item-related statistics next to the table in the item's tab.
-	 * @param newItemAction							The action in the main window menu for creating a new iteme.
-	 * @param newItemButton							The button in the main window for creating a new item.
+	 * @param pointerSupply							A struct containing pointers to item-specific UI elements.
 	 * @param columnWidthsSetting					The setting storing the column widths of the UI table.
 	 * @param columnOrderSetting					The setting storing the column order of the UI table.
 	 * @param hiddenColumnsSetting					The setting storing the column hidden states of the UI table.
@@ -146,16 +161,12 @@ public:
 	 * @param openDeleteItemsDialogAndExecuteMethod	The method opening the dialog for deleting an item.
 	 */
 	inline ItemTypeMapper(
+		Database&					db,
 		PALItemType					type,
 		QString						name,
-		Database&					db,
 		NormalTable&				baseTable,
 		CompositeTable*				compTable,
-		QWidget*					tab,
-		QTableView*					tableView,
-		QScrollArea*				statsScrollArea,
-		QAction*					newItemAction,
-		QPushButton*				newItemButton,
+		TypeMapperPointers&&		pointerSupply,
 		ProjectMultiSetting<int>*	columnWidthsSetting,
 		ProjectMultiSetting<int>*	columnOrderSetting,
 		ProjectMultiSetting<bool>*	hiddenColumnsSetting,
@@ -172,12 +183,12 @@ public:
 		name									(name),
 		baseTable								(baseTable),
 		compTable								(compTable),
-		statsEngine								(new ItemStatsEngine(db, type, baseTable, statsScrollArea->findChild<QVBoxLayout*>())),
-		tab										(tab),
-		tableView								(tableView),
-		statsScrollArea							(statsScrollArea),
-		newItemAction							(newItemAction),
-		newItemButton							(newItemButton),
+		statsEngine								(new ItemStatsEngine(db, type, baseTable, pointerSupply.statsScrollArea->findChild<QVBoxLayout*>())),
+		tab										(pointerSupply.tab),
+		tableView								(pointerSupply.tableView),
+		statsScrollArea							(pointerSupply.statsScrollArea),
+		newItemAction							(pointerSupply.newItemAction),
+		newItemButton							(pointerSupply.newItemButton),
 		dialogGeometrySetting					(dialogGeometrySetting),
 		showStatsPanelSetting					(showStatsPanelSetting),
 		statsPanelSplitterSizesSetting			(statsPanelSplitterSizesSetting),
@@ -241,273 +252,6 @@ public:
 
 
 
-/**
- * A helper struct for passing pointers to item-specific UI elements to the constructor of
- * ItemTypeMapper subtypes.
- */
-struct TypeMapperPointers {
-	/** The item type's tab in the main window. */
-	QWidget*		tab;
-	/** The item type's table view in the main window. */
-	QTableView*		tableView;
-	/** The item type's stats scroll area in the main window. */
-	QScrollArea*	statsScrollArea;
-	/** The item type's action in the main window's menu bar for creating a new item. */
-	QAction*		newItemAction;
-	/** The item type's button in the main window for creating a new item. */
-	QPushButton*	newItemButton;
-};
-
-/**
- * The arguments passed to the constructor of each ItemTypeMapper subtype.
- * 
- * These arguments are dynamic, i.e. only known at runtime, so they have to be passed to the
- * constructor by code with access to the dynamic elements.
- */
-#define TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS \
-	Database&					db, \
-	TypeMapperPointers&&		pointerSupply, \
-	ProjectMultiSetting<int>*	columnWidthsSetting, \
-	ProjectMultiSetting<int>*	columnOrderSetting, \
-	ProjectMultiSetting<bool>*	hiddenColumnsSetting, \
-	ProjectSetting<QString>*	sortingSetting
-
-/**
- * The dynamic constructor arguments from all ItemTypeMapper subtypes which are passed on to the
- * ItemTypeMapper constructor.
- */
-#define TYPE_MAPPER_DYNAMIC_ARG_NAMES \
-	pointerSupply.tab, \
-	pointerSupply.tableView, \
-	pointerSupply.statsScrollArea, \
-	pointerSupply.newItemAction, \
-	pointerSupply.newItemButton, \
-	columnWidthsSetting, \
-	columnOrderSetting, \
-	hiddenColumnsSetting, \
-	sortingSetting
-
-
-
-/**
- * An ItemTypeMapper for item type Ascent.
- */
-class AscentMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new AscentMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline AscentMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeAscent, "ascent", db,
-			db.ascentsTable,
-			new CompositeAscentsTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::ascentDialog_geometry,
-			&Settings::ascentsStats_show,
-			&Settings::ascentsStats_splitterSizes,
-			&openNewAscentDialogAndStore,
-			&openDuplicateAscentDialogAndStore,
-			&openEditAscentDialogAndStore,
-			&openDeleteAscentsDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Peak.
- */
-class PeakMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new PeakMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline PeakMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypePeak, "peak", db,
-			db.peaksTable,
-			new CompositePeaksTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::peakDialog_geometry,
-			&Settings::peaksStats_show,
-			&Settings::peaksStats_splitterSizes,
-			&openNewPeakDialogAndStore,
-			&openDuplicatePeakDialogAndStore,
-			&openEditPeakDialogAndStore,
-			&openDeletePeaksDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Trip.
- */
-class TripMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new TripMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline TripMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeTrip, "trip", db,
-			db.tripsTable,
-			new CompositeTripsTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::tripDialog_geometry,
-			&Settings::tripsStats_show,
-			&Settings::tripsStats_splitterSizes,
-			&openNewTripDialogAndStore,
-			nullptr,
-			&openEditTripDialogAndStore,
-			&openDeleteTripsDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Hiker.
- */
-class HikerMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new HikerMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline HikerMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeHiker, "hiker", db,
-			db.hikersTable,
-			new CompositeHikersTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::hikerDialog_geometry,
-			&Settings::hikersStats_show,
-			&Settings::hikersStats_splitterSizes,
-			&openNewHikerDialogAndStore,
-			nullptr,
-			&openEditHikerDialogAndStore,
-			&openDeleteHikersDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Region.
- */
-class RegionMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new RegionMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline RegionMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeRegion, "region", db,
-			db.regionsTable,
-			new CompositeRegionsTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::regionDialog_geometry,
-			&Settings::regionsStats_show,
-			&Settings::regionsStats_splitterSizes,
-			&openNewRegionDialogAndStore,
-			nullptr,
-			&openEditRegionDialogAndStore,
-			&openDeleteRegionsDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Range.
- */
-class RangeMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new RangeMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline RangeMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeRange, "range", db,
-			db.rangesTable,
-			new CompositeRangesTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::rangeDialog_geometry,
-			&Settings::rangesStats_show,
-			&Settings::rangesStats_splitterSizes,
-			&openNewRangeDialogAndStore,
-			nullptr,
-			&openEditRangeDialogAndStore,
-			&openDeleteRangesDialogAndExecute
-		)
-	{}
-};
-
-/**
- * An ItemTypeMapper for item type Country.
- */
-class CountryMapper : public ItemTypeMapper {
-public:
-	/**
-	 * Creates a new CountryMapper instance.
-	 * 
-	 * @param db					The database.
-	 * @param pointerSupply			Pointers to item-specific UI elements.
-	 * @param columnWidthsSetting	The setting storing the column widths of the UI table.
-	 * @param columnOrderSetting	The setting storing the column order of the UI table.
-	 * @param hiddenColumnsSetting	The setting storing the column hidden states of the UI table.
-	 * @param sortingSetting		The setting storing the sorting of the UI table.
-	 */
-	inline CountryMapper(TYPE_MAPPER_DYNAMIC_ARG_DECLARATIONS) :
-		ItemTypeMapper(ItemTypeCountry, "country", db,
-			db.countriesTable,
-			new CompositeCountriesTable(db, pointerSupply.tableView),
-			TYPE_MAPPER_DYNAMIC_ARG_NAMES,
-			&Settings::countryDialog_geometry,
-			&Settings::countriesStats_show,
-			&Settings::countriesStats_splitterSizes,
-			&openNewCountryDialogAndStore,
-			nullptr,
-			&openEditCountryDialogAndStore,
-			&openDeleteCountriesDialogAndExecute
-		)
-	{}
-};
-
-
-
 
 
 /**
@@ -520,19 +264,19 @@ public:
 class ItemTypesHandler {
 public:
 	/** The ItemTypeMapper instance for the ascent item type. */
-	AscentMapper	ascentMapper;
+	ItemTypeMapper ascentMapper;
 	/** The ItemTypeMapper instance for the peak item type. */
-	PeakMapper		peakMapper;
+	ItemTypeMapper peakMapper;
 	/** The ItemTypeMapper instance for the trip item type. */
-	TripMapper		tripMapper;
+	ItemTypeMapper tripMapper;
 	/** The ItemTypeMapper instance for the hiker item type. */
-	HikerMapper		hikerMapper;
+	ItemTypeMapper hikerMapper;
 	/** The ItemTypeMapper instance for the region item type. */
-	RegionMapper	regionMapper;
+	ItemTypeMapper regionMapper;
 	/** The ItemTypeMapper instance for the range item type. */
-	RangeMapper		rangeMapper;
+	ItemTypeMapper rangeMapper;
 	/** The ItemTypeMapper instance for the country item type. */
-	CountryMapper	countryMapper;
+	ItemTypeMapper countryMapper;
 	
 	/** The ItemTypeMapper instances for all item types. */
 	const QMap<PALItemType, ItemTypeMapper*> mappers;
@@ -545,17 +289,18 @@ public:
 	/**
 	 * Creates the ItemTypesHandler instance.
 	 * 
-	 * @param db				The database.
-	 * @param pointerSupply		A map of pointer supply structs for each item type.
+	 * @param db			The database.
+	 * @param uiPointerMap	A map of pointer supply structs for each item type.
 	 */
-	inline ItemTypesHandler(Database& db, QMap<PALItemType, TypeMapperPointers>&& pointerSupply) :
-		ascentMapper	(AscentMapper	(db, pointerSupply.value(ItemTypeAscent),	&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable)),
-		peakMapper		(PeakMapper		(db, pointerSupply.value(ItemTypePeak),		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable)),
-		tripMapper		(TripMapper		(db, pointerSupply.value(ItemTypeTrip),		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable)),
-		hikerMapper		(HikerMapper	(db, pointerSupply.value(ItemTypeHiker),	&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable)),
-		regionMapper	(RegionMapper	(db, pointerSupply.value(ItemTypeRegion),	&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable)),
-		rangeMapper		(RangeMapper	(db, pointerSupply.value(ItemTypeRange),	&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable)),
-		countryMapper	(CountryMapper	(db, pointerSupply.value(ItemTypeCountry),	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable)),
+	inline ItemTypesHandler(Database& db, QMap<PALItemType, TypeMapperPointers>&& uiPointerMap) :
+		//										type				name		baseTable			compTable					(db, tableView									  )		pointerSupply							columnWidthsSetting									columnOrderSetting								hiddenColumnsSetting								sortingSetting								dialogGeometrySetting				showStatsPanelSetting			statsPanelSplitterSizesSetting				openNewItemDialogAndStoreMethod	openDuplicateItemDialogAndStoreMethod	openEditItemDialogAndStoreMethod	openDeleteItemsDialogAndExecuteMethod
+		ascentMapper	(ItemTypeMapper	(db,	ItemTypeAscent,		"ascent",	db.ascentsTable,	new CompositeAscentsTable	(db, uiPointerMap.value(ItemTypeAscent)	.tableView),	uiPointerMap.value(ItemTypeAscent),		&db.projectSettings.columnWidths_ascentsTable,		&db.projectSettings.columnOrder_ascentsTable,	&db.projectSettings.hiddenColumns_ascentsTable,		&db.projectSettings.sorting_ascentsTable,	&Settings::ascentDialog_geometry,	&Settings::ascentsStats_show,	&Settings::ascentsStats_splitterSizes,		&openNewAscentDialogAndStore,	&openDuplicateAscentDialogAndStore,		&openEditAscentDialogAndStore,		&openDeleteAscentsDialogAndExecute)),
+		peakMapper		(ItemTypeMapper	(db,	ItemTypePeak,		"peak",		db.peaksTable,		new CompositePeaksTable		(db, uiPointerMap.value(ItemTypePeak)	.tableView),	uiPointerMap.value(ItemTypePeak),		&db.projectSettings.columnWidths_peaksTable,		&db.projectSettings.columnOrder_peaksTable,		&db.projectSettings.hiddenColumns_peaksTable,		&db.projectSettings.sorting_peaksTable,		&Settings::peakDialog_geometry,		&Settings::peaksStats_show,		&Settings::peaksStats_splitterSizes,		&openNewPeakDialogAndStore,		&openDuplicatePeakDialogAndStore,		&openEditPeakDialogAndStore,		&openDeletePeaksDialogAndExecute)),
+		tripMapper		(ItemTypeMapper	(db,	ItemTypeTrip,		"trip",		db.tripsTable,		new CompositeTripsTable		(db, uiPointerMap.value(ItemTypeTrip)	.tableView),	uiPointerMap.value(ItemTypeTrip),		&db.projectSettings.columnWidths_tripsTable,		&db.projectSettings.columnOrder_tripsTable,		&db.projectSettings.hiddenColumns_tripsTable,		&db.projectSettings.sorting_tripsTable,		&Settings::tripDialog_geometry,		&Settings::tripsStats_show,		&Settings::tripsStats_splitterSizes,		&openNewTripDialogAndStore,		nullptr /* no duplication */,			&openEditTripDialogAndStore,		&openDeleteTripsDialogAndExecute)),
+		hikerMapper		(ItemTypeMapper	(db,	ItemTypeHiker,		"hiker",	db.hikersTable,		new CompositeHikersTable	(db, uiPointerMap.value(ItemTypeHiker)	.tableView),	uiPointerMap.value(ItemTypeHiker),		&db.projectSettings.columnWidths_hikersTable,		&db.projectSettings.columnOrder_hikersTable,	&db.projectSettings.hiddenColumns_hikersTable,		&db.projectSettings.sorting_hikersTable,	&Settings::hikerDialog_geometry,	&Settings::hikersStats_show,	&Settings::hikersStats_splitterSizes,		&openNewHikerDialogAndStore,	nullptr /* no duplication */,			&openEditHikerDialogAndStore,		&openDeleteHikersDialogAndExecute)),
+		regionMapper	(ItemTypeMapper	(db,	ItemTypeRegion,		"region",	db.regionsTable,	new CompositeRegionsTable	(db, uiPointerMap.value(ItemTypeRegion)	.tableView),	uiPointerMap.value(ItemTypeRegion),		&db.projectSettings.columnWidths_regionsTable,		&db.projectSettings.columnOrder_regionsTable,	&db.projectSettings.hiddenColumns_regionsTable,		&db.projectSettings.sorting_regionsTable,	&Settings::regionDialog_geometry,	&Settings::regionsStats_show,	&Settings::regionsStats_splitterSizes,		&openNewRegionDialogAndStore,	nullptr /* no duplication */,			&openEditRegionDialogAndStore,		&openDeleteRegionsDialogAndExecute)),
+		rangeMapper		(ItemTypeMapper	(db,	ItemTypeRange,		"range",	db.rangesTable,		new CompositeRangesTable	(db, uiPointerMap.value(ItemTypeRange)	.tableView),	uiPointerMap.value(ItemTypeRange),		&db.projectSettings.columnWidths_rangesTable,		&db.projectSettings.columnOrder_rangesTable,	&db.projectSettings.hiddenColumns_rangesTable,		&db.projectSettings.sorting_rangesTable,	&Settings::rangeDialog_geometry,	&Settings::rangesStats_show,	&Settings::rangesStats_splitterSizes,		&openNewRangeDialogAndStore,	nullptr /* no duplication */,			&openEditRangeDialogAndStore,		&openDeleteRangesDialogAndExecute)),
+		countryMapper	(ItemTypeMapper	(db,	ItemTypeCountry,	"country",	db.countriesTable,	new CompositeCountriesTable	(db, uiPointerMap.value(ItemTypeCountry).tableView),	uiPointerMap.value(ItemTypeCountry),	&db.projectSettings.columnWidths_countriesTable,	&db.projectSettings.columnOrder_countriesTable,	&db.projectSettings.hiddenColumns_countriesTable,	&db.projectSettings.sorting_countriesTable,	&Settings::countryDialog_geometry,	&Settings::countriesStats_show,	&Settings::countriesStats_splitterSizes,	&openNewCountryDialogAndStore,	nullptr /* no duplication */,			&openEditCountryDialogAndStore,		&openDeleteCountriesDialogAndExecute)),
 		mappers({
 			{ItemTypeAscent,	(&ascentMapper)},
 			{ItemTypePeak,		(&peakMapper)},
