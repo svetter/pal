@@ -202,14 +202,14 @@ public:
 	
 private:
 	QList<BufferRowIndex> evaluateCrumbsCached(const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, QMap<BufferRowIndex, QList<BufferRowIndex>>& crumbsSingleRowResultCache, QHash<QSet<BufferRowIndex>, QList<BufferRowIndex>>& crumbsWholeSetResultCache) const;
-	void updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
-	void updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const;
-	void updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
+	void updateHistogramChart(HistogramChart& chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const;
+	void updateTimeScatterChart(TimeScatterChart& chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const;
+	void updateTopNChart(TopNChart& chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const;
 	
 	QString getItemLabelFor(const BufferRowIndex& bufferIndex) const;
 	
 	void clearBreadcrumbCachesFor(const Breadcrumbs* const breadcrumbs);
-	void clearChartCacheFor(Chart* const chart);
+	void clearChartCacheFor(Chart& chart);
 	
 	QHash<const Breadcrumbs*, QSet<Chart*>> getBreadcrumbDependencyMap() const;
 	QHash<Chart*, QSet<Column*>> getPostCrumbsUnderlyingColumnSetPerChart() const;

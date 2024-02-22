@@ -43,7 +43,12 @@ StatsEngine::StatsEngine(Database& db) :
  * Destroys the StatsEngine.
  */
 StatsEngine::~StatsEngine()
-{}
+{
+	for (Chart* chart : qAsConst(charts)) {
+		if (chart) delete chart;
+	}
+	charts.clear();
+}
 
 
 
@@ -159,11 +164,7 @@ GeneralStatsEngine::GeneralStatsEngine(Database& db, QVBoxLayout** const statist
  * Destroys the GeneralStatsEngine.
  */
 GeneralStatsEngine::~GeneralStatsEngine()
-{
-	delete elevGainPerYearChart;
-	delete numAscentsPerYearChart;
-	delete heightsScatterChart;
-}
+{}
 
 
 
@@ -452,15 +453,7 @@ ItemStatsEngine::ItemStatsEngine(Database& db, PALItemType itemType, const Norma
  * Destroys the ItemStatsEngine.
  */
 ItemStatsEngine::~ItemStatsEngine()
-{
-	delete peakHeightHistChart;
-	delete elevGainHistChart;
-	delete heightsScatterChart;
-	if (itemType != ItemTypeAscent) delete topNumAscentsChart;
-	delete topMaxPeakHeightChart;
-	delete topMaxElevGainChart;
-	if (itemType != ItemTypeAscent) delete topElevGainSumChart;
-}
+{}
 
 
 
@@ -588,7 +581,7 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 		const QSet<Chart*> charts = breadcrumbDependencies.value(breadcrumbs);
 		for (Chart* const chart : charts) {
 			dirty[chart] = true;
-			clearChartCacheFor(chart);
+			clearChartCacheFor(*chart);
 		}
 	}
 	
@@ -601,7 +594,7 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 		if (!intersect(columns, changedColumns)) continue;
 		
 		dirty[chart] = true;
-		clearChartCacheFor(chart);
+		clearChartCacheFor(*chart);
 	}
 	
 	// === LEVEL 3 ===
@@ -693,7 +686,7 @@ void ItemStatsEngine::updateCharts()
 			return peakHeightHistChart->classifyValue(peakHeight);
 		};
 		
-		updateHistogramChart(peakHeightHistChart, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
+		updateHistogramChart(*peakHeightHistChart, peakBufferRows, peakHeightClassFromPeakBufferRow, peakHeightHistCache);
 		dirty[peakHeightHistChart] = false;
 	}
 	
@@ -709,7 +702,7 @@ void ItemStatsEngine::updateCharts()
 			return elevGainHistChart->classifyValue(elevGain);
 		};
 		
-		updateHistogramChart(elevGainHistChart, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
+		updateHistogramChart(*elevGainHistChart, ascentBufferRows, elevGainClassFromAscentBufferRow, elevGainHistCache);
 		dirty[elevGainHistChart] = false;
 	}
 	
@@ -748,7 +741,7 @@ void ItemStatsEngine::updateCharts()
 		};
 		
 		QList<DateScatterSeries*> seriesList = {&elevGainScatterSeries, &peakHeightScatterSeries};
-		updateTimeScatterChart(heightsScatterChart, seriesList, ascentBufferRows, xyValuesFromTargetBufferRow, heightsScatterCache);
+		updateTimeScatterChart(*heightsScatterChart, seriesList, ascentBufferRows, xyValuesFromTargetBufferRow, heightsScatterCache);
 		dirty[heightsScatterChart] = false;
 	}
 	
@@ -762,7 +755,7 @@ void ItemStatsEngine::updateCharts()
 			return ascentBufferRows.size();
 		};
 		
-		updateTopNChart(topNumAscentsChart, ascentCrumbs, currentStartBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
+		updateTopNChart(*topNumAscentsChart, ascentCrumbs, currentStartBufferRows, numAscentsFromAscentBufferRows, topNumAscentsCache);
 		dirty[topNumAscentsChart] = false;
 	}
 	
@@ -782,7 +775,7 @@ void ItemStatsEngine::updateCharts()
 			return maxPeakHeight;
 		};
 		
-		updateTopNChart(topMaxPeakHeightChart, peakCrumbs, currentStartBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
+		updateTopNChart(*topMaxPeakHeightChart, peakCrumbs, currentStartBufferRows, maxPeakHeightFromPeakBufferRows, topMaxPeakHeightCache);
 		dirty[topMaxPeakHeightChart] = false;
 	}
 	
@@ -802,7 +795,7 @@ void ItemStatsEngine::updateCharts()
 			return maxElevGain;
 		};
 		
-		updateTopNChart(topMaxElevGainChart, ascentCrumbs, currentStartBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
+		updateTopNChart(*topMaxElevGainChart, ascentCrumbs, currentStartBufferRows, maxElevGainFromAscentBufferRows, topMaxElevGainCache);
 		dirty[topMaxElevGainChart] = false;
 	}
 	
@@ -824,7 +817,7 @@ void ItemStatsEngine::updateCharts()
 			return (qreal) elevGainSum / 1000;
 		};
 		
-		updateTopNChart(topElevGainSumChart, ascentCrumbs, currentStartBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
+		updateTopNChart(*topElevGainSumChart, ascentCrumbs, currentStartBufferRows, elevGainSumFromAscentBufferRows, topElevGainSumCache);
 		dirty[topElevGainSumChart] = false;
 	}
 }
@@ -946,12 +939,11 @@ QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& c
  * @param histogramClassFromTargetBufferRow	A function which returns the histogram class index for a given buffer row in the target table.
  * @param cache								The cache to use.
  */
-void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const
+void ItemStatsEngine::updateHistogramChart(HistogramChart& chart, const QList<BufferRowIndex>& targetBufferRows, std::function<int (const BufferRowIndex&)> histogramClassFromTargetBufferRow, QMap<BufferRowIndex, int>& cache) const
 {
-	assert(chart);
 	assert(histogramClassFromTargetBufferRow);
 	
-	QList<qreal> histogramData = QList<qreal>(chart->numClasses, 0);
+	QList<qreal> histogramData = QList<qreal>(chart.numClasses, 0);
 	qreal maxY = 0;
 	
 	for (const BufferRowIndex& targetBufferRow : targetBufferRows) {
@@ -976,7 +968,7 @@ void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const QL
 		if (newClassCount > maxY) maxY = newClassCount;
 	}
 	
-	chart->updateData(histogramData, maxY, currentlyAllRowsSelected);
+	chart.updateData(histogramData, maxY, currentlyAllRowsSelected);
 }
 
 /**
@@ -989,10 +981,8 @@ void ItemStatsEngine::updateHistogramChart(HistogramChart* const chart, const QL
  * @param xyValuesFromTargetBufferRow	A function which returns a date and a list of y values for a given buffer row in the target table.
  * @param cache							The cache to use.
  */
-void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart* const chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const
+void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<DateScatterSeries*> allSeries, const QList<BufferRowIndex>& targetBufferRows, std::function<QPair<QDateTime, QList<qreal>> (const BufferRowIndex&)> xyValuesFromTargetBufferRow, QMap<BufferRowIndex, QPair<QDateTime, QList<qreal>>>& cache) const
 {
-	assert(chart);
-	
 	QDate minDate = QDate();
 	QDate maxDate = QDate();
 	int maxY = 0;
@@ -1039,7 +1029,7 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart* const chart, QLis
 		if (date > maxDate || !maxDate.isValid()) maxDate = date;
 	}
 	
-	chart->updateData(allSeries, minDate, maxDate, maxY, currentlyAllRowsSelected);
+	chart.updateData(allSeries, minDate, maxDate, maxY, currentlyAllRowsSelected);
 }
 
 /**
@@ -1051,9 +1041,8 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart* const chart, QLis
  * @param valueFromTargetBufferRows	A function which returns a chart value for a given list of buffer rows in the target table.
  * @param cache						The cache to use.
  */
-void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const
+void ItemStatsEngine::updateTopNChart(TopNChart& chart, const Breadcrumbs& crumbs, const QSet<BufferRowIndex>& selectedBufferRows, std::function<qreal (const QList<BufferRowIndex>&)> valueFromTargetBufferRows, QMap<BufferRowIndex, qreal>& cache) const
 {
-	assert(chart);
 	assert(valueFromTargetBufferRows);
 	
 	QList<QPair<BufferRowIndex, qreal>> indexValuePairs = QList<QPair<BufferRowIndex, qreal>>();
@@ -1087,7 +1076,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs&
 	};
 	std::stable_sort(indexValuePairs.begin(), indexValuePairs.end(), comparator);
 	
-	int numItems = std::min(chart->n, (int) indexValuePairs.size());
+	int numItems = std::min(chart.n, (int) indexValuePairs.size());
 	QStringList itemLabels = QStringList();
 	QList<qreal> itemValues = QList<qreal>();
 	for (int i = 0; i < numItems; i++) {
@@ -1097,7 +1086,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart* const chart, const Breadcrumbs&
 		itemValues.append(itemValue);
 	}
 	
-	chart->updateData(itemLabels, itemValues, currentlyAllRowsSelected);
+	chart.updateData(itemLabels, itemValues, currentlyAllRowsSelected);
 }
 
 /**
@@ -1186,27 +1175,27 @@ void ItemStatsEngine::clearBreadcrumbCachesFor(const Breadcrumbs* const breadcru
  * 
  * @param chart	The chart for which to clear the cache.
  */
-void ItemStatsEngine::clearChartCacheFor(Chart* const chart)
+void ItemStatsEngine::clearChartCacheFor(Chart& chart)
 {
-	if (chart == peakHeightHistChart) {
+	if (&chart == peakHeightHistChart) {
 		peakHeightHistCache.clear();
 	}
-	else if (chart == elevGainHistChart) {
+	else if (&chart == elevGainHistChart) {
 		elevGainHistCache.clear();
 	}
-	else if (chart == heightsScatterChart) {
+	else if (&chart == heightsScatterChart) {
 		heightsScatterCache.clear();
 	}
-	else if (chart == topNumAscentsChart) {
+	else if (&chart == topNumAscentsChart) {
 		topNumAscentsCache.clear();
 	}
-	else if (chart == topMaxPeakHeightChart) {
+	else if (&chart == topMaxPeakHeightChart) {
 		topMaxPeakHeightCache.clear();
 	}
-	else if (chart == topMaxElevGainChart) {
+	else if (&chart == topMaxElevGainChart) {
 		topMaxElevGainCache.clear();
 	}
-	else if (chart == topElevGainSumChart) {
+	else if (&chart == topElevGainSumChart) {
 		topElevGainSumCache.clear();
 	}
 }
