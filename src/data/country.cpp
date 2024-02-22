@@ -50,9 +50,8 @@ Country::~Country()
  * @param other	The other country.
  * @return		True if the other country is equal to this one, false otherwise.
  */
-bool Country::equalTo(const Country* const other) const
+bool Country::equalTo(const Country& other) const
 {
-	assert(other);
-	if (name	!= other->name)	return false;
+	if (name	!= other.name)	return false;
 	return true;
 }

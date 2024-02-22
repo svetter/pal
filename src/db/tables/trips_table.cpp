@@ -54,13 +54,13 @@ TripsTable::TripsTable() :
  * @param trip		The trip to add.
  * @return			The index of the new trip in the table buffer.
  */
-BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
+BufferRowIndex TripsTable::addRow(QWidget* parent, Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
 	
 	BufferRowIndex newTripIndex = NormalTable::addRow(parent, columnDataPairs);
-	trip->tripID = getPrimaryKeyAt(newTripIndex);
+	trip.tripID = getPrimaryKeyAt(newTripIndex);
 	return newTripIndex;
 }
 
@@ -72,7 +72,7 @@ BufferRowIndex TripsTable::addRow(QWidget* parent, Trip* trip)
  * @param parent	The parent widget.
  * @param trip		The trip to update.
  */
-void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip)
+void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
@@ -88,15 +88,15 @@ void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip
  * @param trip		The trip from which to get the data.
  * @return			A list of column-data pairs representing the trip's data.
  */
-const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip* trip) const
+const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip& trip) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &nameColumn)			{ data = trip->name;		}
-		else if (column == &startDateColumn)	{ data = trip->startDate;	}
-		else if (column == &endDateColumn)		{ data = trip->endDate;		}
-		else if (column == &descriptionColumn)	{ data = trip->description;	}
+		     if (column == &nameColumn)			{ data = trip.name;			}
+		else if (column == &startDateColumn)	{ data = trip.startDate;	}
+		else if (column == &endDateColumn)		{ data = trip.endDate;		}
+		else if (column == &descriptionColumn)	{ data = trip.description;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

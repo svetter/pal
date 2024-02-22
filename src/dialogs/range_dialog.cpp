@@ -29,6 +29,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -43,9 +45,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
-RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* init) :
+RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Range> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init)
+	init(std::move(init))
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
@@ -78,9 +80,7 @@ RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
  * Destroys the range dialog.
  */
 RangeDialog::~RangeDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -123,13 +123,12 @@ void RangeDialog::insertInitData()
  *
  * @return	The range data as a range object. The caller takes ownership of the object.
  */
-Range* RangeDialog::extractData()
+unique_ptr<Range> RangeDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
 	int		continent	= parseEnumCombo	(continentCombo, true);
 	
-	Range* range = new Range(ItemID(), name, continent);
-	return range;
+	return make_unique<Range>(ItemID(), name, continent);
 }
 
 
@@ -141,10 +140,7 @@ Range* RangeDialog::extractData()
  */
 bool RangeDialog::changesMade()
 {
-	Range* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -199,8 +195,8 @@ BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWind
  */
 bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Range* originalRange = db.getRangeAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, mainWindow, db, editItem, originalRange);
+	unique_ptr<Range> originalRange = db.getRangeAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, mainWindow, db, editItem, std::move(originalRange));
 	return editedIndex.isValid();
 }
 
@@ -248,35 +244,33 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* originalRange)
+BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange)
 {
 	BufferRowIndex newRangeIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRange);
 		originalRange->rangeID = ItemID();
 	}
+	const ItemID originalRangeID = originalRange->rangeID;
 	
-	RangeDialog dialog(parent, mainWindow, db, purpose, originalRange);
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, purpose, std::move(originalRange));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalRangeID = FORCE_VALID(originalRange->rangeID);
-		Range* const extractedRange = dialog.extractData();
+		unique_ptr<Range> extractedRange = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newRangeIndex = db.rangesTable.addRow(parent, extractedRange);
+			newRangeIndex = db.rangesTable.addRow(parent, *extractedRange);
 			break;
 		case editItem:
-			db.rangesTable.updateRow(parent, originalRangeID, extractedRange);
+			db.rangesTable.updateRow(parent, FORCE_VALID(originalRangeID), *extractedRange);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRangeIndex = db.rangesTable.getBufferIndexForPrimaryKey(originalRangeID);
+			newRangeIndex = db.rangesTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalRangeID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedRange;
 	}
 	
 	return newRangeIndex;

@@ -28,6 +28,8 @@
 #include "src/data/peak.h"
 #include "ui_peak_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -38,18 +40,18 @@ class PeakDialog : public ItemDialog, public Ui_PeakDialog
 	Q_OBJECT
 	
 	/** The peak data before user interaction starts. */
-	const Peak* init;
+	unique_ptr<const Peak> init;
 	
 	/** The list of IDs corresponding to the regions selectable in the region combo box. */
 	QList<ValidItemID> selectableRegionIDs;
 	
 public:
-	PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* init);
+	PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init);
 	~PeakDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Peak* extractData();
+	unique_ptr<Peak> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -73,7 +75,7 @@ BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget* parent, QMainWindow* ma
 bool			openEditPeakDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeletePeaksDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openPeakDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* originalPeak);
+BufferRowIndex	openPeakDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak);
 
 
 

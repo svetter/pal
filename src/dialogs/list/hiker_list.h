@@ -47,7 +47,7 @@ class HikersOnAscent : public QAbstractTableModel {
 public:
 	HikersOnAscent();
 	
-	void addHiker(Hiker* hiker);
+	void addHiker(const Hiker& hiker);
 	void removeHikerAt(int rowIndex);
 	void clear();
 	

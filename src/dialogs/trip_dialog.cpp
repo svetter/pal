@@ -28,6 +28,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -42,9 +44,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  */
-TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* init) :
+TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init)
+	init(std::move(init))
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));
@@ -85,9 +87,7 @@ TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
  * Destroys the trip dialog.
  */
 TripDialog::~TripDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -128,7 +128,7 @@ void TripDialog::insertInitData()
  *
  * @return	The trip data as a trip object. The caller takes ownership of the object.
  */
-Trip* TripDialog::extractData()
+unique_ptr<Trip> TripDialog::extractData()
 {
 	QString	name		= parseLineEdit			(nameLineEdit);
 	QDate	startDate	= parseDateWidget		(startDateWidget);
@@ -138,8 +138,7 @@ Trip* TripDialog::extractData()
 	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();
 	if (datesUnspecifiedCheckbox->isChecked())	endDate = QDate();
 	
-	Trip* trip = new Trip(ItemID(), name, startDate, endDate, description);
-	return trip;
+	return make_unique<Trip>(ItemID(), name, startDate, endDate, description);
 }
 
 
@@ -150,10 +149,7 @@ Trip* TripDialog::extractData()
  */
 bool TripDialog::changesMade()
 {
-	Trip* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -249,8 +245,8 @@ BufferRowIndex openNewTripDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  */
 bool openEditTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Trip* originalTrip = db.getTripAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openTripDialogAndStore(parent, mainWindow, db, editItem, originalTrip);
+	unique_ptr<Trip> originalTrip = db.getTripAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openTripDialogAndStore(parent, mainWindow, db, editItem, std::move(originalTrip));
 	return editedIndex.isValid();
 }
 
@@ -298,35 +294,33 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  * @param originalTrip	The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  * @return				The index of the new trip in the database's trip table buffer, or existing index of edited trip. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* originalTrip)
+BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip)
 {
 	BufferRowIndex newTripIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalTrip);
 		originalTrip->tripID = ItemID();
 	}
+	const ItemID originalTripID = originalTrip->tripID;
 	
-	TripDialog dialog(parent, mainWindow, db, purpose, originalTrip);
+	TripDialog dialog = TripDialog(parent, mainWindow, db, purpose, std::move(originalTrip));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalTripID = FORCE_VALID(originalTrip->tripID);
-		Trip* const extractedTrip = dialog.extractData();
+		unique_ptr<Trip> extractedTrip = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newTripIndex = db.tripsTable.addRow(parent, extractedTrip);
+			newTripIndex = db.tripsTable.addRow(parent, *extractedTrip);
 			break;
 		case editItem:
-			db.tripsTable.updateRow(parent, originalTripID, extractedTrip);
+			db.tripsTable.updateRow(parent, FORCE_VALID(originalTripID), *extractedTrip);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newTripIndex = db.tripsTable.getBufferIndexForPrimaryKey(originalTripID);
+			newTripIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalTripID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedTrip;
 	}
 	
 	return newTripIndex;

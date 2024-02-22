@@ -32,6 +32,8 @@
 #include <QSqlQuery>
 #include <QFile>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -433,7 +435,7 @@ QList<NormalTable*> Database::getNormalItemTableList() const
  * @param ascentID	The ID of the ascent to fetch.
  * @return			The ascent with the given ID.
  */
-Ascent* Database::getAscent(ValidItemID ascentID) const
+unique_ptr<Ascent> Database::getAscent(ValidItemID ascentID) const
 {
 	assert(databaseLoaded);
 	return getAscentAt(ascentsTable.getBufferIndexForPrimaryKey(ascentID));
@@ -448,7 +450,7 @@ Ascent* Database::getAscent(ValidItemID ascentID) const
  * @param peakID	The ID of the peak to fetch.
  * @return			The peak with the given ID.
  */
-Peak* Database::getPeak(ValidItemID peakID) const
+unique_ptr<Peak> Database::getPeak(ValidItemID peakID) const
 {
 	assert(databaseLoaded);
 	return getPeakAt(peaksTable.getBufferIndexForPrimaryKey(peakID));
@@ -463,7 +465,7 @@ Peak* Database::getPeak(ValidItemID peakID) const
  * @param tripID	The ID of the trip to fetch.
  * @return			The trip with the given ID.
  */
-Trip* Database::getTrip(ValidItemID tripID) const
+unique_ptr<Trip> Database::getTrip(ValidItemID tripID) const
 {
 	assert(databaseLoaded);
 	return getTripAt(tripsTable.getBufferIndexForPrimaryKey(tripID));
@@ -478,7 +480,7 @@ Trip* Database::getTrip(ValidItemID tripID) const
  * @param hikerID	The ID of the hiker to fetch.
  * @return			The hiker with the given ID.
  */
-Hiker* Database::getHiker(ValidItemID hikerID) const
+unique_ptr<Hiker> Database::getHiker(ValidItemID hikerID) const
 {
 	assert(databaseLoaded);
 	return getHikerAt(hikersTable.getBufferIndexForPrimaryKey(hikerID));
@@ -493,7 +495,7 @@ Hiker* Database::getHiker(ValidItemID hikerID) const
  * @param regionID	The ID of the region to fetch.
  * @return			The region with the given ID.
  */
-Region* Database::getRegion(ValidItemID regionID) const
+unique_ptr<Region> Database::getRegion(ValidItemID regionID) const
 {
 	assert(databaseLoaded);
 	return getRegionAt(regionsTable.getBufferIndexForPrimaryKey(regionID));
@@ -508,7 +510,7 @@ Region* Database::getRegion(ValidItemID regionID) const
  * @param rangeID	The ID of the range to fetch.
  * @return			The range with the given ID.
  */
-Range* Database::getRange(ValidItemID rangeID) const
+unique_ptr<Range> Database::getRange(ValidItemID rangeID) const
 {
 	assert(databaseLoaded);
 	return getRangeAt(rangesTable.getBufferIndexForPrimaryKey(rangeID));
@@ -523,7 +525,7 @@ Range* Database::getRange(ValidItemID rangeID) const
  * @param countryID	The ID of the country to fetch.
  * @return			The country with the given ID.
  */
-Country* Database::getCountry(ValidItemID countryID) const
+unique_ptr<Country> Database::getCountry(ValidItemID countryID) const
 {
 	assert(databaseLoaded);
 	return getCountryAt(countriesTable.getBufferIndexForPrimaryKey(countryID));
@@ -540,7 +542,7 @@ Country* Database::getCountry(ValidItemID countryID) const
  * @param rowIndex	The buffer row index of the ascent to fetch.
  * @return			The ascent at the given buffer row index.
  */
-Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
+unique_ptr<Ascent> Database::getAscentAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -564,7 +566,7 @@ Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
 	QSet<ValidItemID>	hikerIDs	= participatedTable.getMatchingEntries(participatedTable.ascentIDColumn, ascentID);
 	QList<Photo>		photos		= photosTable.getPhotosForAscent(ascentID);
 	
-	return new Ascent(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return make_unique<Ascent>(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
 }
 
 /**
@@ -576,7 +578,7 @@ Ascent* Database::getAscentAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the peak to fetch.
  * @return			The peak at the given buffer row index.
  */
-Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
+unique_ptr<Peak> Database::getPeakAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -592,7 +594,7 @@ Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
 	QString	earthLink	= row->at(peaksTable.earthLinkColumn	.getIndex()).toString();
 	QString	wikiLink	= row->at(peaksTable.wikiLinkColumn		.getIndex()).toString();
 	
-	return new Peak(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
+	return make_unique<Peak>(peakID, name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
 /**
@@ -604,7 +606,7 @@ Peak* Database::getPeakAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the trip to fetch.
  * @return			The trip at the given buffer row index.
  */
-Trip* Database::getTripAt(BufferRowIndex rowIndex) const
+unique_ptr<Trip> Database::getTripAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -617,7 +619,7 @@ Trip* Database::getTripAt(BufferRowIndex rowIndex) const
 	QDate	endDate		= row->at(tripsTable.endDateColumn		.getIndex()).toDate();
 	QString	description	= row->at(tripsTable.descriptionColumn	.getIndex()).toString();
 	
-	return new Trip(tripID, name, startDate, endDate, description);
+	return make_unique<Trip>(tripID, name, startDate, endDate, description);
 }
 
 /**
@@ -629,7 +631,7 @@ Trip* Database::getTripAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the hiker to fetch.
  * @return			The hiker at the given buffer row index.
  */
-Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
+unique_ptr<Hiker> Database::getHikerAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -639,7 +641,7 @@ Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
 	ValidItemID hikerID = VALID_ITEM_ID(row->at(hikersTable.primaryKeyColumn.getIndex()));
 	QString	name	= row->at(hikersTable.nameColumn.getIndex()).toString();
 	
-	return new Hiker(hikerID, name);
+	return make_unique<Hiker>(hikerID, name);
 }
 
 /**
@@ -651,7 +653,7 @@ Hiker* Database::getHikerAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the region to fetch.
  * @return			The region at the given buffer row index.
  */
-Region* Database::getRegionAt(BufferRowIndex rowIndex) const
+unique_ptr<Region> Database::getRegionAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -663,7 +665,7 @@ Region* Database::getRegionAt(BufferRowIndex rowIndex) const
 	ItemID	rangeID		= row->at(regionsTable.rangeIDColumn	.getIndex()).toInt();
 	ItemID	countryID	= row->at(regionsTable.countryIDColumn	.getIndex()).toInt();
 	
-	return new Region(regionID, name, rangeID, countryID);
+	return make_unique<Region>(regionID, name, rangeID, countryID);
 }
 
 /**
@@ -675,7 +677,7 @@ Region* Database::getRegionAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the range to fetch.
  * @return			The range at the given buffer row index.
  */
-Range* Database::getRangeAt(BufferRowIndex rowIndex) const
+unique_ptr<Range> Database::getRangeAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -686,7 +688,7 @@ Range* Database::getRangeAt(BufferRowIndex rowIndex) const
 	QString	name		= row->at(rangesTable.nameColumn		.getIndex()).toString();
 	int		continent	= row->at(rangesTable.continentColumn	.getIndex()).toInt();
 	
-	return new Range(rangeID, name, continent);
+	return make_unique<Range>(rangeID, name, continent);
 }
 
 /**
@@ -698,7 +700,7 @@ Range* Database::getRangeAt(BufferRowIndex rowIndex) const
  * @param rowIndex	The buffer row index of the country to fetch.
  * @return			The country at the given buffer row index.
  */
-Country* Database::getCountryAt(BufferRowIndex rowIndex) const
+unique_ptr<Country> Database::getCountryAt(BufferRowIndex rowIndex) const
 {
 	assert(databaseLoaded);
 	
@@ -708,7 +710,7 @@ Country* Database::getCountryAt(BufferRowIndex rowIndex) const
 	ValidItemID countryID = VALID_ITEM_ID(row->at(countriesTable.primaryKeyColumn.getIndex()));
 	QString	name	= row->at(countriesTable.nameColumn.getIndex()).toString();
 	
-	return new Country(countryID, name);
+	return make_unique<Country>(countryID, name);
 }
 
 

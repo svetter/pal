@@ -51,7 +51,7 @@ SettingsTable::SettingsTable() :
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			True if the setting is present and not null, false otherwise.
  */
-bool SettingsTable::settingIsPresent(const GenericProjectSetting* setting, QWidget* parent)
+bool SettingsTable::settingIsPresent(const GenericProjectSetting& setting, QWidget* parent)
 {
 	ItemID settingID = findSettingID(setting, parent);
 	if (settingID.isInvalid()) return false;
@@ -69,17 +69,17 @@ bool SettingsTable::settingIsPresent(const GenericProjectSetting* setting, QWidg
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			The current value of the setting.
  */
-QVariant SettingsTable::getSetting(const GenericProjectSetting* setting, QWidget* parent)
+QVariant SettingsTable::getSetting(const GenericProjectSetting& setting, QWidget* parent)
 {
 	ItemID id = findSettingID(setting);
 	if (id.isInvalid()) {
 		if (!parent) {
-			return setting->defaultValue;
+			return setting.defaultValue;
 		}
 		
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
-		columnDataPairs.append({&settingKeyColumn,	setting->key});
-		columnDataPairs.append({&settingValueColumn,	setting->defaultValue});
+		columnDataPairs.append({&settingKeyColumn,		setting.key});
+		columnDataPairs.append({&settingValueColumn,	setting.defaultValue});
 		BufferRowIndex newBufferIndex = addRow(parent, columnDataPairs);
 		id = primaryKeyColumn.getValueAt(newBufferIndex);
 	}
@@ -95,7 +95,7 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting* setting, QWidget
  * @param setting	The setting to add or update.
  * @param value		The new value for the setting.
  */
-void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* setting, QVariant value)
+void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting& setting, QVariant value)
 {
 	ItemID id = findSettingID(setting, parent);
 	if (id.isValid()) {
@@ -104,7 +104,7 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* set
 	} else {
 		// Add setting
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
-		columnDataPairs.append({&settingKeyColumn,		setting->key});
+		columnDataPairs.append({&settingKeyColumn,		setting.key});
 		columnDataPairs.append({&settingValueColumn,	value});
 		addRow(parent, columnDataPairs);
 	}
@@ -116,7 +116,7 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting* set
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting* setting)
+void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting& setting)
 {
 	ItemID id = findSettingID(setting, parent);
 	if (id.isInvalid()) return;
@@ -129,7 +129,7 @@ void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting* s
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting* setting)
+void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting& setting)
 {
 	ItemID id = findSettingID(setting, parent);
 	if (id.isInvalid()) return;
@@ -163,9 +163,9 @@ void SettingsTable::clearAllSettings(QWidget* parent, const QString& baseKey)
  * @param parent	The parent window. Can be nullptr, in which case no cleanup is performed for duplicate settings.
  * @return			The projectSettingID of the setting, or an invalid ItemID if the setting is not present.
  */
-ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidget* parent)
+ItemID SettingsTable::findSettingID(const GenericProjectSetting& setting, QWidget* parent)
 {
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting->key);
+	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting.key);
 	
 	if (bufferRowIndices.size() == 0) {
 		return ItemID();
@@ -173,7 +173,7 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting* setting, QWidge
 	BufferRowIndex settingIndex = bufferRowIndices.last();
 	
 	if (bufferRowIndices.size() > 1) {
-		QString error = "WARNING: Found " + QString::number(bufferRowIndices.size()) + " entries for project setting " + setting->key + ".";
+		QString error = "WARNING: Found " + QString::number(bufferRowIndices.size()) + " entries for project setting " + setting.key + ".";
 		if (parent) {
 			error += " Cleaning up.";
 		}

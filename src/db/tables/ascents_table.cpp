@@ -75,13 +75,13 @@ AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyCol
  * @param ascent	The ascent to add.
  * @return			The index of the new ascent in the table buffer.
  */
-BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
+BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
 	BufferRowIndex newAscentIndex = NormalTable::addRow(parent, columnDataPairs);
-	ascent->ascentID = getPrimaryKeyAt(newAscentIndex);
+	ascent.ascentID = getPrimaryKeyAt(newAscentIndex);
 	return newAscentIndex;
 }
 
@@ -93,12 +93,12 @@ BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent* ascent)
  * @param parent	The parent widget.
  * @param ascent	The ascent to update.
  */
-void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
+void AscentsTable::updateRow(QWidget* parent, const Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
-	NormalTable::updateRow(parent, FORCE_VALID(ascent->ascentID), columnDataPairs);
+	NormalTable::updateRow(parent, FORCE_VALID(ascent.ascentID), columnDataPairs);
 }
 
 
@@ -109,23 +109,23 @@ void AscentsTable::updateRow(QWidget* parent, const Ascent* ascent)
  * @param ascent	The ascent from which to get the data.
  * @return			A list of column-data pairs representing the ascent's data.
  */
-const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Ascent* ascent) const
+const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Ascent& ascent) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &titleColumn)			{ data = ascent->title;							}
-		else if (column == &peakIDColumn)			{ data = ascent->peakID.asQVariant();			}
-		else if (column == &dateColumn)				{ data = ascent->date;							}
-		else if (column == &peakOnDayColumn)		{ data = ascent->perDayIndex;					}
-		else if (column == &timeColumn)				{ data = ascent->time;							}
-		else if (column == &elevationGainColumn)	{ data = ascent->getElevationGainAsQVariant();	}
-		else if (column == &hikeKindColumn)			{ data = ascent->hikeKind;						}
-		else if (column == &traverseColumn)			{ data = ascent->traverse;						}
-		else if (column == &difficultySystemColumn)	{ data = ascent->difficultySystem;				}
-		else if (column == &difficultyGradeColumn)	{ data = ascent->difficultyGrade;				}
-		else if (column == &tripIDColumn)			{ data = ascent->tripID.asQVariant();			}
-		else if (column == &descriptionColumn)		{ data = ascent->description;					}
+		     if (column == &titleColumn)			{ data = ascent.title;							}
+		else if (column == &peakIDColumn)			{ data = ascent.peakID.asQVariant();			}
+		else if (column == &dateColumn)				{ data = ascent.date;							}
+		else if (column == &peakOnDayColumn)		{ data = ascent.perDayIndex;					}
+		else if (column == &timeColumn)				{ data = ascent.time;							}
+		else if (column == &elevationGainColumn)	{ data = ascent.getElevationGainAsQVariant();	}
+		else if (column == &hikeKindColumn)			{ data = ascent.hikeKind;						}
+		else if (column == &traverseColumn)			{ data = ascent.traverse;						}
+		else if (column == &difficultySystemColumn)	{ data = ascent.difficultySystem;				}
+		else if (column == &difficultyGradeColumn)	{ data = ascent.difficultyGrade;				}
+		else if (column == &tripIDColumn)			{ data = ascent.tripID.asQVariant();			}
+		else if (column == &descriptionColumn)		{ data = ascent.description;					}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

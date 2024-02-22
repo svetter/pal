@@ -56,13 +56,12 @@ Trip::~Trip()
  * @param other	The other trip.
  * @return		True if the other trip is equal to this one, false otherwise.
  */
-bool Trip::equalTo(const Trip* const other) const
+bool Trip::equalTo(const Trip& other) const
 {
-	assert(other);
-	if (name		!= other->name)			return false;
-	if (startDate	!= other->startDate)	return false;
-	if (endDate		!= other->endDate)		return false;
-	if (description	!= other->description)	return false;
+	if (name		!= other.name)			return false;
+	if (startDate	!= other.startDate)		return false;
+	if (endDate		!= other.endDate)		return false;
+	if (description	!= other.description)	return false;
 	return true;
 }
 

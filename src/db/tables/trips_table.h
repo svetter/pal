@@ -49,10 +49,10 @@ public:
 	
 	TripsTable();
 	
-	BufferRowIndex addRow(QWidget* parent, Trip* trip);
-	void updateRow(QWidget* parent, ValidItemID tripID, const Trip* trip);
+	BufferRowIndex addRow(QWidget* parent, Trip& trip);
+	void updateRow(QWidget* parent, ValidItemID tripID, const Trip& trip);
 private:
-	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip* trip) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip& trip) const;
 	
 public:
 	virtual QString getNoneString() const;

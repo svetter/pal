@@ -28,6 +28,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -42,9 +44,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  */
-HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Hiker* init) :
+HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init)
+	init(std::move(init))
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
@@ -74,9 +76,7 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
  * Destroys the hiker dialog.
  */
 HikerDialog::~HikerDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -107,12 +107,11 @@ void HikerDialog::insertInitData()
  *
  * @return	The hiker data as a hiker object. The caller takes ownership of the object.
  */
-Hiker* HikerDialog::extractData()
+unique_ptr<Hiker> HikerDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Hiker* hiker = new Hiker(ItemID(), name);
-	return hiker;
+	return make_unique<Hiker>(ItemID(), name);
 }
 
 
@@ -124,10 +123,7 @@ Hiker* HikerDialog::extractData()
  */
 bool HikerDialog::changesMade()
 {
-	Hiker* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -182,8 +178,8 @@ BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWind
  */
 bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Hiker* originalHiker = db.getHikerAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, mainWindow, db, editItem, originalHiker);
+	unique_ptr<Hiker> originalHiker = db.getHikerAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, mainWindow, db, editItem, std::move(originalHiker));
 	return editedIndex.isValid();
 }
 
@@ -238,35 +234,33 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  * @param originalHiker	The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  * @return				The index of the new hiker in the database's hiker table buffer, or existing index of edited hiker. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Hiker* originalHiker)
+BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker)
 {
 	BufferRowIndex newHikerIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalHiker);
 		originalHiker->hikerID = ItemID();
 	}
+	const ItemID originalHikerID = originalHiker->hikerID;
 	
-	HikerDialog dialog(parent, mainWindow, db, purpose, originalHiker);
+	HikerDialog dialog = HikerDialog(parent, mainWindow, db, purpose, std::move(originalHiker));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalHikerID = FORCE_VALID(originalHiker->hikerID);
-		Hiker* const extractedHiker = dialog.extractData();
+		unique_ptr<Hiker> extractedHiker = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newHikerIndex = db.hikersTable.addRow(parent, extractedHiker);
+			newHikerIndex = db.hikersTable.addRow(parent, *extractedHiker);
 			break;
 		case editItem:
-			db.hikersTable.updateRow(parent, originalHikerID, extractedHiker);
+			db.hikersTable.updateRow(parent, FORCE_VALID(originalHikerID), *extractedHiker);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newHikerIndex = db.hikersTable.getBufferIndexForPrimaryKey(originalHikerID);
+			newHikerIndex = db.hikersTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalHikerID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedHiker;
 	}
 	
 	return newHikerIndex;

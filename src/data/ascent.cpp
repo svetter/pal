@@ -78,23 +78,22 @@ Ascent::~Ascent()
  * @param other	The other ascent.
  * @return		True if the other ascent is equal to this one, false otherwise.
  */
-bool Ascent::equalTo(const Ascent* const other) const
+bool Ascent::equalTo(const Ascent& other) const
 {
-	assert(other);
-	if (title				!= other->title)			return false;
-	if (peakID				!= other->peakID)			return false;
-	if (date				!= other->date)				return false;
-	if (perDayIndex			!= other->perDayIndex)		return false;
-	if (time				!= other->time)				return false;
-	if (elevationGain		!= other->elevationGain)	return false;
-	if (hikeKind			!= other->hikeKind)			return false;
-	if (traverse			!= other->traverse)			return false;
-	if (difficultySystem	!= other->difficultySystem)	return false;
-	if (difficultyGrade		!= other->difficultyGrade)	return false;
-	if (tripID				!= other->tripID)			return false;
-	if (hikerIDs			!= other->hikerIDs)			return false;
-	if (photos				!= other->photos)			return false;
-	if (description			!= other->description)		return false;
+	if (title				!= other.title)				return false;
+	if (peakID				!= other.peakID)			return false;
+	if (date				!= other.date)				return false;
+	if (perDayIndex			!= other.perDayIndex)		return false;
+	if (time				!= other.time)				return false;
+	if (elevationGain		!= other.elevationGain)		return false;
+	if (hikeKind			!= other.hikeKind)			return false;
+	if (traverse			!= other.traverse)			return false;
+	if (difficultySystem	!= other.difficultySystem)	return false;
+	if (difficultyGrade		!= other.difficultyGrade)	return false;
+	if (tripID				!= other.tripID)			return false;
+	if (hikerIDs			!= other.hikerIDs)			return false;
+	if (photos				!= other.photos)			return false;
+	if (description			!= other.description)		return false;
 	return true;
 }
 

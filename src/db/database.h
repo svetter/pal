@@ -46,6 +46,8 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
+using std::unique_ptr;
+
 class MainWindow;
 class CompositeAscentsTable;
 struct WhatIfDeleteResult;
@@ -102,21 +104,21 @@ public:
 	QList<Table*> getItemTableList() const;
 	QList<NormalTable*> getNormalItemTableList() const;
 	
-	Ascent*		getAscent	(ValidItemID ascentID)	const;
-	Peak*		getPeak		(ValidItemID peakID)	const;
-	Trip*		getTrip		(ValidItemID tripID)	const;
-	Hiker*		getHiker	(ValidItemID hikerID)	const;
-	Region*		getRegion	(ValidItemID regionID)	const;
-	Range*		getRange	(ValidItemID rangeID)	const;
-	Country*	getCountry	(ValidItemID countryID)	const;
+	unique_ptr<Ascent>	getAscent		(ValidItemID	ascentID)	const;
+	unique_ptr<Peak>	getPeak			(ValidItemID	peakID)		const;
+	unique_ptr<Trip>	getTrip			(ValidItemID	tripID)		const;
+	unique_ptr<Hiker>	getHiker		(ValidItemID	hikerID)	const;
+	unique_ptr<Region>	getRegion		(ValidItemID	regionID)	const;
+	unique_ptr<Range>	getRange		(ValidItemID	rangeID)	const;
+	unique_ptr<Country>	getCountry		(ValidItemID	countryID)	const;
 	
-	Ascent*		getAscentAt		(BufferRowIndex rowIndex) const;
-	Peak*		getPeakAt		(BufferRowIndex rowIndex) const;
-	Trip*		getTripAt		(BufferRowIndex rowIndex) const;
-	Hiker*		getHikerAt		(BufferRowIndex rowIndex) const;
-	Region*		getRegionAt		(BufferRowIndex rowIndex) const;
-	Range*		getRangeAt		(BufferRowIndex rowIndex) const;
-	Country*	getCountryAt	(BufferRowIndex rowIndex) const;
+	unique_ptr<Ascent>	getAscentAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Peak>	getPeakAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Trip>	getTripAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Hiker>	getHikerAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Region>	getRegionAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Range>	getRangeAt		(BufferRowIndex	rowIndex)	const;
+	unique_ptr<Country>	getCountryAt	(BufferRowIndex	rowIndex)	const;
 	
 	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable& table, QSet<ValidItemID> primaryKeys);
 	void removeRows(QWidget* parent, NormalTable& table, QSet<ValidItemID> primaryKeys);

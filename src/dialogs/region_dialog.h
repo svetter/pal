@@ -28,6 +28,8 @@
 #include "src/data/region.h"
 #include "ui_region_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -38,20 +40,20 @@ class RegionDialog : public ItemDialog, public Ui_RegionDialog
 	Q_OBJECT
 	
 	/** The region data before user interaction starts. */
-	const Region* init;
-
+	unique_ptr<const Region> init;
+	
 	/** The list of IDs corresponding to the ranges selectable in the range combo box. */
 	QList<ValidItemID> selectableRangeIDs;
 	/** The list of IDs corresponding to the countries selectable in the country combo box. */
 	QList<ValidItemID> selectableCountryIDs;
 	
 public:
-	RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* init);
+	RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Region> init);
 	~RegionDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Region* extractData();
+	unique_ptr<Region> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -74,7 +76,7 @@ BufferRowIndex	openNewRegionDialogAndStore			(QWidget* parent, QMainWindow* main
 bool			openEditRegionDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteRegionsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* originalRegion);
+BufferRowIndex	openRegionDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion);
 
 
 

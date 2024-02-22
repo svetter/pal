@@ -31,6 +31,8 @@
 #include "list/hiker_list.h"
 #include "list/photo_list.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -41,7 +43,7 @@ class AscentDialog : public ItemDialog, public Ui_AscentDialog
 	Q_OBJECT
 	
 	/** The ascent data before user interaction starts. */
-	const Ascent* init;
+	unique_ptr<const Ascent> init;
 	
 	/** The list of IDs corresponding to the regions selectable in the region filter combo box. */
 	QList<ValidItemID> selectableRegionIDs;
@@ -56,12 +58,12 @@ class AscentDialog : public ItemDialog, public Ui_AscentDialog
 	PhotosOfAscent photosModel;
 	
 public:
-	AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* init);
+	AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init);
 	~AscentDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Ascent* extractData();
+	unique_ptr<Ascent> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -97,7 +99,7 @@ BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget* parent, QMainWindow* 
 bool			openEditAscentDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteAscentsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Ascent* originalAscent);
+BufferRowIndex	openAscentDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent);
 
 
 QString		openFileDialogForSinglePhotoSelection	(QWidget* parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());

@@ -28,6 +28,8 @@
 #include "src/data/trip.h"
 #include "ui_trip_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -38,15 +40,15 @@ class TripDialog : public ItemDialog, public Ui_TripDialog
 	Q_OBJECT
 	
 	/** The trip data before user interaction starts. */
-	const Trip* init;
+	unique_ptr<const Trip> init;
 	
 public:
-	TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* init);
+	TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init);
 	~TripDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Trip* extractData();
+	unique_ptr<Trip> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -69,7 +71,7 @@ BufferRowIndex	openNewTripDialogAndStore		(QWidget* parent, QMainWindow* mainWin
 bool			openEditTripDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteTripsDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openTripDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Trip* originalTrip);
+BufferRowIndex	openTripDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip);
 
 
 

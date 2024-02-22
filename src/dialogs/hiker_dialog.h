@@ -29,6 +29,8 @@
 #include "src/data/hiker.h"
 #include "ui_hiker_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -39,15 +41,15 @@ class HikerDialog : public ItemDialog, public Ui_HikerDialog
 	Q_OBJECT
 	
 	/** The hiker data before user interaction starts. */
-	const Hiker* init;
+	unique_ptr<const Hiker> init;
 	
 public:
-	HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Hiker* init);
+	HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init);
 	~HikerDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Hiker* extractData();
+	unique_ptr<Hiker> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -66,7 +68,7 @@ BufferRowIndex	openNewHikerDialogAndStore			(QWidget* parent, QMainWindow* mainW
 bool			openEditHikerDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteHikersDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openHikerDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Hiker* originalHiker);
+BufferRowIndex	openHikerDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker);
 
 
 

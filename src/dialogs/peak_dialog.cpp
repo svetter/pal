@@ -29,6 +29,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -43,9 +45,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* init) :
+PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init),
+	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
@@ -80,9 +82,9 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 		insertInitData();
 		break;
 	case duplicateItem:
-		Peak* blankPeak = extractData();
+		unique_ptr<Peak> blankPeak = extractData();
 		insertInitData();
-		this->init = blankPeak;
+		this->init = std::move(blankPeak);
 		break;
 	}
 }
@@ -91,9 +93,7 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
  * Destroys the peak dialog.
  */
 PeakDialog::~PeakDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -153,7 +153,7 @@ void PeakDialog::insertInitData()
  *
  * @return	The peak data as a peak object. The caller takes ownership of the object.
  */
-Peak* PeakDialog::extractData()
+unique_ptr<Peak> PeakDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
 	int		height		= parseSpinner		(heightSpinner);
@@ -165,8 +165,7 @@ Peak* PeakDialog::extractData()
 	
 	if (!heightCheckbox->isChecked())	height = -1;
 	
-	Peak* peak = new Peak(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
-	return peak;
+	return make_unique<Peak>(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
 
 
@@ -177,10 +176,7 @@ Peak* PeakDialog::extractData()
  */
 bool PeakDialog::changesMade()
 {
-	Peak* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -263,8 +259,8 @@ BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  */
 BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Peak* originalPeak = db.getPeakAt(bufferRowIndex);
-	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, originalPeak);
+	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
+	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalPeak));
 }
 
 /**
@@ -278,8 +274,8 @@ BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mai
  */
 bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Peak* originalPeak = db.getPeakAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, originalPeak);
+	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, std::move(originalPeak));
 	return editedIndex.isValid();
 }
 
@@ -327,35 +323,33 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Peak* originalPeak)
+BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
 {
 	BufferRowIndex newPeakIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalPeak);
 		originalPeak->peakID = ItemID();
 	}
+	const ItemID originalPeakID = originalPeak->peakID;
 	
-	PeakDialog dialog(parent, mainWindow, db, purpose, originalPeak);
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, purpose, std::move(originalPeak));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalPeakID = FORCE_VALID(originalPeak->peakID);
-		Peak* const extractedPeak = dialog.extractData();
+		unique_ptr<Peak> extractedPeak = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newPeakIndex = db.peaksTable.addRow(parent, extractedPeak);
+			newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
 			break;
 		case editItem:
-			db.peaksTable.updateRow(parent, originalPeakID, extractedPeak);
+			db.peaksTable.updateRow(parent, FORCE_VALID(originalPeakID), *extractedPeak);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newPeakIndex = db.peaksTable.getBufferIndexForPrimaryKey(originalPeakID);
+			newPeakIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalPeakID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedPeak;
 	}
 	
 	return newPeakIndex;

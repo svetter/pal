@@ -62,13 +62,13 @@ PeaksTable::PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn) :
  * @param peak		The peak to add.
  * @return			The index of the new peak in the table buffer.
  */
-BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak* peak)
+BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak& peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
 	
 	BufferRowIndex newPeakIndex = NormalTable::addRow(parent, columnDataPairs);
-	peak->peakID = getPrimaryKeyAt(newPeakIndex);
+	peak.peakID = getPrimaryKeyAt(newPeakIndex);
 	return newPeakIndex;
 }
 
@@ -80,7 +80,7 @@ BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak* peak)
  * @param parent	The parent widget.
  * @param peak		The peak to update.
  */
-void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak)
+void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak& peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
@@ -96,18 +96,18 @@ void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak
  * @param peak		The peak from which to get the data.
  * @return			A list of column-data pairs representing the peak's data.
  */
-const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Peak* peak) const
+const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Peak& peak) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &nameColumn)			{ data = peak->name;					}
-		else if (column == &heightColumn)		{ data = peak->getHeightAsQVariant();	}
-		else if (column == &volcanoColumn)		{ data = peak->volcano;					}
-		else if (column == &regionIDColumn)		{ data = peak->regionID.asQVariant();	}
-		else if (column == &mapsLinkColumn)		{ data = peak->mapsLink;				}
-		else if (column == &earthLinkColumn)	{ data = peak->earthLink;				}
-		else if (column == &wikiLinkColumn)		{ data = peak->wikiLink;				}
+		     if (column == &nameColumn)			{ data = peak.name;						}
+		else if (column == &heightColumn)		{ data = peak.getHeightAsQVariant();	}
+		else if (column == &volcanoColumn)		{ data = peak.volcano;					}
+		else if (column == &regionIDColumn)		{ data = peak.regionID.asQVariant();	}
+		else if (column == &mapsLinkColumn)		{ data = peak.mapsLink;					}
+		else if (column == &earthLinkColumn)	{ data = peak.earthLink;				}
+		else if (column == &wikiLinkColumn)		{ data = peak.wikiLink;					}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

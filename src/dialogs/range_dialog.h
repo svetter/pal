@@ -28,6 +28,8 @@
 #include "src/data/range.h"
 #include "ui_range_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -38,15 +40,15 @@ class RangeDialog : public ItemDialog, public Ui_RangeDialog
 	Q_OBJECT
 	
 	/** The range data before user interaction starts. */
-	const Range* init;
+	unique_ptr<const Range> init;
 	
 public:
-	RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* init);
+	RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Range> init);
 	~RangeDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Range* extractData();
+	unique_ptr<Range> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -66,7 +68,7 @@ BufferRowIndex	openNewRangeDialogAndStore			(QWidget* parent, QMainWindow* mainW
 bool			openEditRangeDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteRangesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openRangeDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Range* originalRange);
+BufferRowIndex	openRangeDialogAndStore				(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange);
 
 
 

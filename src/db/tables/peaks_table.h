@@ -55,10 +55,10 @@ public:
 	
 	PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn);
 	
-	BufferRowIndex addRow(QWidget* parent, Peak* peak);
-	void updateRow(QWidget* parent, ValidItemID peakID, const Peak* peak);
+	BufferRowIndex addRow(QWidget* parent, Peak& peak);
+	void updateRow(QWidget* parent, ValidItemID peakID, const Peak& peak);
 private:
-	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Peak* peak) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Peak& peak) const;
 	
 public:
 	virtual QString getNoneString() const;

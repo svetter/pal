@@ -48,13 +48,13 @@ HikersTable::HikersTable() :
  * @param hiker	The hiker to add.
  * @return			The index of the new hiker in the table buffer.
  */
-BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker* hiker)
+BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
 	
 	BufferRowIndex newHikerIndex = NormalTable::addRow(parent, columnDataPairs);
-	hiker->hikerID = getPrimaryKeyAt(newHikerIndex);
+	hiker.hikerID = getPrimaryKeyAt(newHikerIndex);
 	return newHikerIndex;
 }
 
@@ -66,7 +66,7 @@ BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker* hiker)
  * @param parent	The parent widget.
  * @param hiker		The hiker to update.
  */
-void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker)
+void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
@@ -82,12 +82,12 @@ void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* h
  * @param hiker		The hiker from which to get the data.
  * @return			A list of column-data pairs representing the hiker's data.
  */
-const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker* hiker) const
+const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker& hiker) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &nameColumn)	{ data = hiker->name;	}
+		     if (column == &nameColumn)	{ data = hiker.name;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

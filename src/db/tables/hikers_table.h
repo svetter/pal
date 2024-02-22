@@ -43,10 +43,10 @@ public:
 	
 	HikersTable();
 	
-	BufferRowIndex addRow(QWidget* parent, Hiker* hiker);
-	void updateRow(QWidget* parent, ValidItemID hikerID, const Hiker* hiker);
+	BufferRowIndex addRow(QWidget* parent, Hiker& hiker);
+	void updateRow(QWidget* parent, ValidItemID hikerID, const Hiker& hiker);
 private:
-	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker* hiker) const;
+	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker& hiker) const;
 	
 public:
 	virtual QString getNoneString() const;

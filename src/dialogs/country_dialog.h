@@ -28,6 +28,8 @@
 #include "src/data/country.h"
 #include "ui_country_dialog.h"
 
+using std::unique_ptr;
+
 
 
 /**
@@ -38,15 +40,15 @@ class CountryDialog : public ItemDialog, public Ui_CountryDialog
 	Q_OBJECT
 	
 	/** The country data before user interaction starts. */
-	const Country* init;
+	unique_ptr<const Country> init;
 	
 public:
-	CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* init);
+	CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Country> init);
 	~CountryDialog();
 	
 	virtual QString getEditWindowTitle() override;
 	
-	Country* extractData();
+	unique_ptr<Country> extractData();
 	virtual bool changesMade() override;
 	
 private:
@@ -65,7 +67,7 @@ BufferRowIndex	openNewCountryDialogAndStore		(QWidget* parent, QMainWindow* main
 bool			openEditCountryDialogAndStore		(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteCountriesDialogAndExecute	(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 
-BufferRowIndex	openCountryDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* originalCountry);
+BufferRowIndex	openCountryDialogAndStore			(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry);
 
 
 

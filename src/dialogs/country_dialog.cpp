@@ -28,6 +28,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -42,9 +44,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  */
-CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* init) :
+CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Country> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init)
+	init(std::move(init))
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
@@ -74,9 +76,7 @@ CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database&
  * Destroys the country dialog.
  */
 CountryDialog::~CountryDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -107,12 +107,11 @@ void CountryDialog::insertInitData()
  *
  * @return	The country data as a country object. The caller takes ownership of the object.
  */
-Country* CountryDialog::extractData()
+unique_ptr<Country> CountryDialog::extractData()
 {
 	QString	name	= parseLineEdit	(nameLineEdit);
 	
-	Country* country = new Country(ItemID(), name);
-	return country;
+	return make_unique<Country>(ItemID(), name);
 }
 
 
@@ -124,10 +123,7 @@ Country* CountryDialog::extractData()
  */
 bool CountryDialog::changesMade()
 {
-	Country* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -182,8 +178,8 @@ BufferRowIndex openNewCountryDialogAndStore(QWidget* parent, QMainWindow* mainWi
  */
 bool openEditCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Country* originalCountry = db.getCountryAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, mainWindow, db, editItem, originalCountry);
+	unique_ptr<Country> originalCountry = db.getCountryAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, mainWindow, db, editItem, std::move(originalCountry));
 	return editedIndex.isValid();
 }
 
@@ -231,35 +227,33 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindo
  * @param originalCountry	The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  * @return					The index of the new country in the database's country table buffer, or existing index of edited country. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Country* originalCountry)
+BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry)
 {
 	BufferRowIndex newCountryIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalCountry);
 		originalCountry->countryID = ItemID();
 	}
+	const ItemID originalCountryID = originalCountry->countryID;
 	
-	CountryDialog dialog(parent, mainWindow, db, purpose, originalCountry);
+	CountryDialog dialog = CountryDialog(parent, mainWindow, db, purpose, std::move(originalCountry));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalCountryID = FORCE_VALID(originalCountry->countryID);
-		Country* const extractedCountry = dialog.extractData();
+		unique_ptr<Country> extractedCountry = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newCountryIndex = db.countriesTable.addRow(parent, extractedCountry);
+			newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
 			break;
 		case editItem:
-			db.countriesTable.updateRow(parent, originalCountryID, extractedCountry);
+			db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newCountryIndex = db.countriesTable.getBufferIndexForPrimaryKey(originalCountryID);
+			newCountryIndex = db.countriesTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalCountryID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedCountry;
 	}
 	
 	return newCountryIndex;

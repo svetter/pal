@@ -31,6 +31,8 @@
 #include <QPushButton>
 #include <QFileDialog>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -117,11 +119,10 @@ void ProjectSettingsWindow::saveSettings()
 		if (newDefaultHikerLineEdit->text().isEmpty()) return;
 		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
-		Hiker* newDefaultHiker = new Hiker(ItemID(), newDefaultHikerName);
-		db.hikersTable.addRow(this, newDefaultHiker);
+		unique_ptr<Hiker> newDefaultHiker = make_unique<Hiker>(ItemID(), newDefaultHikerName);
+		db.hikersTable.addRow(this, *newDefaultHiker);
 		
 		db.projectSettings.defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
-		delete newDefaultHiker;
 	}
 	else {
 		db.projectSettings.defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());

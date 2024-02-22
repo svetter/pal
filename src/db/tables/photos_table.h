@@ -55,9 +55,9 @@ public:
 	QList<Photo> getPhotosForAscent(ValidItemID ascentID) const;
 	
 	void addRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos);
-	void addRows(QWidget* parent, const Ascent* ascent);
+	void addRows(QWidget* parent, const Ascent& ascent);
 	void updateRows(QWidget* parent, ValidItemID ascentID, const QList<Photo>& photos);
-	void updateRows(QWidget* parent, const Ascent* ascent);
+	void updateRows(QWidget* parent, const Ascent& ascent);
 	void updateFilepathAt(QWidget* parent, BufferRowIndex bufferRowIndex, QString newFilepath);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, ValidItemID ascentID, int sortIndex, const QString& filepath, const QString& description) const;

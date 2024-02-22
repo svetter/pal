@@ -48,13 +48,13 @@ CountriesTable::CountriesTable() :
  * @param country	The country to add.
  * @return			The index of the new country in the table buffer.
  */
-BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
+BufferRowIndex CountriesTable::addRow(QWidget* parent, Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
 	
 	BufferRowIndex newCountryIndex = NormalTable::addRow(parent, columnDataPairs);
-	country->countryID = getPrimaryKeyAt(newCountryIndex);
+	country.countryID = getPrimaryKeyAt(newCountryIndex);
 	return newCountryIndex;
 }
 
@@ -66,7 +66,7 @@ BufferRowIndex CountriesTable::addRow(QWidget* parent, Country* country)
  * @param parent	The parent widget.
  * @param country	The country to update.
  */
-void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country* country)
+void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
@@ -82,12 +82,12 @@ void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Cou
  * @param country	The country from which to get the data.
  * @return			A list of column-data pairs representing the country's data.
  */
-const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Country* country) const
+const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Country& country) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &nameColumn)	{ data = country->name;	}
+		     if (column == &nameColumn)	{ data = country.name;	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

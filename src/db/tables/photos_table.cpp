@@ -99,9 +99,9 @@ void PhotosTable::addRows(QWidget* parent, ValidItemID ascentID, const QList<Pho
  * @param parent	The parent widget.
  * @param ascent	The ascent object from which to get the ascentID and photos.
  */
-void PhotosTable::addRows(QWidget* parent, const Ascent* ascent)
+void PhotosTable::addRows(QWidget* parent, const Ascent& ascent)
 {
-	return addRows(parent, FORCE_VALID(ascent->ascentID), ascent->photos);
+	return addRows(parent, FORCE_VALID(ascent.ascentID), ascent.photos);
 }
 
 /**
@@ -128,9 +128,9 @@ void PhotosTable::updateRows(QWidget* parent, ValidItemID ascentID, const QList<
  * @param parent	The parent widget.
  * @param ascent	The ascent to use for updating the table contents.
  */
-void PhotosTable::updateRows(QWidget* parent, const Ascent* ascent)
+void PhotosTable::updateRows(QWidget* parent, const Ascent& ascent)
 {
-	return updateRows(parent, FORCE_VALID(ascent->ascentID), ascent->photos);
+	return updateRows(parent, FORCE_VALID(ascent.ascentID), ascent.photos);
 }
 
 /**

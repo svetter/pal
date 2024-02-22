@@ -40,11 +40,11 @@ HikersOnAscent::HikersOnAscent() :
  * 
  * @param hiker	The hiker to add.
  */
-void HikersOnAscent::addHiker(Hiker* hiker)
+void HikersOnAscent::addHiker(const Hiker& hiker)
 {
 	int currentNumHikers = list.size();
 	beginInsertRows(QModelIndex(), currentNumHikers, currentNumHikers);
-	list.append({FORCE_VALID(hiker->hikerID), hiker->name});
+	list.append({FORCE_VALID(hiker.hikerID), hiker.name});
 	endInsertRows();
 }
 

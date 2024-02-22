@@ -55,13 +55,13 @@ RegionsTable::RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyCol
  * @param region	The region to add.
  * @return			The index of the new region in the table buffer.
  */
-BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
+BufferRowIndex RegionsTable::addRow(QWidget* parent, Region& region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
 	
 	BufferRowIndex newRegionIndex = NormalTable::addRow(parent, columnDataPairs);
-	region->regionID = getPrimaryKeyAt(newRegionIndex);
+	region.regionID = getPrimaryKeyAt(newRegionIndex);
 	return newRegionIndex;
 }
 
@@ -73,7 +73,7 @@ BufferRowIndex RegionsTable::addRow(QWidget* parent, Region* region)
  * @param parent	The parent widget.
  * @param region	The region to update.
  */
-void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region* region)
+void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region& region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
@@ -89,14 +89,14 @@ void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region
  * @param region	The region from which to get the data.
  * @return			A list of column-data pairs representing the region's data.
  */
-const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Region* region) const
+const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<const Column*>& columns, const Region& region) const
 {
 	QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 	for (const Column* const column : columns) {
 		QVariant data;
-		     if (column == &nameColumn)			{ data = region->name;						}
-		else if (column == &rangeIDColumn)		{ data = region->rangeID.asQVariant();		}
-		else if (column == &countryIDColumn)	{ data = region->countryID.asQVariant();	}
+		     if (column == &nameColumn)			{ data = region.name;					}
+		else if (column == &rangeIDColumn)		{ data = region.rangeID.asQVariant();	}
+		else if (column == &countryIDColumn)	{ data = region.countryID.asQVariant();	}
 		else assert(false);
 		
 		columnDataPairs.append({column, data});

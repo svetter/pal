@@ -48,7 +48,7 @@ GenericProjectSetting::GenericProjectSetting(SettingsTable& table, const QString
  */
 bool GenericProjectSetting::present(QWidget* parent) const
 {
-	return table.settingIsPresent(this, parent);
+	return table.settingIsPresent(*this, parent);
 }
 
 /**
@@ -62,7 +62,7 @@ bool GenericProjectSetting::present(QWidget* parent) const
  */
 QVariant GenericProjectSetting::getAsQVariant(QWidget* parent) const
 {
-	return table.getSetting(this, parent);
+	return table.getSetting(*this, parent);
 }
 
 /**
@@ -84,7 +84,7 @@ QVariant GenericProjectSetting::getDefaultAsQVariant() const
  */
 void GenericProjectSetting::set(QWidget* parent, QVariant value) const
 {
-	table.setSetting(parent, this, value);
+	table.setSetting(parent, *this, value);
 }
 
 /**
@@ -94,7 +94,7 @@ void GenericProjectSetting::set(QWidget* parent, QVariant value) const
  */
 void GenericProjectSetting::clear(QWidget* parent) const
 {
-	table.clearSetting(parent, this);
+	table.clearSetting(parent, *this);
 }
 
 /**
@@ -104,7 +104,7 @@ void GenericProjectSetting::clear(QWidget* parent) const
  */
 void GenericProjectSetting::remove(QWidget* parent) const
 {
-	table.removeSetting(parent, this);
+	table.removeSetting(parent, *this);
 }
 
 
@@ -139,7 +139,7 @@ ProjectSetting<T>::ProjectSetting(SettingsTable& table, const QString& key, QVar
 template<typename T>
 T ProjectSetting<T>::get(QWidget* parent) const
 {
-	QVariant value = table.getSetting(this, parent);
+	QVariant value = table.getSetting(*this, parent);
 	assert(value.canConvert<T>());
 	return value.value<T>();
 }

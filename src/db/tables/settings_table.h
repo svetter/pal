@@ -47,16 +47,16 @@ class SettingsTable : public Table {
 public:
 	SettingsTable();
 	
-	bool settingIsPresent(const GenericProjectSetting* setting, QWidget* parent = nullptr);
-	QVariant getSetting(const GenericProjectSetting* setting, QWidget* parent = nullptr);
+	bool settingIsPresent(const GenericProjectSetting& setting, QWidget* parent = nullptr);
+	QVariant getSetting(const GenericProjectSetting& setting, QWidget* parent = nullptr);
 	
-	void setSetting(QWidget* parent, const GenericProjectSetting* setting, QVariant value);
-	void clearSetting(QWidget* parent, const GenericProjectSetting* setting);
-	void removeSetting(QWidget* parent, const GenericProjectSetting* setting);
+	void setSetting(QWidget* parent, const GenericProjectSetting& setting, QVariant value);
+	void clearSetting(QWidget* parent, const GenericProjectSetting& setting);
+	void removeSetting(QWidget* parent, const GenericProjectSetting& setting);
 	void clearAllSettings(QWidget* parent, const QString& baseKey);
 	
 private:
-	ItemID findSettingID(const GenericProjectSetting* setting, QWidget* parent = nullptr);
+	ItemID findSettingID(const GenericProjectSetting& setting, QWidget* parent = nullptr);
 };
 
 

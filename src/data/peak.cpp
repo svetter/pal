@@ -62,16 +62,15 @@ Peak::~Peak()
  * @param other	The other peak.
  * @return		True if the other peak is equal to this one, false otherwise.
  */
-bool Peak::equalTo(const Peak* const other) const
+bool Peak::equalTo(const Peak& other) const
 {
-	assert(other);
-	if (name		!= other->name)			return false;
-	if (height		!= other->height)		return false;
-	if (volcano		!= other->volcano)		return false;
-	if (regionID	!= other->regionID)		return false;
-	if (mapsLink	!= other->mapsLink)		return false;
-	if (earthLink	!= other->earthLink)	return false;
-	if (wikiLink	!= other->wikiLink)		return false;
+	if (name		!= other.name)		return false;
+	if (height		!= other.height)	return false;
+	if (volcano		!= other.volcano)	return false;
+	if (regionID	!= other.regionID)	return false;
+	if (mapsLink	!= other.mapsLink)	return false;
+	if (earthLink	!= other.earthLink)	return false;
+	if (wikiLink	!= other.wikiLink)	return false;
 	return true;
 }
 

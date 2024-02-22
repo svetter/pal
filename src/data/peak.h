@@ -58,7 +58,7 @@ public:
 	Peak(ItemID peakID, QString& name, int height, bool volcano, ItemID regionID, QString& mapsLink, QString& earthLink, QString& wikiLink);
 	virtual ~Peak();
 	
-	bool equalTo(const Peak* const other) const;
+	bool equalTo(const Peak& other) const;
 	
 	bool heightSpecified() const;
 	

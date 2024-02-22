@@ -54,11 +54,10 @@ Region::~Region()
  * @param other	The other region.
  * @return		True if the other region is equal to this one, false otherwise.
  */
-bool Region::equalTo(const Region* const other) const
+bool Region::equalTo(const Region& other) const
 {
-	assert(other);
-	if (name		!= other->name)			return false;
-	if (rangeID		!= other->rangeID)		return false;
-	if (countryID	!= other->countryID)	return false;
+	if (name		!= other.name)		return false;
+	if (rangeID		!= other.rangeID)	return false;
+	if (countryID	!= other.countryID)	return false;
 	return true;
 }

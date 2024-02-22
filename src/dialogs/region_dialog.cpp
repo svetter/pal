@@ -30,6 +30,8 @@
 
 #include <QMessageBox>
 
+using std::unique_ptr, std::make_unique;
+
 
 
 /**
@@ -44,9 +46,9 @@
  * @param purpose		The purpose of the dialog.
  * @param init			The region data to initialize the dialog with and store as initial data. RegionDialog takes ownership of this pointer.
  */
-RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* init) :
+RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Region> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
-	init(init),
+	init(std::move(init)),
 	selectableRangeIDs(QList<ValidItemID>()),
 	selectableCountryIDs(QList<ValidItemID>())
 {
@@ -84,9 +86,7 @@ RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
  * Destroys the region dialog.
  */
 RegionDialog::~RegionDialog()
-{
-	delete init;
-}
+{}
 
 
 
@@ -141,14 +141,13 @@ void RegionDialog::insertInitData()
  *
  * @return	The region data as a region object. The caller takes ownership of the object.
  */
-Region* RegionDialog::extractData()
+unique_ptr<Region> RegionDialog::extractData()
 {
 	QString	name		= parseLineEdit		(nameLineEdit);
 	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs);
 	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs);
 	
-	Region* region = new Region(ItemID(), name, rangeID, countryID);
-	return region;
+	return make_unique<Region>(ItemID(), name, rangeID, countryID);
 }
 
 
@@ -160,10 +159,7 @@ Region* RegionDialog::extractData()
  */
 bool RegionDialog::changesMade()
 {
-	Region* currentState = extractData();
-	bool equal = currentState->equalTo(init);
-	delete currentState;
-	return !equal;
+	return !extractData()->equalTo(*init);
 }
 
 
@@ -250,8 +246,8 @@ BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, QMainWindow* mainWin
  */
 bool openEditRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
-	Region* originalRegion = db.getRegionAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRegionDialogAndStore(parent, mainWindow, db, editItem, originalRegion);
+	unique_ptr<Region> originalRegion = db.getRegionAt(bufferRowIndex);
+	BufferRowIndex editedIndex = openRegionDialogAndStore(parent, mainWindow, db, editItem, std::move(originalRegion));
 	return editedIndex.isValid();
 }
 
@@ -299,35 +295,33 @@ bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
  * @param originalRegion	The region data to initialize the dialog with and store as initial data. Region takes ownership of this pointer.
  * @return					The index of the new region in the database's region table buffer, or existing index of edited region. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, Region* originalRegion)
+BufferRowIndex openRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion)
 {
 	BufferRowIndex newRegionIndex = BufferRowIndex();
 	if (purpose == duplicateItem) {
 		assert(originalRegion);
 		originalRegion->regionID = ItemID();
 	}
+	const ItemID originalRegionID = originalRegion->regionID;
 	
-	RegionDialog dialog(parent, mainWindow, db, purpose, originalRegion);
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, purpose, std::move(originalRegion));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		const ValidItemID originalRegionID = FORCE_VALID(originalRegion->regionID);
-		Region* const extractedRegion = dialog.extractData();
+		unique_ptr<Region> extractedRegion = dialog.extractData();
 		
 		switch (purpose) {
 		case newItem:
 		case duplicateItem:
-			newRegionIndex = db.regionsTable.addRow(parent, extractedRegion);
+			newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
 			break;
 		case editItem:
-			db.regionsTable.updateRow(parent, originalRegionID, extractedRegion);
+			db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
 			
 			// Set result to existing buffer row to signal that changes were made
-			newRegionIndex = db.regionsTable.getBufferIndexForPrimaryKey(originalRegionID);
+			newRegionIndex = db.regionsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalRegionID));
 			break;
 		default:
 			assert(false);
 		}
-		
-		delete extractedRegion;
 	}
 	
 	return newRegionIndex;
