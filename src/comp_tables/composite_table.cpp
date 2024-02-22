@@ -56,7 +56,7 @@ CompositeTable::CompositeTable(const Database& db, NormalTable& baseTable, QTabl
 	name(baseTable.name),
 	uiName(baseTable.uiName)
 {
-	unique_ptr changeListener = make_unique<const RowChangeListenerCompositeTable>(RowChangeListenerCompositeTable(this));
+	unique_ptr changeListener = make_unique<const RowChangeListenerCompositeTable>(RowChangeListenerCompositeTable(*this));
 	baseTable.setRowChangeListener(std::move(changeListener));
 }
 
@@ -1073,7 +1073,7 @@ const ProjectSettings& CompositeTable::getProjectSettings() const
  * 
  * @param listener	The composite column to notify of changes.
  */
-RowChangeListenerCompositeTable::RowChangeListenerCompositeTable(CompositeTable* listener) :
+RowChangeListenerCompositeTable::RowChangeListenerCompositeTable(CompositeTable& listener) :
 	RowChangeListener(),
 	listener(listener)
 {}
@@ -1093,7 +1093,7 @@ RowChangeListenerCompositeTable::~RowChangeListenerCompositeTable()
  */
 void RowChangeListenerCompositeTable::bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const
 {
-	listener->bufferRowJustInserted(bufferRowIndex);
+	listener.bufferRowJustInserted(bufferRowIndex);
 }
 
 /**
@@ -1103,5 +1103,5 @@ void RowChangeListenerCompositeTable::bufferRowJustInserted(const BufferRowIndex
  */
 void RowChangeListenerCompositeTable::bufferRowAboutToBeRemoved(const BufferRowIndex& bufferRowIndex) const
 {
-	listener->bufferRowAboutToBeRemoved(bufferRowIndex);
+	listener.bufferRowAboutToBeRemoved(bufferRowIndex);
 }

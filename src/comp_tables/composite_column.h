@@ -42,7 +42,7 @@ class CompositeTable;
  */
 class CompositeColumn {
 	/** The composite table this column belongs to. */
-	CompositeTable* const table;
+	CompositeTable& table;
 	
 public:
 	/** The internal name of this column. */
@@ -68,7 +68,7 @@ protected:
 	const QString suffix;
 	
 protected:
-	CompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	CompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
@@ -130,7 +130,7 @@ class DirectCompositeColumn : public CompositeColumn {
 	Column& contentColumn;
 	
 public:
-	DirectCompositeColumn(CompositeTable* table, QString suffix, Column& contentColumn);
+	DirectCompositeColumn(CompositeTable& table, QString suffix, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -150,7 +150,7 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	Column& contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn);
+	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -170,7 +170,7 @@ class DifferenceCompositeColumn : public CompositeColumn {
 	ValueColumn& subtrahendColumn;
 	
 public:
-	DifferenceCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, ValueColumn& minuendColumn, ValueColumn& subtrahendColumn);
+	DifferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, ValueColumn& minuendColumn, ValueColumn& subtrahendColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -190,7 +190,7 @@ class DependentEnumCompositeColumn : public CompositeColumn {
 	ValueColumn& displayedEnumColumn;
 	
 public:
-	DependentEnumCompositeColumn(CompositeTable* table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn);
+	DependentEnumCompositeColumn(CompositeTable& table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -217,7 +217,7 @@ class IndexCompositeColumn : public CompositeColumn {
 	const QList<BaseSortingPass> sortingPasses;
 	
 public:
-	IndexCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
+	IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
@@ -235,7 +235,7 @@ class OrdinalCompositeColumn : public IndexCompositeColumn {
 	const Column& separatingColumn;
 	
 public:
-	OrdinalCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
+	OrdinalCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;

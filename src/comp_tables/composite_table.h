@@ -219,10 +219,10 @@ signals:
  */
 class RowChangeListenerCompositeTable : public RowChangeListener {
 	/** The CompositeTable to notify about row changes. */
-	CompositeTable* listener;
+	CompositeTable& listener;
 	
 public:
-	RowChangeListenerCompositeTable(CompositeTable* listener);
+	RowChangeListenerCompositeTable(CompositeTable& listener);
 	virtual ~RowChangeListenerCompositeTable();
 	
 	virtual void bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const;

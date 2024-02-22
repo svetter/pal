@@ -38,7 +38,7 @@
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
-FoldCompositeColumn::FoldCompositeColumn(CompositeTable* table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
 	CompositeColumn(table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
 	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
@@ -73,7 +73,7 @@ const QSet<Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn) :
 	FoldCompositeColumn(table, name, uiName, contentType, true, suffix, breadcrumbs, contentColumn),
 	op(op)
 {
@@ -89,7 +89,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QS
  * @param suffix		A suffix to append to the content of each cell.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs) :
 	NumericFoldCompositeColumn(table, name, uiName, suffix, op, Integer, breadcrumbs, nullptr)
 {}
 
@@ -103,7 +103,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QS
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column& contentColumn) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column& contentColumn) :
 	NumericFoldCompositeColumn(table, name, uiName, suffix, op, op == IDListFold ? IDList : contentColumn.type, breadcrumbs, &contentColumn)
 {}
 
@@ -192,7 +192,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to list.
  */
-ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column& contentColumn, const QStringList* enumNames) :
+ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column& contentColumn, const QStringList* enumNames) :
 	FoldCompositeColumn(table, name, uiName, String, false, QString(), breadcrumbs, &contentColumn, enumNames)
 {}
 
@@ -260,7 +260,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The hiker name column whose values to list.
  */
-HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable* table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn& contentColumn) :
+HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn& contentColumn) :
 	ListStringFoldCompositeColumn(table, name, uiName, breadcrumbs, contentColumn)
 {}
 

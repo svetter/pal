@@ -120,7 +120,7 @@ void DataExportThread::exportOneTable()
 {
 	// Assemble column info list
 	const ItemTypeMapper& mapper = typesHandler->get(ItemTypeAscent);
-	CompositeTable* const compTable = mapper.compTable;
+	CompositeTable& compTable = *mapper.compTable;
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	{
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
@@ -141,29 +141,29 @@ void DataExportThread::exportOneTable()
 	
 	// Determine and report workload size
 	int workloadSize = 0;	// In cells
-	workloadSize += compTable->getNumberOfCellsToUpdate();
-	workloadSize += compTable->rowCount() * allColumnInfos.at(0).size();
+	workloadSize += compTable.getNumberOfCellsToUpdate();
+	workloadSize += compTable.rowCount() * allColumnInfos.at(0).size();
 	emit callback_reportWorkloadSize(workloadSize);
 	int progress = 0;
 	
 	// Make sure table is up to date
-	if (compTable->getNumberOfCellsToUpdate() >= 1) {
+	if (compTable.getNumberOfCellsToUpdate() >= 1) {
 		emit callback_setProgressText(tr("Preparing table..."));
 		auto progressLambda = [this, &progress] () {
 			emit callback_reportProgress(++progress);
 		};
-		compTable->updateBothBuffers(progressLambda);
+		compTable.updateBothBuffers(progressLambda);
 	}
 	
 	
 	// Start writing file(s)
-	writer->beginExport(allColumnInfos, {compTable->uiName});
+	writer->beginExport(allColumnInfos, { compTable.uiName });
 	
 	emit callback_setProgressText(tr("Exporting table..."));
-	writer->beginTable(compTable->uiName, allColumnInfos.at(0));
+	writer->beginTable(compTable.uiName, allColumnInfos.at(0));
 	
 	// FOR ALL ROWS IN TABLE
-	int numRows = compTable->rowCount();
+	int numRows = compTable.rowCount();
 	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(numRows); rowIndex++) {
 		if (abortWasCalled) break;
 		
@@ -173,9 +173,9 @@ void DataExportThread::exportOneTable()
 		for (const ExportColumnInfo& columnInfo : allColumnInfos.at(0)) {
 			QVariant value;
 			if (columnInfo.exportOnly) {
-				value = compTable->getExportOnlyColumnAt(columnInfo.indexInTable).computeValueAt(rowIndex);
+				value = compTable.getExportOnlyColumnAt(columnInfo.indexInTable).computeValueAt(rowIndex);
 			} else {
-				value = compTable->getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
+				value = compTable.getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
 			}
 			
 			writer->writeCell(value, columnInfo);
@@ -223,9 +223,9 @@ void DataExportThread::exportAsShown()
 	// Determine and report workload size
 	int workloadSize = 0;	// In cells
 	for (int tableIndex = 0; tableIndex < compTables.size(); tableIndex++) {
-		const CompositeTable* const compTable = compTables.at(tableIndex);
-		workloadSize += compTable->getNumberOfCellsToUpdate();
-		workloadSize += compTable->rowCount() * allColumnInfos.at(tableIndex).size();
+		const CompositeTable& compTable = *compTables.at(tableIndex);
+		workloadSize += compTable.getNumberOfCellsToUpdate();
+		workloadSize += compTable.rowCount() * allColumnInfos.at(tableIndex).size();
 	}
 	emit callback_reportWorkloadSize(workloadSize);
 	int progress = 0;
@@ -250,14 +250,14 @@ void DataExportThread::exportAsShown()
 	for (int tableIndex = 0; tableIndex < compTables.size(); tableIndex++) {
 		if (abortWasCalled) break;
 		
-		const CompositeTable* const compTable = compTables.at(tableIndex);
+		const CompositeTable& compTable = *compTables.at(tableIndex);
 		const QList<ExportColumnInfo>& columnInfos = allColumnInfos.at(tableIndex);
 		
-		emit callback_setProgressText(tr("Exporting table %1...").arg(compTable->uiName));
-		writer->beginTable(compTable->uiName, columnInfos);
+		emit callback_setProgressText(tr("Exporting table %1...").arg(compTable.uiName));
+		writer->beginTable(compTable.uiName, columnInfos);
 		
 		// FOR ALL ROWS IN TABLE
-		int numRows = compTable->rowCount();
+		int numRows = compTable.rowCount();
 		for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(numRows); rowIndex++) {
 			if (abortWasCalled) break;
 			
@@ -265,7 +265,7 @@ void DataExportThread::exportAsShown()
 			
 			// FOR ALL CELLS IN ROW
 			for (const ExportColumnInfo& columnInfo : columnInfos) {
-				QVariant value = compTable->getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
+				QVariant value = compTable.getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
 				writer->writeCell(value, columnInfo);
 				
 				emit callback_reportProgress(++progress);
