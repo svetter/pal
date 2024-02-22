@@ -37,7 +37,7 @@ class CompositeColumn;
 class Filter {
 public:
 	/** The column to use for filtering rows. */
-	const CompositeColumn* column;
+	const CompositeColumn& column;
 	/** The first (and possibly only) value to use for filtering rows. */
 	const QVariant value;
 	/** Whether a second value is set for filtering rows. */
@@ -51,7 +51,7 @@ public:
 	 * @param column	The column to use for filtering rows.
 	 * @param value		The value to use for filtering rows.
 	 */
-	inline Filter(const CompositeColumn* column, QVariant value) :
+	inline Filter(const CompositeColumn& column, QVariant value) :
 		column(column),
 		value(value),
 		hasSecond(false),
@@ -65,7 +65,7 @@ public:
 	 * @param value			The first value to use for filtering rows.
 	 * @param secondValue	The second value to use for filtering rows.
 	 */
-	inline Filter(const CompositeColumn* column, QVariant value, QVariant secondValue) :
+	inline Filter(const CompositeColumn& column, QVariant value, QVariant secondValue) :
 		column(column),
 		value(value),
 		hasSecond(true),
@@ -84,7 +84,7 @@ public:
  */
 inline bool operator==(const Filter& filter1, const Filter& filter2)
 {
-	if (filter1.column != filter2.column) return false;
+	if (&filter1.column != &filter2.column) return false;
 	if (filter1.value != filter2.value) return false;
 	if (filter1.hasSecond != filter2.hasSecond) return false;
 	if (!filter1.hasSecond && !filter2.hasSecond) return true;
@@ -115,7 +115,7 @@ inline bool operator!=(const Filter& filter1, const Filter& filter2)
  */
 inline size_t qHash(const Filter& key, size_t seed)
 {
-	return qHashMulti(seed, (void*) key.column, key.value.toByteArray(), key.hasSecond, key.secondValue.toByteArray());
+	return qHashMulti(seed, (void*) &key.column, key.value.toByteArray(), key.hasSecond, key.secondValue.toByteArray());
 }
 
 

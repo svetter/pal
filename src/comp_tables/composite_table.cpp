@@ -84,7 +84,7 @@ void CompositeTable::addColumn(const CompositeColumn& column)
 	// Register as change listener at all underlying columns
 	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(&column));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(column));
 		underlyingColumn->registerChangeListener(std::move(changeListener));
 	}
 }
@@ -117,7 +117,7 @@ void CompositeTable::addFilterColumn(const CompositeColumn& column)
 	// Register as change listener at all underlying columns
 	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
 	for (Column* underlyingColumn : underlyingColumns) {
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(&column));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(column));
 		underlyingColumn->registerChangeListener(std::move(changeListener));
 	}
 }
@@ -204,9 +204,11 @@ QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() cons
  * @param columnIndex	The index of the column to return.
  * @return				The composite column at the given index.
  */
-const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
+const CompositeColumn& CompositeTable::getColumnAt(int columnIndex) const
 {
-	return columns.at(columnIndex);
+	const CompositeColumn* column = columns.at(columnIndex);
+	assert(column);
+	return *column;
 }
 
 /**
@@ -215,20 +217,23 @@ const CompositeColumn* CompositeTable::getColumnAt(int columnIndex) const
  * @param columnIndex	The index in the export-only column list of the column to return.
  * @return				The composite column at the given index in the export-only column list.
  */
-const CompositeColumn* CompositeTable::getExportOnlyColumnAt(int columnIndex) const
+const CompositeColumn& CompositeTable::getExportOnlyColumnAt(int columnIndex) const
 {
-	return exportColumns.at(columnIndex).second;
+	const CompositeColumn* column = exportColumns.at(columnIndex).second;
+	assert(column);
+	return *column;
 }
 
 /**
- * Returns the composite column with the given internal name.
+ * Returns the composite column with the given internal name, or nullptr if there is no column with
+ * the given name.
  * 
  * @pre The column is a normal or filter-only column, not an export-only column.
  * 
  * @param columnName	The internal name of the column to return.
- * @return				The composite column with the given name, or a nullptr.
+ * @return				The composite column with the given name, or nullptr.
  */
-const CompositeColumn* CompositeTable::getColumnByName(const QString& columnName) const
+const CompositeColumn* CompositeTable::getColumnByNameOrNull(const QString& columnName) const
 {
 	for (const CompositeColumn* const column : columns) {
 		if (column->name == columnName) return column;
@@ -244,9 +249,9 @@ const CompositeColumn* CompositeTable::getColumnByName(const QString& columnName
  * @param column	The normal or filter-only column to return the index of.
  * @return			The index of the given normal or filter-only column.
  */
-int CompositeTable::getIndexOf(const CompositeColumn* column) const
+int CompositeTable::getIndexOf(const CompositeColumn& column) const
 {
-	return columns.indexOf(column);
+	return columns.indexOf(&column);
 }
 
 /**
@@ -257,10 +262,10 @@ int CompositeTable::getIndexOf(const CompositeColumn* column) const
  * @param column	The composite column to return the export-only column index of.
  * @return			The export-only column index of the given composite column.
  */
-int CompositeTable::getExportIndexOf(const CompositeColumn* column) const
+int CompositeTable::getExportIndexOf(const CompositeColumn& column) const
 {
 	for (int exportColumnIndex = 0; exportColumnIndex < exportColumns.size(); exportColumnIndex++) {
-		if (exportColumns.at(exportColumnIndex).second == column) return exportColumnIndex;
+		if (exportColumns.at(exportColumnIndex).second == &column) return exportColumnIndex;
 	}
 	return -1;
 }
@@ -397,7 +402,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	
 	// Filter order buffer
 	for (const Filter& filter : qAsConst(currentFilters)) {
-		filter.column->applySingleFilter(filter, viewOrder);
+		filter.column.applySingleFilter(filter, viewOrder);
 	}
 	
 	// Sort order buffer
@@ -422,8 +427,7 @@ QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
 		canStayDirty.remove(currentSorting.column);
 	}
 	for (const Filter& filter : currentFilters) {
-		assert(filter.column);
-		canStayDirty.remove(filter.column);
+		canStayDirty.remove(&filter.column);
 	}
 	
 	columnsToUpdate.subtract(canStayDirty);
@@ -510,7 +514,7 @@ void CompositeTable::updateBothBuffers(std::function<void()> runAfterEachCellUpd
 	// Rebuild order buffer if necessary
 	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
 	for (const Filter& filter : qAsConst(currentFilters)) {
-		orderBufferDirty |= columnsToUpdate.contains(filter.column);
+		orderBufferDirty |= columnsToUpdate.contains(&filter.column);
 	}
 	if (orderBufferDirty) {
 		rebuildOrderBuffer(false);
@@ -576,25 +580,25 @@ ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferR
  * @param column			The column to return the value for.
  * @return					The raw value of the cell at the given buffer row and column index.
  */
-QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column)
+QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn& column)
 {
 	assert(bufferInitialized);
-	assert(columns.contains(column));
+	assert(columns.contains(&column));
 	assert(bufferRowIndex.isValid(buffer.numRows()));
 	
 	QVariant result;
-	if (dirtyColumns.contains(column)) {
-		if (column->cellsAreInterdependent) {
+	if (dirtyColumns.contains(&column)) {
+		if (column.cellsAreInterdependent) {
 			// Have to compute whole column anyway, might as well update the buffer
-			updateBufferColumns({column});
-			result = buffer.getCell(bufferRowIndex, column->getIndex());
+			updateBufferColumns({ &column });
+			result = buffer.getCell(bufferRowIndex, column.getIndex());
 		} else {
 			// Compute single cell instead of updating buffer for entire column to save time
-			result = column->computeValueAt(bufferRowIndex);
+			result = column.computeValueAt(bufferRowIndex);
 		}
 	} else {
 		// Buffer is up to date
-		result = buffer.getCell(bufferRowIndex, column->getIndex());
+		result = buffer.getCell(bufferRowIndex, column.getIndex());
 	}
 	
 	return result.isNull() ? QVariant() : result;
@@ -608,9 +612,9 @@ QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const Compos
  * @param column			The column to return the value for.
  * @return					The formatted value of the cell at the given buffer row and column index.
  */
-QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column)
+QVariant CompositeTable::getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn& column)
 {
-	return column->toFormattedTableContent(getRawValue(bufferRowIndex, column));
+	return column.toFormattedTableContent(getRawValue(bufferRowIndex, column));
 }
 
 
@@ -702,7 +706,7 @@ bool CompositeTable::filterIsActive() const
  */
 void CompositeTable::markColumnHidden(int columnIndex)
 {
-	hiddenColumns.insert(getColumnAt(columnIndex));
+	hiddenColumns.insert(&getColumnAt(columnIndex));
 }
 
 /**
@@ -712,7 +716,7 @@ void CompositeTable::markColumnHidden(int columnIndex)
  */
 void CompositeTable::markColumnUnhidden(int columnIndex)
 {
-	hiddenColumns.remove(getColumnAt(columnIndex));
+	hiddenColumns.remove(&getColumnAt(columnIndex));
 }
 
 /**
@@ -759,7 +763,7 @@ void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
 	QList<QVariant>* newRow = new QList<QVariant>();
 	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 		QVariant newCell;
-		if (getColumnAt(columnIndex)->cellsAreInterdependent) {
+		if (getColumnAt(columnIndex).cellsAreInterdependent) {
 			// Computing single cell is expensive and whole column will be completely recomputed anyway
 			// => leave cell empty for now
 			newCell = QVariant();
@@ -892,25 +896,25 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	
 	int columnIndex = index.column();
 	assert(columnIndex >= 0 && columnIndex < columns.size());
-	const CompositeColumn* column = columns.at(columnIndex);
+	const CompositeColumn& column = *columns.at(columnIndex);
 	
 	if (role == Qt::TextAlignmentRole) {
-		return column->alignment;
+		return column.alignment;
 	}
 	
-	int relevantRole = column->contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
+	int relevantRole = column.contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
 	if (role != relevantRole) return QVariant();
 	
 	QVariant result = buffer.getCell(bufferRowIndex, columnIndex);
 	
 	if (result.isNull()) return QVariant();
 	
-	if (column->contentType == Bit) {
+	if (column.contentType == Bit) {
 		assert(role == Qt::CheckStateRole);
 		return result.toBool() ? Qt::Checked : Qt::Unchecked;
 	}
 	
-	return column->toFormattedTableContent(result);
+	return column.toFormattedTableContent(result);
 }
 
 /**
@@ -926,12 +930,12 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 {
 	assert(columnIndex >= 0 && columnIndex < columns.size());
-	const CompositeColumn* const column = columns.at(columnIndex);
+	const CompositeColumn& column = *columns.at(columnIndex);
 	
-	if (bufferInitialized) updateBufferColumns({column});	// Sort column might need to be updated if hidden
+	if (bufferInitialized) updateBufferColumns({ &column });	// Sort column might need to be updated if hidden
 	
 	const SortingPass previousSort = currentSorting;
-	currentSorting = {column, order};
+	currentSorting = {&column, order};
 	
 	// Remember horizontal scroll
 	const int horizontalScroll = tableView->horizontalScrollBar()->value();
@@ -1011,8 +1015,8 @@ QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int c
 	assert(bufferRowIndex.isValid(baseTable.getNumberOfRows()));
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	
-	const CompositeColumn* column = columns.at(columnIndex);
-	QVariant result = column->computeValueAt(bufferRowIndex);
+	const CompositeColumn& column = *columns.at(columnIndex);
+	QVariant result = column.computeValueAt(bufferRowIndex);
 	
 	if (!result.isValid()) return QVariant();
 	
@@ -1029,8 +1033,8 @@ QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int c
  */
 QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 {
-	const CompositeColumn* column = columns.at(columnIndex);
-	QList<QVariant> cells = column->computeWholeColumn();
+	const CompositeColumn& column = *columns.at(columnIndex);
+	QList<QVariant> cells = column.computeWholeColumn();
 	assert(cells.size() == buffer.numRows());
 	return cells;
 }

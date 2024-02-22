@@ -226,12 +226,12 @@ private:
  */
 class ColumnChangeListenerGeneralStatsEngine : public ColumnChangeListener {
 	/** The ColumnChangeListenerGeneralStatsEngine to notify about column changes. */
-	GeneralStatsEngine* const listener;
+	GeneralStatsEngine& listener;
 	/** The charts affected by the column changes. */
 	QSet<Chart*> affectedCharts;
 	
 public:
-	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener, const QSet<Chart*>& affectedCharts);
+	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine& listener, const QSet<Chart*>& affectedCharts);
 	virtual ~ColumnChangeListenerGeneralStatsEngine();
 	
 	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;

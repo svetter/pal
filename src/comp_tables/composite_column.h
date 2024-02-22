@@ -248,10 +248,10 @@ public:
  */
 class ColumnChangeListenerCompositeColumn : public ColumnChangeListener {
 	/** The CompositeColumn to notify about column changes. */
-	const CompositeColumn* const listener;
+	const CompositeColumn& listener;
 	
 public:
-	ColumnChangeListenerCompositeColumn(const CompositeColumn* listener);
+	ColumnChangeListenerCompositeColumn(const CompositeColumn& listener);
 	virtual ~ColumnChangeListenerCompositeColumn();
 	
 	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;

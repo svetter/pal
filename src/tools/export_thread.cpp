@@ -173,9 +173,9 @@ void DataExportThread::exportOneTable()
 		for (const ExportColumnInfo& columnInfo : allColumnInfos.at(0)) {
 			QVariant value;
 			if (columnInfo.exportOnly) {
-				value = compTable->getExportOnlyColumnAt(columnInfo.indexInTable)->computeValueAt(rowIndex);
+				value = compTable->getExportOnlyColumnAt(columnInfo.indexInTable).computeValueAt(rowIndex);
 			} else {
-				value = compTable->getColumnAt(columnInfo.indexInTable)->getRawValueAt(rowIndex);
+				value = compTable->getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
 			}
 			
 			writer->writeCell(value, columnInfo);
@@ -265,7 +265,7 @@ void DataExportThread::exportAsShown()
 			
 			// FOR ALL CELLS IN ROW
 			for (const ExportColumnInfo& columnInfo : columnInfos) {
-				QVariant value = compTable->getColumnAt(columnInfo.indexInTable)->getRawValueAt(rowIndex);
+				QVariant value = compTable->getColumnAt(columnInfo.indexInTable).getRawValueAt(rowIndex);
 				writer->writeCell(value, columnInfo);
 				
 				emit callback_reportProgress(++progress);

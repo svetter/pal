@@ -145,11 +145,11 @@ public:
 	int getNumberOfColumnsForCompleteExport() const;
 	QList<const CompositeColumn*> getNormalColumnList() const;
 	QList<const CompositeColumn*> getCompleteExportColumnList() const;
-	const CompositeColumn* getColumnAt(int columnIndex) const;
-	const CompositeColumn* getExportOnlyColumnAt(int columnIndex) const;
-	const CompositeColumn* getColumnByName(const QString& columnName) const;
-	int getIndexOf(const CompositeColumn* column) const;
-	int getExportIndexOf(const CompositeColumn* column) const;
+	const CompositeColumn& getColumnAt(int columnIndex) const;
+	const CompositeColumn& getExportOnlyColumnAt(int columnIndex) const;
+	const CompositeColumn* getColumnByNameOrNull(const QString& columnName) const;
+	int getIndexOf(const CompositeColumn& column) const;
+	int getExportIndexOf(const CompositeColumn& column) const;
 	QSet<QString> getNormalColumnNameSet() const;
 	const NormalTable& getBaseTable() const;
 	
@@ -164,8 +164,8 @@ public:
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;
 	
-	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
-	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn* column);
+	QVariant getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn& column);
+	QVariant getFormattedValue(BufferRowIndex bufferRowIndex, const CompositeColumn& column);
 	
 	virtual SortingPass getDefaultSorting() const = 0;
 	SortingPass getCurrentSorting() const;

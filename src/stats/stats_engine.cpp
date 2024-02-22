@@ -207,7 +207,7 @@ void GeneralStatsEngine::setupStatsTab()
 	const QList<Column*> columns = chartsPerColumn.keys();
 	for (Column* const column : columns) {
 		const QSet<Chart*> affectedCharts = chartsPerColumn.value(column);
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerGeneralStatsEngine>(ColumnChangeListenerGeneralStatsEngine(this, affectedCharts));
+		unique_ptr changeListener = make_unique<const ColumnChangeListenerGeneralStatsEngine>(ColumnChangeListenerGeneralStatsEngine(*this, affectedCharts));
 		column->registerChangeListener(std::move(changeListener));
 	}
 }
@@ -1342,7 +1342,7 @@ QSet<Column*> ItemStatsEngine::getUsedColumnSet() const
  * @param listener			The ItemStatsEngine to notify about changes.
  * @param affectedCharts	The set of charts affected by changes to the column.
  */
-ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine* listener, const QSet<Chart*>& affectedCharts) :
+ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine& listener, const QSet<Chart*>& affectedCharts) :
 	ColumnChangeListener(),
 	listener(listener),
 	affectedCharts(affectedCharts)
@@ -1365,7 +1365,7 @@ ColumnChangeListenerGeneralStatsEngine::~ColumnChangeListenerGeneralStatsEngine(
 void ColumnChangeListenerGeneralStatsEngine::columnDataChanged(QSet<const Column*> affectedColumns) const
 {
 	Q_UNUSED(affectedColumns);
-	listener->markChartsDirty(affectedCharts);
+	listener.markChartsDirty(affectedCharts);
 }
 
 

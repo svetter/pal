@@ -132,7 +132,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
  */
 int CompositeColumn::getIndex() const
 {
-	return table->getIndexOf(this);
+	return table->getIndexOf(*this);
 }
 
 /**
@@ -144,7 +144,7 @@ int CompositeColumn::getIndex() const
  */
 int CompositeColumn::getExportIndex() const
 {
-	return table->getExportIndexOf(this);
+	return table->getExportIndexOf(*this);
 }
 
 /**
@@ -154,7 +154,7 @@ int CompositeColumn::getExportIndex() const
  */
 bool CompositeColumn::isExportOnlyColumn() const
 {
-	return table->getExportIndexOf(this) >= 0;
+	return table->getExportIndexOf(*this) >= 0;
 }
 
 /**
@@ -195,7 +195,7 @@ QList<QVariant> CompositeColumn::computeWholeColumn() const
  */
 QVariant CompositeColumn::getRawValueAt(BufferRowIndex rowIndex) const
 {
-	return table->getRawValue(rowIndex, this);
+	return table->getRawValue(rowIndex, *this);
 }
 
 /**
@@ -206,7 +206,7 @@ QVariant CompositeColumn::getRawValueAt(BufferRowIndex rowIndex) const
  */
 QVariant CompositeColumn::getFormattedValueAt(BufferRowIndex rowIndex) const
 {
-	return table->getFormattedValue(rowIndex, this);
+	return table->getFormattedValue(rowIndex, *this);
 }
 
 
@@ -254,7 +254,7 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const
 {
 	if (orderBuffer.isEmpty()) return;
-	assert(filter.column == this);
+	assert(&filter.column == this);
 	
 	const QVariant value		= filter.value;
 	const bool hasSecond		= filter.hasSecond;
@@ -394,7 +394,7 @@ void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& o
  */
 void CompositeColumn::announceChangedData() const
 {
-	int thisColumnIndex = table->getIndexOf(this);
+	int thisColumnIndex = table->getIndexOf(*this);
 	table->announceChangesUnderColumn(thisColumnIndex);
 }
 
@@ -825,7 +825,7 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
  * 
  * @param listener	The CompositeColumn to notify about changes.
  */
-ColumnChangeListenerCompositeColumn::ColumnChangeListenerCompositeColumn(const CompositeColumn* listener) :
+ColumnChangeListenerCompositeColumn::ColumnChangeListenerCompositeColumn(const CompositeColumn& listener) :
 	ColumnChangeListener(),
 	listener(listener)
 {}
@@ -846,5 +846,5 @@ ColumnChangeListenerCompositeColumn::~ColumnChangeListenerCompositeColumn()
 void ColumnChangeListenerCompositeColumn::columnDataChanged(QSet<const Column*> affectedColumns) const
 {
 	Q_UNUSED(affectedColumns);
-	listener->announceChangedData();
+	listener.announceChangedData();
 }

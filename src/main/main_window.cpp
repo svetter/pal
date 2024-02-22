@@ -265,7 +265,7 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
 	
 	// Restore column widths
 	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
+		const QString& columnName = mapper->compTable->getColumnAt(columnIndex).name;
 		int columnWidth = columnWidthMap[columnName];
 		if (columnWidth < 1) {
 			columnWidth = mapper->tableView->horizontalHeader()->sizeHintForColumn(columnIndex);
@@ -287,12 +287,14 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
 	const QMap<QString, int> columnOrderMap = mapper->columnOrderSetting->get(normalColumnNames);
 	// Sort by visual index
-	QList<QPair<QString, int>> columnOrderList = QList<QPair<QString, int>>();
+	QList<QPair<const CompositeColumn*, int>> columnOrderList = QList<QPair<const CompositeColumn*, int>>();
 	for (const QPair<QString, int>& columnOrderPair : columnOrderMap.asKeyValueRange()) {
 		if (columnOrderPair.second < 0) continue;	// Visual index invalid, ignore column
-		columnOrderList.append(columnOrderPair);
+		const CompositeColumn* column = mapper->compTable->getColumnByNameOrNull(columnOrderPair.first);
+		if (!column) continue;
+		columnOrderList.append({column, columnOrderPair.second});
 	}
-	auto comparator = [](const QPair<QString, int>& pair1, const QPair<QString, int>& pair2) {
+	auto comparator = [](const QPair<const CompositeColumn*, int>& pair1, const QPair<const CompositeColumn*, int>& pair2) {
 		return pair1.second < pair2.second;
 	};
 	std::sort(columnOrderList.begin(), columnOrderList.end(), comparator);
@@ -300,8 +302,8 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 	// Restore column order
 	QHeaderView* header = mapper->tableView->horizontalHeader();
 	for (int visualIndex = 0; visualIndex < columnOrderList.size(); visualIndex++) {
-		const QString& columnName = columnOrderList.at(visualIndex).first;
-		int logicalIndex = mapper->compTable->getColumnByName(columnName)->getIndex();
+		const CompositeColumn& column = *columnOrderList.at(visualIndex).first;
+		int logicalIndex = column.getIndex();
 		int currentVisualIndex = header->visualIndex(logicalIndex);
 		header->moveSection(currentVisualIndex, visualIndex);
 	}
@@ -322,7 +324,7 @@ void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
 	
 	// Restore column hidden status
 	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(columnIndex)->name;
+		const QString& columnName = mapper->compTable->getColumnAt(columnIndex).name;
 		bool storedColumnHiddenStatus = columnHiddenMap[columnName];
 		if (!storedColumnHiddenStatus) continue;
 		mapper->tableView->horizontalHeader()->setSectionHidden(columnIndex, true);
@@ -347,7 +349,7 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 		QStringList saved = mapper->sortingSetting->get().split(",");
 		if (saved.size() != 2) break;
 		
-		const CompositeColumn* column = mapper->compTable->getColumnByName(saved.at(0).trimmed());
+		const CompositeColumn* column = mapper->compTable->getColumnByNameOrNull(saved.at(0).trimmed());
 		if (!column) break;
 		
 		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
@@ -1036,7 +1038,7 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 			continue;
 		}
 		
-		const QString& columnName = mapper.compTable->getColumnAt(logicalIndex)->uiName;
+		const QString& columnName = mapper.compTable->getColumnAt(logicalIndex).uiName;
 		QAction* restoreColumnAction = columnContextMenuRestoreColumnMenu->addAction(columnName);
 		restoreColumnAction->setData(logicalIndex);
 		connect(restoreColumnAction, &QAction::triggered, this, &MainWindow::handle_unhideColumn);
@@ -1642,7 +1644,7 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 	QMap<QString, int>	orderMap;
 	QMap<QString, bool>	hiddenMap;
 	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable->columnCount(); logicalColumnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(logicalColumnIndex)->name;
+		const QString& columnName = mapper->compTable->getColumnAt(logicalColumnIndex).name;
 		
 		// Hidden status
 		const bool hidden = header->isSectionHidden(logicalColumnIndex);
