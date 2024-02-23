@@ -236,12 +236,13 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  */
 BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker)
 {
-	BufferRowIndex newHikerIndex = BufferRowIndex();
+	assert((bool) originalHiker != (purpose == newItem));
+	
+	const ItemID originalHikerID = (purpose != newItem) ? originalHiker->hikerID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalHiker);
 		originalHiker->hikerID = ItemID();
 	}
-	const ItemID originalHikerID = originalHiker->hikerID;
+	BufferRowIndex newHikerIndex = BufferRowIndex();
 	
 	HikerDialog dialog = HikerDialog(parent, mainWindow, db, purpose, std::move(originalHiker));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

@@ -296,12 +296,13 @@ bool openDeleteTripsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  */
 BufferRowIndex openTripDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip)
 {
-	BufferRowIndex newTripIndex = BufferRowIndex();
+	assert((bool) originalTrip != (purpose == newItem));
+	
+	const ItemID originalTripID = (purpose != newItem) ? originalTrip->tripID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalTrip);
 		originalTrip->tripID = ItemID();
 	}
-	const ItemID originalTripID = originalTrip->tripID;
+	BufferRowIndex newTripIndex = BufferRowIndex();
 	
 	TripDialog dialog = TripDialog(parent, mainWindow, db, purpose, std::move(originalTrip));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

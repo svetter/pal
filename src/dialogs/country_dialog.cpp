@@ -229,12 +229,13 @@ bool openDeleteCountriesDialogAndExecute(QWidget* parent, QMainWindow* mainWindo
  */
 BufferRowIndex openCountryDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry)
 {
-	BufferRowIndex newCountryIndex = BufferRowIndex();
+	assert((bool) originalCountry != (purpose == newItem));
+	
+	const ItemID originalCountryID = (purpose != newItem) ? originalCountry->countryID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalCountry);
 		originalCountry->countryID = ItemID();
 	}
-	const ItemID originalCountryID = originalCountry->countryID;
+	BufferRowIndex newCountryIndex = BufferRowIndex();
 	
 	CountryDialog dialog = CountryDialog(parent, mainWindow, db, purpose, std::move(originalCountry));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

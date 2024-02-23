@@ -325,12 +325,13 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  */
 BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
 {
-	BufferRowIndex newPeakIndex = BufferRowIndex();
+	assert((bool) originalPeak != (purpose == newItem));
+	
+	const ItemID originalPeakID = (purpose != newItem) ? originalPeak->peakID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalPeak);
 		originalPeak->peakID = ItemID();
 	}
-	const ItemID originalPeakID = originalPeak->peakID;
+	BufferRowIndex newPeakIndex = BufferRowIndex();
 	
 	PeakDialog dialog = PeakDialog(parent, mainWindow, db, purpose, std::move(originalPeak));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

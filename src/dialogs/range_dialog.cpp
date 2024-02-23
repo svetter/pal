@@ -246,12 +246,13 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  */
 BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange)
 {
-	BufferRowIndex newRangeIndex = BufferRowIndex();
+	assert((bool) originalRange != (purpose == newItem));
+	
+	const ItemID originalRangeID = (purpose != newItem) ? originalRange->rangeID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalRange);
 		originalRange->rangeID = ItemID();
 	}
-	const ItemID originalRangeID = originalRange->rangeID;
+	BufferRowIndex newRangeIndex = BufferRowIndex();
 	
 	RangeDialog dialog = RangeDialog(parent, mainWindow, db, purpose, std::move(originalRange));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

@@ -297,12 +297,13 @@ bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
  */
 BufferRowIndex openRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion)
 {
-	BufferRowIndex newRegionIndex = BufferRowIndex();
+	assert((bool) originalRegion != (purpose == newItem));
+	
+	const ItemID originalRegionID = (purpose != newItem) ? originalRegion->regionID : ItemID();
 	if (purpose == duplicateItem) {
-		assert(originalRegion);
 		originalRegion->regionID = ItemID();
 	}
-	const ItemID originalRegionID = originalRegion->regionID;
+	BufferRowIndex newRegionIndex = BufferRowIndex();
 	
 	RegionDialog dialog = RegionDialog(parent, mainWindow, db, purpose, std::move(originalRegion));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {

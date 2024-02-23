@@ -664,14 +664,15 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
  */
 BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent)
 {
-	BufferRowIndex newAscentIndex = BufferRowIndex();
+	assert((bool) originalAscent != (purpose == newItem));
+	
+	const ItemID			originalAscentID	= (purpose != newItem)	? originalAscent->ascentID						: ItemID();
+	const QSet<ValidItemID>	originalHikerIDs	= (purpose == editItem)	? QSet<ValidItemID>(originalAscent->hikerIDs)	: QSet<ValidItemID>();
+	const QList<Photo>		originalPhotos		= (purpose == editItem)	? QList<Photo>(originalAscent->photos)			: QList<Photo>();
 	if (purpose == duplicateItem) {
-		assert(originalAscent);
 		originalAscent->ascentID = ItemID();
 	}
-	const ItemID originalAscentID = originalAscent->ascentID;
-	const QSet<ValidItemID> originalHikerIDs = QSet<ValidItemID>(originalAscent->hikerIDs);
-	const QList<Photo> originalPhotos = QList<Photo>(originalAscent->photos);
+	BufferRowIndex newAscentIndex = BufferRowIndex();
 	
 	AscentDialog dialog = AscentDialog(parent, mainWindow, db, purpose, std::move(originalAscent));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
