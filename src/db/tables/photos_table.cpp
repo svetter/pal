@@ -42,7 +42,6 @@ PhotosTable::PhotosTable(PrimaryKeyColumn& foreignAscentIDColumn) :
 	filepathColumn		(ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
 	descriptionColumn	(ValueColumn		(this,	"description",	tr("Description"),	String,		true))
 {
-	addColumn(primaryKeyColumn);
 	addColumn(ascentIDColumn);
 	addColumn(sortIndexColumn);
 	addColumn(filepathColumn);
