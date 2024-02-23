@@ -15,19 +15,6 @@
 
 
 
-QT += core gui
-QT += sql
-QT += svg svgwidgets
-QT += charts
-
-CONFIG += c++17
-CONFIG += lrelease
-CONFIG += embed_translations
-
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs deprecated before Qt 6.0.0
-
-
-
 VERSION = 1.3.0
 DEFINES += APP_VERSION_MAJOR=1
 DEFINES += APP_VERSION_MINOR=3
@@ -38,70 +25,18 @@ DEFINES += CODE_LINK='"\\\"https://github.com/svetter/pal\\\""'
 
 
 
-SOURCES += \
-	src/comp_tables/breadcrumbs.cpp \
-	src/comp_tables/composite_column.cpp \
-	src/comp_tables/composite_table.cpp \
-	src/comp_tables/fold_composite_column.cpp \
-	src/data/ascent.cpp \
-	src/data/country.cpp \
-	src/data/enum_names.cpp \
-	src/data/hiker.cpp \
-	src/data/item_id.cpp \
-	src/data/peak.cpp \
-	src/data/photo.cpp \
-	src/data/range.cpp \
-	src/data/region.cpp \
-	src/data/trip.cpp \
-	src/db/associative_table.cpp \
-	src/db/column.cpp \
-	src/db/database.cpp \
-	src/db/db_error.cpp \
-	src/db/db_upgrade.cpp \
-	src/db/normal_table.cpp \
-	src/db/row_index.cpp \
-	src/db/table.cpp \
-	src/db/table_buffer.cpp \
-	src/db/tables/ascents_table.cpp \
-	src/db/tables/countries_table.cpp \
-	src/db/tables/hikers_table.cpp \
-	src/db/tables/participated_table.cpp \
-	src/db/tables/peaks_table.cpp \
-	src/db/tables/photos_table.cpp \
-	src/db/tables/ranges_table.cpp \
-	src/db/tables/regions_table.cpp \
-	src/db/tables/settings_table.cpp \
-	src/db/tables/trips_table.cpp \
-	src/dialogs/add_hiker_dialog.cpp \
-	src/dialogs/country_dialog.cpp \
-	src/dialogs/hiker_dialog.cpp \
-	src/dialogs/item_dialog.cpp \
-	src/dialogs/list/hiker_list.cpp \
-	src/dialogs/list/photo_list.cpp \
-	src/dialogs/parse_helper.cpp \
-	src/dialogs/range_dialog.cpp \
-	src/dialogs/ascent_dialog.cpp \
-	src/dialogs/peak_dialog.cpp \
-	src/dialogs/region_dialog.cpp \
-	src/dialogs/trip_dialog.cpp \
-	src/main/about_window.cpp \
-	src/main/ascent_filter_bar.cpp \
-	src/main/helpers.cpp \
-	src/main/main.cpp \
-	src/main/main_window.cpp \
-	src/settings/project_settings.cpp \
-	src/settings/project_settings_window.cpp \
-	src/settings/settings.cpp \
-	src/settings/settings_window.cpp \
-	src/stats/chart.cpp \
-	src/stats/stats_engine.cpp \
-	src/tools/export_dialog.cpp \
-	src/tools/export_thread.cpp \
-	src/tools/export_writer.cpp \
-	src/tools/photo_relocation_thread.cpp \
-	src/tools/relocate_photos_dialog.cpp \
-	src/viewer/ascent_viewer.cpp \
-	src/viewer/scalable_image_label.cpp
+QT += core gui
+QT += sql
+QT += svg svgwidgets
+QT += charts
+
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs deprecated before Qt 6.0.0
+
+CONFIG += c++17
+CONFIG += lrelease
+CONFIG += embed_translations
+
+
 
 HEADERS += \
 	src/comp_tables/breadcrumbs.h \
@@ -181,6 +116,71 @@ HEADERS += \
 	src/viewer/icon_group_box.h \
 	src/viewer/scalable_image_label.h
 
+SOURCES += \
+	src/comp_tables/breadcrumbs.cpp \
+	src/comp_tables/composite_column.cpp \
+	src/comp_tables/composite_table.cpp \
+	src/comp_tables/fold_composite_column.cpp \
+	src/data/ascent.cpp \
+	src/data/country.cpp \
+	src/data/enum_names.cpp \
+	src/data/hiker.cpp \
+	src/data/item_id.cpp \
+	src/data/peak.cpp \
+	src/data/photo.cpp \
+	src/data/range.cpp \
+	src/data/region.cpp \
+	src/data/trip.cpp \
+	src/db/associative_table.cpp \
+	src/db/column.cpp \
+	src/db/database.cpp \
+	src/db/db_error.cpp \
+	src/db/db_upgrade.cpp \
+	src/db/normal_table.cpp \
+	src/db/row_index.cpp \
+	src/db/table.cpp \
+	src/db/table_buffer.cpp \
+	src/db/tables/ascents_table.cpp \
+	src/db/tables/countries_table.cpp \
+	src/db/tables/hikers_table.cpp \
+	src/db/tables/participated_table.cpp \
+	src/db/tables/peaks_table.cpp \
+	src/db/tables/photos_table.cpp \
+	src/db/tables/ranges_table.cpp \
+	src/db/tables/regions_table.cpp \
+	src/db/tables/settings_table.cpp \
+	src/db/tables/trips_table.cpp \
+	src/dialogs/add_hiker_dialog.cpp \
+	src/dialogs/country_dialog.cpp \
+	src/dialogs/hiker_dialog.cpp \
+	src/dialogs/item_dialog.cpp \
+	src/dialogs/list/hiker_list.cpp \
+	src/dialogs/list/photo_list.cpp \
+	src/dialogs/parse_helper.cpp \
+	src/dialogs/range_dialog.cpp \
+	src/dialogs/ascent_dialog.cpp \
+	src/dialogs/peak_dialog.cpp \
+	src/dialogs/region_dialog.cpp \
+	src/dialogs/trip_dialog.cpp \
+	src/main/about_window.cpp \
+	src/main/ascent_filter_bar.cpp \
+	src/main/helpers.cpp \
+	src/main/main.cpp \
+	src/main/main_window.cpp \
+	src/settings/project_settings.cpp \
+	src/settings/project_settings_window.cpp \
+	src/settings/settings.cpp \
+	src/settings/settings_window.cpp \
+	src/stats/chart.cpp \
+	src/stats/stats_engine.cpp \
+	src/tools/export_dialog.cpp \
+	src/tools/export_thread.cpp \
+	src/tools/export_writer.cpp \
+	src/tools/photo_relocation_thread.cpp \
+	src/tools/relocate_photos_dialog.cpp \
+	src/viewer/ascent_viewer.cpp \
+	src/viewer/scalable_image_label.cpp
+
 FORMS += \
 	src/ui/about_window.ui \
 	src/ui/ascent_filter_bar.ui \
@@ -238,10 +238,3 @@ TRANSLATIONS += \
 
 DISTFILES += \
 	translation/de.ts
-
-
-
-# Default rules for deployment
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
