@@ -31,7 +31,8 @@
 // Application version
 
 QString getAppVersion();
-bool isBelowVersion(QString versionToCheck, QString minimalVersion);
+bool versionOlderThan(const QString& version1, const QString& version2);
+bool versionOlderOrEqual(const QString& version1, const QString& version2);
 
 
 

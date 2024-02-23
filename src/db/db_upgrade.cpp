@@ -71,22 +71,22 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	const QString currentDbVersion	= determineCurrentDbVersion();
 	const QString appVersion		= getAppVersion();
 	
-	if (isBelowVersion(appVersion, currentDbVersion)) {
+	if (versionOlderThan(appVersion, currentDbVersion)) {
 		// App is older than database version, show warning
 		bool abort = !showOutdatedAppWarningAndBackup(currentDbVersion);
 		if (abort) return false;
 		executeAfterStructuralUpgrade();
 		return true;
 	}
-	if (!isBelowVersion(currentDbVersion, appVersion)) {
+	if (!versionOlderThan(currentDbVersion, appVersion)) {
 		// No upgrade necessary
 		executeAfterStructuralUpgrade();
 		return true;
 	}
 	
-	if (isBelowVersion(currentDbVersion, "1.2.0")) {
+	if (versionOlderThan(currentDbVersion, "1.2.0")) {
 		// Determine whether upgrading from the old version will definitely break compatibility
-		bool upgradeBreakCompatibility = isBelowVersion(currentDbVersion, "1.2.0");
+		bool upgradeBreakCompatibility = versionOlderThan(currentDbVersion, "1.2.0");
 		
 		// Ask user to confirm upgrade and create backup
 		bool abort = !promptUserAboutUpgradeAndBackup(currentDbVersion, upgradeBreakCompatibility);
@@ -106,7 +106,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	// 1.2.0
 	// Versions older than this have a different format for the project settings table
 	// Check project settings table structure
-	if (isBelowVersion(currentDbVersion, "1.2.0")) {
+	if (versionOlderThan(currentDbVersion, "1.2.0")) {
 		// Extract only default hiker, ignore everything else (ascent filters)
 		v1_2_0_defaultHikerToCarryOver = extractDefaultHikerFromBeforeV1_2_0();
 		// Remove old project settings table
@@ -127,7 +127,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	// Database format now has to match current model and table buffers can be used.
 	
 	// 1.2.0
-	if (isBelowVersion(currentDbVersion, "1.2.0")) {
+	if (versionOlderThan(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
 			db.projectSettings.defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
@@ -136,8 +136,8 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	
 	
 	// Set new version
-	if (isBelowVersion(currentDbVersion, appVersion)) {
-		qDebug().noquote().nospace() << "Upgraded database from v" << currentDbVersion << " to v" << appVersion;
+	if (versionOlderThan(currentDbVersion, appVersion)) {
+		qDebug().noquote().nospace() << "Upgrading database from v" << currentDbVersion << " to v" << appVersion;
 		db.projectSettings.databaseVersion.set(parent, appVersion);
 		
 		showUpgradeSuccessMessage(currentDbVersion, appVersion);

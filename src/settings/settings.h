@@ -476,7 +476,7 @@ public:
 	}
 	
 private:
-	static bool settingsOlderThan(QString version);
+	static bool settingsVersionUpTo(const QString& version);
 public:
 	static void checkForVersionChange();
 };

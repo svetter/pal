@@ -28,15 +28,15 @@
 
 
 /**
- * Determines whether the settings file was last saved by a version of the application that is
- * older than the current version.
+ * Determines whether the settings were last saved by a version of the application that is older
+ * than or equal to the given version.
  * 
- * @param version	The version of the application with which to compare the settings file version.
- * @return			True if the settings file is older than the current version, false otherwise.
+ * @param version	The version of the application with which to compare the settings version.
+ * @return			True if the settings version is below or equal to the given version, false otherwise.
  */
-bool Settings::settingsOlderThan(QString version)
+bool Settings::settingsVersionUpTo(const QString& version)
 {
-	return isBelowVersion(appVersion.get(), version);
+	return versionOlderOrEqual(appVersion.get(), version);
 }
 
 
@@ -49,14 +49,14 @@ bool Settings::settingsOlderThan(QString version)
  */
 void Settings::checkForVersionChange()
 {
-	// 1.1.0
-	if (settingsOlderThan("1.1.0")) {
+	// 1.0.3 or older
+	if (settingsVersionUpTo("1.0.3")) {
 		// New columns => reset column widths
 		qSettings.remove("implicit/mainWindow/columnWidths");
 	}
 	
-	// 1.2.0
-	if (settingsOlderThan("1.2.0")) {
+	// 1.1.1. or older
+	if (settingsVersionUpTo("1.1.1")) {
 		// Open tab, filter bar visibility, column widths, sortings moved to project settings => remove
 		qSettings.remove("implicit/mainWindow/currentTabIndex");
 		qSettings.remove("implicit/mainWindow/showFilters");
@@ -76,17 +76,18 @@ void Settings::checkForVersionChange()
 		}
 	}
 	
-	// 1.3.0
-	if (settingsOlderThan("1.3.0")) {
+	// 1.2.1 or older
+	if (settingsVersionUpTo("1.2.1")) {
 		// Geometry saving and restoring fixed/changed => reset
 		resetGeometrySettings();
 	}
 	
 	// Update settings version
-	QString currentAppVersion = getAppVersion();
-	if (settingsOlderThan(currentAppVersion)) {
+	const QString currentAppVersion = getAppVersion();
+	const QString currentSettingsVersion = appVersion.get();
+	if (versionOlderThan(currentSettingsVersion, currentAppVersion)) {
+		qDebug().noquote().nospace() << "Upgraded global settings from v" << currentSettingsVersion << " to v" << currentAppVersion;
 		appVersion.set(currentAppVersion);
-		qDebug().noquote().nospace() << "Upgraded global settings from v" << appVersion.get() << " to v" << currentAppVersion;
 	}
 }
 

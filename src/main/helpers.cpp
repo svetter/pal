@@ -45,25 +45,38 @@ QString getAppVersion()
 /**
  * Compares two version strings and determines whether the first one is older than the second one.
  * 
- * @param settingsVersion	The version of the application that saved the settings file.
- * @param minimalVersion	The version of the application with which to compare the settings file version.
- * @return					True if the settings file is older than the given version, false otherwise.
+ * @param version1	The first version string.
+ * @param version2	The second version string.
+ * @return			True if the first version is older than the second one, false otherwise.
  */
-bool isBelowVersion(QString versionToCheck, QString minimalVersion)
+bool versionOlderThan(const QString& version1, const QString& version2)
 {
-	QStringList checkSplit		= versionToCheck.split('.');
-	QStringList minimalSplit	= minimalVersion.split('.');
-	assert(checkSplit.size() == 3 && minimalSplit.size() == 3);
+	QStringList split1 = version1.split('.');
+	QStringList split2 = version2.split('.');
+	assert(split1.size() == 3 && split2.size() == 3);
 	for (int i = 0; i < 3; i++) {
 		bool conversionOk = false;
-		int settingsNumber = checkSplit.at(i).toInt(&conversionOk);
+		int number1 = split1.at(i).toInt(&conversionOk);
 		assert(conversionOk);
-		int minimalNumber = minimalSplit.at(i).toInt(&conversionOk);
+		int number2 = split2.at(i).toInt(&conversionOk);
 		assert(conversionOk);
-		if (settingsNumber > minimalNumber) return false;
-		if (settingsNumber < minimalNumber) return true;
+		if (number1 > number2) return false;
+		if (number1 < number2) return true;
 	}
 	return false;
+}
+
+/**
+ * Compares two version strings and determines whether the first one is older than or equal to the
+ * second one.
+ * 
+ * @param version1	The first version string.
+ * @param version2	The second version string.
+ * @return			True if the first version is older than or equal to the second one, false otherwise.
+ */
+bool versionOlderOrEqual(const QString& version1, const QString& version2)
+{
+	return !versionOlderThan(version2, version1);
 }
 
 
