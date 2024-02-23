@@ -71,7 +71,7 @@ void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString em
 	aboutToClose();
 	
 	QString itemName = nameLineEdit->text();
-	if (itemName.isEmpty() && !Settings::allowEmptyNames.get()) {
+	if (itemName.isEmpty()) {
 		QMessageBox::information(this, emptyNameWindowTitle, emptyNameMessage, QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}

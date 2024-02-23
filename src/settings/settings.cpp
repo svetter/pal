@@ -82,6 +82,12 @@ void Settings::checkForVersionChange()
 		resetGeometrySettings();
 	}
 	
+	// 1.3.0 or older
+	if (settingsVersionUpTo("1.3.0")) {
+		// Setting for allowing empty names was removed => clean up
+		qSettings.remove("allowEmptyNames");
+	}
+	
 	// Update settings version
 	const QString currentAppVersion = getAppVersion();
 	const QString currentSettingsVersion = appVersion.get();

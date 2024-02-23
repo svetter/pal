@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>895</height>
+    <height>868</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,13 +154,6 @@
        <widget class="QCheckBox" name="confirmCancelCheckbox">
         <property name="text">
          <string>Ask for confirmation before discarding unsaved changes</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="allowEmptyNamesCheckbox">
-        <property name="text">
-         <string>Allow saving when item name is empty</string>
         </property>
        </widget>
       </item>

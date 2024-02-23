@@ -3136,11 +3136,6 @@ Trotzdem speichern?</translation>
         <translation>Vor dem Verwerfen ungesicherter Änderungen nachfragen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="163"/>
-        <source>Allow saving when item name is empty</source>
-        <translation>Speichern von Einträgen ohne Name erlauben</translation>
-    </message>
-    <message>
         <location filename="../src/ui/settings_window.ui" line="170"/>
         <source>Warn when saving an item with a duplicate name</source>
         <translation>Beim Speichern von Einträgen vor duplizierten Namen warnen</translation>

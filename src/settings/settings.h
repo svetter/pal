@@ -310,8 +310,6 @@ public:
 	inline static const Setting<bool>	confirmDelete								= Setting<bool>		("confirmDelete",								true);
 	/** Ask user for confirmation before discarding changes in an edit dialog. */
 	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
-	/** Allow user to store items with empty names. */
-	inline static const Setting<bool>	allowEmptyNames								= Setting<bool>		("allowEmptyNames",								false);
 	/** Warn user if an item with the same name already exists. */
 	inline static const Setting<bool>	warnAboutDuplicateNames						= Setting<bool>		("warnAboutDuplicateNames",						true);
 	
