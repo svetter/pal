@@ -81,6 +81,7 @@ MainWindow::MainWindow() :
 	generalStatsEngine.setupStatsTab();
 	initColumnContextMenu();
 	initTableContextMenuAndShortcuts();
+	updateItemCountDisplays(true);
 	updateRecentFilesMenu();
 	
 	// Open database
@@ -477,7 +478,6 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			tabIndex = db.projectSettings.mainWindow_currentTabIndex.get(this);
 		}
 		mainAreaTabs->setCurrentIndex(tabIndex);
-		setFilteredAscentsCounterVisible(tabIndex == 0);
 		
 		ItemTypeMapper* activeMapper = getActiveMapperOrNull();
 		if (activeMapper) {
@@ -508,7 +508,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		initCompositeBuffers();
 		projectOpen = true;
 		
-		updateTableSize();
+		updateItemCountDisplays();
 		handle_tableSelectionChanged();
 		
 		setUIEnabled(true);
@@ -647,19 +647,20 @@ void MainWindow::updateRecentFilesMenu()
 
 /**
  * Updates or clears the status bar indicator for the number of entries in the currently selected
- * table.
+ * table, as well as the LED-styled ascent counters at the top.
  * 
  * For the ascent table, also updates the status bar indicator for the number of applied filters.
  * 
- * @param reset	Clear the status bar indicator completely.
+ * @param reset	If true, clear the status bar indicator and LED counters completely.
  */
-void MainWindow::updateTableSize(bool reset)
+void MainWindow::updateItemCountDisplays(bool reset)
 {
 	if (reset) {
 		statusBarTableSizeLabel->setText("");
 		statusBarFiltersLabel->setText("");
 		ascentCounterSegmentNumber->setProperty("value", QVariant());
 		ascentCounterFilteredSegmentNumber->setProperty("value", QVariant());
+		setFilteredAscentsCounterVisible(false);
 		return;
 	}
 	
@@ -682,10 +683,12 @@ void MainWindow::updateTableSize(bool reset)
 	statusBarTableSizeLabel->setText(countText);
 	
 	QString filterText = QString();
+	bool filteredAscentsCounterVisible = false;
 	if (activeMapper && activeMapper->type == ItemTypeAscent) {
-		int filtersApplied = activeMapper->compTable->getCurrentFilters().size();
-		if (filtersApplied) {
-			filterText = (filtersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(filtersApplied);
+		int numFiltersApplied = activeMapper->compTable->getCurrentFilters().size();
+		if (numFiltersApplied > 0) {
+			filterText = (numFiltersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(numFiltersApplied);
+			filteredAscentsCounterVisible = true;
 		} else {
 			filterText = tr("No filters applied");
 		}
@@ -697,6 +700,7 @@ void MainWindow::updateTableSize(bool reset)
 	// Set number of filtered rows
 	const int numAscentsShown = typesHandler->get(ItemTypeAscent).compTable->rowCount();
 	ascentCounterFilteredSegmentNumber->setProperty("value", QVariant(numAscentsShown));
+	setFilteredAscentsCounterVisible(filteredAscentsCounterVisible);
 }
 
 
@@ -708,7 +712,7 @@ void MainWindow::updateTableSize(bool reset)
  */
 void MainWindow::currentFiltersChanged()
 {
-	updateTableSize();
+	updateItemCountDisplays();
 	handle_clearTableSelection();	// Have to clear table selection for chart range pinning to work correctly
 	handle_tableSelectionChanged();
 }
@@ -834,6 +838,8 @@ void MainWindow::setFilteredAscentsCounterVisible(bool visible)
 	ascentCounterFilteredLabel->setVisible(visible);
 	
 	updateTopBarButtonVisibilities();
+	
+	setUpdatesEnabled(true);
 }
 
 /**
@@ -870,7 +876,7 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
 	}
 	// Update table size info
-	if (numberOfEntriesChanged)	updateTableSize();
+	if (numberOfEntriesChanged) updateItemCountDisplays();
 	// Update filters
 	updateFilters();
 }
@@ -931,8 +937,8 @@ void MainWindow::handle_tabChanged()
 	if (!projectOpen) return;
 	
 	ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
-	const bool ascentsActive = activeMapper && activeMapper->type == ItemTypeAscent;
-	setFilteredAscentsCounterVisible(ascentsActive);
+	
+	updateItemCountDisplays();
 	
 	QProgressDialog progress(this);
 	progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowCloseButtonHint);
@@ -963,7 +969,6 @@ void MainWindow::handle_tabChanged()
 	}
 	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	
-	updateTableSize();
 	updateTableContextMenuIcons();
 	handle_tableSelectionChanged();
 	
@@ -1227,7 +1232,7 @@ void MainWindow::handle_newDatabase()
 	projectOpen = true;
 	
 	updateFilters();
-	updateTableSize();
+	updateItemCountDisplays();
 	handle_tableSelectionChanged();
 	setUIEnabled(true);
 	
@@ -1363,7 +1368,7 @@ void MainWindow::handle_closeDatabase()
 		mapper->statsEngine->resetStatsPanel();
 	}
 	generalStatsEngine.resetStatsTab();
-	updateTableSize(true);
+	updateItemCountDisplays(true);
 	mainAreaTabs->setCurrentIndex(0);
 	typesHandler->resetTabOpenedFlags();
 }
