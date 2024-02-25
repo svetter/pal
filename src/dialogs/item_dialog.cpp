@@ -181,17 +181,20 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * Repopulates the given combo box with the given table's entries, filtered and sorted according to
  * the given parameters, and writes the IDs of the entries to the referenced list.
  * 
- * @param table					The table to get the entries from.
- * @param displayAndSortColumn	The column of the table to use for displaying and sorting the entries.
- * @param sortAsString			Whether to sort the entries as strings. Otherwise, QVariant::compare() is used.
- * @param combo					The combo box to populate.
- * @param idList				The list in which to store the IDs of the entries.
- * @param overrideFirstLine		If not empty, this string will be used as the first line of the combo box instead of the table's none string.
- * @param filterColumn			If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
- * @param filterID				The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
+ * @param table						The table to get the entries from.
+ * @param displayAndSortColumn		The column of the table to use for displaying and sorting the entries.
+ * @param sortAsString				Whether to sort the entries as strings. Otherwise, QVariant::compare() is used.
+ * @param combo						The combo box to populate.
+ * @param idList					The list in which to store the IDs of the entries.
+ * @param overrideFirstLine			If not empty, this string will be used as the first line of the combo box instead of the table's none string.
+ * @param distinctionKeyColumn		If not null, this column will be used to point to a cell in distinctionContentColumn.
+ * @param distinctionContentColumn	If not null, this column will be used to add a distinguishing name in brackets to entries with duplicate names.
+ * @param filterColumn				If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
+ * @param filterID					The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
  */
-void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine, const ForeignKeyColumn* filterColumn, ItemID filterID)
+void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID)
 {
+	assert(displayAndSortColumn.table == &table);
 	assert(!(!filterColumn && filterID.isValid()));
 	
 	combo->clear();
@@ -202,6 +205,7 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 	
 	// Get pairs of ID and display/sort field
 	QList<QPair<ValidItemID, QVariant>> selectableItems = table.pairIDWith(displayAndSortColumn);
+	if (selectableItems.isEmpty()) return;
 	
 	if (filterColumn) {
 		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it
@@ -221,6 +225,36 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 		return QVariant::compare(p1.second, p2.second) == QPartialOrdering::Less;
 	};
 	std::sort(selectableItems.begin(), selectableItems.end(), comparator);
+	
+	// Add distinction field in brackets in case of duplicates
+	if (distinctionKeyColumn || distinctionContentColumn) {
+		assert(distinctionKeyColumn && distinctionContentColumn);
+		assert(distinctionKeyColumn->table == &table);
+		assert(distinctionKeyColumn->foreignColumn->table == distinctionContentColumn->table);
+		// Find duplicates
+		QSet<int> duplicateNameIndices = QSet<int>();
+		QString previousName;
+		for (int i = 0; i < selectableItems.size(); i++) {
+			const QString currentName = selectableItems.at(i).second.toString();
+			const bool sameName = currentName == previousName && i != 0;
+			if (sameName) {
+				duplicateNameIndices.insert(i - 1);
+				duplicateNameIndices.insert(i);
+			}
+			previousName = currentName;
+		}
+		// Append distinction column content to duplicate names
+		for (const int duplicateNameIndex : duplicateNameIndices) {
+			const ValidItemID& itemID = selectableItems.at(duplicateNameIndex).first;
+			const ItemID& distinctionKey = distinctionKeyColumn->getValueFor(itemID);
+			if (distinctionKey.isInvalid()) continue;
+			const QString& distinctionContent = distinctionContentColumn->getValueFor(FORCE_VALID(distinctionKey)).toString();
+			if (distinctionContent.isEmpty()) continue;
+			const QString& currentName = selectableItems.at(duplicateNameIndex).second.toString();
+			const QString newName = currentName + " (" + distinctionContent + ")";
+			selectableItems[duplicateNameIndex].second = newName;
+		}
+	}
 	
 	// Save IDs and populate combo box
 	for (const auto& [itemID, name] : selectableItems) {

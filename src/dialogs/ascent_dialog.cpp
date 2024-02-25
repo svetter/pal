@@ -155,8 +155,8 @@ QString AscentDialog::getEditWindowTitle()
  */
 void AscentDialog::populateComboBoxes()
 {
-	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"));
-	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
@@ -293,9 +293,9 @@ void AscentDialog::handle_regionFilterChanged()
 {
 	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
 	if (regionID.isValid()) {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, regionID);
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionID);
 	} else {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
 	}
 }
 
@@ -309,7 +309,7 @@ void AscentDialog::handle_newPeak()
 	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
-	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs);
+	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
 	const ValidItemID newPeakID = db.peaksTable.getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None

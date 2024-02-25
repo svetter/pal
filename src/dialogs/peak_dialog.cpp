@@ -114,7 +114,7 @@ QString PeakDialog::getEditWindowTitle()
  */
 void PeakDialog::populateComboBoxes()
 {
-	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 }
 
 
@@ -202,7 +202,7 @@ void PeakDialog::handle_newRegion()
 	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
-	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs);
+	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 	const ValidItemID newRegionID = db.regionsTable.getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(newRegionID) + 1);	// 0 is None
 }

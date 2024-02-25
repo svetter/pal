@@ -105,7 +105,7 @@ public:
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
-void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, QString overrideFirstLine = QString(), const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID());
+void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID());
 
 
 
