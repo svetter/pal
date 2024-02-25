@@ -155,8 +155,8 @@ QString AscentDialog::getEditWindowTitle()
  */
 void AscentDialog::populateComboBoxes()
 {
-	populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionFilterCombo, selectableRegionIDs, tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
-	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
+	populateRegionCombo(db, regionFilterCombo, selectableRegionIDs, true);
+	populatePeakCombo(db, peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
@@ -171,7 +171,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+	populateTripCombo(db, tripCombo, selectableTripIDs);
 }
 
 
@@ -291,12 +291,8 @@ bool AscentDialog::changesMade()
  */
 void AscentDialog::handle_regionFilterChanged()
 {
-	ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
-	if (regionID.isValid()) {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionID);
-	} else {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
-	}
+	const ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
+	populatePeakCombo(db, peakCombo, selectablePeakIDs, regionID);
 }
 
 /**
@@ -309,7 +305,7 @@ void AscentDialog::handle_newPeak()
 	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
-	populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
+	populatePeakCombo(db, peakCombo, selectablePeakIDs);
 	const ValidItemID newPeakID = db.peaksTable.getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None
@@ -380,7 +376,7 @@ void AscentDialog::handle_newTrip()
 	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
-	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+	populateTripCombo(db, tripCombo, selectableTripIDs);
 	const ValidItemID newTripID = db.tripsTable.getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(newTripID) + 1);	// 0 is None
 }

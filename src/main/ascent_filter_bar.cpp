@@ -330,7 +330,7 @@ void AscentFilterBar::updateRangeCombo()
 	if (rangeComboIndex > 0) {
 		previouslySelectedRangeID = selectableRangeIDs.at(rangeComboIndex - 1);	// 0 is None
 	}
-	populateItemCombo(db->rangesTable, db->rangesTable.nameColumn, true, rangeFilterCombo, selectableRangeIDs);
+	populateRangeCombo(*db, rangeFilterCombo, selectableRangeIDs);
 	
 	int newRangeComboIndex = 0;
 	ItemID newlySelectedRangeID = ItemID();
@@ -364,7 +364,7 @@ void AscentFilterBar::updateHikerCombo()
 	if (hikerComboIndex > 0) {
 		previouslySelectedHikerID = selectableHikerIDs.at(hikerComboIndex - 1);	// 0 is None
 	}
-	populateItemCombo(db->hikersTable, db->hikersTable.nameColumn, true, hikerFilterCombo, selectableHikerIDs);
+	populateHikerCombo(*db, hikerFilterCombo, selectableHikerIDs);
 	
 	int newHikerComboIndex = 0;
 	ItemID newlySelectedHikerID = ItemID();

@@ -262,3 +262,42 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 		combo->addItem(name.toString());
 	}
 }
+
+
+void populatePeakCombo(Database& db, QComboBox* peakCombo, QList<ValidItemID>& selectablePeakIDs, ItemID regionFilterID)
+{
+	if (regionFilterID.isValid()) {
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionFilterID);
+	} else {
+		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
+	}
+}
+
+void populateTripCombo(Database& db, QComboBox* tripCombo, QList<ValidItemID>& selectableTripIDs)
+{
+	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+}
+
+void populateHikerCombo(Database& db, QComboBox* hikerCombo, QList<ValidItemID>& selectableHikerIDs)
+{
+	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
+}
+
+void populateRegionCombo(Database& db, QComboBox* regionCombo, QList<ValidItemID>& selectableRegionIDs, bool asFilter)
+{
+	if (asFilter) {
+		populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, ItemDialog::tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+	} else {
+		populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+	}
+}
+
+void populateRangeCombo(Database& db, QComboBox* rangeCombo, QList<ValidItemID>& selectableRangeIDs)
+{
+	populateItemCombo(db.rangesTable, db.rangesTable.nameColumn, true, rangeCombo, selectableRangeIDs);
+}
+
+void populateCountryCombo(Database& db, QComboBox* countryCombo, QList<ValidItemID>& selectableCountryIDs)
+{
+	populateItemCombo(db.countriesTable, db.countriesTable.nameColumn, true, countryCombo, selectableCountryIDs);
+}

@@ -92,7 +92,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainW
 
 void ProjectSettingsWindow::repopulateHikerCombo()
 {
-	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, defaultHikerCombo, selectableHikerIDs);
+	populateHikerCombo(db, defaultHikerCombo, selectableHikerIDs);
 }
 
 

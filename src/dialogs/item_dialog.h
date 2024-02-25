@@ -105,7 +105,16 @@ public:
 
 bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
+
+
 void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID());
+
+void populatePeakCombo		(Database& db, QComboBox* peakCombo,	QList<ValidItemID>& selectablePeakIDs,		ItemID regionFilterID = ItemID());
+void populateTripCombo		(Database& db, QComboBox* tripCombo,	QList<ValidItemID>& selectableTripIDs);
+void populateHikerCombo		(Database& db, QComboBox* hikerCombo,	QList<ValidItemID>& selectableHikerIDs);
+void populateRegionCombo	(Database& db, QComboBox* regionCombo,	QList<ValidItemID>& selectableRegionIDs,	bool asFilter = false);
+void populateRangeCombo		(Database& db, QComboBox* rangeCombo,	QList<ValidItemID>& selectableRangeIDs);
+void populateCountryCombo	(Database& db, QComboBox* countryCombo,	QList<ValidItemID>& selectableCountryIDs);
 
 
 
