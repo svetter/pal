@@ -53,7 +53,7 @@ using std::unique_ptr, std::make_unique;
  * @param purpose		The purpose of the dialog.
  * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
-AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init) :
+AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>()),
@@ -82,7 +82,7 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, &Settings::ascentDialog_geometry);
 	
 	
 	populateComboBoxes();
@@ -322,7 +322,7 @@ void AscentDialog::handle_regionFilterChanged()
  */
 void AscentDialog::handle_newPeak()
 {
-	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(*this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
 	populatePeakCombo(db, peakCombo, selectablePeakIDs);
@@ -393,7 +393,7 @@ void AscentDialog::handle_difficultySystemChanged()
  */
 void AscentDialog::handle_newTrip()
 {
-	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newTripIndex = openNewTripDialogAndStore(*this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
 	populateTripCombo(db, tripCombo, selectableTripIDs);
@@ -408,7 +408,7 @@ void AscentDialog::handle_newTrip()
  */
 void AscentDialog::handle_addHiker()
 {
-	ItemID hikerID = openAddHikerDialog(this, mainWindow, db);
+	ItemID hikerID = openAddHikerDialog(*this, mainWindow, db);
 	if (hikerID.isInvalid()) return;
 	if (hikersModel.containsHiker(FORCE_VALID(hikerID))) return;
 	unique_ptr<Hiker> hiker = db.getHiker(FORCE_VALID(hikerID));
@@ -450,7 +450,7 @@ void AscentDialog::handle_addPhotos()
 		preSelectedDir = QFileInfo(photosModel.getFilepathAt(photoIndexForDir)).path();
 	}
 	
-	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
+	QStringList filepaths = openFileDialogForMultiPhotoSelection(*this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();
@@ -528,7 +528,7 @@ void AscentDialog::handle_ok()
  */
 void AscentDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, &Settings::ascentDialog_geometry);
 	
 	savePhotoDescriptionToList();
 }
@@ -598,7 +598,7 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
  * @param db			The project database.
  * @return				The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
 	return openAscentDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -612,7 +612,7 @@ BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWin
  * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
  * @return					The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
 	return openAscentDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalAscent));
@@ -627,7 +627,7 @@ BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* m
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, mainWindow, db, editItem, std::move(originalAscent));
@@ -643,7 +643,7 @@ bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Data
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -678,7 +678,7 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
  * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent)
+BufferRowIndex openAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent)
 {
 	assert((bool) originalAscent != (purpose == newItem));
 	
@@ -733,12 +733,12 @@ BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow
  * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
  * @return						The selected filepath, or an empty QString if the dialog was cancelled.
  */
-QString openFileDialogForSinglePhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
+QString openFileDialogForSinglePhotoSelection(QWidget& parent, QString preSelectedDir, QString overrideWindowTitle)
 {
 	QString caption = AscentDialog::tr("Select photo of ascent");
 	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
 	QString filter = getImageFileDialogFilterString();
-	QString filepath = QFileDialog::getOpenFileName(parent, caption, preSelectedDir, filter);
+	QString filepath = QFileDialog::getOpenFileName(&parent, caption, preSelectedDir, filter);
 	
 	QStringList checkedPath = checkFilepathsAndAskUser(parent, {filepath});
 	if (checkedPath.isEmpty()) return QString();
@@ -753,12 +753,12 @@ QString openFileDialogForSinglePhotoSelection(QWidget* parent, QString preSelect
  * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
  * @return						The selected filepaths, or an empty QStringList if the dialog was cancelled.
  */
-QStringList openFileDialogForMultiPhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
+QStringList openFileDialogForMultiPhotoSelection(QWidget& parent, QString preSelectedDir, QString overrideWindowTitle)
 {
 	QString caption = AscentDialog::tr("Select photos of ascent");
 	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
 	QString filter = getImageFileDialogFilterString();
-	QStringList filepaths = QFileDialog::getOpenFileNames(parent, caption, preSelectedDir, filter);
+	QStringList filepaths = QFileDialog::getOpenFileNames(&parent, caption, preSelectedDir, filter);
 	
 	filepaths = checkFilepathsAndAskUser(parent, filepaths);
 	
@@ -783,7 +783,7 @@ QString getImageFileDialogFilterString()
  * @param filepaths		The filepaths to check.
  * @return				The filepaths which are unproblematic  or confirmed by the user. Empty if the user cancels.
  */
-QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths)
+QStringList checkFilepathsAndAskUser(QWidget& parent, QStringList filepaths)
 {
 	bool noToAll = false;
 	
@@ -806,7 +806,7 @@ QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths)
 		if (filepaths.size() - 1 > i) {
 			buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
 		}
-		auto pressedButton = QMessageBox::warning(parent, title, message, buttons);
+		auto pressedButton = QMessageBox::warning(&parent, title, message, buttons);
 		
 		if (pressedButton == QMessageBox::Yes) {
 			// Do nothing

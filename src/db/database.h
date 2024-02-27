@@ -96,9 +96,9 @@ public:
 	~Database();
 	
 	void reset();
-	void createNew(QWidget* parent, const QString& filepath);
-	bool openExisting(QWidget* parent, const QString& filepath);
-	bool saveAs(QWidget* parent, const QString& filepath);
+	void createNew(QWidget& parent, const QString& filepath);
+	bool openExisting(QWidget& parent, const QString& filepath);
+	bool saveAs(QWidget& parent, const QString& filepath);
 	QString getCurrentFilepath() const;
 	
 	QList<Table*> getItemTableList() const;
@@ -121,11 +121,11 @@ public:
 	unique_ptr<Country>	getCountryAt	(BufferRowIndex	rowIndex)	const;
 	
 	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable& table, QSet<ValidItemID> primaryKeys);
-	void removeRows(QWidget* parent, NormalTable& table, QSet<ValidItemID> primaryKeys);
+	void removeRows(QWidget& parent, NormalTable& table, QSet<ValidItemID> primaryKeys);
 private:
 	QList<WhatIfDeleteResult> removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable& table, QSet<ValidItemID> primaryKeys);
 	
-	void populateBuffers(QWidget* parent);
+	void populateBuffers(QWidget& parent);
 	
 	void computeBreadcrumbMatrix();
 public:

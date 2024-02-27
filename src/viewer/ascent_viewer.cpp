@@ -744,7 +744,7 @@ void AscentViewer::addPhotosFromDialog()
 		assert(currentPhotoIndex >= 0);
 		QFileInfo(photos.at(currentPhotoIndex).filepath).path();
 	}
-	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
+	QStringList filepaths = openFileDialogForMultiPhotoSelection(*this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	addPhotos(filepaths);
@@ -800,7 +800,7 @@ void AscentViewer::replaceCurrentPhoto()
 	/*: %1 is a filepath, so it is best if it remains at the end of the string. */
 	QString dialogTitle = tr("Replace %1").arg(photos.at(currentPhotoIndex).filepath);
 	QString preSelectedDir = QFileInfo(photos.at(currentPhotoIndex).filepath).path();
-	QString filepath = openFileDialogForSinglePhotoSelection(this, preSelectedDir, dialogTitle);
+	QString filepath = openFileDialogForSinglePhotoSelection(*this, preSelectedDir, dialogTitle);
 	if (filepath.isEmpty()) return;
 	
 	photos[currentPhotoIndex].filepath = filepath;
@@ -832,7 +832,7 @@ void AscentViewer::savePhotosList()
 	for (int i = 0; i < photos.size(); i++) {
 		photos[0].sortIndex = i;
 	}
-	db.photosTable.updateRows(this, FORCE_VALID(currentAscentID), photos);
+	db.photosTable.updateRows(*this, FORCE_VALID(currentAscentID), photos);
 }
 
 
@@ -849,7 +849,7 @@ void AscentViewer::saveDescription()
 	QString newDescription = descriptionTextBrowser->toPlainText();
 	bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
 	if (descriptionChanged) {
-		db.ascentsTable.updateCell(this, FORCE_VALID(currentAscentID), db.ascentsTable.descriptionColumn, newDescription);
+		db.ascentsTable.updateCell(*this, FORCE_VALID(currentAscentID), db.ascentsTable.descriptionColumn, newDescription);
 	}
 }
 
@@ -1082,7 +1082,7 @@ void AscentViewer::handle_relocatePhotos()
 {
 	savePhotoDescription();
 	stopSlideshow();
-	RelocatePhotosDialog(this, db).exec();
+	RelocatePhotosDialog(*this, db).exec();
 	loadPhotosList();
 	changeToPhoto(currentPhotoIndex, false);
 }
@@ -1156,7 +1156,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
 void AscentViewer::handle_editAscent()
 {
 	BufferRowIndex oldBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
-	openEditAscentDialogAndStore(this, mainWindow, db, oldBufferRowIndex);
+	openEditAscentDialogAndStore(*this, *mainWindow, db, oldBufferRowIndex);
 	handleChangesToUnderlyingData(oldBufferRowIndex);
 }
 
@@ -1168,7 +1168,7 @@ void AscentViewer::handle_editPeak()
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID peakID = VALID_ITEM_ID(db.ascentsTable.peakIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
 	BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(peakID);
-	openEditPeakDialogAndStore(this, mainWindow, db, peakBufferRowIndex);
+	openEditPeakDialogAndStore(*this, *mainWindow, db, peakBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
 
@@ -1180,7 +1180,7 @@ void AscentViewer::handle_editTrip()
 	BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
 	ValidItemID tripID = VALID_ITEM_ID(db.ascentsTable.tripIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
 	BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(tripID);
-	openEditTripDialogAndStore(this, mainWindow, db, tripBufferRowIndex);
+	openEditTripDialogAndStore(*this, *mainWindow, db, tripBufferRowIndex);
 	handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 }
 
@@ -1197,7 +1197,7 @@ void AscentViewer::handle_editTrip()
  */
 void AscentViewer::handle_filesDropped(QStringList filepaths)
 {
-	QStringList checkedPaths = checkFilepathsAndAskUser(this, filepaths);
+	QStringList checkedPaths = checkFilepathsAndAskUser(*this, filepaths);
 	if (checkedPaths.isEmpty()) return;
 	addPhotos(checkedPaths);
 }
@@ -1290,7 +1290,7 @@ void AscentViewer::reject()
  */
 void AscentViewer::saveImplicitSettings()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+	saveDialogGeometry(*this, *mainWindow, &Settings::ascentViewer_geometry);
 	
 	saveSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
 	saveSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
@@ -1305,7 +1305,7 @@ void AscentViewer::saveImplicitSettings()
 void AscentViewer::restoreImplicitSettings()
 {
 	if (Settings::rememberWindowPositions.get()) {
-		restoreDialogGeometry(this, mainWindow, &Settings::ascentViewer_geometry);
+		restoreDialogGeometry(*this, *mainWindow, &Settings::ascentViewer_geometry);
 	}
 	
 	restoreSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);

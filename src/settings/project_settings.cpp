@@ -82,7 +82,7 @@ QVariant GenericProjectSetting::getDefaultAsQVariant() const
  * @param parent	The parent window. Cannot be nullptr.
  * @param value		The new value for the setting.
  */
-void GenericProjectSetting::set(QWidget* parent, QVariant value) const
+void GenericProjectSetting::set(QWidget& parent, QVariant value) const
 {
 	table.setSetting(parent, *this, value);
 }
@@ -92,7 +92,7 @@ void GenericProjectSetting::set(QWidget* parent, QVariant value) const
  *
  * @param parent	The parent window. Cannot be nullptr.
  */
-void GenericProjectSetting::clear(QWidget* parent) const
+void GenericProjectSetting::clear(QWidget& parent) const
 {
 	table.clearSetting(parent, *this);
 }
@@ -102,7 +102,7 @@ void GenericProjectSetting::clear(QWidget* parent) const
  *
  * @param parent	The parent window. Cannot be nullptr.
  */
-void GenericProjectSetting::remove(QWidget* parent) const
+void GenericProjectSetting::remove(QWidget& parent) const
 {
 	table.removeSetting(parent, *this);
 }
@@ -270,7 +270,7 @@ T ProjectMultiSetting<T>::getDefault() const
  * @param values	The new values for the settings.
  */
 template<typename T>
-void ProjectMultiSetting<T>::set(QWidget* parent, const QMap<QString, T>& subKeyValueMap)
+void ProjectMultiSetting<T>::set(QWidget& parent, const QMap<QString, T>& subKeyValueMap)
 {
 	for (const auto& [subKey, value] : subKeyValueMap.asKeyValueRange()) {
 		createSettingIfMissing(subKey);
@@ -282,7 +282,7 @@ void ProjectMultiSetting<T>::set(QWidget* parent, const QMap<QString, T>& subKey
  * Removes all of the settings from the project settings storage.
  */
 template<typename T>
-void ProjectMultiSetting<T>::clear(QWidget* parent, SettingsTable* settingsTable) const
+void ProjectMultiSetting<T>::clear(QWidget& parent, SettingsTable* settingsTable) const
 {
 	settingsTable->clearAllSettings(parent, baseKey);
 }

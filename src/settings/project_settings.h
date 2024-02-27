@@ -53,9 +53,9 @@ public:
 	QVariant getAsQVariant(QWidget* parent = nullptr) const;
 	QVariant getDefaultAsQVariant() const;
 	
-	void set(QWidget* parent, QVariant value) const;
-	void clear(QWidget* parent) const;
-	void remove(QWidget* parent) const;
+	void set(QWidget& parent, QVariant value) const;
+	void clear(QWidget& parent) const;
+	void remove(QWidget& parent) const;
 };
 
 
@@ -98,8 +98,8 @@ public:
 	QMap<QString, T> get(const QSet<QString>& subKeys);
 	T getDefault() const;
 	
-	void set(QWidget* parent, const QMap<QString, T>& subKeyValueMap);
-	void clear(QWidget* parent, SettingsTable* settingsTable) const;
+	void set(QWidget& parent, const QMap<QString, T>& subKeyValueMap);
+	void clear(QWidget& parent, SettingsTable* settingsTable) const;
 	
 private:
 	void createSettingIfMissing(const QString& subKey);

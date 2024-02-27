@@ -54,7 +54,7 @@ TripsTable::TripsTable() :
  * @param trip		The trip to add.
  * @return			The index of the new trip in the table buffer.
  */
-BufferRowIndex TripsTable::addRow(QWidget* parent, Trip& trip)
+BufferRowIndex TripsTable::addRow(QWidget& parent, Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
@@ -72,7 +72,7 @@ BufferRowIndex TripsTable::addRow(QWidget* parent, Trip& trip)
  * @param parent	The parent widget.
  * @param trip		The trip to update.
  */
-void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip& trip)
+void TripsTable::updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);

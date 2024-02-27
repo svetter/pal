@@ -39,7 +39,7 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 	Q_OBJECT
 	
 	/** The application's main window. */
-	QMainWindow* mainWindow;
+	QMainWindow& mainWindow;
 	/** The project database. */
 	Database& db;
 	
@@ -47,7 +47,7 @@ class AddHikerDialog : public QDialog, public Ui_AddHikerDialog
 	QList<ValidItemID> selectableHikerIDs;
 	
 public:
-	AddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db);
+	AddHikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db);
 	
 private:
 	void populateComboBoxes();
@@ -65,7 +65,7 @@ private:
 
 
 
-ItemID openAddHikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db);
+ItemID openAddHikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db);
 
 
 

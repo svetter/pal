@@ -45,8 +45,8 @@ public:
 	
 	RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn);
 	
-	BufferRowIndex addRow(QWidget* parent, Region& region);
-	void updateRow(QWidget* parent, ValidItemID regionID, const Region& region);
+	BufferRowIndex addRow(QWidget& parent, Region& region);
+	void updateRow(QWidget& parent, ValidItemID regionID, const Region& region);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Region& region) const;
 	

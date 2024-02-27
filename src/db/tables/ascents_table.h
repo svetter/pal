@@ -65,8 +65,8 @@ public:
 	
 	AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn, PrimaryKeyColumn& foreignTripIDColumn);
 	
-	BufferRowIndex addRow(QWidget* parent, Ascent& ascent);
-	void updateRow(QWidget* parent, const Ascent& ascent);
+	BufferRowIndex addRow(QWidget& parent, Ascent& ascent);
+	void updateRow(QWidget& parent, const Ascent& ascent);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Ascent& ascent) const;
 	

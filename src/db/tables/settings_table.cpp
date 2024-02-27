@@ -80,7 +80,7 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting& setting, QWidget
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 		columnDataPairs.append({&settingKeyColumn,		setting.key});
 		columnDataPairs.append({&settingValueColumn,	setting.defaultValue});
-		BufferRowIndex newBufferIndex = addRow(parent, columnDataPairs);
+		BufferRowIndex newBufferIndex = addRow(*parent, columnDataPairs);
 		id = primaryKeyColumn.getValueAt(newBufferIndex);
 	}
 	
@@ -95,9 +95,9 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting& setting, QWidget
  * @param setting	The setting to add or update.
  * @param value		The new value for the setting.
  */
-void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting& setting, QVariant value)
+void SettingsTable::setSetting(QWidget& parent, const GenericProjectSetting& setting, QVariant value)
 {
-	ItemID id = findSettingID(setting, parent);
+	ItemID id = findSettingID(setting, &parent);
 	if (id.isValid()) {
 		// Update setting
 		updateCellInNormalTable(parent, FORCE_VALID(id), settingValueColumn, value);
@@ -116,9 +116,9 @@ void SettingsTable::setSetting(QWidget* parent, const GenericProjectSetting& set
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting& setting)
+void SettingsTable::clearSetting(QWidget& parent, const GenericProjectSetting& setting)
 {
-	ItemID id = findSettingID(setting, parent);
+	ItemID id = findSettingID(setting, &parent);
 	if (id.isInvalid()) return;
 	updateCellInNormalTable(parent, FORCE_VALID(id), settingValueColumn, QVariant());
 }
@@ -129,9 +129,9 @@ void SettingsTable::clearSetting(QWidget* parent, const GenericProjectSetting& s
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting& setting)
+void SettingsTable::removeSetting(QWidget& parent, const GenericProjectSetting& setting)
 {
-	ItemID id = findSettingID(setting, parent);
+	ItemID id = findSettingID(setting, &parent);
 	if (id.isInvalid()) return;
 	removeMatchingRows(parent, settingKeyColumn, FORCE_VALID(id));
 }
@@ -143,7 +143,7 @@ void SettingsTable::removeSetting(QWidget* parent, const GenericProjectSetting& 
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::clearAllSettings(QWidget* parent, const QString& baseKey)
+void SettingsTable::clearAllSettings(QWidget& parent, const QString& baseKey)
 {
 	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
 		QString key = settingKeyColumn.getValueAt(rowIndex).toString();
@@ -182,7 +182,7 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting& setting, QWidge
 			for (const BufferRowIndex& rowIndex : bufferRowIndices) {
 				if (rowIndex == settingIndex) continue;	// Leave the last one in place
 				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
-				removeMatchingRows(parent, settingKeyColumn, id);
+				removeMatchingRows(*parent, settingKeyColumn, id);
 			}
 		}
 	}

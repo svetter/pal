@@ -45,7 +45,7 @@ using std::unique_ptr, std::make_unique;
  * @param purpose		The purpose of the dialog.
  * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init) :
+PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>())
@@ -64,7 +64,7 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, &Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -213,7 +213,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
  */
 void PeakDialog::handle_newRegion()
 {
-	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(*this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
 	populateRegionCombo(db, regionCombo, selectableRegionIDs);
@@ -242,7 +242,7 @@ void PeakDialog::handle_ok()
  */
 void PeakDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, &Settings::peakDialog_geometry);
 }
 
 
@@ -257,7 +257,7 @@ void PeakDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
 	return openPeakDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -271,7 +271,7 @@ BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  * @param bufferRowIndex	The index of the peak to duplicate in the database's peak table buffer.
  * @return					The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
 	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalPeak));
@@ -286,7 +286,7 @@ BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mai
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, std::move(originalPeak));
@@ -302,7 +302,7 @@ bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Databa
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -337,7 +337,7 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
  * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
+BufferRowIndex openPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
 {
 	assert((bool) originalPeak != (purpose == newItem));
 	

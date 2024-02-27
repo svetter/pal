@@ -38,8 +38,8 @@
  * @param format		The export file format.
  * @param csvSeparator	The CSV separator to use, if applicable.
  */
-DataExportThread::DataExportThread(QDialog* parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator) :
-	QThread(parent),
+DataExportThread::DataExportThread(QDialog& parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator) :
+	QThread(&parent),
 	typesHandler(typesHandler),
 	mode(mode),
 	includeStats(includeStats),

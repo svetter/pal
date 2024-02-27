@@ -75,7 +75,7 @@ AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyCol
  * @param ascent	The ascent to add.
  * @return			The index of the new ascent in the table buffer.
  */
-BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent& ascent)
+BufferRowIndex AscentsTable::addRow(QWidget& parent, Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
@@ -93,7 +93,7 @@ BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent& ascent)
  * @param parent	The parent widget.
  * @param ascent	The ascent to update.
  */
-void AscentsTable::updateRow(QWidget* parent, const Ascent& ascent)
+void AscentsTable::updateRow(QWidget& parent, const Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);

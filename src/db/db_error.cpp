@@ -35,9 +35,9 @@
  * @param parent	The parent window.
  * @param error		The error message.
  */
-void displayError(QWidget* parent, QString error)
+void displayError(QWidget& parent, QString error)
 {
-	QMessageBox::critical(parent, Database::tr("Database error"), error);
+	QMessageBox::critical(&parent, Database::tr("Database error"), error);
 	exit(1);
 }
 
@@ -63,7 +63,7 @@ QString formatSqlError(QSqlError error)
  * @param error			The error message.
  * @param queryString	The query that caused the error.
  */
-void displayError(QWidget* parent, QString error, QString& queryString)
+void displayError(QWidget& parent, QString error, QString& queryString)
 {
 	return displayError(parent, error + "\n\n" + Database::tr("Query:") + "\n" + queryString);
 }
@@ -75,7 +75,7 @@ void displayError(QWidget* parent, QString error, QString& queryString)
  * @param error			The error.
  * @param queryString	The query that caused the error.
  */
-void displayError(QWidget* parent, QSqlError error, QString& queryString)
+void displayError(QWidget& parent, QSqlError error, QString& queryString)
 {
 	return displayError(parent, formatSqlError(error), queryString);
 }
@@ -86,7 +86,7 @@ void displayError(QWidget* parent, QSqlError error, QString& queryString)
  * @param parent	The parent window.
  * @param error		The error.
  */
-void displayError(QWidget* parent, QSqlError error)
+void displayError(QWidget& parent, QSqlError error)
 {
 	return displayError(parent, formatSqlError(error));
 }

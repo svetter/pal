@@ -62,7 +62,7 @@ PeaksTable::PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn) :
  * @param peak		The peak to add.
  * @return			The index of the new peak in the table buffer.
  */
-BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak& peak)
+BufferRowIndex PeaksTable::addRow(QWidget& parent, Peak& peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
@@ -80,7 +80,7 @@ BufferRowIndex PeaksTable::addRow(QWidget* parent, Peak& peak)
  * @param parent	The parent widget.
  * @param peak		The peak to update.
  */
-void PeaksTable::updateRow(QWidget* parent, ValidItemID peakID, const Peak& peak)
+void PeaksTable::updateRow(QWidget& parent, ValidItemID peakID, const Peak& peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);

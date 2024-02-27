@@ -55,7 +55,7 @@ RegionsTable::RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyCol
  * @param region	The region to add.
  * @return			The index of the new region in the table buffer.
  */
-BufferRowIndex RegionsTable::addRow(QWidget* parent, Region& region)
+BufferRowIndex RegionsTable::addRow(QWidget& parent, Region& region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
@@ -73,7 +73,7 @@ BufferRowIndex RegionsTable::addRow(QWidget* parent, Region& region)
  * @param parent	The parent widget.
  * @param region	The region to update.
  */
-void RegionsTable::updateRow(QWidget* parent, ValidItemID regionID, const Region& region)
+void RegionsTable::updateRow(QWidget& parent, ValidItemID regionID, const Region& region)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);

@@ -58,7 +58,7 @@ class DataExportThread : public QThread
 	bool abortWasCalled;
 	
 public:
-	DataExportThread(QDialog* parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
+	DataExportThread(QDialog& parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
 	~DataExportThread();
 	
 	void run() override;

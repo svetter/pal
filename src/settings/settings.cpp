@@ -108,11 +108,11 @@ void Settings::checkForVersionChange()
  * @param mainWindow		The application's main window (for determining relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void saveDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
+void saveDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>* geometrySetting)
 {
-	QRect absoluteGeometry = dialog->geometry();
+	QRect absoluteGeometry = dialog.geometry();
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		absoluteGeometry.translate(- mainWindow->pos());
+		absoluteGeometry.translate(- mainWindow.pos());
 	}
 	geometrySetting->set(absoluteGeometry);
 }
@@ -124,7 +124,7 @@ void saveDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<
  * @param mainWindow		The application's main window (for restoring relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
+void restoreDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>* geometrySetting)
 {
 	if (!Settings::rememberWindowPositions.present()) return;
 	
@@ -132,11 +132,11 @@ void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setti
 	if (savedGeometry.isEmpty()) return;
 	
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		savedGeometry.translate(mainWindow->pos());
+		savedGeometry.translate(mainWindow.pos());
 		
 		// Change size if bigger than screen
 		const QScreen* screen = QGuiApplication::screenAt(savedGeometry.center());
-		if (!screen) screen = mainWindow->screen();
+		if (!screen) screen = mainWindow.screen();
 		assert(screen);
 		QRect screenGeometry = screen->availableGeometry();
 		const int frameTopHeight = 30;	// Extra space for window top bar
@@ -151,7 +151,7 @@ void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setti
 		if (savedGeometry.bottom() > screenGeometry.bottom())	savedGeometry.moveBottom(screenGeometry.bottom());
 	}
 	
-	dialog->setGeometry(savedGeometry);
+	dialog.setGeometry(savedGeometry);
 }
 
 

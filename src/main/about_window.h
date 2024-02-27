@@ -40,7 +40,7 @@ class AboutWindow : public QDialog, public Ui_AboutWindow
 	Q_OBJECT
 	
 public:
-	AboutWindow(QWidget* parent);
+	AboutWindow(QWidget& parent);
 };
 
 

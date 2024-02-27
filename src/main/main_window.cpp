@@ -363,7 +363,7 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 	}
 	mapper->tableView->sortByColumn(sorting.column->getIndex(), sorting.order);
 	
-	if (!sortingSettingValid) mapper->sortingSetting->clear(this);
+	if (!sortingSettingValid) mapper->sortingSetting->clear(*this);
 }
 
 
@@ -463,7 +463,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 	setVisible(true);
 	updateTopBarButtonVisibilities();
 	
-	bool dbOpened = db.openExisting(this, filepath);
+	bool dbOpened = db.openExisting(*this, filepath);
 	
 	if (dbOpened) {
 		setWindowTitleFilename(filepath);
@@ -747,7 +747,7 @@ void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowInde
  */
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, this, db);
+	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(*this, *this, db);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -766,7 +766,7 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
 	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	BufferRowIndex newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
+	BufferRowIndex newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, bufferRowIndex);
 	if (newBufferRowIndex == -1) return;
 	
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
@@ -785,7 +785,7 @@ void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index
 {
 	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
 	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	bool changesMade = mapper.openEditItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
+	bool changesMade = mapper.openEditItemDialogAndStoreMethod(*this, *this, db, bufferRowIndex);
 	if (!changesMade) return;
 	
 	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
@@ -813,7 +813,7 @@ void MainWindow::deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> vi
 		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
 	}
 	
-	bool deleted = mapper.openDeleteItemsDialogAndExecuteMethod(this, this, db, bufferRowIndices);
+	bool deleted = mapper.openDeleteItemsDialogAndExecuteMethod(*this, *this, db, bufferRowIndices);
 	if (!deleted) return;
 	
 	if (minViewIndex.get() >= mapper.compTable->rowCount()) {
@@ -1225,7 +1225,7 @@ void MainWindow::handle_newDatabase()
 	if (projectOpen) handle_closeDatabase();
 	
 	setWindowTitleFilename(filepath);
-	db.createNew(this, filepath);
+	db.createNew(*this, filepath);
 	
 	// Build buffers and update size info
 	initCompositeBuffers();
@@ -1239,7 +1239,7 @@ void MainWindow::handle_newDatabase()
 	addToRecentFilesList(filepath);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow(this, this, db, true).exec();
+		ProjectSettingsWindow(*this, *this, db, true).exec();
 	}
 	
 	getActiveMapper().openingTab();
@@ -1332,7 +1332,7 @@ void MainWindow::handle_saveDatabaseAs()
 		QFile(filepath).remove();
 	}
 	
-	bool success = db.saveAs(this, filepath);
+	bool success = db.saveAs(*this, filepath);
 	if (!success) {
 		QString title = tr("Save database as");
 		QString message = tr("Writing database file failed:")
@@ -1381,7 +1381,7 @@ void MainWindow::handle_closeDatabase()
  */
 void MainWindow::handle_openProjectSettings()
 {
-	ProjectSettingsWindow(this, this, db).exec();
+	ProjectSettingsWindow(*this, *this, db).exec();
 }
 
 /**
@@ -1391,7 +1391,7 @@ void MainWindow::handle_openProjectSettings()
  */
 void MainWindow::handle_openSettings()
 {
-	SettingsWindow(this).exec();
+	SettingsWindow(*this).exec();
 }
 
 
@@ -1553,7 +1553,7 @@ void MainWindow::handle_clearTableSelection()
  */
 void MainWindow::handle_relocatePhotos()
 {
-	RelocatePhotosDialog(this, db).exec();
+	RelocatePhotosDialog(*this, db).exec();
 }
 
 /**
@@ -1563,7 +1563,7 @@ void MainWindow::handle_relocatePhotos()
  */
 void MainWindow::handle_exportData()
 {
-	DataExportDialog(this, typesHandler).exec();
+	DataExportDialog(*this, typesHandler).exec();
 }
 
 
@@ -1577,7 +1577,7 @@ void MainWindow::handle_exportData()
  */
 void MainWindow::handle_about()
 {
-	AboutWindow(this).exec();
+	AboutWindow(*this).exec();
 }
 
 
@@ -1606,8 +1606,8 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings.mainWindow_currentTabIndex	.set(this, mainAreaTabs->currentIndex());
-	db.projectSettings.mainWindow_showFilterBar		.set(this, showFiltersAction->isChecked());
+	db.projectSettings.mainWindow_currentTabIndex	.set(*this, mainAreaTabs->currentIndex());
+	db.projectSettings.mainWindow_showFilterBar		.set(*this, showFiltersAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
@@ -1673,9 +1673,9 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 			orderMap[columnName] = visualIndex;
 		}
 	}
-	mapper->columnWidthsSetting	->set(this, widthsMap);
-	mapper->columnOrderSetting	->set(this, orderMap);
-	mapper->hiddenColumnsSetting->set(this, hiddenMap);
+	mapper->columnWidthsSetting	->set(*this, widthsMap);
+	mapper->columnOrderSetting	->set(*this, orderMap);
+	mapper->hiddenColumnsSetting->set(*this, hiddenMap);
 }
 
 /**
@@ -1688,7 +1688,7 @@ void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
 	const auto& [column, order] = mapper->compTable->getCurrentSorting();
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
 	QString settingValue = column->name + ", " + orderString;
-	mapper->sortingSetting->set(this, settingValue);
+	mapper->sortingSetting->set(*this, settingValue);
 }
 
 

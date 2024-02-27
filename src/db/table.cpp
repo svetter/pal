@@ -224,7 +224,7 @@ const Column& Table::getColumnByIndex(int index) const
  * 
  * @param parent	The parent window.
  */
-void Table::initBuffer(QWidget* parent)
+void Table::initBuffer(QWidget& parent)
 {
 	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent);
 	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
@@ -381,7 +381,7 @@ void Table::notifyAllColumns()
  * @param columnDataPairs	Pairs of columns and corresponding data to add.
  * @return					The index of the newly added row in the buffer.
  */
-BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
+BufferRowIndex Table::addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs)
 {
 	// Announce row insertion
 	BufferRowIndex newItemBufferRowIndex = BufferRowIndex(buffer.numRows());
@@ -421,7 +421,7 @@ BufferRowIndex Table::addRow(QWidget* parent, const QList<ColumnDataPair>& colum
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
+void Table::updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
@@ -457,7 +457,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
  * @param primaryKey		The primary key of the row to update.
  * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
+void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
@@ -488,7 +488,7 @@ void Table::updateRowInNormalTable(QWidget* parent, const ValidItemID primaryKey
  * @param primaryKeyColumns	The primary key columns.
  * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
  */
-void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
+void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	int numPrimaryKeys = getNumberOfPrimaryKeyColumns();
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
@@ -520,7 +520,7 @@ void Table::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyCol
  * @param column	The column to check.
  * @param key		The value to check for.
  */
-void Table::removeMatchingRows(QWidget* parent, const Column& column, ValidItemID key)
+void Table::removeMatchingRows(QWidget& parent, const Column& column, ValidItemID key)
 {
 	assert(getColumnList().contains(&column));
 	assert(column.isKey());
@@ -560,7 +560,7 @@ void Table::removeMatchingRows(QWidget* parent, const Column& column, ValidItemI
  * 
  * @param parent	The parent window.
  */
-void Table::createTableInSql(QWidget* parent)
+void Table::createTableInSql(QWidget& parent)
 {
 	QString columnFormatsString = "";
 	for (int i = 0; i < columns.size(); i++) {
@@ -594,7 +594,7 @@ void Table::createTableInSql(QWidget* parent)
  * @param parent	The parent window.
  * @return			A two-dimensional list of QVariants containing the response to the SQL query.
  */
-QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
+QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget& parent) const
 {
 	QString queryString = QString(
 			"SELECT " + getColumnListString() +
@@ -634,7 +634,7 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget* parent) const
  * @param columnDataPairs	Pairs of columns and corresponding data to add.
  * @return					The ID of the newly added row.
  */
-ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
+ValidItemID Table::addRowToSql(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs)
 {
 	QString questionMarks = "";
 	for (int i = 0; i < columnDataPairs.size(); i++) {
@@ -668,7 +668,7 @@ ValidItemID Table::addRowToSql(QWidget* parent, const QList<ColumnDataPair>& col
  * @param column		The column to update.
  * @param data			The new data for the cell.
  */
-void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
+void Table::updateCellOfNormalTableInSql(QWidget& parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
 	assert(!isAssociative);
 	
@@ -697,7 +697,7 @@ void Table::updateCellOfNormalTableInSql(QWidget* parent, const ValidItemID prim
  * @param primaryKey		The primary key of the row to update.
  * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
+void Table::updateRowInSql(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	const Column& primaryKeyColumn = *primaryKeyColumns.first();
@@ -731,7 +731,7 @@ void Table::updateRowInSql(QWidget* parent, const ValidItemID primaryKey, const 
  * @param primaryKeyColumns	The primary key columns.
  * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
  */
-void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
+void Table::removeRowFromSql(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	QString condition = "";
 	for (int i = 0; i < primaryKeys.size(); i++) {
@@ -760,7 +760,7 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
  * @param column	The column to check.
  * @param key		The value to check for.
  */
-void Table::removeMatchingRowsFromSql(QWidget* parent, const Column& column, ValidItemID key)
+void Table::removeMatchingRowsFromSql(QWidget& parent, const Column& column, ValidItemID key)
 {
 	assert(getColumnList().contains(&column));
 	

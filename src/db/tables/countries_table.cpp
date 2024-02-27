@@ -48,7 +48,7 @@ CountriesTable::CountriesTable() :
  * @param country	The country to add.
  * @return			The index of the new country in the table buffer.
  */
-BufferRowIndex CountriesTable::addRow(QWidget* parent, Country& country)
+BufferRowIndex CountriesTable::addRow(QWidget& parent, Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
@@ -66,7 +66,7 @@ BufferRowIndex CountriesTable::addRow(QWidget* parent, Country& country)
  * @param parent	The parent widget.
  * @param country	The country to update.
  */
-void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country& country)
+void CountriesTable::updateRow(QWidget& parent, ValidItemID countryID, const Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);

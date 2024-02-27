@@ -52,7 +52,7 @@ RangesTable::RangesTable() :
  * @param range		The range to add.
  * @return			The index of the new range in the table buffer.
  */
-BufferRowIndex RangesTable::addRow(QWidget* parent, Range& range)
+BufferRowIndex RangesTable::addRow(QWidget& parent, Range& range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, range);
@@ -70,7 +70,7 @@ BufferRowIndex RangesTable::addRow(QWidget* parent, Range& range)
  * @param parent	The parent widget.
  * @param range		The range to update.
  */
-void RangesTable::updateRow(QWidget* parent, ValidItemID rangeID, const Range& range)
+void RangesTable::updateRow(QWidget& parent, ValidItemID rangeID, const Range& range)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, range);

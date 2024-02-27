@@ -44,7 +44,7 @@ using std::unique_ptr, std::make_unique;
  * @param purpose		The purpose of the dialog.
  * @param init			The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  */
-HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init) :
+HikerDialog::HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init) :
 	ItemDialog(parent, mainWindow, db, purpose),
 	init(std::move(init))
 {
@@ -55,7 +55,7 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 	
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, &Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -154,7 +154,7 @@ void HikerDialog::handle_ok()
  */
 void HikerDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, &Settings::hikerDialog_geometry);
 }
 
 
@@ -169,7 +169,7 @@ void HikerDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new hiker in the database's hiker table buffer.
  */
-BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
 	return openHikerDialogAndStore(parent, mainWindow, db, newItem, nullptr);
 }
@@ -183,7 +183,7 @@ BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWind
  * @param bufferRowIndex	The index of the hiker to edit in the database's hiker table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Hiker> originalHiker = db.getHikerAt(bufferRowIndex);
 	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, mainWindow, db, editItem, std::move(originalHiker));
@@ -199,7 +199,7 @@ bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Datab
  * @param bufferRowIndices	The indices of the hikers to delete in the database's hiker table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -241,7 +241,7 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
  * @param originalHiker	The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  * @return				The index of the new hiker in the database's hiker table buffer, or existing index of edited hiker. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker)
+BufferRowIndex openHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker)
 {
 	assert((bool) originalHiker != (purpose == newItem));
 	

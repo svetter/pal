@@ -36,8 +36,8 @@
  * @param parent		The parent window.
  * @param typesHandler	The project item types handler.
  */
-DataExportDialog::DataExportDialog(QWidget* parent, const ItemTypesHandler* typesHandler) :
-	QDialog(parent),
+DataExportDialog::DataExportDialog(QWidget& parent, const ItemTypesHandler* typesHandler) :
+	QDialog(&parent),
 	typesHandler(typesHandler),
 	running(false),
 	aborted(false),
@@ -143,7 +143,7 @@ void DataExportDialog::handle_start()
 	ExportFormat fileFormat		= getCurrentlySelectedFileFormat();
 	const QString& csvSeparator	= getCurrentlySelectedCsvSeparator();
 	
-	workerThread = new DataExportThread(this, typesHandler, mode, includeStats, filepathLineEdit->text(), fileFormat, csvSeparator);
+	workerThread = new DataExportThread(*this, typesHandler, mode, includeStats, filepathLineEdit->text(), fileFormat, csvSeparator);
 	
 	connect(workerThread, &DataExportThread::callback_reportWorkloadSize,	this,	&DataExportDialog::handle_callback_workloadSize);
 	connect(workerThread, &DataExportThread::callback_reportProgress,		this,	&DataExportDialog::handle_callback_progressUpdate);

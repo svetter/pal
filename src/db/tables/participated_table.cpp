@@ -47,7 +47,7 @@ ParticipatedTable::ParticipatedTable(PrimaryKeyColumn& foreignAscentIDColumn, Pr
  * @param parent	The parent widget.
  * @param ascent	The ascent containing the hikers list to use.
  */
-void ParticipatedTable::addRows(QWidget* parent, const Ascent& ascent)
+void ParticipatedTable::addRows(QWidget& parent, const Ascent& ascent)
 {
 	for (const ValidItemID& hikerID : ascent.hikerIDs) {
 		QList<const Column*> columns = getColumnList();
@@ -66,7 +66,7 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent& ascent)
  * @param parent	The parent widget.
  * @param ascent	The ascent for which to update the table contents.
  */
-void ParticipatedTable::updateRows(QWidget* parent, const Ascent& ascent)
+void ParticipatedTable::updateRows(QWidget& parent, const Ascent& ascent)
 {
 	// delete pre-existing rows
 	removeMatchingRows(parent, ascentIDColumn, FORCE_VALID(ascent.ascentID));

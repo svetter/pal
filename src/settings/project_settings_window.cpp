@@ -43,8 +43,8 @@ using std::unique_ptr, std::make_unique;
  * @param db			The project database.
  * @param firstOpen		Indicates that the window is being opened as part of the project creation process.
  */
-ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database& db, bool firstOpen) :
-	QDialog(parent),
+ProjectSettingsWindow::ProjectSettingsWindow(QWidget& parent, QMainWindow& mainWindow, Database& db, bool firstOpen) :
+	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
 	db(db),
@@ -62,7 +62,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget* parent, QMainWindow* mainW
 		newDefaultHikerLineEdit->setVisible(false);
 	}
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	restoreDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	
 	
 	repopulateHikerCombo();
@@ -120,12 +120,12 @@ void ProjectSettingsWindow::saveSettings()
 		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
 		unique_ptr<Hiker> newDefaultHiker = make_unique<Hiker>(ItemID(), newDefaultHikerName);
-		db.hikersTable.addRow(this, *newDefaultHiker);
+		db.hikersTable.addRow(*this, *newDefaultHiker);
 		
-		db.projectSettings.defaultHiker.set(this, newDefaultHiker->hikerID.asQVariant());
+		db.projectSettings.defaultHiker.set(*this, newDefaultHiker->hikerID.asQVariant());
 	}
 	else {
-		db.projectSettings.defaultHiker.set(this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+		db.projectSettings.defaultHiker.set(*this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
 	}
 }
 
@@ -138,7 +138,7 @@ void ProjectSettingsWindow::saveSettings()
  */
 void ProjectSettingsWindow::handle_newHiker()
 {
-	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(*this, mainWindow, db);
 	if (newHikerIndex.isInvalid()) return;
 	
 	repopulateHikerCombo();
@@ -156,7 +156,7 @@ void ProjectSettingsWindow::handle_newHiker()
 void ProjectSettingsWindow::handle_save()
 {
 	saveSettings();
-	saveDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	accept();
 }
 
@@ -177,7 +177,7 @@ void ProjectSettingsWindow::handle_apply()
  */
 void ProjectSettingsWindow::handle_cancel()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
 	QDialog::reject();
 }
 

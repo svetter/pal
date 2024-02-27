@@ -121,13 +121,13 @@ public:
 	ProjectSetting<QString>* const		sortingSetting;
 
 	/** The method opening the dialog for creating a new item of this type. */
-	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&);
+	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&);
 	/** The method opening the dialog for duplicating an item of this type. */
-	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database&, BufferRowIndex);
+	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, BufferRowIndex);
 	/** The method opening the dialog for editing an item of this type. */
-	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&, BufferRowIndex);
+	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex);
 	/** The method opening the dialog for deleting an item of this type. */
-	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database&, QSet<BufferRowIndex>);
+	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, QSet<BufferRowIndex>);
 	
 	
 private:
@@ -174,10 +174,10 @@ public:
 		const Setting<QRect>*		dialogGeometrySetting,
 		const Setting<bool>*		showStatsPanelSetting,
 		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
-		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&),
-		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget*, QMainWindow*, Database&, BufferRowIndex),
-		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget*, QMainWindow*, Database&, BufferRowIndex),
-		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget*, QMainWindow*, Database&, QSet<BufferRowIndex>)
+		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&),
+		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, BufferRowIndex),
+		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex),
+		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, QSet<BufferRowIndex>)
 	) :
 		type									(type),
 		name									(name),

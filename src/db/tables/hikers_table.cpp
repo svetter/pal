@@ -48,7 +48,7 @@ HikersTable::HikersTable() :
  * @param hiker	The hiker to add.
  * @return			The index of the new hiker in the table buffer.
  */
-BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker& hiker)
+BufferRowIndex HikersTable::addRow(QWidget& parent, Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
@@ -66,7 +66,7 @@ BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker& hiker)
  * @param parent	The parent widget.
  * @param hiker		The hiker to update.
  */
-void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker& hiker)
+void HikersTable::updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);

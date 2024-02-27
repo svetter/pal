@@ -38,8 +38,8 @@
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
  */
-ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose):
-	QDialog(parent),
+ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose):
+	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
 	db(db),
@@ -223,7 +223,7 @@ bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const ValueColumn& 
  * @param whatIfResults	The determined results of the deletion.
  * @return				True if the user confirmed the deletion, false otherwise.
  */
-bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
+bool displayDeleteWarning(QWidget& parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
 {
 	QString question;
 	if (whatIfResults.isEmpty()) {
@@ -236,7 +236,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto selected = QMessageBox::Cancel;
-	resultButton = QMessageBox::question(parent, windowTitle, question, options, selected);
+	resultButton = QMessageBox::question(&parent, windowTitle, question, options, selected);
 	return resultButton == QMessageBox::Yes;
 }
 

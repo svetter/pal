@@ -56,9 +56,9 @@ class ItemDialog : public QDialog
 	
 protected:
 	/** The parent window. */
-	QWidget* const parent;
+	QWidget& parent;
 	/** The application's main window. */
-	QMainWindow* const mainWindow;
+	QMainWindow& mainWindow;
 	
 	/** The project database. */
 	Database& db;
@@ -77,7 +77,7 @@ private:
 	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
 	
 protected:
-	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose);
+	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose);
 	
 	/**
 	 * Returns the window title to use when the dialog is used to edit an item.
@@ -120,7 +120,7 @@ public:
 
 
 
-bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+bool displayDeleteWarning(QWidget& parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
 
 

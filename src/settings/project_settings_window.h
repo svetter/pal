@@ -42,9 +42,9 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	Q_OBJECT
 	
 	/** The parent window. */
-	QWidget* parent;
+	QWidget& parent;
 	/** The application's main window. */
-	QMainWindow* mainWindow;
+	QMainWindow& mainWindow;
 	
 	/** The project database. */
 	Database& db;
@@ -55,7 +55,7 @@ class ProjectSettingsWindow : public QDialog, public Ui_ProjectSettingsWindow
 	QList<ValidItemID> selectableHikerIDs;
 	
 public:
-	ProjectSettingsWindow(QWidget* parent, QMainWindow* mainWindow, Database& db, bool firstOpen = false);
+	ProjectSettingsWindow(QWidget& parent, QMainWindow& mainWindow, Database& db, bool firstOpen = false);
 private:
 	void repopulateHikerCombo();
 	
