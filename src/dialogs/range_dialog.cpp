@@ -57,7 +57,7 @@ RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 	
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::rangeDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -172,7 +172,7 @@ void RangeDialog::handle_ok()
  */
 void RangeDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::rangeDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::rangeDialog_geometry);
 }
 
 
@@ -217,7 +217,7 @@ bool openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
  * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRangesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRangesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

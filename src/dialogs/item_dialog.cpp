@@ -223,7 +223,7 @@ bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const ValueColumn& 
  * @param whatIfResults	The determined results of the deletion.
  * @return				True if the user confirmed the deletion, false otherwise.
  */
-bool displayDeleteWarning(QWidget& parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
+bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
 {
 	QString question;
 	if (whatIfResults.isEmpty()) {

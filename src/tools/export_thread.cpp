@@ -38,7 +38,7 @@
  * @param format		The export file format.
  * @param csvSeparator	The CSV separator to use, if applicable.
  */
-DataExportThread::DataExportThread(QDialog& parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator) :
+DataExportThread::DataExportThread(QDialog& parent, const ItemTypesHandler& typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator) :
 	QThread(&parent),
 	typesHandler(typesHandler),
 	mode(mode),
@@ -119,7 +119,7 @@ void DataExportThread::abort() {
 void DataExportThread::exportOneTable()
 {
 	// Assemble column info list
-	const ItemTypeMapper& mapper = typesHandler->get(ItemTypeAscent);
+	const ItemTypeMapper& mapper = typesHandler.get(ItemTypeAscent);
 	CompositeTable& compTable = *mapper.compTable;
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	{
@@ -206,7 +206,7 @@ void DataExportThread::exportAsShown()
 	QList<CompositeTable*> compTables = QList<CompositeTable*>();
 	QStringList tableNames = QStringList();
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+	for (const ItemTypeMapper* const mapper : typesHandler.getAllMappers()) {
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
 		for (const CompositeColumn* column : mapper->compTable->getNormalColumnList()) {
 			bool skipColumn = !includeStats && column->isStatistical;
@@ -294,7 +294,7 @@ void DataExportThread::exportAsShown()
 void DataExportThread::exportRaw()
 {
 	// Assemble column info lists
-	const QList<Table*> baseTables = typesHandler->getAllBaseTables();
+	const QList<Table*> baseTables = typesHandler.getAllBaseTables();
 	QStringList tableNames = QStringList();
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	for (const Table* const baseTable : baseTables) {

@@ -483,11 +483,11 @@ public:
 
 // Saving/restoring implicit settings
 
-void saveDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>* geometrySetting);
-void restoreDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>* geometrySetting);
+void saveDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>& geometrySetting);
+void restoreDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>& geometrySetting);
 
-void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
-void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting);
+void saveSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting);
+void restoreSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting);
 
 
 

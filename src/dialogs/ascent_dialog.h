@@ -98,6 +98,7 @@ BufferRowIndex	openNewAscentDialogAndStore			(QWidget& parent, QMainWindow& main
 BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openEditAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 BufferRowIndex	openAscentDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent);
 

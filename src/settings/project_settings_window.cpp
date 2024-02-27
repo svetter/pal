@@ -62,7 +62,7 @@ ProjectSettingsWindow::ProjectSettingsWindow(QWidget& parent, QMainWindow& mainW
 		newDefaultHikerLineEdit->setVisible(false);
 	}
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::projectSettingsWindow_geometry);
 	
 	
 	repopulateHikerCombo();
@@ -156,7 +156,7 @@ void ProjectSettingsWindow::handle_newHiker()
 void ProjectSettingsWindow::handle_save()
 {
 	saveSettings();
-	saveDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::projectSettingsWindow_geometry);
 	accept();
 }
 
@@ -177,7 +177,7 @@ void ProjectSettingsWindow::handle_apply()
  */
 void ProjectSettingsWindow::handle_cancel()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::projectSettingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::projectSettingsWindow_geometry);
 	QDialog::reject();
 }
 

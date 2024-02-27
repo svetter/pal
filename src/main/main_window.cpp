@@ -242,7 +242,7 @@ void MainWindow::setupTableTabs()
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
 		splitter->setStretchFactor(1, 1);
-		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		restoreSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		
 		// Setup stats panels
 		mapper->statsEngine->setupStatsPanel();
@@ -1423,7 +1423,7 @@ void MainWindow::handle_showStatsPanelChanged()
 	if (mapper.statsScrollArea->isVisible()) {
 		// Save splitter sizes before closing
 		QSplitter* const splitter = mapper.tab->findChild<QSplitter*>();
-		saveSplitterSizes(splitter, mapper.statsPanelSplitterSizesSetting);
+		saveSplitterSizes(*splitter, *mapper.statsPanelSplitterSizesSetting);
 	}
 	
 	const bool showStatsPanel = showItemStatsPanelAction->isChecked();
@@ -1459,7 +1459,7 @@ void MainWindow::handle_hideAllStatsPanels()
 		if (mapper->tabHasBeenOpened(true) && mapper->statsScrollArea->isVisible()) {
 			// Save splitter sizes before closing
 			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		}
 		mapper->statsScrollArea->setVisible(false);
 		mapper->statsEngine->setCurrentlyVisible(false);
@@ -1563,7 +1563,7 @@ void MainWindow::handle_relocatePhotos()
  */
 void MainWindow::handle_exportData()
 {
-	DataExportDialog(*this, typesHandler).exec();
+	DataExportDialog(*this, *typesHandler).exec();
 }
 
 
@@ -1630,7 +1630,7 @@ void MainWindow::saveGlobalImplicitSettings()
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
 		if (mapper->tabHasBeenOpened(true) && mapper->itemStatsPanelCurrentlySetVisible()) {
 			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		}
 	}
 }

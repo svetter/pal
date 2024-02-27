@@ -61,7 +61,7 @@ RegionDialog::RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	
 	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::regionDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::regionDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -224,7 +224,7 @@ void RegionDialog::handle_ok()
  */
 void RegionDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::regionDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::regionDialog_geometry);
 }
 
 
@@ -269,7 +269,7 @@ bool openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
  * @param bufferRowIndices	The indices of the regions to delete in the database's region table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRegionsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRegionsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

@@ -1290,10 +1290,10 @@ void AscentViewer::reject()
  */
 void AscentViewer::saveImplicitSettings()
 {
-	saveDialogGeometry(*this, *mainWindow, &Settings::ascentViewer_geometry);
+	saveDialogGeometry(*this, *mainWindow, Settings::ascentViewer_geometry);
 	
-	saveSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
-	saveSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+	saveSplitterSizes( *leftSplitter, Settings::ascentViewer_leftSplitterSizes);
+	saveSplitterSizes(*rightSplitter, Settings::ascentViewer_rightSplitterSizes);
 	
 	Settings::ascentViewer_slideshowInterval.set(slideshowIntervalSpinner->value());
 	Settings::ascentViewer_slideshowAutostart.set(slideshowAutostartCheckbox->isChecked());
@@ -1305,11 +1305,11 @@ void AscentViewer::saveImplicitSettings()
 void AscentViewer::restoreImplicitSettings()
 {
 	if (Settings::rememberWindowPositions.get()) {
-		restoreDialogGeometry(*this, *mainWindow, &Settings::ascentViewer_geometry);
+		restoreDialogGeometry(*this, *mainWindow, Settings::ascentViewer_geometry);
 	}
 	
-	restoreSplitterSizes( leftSplitter, &Settings::ascentViewer_leftSplitterSizes);
-	restoreSplitterSizes(rightSplitter, &Settings::ascentViewer_rightSplitterSizes);
+	restoreSplitterSizes( *leftSplitter, Settings::ascentViewer_leftSplitterSizes);
+	restoreSplitterSizes(*rightSplitter, Settings::ascentViewer_rightSplitterSizes);
 	
 	slideshowIntervalSpinner->setValue(Settings::ascentViewer_slideshowInterval.get());
 	slideshowAutostartCheckbox->setChecked(Settings::ascentViewer_slideshowAutostart.get());

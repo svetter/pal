@@ -57,7 +57,7 @@ TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::tripDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::tripDialog_geometry);
 	
 	
 	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
@@ -223,7 +223,7 @@ void TripDialog::handle_ok()
  */
 void TripDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::tripDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::tripDialog_geometry);
 }
 
 
@@ -268,7 +268,7 @@ bool openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param bufferRowIndices	The indices of the trips to delete in the database's trip table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteTripsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteTripsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

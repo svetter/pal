@@ -127,7 +127,7 @@ public:
 	/** The method opening the dialog for editing an item of this type. */
 	bool			(* const openEditItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex);
 	/** The method opening the dialog for deleting an item of this type. */
-	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, QSet<BufferRowIndex>);
+	bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&);
 	
 	
 private:
@@ -177,7 +177,7 @@ public:
 		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&),
 		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, BufferRowIndex),
 		bool			(* const openEditItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex),
-		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, QSet<BufferRowIndex>)
+		bool			(* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&)
 	) :
 		type									(type),
 		name									(name),

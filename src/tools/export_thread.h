@@ -41,7 +41,7 @@ class DataExportThread : public QThread
 	Q_OBJECT
 	
 	/** The project item types handler. */
-	const ItemTypesHandler* typesHandler;
+	const ItemTypesHandler& typesHandler;
 	/** The export mode. */
 	const ExportMode mode;
 	/** Whether to include statistical column. */
@@ -58,7 +58,7 @@ class DataExportThread : public QThread
 	bool abortWasCalled;
 	
 public:
-	DataExportThread(QDialog& parent, const ItemTypesHandler* typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
+	DataExportThread(QDialog& parent, const ItemTypesHandler& typesHandler, ExportMode mode, bool includeStats, const QString& filepath, ExportFormat format, QString csvSeparator);
 	~DataExportThread();
 	
 	void run() override;
@@ -74,7 +74,7 @@ private:
 	
 signals:
 	void callback_reportWorkloadSize(int workloadSize);
-	void callback_setProgressText(QString progressText);
+	void callback_setProgressText(const QString& progressText);
 	void callback_reportProgress(int processed);
 };
 

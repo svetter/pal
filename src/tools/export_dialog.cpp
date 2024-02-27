@@ -36,7 +36,7 @@
  * @param parent		The parent window.
  * @param typesHandler	The project item types handler.
  */
-DataExportDialog::DataExportDialog(QWidget& parent, const ItemTypesHandler* typesHandler) :
+DataExportDialog::DataExportDialog(QWidget& parent, const ItemTypesHandler& typesHandler) :
 	QDialog(&parent),
 	typesHandler(typesHandler),
 	running(false),

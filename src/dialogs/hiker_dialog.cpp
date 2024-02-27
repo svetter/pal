@@ -55,7 +55,7 @@ HikerDialog::HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 	
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::hikerDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -154,7 +154,7 @@ void HikerDialog::handle_ok()
  */
 void HikerDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::hikerDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::hikerDialog_geometry);
 }
 
 
@@ -199,7 +199,7 @@ bool openEditHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
  * @param bufferRowIndices	The indices of the hikers to delete in the database's hiker table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

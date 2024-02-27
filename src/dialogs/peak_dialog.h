@@ -73,7 +73,7 @@ private:
 BufferRowIndex	openNewPeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db);
 BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openEditPeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeletePeaksDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openDeletePeaksDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 BufferRowIndex	openPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak);
 

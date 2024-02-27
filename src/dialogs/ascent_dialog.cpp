@@ -82,7 +82,7 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::ascentDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::ascentDialog_geometry);
 	
 	
 	populateComboBoxes();
@@ -528,7 +528,7 @@ void AscentDialog::handle_ok()
  */
 void AscentDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::ascentDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::ascentDialog_geometry);
 	
 	savePhotoDescriptionToList();
 }
@@ -643,7 +643,7 @@ bool openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

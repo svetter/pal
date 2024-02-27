@@ -66,7 +66,7 @@ private:
 
 BufferRowIndex	openNewHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
 bool			openEditHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeleteHikersDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openDeleteHikersDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 BufferRowIndex	openHikerDialogAndStore				(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker);
 

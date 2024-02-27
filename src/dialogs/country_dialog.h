@@ -65,7 +65,7 @@ private:
 
 BufferRowIndex	openNewCountryDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db);
 bool			openEditCountryDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeleteCountriesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openDeleteCountriesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 BufferRowIndex	openCountryDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry);
 

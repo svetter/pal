@@ -120,7 +120,7 @@ public:
 
 
 
-bool displayDeleteWarning(QWidget& parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
 
 

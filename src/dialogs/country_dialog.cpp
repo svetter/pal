@@ -55,7 +55,7 @@ CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database&
 	
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::countryDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::countryDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -154,7 +154,7 @@ void CountryDialog::handle_ok()
  */
 void CountryDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::countryDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::countryDialog_geometry);
 }
 
 
@@ -199,7 +199,7 @@ bool openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Dat
  * @param bufferRowIndices	The indices of the countries to delete in the database's country table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;

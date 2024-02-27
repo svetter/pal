@@ -74,7 +74,7 @@ private:
 
 BufferRowIndex	openNewRegionDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
 bool			openEditRegionDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeleteRegionsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
+bool			openDeleteRegionsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 BufferRowIndex	openRegionDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion);
 

@@ -64,7 +64,7 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
-	restoreDialogGeometry(*this, mainWindow, &Settings::peakDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -242,7 +242,7 @@ void PeakDialog::handle_ok()
  */
 void PeakDialog::aboutToClose()
 {
-	saveDialogGeometry(*this, mainWindow, &Settings::peakDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
 }
 
 
@@ -302,7 +302,7 @@ bool openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
