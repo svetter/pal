@@ -51,6 +51,17 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{ nameLineEdit }},
+		{regionCheckbox,	{ regionCombo, newRegionButton }},
+		{heightCheckbox,	{ heightSpecifyCheckbox, heightSpinner }},
+		{mapsCheckbox,		{ mapsLineEdit }},
+		{earthCheckbox,		{ earthLineEdit }},
+		{wikipediaCheckbox,	{ wikipediaLineEdit }}
+	}, {
+		volcanoCheckbox
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
@@ -60,26 +71,29 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	populateComboBoxes();
 	
 	
-	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
-	connect(newRegionButton,	&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
+	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
+	connect(newRegionButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
 	
-	connect(okButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
-	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
+	connect(okButton,				&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
+	connect(cancelButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
 	
 	
 	// Set initial height
-	heightCheckbox->setChecked(Settings::peakDialog_heightEnabledInitially.get());
+	heightSpecifyCheckbox->setChecked(Settings::peakDialog_heightEnabledInitially.get());
 	handle_heightSpecifiedChanged();
 	heightSpinner->setValue(Settings::peakDialog_initialHeight.get());
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	case duplicateItem:
 		unique_ptr<Peak> blankPeak = extractData();
@@ -128,7 +142,7 @@ void PeakDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	// Height
 	bool heightSpecified = init->heightSpecified();
-	heightCheckbox->setChecked(heightSpecified);
+	heightSpecifyCheckbox->setChecked(heightSpecified);
 	if (heightSpecified) {
 		heightSpinner->setValue(init->height);
 	}
@@ -142,8 +156,8 @@ void PeakDialog::insertInitData()
 		regionCombo->setCurrentIndex(0);
 	}
 	// Links
-	googleMapsLineEdit->setText(init->mapsLink);
-	googleEarthLineEdit->setText(init->earthLink);
+	mapsLineEdit->setText(init->mapsLink);
+	earthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);
 }
 
@@ -159,11 +173,11 @@ unique_ptr<Peak> PeakDialog::extractData()
 	int		height		= parseSpinner		(heightSpinner);
 	bool	volcano		= parseCheckbox		(volcanoCheckbox);
 	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs);
-	QString	mapsLink	= parseLineEdit		(googleMapsLineEdit);
-	QString	earthLink	= parseLineEdit		(googleEarthLineEdit);
+	QString	mapsLink	= parseLineEdit		(mapsLineEdit);
+	QString	earthLink	= parseLineEdit		(earthLineEdit);
 	QString	wikiLink	= parseLineEdit		(wikipediaLineEdit);
 	
-	if (!heightCheckbox->isChecked())	height = -1;
+	if (!heightSpecifyCheckbox->isChecked()) height = -1;
 	
 	return make_unique<Peak>(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
@@ -188,7 +202,7 @@ bool PeakDialog::changesMade()
  */
 void PeakDialog::handle_heightSpecifiedChanged()
 {
-	bool enabled = heightCheckbox->isChecked();
+	bool enabled = heightSpecifyCheckbox->isChecked();
 	heightSpinner->setEnabled(enabled);
 }
 

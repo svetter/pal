@@ -53,6 +53,12 @@ RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	selectableCountryIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{ nameLineEdit }},
+		{rangeCheckbox,		{ rangeCombo, newRangeButton }},
+		{countryCheckbox,	{ countryCombo, newCountryButton }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::regionDialog_geometry);
@@ -69,13 +75,16 @@ RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	default:
 		assert(false);

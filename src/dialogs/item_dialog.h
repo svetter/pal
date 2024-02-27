@@ -29,6 +29,8 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QCheckBox>
+#include <QPushButton>
 #include <QMainWindow>
 
 
@@ -39,6 +41,7 @@
 enum DialogPurpose {
 	newItem,
 	editItem,
+	multiEdit,
 	duplicateItem
 };
 
@@ -62,6 +65,18 @@ protected:
 	/** The purpose of the dialog. */
 	const DialogPurpose purpose;
 	
+private:
+	/** The dialog's save button. */
+	QPushButton* saveButton;
+	/** The checkboxes which control which values are edited when the dialog is used for multi-editing, along with all widgets that are affected by each checkbox. */
+	QMap<QCheckBox*, QSet<QWidget*>> multiEditCheckboxes;
+	/** The checkboxes which need to be turned into tristate checkboxes when editing multiple items. */
+	QSet<QCheckBox*> tristateCheckboxes;
+	
+	/** The previous enable states of all widgets currently disabled because of a multi-edit checkbox. */
+	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
+	
+protected:
 	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose);
 	
 	/**
@@ -71,7 +86,9 @@ protected:
 	 */
 	virtual QString getEditWindowTitle() = 0;
 	
-	void changeStringsForEdit(QPushButton* okButton);
+	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QSet<QWidget*>>& multiEditCheckboxes, const QSet<QCheckBox*>& tristateCheckboxes = QSet<QCheckBox*>());
+	void changeUIForPurpose();
+	void handle_multiEditCheckboxClicked();
 	
 	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const ValueColumn& nameColumn);
 	/**

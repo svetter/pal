@@ -50,6 +50,11 @@ RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{ nameLineEdit }},
+		{continentCheckbox,	{ continentCombo }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::rangeDialog_geometry);
@@ -63,13 +68,16 @@ RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	default:
 		assert(false);

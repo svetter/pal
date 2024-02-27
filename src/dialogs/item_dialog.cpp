@@ -43,21 +43,86 @@ ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	parent(parent),
 	mainWindow(mainWindow),
 	db(db),
-	purpose(purpose)
+	purpose(purpose),
+	multiEditCheckboxes(QMap<QCheckBox*, QSet<QWidget*>>()),
+	tristateCheckboxes(QSet<QCheckBox*>()),
+	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
 {}
 
 
 
 /**
- * Exchanges all relevant strings to prepare the item dialog for editing an existing item.
+ * Sets the pointers to the UI elements that are relevant for editing multiple items at once.
  * 
- * @param okButton	The ok button.
+ * @param saveButton			The dialog's save button.
+ * @param multiEditCheckboxes	The checkboxes that control whether to edit a value for all selected items.
+ * @param tristateCheckboxes	The checkboxes for bool values in items, which are turned into tristate checkboxes when editing multiple items.
  */
-void ItemDialog::changeStringsForEdit(QPushButton* okButton)
+void ItemDialog::setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QSet<QWidget*>>& multiEditCheckboxes, const QSet<QCheckBox*>& tristateCheckboxes)
 {
-	if (purpose != editItem) return;
-	setWindowTitle(getEditWindowTitle());
-	okButton->setText(tr("Save changes"));
+	this->saveButton = saveButton;
+	this->multiEditCheckboxes = multiEditCheckboxes;
+	this->tristateCheckboxes = tristateCheckboxes;
+}
+
+
+
+/**
+ * Makes changes to the UI which are specific to the purpose of the dialog.
+ */
+void ItemDialog::changeUIForPurpose()
+{
+	if (purpose == multiEdit) {
+		for (const auto& [checkbox, widgets] : multiEditCheckboxes.asKeyValueRange()) {
+			checkbox->setToolTip(tr("Set for all selected items"));
+			for (QWidget* widget : qAsConst(widgets)) {
+				savedWidgetEnabledStates[checkbox][widget] = widget->isEnabled();
+				widget->setEnabled(false);
+			}
+			connect(checkbox, &QPushButton::clicked, this, &ItemDialog::handle_multiEditCheckboxClicked);
+		}
+		for (QCheckBox* const checkbox : qAsConst(tristateCheckboxes)) {
+			checkbox->setTristate(true);
+			checkbox->setCheckState(Qt::CheckState::PartiallyChecked);
+		}
+		saveButton->setText(tr("Save changes for all"));
+	}
+	else {
+		const QList<QCheckBox*> checkboxes = multiEditCheckboxes.keys();
+		for (QCheckBox* checkbox : checkboxes) {
+			assert(checkbox);
+			checkbox->setVisible(false);
+		}
+	}
+	
+	if (purpose == editItem) {
+		setWindowTitle(getEditWindowTitle());
+		saveButton->setText(tr("Save changes"));
+	}
+}
+
+/**
+ * Generic event handler for clicks on multi-edit checkboxes.
+ * 
+ * Enables or disables the widgets that are controlled by the checkbox, depending on its state.
+ */
+void ItemDialog::handle_multiEditCheckboxClicked()
+{
+	QCheckBox* const checkbox = (QCheckBox*) QObject::sender();
+	const QSet<QWidget*>& widgets = multiEditCheckboxes.value(checkbox);
+	for (QWidget* const widget : widgets) {
+		if (checkbox->isChecked()) {
+			// Restore state
+			QMap<QWidget*, bool>& enabledStateMap = savedWidgetEnabledStates[checkbox];
+			const bool previousState = enabledStateMap.value(widget);
+			enabledStateMap.remove(widget);
+			widget->setEnabled(previousState);
+		} else {
+			// Save state and disable
+			savedWidgetEnabledStates[checkbox][widget] = widget->isEnabled();
+			widget->setEnabled(false);
+		}
+	}
 }
 
 

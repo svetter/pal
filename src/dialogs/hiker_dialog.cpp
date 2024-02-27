@@ -49,6 +49,10 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,	{ nameLineEdit }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
@@ -59,13 +63,16 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 	connect(cancelButton,	&QPushButton::clicked,		this,	&HikerDialog::handle_cancel);
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	default:
 		assert(false);

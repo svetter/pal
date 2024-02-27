@@ -49,6 +49,10 @@ CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database&
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,	{ nameLineEdit }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::countryDialog_geometry);
@@ -59,13 +63,16 @@ CountryDialog::CountryDialog(QWidget* parent, QMainWindow* mainWindow, Database&
 	connect(cancelButton,	&QPushButton::clicked,	this,	&CountryDialog::handle_cancel);
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	default:
 		assert(false);

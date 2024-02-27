@@ -49,6 +49,12 @@ TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,			{ nameLineEdit }},
+		{datesCheckbox,			{ startDateLabel, startDateWidget, endDateLabel, endDateWidget, datesUnspecifiedCheckbox }},
+		{descriptionCheckbox,	{ descriptionEditor }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::tripDialog_geometry);
@@ -70,13 +76,16 @@ TripDialog::TripDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 	handle_datesSpecifiedChanged();
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	default:
 		assert(false);

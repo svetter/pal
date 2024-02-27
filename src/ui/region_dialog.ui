@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>172</height>
+    <width>454</width>
+    <height>173</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,12 +15,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>16777215</width>
-    <height>172</height>
-   </size>
   </property>
   <property name="windowTitle">
    <string>New region</string>
@@ -50,11 +44,22 @@
       <number>10</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="nameLabel">
-       <property name="text">
-        <string>Name</string>
+      <layout class="QHBoxLayout" name="nameLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="nameCheckbox">
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="nameLabel">
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="nameLineEdit">
@@ -76,11 +81,22 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="rangeLabel">
-       <property name="text">
-        <string>Mountain range</string>
+      <layout class="QHBoxLayout" name="rangeLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="rangeCheckbox">
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="rangeLabel">
+         <property name="text">
+          <string>Mountain range</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="1" column="1">
       <layout class="QHBoxLayout" name="rangeSelectionLayout">
@@ -126,11 +142,22 @@
       </layout>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="countryLabel">
-       <property name="text">
-        <string>Country</string>
+      <layout class="QHBoxLayout" name="countryLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="countryCheckbox">
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="countryLabel">
+         <property name="text">
+          <string>Country</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="2" column="1">
       <layout class="QHBoxLayout" name="countrySelectionLayout">

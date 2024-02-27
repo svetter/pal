@@ -63,6 +63,23 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	photosModel(PhotosOfAscent())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{titleCheckbox,			{ titleLineEdit }},
+		{peakCheckbox,			{ regionFilterCombo, peakCombo, newPeakButton }},
+		{dateCheckbox,			{ dateSpecifyCheckbox, dateWidget }},
+		{peakIndexCheckbox,		{ peakIndexSpinner }},
+		{timeCheckbox,			{ timeSpecifyCheckbox, timeWidget }},
+		{elevationGainCheckbox,	{ elevationGainSpecifyCheckbox, elevationGainSpinner }},
+		{hikeKindCheckbox,		{ hikeKindCombo }},
+		{difficultyCheckbox,	{ difficultySystemCombo, difficultyGradeCombo }},
+		{tripCheckbox,			{ tripCombo, newTripButton }},
+		{hikersCheckbox,		{ hikersListView, addHikerButton, removeHikersButton }},
+		{photosCheckbox,		{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit }},
+		{descriptionCheckbox,	{ descriptionEditor }}
+	}, {
+		traverseCheckbox
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
 	restoreDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
@@ -78,9 +95,9 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	
 	connect(regionFilterCombo,					&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_regionFilterChanged);
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
-	connect(dateCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
-	connect(timeCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
-	connect(elevationGainCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
+	connect(dateSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
+	connect(timeSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(elevationGainSpecifyCheckbox,		&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
 	connect(difficultySystemCombo,				&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_addHiker);
@@ -94,16 +111,16 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	
 	
 	// Set initial date
-	dateCheckbox->setChecked(Settings::ascentDialog_dateEnabledInitially.get());
+	dateSpecifyCheckbox->setChecked(Settings::ascentDialog_dateEnabledInitially.get());
 	handle_dateSpecifiedChanged();
 	QDate initialDate = QDateTime::currentDateTime().date().addDays(- Settings::ascentDialog_initialDateDaysInPast.get());
 	dateWidget->setDate(initialDate);
 	// Set initial time
-	timeCheckbox->setChecked(Settings::ascentDialog_timeEnabledInitially.get());
+	timeSpecifyCheckbox->setChecked(Settings::ascentDialog_timeEnabledInitially.get());
 	handle_timeSpecifiedChanged();
 	timeWidget->setTime(Settings::ascentDialog_initialTime.get());
 	// Set initial elevation gain
-	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
+	elevationGainSpecifyCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	// Set initial hiker
@@ -114,13 +131,16 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	}
 	
 	
+	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
 		insertInitData();
+		break;
+	case multiEdit:
+		// TODO
 		break;
 	case duplicateItem:
 		unique_ptr<Ascent> blankAscent = extractData();
@@ -191,7 +211,7 @@ void AscentDialog::insertInitData()
 	}
 	// Date
 	bool dateSpecified = init->dateSpecified();
-	dateCheckbox->setChecked(dateSpecified);
+	dateSpecifyCheckbox->setChecked(dateSpecified);
 	if (dateSpecified) {
 		dateWidget->setDate(init->date);
 	}
@@ -200,14 +220,14 @@ void AscentDialog::insertInitData()
 	peakIndexSpinner->setValue(init->perDayIndex);
 	// Time
 	bool timeSpecified = init->timeSpecified();
-	timeCheckbox->setChecked(timeSpecified);
+	timeSpecifyCheckbox->setChecked(timeSpecified);
 	if (timeSpecified) {
 		timeWidget->setTime(init->time);
 	}
 	handle_timeSpecifiedChanged();
 	// Elevation gain
 	bool elevationGainSpecified = init->elevationGainSpecified();
-	elevationGainCheckbox->setChecked(elevationGainSpecified);
+	elevationGainSpecifyCheckbox->setChecked(elevationGainSpecified);
 	if (elevationGainSpecified) {
 		elevationGainSpinner->setValue(init->elevationGain);
 	}
@@ -259,9 +279,9 @@ unique_ptr<Ascent> AscentDialog::extractData()
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
 	QList<Photo>		photos				= photosModel.getPhotoList();
 	
-	if (!dateCheckbox->isChecked())				date = QDate();
-	if (!timeCheckbox->isChecked())				time = QTime();
-	if (!elevationGainCheckbox->isChecked())	elevationGain = -1;
+	if (!dateSpecifyCheckbox->isChecked())			date = QDate();
+	if (!timeSpecifyCheckbox->isChecked())			time = QTime();
+	if (!elevationGainSpecifyCheckbox->isChecked())	elevationGain = -1;
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= 0;
 		difficultyGrade		= 0;
@@ -318,7 +338,7 @@ void AscentDialog::handle_newPeak()
  */
 void AscentDialog::handle_dateSpecifiedChanged()
 {
-	bool enabled = dateCheckbox->isChecked();
+	bool enabled = dateSpecifyCheckbox->isChecked();
 	dateWidget->setEnabled(enabled);
 }
 
@@ -329,7 +349,7 @@ void AscentDialog::handle_dateSpecifiedChanged()
  */
 void AscentDialog::handle_timeSpecifiedChanged()
 {
-	bool enabled = timeCheckbox->isChecked();
+	bool enabled = timeSpecifyCheckbox->isChecked();
 	timeWidget->setEnabled(enabled);
 }
 
@@ -340,7 +360,7 @@ void AscentDialog::handle_timeSpecifiedChanged()
  */
 void AscentDialog::handle_elevationGainSpecifiedChanged()
 {
-	bool enabled = elevationGainCheckbox->isChecked();
+	bool enabled = elevationGainSpecifyCheckbox->isChecked();
 	elevationGainSpinner->setEnabled(enabled);
 }
 
