@@ -116,9 +116,9 @@ QString RegionDialog::getEditWindowTitle()
  */
 void RegionDialog::populateComboBoxes()
 {
-	populateRangeCombo(db, rangeCombo, selectableRangeIDs);
+	populateRangeCombo(db, *rangeCombo, selectableRangeIDs);
 	
-	populateCountryCombo(db, countryCombo, selectableCountryIDs);
+	populateCountryCombo(db, *countryCombo, selectableCountryIDs);
 }
 
 
@@ -183,7 +183,7 @@ void RegionDialog::handle_newRange()
 	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(*this, mainWindow, db);
 	if (newRangeIndex.isInvalid()) return;
 	
-	populateRangeCombo(db, rangeCombo, selectableRangeIDs);
+	populateRangeCombo(db, *rangeCombo, selectableRangeIDs);
 	const ValidItemID newRangeID = db.rangesTable.getPrimaryKeyAt(newRangeIndex);
 	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(newRangeID) + 1);	// 0 is None
 }
@@ -198,7 +198,7 @@ void RegionDialog::handle_newCountry()
 	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(*this, mainWindow, db);
 	if (newCountryIndex.isInvalid()) return;
 	
-	populateCountryCombo(db, countryCombo, selectableCountryIDs);
+	populateCountryCombo(db, *countryCombo, selectableCountryIDs);
 	const ValidItemID newCountryID = db.countriesTable.getPrimaryKeyAt(newCountryIndex);
 	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(newCountryID) + 1);	// 0 is None
 }

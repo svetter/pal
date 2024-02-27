@@ -175,8 +175,8 @@ QString AscentDialog::getEditWindowTitle()
  */
 void AscentDialog::populateComboBoxes()
 {
-	populateRegionCombo(db, regionFilterCombo, selectableRegionIDs, true);
-	populatePeakCombo(db, peakCombo, selectablePeakIDs);
+	populateRegionCombo(db, *regionFilterCombo, selectableRegionIDs, true);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
@@ -191,7 +191,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	populateTripCombo(db, tripCombo, selectableTripIDs);
+	populateTripCombo(db, *tripCombo, selectableTripIDs);
 }
 
 
@@ -312,7 +312,7 @@ bool AscentDialog::changesMade()
 void AscentDialog::handle_regionFilterChanged()
 {
 	const ItemID regionID = parseItemCombo(*regionFilterCombo, selectableRegionIDs);
-	populatePeakCombo(db, peakCombo, selectablePeakIDs, regionID);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs, regionID);
 }
 
 /**
@@ -325,7 +325,7 @@ void AscentDialog::handle_newPeak()
 	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(*this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
-	populatePeakCombo(db, peakCombo, selectablePeakIDs);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs);
 	const ValidItemID newPeakID = db.peaksTable.getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None
@@ -396,7 +396,7 @@ void AscentDialog::handle_newTrip()
 	BufferRowIndex newTripIndex = openNewTripDialogAndStore(*this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
-	populateTripCombo(db, tripCombo, selectableTripIDs);
+	populateTripCombo(db, *tripCombo, selectableTripIDs);
 	const ValidItemID newTripID = db.tripsTable.getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(newTripID) + 1);	// 0 is None
 }

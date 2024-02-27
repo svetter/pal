@@ -63,7 +63,7 @@ AddHikerDialog::AddHikerDialog(QWidget& parent, QMainWindow& mainWindow, Databas
  */
 void AddHikerDialog::populateComboBoxes()
 {
-	populateHikerCombo(db, hikerCombo, selectableHikerIDs);
+	populateHikerCombo(db, *hikerCombo, selectableHikerIDs);
 }
 
 
@@ -102,7 +102,7 @@ void AddHikerDialog::handle_newHiker()
 	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(*this, mainWindow, db);
 	if (newHikerIndex.isInvalid()) return;
 	
-	populateHikerCombo(db, hikerCombo, selectableHikerIDs);
+	populateHikerCombo(db, *hikerCombo, selectableHikerIDs);
 	const ValidItemID newHikerID = db.hikersTable.getPrimaryKeyAt(newHikerIndex);
 	hikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
 }
