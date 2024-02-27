@@ -118,11 +118,11 @@ public:
 	
 private:
 	// Execute user commands
-	void viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
+	void viewSelectedItem();
 	void newItem(const ItemTypeMapper& mapper);
-	void duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
-	void editItem(const ItemTypeMapper& mapper, const QModelIndex& index);
-	void deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices);
+	void duplicateAndEditSelectedItem();
+	void editSelectedItems();
+	void deleteSelectedItems();
 	// Helpers
 	void setFilteredAscentsCounterVisible(bool visible);
 	void updateTopBarButtonVisibilities();
@@ -142,11 +142,6 @@ private slots:
 	// Column context menu action handlers
 	void handle_hideColumn();
 	void handle_unhideColumn();
-	// Table context menu action handlers
-	void handle_viewSelectedItem();
-	void handle_editSelectedItem();
-	void handle_duplicateAndEditSelectedItem();
-	void handle_deleteSelectedItems();
 	
 	// File menu action handlers
 	void handle_newDatabase();
@@ -184,9 +179,9 @@ private:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	
 	// General helpers
-	QTableView* getCurrentTableView() const;
 	ItemTypeMapper* getActiveMapperOrNull() const;
 	ItemTypeMapper& getActiveMapper() const;
+	QPair<QSet<BufferRowIndex>, BufferRowIndex> getSelectedRows(const ItemTypeMapper& mapper) const;
 	void addToRecentFilesList(const QString& filepath);
 	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);
