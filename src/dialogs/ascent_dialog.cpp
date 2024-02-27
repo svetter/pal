@@ -51,10 +51,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
-AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Ascent> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>()),
 	selectablePeakIDs(QList<ValidItemID>()),
@@ -155,18 +156,6 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
  */
 AscentDialog::~AscentDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- * 
- * @return	The window title for editing an item
- */
-QString AscentDialog::getEditWindowTitle()
-{
-	return tr("Edit ascent");
-}
 
 
 
@@ -676,11 +665,13 @@ bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
+ * @param bufferRowIndices	The buffer row indices of the ascents to edit, if purpose is multiEdit.
  * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent)
+BufferRowIndex openAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	assert((bool) originalAscent != (purpose == newItem));
+	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
 	
 	const ItemID			originalAscentID	= (purpose != newItem)	? originalAscent->ascentID						: ItemID();
 	const QSet<ValidItemID>	originalHikerIDs	= (purpose == editItem)	? QSet<ValidItemID>(originalAscent->hikerIDs)	: QSet<ValidItemID>();
@@ -690,7 +681,16 @@ BufferRowIndex openAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow
 	}
 	BufferRowIndex newAscentIndex = BufferRowIndex();
 	
-	AscentDialog dialog = AscentDialog(parent, mainWindow, db, purpose, std::move(originalAscent));
+	QString windowTitle;
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	windowTitle = AscentDialog::tr("New ascent");									break;
+	case editItem:		windowTitle = AscentDialog::tr("Edit ascent");									break;
+	case multiEdit:		windowTitle = AscentDialog::tr("Edit %1 ascents").arg(bufferRowIndices.size());	break;
+	default: assert(false);
+	}
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalAscent));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		unique_ptr<Ascent> extractedAscent = dialog.extractData();
 		

@@ -77,14 +77,7 @@ private:
 	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
 	
 protected:
-	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose);
-	
-	/**
-	 * Returns the window title to use when the dialog is used to edit an item.
-	 * 
-	 * @return	The window title for editing an item
-	 */
-	virtual QString getEditWindowTitle() = 0;
+	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle);
 	
 	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QSet<QWidget*>>& multiEditCheckboxes, const QSet<QCheckBox*>& tristateCheckboxes = QSet<QCheckBox*>());
 	void changeUIForPurpose();

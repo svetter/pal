@@ -58,10 +58,8 @@ class AscentDialog : public ItemDialog, public Ui_AscentDialog
 	PhotosOfAscent photosModel;
 	
 public:
-	AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init);
+	AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Ascent> init);
 	~AscentDialog();
-	
-	virtual QString getEditWindowTitle() override;
 	
 	unique_ptr<Ascent> extractData();
 	virtual bool changesMade() override;
@@ -100,7 +98,7 @@ bool			openEditAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, 
 bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices);
 bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
-BufferRowIndex	openAscentDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent);
+BufferRowIndex	openAscentDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent, const QSet<BufferRowIndex>& bufferRowIndices = QSet<BufferRowIndex>());
 
 
 QString		openFileDialogForSinglePhotoSelection	(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());

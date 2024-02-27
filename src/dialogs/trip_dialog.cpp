@@ -42,10 +42,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  */
-TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Trip> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init))
 {
 	setupUi(this);
@@ -97,18 +98,6 @@ TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
  */
 TripDialog::~TripDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString TripDialog::getEditWindowTitle()
-{
-	return tr("Edit trip");
-}
 
 
 
@@ -296,16 +285,18 @@ bool openDeleteTripsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, D
 /**
  * Opens a purpose-generic trip dialog and applies the resulting changes to the database.
  *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalTrip	The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
- * @return				The index of the new trip in the database's trip table buffer, or existing index of edited trip. Invalid if the dialog was cancelled.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param originalTrip		The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
+ * @param bufferRowIndices	The buffer row indices of the trips to edit, if purpose is multiEdit.
+ * @return					The index of the new trip in the database's trip table buffer, or existing index of edited trip. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip)
+BufferRowIndex openTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	assert((bool) originalTrip != (purpose == newItem));
+	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
 	
 	const ItemID originalTripID = (purpose != newItem) ? originalTrip->tripID : ItemID();
 	if (purpose == duplicateItem) {
@@ -313,7 +304,16 @@ BufferRowIndex openTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, 
 	}
 	BufferRowIndex newTripIndex = BufferRowIndex();
 	
-	TripDialog dialog = TripDialog(parent, mainWindow, db, purpose, std::move(originalTrip));
+	QString windowTitle;
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	windowTitle = TripDialog::tr("New trip");									break;
+	case editItem:		windowTitle = TripDialog::tr("Edit trip");									break;
+	case multiEdit:		windowTitle = TripDialog::tr("Edit %1 trips").arg(bufferRowIndices.size());	break;
+	default: assert(false);
+	}
+	
+	TripDialog dialog = TripDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalTrip));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		unique_ptr<Trip> extractedTrip = dialog.extractData();
 		

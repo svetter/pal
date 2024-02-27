@@ -42,10 +42,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
  */
-CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Country> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Country> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init))
 {
 	setupUi(this);
@@ -84,18 +85,6 @@ CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database&
  */
 CountryDialog::~CountryDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString CountryDialog::getEditWindowTitle()
-{
-	return tr("Edit country");
-}
 
 
 
@@ -232,11 +221,13 @@ bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindo
  * @param db				The project database.
  * @param purpose			The purpose of the dialog.
  * @param originalCountry	The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
+ * @param bufferRowIndices	The buffer row indices of the countries to edit, if purpose is multiEdit.
  * @return					The index of the new country in the database's country table buffer, or existing index of edited country. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry)
+BufferRowIndex openCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	assert((bool) originalCountry != (purpose == newItem));
+	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
 	
 	const ItemID originalCountryID = (purpose != newItem) ? originalCountry->countryID : ItemID();
 	if (purpose == duplicateItem) {
@@ -244,7 +235,16 @@ BufferRowIndex openCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindo
 	}
 	BufferRowIndex newCountryIndex = BufferRowIndex();
 	
-	CountryDialog dialog = CountryDialog(parent, mainWindow, db, purpose, std::move(originalCountry));
+	QString windowTitle;
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	windowTitle = CountryDialog::tr("New country");										break;
+	case editItem:		windowTitle = CountryDialog::tr("Edit country");									break;
+	case multiEdit:		windowTitle = CountryDialog::tr("Edit %1 countries").arg(bufferRowIndices.size());	break;
+	default: assert(false);
+	}
+	
+	CountryDialog dialog = CountryDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalCountry));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		unique_ptr<Country> extractedCountry = dialog.extractData();
 		

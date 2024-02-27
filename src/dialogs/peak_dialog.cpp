@@ -43,10 +43,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Peak> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>())
 {
@@ -108,18 +109,6 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
  */
 PeakDialog::~PeakDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString PeakDialog::getEditWindowTitle()
-{
-	return tr("Edit peak");
-}
 
 
 
@@ -330,16 +319,18 @@ bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, D
 /**
  * Opens a purpose-generic peak dialog and applies the resulting changes to the database.
  *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
- * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param originalPeak		The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
+ * @param bufferRowIndices	The buffer row indices of the peaks to edit, if purpose is multiEdit.
+ * @return					The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
+BufferRowIndex openPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	assert((bool) originalPeak != (purpose == newItem));
+	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
 	
 	const ItemID originalPeakID = (purpose != newItem) ? originalPeak->peakID : ItemID();
 	if (purpose == duplicateItem) {
@@ -347,7 +338,16 @@ BufferRowIndex openPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, 
 	}
 	BufferRowIndex newPeakIndex = BufferRowIndex();
 	
-	PeakDialog dialog = PeakDialog(parent, mainWindow, db, purpose, std::move(originalPeak));
+	QString windowTitle;
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	windowTitle = PeakDialog::tr("New peak");									break;
+	case editItem:		windowTitle = PeakDialog::tr("Edit peak");									break;
+	case multiEdit:		windowTitle = PeakDialog::tr("Edit %1 peaks").arg(bufferRowIndices.size());	break;
+	default: assert(false);
+	}
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalPeak));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		unique_ptr<Peak> extractedPeak = dialog.extractData();
 		

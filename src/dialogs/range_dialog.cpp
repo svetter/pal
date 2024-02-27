@@ -43,10 +43,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
-RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Range> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Range> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init))
 {
 	setupUi(this);
@@ -89,18 +90,6 @@ RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
  */
 RangeDialog::~RangeDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString RangeDialog::getEditWindowTitle()
-{
-	return tr("Edit mountain range");
-}
 
 
 
@@ -245,16 +234,18 @@ bool openDeleteRangesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, 
 /**
  * Opens a purpose-generic range dialog and applies the resulting changes to the database.
  *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
- * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param originalRange		The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
+ * @param bufferRowIndices	The buffer row indices of the ranges to edit, if purpose is multiEdit.
+ * @return					The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
  */
-BufferRowIndex openRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange)
+BufferRowIndex openRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	assert((bool) originalRange != (purpose == newItem));
+	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
 	
 	const ItemID originalRangeID = (purpose != newItem) ? originalRange->rangeID : ItemID();
 	if (purpose == duplicateItem) {
@@ -262,7 +253,16 @@ BufferRowIndex openRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow,
 	}
 	BufferRowIndex newRangeIndex = BufferRowIndex();
 	
-	RangeDialog dialog = RangeDialog(parent, mainWindow, db, purpose, std::move(originalRange));
+	QString windowTitle;
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	windowTitle = RangeDialog::tr("New mountain range");									break;
+	case editItem:		windowTitle = RangeDialog::tr("Edit mountain range");									break;
+	case multiEdit:		windowTitle = RangeDialog::tr("Edit %1 mountain ranges").arg(bufferRowIndices.size());	break;
+	default: assert(false);
+	}
+	
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalRange));
 	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
 		unique_ptr<Range> extractedRange = dialog.extractData();
 		

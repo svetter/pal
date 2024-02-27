@@ -37,8 +37,9 @@
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  */
-ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose):
+ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle):
 	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
@@ -47,7 +48,9 @@ ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	multiEditCheckboxes(QMap<QCheckBox*, QSet<QWidget*>>()),
 	tristateCheckboxes(QSet<QCheckBox*>()),
 	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
-{}
+{
+	setWindowTitle(windowTitle);
+}
 
 
 
@@ -96,7 +99,6 @@ void ItemDialog::changeUIForPurpose()
 	}
 	
 	if (purpose == editItem) {
-		setWindowTitle(getEditWindowTitle());
 		saveButton->setText(tr("Save changes"));
 	}
 }

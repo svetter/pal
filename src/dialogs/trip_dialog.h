@@ -43,10 +43,8 @@ class TripDialog : public ItemDialog, public Ui_TripDialog
 	unique_ptr<const Trip> init;
 	
 public:
-	TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init);
+	TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Trip> init);
 	~TripDialog();
-	
-	virtual QString getEditWindowTitle() override;
 	
 	unique_ptr<Trip> extractData();
 	virtual bool changesMade() override;
@@ -71,7 +69,7 @@ BufferRowIndex	openNewTripDialogAndStore		(QWidget& parent, QMainWindow& mainWin
 bool			openEditTripDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteTripsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
-BufferRowIndex	openTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip);
+BufferRowIndex	openTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip, const QSet<BufferRowIndex>& bufferRowIndices = QSet<BufferRowIndex>());
 
 
 
