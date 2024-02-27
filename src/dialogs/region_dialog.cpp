@@ -152,9 +152,9 @@ void RegionDialog::insertInitData()
  */
 unique_ptr<Region> RegionDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs);
-	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	ItemID	rangeID		= parseItemCombo	(*rangeCombo, selectableRangeIDs);
+	ItemID	countryID	= parseItemCombo	(*countryCombo, selectableCountryIDs);
 	
 	return make_unique<Region>(ItemID(), name, rangeID, countryID);
 }

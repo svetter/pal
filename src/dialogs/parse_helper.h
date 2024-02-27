@@ -38,14 +38,14 @@
 
 
 
-QString		parseLineEdit		(const QLineEdit*		lineEdit);
-QString		parsePlainTextEdit	(const QPlainTextEdit*	plainTextEdit);
-int			parseSpinner		(const QSpinBox*		spinBox);
-ItemID		parseItemCombo		(const QComboBox*		combo, const QList<ValidItemID>& itemIDs);
-int			parseEnumCombo		(const QComboBox*		combo, bool defaultToZero);
-bool		parseCheckbox		(const QCheckBox*		checkbox);
-QDate		parseDateWidget		(const QDateEdit*		dateEdit);
-QTime		parseTimeWidget		(const QTimeEdit*		timeEdit);
+QString		parseLineEdit		(const QLineEdit&		lineEdit);
+QString		parsePlainTextEdit	(const QPlainTextEdit&	plainTextEdit);
+int			parseSpinner		(const QSpinBox&		spinBox);
+ItemID		parseItemCombo		(const QComboBox&		combo, const QList<ValidItemID>& itemIDs);
+int			parseEnumCombo		(const QComboBox&		combo, bool defaultToZero);
+bool		parseCheckbox		(const QCheckBox&		checkbox);
+QDate		parseDateWidget		(const QDateEdit&		dateEdit);
+QTime		parseTimeWidget		(const QTimeEdit&		timeEdit);
 
 
 

@@ -139,10 +139,10 @@ void TripDialog::insertInitData()
  */
 unique_ptr<Trip> TripDialog::extractData()
 {
-	QString	name		= parseLineEdit			(nameLineEdit);
-	QDate	startDate	= parseDateWidget		(startDateWidget);
-	QDate	endDate		= parseDateWidget		(endDateWidget);
-	QString	description	= parsePlainTextEdit	(descriptionEditor);
+	QString	name		= parseLineEdit			(*nameLineEdit);
+	QDate	startDate	= parseDateWidget		(*startDateWidget);
+	QDate	endDate		= parseDateWidget		(*endDateWidget);
+	QString	description	= parsePlainTextEdit	(*descriptionEditor);
 	
 	if (datesUnspecifiedCheckbox->isChecked())	startDate = QDate();
 	if (datesUnspecifiedCheckbox->isChecked())	endDate = QDate();

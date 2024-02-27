@@ -615,18 +615,18 @@ QSet<Filter> AscentFilterBar::collectFilters()
 	}
 	
 	if (rangeFilterBox->isChecked()) {
-		ItemID rangeID = parseItemCombo(rangeFilterCombo, selectableRangeIDs);
+		ItemID rangeID = parseItemCombo(*rangeFilterCombo, selectableRangeIDs);
 		filters.insert(Filter(compAscents->rangeIDColumn, rangeID.asQVariant()));
 	}
 	
 	if (hikeKindFilterBox->isChecked()) {
-		int value = parseEnumCombo(hikeKindFilterCombo, true);
+		int value = parseEnumCombo(*hikeKindFilterCombo, true);
 		filters.insert(Filter(compAscents->hikeKindColumn, value));
 	}
 	
 	if (difficultyFilterBox->isChecked()) {
-		int system	= parseEnumCombo(difficultyFilterSystemCombo, true);
-		int grade	= parseEnumCombo(difficultyFilterGradeCombo, true);
+		int system	= parseEnumCombo(*difficultyFilterSystemCombo, true);
+		int grade	= parseEnumCombo(*difficultyFilterGradeCombo, true);
 		if (system <= 0) {
 			system = 0;
 			grade = 0;
@@ -635,7 +635,7 @@ QSet<Filter> AscentFilterBar::collectFilters()
 	}
 	
 	if (hikerFilterBox->isChecked()) {
-		ItemID hikerID = parseItemCombo(hikerFilterCombo, selectableHikerIDs);
+		ItemID hikerID = parseItemCombo(*hikerFilterCombo, selectableHikerIDs);
 		filters.insert(Filter(compAscents->hikerIDsColumn, hikerID.asQVariant()));
 	}
 	

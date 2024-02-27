@@ -116,7 +116,7 @@ void CountryDialog::insertInitData()
  */
 unique_ptr<Country> CountryDialog::extractData()
 {
-	QString	name	= parseLineEdit	(nameLineEdit);
+	QString	name	= parseLineEdit	(*nameLineEdit);
 	
 	return make_unique<Country>(ItemID(), name);
 }

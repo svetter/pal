@@ -125,7 +125,7 @@ void ProjectSettingsWindow::saveSettings()
 		db.projectSettings.defaultHiker.set(*this, newDefaultHiker->hikerID.asQVariant());
 	}
 	else {
-		db.projectSettings.defaultHiker.set(*this, parseItemCombo(defaultHikerCombo, selectableHikerIDs).asQVariant());
+		db.projectSettings.defaultHiker.set(*this, parseItemCombo(*defaultHikerCombo, selectableHikerIDs).asQVariant());
 	}
 }
 

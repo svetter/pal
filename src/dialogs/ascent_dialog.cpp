@@ -264,18 +264,18 @@ void AscentDialog::insertInitData()
  */
 unique_ptr<Ascent> AscentDialog::extractData()
 {
-	QString				title				= parseLineEdit			(titleLineEdit);
-	ItemID				peakID				= parseItemCombo		(peakCombo, selectablePeakIDs);
-	QDate				date				= parseDateWidget		(dateWidget);
-	int					perDayIndex			= parseSpinner			(peakIndexSpinner);
-	QTime				time				= parseTimeWidget		(timeWidget);
-	int					elevationGain		= parseSpinner			(elevationGainSpinner);
-	int					hikeKind			= parseEnumCombo		(hikeKindCombo, false);
-	bool				traverse			= parseCheckbox			(traverseCheckbox);
-	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
-	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
-	ItemID				tripID				= parseItemCombo		(tripCombo, selectableTripIDs);
-	QString				description			= parsePlainTextEdit	(descriptionEditor);
+	QString				title				= parseLineEdit			(*titleLineEdit);
+	ItemID				peakID				= parseItemCombo		(*peakCombo, selectablePeakIDs);
+	QDate				date				= parseDateWidget		(*dateWidget);
+	int					perDayIndex			= parseSpinner			(*peakIndexSpinner);
+	QTime				time				= parseTimeWidget		(*timeWidget);
+	int					elevationGain		= parseSpinner			(*elevationGainSpinner);
+	int					hikeKind			= parseEnumCombo		(*hikeKindCombo, false);
+	bool				traverse			= parseCheckbox			(*traverseCheckbox);
+	int					difficultySystem	= parseEnumCombo		(*difficultySystemCombo, true);
+	int					difficultyGrade		= parseEnumCombo		(*difficultyGradeCombo, true);
+	ItemID				tripID				= parseItemCombo		(*tripCombo, selectableTripIDs);
+	QString				description			= parsePlainTextEdit	(*descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
 	QList<Photo>		photos				= photosModel.getPhotoList();
 	
@@ -311,7 +311,7 @@ bool AscentDialog::changesMade()
  */
 void AscentDialog::handle_regionFilterChanged()
 {
-	const ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
+	const ItemID regionID = parseItemCombo(*regionFilterCombo, selectableRegionIDs);
 	populatePeakCombo(db, peakCombo, selectablePeakIDs, regionID);
 }
 

@@ -133,8 +133,8 @@ void RangeDialog::insertInitData()
  */
 unique_ptr<Range> RangeDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	int		continent	= parseEnumCombo	(continentCombo, true);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	int		continent	= parseEnumCombo	(*continentCombo, true);
 	
 	return make_unique<Range>(ItemID(), name, continent);
 }

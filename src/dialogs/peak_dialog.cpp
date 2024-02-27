@@ -169,13 +169,13 @@ void PeakDialog::insertInitData()
  */
 unique_ptr<Peak> PeakDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	int		height		= parseSpinner		(heightSpinner);
-	bool	volcano		= parseCheckbox		(volcanoCheckbox);
-	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs);
-	QString	mapsLink	= parseLineEdit		(mapsLineEdit);
-	QString	earthLink	= parseLineEdit		(earthLineEdit);
-	QString	wikiLink	= parseLineEdit		(wikipediaLineEdit);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	int		height		= parseSpinner		(*heightSpinner);
+	bool	volcano		= parseCheckbox		(*volcanoCheckbox);
+	ItemID	regionID	= parseItemCombo	(*regionCombo, selectableRegionIDs);
+	QString	mapsLink	= parseLineEdit		(*mapsLineEdit);
+	QString	earthLink	= parseLineEdit		(*earthLineEdit);
+	QString	wikiLink	= parseLineEdit		(*wikipediaLineEdit);
 	
 	if (!heightSpecifyCheckbox->isChecked()) height = -1;
 	

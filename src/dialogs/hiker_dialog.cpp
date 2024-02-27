@@ -116,7 +116,7 @@ void HikerDialog::insertInitData()
  */
 unique_ptr<Hiker> HikerDialog::extractData()
 {
-	QString	name	= parseLineEdit	(nameLineEdit);
+	QString	name	= parseLineEdit	(*nameLineEdit);
 	
 	return make_unique<Hiker>(ItemID(), name);
 }
