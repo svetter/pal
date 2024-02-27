@@ -181,9 +181,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * Repopulates the given combo box with the given table's entries, filtered and sorted according to
  * the given parameters, and writes the IDs of the entries to the referenced list.
  * 
- * @param table						The table to get the entries from.
  * @param displayAndSortColumn		The column of the table to use for displaying and sorting the entries.
- * @param sortAsString				Whether to sort the entries as strings. Otherwise, QVariant::compare() is used.
  * @param combo						The combo box to populate.
  * @param idList					The list in which to store the IDs of the entries.
  * @param overrideFirstLine			If not empty, this string will be used as the first line of the combo box instead of the table's none string.
@@ -191,11 +189,15 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * @param distinctionContentColumn	If not null, this column will be used to add a distinguishing name in brackets to entries with duplicate names.
  * @param filterColumn				If not null, only entries whose foreign key ID in this column matches the given ID will be added to the combo box.
  * @param filterID					The ID to use for filtering entries, or an invalid ID to filter for entries with no reference.
+ * @param prefixColumn				If not null, this column will be used to add a prefix to the display names of the entries. Must be in the same table as displayAndSortColumn.
+ * @param prefixValueToString		A function to convert the value of prefixColumn to a string. Must be provided iff prefixColumn is not null.
  */
-void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID)
+void populateItemCombo(const ValueColumn& displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID, const ValueColumn* prefixColumn, std::function<QString (const QVariant&)> prefixValueToString)
 {
-	assert(&displayAndSortColumn.table == &table);
 	assert(!(!filterColumn && filterID.isValid()));
+	assert((bool) prefixColumn == (bool) prefixValueToString);
+	
+	const NormalTable& table = (NormalTable&) displayAndSortColumn.table;
 	
 	combo->clear();
 	idList.clear();
@@ -219,10 +221,20 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 		}
 	}
 	
+	// Add prefix to display names
+	if (prefixColumn && prefixValueToString) {
+		for (int i = 0; i < selectableItems.size(); i++) {
+			const ValidItemID& itemID = selectableItems.at(i).first;
+			const QString prefix = prefixValueToString(prefixColumn->getValueFor(itemID));
+			if (!prefix.isEmpty()) {
+				selectableItems[i].second = prefix + ": " + selectableItems.at(i).second.toString();
+			}
+		}
+	}
+	
 	// Sort entries according to sort field
-	auto comparator = [sortAsString] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
-		if (sortAsString) return QString::localeAwareCompare(p1.second.toString(), p2.second.toString()) < 0;
-		return QVariant::compare(p1.second, p2.second) == QPartialOrdering::Less;
+	auto comparator = [] (const QPair<ValidItemID, QVariant>& p1, const QPair<ValidItemID, QVariant>& p2) {
+		return QString::localeAwareCompare(p1.second.toString(), p2.second.toString()) < 0;
 	};
 	std::sort(selectableItems.begin(), selectableItems.end(), comparator);
 	
@@ -267,37 +279,42 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 void populatePeakCombo(Database& db, QComboBox* peakCombo, QList<ValidItemID>& selectablePeakIDs, ItemID regionFilterID)
 {
 	if (regionFilterID.isValid()) {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionFilterID);
+		populateItemCombo(db.peaksTable.nameColumn, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionFilterID);
 	} else {
-		populateItemCombo(db.peaksTable, db.peaksTable.nameColumn, true, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
+		populateItemCombo(db.peaksTable.nameColumn, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
 	}
 }
 
 void populateTripCombo(Database& db, QComboBox* tripCombo, QList<ValidItemID>& selectableTripIDs)
 {
-	populateItemCombo(db.tripsTable, db.tripsTable.nameColumn, true, tripCombo, selectableTripIDs);
+	auto prefixValueToString = [](const QVariant& prefixValue) {
+		if (!prefixValue.canConvert<QDate>()) return QString();
+		return QString::number(prefixValue.toDate().year());
+	};
+	
+	populateItemCombo(db.tripsTable.nameColumn, tripCombo, selectableTripIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.tripsTable.startDateColumn, prefixValueToString);
 }
 
 void populateHikerCombo(Database& db, QComboBox* hikerCombo, QList<ValidItemID>& selectableHikerIDs)
 {
-	populateItemCombo(db.hikersTable, db.hikersTable.nameColumn, true, hikerCombo, selectableHikerIDs);
+	populateItemCombo(db.hikersTable.nameColumn, hikerCombo, selectableHikerIDs);
 }
 
 void populateRegionCombo(Database& db, QComboBox* regionCombo, QList<ValidItemID>& selectableRegionIDs, bool asFilter)
 {
 	if (asFilter) {
-		populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, ItemDialog::tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+		populateItemCombo(db.regionsTable.nameColumn, regionCombo, selectableRegionIDs, ItemDialog::tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 	} else {
-		populateItemCombo(db.regionsTable, db.regionsTable.nameColumn, true, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+		populateItemCombo(db.regionsTable.nameColumn, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 	}
 }
 
 void populateRangeCombo(Database& db, QComboBox* rangeCombo, QList<ValidItemID>& selectableRangeIDs)
 {
-	populateItemCombo(db.rangesTable, db.rangesTable.nameColumn, true, rangeCombo, selectableRangeIDs);
+	populateItemCombo(db.rangesTable.nameColumn, rangeCombo, selectableRangeIDs);
 }
 
 void populateCountryCombo(Database& db, QComboBox* countryCombo, QList<ValidItemID>& selectableCountryIDs)
 {
-	populateItemCombo(db.countriesTable, db.countriesTable.nameColumn, true, countryCombo, selectableCountryIDs);
+	populateItemCombo(db.countriesTable.nameColumn, countryCombo, selectableCountryIDs);
 }

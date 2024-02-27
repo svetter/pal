@@ -107,7 +107,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 
 
 
-void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID());
+void populateItemCombo(const ValueColumn& displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID(), const ValueColumn* prefixColumn = nullptr, std::function<QString (const QVariant&)> prefixValueToString = nullptr);
 
 void populatePeakCombo		(Database& db, QComboBox* peakCombo,	QList<ValidItemID>& selectablePeakIDs,		ItemID regionFilterID = ItemID());
 void populateTripCombo		(Database& db, QComboBox* tripCombo,	QList<ValidItemID>& selectableTripIDs);
