@@ -55,7 +55,7 @@ enum DataType {
 class Column {
 public:
 	/** The table this column belongs to. */
-	const Table* const table;
+	const Table& table;
 	
 	/** The internal name of the column. */
 	const QString name;
@@ -80,14 +80,14 @@ private:
 	QSet<shared_ptr<const ColumnChangeListener>> changeListeners;
 	
 protected:
-	Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignKey, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	Column(const Table& table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignKey, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	~Column();
 	
 	bool isPrimaryKey() const;
 	bool isForeignKey() const;
 	bool isKey() const;
-	PrimaryKeyColumn* getReferencedForeignColumn() const;
+	PrimaryKeyColumn& getReferencedForeignColumn() const;
 	int getIndex() const;
 	
 	QVariant getValueAt(BufferRowIndex bufferRowIndex) const;
@@ -97,7 +97,7 @@ public:
 	QString getSqlSpecificationString() const;
 	
 	void registerChangeListener(shared_ptr<const ColumnChangeListener> newListener);
-	QSet<shared_ptr<const ColumnChangeListener>> getChangeListeners() const;
+	const QSet<shared_ptr<const ColumnChangeListener>>& getChangeListeners() const;
 };
 
 
@@ -108,7 +108,7 @@ public:
 class ValueColumn : public Column
 {
 public:
-	ValueColumn(const Table* table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	ValueColumn(const Table& table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 };
 
 
@@ -119,7 +119,7 @@ public:
 class PrimaryKeyColumn : public Column
 {
 public:
-	PrimaryKeyColumn(const Table* table, QString name, QString uiName);
+	PrimaryKeyColumn(const Table& table, QString name, QString uiName);
 };
 
 
@@ -130,7 +130,7 @@ public:
 class ForeignKeyColumn : public Column
 {
 public:
-	ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey = false);
+	ForeignKeyColumn(const Table& table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey = false);
 };
 
 
@@ -141,7 +141,7 @@ public:
 class PrimaryForeignKeyColumn : public ForeignKeyColumn
 {
 public:
-	PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn);
+	PrimaryForeignKeyColumn(const Table& table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn);
 };
 
 

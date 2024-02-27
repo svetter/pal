@@ -194,7 +194,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  */
 void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColumn, bool sortAsString, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID)
 {
-	assert(displayAndSortColumn.table == &table);
+	assert(&displayAndSortColumn.table == &table);
 	assert(!(!filterColumn && filterID.isValid()));
 	
 	combo->clear();
@@ -209,7 +209,7 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 	
 	if (filterColumn) {
 		// Filter entries: if an item's foreign key ID doesn't match the given one, discard it
-		assert(filterColumn->table == &table && filterColumn->type == ID);
+		assert(&filterColumn->table == &table && filterColumn->type == ID);
 		for (int i = selectableItems.size() - 1; i >= 0; i--) {
 			const ValidItemID& itemID = selectableItems.at(i).first;
 			ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);
@@ -229,8 +229,8 @@ void populateItemCombo(NormalTable& table, const ValueColumn& displayAndSortColu
 	// Add distinction field in brackets in case of duplicates
 	if (distinctionKeyColumn || distinctionContentColumn) {
 		assert(distinctionKeyColumn && distinctionContentColumn);
-		assert(distinctionKeyColumn->table == &table);
-		assert(distinctionKeyColumn->foreignColumn->table == distinctionContentColumn->table);
+		assert(&distinctionKeyColumn->table == &table);
+		assert(&distinctionKeyColumn->foreignColumn->table == &distinctionContentColumn->table);
 		// Find duplicates
 		QSet<int> duplicateNameIndices = QSet<int>();
 		QString previousName;

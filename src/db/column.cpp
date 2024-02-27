@@ -46,7 +46,7 @@ using std::shared_ptr;
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
-Column::Column(const Table* table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignColumn, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+Column::Column(const Table& table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignColumn, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 	table(table),
 	name(name),
 	uiName(uiName),
@@ -59,7 +59,7 @@ Column::Column(const Table* table, QString name, QString uiName, bool primaryKey
 	changeListeners(QSet<shared_ptr<const ColumnChangeListener>>())
 {
 	assert(name.compare(QString("ID"), Qt::CaseInsensitive) != 0);
-	assert(table->isAssociative == (primaryKey && foreignColumn));
+	assert(table.isAssociative == (primaryKey && foreignColumn));
 	if (primaryKey)						assert(!nullable);
 	if (primaryKey || foreignColumn)	assert(type == ID && name.endsWith("ID"));
 	if (name.endsWith("ID"))			assert((type == ID) && (primaryKey || foreignColumn));
@@ -106,11 +106,14 @@ bool Column::isKey() const
 /**
  * Returns the column referenced by this column if it contains foreign keys, or nullptr otherwise.
  * 
+ * @pre The column is a foreign key column.
+ * 
  * @return	The foreign column referenced by this one, or nullptr.
  */
-PrimaryKeyColumn* Column::getReferencedForeignColumn() const
+PrimaryKeyColumn& Column::getReferencedForeignColumn() const
 {
-	return foreignColumn;
+	assert(foreignColumn);
+	return *foreignColumn;
 }
 
 /**
@@ -120,7 +123,7 @@ PrimaryKeyColumn* Column::getReferencedForeignColumn() const
  */
 int Column::getIndex() const
 {
-	return table->getColumnIndex(*this);
+	return table.getColumnIndex(*this);
 }
 
 
@@ -133,19 +136,21 @@ int Column::getIndex() const
  */
 QVariant Column::getValueAt(BufferRowIndex bufferRowIndex) const
 {
-	return table->getBufferRow(bufferRowIndex)->at(getIndex());
+	return table.getBufferRow(bufferRowIndex)->at(getIndex());
 }
 
 /**
  * Returns the value stored in this column in the row with the given primary key.
+ * 
+ * @pre This column is not in an associative table.
  * 
  * @param itemID	The primary key of the row to return the value from.
  * @return			The value in this column at the indicated row.
  */
 QVariant Column::getValueFor(ValidItemID itemID) const
 {
-	assert(!table->isAssociative);
-	return getValueAt(((NormalTable*) table)->getBufferIndexForPrimaryKey(itemID));
+	assert(!table.isAssociative);
+	return getValueAt(((NormalTable&) table).getBufferIndexForPrimaryKey(itemID));
 }
 
 /**
@@ -156,7 +161,7 @@ QVariant Column::getValueFor(ValidItemID itemID) const
  */
 bool Column::anyCellMatches(QVariant value) const
 {
-	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(table->getNumberOfRows()); index++) {
+	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(table.getNumberOfRows()); index++) {
 		if (getValueAt(index) == value) return true;
 	}
 	return false;
@@ -190,7 +195,7 @@ QString Column::getSqlSpecificationString() const
 	
 	QString foreignKeyString = "";
 	if (foreignColumn)
-		primaryKeyString = " REFERENCES " + foreignColumn->table->name + "(" + foreignColumn->name + ")";
+		primaryKeyString = " REFERENCES " + foreignColumn->table.name + "(" + foreignColumn->name + ")";
 	
 	QString nullString = "";
 	if (!nullable)
@@ -214,7 +219,7 @@ void Column::registerChangeListener(shared_ptr<const ColumnChangeListener> newLi
 /**
  * Returns the set of all change listeners registered for this column.
  */
-QSet<shared_ptr<const ColumnChangeListener>> Column::getChangeListeners() const
+const QSet<shared_ptr<const ColumnChangeListener>>& Column::getChangeListeners() const
 {
 	return changeListeners;
 }
@@ -234,7 +239,7 @@ QSet<shared_ptr<const ColumnChangeListener>> Column::getChangeListeners() const
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  * @param enumNameLists	An optional list of enum name lists with which to replace the raw cell content.
  */
-ValueColumn::ValueColumn(const Table* table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+ValueColumn::ValueColumn(const Table& table, QString name, QString uiName, DataType type, bool nullable, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
 	Column(table, name, uiName, false, nullptr, type, nullable, enumNames, enumNameLists)
 {}
 
@@ -247,7 +252,7 @@ ValueColumn::ValueColumn(const Table* table, QString name, QString uiName, DataT
  * @param name		The internal name of the column.
  * @param uiName	The name of the column as it should be displayed in the UI.
  */
-PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiName) :
+PrimaryKeyColumn::PrimaryKeyColumn(const Table& table, QString name, QString uiName) :
 	Column(table, name, uiName, true, nullptr, ID, false)
 {}
 
@@ -263,7 +268,7 @@ PrimaryKeyColumn::PrimaryKeyColumn(const Table* table, QString name, QString uiN
  * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  * @param primaryKey	Whether the column contains primary keys.
  */
-ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey) :
+ForeignKeyColumn::ForeignKeyColumn(const Table& table, QString name, QString uiName, bool nullable, PrimaryKeyColumn& foreignColumn, bool primaryKey) :
 	Column(table, name, uiName, primaryKey, &foreignColumn, ID, nullable)
 {}
 
@@ -277,7 +282,7 @@ ForeignKeyColumn::ForeignKeyColumn(const Table* table, QString name, QString uiN
  * @param uiName	The name of the column as it should be displayed in the UI.
  * @param foreignColumn	The foreign column referenced by this column if it contains foreign keys.
  */
-PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table* table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn) :
+PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table& table, QString name, QString uiName, PrimaryKeyColumn& foreignColumn) :
 	ForeignKeyColumn(table, name, uiName, false, foreignColumn, true)
 {}
 
@@ -375,9 +380,9 @@ QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& wha
 	int numAffectedItems = whatIfResult.numAffectedRowIndices;
 	QString itemName;
 	if (numAffectedItems == 1) {
-		itemName = whatIfResult.itemTable->getItemNameSingularLowercase();
+		itemName = whatIfResult.itemTable.getItemNameSingularLowercase();
 	} else {
-		itemName = whatIfResult.itemTable->getItemNamePluralLowercase();
+		itemName = whatIfResult.itemTable.getItemNamePluralLowercase();
 	}
 	/*: This will be part of a listing of consequences of deleting an item.
 	 *  An example would be: "Hiker will be removed from 42 ascents."

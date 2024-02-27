@@ -33,9 +33,9 @@
 SettingsTable::SettingsTable() :
 	Table("ProjectSettings", tr("Project settings"), false),
 	//												name				uiName							type	nullable
-	primaryKeyColumn	(PrimaryKeyColumn	(this,	"projectSettingID",	tr("Project setting ID"))),
-	settingKeyColumn	(ValueColumn		(this,	"settingKey",		tr("Project setting key"),		String,	false)),
-	settingValueColumn	(ValueColumn		(this,	"settingValue",		tr("Project setting value"),	String,	true))
+	primaryKeyColumn	(PrimaryKeyColumn	(*this,	"projectSettingID",	tr("Project setting ID"))),
+	settingKeyColumn	(ValueColumn		(*this,	"settingKey",		tr("Project setting key"),		String,	false)),
+	settingValueColumn	(ValueColumn		(*this,	"settingValue",		tr("Project setting value"),	String,	true))
 {
 	addColumn(primaryKeyColumn);
 	addColumn(settingKeyColumn);

@@ -34,7 +34,7 @@
 HikersTable::HikersTable() :
 	NormalTable(QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
 	//									name	uiName		type	nullable
-	nameColumn	(ValueColumn	(this,	"name",	tr("Name"),	String,	false))
+	nameColumn	(ValueColumn	(*this,	"name",	tr("Name"),	String,	false))
 {
 	addColumn(nameColumn);
 }

@@ -471,7 +471,7 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QStrin
 	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
 {
-	assert(contentColumn.table == breadcrumbs.getTargetTable());
+	assert(&contentColumn.table == &breadcrumbs.getTargetTable());
 }
 
 
@@ -527,7 +527,7 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable& table, QStr
 	minuendColumn(minuendColumn),
 	subtrahendColumn(subtrahendColumn)
 {
-	assert(minuendColumn.table == subtrahendColumn.table);
+	assert(&minuendColumn.table == &subtrahendColumn.table);
 	assert(!minuendColumn.isKey() && !subtrahendColumn.isKey());
 	assert(minuendColumn.type == subtrahendColumn.type);
 	assert(&minuendColumn != &subtrahendColumn);
@@ -601,7 +601,7 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable& table
 	discerningEnumColumn(discerningEnumColumn),
 	displayedEnumColumn(displayedEnumColumn)
 {
-	assert(discerningEnumColumn.table == displayedEnumColumn.table);
+	assert(&discerningEnumColumn.table == &displayedEnumColumn.table);
 	assert(!discerningEnumColumn.isKey() && !displayedEnumColumn.isKey());
 	assert(discerningEnumColumn.type == DualEnum && displayedEnumColumn.type == DualEnum);
 	assert(discerningEnumColumn.enumNameLists == displayedEnumColumn.enumNameLists);
@@ -661,7 +661,7 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, 
 {
 	assert(!sortingPasses.isEmpty());
 	for (const auto& [column, order] : sortingPasses) {
-		assert(column.table == &table.getBaseTable());
+		assert(&column.table == &table.getBaseTable());
 		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
 }
@@ -702,7 +702,7 @@ QList<QVariant> IndexCompositeColumn::computeWholeColumn() const
 
 QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
 {
-	int numberOfRows = sortingPasses.at(0).column.table->getNumberOfRows();
+	int numberOfRows = sortingPasses.at(0).column.table.getNumberOfRows();
 	// Local order buffer which represents the ordered list of row indices
 	QList<BufferRowIndex> order = QList<BufferRowIndex>();
 	for (BufferRowIndex index = BufferRowIndex(0); index.isValid(numberOfRows); index++) {

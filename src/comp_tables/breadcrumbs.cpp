@@ -38,14 +38,14 @@ Breadcrumb::Breadcrumb(Column& firstColumn, Column& secondColumn) :
 	firstColumn(firstColumn),
 	secondColumn(secondColumn)
 {
-	assert(firstColumn.table != secondColumn.table);
+	assert(&firstColumn.table != &secondColumn.table);
 	assert(firstColumn.isForeignKey() != secondColumn.isForeignKey());
 	if (isForward()) {
 		assert(secondColumn.isPrimaryKey());
-		assert(firstColumn.getReferencedForeignColumn() == &secondColumn);
+		assert(&firstColumn.getReferencedForeignColumn() == &secondColumn);
 	} else {
 		assert(firstColumn.isPrimaryKey());
-		assert(secondColumn.getReferencedForeignColumn() == &firstColumn);
+		assert(&secondColumn.getReferencedForeignColumn() == &firstColumn);
 	}
 }
 
@@ -143,17 +143,17 @@ Breadcrumbs::Breadcrumbs(const QList<Breadcrumb>& breadcrumbs) :
 	list(breadcrumbs)
 {
 	if (!list.isEmpty()) {
-		assert(!list.first().firstColumn.table->isAssociative);
-		assert(!list.last().secondColumn.table->isAssociative);
+		assert(!list.first().firstColumn.table.isAssociative);
+		assert(!list.last().secondColumn.table.isAssociative);
 		
 		const Table* previousTable = nullptr;
-		const Table* currentTable = list.first().firstColumn.table;
+		const Table* currentTable = &list.first().firstColumn.table;
 		for (const auto& [firstColumn, secondColumn] : list) {
-			assert(firstColumn.table == currentTable);
-			assert(secondColumn.table != previousTable);
+			assert(&firstColumn.table == currentTable);
+			assert(&secondColumn.table != previousTable);
 			
-			previousTable = firstColumn.table;
-			currentTable = secondColumn.table;
+			previousTable = &firstColumn.table;
+			currentTable = &secondColumn.table;
 		}
 	}
 }
@@ -190,10 +190,10 @@ const QSet<Column*> Breadcrumbs::getColumnSet() const
  * 
  * @return	The first table in the breadcrumb trail.
  */
-const NormalTable* Breadcrumbs::getStartTable() const
+const NormalTable& Breadcrumbs::getStartTable() const
 {
 	assert(!list.isEmpty());
-	return (NormalTable*) list.first().firstColumn.table;
+	return (NormalTable&) list.first().firstColumn.table;
 }
 
 /**
@@ -203,10 +203,10 @@ const NormalTable* Breadcrumbs::getStartTable() const
  * 
  * @return	The last table in the breadcrumb trail.
  */
-const NormalTable* Breadcrumbs::getTargetTable() const
+const NormalTable& Breadcrumbs::getTargetTable() const
 {
 	assert(!list.isEmpty());
-	return (NormalTable*) list.last().secondColumn.table;
+	return (NormalTable&) list.last().secondColumn.table;
 }
 
 
@@ -240,7 +240,7 @@ bool Breadcrumbs::goesVia(const Table& table) const
 {
 	for (int i = 1; i < list.size(); i++) {
 		const Breadcrumb& crumb = list.at(i);
-		if (crumb.firstColumn.table == &table) {
+		if (&crumb.firstColumn.table == &table) {
 			return true;
 		}
 	}
@@ -283,9 +283,9 @@ bool Breadcrumbs::operator!=(const Breadcrumbs& other) const
 void Breadcrumbs::append(const Breadcrumb& breadcrumb)
 {
 	if (list.isEmpty()) {
-		assert(!breadcrumb.firstColumn.table->isAssociative);
+		assert(!breadcrumb.firstColumn.table.isAssociative);
 	} else {
-		assert(list.last().secondColumn.table == breadcrumb.firstColumn.table);
+		assert(&list.last().secondColumn.table == &breadcrumb.firstColumn.table);
 	}
 	
 	list.append(breadcrumb);
@@ -347,14 +347,14 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 		if (currentKeySet.isEmpty()) return QSet<BufferRowIndex>();
 		
 		currentRowIndexSet.clear();
-		const Table* const table = crumb.secondColumn.table;
+		const Table& table = crumb.secondColumn.table;
 		
 		// The second half of the transfer is dependent on the reference direction:
 		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
 			// Find row matching each primary key
 			for (const ValidItemID& key : currentKeySet) {
-				BufferRowIndex bufferRowIndex = table->getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
+				BufferRowIndex bufferRowIndex = table.getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
 				// Add new buffer index to current set
 				currentRowIndexSet.insert(bufferRowIndex);
 			}
@@ -363,7 +363,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			// Backward reference (reference search, result for each input element is key set)
 			// Find rows in new table where key in secondColumn matches any key in current set
 			for (const ValidItemID& key : currentKeySet) {
-				const QList<BufferRowIndex> bufferRowIndexList = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
+				const QList<BufferRowIndex> bufferRowIndexList = table.getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				// Add new buffer indices to current set
 				currentRowIndexSet.unite(matchingBufferRowIndices);
@@ -391,18 +391,18 @@ BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferR
 		assert(crumb.isForward());
 		
 		// Look up key stored in current column at current row index
-		const Column& currentColumn = crumb.firstColumn;
+		const ForeignKeyColumn& currentColumn = (ForeignKeyColumn&) crumb.firstColumn;
 		const ItemID key = currentColumn.getValueAt(currentRowIndex);
 		
 		if (key.isInvalid()) return BufferRowIndex();
 		
 		// Get referenced primary key column of other table
-		const PrimaryKeyColumn& referencedColumn = *currentColumn.getReferencedForeignColumn();
-		assert(!referencedColumn.table->isAssociative);
-		const NormalTable* currentTable = (NormalTable*) referencedColumn.table;
+		const PrimaryKeyColumn& referencedColumn = currentColumn.getReferencedForeignColumn();
+		assert(!referencedColumn.table.isAssociative);
+		const NormalTable& currentTable = (NormalTable&) referencedColumn.table;
 		
 		// Find row index that contains the current primary key
-		currentRowIndex = currentTable->getBufferIndexForPrimaryKey(FORCE_VALID(key));
+		currentRowIndex = currentTable.getBufferIndexForPrimaryKey(FORCE_VALID(key));
 		assert(currentRowIndex.isValid());
 	}
 	
@@ -440,14 +440,14 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 		if (currentKeyList.isEmpty()) return QList<BufferRowIndex>();
 		
 		currentRowIndexList.clear();
-		const Table* const table = crumb.secondColumn.table;
+		const Table& table = crumb.secondColumn.table;
 		
 		// The second half of the transfer is dependent on the reference direction:
 		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
 			// Find row matching each primary key
 			for (const ValidItemID& key : currentKeyList) {
-				BufferRowIndex bufferRowIndex = table->getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
+				BufferRowIndex bufferRowIndex = table.getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
 				// Add new buffer index to current list
 				currentRowIndexList.append(bufferRowIndex);
 			}
@@ -456,13 +456,13 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 			// Backward reference (reference search, result for each input element is key list)
 			// Find rows in new table where key in secondColumn matches any key in current list
 			for (const ValidItemID& key : currentKeyList) {
-				const QList<BufferRowIndex> matchingBufferRowIndices = table->getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
+				const QList<BufferRowIndex> matchingBufferRowIndices = table.getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				// Add new buffer indices to current list
 				currentRowIndexList.append(matchingBufferRowIndices);
 			}
 		}
 		
-		if (crumb.firstColumn.table->isAssociative && initialBufferRowIndices.size() > 1) {
+		if (crumb.firstColumn.table.isAssociative && initialBufferRowIndices.size() > 1) {
 			// Coming out of associative table => Remove all duplicates
 			const QSet<BufferRowIndex> currentRowIndexSet = QSet<BufferRowIndex>(currentRowIndexList.constBegin(), currentRowIndexList.constEnd());
 			currentRowIndexList.clear();

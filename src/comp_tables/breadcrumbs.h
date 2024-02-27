@@ -72,8 +72,8 @@ public:
 	Breadcrumbs(const QList<Breadcrumb>& initList);
 	
 	const QSet<Column*> getColumnSet() const;
-	const NormalTable* getStartTable() const;
-	const NormalTable* getTargetTable() const;
+	const NormalTable& getStartTable() const;
+	const NormalTable& getTargetTable() const;
 	bool isEmpty() const;
 	int length() const;
 	bool goesVia(const Table& table) const;

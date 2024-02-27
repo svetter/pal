@@ -142,11 +142,11 @@ public:
  * A struct for storing a singular result of a what-if delete investigation.
  */
 struct WhatIfDeleteResult {
-	const Table*		affectedTable;
-	const NormalTable*	itemTable;
+	const Table&		affectedTable;
+	const NormalTable&	itemTable;
 	int					numAffectedRowIndices;
 	
-	WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices);
+	WhatIfDeleteResult(const Table& affectedTable, const NormalTable& itemTable, int numAffectedRowIndices);
 };
 
 

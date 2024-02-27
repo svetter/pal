@@ -34,7 +34,7 @@
 CountriesTable::CountriesTable() :
 	NormalTable(QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
 	//									name	uiName		type	nullable
-	nameColumn	(ValueColumn	(this,	"name",	tr("Name"),	String,	false))
+	nameColumn	(ValueColumn	(*this,	"name",	tr("Name"),	String,	false))
 {
 	addColumn(nameColumn);
 }

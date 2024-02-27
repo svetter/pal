@@ -34,10 +34,10 @@
 TripsTable::TripsTable() :
 	NormalTable(QString("Trips"), tr("Trips"), "tripID", tr("Trip ID")),
 	//										name			uiName				type	nullable
-	nameColumn			(ValueColumn(this,	"name",			tr("Name"),			String,	false)),
-	startDateColumn		(ValueColumn(this,	"startDate",	tr("Start date"),	Date,	true)),
-	endDateColumn		(ValueColumn(this,	"endDate",		tr("End date"),		Date,	true)),
-	descriptionColumn	(ValueColumn(this,	"description",	tr("Description"),	String,	true))
+	nameColumn			(ValueColumn(*this,	"name",			tr("Name"),			String,	false)),
+	startDateColumn		(ValueColumn(*this,	"startDate",	tr("Start date"),	Date,	true)),
+	endDateColumn		(ValueColumn(*this,	"endDate",		tr("End date"),		Date,	true)),
+	descriptionColumn	(ValueColumn(*this,	"description",	tr("Description"),	String,	true))
 {
 	addColumn(nameColumn);
 	addColumn(startDateColumn);

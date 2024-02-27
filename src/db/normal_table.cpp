@@ -41,7 +41,7 @@
  */
 NormalTable::NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName) :
 	Table(name, uiName, false),
-	primaryKeyColumn(PrimaryKeyColumn(this, primaryKeyColumnName, primaryKeyColumnUIName))
+	primaryKeyColumn(PrimaryKeyColumn(*this, primaryKeyColumnName, primaryKeyColumnUIName))
 {
 	addColumn(primaryKeyColumn);
 }

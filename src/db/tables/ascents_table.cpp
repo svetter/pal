@@ -39,18 +39,18 @@
 AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyColumn& foreignTripIDColumn) :
 	NormalTable(QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
 	//													name				uiName				type		nullable	foreignColumn/enumNames/enumNameLists
-	titleColumn				(ValueColumn		(this,	"title",			tr("Title"),		String,		true)),
-	peakIDColumn			(ForeignKeyColumn	(this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),
-	dateColumn				(ValueColumn		(this,	"date",				tr("Date"),			Date,		true)),
-	peakOnDayColumn			(ValueColumn		(this,	"peakOnDay",		tr("Peak/day"),		Integer,	false)),
-	timeColumn				(ValueColumn		(this,	"time",				tr("Local time"),	Time,		true)),
-	elevationGainColumn		(ValueColumn		(this,	"elevationGain",	tr("Elev. gain"),	Integer,	true)),
-	hikeKindColumn			(ValueColumn		(this,	"hikeKind",			tr("Kind of hike"),	Enum,		false,		&EnumNames::hikeKindNames)),
-	traverseColumn			(ValueColumn		(this,	"traverse",			tr("Traverse"),		Bit,		false)),
-	difficultySystemColumn	(ValueColumn		(this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
-	difficultyGradeColumn	(ValueColumn		(this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
-	tripIDColumn			(ForeignKeyColumn	(this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
-	descriptionColumn		(ValueColumn		(this,	"description",		tr("Description"),	String,		true))
+	titleColumn				(ValueColumn		(*this,	"title",			tr("Title"),		String,		true)),
+	peakIDColumn			(ForeignKeyColumn	(*this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),
+	dateColumn				(ValueColumn		(*this,	"date",				tr("Date"),			Date,		true)),
+	peakOnDayColumn			(ValueColumn		(*this,	"peakOnDay",		tr("Peak/day"),		Integer,	false)),
+	timeColumn				(ValueColumn		(*this,	"time",				tr("Local time"),	Time,		true)),
+	elevationGainColumn		(ValueColumn		(*this,	"elevationGain",	tr("Elev. gain"),	Integer,	true)),
+	hikeKindColumn			(ValueColumn		(*this,	"hikeKind",			tr("Kind of hike"),	Enum,		false,		&EnumNames::hikeKindNames)),
+	traverseColumn			(ValueColumn		(*this,	"traverse",			tr("Traverse"),		Bit,		false)),
+	difficultySystemColumn	(ValueColumn		(*this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+	difficultyGradeColumn	(ValueColumn		(*this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
+	tripIDColumn			(ForeignKeyColumn	(*this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
+	descriptionColumn		(ValueColumn		(*this,	"description",		tr("Description"),	String,		true))
 {
 	addColumn(titleColumn);
 	addColumn(peakIDColumn);

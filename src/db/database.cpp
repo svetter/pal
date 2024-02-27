@@ -282,44 +282,43 @@ void Database::computeBreadcrumbMatrix()
 			AssociativeTable* const associativeTable = (AssociativeTable*) table;
 			PrimaryForeignKeyColumn& column1 = associativeTable->getColumn1();
 			PrimaryForeignKeyColumn& column2 = associativeTable->getColumn2();
-			PrimaryKeyColumn* const foreignColumn1 = column1.getReferencedForeignColumn();
-			PrimaryKeyColumn* const foreignColumn2 = column2.getReferencedForeignColumn();
-			const NormalTable* const foreignTable1 = (NormalTable*) foreignColumn1->table;
-			const NormalTable* const foreignTable2 = (NormalTable*) foreignColumn2->table;
-			assert(foreignColumn1 && foreignColumn2 && foreignTable1 && foreignTable2);
+			PrimaryKeyColumn& foreignColumn1 = column1.getReferencedForeignColumn();
+			PrimaryKeyColumn& foreignColumn2 = column2.getReferencedForeignColumn();
+			const NormalTable& foreignTable1 = (NormalTable&) foreignColumn1.table;
+			const NormalTable& foreignTable2 = (NormalTable&) foreignColumn2.table;
 			
-			assert(breadcrumbMatrix[foreignTable1][foreignTable2].isEmpty());
-			assert(breadcrumbMatrix[foreignTable2][foreignTable1].isEmpty());
+			assert(breadcrumbMatrix[&foreignTable1][&foreignTable2].isEmpty());
+			assert(breadcrumbMatrix[&foreignTable2][&foreignTable1].isEmpty());
 			
 			// Foreign table to other foreign table via associative table (either side)
-			breadcrumbMatrix[foreignTable1][foreignTable2] = Breadcrumbs({
-				{*foreignColumn1,	column1},
-				{column2,			*foreignColumn2}
+			breadcrumbMatrix[&foreignTable1][&foreignTable2] = Breadcrumbs({
+				{foreignColumn1,	column1},
+				{column2,			foreignColumn2}
 			});
-			breadcrumbMatrix[foreignTable2][foreignTable1] = Breadcrumbs({
-				{*foreignColumn2,	column2},
-				{column1,			*foreignColumn1}
+			breadcrumbMatrix[&foreignTable2][&foreignTable1] = Breadcrumbs({
+				{foreignColumn2,	column2},
+				{column1,			foreignColumn1}
 			});
 			numFilled += 2;
 		}
 		
 		else {
 			// Normal table
-			const NormalTable* const normalTable = (NormalTable*) table;
-			QList<const Column*> foreignKeyColumns = normalTable->getForeignKeyColumnList();
-			for (const Column* const column : foreignKeyColumns) {
-				ForeignKeyColumn* const localColumn = (ForeignKeyColumn*) column;
-				PrimaryKeyColumn* const foreignColumn = column->getReferencedForeignColumn();
-				const NormalTable* const foreignTable = (NormalTable*) foreignColumn->table;
+			const NormalTable& normalTable = (NormalTable&) *table;
+			QList<const ForeignKeyColumn*> foreignKeyColumns = normalTable.getForeignKeyColumnTypedList();
+			for (const ForeignKeyColumn* const column : foreignKeyColumns) {
+				ForeignKeyColumn& localColumn = (ForeignKeyColumn&) *column;	// This is casting the const away
+				PrimaryKeyColumn& foreignColumn = column->getReferencedForeignColumn();
+				NormalTable& foreignTable = (NormalTable&) foreignColumn.table;
 				
-				assert(breadcrumbMatrix[normalTable][foreignTable].isEmpty());
-				assert(breadcrumbMatrix[foreignTable][normalTable].isEmpty());
+				assert(breadcrumbMatrix[&normalTable][&foreignTable].isEmpty());
+				assert(breadcrumbMatrix[&foreignTable][&normalTable].isEmpty());
 				
-				breadcrumbMatrix[normalTable][foreignTable] = Breadcrumbs({
-					{*localColumn, *foreignColumn}
+				breadcrumbMatrix[&normalTable][&foreignTable] = Breadcrumbs({
+					{localColumn, foreignColumn}
 				});
-				breadcrumbMatrix[foreignTable][normalTable] = Breadcrumbs({
-					{*foreignColumn, *localColumn}
+				breadcrumbMatrix[&foreignTable][&normalTable] = Breadcrumbs({
+					{foreignColumn, localColumn}
 				});
 				numFilled += 2;
 			}
@@ -791,42 +790,43 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 		
 		// Look for references in associative table
 		if (candidateTable->isAssociative) {
-			AssociativeTable* candidateAssociativeTable = (AssociativeTable*) candidateTable;
+			AssociativeTable& candidateAssociativeTable = (AssociativeTable&) *candidateTable;
 			
-			const PrimaryForeignKeyColumn* matchingColumn = candidateAssociativeTable->getOwnColumnReferencing(primaryKeyColumn);
+			const PrimaryForeignKeyColumn* matchingColumn = candidateAssociativeTable.getOwnColumnReferencing(primaryKeyColumn);
 			if (!matchingColumn) continue;
 			
 			// WHAT IF
 			if (searchNotExecute) {
 				int numAffectedRowIndices = 0;
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					numAffectedRowIndices += candidateAssociativeTable->getNumberOfMatchingRows(*matchingColumn, primaryKey);
+					numAffectedRowIndices += candidateAssociativeTable.getNumberOfMatchingRows(*matchingColumn, primaryKey);
 				}
 				if (numAffectedRowIndices > 0) {
-					const NormalTable* itemTable = candidateAssociativeTable->traverseAssociativeRelation(primaryKeyColumn);
+					const NormalTable& itemTable = candidateAssociativeTable.traverseAssociativeRelation(primaryKeyColumn);
 					result.append(WhatIfDeleteResult(candidateAssociativeTable, itemTable, numAffectedRowIndices));
 				}
 			}
 			// EXECUTE
 			else {
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					candidateAssociativeTable->removeMatchingRows(parent, *matchingColumn, primaryKey);
+					candidateAssociativeTable.removeMatchingRows(parent, *matchingColumn, primaryKey);
 				}
 			}
 		}
 		
 		// Look for references in normal table
 		else {
-			NormalTable* candidateNormalTable = (NormalTable*) candidateTable;
+			NormalTable& candidateNormalTable = (NormalTable&) *candidateTable;
 			
 			QSet<BufferRowIndex> affectedRowIndices = QSet<BufferRowIndex>();
 			QList<QPair<const Column*, QList<BufferRowIndex>>> affectedCells = QList<QPair<const Column*, QList<BufferRowIndex>>>();
 			
-			for (const Column* otherTableColumn : candidateNormalTable->getColumnList()) {
-				if (otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
+			for (const Column* otherTableColumn : candidateNormalTable.getColumnList()) {
+				if (!otherTableColumn->isForeignKey()) continue;
+				if (&otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
 				
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					QList<BufferRowIndex> rowIndexList = candidateNormalTable->getMatchingBufferRowIndices(*otherTableColumn, ID_GET(primaryKey));
+					QList<BufferRowIndex> rowIndexList = candidateNormalTable.getMatchingBufferRowIndices(*otherTableColumn, ID_GET(primaryKey));
 					QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
 					
 					affectedRowIndices.unite(rowIndexSet);
@@ -843,13 +843,13 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			// EXECUTE
 			else {
 				for (const auto& [affectedColumn, rowIndices] : affectedCells) {
-					NormalTable* affectedTable = (NormalTable*) affectedColumn->table;
-					const PrimaryKeyColumn& affectedPrimaryKeyColumn = affectedTable->primaryKeyColumn;
+					NormalTable& affectedTable = (NormalTable&) affectedColumn->table;
+					const PrimaryKeyColumn& affectedPrimaryKeyColumn = affectedTable.primaryKeyColumn;
 					
 					for (const BufferRowIndex& rowIndex : rowIndices) {
 						ValidItemID primaryKey = VALID_ITEM_ID(affectedPrimaryKeyColumn.getValueAt(rowIndex));
 						// Remove single instance of reference to the key about to be removed
-						candidateNormalTable->updateCell(parent, primaryKey, *affectedColumn, ItemID().asQVariant());
+						candidateNormalTable.updateCell(parent, primaryKey, *affectedColumn, ItemID().asQVariant());
 					}
 				}
 			}
@@ -870,7 +870,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
  * @param itemTable				The table that contains the item that is to be deleted.
  * @param numAffectedRowIndices	The number of rows in the affected table that would be affected by the deletion.
  */
-WhatIfDeleteResult::WhatIfDeleteResult(const Table* affectedTable, const NormalTable* itemTable, int numAffectedRowIndices) :
+WhatIfDeleteResult::WhatIfDeleteResult(const Table& affectedTable, const NormalTable& itemTable, int numAffectedRowIndices) :
 	affectedTable(affectedTable),
 	itemTable(itemTable),
 	numAffectedRowIndices(numAffectedRowIndices)

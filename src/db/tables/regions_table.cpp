@@ -37,9 +37,9 @@
 RegionsTable::RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn) :
 	NormalTable(QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
 	//											name			uiName						type	nullable	foreignColumn
-	nameColumn		(ValueColumn		(this,	"name",			tr("Name"),					String,	false)),
-	rangeIDColumn	(ForeignKeyColumn	(this,	"rangeID",		tr("Mountain range ID"),			true,		foreignRangeIDColumn)),
-	countryIDColumn	(ForeignKeyColumn	(this,	"countryID",	tr("Country ID"),					true,		foreignCountryIDColumn))
+	nameColumn		(ValueColumn		(*this,	"name",			tr("Name"),					String,	false)),
+	rangeIDColumn	(ForeignKeyColumn	(*this,	"rangeID",		tr("Mountain range ID"),			true,		foreignRangeIDColumn)),
+	countryIDColumn	(ForeignKeyColumn	(*this,	"countryID",	tr("Country ID"),					true,		foreignCountryIDColumn))
 {
 	addColumn(nameColumn);
 	addColumn(rangeIDColumn);

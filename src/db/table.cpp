@@ -117,6 +117,20 @@ QList<const Column*> Table::getPrimaryKeyColumnList() const
 }
 
 /**
+ * Returns a typed list of all primary key columns in the table.
+ * 
+ * @return	A typed list of all primary key columns in the table.
+ */
+QList<const PrimaryKeyColumn*> Table::getPrimaryKeyColumnTypedList() const
+{
+	QList<const PrimaryKeyColumn*> primaryKeyColumns = QList<const PrimaryKeyColumn*>();
+	for (const Column* column : getPrimaryKeyColumnList()) {
+		primaryKeyColumns.append((PrimaryKeyColumn*) column);
+	}
+	return primaryKeyColumns;
+}
+
+/**
  * Returns a list of all foreign key columns in the table.
  * 
  * @return	A list of all foreign key columns in the table.
@@ -126,6 +140,20 @@ QList<const Column*> Table::getForeignKeyColumnList() const
 	QList<const Column*> foreignKeyColumns = QList<const Column*>();
 	for (const Column* column : columns) {
 		if (column->foreignColumn) foreignKeyColumns.append(column);
+	}
+	return foreignKeyColumns;
+}
+
+/**
+ * Returns a typed list of all foreign key columns in the table.
+ * 
+ * @return	A typed list of all foreign key columns in the table.
+ */
+QList<const ForeignKeyColumn*> Table::getForeignKeyColumnTypedList() const
+{
+	QList<const ForeignKeyColumn*> foreignKeyColumns = QList<const ForeignKeyColumn*>();
+	for (const Column* column : getForeignKeyColumnList()) {
+		foreignKeyColumns.append((const ForeignKeyColumn*) column);
 	}
 	return foreignKeyColumns;
 }
@@ -398,7 +426,7 @@ void Table::updateCellInNormalTable(QWidget* parent, const ValidItemID primaryKe
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
-	assert(column.table == this);
+	assert(&column.table == this);
 	
 	// Update cell in SQL database
 	updateCellOfNormalTableInSql(parent, primaryKey, column, data);
@@ -709,7 +737,7 @@ void Table::removeRowFromSql(QWidget* parent, const QList<const Column*>& primar
 	for (int i = 0; i < primaryKeys.size(); i++) {
 		if (i > 0) condition.append(" AND ");
 		const Column& column = *primaryKeyColumns.at(i);
-		assert(column.table == this && column.isPrimaryKey());
+		assert(&column.table == this && column.isPrimaryKey());
 		
 		condition.append(column.name + " = " + QString::number(ID_GET(primaryKeys.at(i))));
 	}

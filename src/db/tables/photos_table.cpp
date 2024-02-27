@@ -37,10 +37,10 @@
 PhotosTable::PhotosTable(PrimaryKeyColumn& foreignAscentIDColumn) :
 	NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
 	//												name			uiName				type		nullable	foreignColumn
-	ascentIDColumn		(ForeignKeyColumn	(this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
-	sortIndexColumn		(ValueColumn		(this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
-	filepathColumn		(ValueColumn		(this,	"filepath",		tr("File path"),	String,		false)),
-	descriptionColumn	(ValueColumn		(this,	"description",	tr("Description"),	String,		true))
+	ascentIDColumn		(ForeignKeyColumn	(*this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
+	sortIndexColumn		(ValueColumn		(*this,	"sortIndex",	tr("Sort index"),	Integer,	true)),
+	filepathColumn		(ValueColumn		(*this,	"filepath",		tr("File path"),	String,		false)),
+	descriptionColumn	(ValueColumn		(*this,	"description",	tr("Description"),	String,		true))
 {
 	addColumn(ascentIDColumn);
 	addColumn(sortIndexColumn);

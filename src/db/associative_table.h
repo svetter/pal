@@ -48,9 +48,9 @@ public:
 	// Column info
 	PrimaryForeignKeyColumn& getColumn1();
 	PrimaryForeignKeyColumn& getColumn2();
-	const PrimaryForeignKeyColumn* getOtherColumn(const PrimaryForeignKeyColumn& column) const;
+	const PrimaryForeignKeyColumn& getOtherColumn(const PrimaryForeignKeyColumn& column) const;
 	const PrimaryForeignKeyColumn* getOwnColumnReferencing(const PrimaryKeyColumn& column) const;
-	const NormalTable* traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const;
+	const NormalTable& traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const;
 	
 	// Buffer access
 	int getNumberOfMatchingRows(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const;

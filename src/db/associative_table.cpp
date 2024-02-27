@@ -39,8 +39,8 @@
  */
 AssociativeTable::AssociativeTable(QString name, QString uiName, PrimaryKeyColumn& foreignKeyColumn1, PrimaryKeyColumn& foreignKeyColumn2) :
 	Table(name, uiName, true),
-	column1(PrimaryForeignKeyColumn(this, foreignKeyColumn1.name, foreignKeyColumn1.uiName, foreignKeyColumn1)),
-	column2(PrimaryForeignKeyColumn(this, foreignKeyColumn2.name, foreignKeyColumn2.uiName, foreignKeyColumn2))
+	column1(PrimaryForeignKeyColumn(*this, foreignKeyColumn1.name, foreignKeyColumn1.uiName, foreignKeyColumn1)),
+	column2(PrimaryForeignKeyColumn(*this, foreignKeyColumn2.name, foreignKeyColumn2.uiName, foreignKeyColumn2))
 {
 	assert(foreignKeyColumn1.primaryKey && foreignKeyColumn1.type == DataType::ID);
 	assert(foreignKeyColumn2.primaryKey && foreignKeyColumn2.type == DataType::ID);
@@ -82,14 +82,17 @@ PrimaryForeignKeyColumn& AssociativeTable::getColumn2()
 /**
  * Given one column, returns the only other column of the table.
  * 
+ * @pre The given column is one of the two columns of the table.
+ * 
  * @param column	A column of the table.
  * @return			The other column of the table.
  */
-const PrimaryForeignKeyColumn* AssociativeTable::getOtherColumn(const PrimaryForeignKeyColumn& column) const
+const PrimaryForeignKeyColumn& AssociativeTable::getOtherColumn(const PrimaryForeignKeyColumn& column) const
 {
-	if (&column == &column1) return &column2;
-	if (&column == &column2) return &column1;
-	return nullptr;
+	if (&column == &column1) return column2;
+	if (&column == &column2) return column1;
+	assert(false);
+	return column;
 }
 
 /**
@@ -113,18 +116,17 @@ const PrimaryForeignKeyColumn* AssociativeTable::getOwnColumnReferencing(const P
  * In other words, given a column which is referenced by one of this table's columns, returns the
  * table which is referenced by this table's *other* column.
  * 
- * If the given column is not referenced by this table, nullptr is returned.
+ * @pre The given column is referenced by one of this table's columns.
  * 
  * @param foreignColumn	A key column in a foreign table.
  * @return				The table on the other side of the associative relation, or nullptr.
  */
-const NormalTable* AssociativeTable::traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const
+const NormalTable& AssociativeTable::traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const
 {
 	const PrimaryForeignKeyColumn* matchingOwnColumn = getOwnColumnReferencing(foreignColumn);
-	if (!matchingOwnColumn) return nullptr;
-	
-	const PrimaryForeignKeyColumn* otherColumn = getOtherColumn(*matchingOwnColumn);
-	return (NormalTable*) otherColumn->foreignColumn->table;
+	assert(matchingOwnColumn);
+	const PrimaryForeignKeyColumn& otherColumn = getOtherColumn(*matchingOwnColumn);
+	return (NormalTable&) otherColumn.foreignColumn->table;
 }
 
 
@@ -164,11 +166,11 @@ int AssociativeTable::getNumberOfMatchingRows(const PrimaryForeignKeyColumn& col
 QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const
 {
 	assert(&column == &column1 || &column == &column2);
-	const PrimaryForeignKeyColumn* otherColumn = getOtherColumn(column);
+	const PrimaryForeignKeyColumn& otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
 		if (bufferRow->at(column.getIndex()) == ID_GET(primaryKey)) {
-			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn->getIndex()).toInt()));
+			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn.getIndex()).toInt()));
 		}
 	}
 	return filtered;

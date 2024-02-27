@@ -275,12 +275,12 @@ QStringList HikerListFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buffe
 	
 	QString defaultHikerString = QString();
 	const ProjectSetting<int>& defaultHiker = getProjectSettings().defaultHiker;
-	const HikersTable* hikersTable = (HikersTable*) contentColumn->table;
+	const HikersTable& hikersTable = (HikersTable&) contentColumn->table;
 	
 	// Check whether default hiker is set and get name if so
 	if (defaultHiker.present()) {
 		ValidItemID defaultHikerID = VALID_ITEM_ID(defaultHiker.get());
-		BufferRowIndex defaultHikerRowIndex = hikersTable->getBufferIndexForPrimaryKey(defaultHikerID);
+		BufferRowIndex defaultHikerRowIndex = hikersTable.getBufferIndexForPrimaryKey(defaultHikerID);
 		if (rowIndexSet.contains(defaultHikerRowIndex)) {
 			QVariant content = contentColumn->getValueAt(defaultHikerRowIndex);
 			assert(content.canConvert<QString>());
