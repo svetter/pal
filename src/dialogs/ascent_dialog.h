@@ -62,6 +62,7 @@ public:
 	~AscentDialog();
 	
 	unique_ptr<Ascent> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -95,6 +96,7 @@ private:
 BufferRowIndex	openNewAscentDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
 BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openEditAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditAscentsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
 bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 

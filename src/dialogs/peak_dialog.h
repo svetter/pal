@@ -50,6 +50,7 @@ public:
 	~PeakDialog();
 	
 	unique_ptr<Peak> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -68,10 +69,11 @@ private:
 
 
 
-BufferRowIndex	openNewPeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db);
-BufferRowIndex	openDuplicatePeakDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openEditPeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeletePeaksDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+BufferRowIndex	openNewPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
+BufferRowIndex	openDuplicatePeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openEditPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditPeaksDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
+bool			openDeletePeaksDialogAndExecute		(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

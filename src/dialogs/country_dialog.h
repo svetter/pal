@@ -47,6 +47,7 @@ public:
 	~CountryDialog();
 	
 	unique_ptr<Country> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -61,9 +62,10 @@ private:
 
 
 
-BufferRowIndex	openNewCountryDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditCountryDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeleteCountriesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+BufferRowIndex	openNewCountryDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
+bool			openEditCountryDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditCountriesDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
+bool			openDeleteCountriesDialogAndExecute		(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

@@ -132,16 +132,13 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	}
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	case duplicateItem:
 		unique_ptr<Ascent> blankAscent = extractData();
@@ -149,6 +146,7 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 		this->init = std::move(blankAscent);
 		break;
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -669,6 +667,58 @@ bool openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 	}
 	if (extractedAscent->photos != originalPhotos) {
 		db.photosTable.updateRows(parent, *extractedAscent);
+	}
+	
+	return true;
+}
+
+/**
+ * Opens a multi-edit ascent dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the ascents to edit.
+ * @param initBufferRowIndex	The index of the ascent whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Ascent> originalAscent = db.getAscentAt(initBufferRowIndex);
+	
+	const QString windowTitle = AscentDialog::tr("Edit %1 ascents").arg(bufferRowIndices.size());
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	extractedAscent->ascentID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	const bool saveHikers	= columnsToSave.contains(&db.participatedTable.ascentIDColumn);
+	const bool savePhotos	= columnsToSave.contains(&db.photosTable.ascentIDColumn);
+	
+	QList<const Column*> ascentColumnsToSave = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	if (saveHikers)	ascentColumnsToSave.removeAll(&db.participatedTable.ascentIDColumn);
+	if (savePhotos)	ascentColumnsToSave.removeAll(&db.photosTable.ascentIDColumn);
+	
+	db.ascentsTable.updateRows(parent, bufferRowIndices, ascentColumnsToSave, *extractedAscent);
+	
+	if (saveHikers || savePhotos) {
+		QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
+		for (const BufferRowIndex& ascentBufferRow : bufferRowIndices) {
+			ascentIDs.insert(VALID_ITEM_ID(db.ascentsTable.primaryKeyColumn.getValueAt(ascentBufferRow)));
+		}
+		
+		if (saveHikers) {
+			db.participatedTable.updateRows(parent, ascentIDs, *extractedAscent);
+		}
+		if (savePhotos) {
+			db.photosTable.updateRows(parent, ascentIDs, extractedAscent->photos);
+		}
 	}
 	
 	return true;

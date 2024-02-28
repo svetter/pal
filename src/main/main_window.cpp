@@ -801,12 +801,12 @@ void MainWindow::editSelectedItems()
 		setStatusLine(tr("Saved changes in %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
 	}
 	else {
-		const bool changesMade = activeMapper.openMultiEditItemDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow);
+		const bool changesMade = activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow);
 		if (!changesMade) return;
 		
 		setStatusLine(tr("Saved changes in %1 %2.").arg(selectedBufferRows.size()).arg(activeMapper.baseTable.getItemNamePluralLowercase()));
 	}
-	performUpdatesAfterUserAction(activeMapper, false, markedBufferRow);
+	performUpdatesAfterUserAction(activeMapper, false);
 }
 
 /**

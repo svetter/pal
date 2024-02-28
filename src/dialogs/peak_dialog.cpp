@@ -85,16 +85,13 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	heightSpinner->setValue(Settings::peakDialog_initialHeight.get());
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	case duplicateItem:
 		unique_ptr<Peak> blankPeak = extractData();
@@ -102,6 +99,7 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 		this->init = std::move(blankPeak);
 		break;
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -315,6 +313,38 @@ bool openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
 	unique_ptr<Peak> extractedPeak = dialog.extractData();
 	
 	db.peaksTable.updateRow(parent, FORCE_VALID(originalPeakID), *extractedPeak);
+	return true;
+}
+
+/**
+ * Opens a multi-edit peak dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the peaks to edit.
+ * @param initBufferRowIndex	The index of the peak whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditPeaksDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Peak> originalPeak = db.getPeakAt(initBufferRowIndex);
+	
+	const QString windowTitle = PeakDialog::tr("Edit %1 peaks").arg(bufferRowIndices.size());
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalPeak));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Peak> extractedPeak = dialog.extractData();
+	extractedPeak->peakID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.peaksTable.updateRows(parent, bufferRowIndices, columnList, *extractedPeak);
 	return true;
 }
 

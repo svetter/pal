@@ -47,6 +47,7 @@ public:
 	~TripDialog();
 	
 	unique_ptr<Trip> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -65,9 +66,10 @@ private:
 
 
 
-BufferRowIndex	openNewTripDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditTripDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openDeleteTripsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+BufferRowIndex	openNewTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
+bool			openEditTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditTripsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
+bool			openDeleteTripsDialogAndExecute		(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

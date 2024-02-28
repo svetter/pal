@@ -76,20 +76,18 @@ RegionDialog::RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -271,6 +269,38 @@ bool openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 	unique_ptr<Region> extractedRegion = dialog.extractData();
 	
 	db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
+	return true;
+}
+
+/**
+ * Opens a multi-edit region dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the regions to edit.
+ * @param initBufferRowIndex	The index of the region whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditRegionsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Region> originalRegion = db.getRegionAt(initBufferRowIndex);
+	
+	const QString windowTitle = RegionDialog::tr("Edit %1 regions").arg(bufferRowIndices.size());
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalRegion));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	extractedRegion->regionID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.regionsTable.updateRows(parent, bufferRowIndices, columnList, *extractedRegion);
 	return true;
 }
 

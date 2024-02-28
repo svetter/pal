@@ -64,20 +64,18 @@ CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database&
 	connect(cancelButton,	&QPushButton::clicked,	this,	&CountryDialog::handle_cancel);
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -201,6 +199,38 @@ bool openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Dat
 	unique_ptr<Country> extractedCountry = dialog.extractData();
 	
 	db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
+	return true;
+}
+
+/**
+ * Opens a multi-edit country dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the countries to edit.
+ * @param initBufferRowIndex	The index of the country whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditCountriesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Country> originalCountry = db.getCountryAt(initBufferRowIndex);
+	
+	const QString windowTitle = CountryDialog::tr("Edit %1 countries").arg(bufferRowIndices.size());
+	
+	CountryDialog dialog = CountryDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalCountry));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Country> extractedCountry = dialog.extractData();
+	extractedCountry->countryID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.countriesTable.updateRows(parent, bufferRowIndices, columnList, *extractedCountry);
 	return true;
 }
 

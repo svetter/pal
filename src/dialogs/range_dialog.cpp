@@ -69,20 +69,18 @@ RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 	connect(cancelButton,	&QPushButton::clicked,	this,	&RangeDialog::handle_cancel);
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -219,6 +217,38 @@ bool openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 	unique_ptr<Range> extractedRange = dialog.extractData();
 	
 	db.rangesTable.updateRow(parent, FORCE_VALID(originalRangeID), *extractedRange);
+	return true;
+}
+
+/**
+ * Opens a multi-edit range dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the ranges to edit.
+ * @param initBufferRowIndex	The index of the range whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditRangesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Range> originalRange = db.getRangeAt(initBufferRowIndex);
+	
+	const QString windowTitle = RangeDialog::tr("Edit %1 mountain ranges").arg(bufferRowIndices.size());
+	
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalRange));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Range> extractedRange = dialog.extractData();
+	extractedRange->rangeID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.rangesTable.updateRows(parent, bufferRowIndices, columnList, *extractedRange);
 	return true;
 }
 

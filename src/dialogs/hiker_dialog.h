@@ -48,6 +48,7 @@ public:
 	~HikerDialog();
 	
 	unique_ptr<Hiker> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -64,6 +65,7 @@ private:
 
 BufferRowIndex	openNewHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
 bool			openEditHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditHikersDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
 bool			openDeleteHikersDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 

@@ -52,6 +52,7 @@ public:
 	~RegionDialog();
 	
 	unique_ptr<Region> extractData();
+	
 	virtual bool changesMade() override;
 	
 private:
@@ -72,6 +73,7 @@ private:
 
 BufferRowIndex	openNewRegionDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
 bool			openEditRegionDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
+bool			openMultiEditRegionsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
 bool			openDeleteRegionsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 

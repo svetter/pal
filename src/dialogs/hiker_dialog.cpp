@@ -64,20 +64,18 @@ HikerDialog::HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 	connect(cancelButton,	&QPushButton::clicked,		this,	&HikerDialog::handle_cancel);
 	
 	
-	changeUIForPurpose();
 	switch (purpose) {
 	case newItem:
 		this->init = extractData();
 		break;
 	case editItem:
-		insertInitData();
-		break;
 	case multiEdit:
-		// TODO
+		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -201,6 +199,38 @@ bool openEditHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 	unique_ptr<Hiker> extractedHiker = dialog.extractData();
 	
 	db.hikersTable.updateRow(parent, FORCE_VALID(originalHikerID), *extractedHiker);
+	return true;
+}
+
+/**
+ * Opens a multi-edit hiker dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the hikers to edit.
+ * @param initBufferRowIndex	The index of the hiker whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditHikersDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Hiker> originalHiker = db.getHikerAt(initBufferRowIndex);
+	
+	const QString windowTitle = HikerDialog::tr("Edit %1 hikers").arg(bufferRowIndices.size());
+	
+	HikerDialog dialog = HikerDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalHiker));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Hiker> extractedHiker = dialog.extractData();
+	extractedHiker->hikerID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.hikersTable.updateRows(parent, bufferRowIndices, columnList, *extractedHiker);
 	return true;
 }
 
