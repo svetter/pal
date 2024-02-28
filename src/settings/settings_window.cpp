@@ -37,8 +37,8 @@
  * 
  * @param mainWindow	The application's main window.
  */
-SettingsWindow::SettingsWindow(QMainWindow* mainWindow) :
-	QDialog(mainWindow),
+SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
+	QDialog(&mainWindow),
 	mainWindow(mainWindow),
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
@@ -46,7 +46,7 @@ SettingsWindow::SettingsWindow(QMainWindow* mainWindow) :
 {
 	setupUi(this);
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::settingsWindow_geometry);
 	
 	
 	connect(styleCombo,							&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedStyle);
@@ -306,7 +306,7 @@ void SettingsWindow::handle_peakHeightCheckboxChanged()
 void SettingsWindow::handle_save()
 {
 	saveSettings();
-	saveDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::settingsWindow_geometry);
 	accept();
 }
 
@@ -327,7 +327,7 @@ void SettingsWindow::handle_apply()
  */
 void SettingsWindow::handle_cancel()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::settingsWindow_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::settingsWindow_geometry);
 	setVisible(false);
 	applyStoredStyle();
 	QDialog::reject();

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>361</width>
     <height>300</height>
    </rect>
   </property>
@@ -38,11 +38,21 @@
       <number>10</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="nameLabel">
-       <property name="text">
-        <string>Name</string>
+      <layout class="QHBoxLayout" name="nameLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="nameCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="nameLabel">
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="nameLineEdit">
@@ -64,19 +74,35 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="datesLabel">
-       <property name="text">
-        <string>Date</string>
+      <layout class="QHBoxLayout" name="datesLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="datesCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="datesLabel">
+         <property name="text">
+          <string>Date</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="datesLayout">
+      <layout class="QHBoxLayout" name="datesSelectionLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
         <layout class="QFormLayout" name="datesForm">
+         <property name="horizontalSpacing">
+          <number>10</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>5</number>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="startDateLabel">
            <property name="text">
@@ -200,11 +226,28 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="descriptionLabel">
-     <property name="text">
-      <string>Description</string>
+    <layout class="QHBoxLayout" name="descriptionLabelLayout">
+     <property name="spacing">
+      <number>10</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QCheckBox" name="descriptionCheckbox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="descriptionLabel">
+       <property name="text">
+        <string>Description</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QPlainTextEdit" name="descriptionEditor">

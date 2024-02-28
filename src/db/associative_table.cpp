@@ -188,7 +188,7 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyCo
  * @param parent			The parent window.
  * @param columnDataPairs	Pairs of columns and corresponding data to add.
  */
-void AssociativeTable::addRow(QWidget* parent, const QList<ColumnDataPair>& columnDataPairs)
+void AssociativeTable::addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs)
 {
 	Table::addRow(parent, columnDataPairs);
 }
@@ -202,7 +202,7 @@ void AssociativeTable::addRow(QWidget* parent, const QList<ColumnDataPair>& colu
  * @param primaryKeyColumns	The primary key columns.
  * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
  */
-void AssociativeTable::removeRow(QWidget* parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
+void AssociativeTable::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
 	return Table::removeRow(parent, primaryKeyColumns, primaryKeys);
 }
@@ -216,9 +216,23 @@ void AssociativeTable::removeRow(QWidget* parent, const QList<const Column*>& pr
  * @param column	The column to check.
  * @param key		The value to check for.
  */
-void AssociativeTable::removeMatchingRows(QWidget* parent, const Column& column, ValidItemID primaryKey)
+void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column, ValidItemID primaryKey)
 {
 	return Table::removeMatchingRows(parent, column, primaryKey);
+}
+
+/**
+ * Removes all rows from the table where the given column has one of the given values.
+ * 
+ * Delegates to Table::removeMatchingRows(...).
+ *
+ * @param parent		The parent window.
+ * @param column		The column to check.
+ * @param primaryKeys	The values to check for.
+ */
+void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& primaryKeys)
+{
+	return Table::removeMatchingRows(parent, column, primaryKeys);
 }
 
 

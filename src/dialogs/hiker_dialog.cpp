@@ -42,16 +42,21 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
  */
-HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+HikerDialog::HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Hiker> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,	{{ nameLineEdit }, { &db.hikersTable.nameColumn }}}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::hikerDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -64,12 +69,13 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
+	case multiEdit:
 		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -77,18 +83,6 @@ HikerDialog::HikerDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
  */
 HikerDialog::~HikerDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString HikerDialog::getEditWindowTitle()
-{
-	return tr("Edit hiker");
-}
 
 
 
@@ -109,7 +103,7 @@ void HikerDialog::insertInitData()
  */
 unique_ptr<Hiker> HikerDialog::extractData()
 {
-	QString	name	= parseLineEdit	(nameLineEdit);
+	QString	name	= parseLineEdit	(*nameLineEdit);
 	
 	return make_unique<Hiker>(ItemID(), name);
 }
@@ -123,6 +117,10 @@ unique_ptr<Hiker> HikerDialog::extractData()
  */
 bool HikerDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
@@ -147,7 +145,7 @@ void HikerDialog::handle_ok()
  */
 void HikerDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::hikerDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::hikerDialog_geometry);
 }
 
 
@@ -162,9 +160,19 @@ void HikerDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new hiker in the database's hiker table buffer.
  */
-BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openHikerDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = HikerDialog::tr("New hiker");
+	
+	HikerDialog dialog = HikerDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Hiker> extractedHiker = dialog.extractData();
+	
+	const BufferRowIndex newHikerIndex = db.hikersTable.addRow(parent, *extractedHiker);
+	return newHikerIndex;
 }
 
 /**
@@ -176,11 +184,54 @@ BufferRowIndex openNewHikerDialogAndStore(QWidget* parent, QMainWindow* mainWind
  * @param bufferRowIndex	The index of the hiker to edit in the database's hiker table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Hiker> originalHiker = db.getHikerAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openHikerDialogAndStore(parent, mainWindow, db, editItem, std::move(originalHiker));
-	return editedIndex.isValid();
+	const ItemID originalHikerID = originalHiker->hikerID;
+	
+	const QString windowTitle = HikerDialog::tr("Edit hiker");
+	
+	HikerDialog dialog = HikerDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalHiker));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Hiker> extractedHiker = dialog.extractData();
+	
+	db.hikersTable.updateRow(parent, FORCE_VALID(originalHikerID), *extractedHiker);
+	return true;
+}
+
+/**
+ * Opens a multi-edit hiker dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the hikers to edit.
+ * @param initBufferRowIndex	The index of the hiker whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditHikersDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Hiker> originalHiker = db.getHikerAt(initBufferRowIndex);
+	
+	const QString windowTitle = HikerDialog::tr("Edit %1 hikers").arg(bufferRowIndices.size());
+	
+	HikerDialog dialog = HikerDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalHiker));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Hiker> extractedHiker = dialog.extractData();
+	extractedHiker->hikerID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.hikersTable.updateRows(parent, bufferRowIndices, columnList, *extractedHiker);
+	return true;
 }
 
 /**
@@ -192,7 +243,7 @@ bool openEditHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Datab
  * @param bufferRowIndices	The indices of the hikers to delete in the database's hiker table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -220,49 +271,4 @@ bool openDeleteHikersDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 	
 	db.removeRows(parent, db.hikersTable, hikerIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic hiker dialog and applies the resulting changes to the database.
- *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalHiker	The hiker data to initialize the dialog with and store as initial data. HikerDialog takes ownership of this pointer.
- * @return				The index of the new hiker in the database's hiker table buffer, or existing index of edited hiker. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openHikerDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Hiker> originalHiker)
-{
-	assert((bool) originalHiker != (purpose == newItem));
-	
-	const ItemID originalHikerID = (purpose != newItem) ? originalHiker->hikerID : ItemID();
-	if (purpose == duplicateItem) {
-		originalHiker->hikerID = ItemID();
-	}
-	BufferRowIndex newHikerIndex = BufferRowIndex();
-	
-	HikerDialog dialog = HikerDialog(parent, mainWindow, db, purpose, std::move(originalHiker));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Hiker> extractedHiker = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newHikerIndex = db.hikersTable.addRow(parent, *extractedHiker);
-			break;
-		case editItem:
-			db.hikersTable.updateRow(parent, FORCE_VALID(originalHikerID), *extractedHiker);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newHikerIndex = db.hikersTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalHikerID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newHikerIndex;
 }

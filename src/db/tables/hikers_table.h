@@ -43,8 +43,9 @@ public:
 	
 	HikersTable();
 	
-	BufferRowIndex addRow(QWidget* parent, Hiker& hiker);
-	void updateRow(QWidget* parent, ValidItemID hikerID, const Hiker& hiker);
+	BufferRowIndex addRow(QWidget& parent, Hiker& hiker);
+	void updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker);
+	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Hiker& hiker);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Hiker& hiker) const;
 	

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>725</height>
+    <width>479</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -44,11 +44,21 @@
       <number>10</number>
      </property>
      <item row="0" column="0">
-      <widget class="QLabel" name="titleLabel">
-       <property name="text">
-        <string>Ascent title</string>
+      <layout class="QHBoxLayout" name="titleLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="titleCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="titleLabel">
+         <property name="text">
+          <string>Ascent title</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="titleLineEdit">
@@ -70,21 +80,44 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="peakLabel">
-       <property name="text">
-        <string>Peak</string>
+      <layout class="QHBoxLayout" name="peakLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="peakCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="peakLabel">
+         <property name="text">
+          <string>Peak</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="1" column="1">
-      <layout class="QGridLayout" name="peakLayout">
+      <layout class="QGridLayout" name="peakSelectionLayout">
        <property name="horizontalSpacing">
         <number>10</number>
        </property>
        <property name="verticalSpacing">
-        <number>6</number>
+        <number>5</number>
        </property>
-       <item row="2" column="0">
+       <item row="0" column="0">
+        <widget class="QComboBox" name="regionFilterCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="placeholderText">
+          <string>Filter peaks by region</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QComboBox" name="peakCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -103,20 +136,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QComboBox" name="regionFilterCombo">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="placeholderText">
-          <string>Filter peaks by region</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
+       <item row="1" column="1">
         <widget class="QPushButton" name="newPeakButton">
          <property name="text">
           <string>New peak...</string>
@@ -130,68 +150,85 @@
       </layout>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="dateLabel">
-       <property name="text">
-        <string>Date</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="dateSelectionLayout">
+      <layout class="QHBoxLayout" name="dateLabelLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="dateCheckbox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QCheckBox" name="dateCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="dateLabel">
          <property name="text">
-          <string/>
+          <string>Date</string>
          </property>
         </widget>
        </item>
+      </layout>
+     </item>
+     <item row="2" column="1">
+      <layout class="QHBoxLayout" name="dateAndPeakIndexLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
-        <widget class="QDateEdit" name="dateWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="dateSelectionLayout">
+         <property name="spacing">
+          <number>10</number>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>90</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="maximumDate">
-          <date>
-           <year>2100</year>
-           <month>1</month>
-           <day>1</day>
-          </date>
-         </property>
-         <property name="minimumDate">
-          <date>
-           <year>1900</year>
-           <month>1</month>
-           <day>1</day>
-          </date>
-         </property>
-         <property name="calendarPopup">
-          <bool>true</bool>
-         </property>
-        </widget>
+         <item>
+          <widget class="QCheckBox" name="dateSpecifyCheckbox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="dateWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>90</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="maximumDate">
+            <date>
+             <year>2100</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
+           <property name="minimumDate">
+            <date>
+             <year>1900</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="dateSpacer1">
@@ -210,7 +247,10 @@
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="peakIndexLayout">
+        <widget class="QCheckBox" name="peakIndexCheckbox"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="peakIndexSelectionLayout">
          <property name="spacing">
           <number>5</number>
          </property>
@@ -255,19 +295,29 @@
       </layout>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="timeLabel">
-       <property name="text">
-        <string>Local time</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <layout class="QHBoxLayout" name="timeLayout">
+      <layout class="QHBoxLayout" name="timeLabelLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="timeCheckbox">
+        <widget class="QCheckBox" name="timeCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="timeLabel">
+         <property name="text">
+          <string>Local time</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="1">
+      <layout class="QHBoxLayout" name="timeSelectionLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="timeSpecifyCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -320,19 +370,29 @@
       </layout>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="elevationGainLabel">
-       <property name="text">
-        <string>Elevation gain</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <layout class="QHBoxLayout" name="elevationGainLayout">
+      <layout class="QHBoxLayout" name="elevationGainLabelLayout">
        <property name="spacing">
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="elevationGainCheckbox">
+        <widget class="QCheckBox" name="elevationGainCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="elevationGainLabel">
+         <property name="text">
+          <string>Elevation gain</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="1">
+      <layout class="QHBoxLayout" name="elevationGainSelectionLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="elevationGainSpecifyCheckbox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -385,14 +445,24 @@
       </layout>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="hikeKindLabel">
-       <property name="text">
-        <string>Kind of hike</string>
+      <layout class="QHBoxLayout" name="hikeKindLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="hikeKindCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="hikeKindLabel">
+         <property name="text">
+          <string>Kind of hike</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="5" column="1">
-      <layout class="QHBoxLayout" name="hikeKindLayout">
+      <layout class="QHBoxLayout" name="hikeKindAndTraverseLayout">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -454,14 +524,24 @@
       </layout>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="difficultyLabel">
-       <property name="text">
-        <string>Difficulty</string>
+      <layout class="QHBoxLayout" name="difficultyLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="difficultyCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="difficultyLabel">
+         <property name="text">
+          <string>Difficulty</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="6" column="1">
-      <layout class="QHBoxLayout" name="difficultyLayout">
+      <layout class="QHBoxLayout" name="difficultySelectionLayout">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -509,11 +589,21 @@
       </layout>
      </item>
      <item row="7" column="0">
-      <widget class="QLabel" name="tripLabel">
-       <property name="text">
-        <string>During trip</string>
+      <layout class="QHBoxLayout" name="tripLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="tripCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="tripLabel">
+         <property name="text">
+          <string>During trip</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="7" column="1">
       <layout class="QHBoxLayout" name="tripSelectionLayout">
@@ -559,14 +649,24 @@
       </layout>
      </item>
      <item row="8" column="0">
-      <widget class="QLabel" name="hikersLabel">
-       <property name="text">
-        <string>Participants</string>
+      <layout class="QHBoxLayout" name="hikersLabelLayout">
+       <property name="spacing">
+        <number>10</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QCheckBox" name="hikersCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="hikersLabel">
+         <property name="text">
+          <string>Participants</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="8" column="1">
-      <layout class="QHBoxLayout" name="hikersLayout">
+      <layout class="QHBoxLayout" name="hikersSelectionLayout">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -650,19 +750,29 @@
       </layout>
      </item>
      <item row="9" column="0">
-      <widget class="QLabel" name="photosLabel">
-       <property name="text">
-        <string>Photos</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <layout class="QVBoxLayout" name="photosLayout">
+      <layout class="QHBoxLayout" name="photosLabelLayout">
        <property name="spacing">
-        <number>6</number>
+        <number>10</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="photosListLayout">
+        <widget class="QCheckBox" name="photosCheckbox"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="photosLabel">
+         <property name="text">
+          <string>Photos</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="9" column="1">
+      <layout class="QVBoxLayout" name="photosEditLayout">
+       <property name="spacing">
+        <number>5</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="photosSelectionLayout">
          <property name="spacing">
           <number>10</number>
          </property>
@@ -756,11 +866,28 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="descriptionLabel">
-     <property name="text">
-      <string>Description</string>
+    <layout class="QHBoxLayout" name="descriptionLabelLayout">
+     <property name="spacing">
+      <number>10</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QCheckBox" name="descriptionCheckbox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="descriptionLabel">
+       <property name="text">
+        <string>Description</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QPlainTextEdit" name="descriptionEditor">

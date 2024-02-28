@@ -29,6 +29,8 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QCheckBox>
+#include <QPushButton>
 #include <QMainWindow>
 
 
@@ -39,6 +41,7 @@
 enum DialogPurpose {
 	newItem,
 	editItem,
+	multiEdit,
 	duplicateItem
 };
 
@@ -53,26 +56,37 @@ class ItemDialog : public QDialog
 	
 protected:
 	/** The parent window. */
-	QWidget* const parent;
+	QWidget& parent;
 	/** The application's main window. */
-	QMainWindow* const mainWindow;
+	QMainWindow& mainWindow;
 	
 	/** The project database. */
 	Database& db;
 	/** The purpose of the dialog. */
 	const DialogPurpose purpose;
 	
-	ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose);
+private:
+	/** The dialog's save button. */
+	QPushButton* saveButton;
+	/** The checkboxes which control which values are edited when the dialog is used for multi-editing, along with all widgets that are affected by each checkbox and the corresponding column in the item table. */
+	QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>> multiEditCheckboxes;
+	/** The checkboxes which need to be turned into tristate checkboxes when editing multiple items, along with the corresponding column in the item table. */
+	QMap<QCheckBox*, QSet<const Column*>> tristateCheckboxes;
 	
-	/**
-	 * Returns the window title to use when the dialog is used to edit an item.
-	 * 
-	 * @return	The window title for editing an item
-	 */
-	virtual QString getEditWindowTitle() = 0;
+	/** The previous enable states of all widgets currently disabled because of a multi-edit checkbox. */
+	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
 	
-	void changeStringsForEdit(QPushButton* okButton);
+protected:
+	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle);
 	
+	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes = QMap<QCheckBox*, QSet<const Column*>>());
+	void changeUIForPurpose();
+	void handle_multiEditCheckboxClicked();
+	bool anyMultiEditChanges();
+public:
+	QSet<const Column*> getMultiEditColumns();
+	
+protected:
 	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const ValueColumn& nameColumn);
 	/**
 	 * Event handler for the OK button.
@@ -103,18 +117,18 @@ public:
 
 
 
-bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
+bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QList<WhatIfDeleteResult>& whatIfResults);
 
 
 
-void populateItemCombo(const ValueColumn& displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID(), const ValueColumn* prefixColumn = nullptr, std::function<QString (const QVariant&)> prefixValueToString = nullptr);
+void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID(), const ValueColumn* prefixColumn = nullptr, std::function<QString (const QVariant&)> prefixValueToString = nullptr);
 
-void populatePeakCombo		(Database& db, QComboBox* peakCombo,	QList<ValidItemID>& selectablePeakIDs,		ItemID regionFilterID = ItemID());
-void populateTripCombo		(Database& db, QComboBox* tripCombo,	QList<ValidItemID>& selectableTripIDs);
-void populateHikerCombo		(Database& db, QComboBox* hikerCombo,	QList<ValidItemID>& selectableHikerIDs);
-void populateRegionCombo	(Database& db, QComboBox* regionCombo,	QList<ValidItemID>& selectableRegionIDs,	bool asFilter = false);
-void populateRangeCombo		(Database& db, QComboBox* rangeCombo,	QList<ValidItemID>& selectableRangeIDs);
-void populateCountryCombo	(Database& db, QComboBox* countryCombo,	QList<ValidItemID>& selectableCountryIDs);
+void populatePeakCombo		(Database& db, QComboBox& peakCombo,	QList<ValidItemID>& selectablePeakIDs,		ItemID regionFilterID = ItemID());
+void populateTripCombo		(Database& db, QComboBox& tripCombo,	QList<ValidItemID>& selectableTripIDs);
+void populateHikerCombo		(Database& db, QComboBox& hikerCombo,	QList<ValidItemID>& selectableHikerIDs);
+void populateRegionCombo	(Database& db, QComboBox& regionCombo,	QList<ValidItemID>& selectableRegionIDs,	bool asFilter = false);
+void populateRangeCombo		(Database& db, QComboBox& rangeCombo,	QList<ValidItemID>& selectableRangeIDs);
+void populateCountryCombo	(Database& db, QComboBox& countryCombo,	QList<ValidItemID>& selectableCountryIDs);
 
 
 

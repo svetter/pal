@@ -48,7 +48,7 @@ HikersTable::HikersTable() :
  * @param hiker	The hiker to add.
  * @return			The index of the new hiker in the table buffer.
  */
-BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker& hiker)
+BufferRowIndex HikersTable::addRow(QWidget& parent, Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
@@ -66,12 +66,28 @@ BufferRowIndex HikersTable::addRow(QWidget* parent, Hiker& hiker)
  * @param parent	The parent widget.
  * @param hiker		The hiker to update.
  */
-void HikersTable::updateRow(QWidget* parent, ValidItemID hikerID, const Hiker& hiker)
+void HikersTable::updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
 	
 	NormalTable::updateRow(parent, hikerID, columnDataPairs);
+}
+
+/**
+ * Updates the contents of existing hikers in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the hikers to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param hiker			The new data for the hikers. The hikerID will be ignored.
+ */
+void HikersTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Hiker& hiker)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
 }
 
 

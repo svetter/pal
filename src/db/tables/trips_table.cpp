@@ -54,7 +54,7 @@ TripsTable::TripsTable() :
  * @param trip		The trip to add.
  * @return			The index of the new trip in the table buffer.
  */
-BufferRowIndex TripsTable::addRow(QWidget* parent, Trip& trip)
+BufferRowIndex TripsTable::addRow(QWidget& parent, Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
@@ -72,12 +72,28 @@ BufferRowIndex TripsTable::addRow(QWidget* parent, Trip& trip)
  * @param parent	The parent widget.
  * @param trip		The trip to update.
  */
-void TripsTable::updateRow(QWidget* parent, ValidItemID tripID, const Trip& trip)
+void TripsTable::updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
 	
 	NormalTable::updateRow(parent, tripID, columnDataPairs);
+}
+
+/**
+ * Updates the contents of existing trips in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the trips to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param trip			The new data for the trips. The tripID will be ignored.
+ */
+void TripsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Trip& trip)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
 }
 
 

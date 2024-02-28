@@ -49,7 +49,7 @@ class RelocatePhotosDialog : public QDialog, public Ui_RelocatePhotosDialog
 	PhotoRelocationThread* workerThread;
 	
 public:
-	RelocatePhotosDialog(QWidget* parent, Database& db);
+	RelocatePhotosDialog(QWidget& parent, Database& db);
 	
 private slots:
 	void handle_browseOldPath();

@@ -75,7 +75,7 @@ AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyCol
  * @param ascent	The ascent to add.
  * @return			The index of the new ascent in the table buffer.
  */
-BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent& ascent)
+BufferRowIndex AscentsTable::addRow(QWidget& parent, Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
@@ -93,12 +93,28 @@ BufferRowIndex AscentsTable::addRow(QWidget* parent, Ascent& ascent)
  * @param parent	The parent widget.
  * @param ascent	The ascent to update.
  */
-void AscentsTable::updateRow(QWidget* parent, const Ascent& ascent)
+void AscentsTable::updateRow(QWidget& parent, const Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
 	NormalTable::updateRow(parent, FORCE_VALID(ascent.ascentID), columnDataPairs);
+}
+
+/**
+ * Updates the contents of existing ascents in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the ascents to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param ascent		The new data for the ascents. The ascentID will be ignored.
+ */
+void AscentsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Ascent& ascent)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
 }
 
 

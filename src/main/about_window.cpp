@@ -35,8 +35,8 @@
  * 
  * @param parent	Parent widget.
  */
-AboutWindow::AboutWindow(QWidget* parent) :
-	QDialog(parent)
+AboutWindow::AboutWindow(QWidget& parent) :
+	QDialog(&parent)
 {
 	setupUi(this);
 	

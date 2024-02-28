@@ -51,10 +51,11 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
-AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Ascent> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>()),
 	selectablePeakIDs(QList<ValidItemID>()),
@@ -63,9 +64,26 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	photosModel(PhotosOfAscent())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{titleCheckbox,			{{ titleLineEdit },																	{ &db.ascentsTable.titleColumn }}},
+		{peakCheckbox,			{{ regionFilterCombo, peakCombo, newPeakButton },									{ &db.ascentsTable.peakIDColumn }}},
+		{dateCheckbox,			{{ dateSpecifyCheckbox, dateWidget },												{ &db.ascentsTable.dateColumn }}},
+		{peakIndexCheckbox,		{{ peakIndexSpinner },																{ &db.ascentsTable.peakOnDayColumn }}},
+		{timeCheckbox,			{{ timeSpecifyCheckbox, timeWidget },												{ &db.ascentsTable.timeColumn }}},
+		{elevationGainCheckbox,	{{ elevationGainSpecifyCheckbox, elevationGainSpinner },							{ &db.ascentsTable.elevationGainColumn }}},
+		{hikeKindCheckbox,		{{ hikeKindCombo },																	{ &db.ascentsTable.hikeKindColumn }}},
+		{difficultyCheckbox,	{{ difficultySystemCombo, difficultyGradeCombo },									{ &db.ascentsTable.difficultySystemColumn, &db.ascentsTable.difficultyGradeColumn }}},
+		{tripCheckbox,			{{ tripCombo, newTripButton },														{ &db.ascentsTable.tripIDColumn }}},
+		{hikersCheckbox,		{{ hikersListView, addHikerButton, removeHikersButton },							{ &db.participatedTable.ascentIDColumn }}},
+		{photosCheckbox,		{{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit },	{ &db.photosTable.ascentIDColumn }}},
+		{descriptionCheckbox,	{{ descriptionEditor },																{ &db.ascentsTable.descriptionColumn }}}
+	}, {
+		{traverseCheckbox,	{ &db.ascentsTable.traverseColumn }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::ascentDialog_geometry);
 	
 	
 	populateComboBoxes();
@@ -78,9 +96,9 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	
 	connect(regionFilterCombo,					&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_regionFilterChanged);
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
-	connect(dateCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
-	connect(timeCheckbox,						&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
-	connect(elevationGainCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
+	connect(dateSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
+	connect(timeSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(elevationGainSpecifyCheckbox,		&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
 	connect(difficultySystemCombo,				&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_difficultySystemChanged);
 	connect(newTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_addHiker);
@@ -94,16 +112,16 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 	
 	
 	// Set initial date
-	dateCheckbox->setChecked(Settings::ascentDialog_dateEnabledInitially.get());
+	dateSpecifyCheckbox->setChecked(Settings::ascentDialog_dateEnabledInitially.get());
 	handle_dateSpecifiedChanged();
 	QDate initialDate = QDateTime::currentDateTime().date().addDays(- Settings::ascentDialog_initialDateDaysInPast.get());
 	dateWidget->setDate(initialDate);
 	// Set initial time
-	timeCheckbox->setChecked(Settings::ascentDialog_timeEnabledInitially.get());
+	timeSpecifyCheckbox->setChecked(Settings::ascentDialog_timeEnabledInitially.get());
 	handle_timeSpecifiedChanged();
 	timeWidget->setTime(Settings::ascentDialog_initialTime.get());
 	// Set initial elevation gain
-	elevationGainCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
+	elevationGainSpecifyCheckbox->setChecked(Settings::ascentDialog_elevationGainEnabledInitially.get());
 	handle_elevationGainSpecifiedChanged();
 	elevationGainSpinner->setValue(Settings::ascentDialog_initialElevationGain.get());
 	// Set initial hiker
@@ -119,7 +137,7 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
+	case multiEdit:
 		insertInitData();
 		break;
 	case duplicateItem:
@@ -128,6 +146,7 @@ AscentDialog::AscentDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 		this->init = std::move(blankAscent);
 		break;
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -139,24 +158,12 @@ AscentDialog::~AscentDialog()
 
 
 /**
- * Returns the window title to use when the dialog is used to edit an item.
- * 
- * @return	The window title for editing an item
- */
-QString AscentDialog::getEditWindowTitle()
-{
-	return tr("Edit ascent");
-}
-
-
-
-/**
  * Populates the dialog's combo boxes with data from the database.
  */
 void AscentDialog::populateComboBoxes()
 {
-	populateRegionCombo(db, regionFilterCombo, selectableRegionIDs, true);
-	populatePeakCombo(db, peakCombo, selectablePeakIDs);
+	populateRegionCombo(db, *regionFilterCombo, selectableRegionIDs, true);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs);
 	
 	hikeKindCombo->insertItems(1, EnumNames::translateList(EnumNames::hikeKindNames));
 	
@@ -171,7 +178,7 @@ void AscentDialog::populateComboBoxes()
 	
 	handle_difficultySystemChanged();
 	
-	populateTripCombo(db, tripCombo, selectableTripIDs);
+	populateTripCombo(db, *tripCombo, selectableTripIDs);
 }
 
 
@@ -191,27 +198,24 @@ void AscentDialog::insertInitData()
 	}
 	// Date
 	bool dateSpecified = init->dateSpecified();
-	dateCheckbox->setChecked(dateSpecified);
+	dateSpecifyCheckbox->setChecked(dateSpecified);
 	if (dateSpecified) {
 		dateWidget->setDate(init->date);
 	}
-	handle_dateSpecifiedChanged();
 	// Peak on day
 	peakIndexSpinner->setValue(init->perDayIndex);
 	// Time
 	bool timeSpecified = init->timeSpecified();
-	timeCheckbox->setChecked(timeSpecified);
+	timeSpecifyCheckbox->setChecked(timeSpecified);
 	if (timeSpecified) {
 		timeWidget->setTime(init->time);
 	}
-	handle_timeSpecifiedChanged();
 	// Elevation gain
 	bool elevationGainSpecified = init->elevationGainSpecified();
-	elevationGainCheckbox->setChecked(elevationGainSpecified);
+	elevationGainSpecifyCheckbox->setChecked(elevationGainSpecified);
 	if (elevationGainSpecified) {
 		elevationGainSpinner->setValue(init->elevationGain);
 	}
-	handle_elevationGainSpecifiedChanged();
 	// Kind of hike
 	hikeKindCombo->setCurrentIndex(init->hikeKind);
 	// Traverse
@@ -244,24 +248,24 @@ void AscentDialog::insertInitData()
  */
 unique_ptr<Ascent> AscentDialog::extractData()
 {
-	QString				title				= parseLineEdit			(titleLineEdit);
-	ItemID				peakID				= parseItemCombo		(peakCombo, selectablePeakIDs);
-	QDate				date				= parseDateWidget		(dateWidget);
-	int					perDayIndex			= parseSpinner			(peakIndexSpinner);
-	QTime				time				= parseTimeWidget		(timeWidget);
-	int					elevationGain		= parseSpinner			(elevationGainSpinner);
-	int					hikeKind			= parseEnumCombo		(hikeKindCombo, false);
-	bool				traverse			= parseCheckbox			(traverseCheckbox);
-	int					difficultySystem	= parseEnumCombo		(difficultySystemCombo, true);
-	int					difficultyGrade		= parseEnumCombo		(difficultyGradeCombo, true);
-	ItemID				tripID				= parseItemCombo		(tripCombo, selectableTripIDs);
-	QString				description			= parsePlainTextEdit	(descriptionEditor);
+	QString				title				= parseLineEdit			(*titleLineEdit);
+	ItemID				peakID				= parseItemCombo		(*peakCombo, selectablePeakIDs);
+	QDate				date				= parseDateWidget		(*dateWidget);
+	int					perDayIndex			= parseSpinner			(*peakIndexSpinner);
+	QTime				time				= parseTimeWidget		(*timeWidget);
+	int					elevationGain		= parseSpinner			(*elevationGainSpinner);
+	int					hikeKind			= parseEnumCombo		(*hikeKindCombo, false);
+	bool				traverse			= parseCheckbox			(*traverseCheckbox);
+	int					difficultySystem	= parseEnumCombo		(*difficultySystemCombo, true);
+	int					difficultyGrade		= parseEnumCombo		(*difficultyGradeCombo, true);
+	ItemID				tripID				= parseItemCombo		(*tripCombo, selectableTripIDs);
+	QString				description			= parsePlainTextEdit	(*descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
 	QList<Photo>		photos				= photosModel.getPhotoList();
 	
-	if (!dateCheckbox->isChecked())				date = QDate();
-	if (!timeCheckbox->isChecked())				time = QTime();
-	if (!elevationGainCheckbox->isChecked())	elevationGain = -1;
+	if (!dateSpecifyCheckbox->isChecked())			date = QDate();
+	if (!timeSpecifyCheckbox->isChecked())			time = QTime();
+	if (!elevationGainSpecifyCheckbox->isChecked())	elevationGain = -1;
 	if (difficultySystem < 1 || difficultyGrade < 1) {
 		difficultySystem	= 0;
 		difficultyGrade		= 0;
@@ -279,6 +283,10 @@ unique_ptr<Ascent> AscentDialog::extractData()
  */
 bool AscentDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
@@ -291,8 +299,8 @@ bool AscentDialog::changesMade()
  */
 void AscentDialog::handle_regionFilterChanged()
 {
-	const ItemID regionID = parseItemCombo(regionFilterCombo, selectableRegionIDs);
-	populatePeakCombo(db, peakCombo, selectablePeakIDs, regionID);
+	const ItemID regionID = parseItemCombo(*regionFilterCombo, selectableRegionIDs);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs, regionID);
 }
 
 /**
@@ -302,10 +310,10 @@ void AscentDialog::handle_regionFilterChanged()
  */
 void AscentDialog::handle_newPeak()
 {
-	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newPeakIndex = openNewPeakDialogAndStore(*this, mainWindow, db);
 	if (newPeakIndex.isInvalid()) return;
 	
-	populatePeakCombo(db, peakCombo, selectablePeakIDs);
+	populatePeakCombo(db, *peakCombo, selectablePeakIDs);
 	const ValidItemID newPeakID = db.peaksTable.getPrimaryKeyAt(newPeakIndex);
 	regionFilterCombo->setCurrentIndex(0);
 	peakCombo->setCurrentIndex(selectablePeakIDs.indexOf(newPeakID) + 1);	// 0 is None
@@ -318,7 +326,7 @@ void AscentDialog::handle_newPeak()
  */
 void AscentDialog::handle_dateSpecifiedChanged()
 {
-	bool enabled = dateCheckbox->isChecked();
+	bool enabled = dateSpecifyCheckbox->isChecked();
 	dateWidget->setEnabled(enabled);
 }
 
@@ -329,7 +337,7 @@ void AscentDialog::handle_dateSpecifiedChanged()
  */
 void AscentDialog::handle_timeSpecifiedChanged()
 {
-	bool enabled = timeCheckbox->isChecked();
+	bool enabled = timeSpecifyCheckbox->isChecked();
 	timeWidget->setEnabled(enabled);
 }
 
@@ -340,7 +348,7 @@ void AscentDialog::handle_timeSpecifiedChanged()
  */
 void AscentDialog::handle_elevationGainSpecifiedChanged()
 {
-	bool enabled = elevationGainCheckbox->isChecked();
+	bool enabled = elevationGainSpecifyCheckbox->isChecked();
 	elevationGainSpinner->setEnabled(enabled);
 }
 
@@ -373,10 +381,10 @@ void AscentDialog::handle_difficultySystemChanged()
  */
 void AscentDialog::handle_newTrip()
 {
-	BufferRowIndex newTripIndex = openNewTripDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newTripIndex = openNewTripDialogAndStore(*this, mainWindow, db);
 	if (newTripIndex.isInvalid()) return;
 	
-	populateTripCombo(db, tripCombo, selectableTripIDs);
+	populateTripCombo(db, *tripCombo, selectableTripIDs);
 	const ValidItemID newTripID = db.tripsTable.getPrimaryKeyAt(newTripIndex);
 	tripCombo->setCurrentIndex(selectableTripIDs.indexOf(newTripID) + 1);	// 0 is None
 }
@@ -388,7 +396,7 @@ void AscentDialog::handle_newTrip()
  */
 void AscentDialog::handle_addHiker()
 {
-	ItemID hikerID = openAddHikerDialog(this, mainWindow, db);
+	ItemID hikerID = openAddHikerDialog(*this, mainWindow, db);
 	if (hikerID.isInvalid()) return;
 	if (hikersModel.containsHiker(FORCE_VALID(hikerID))) return;
 	unique_ptr<Hiker> hiker = db.getHiker(FORCE_VALID(hikerID));
@@ -430,7 +438,7 @@ void AscentDialog::handle_addPhotos()
 		preSelectedDir = QFileInfo(photosModel.getFilepathAt(photoIndexForDir)).path();
 	}
 	
-	QStringList filepaths = openFileDialogForMultiPhotoSelection(this, preSelectedDir);
+	QStringList filepaths = openFileDialogForMultiPhotoSelection(*this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();
@@ -508,7 +516,7 @@ void AscentDialog::handle_ok()
  */
 void AscentDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::ascentDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::ascentDialog_geometry);
 	
 	savePhotoDescriptionToList();
 }
@@ -578,9 +586,22 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
  * @param db			The project database.
  * @return				The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openAscentDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = AscentDialog::tr("New ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	const BufferRowIndex newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
+	db.participatedTable.addRows(parent, *extractedAscent);
+	db.photosTable.addRows(parent, *extractedAscent);
+	
+	return newAscentIndex;
 }
 
 /**
@@ -592,10 +613,25 @@ BufferRowIndex openNewAscentDialogAndStore(QWidget* parent, QMainWindow* mainWin
  * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
  * @return					The index of the new ascent in the database's ascent table buffer.
  */
-BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
-	return openAscentDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalAscent));
+	originalAscent->ascentID = ItemID();
+	
+	QString windowTitle = AscentDialog::tr("New ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, duplicateItem, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	const BufferRowIndex newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
+	db.participatedTable.addRows(parent, *extractedAscent);
+	db.photosTable.addRows(parent, *extractedAscent);
+	
+	return newAscentIndex;
 }
 
 /**
@@ -607,11 +643,88 @@ BufferRowIndex openDuplicateAscentDialogAndStore(QWidget* parent, QMainWindow* m
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, mainWindow, db, editItem, std::move(originalAscent));
-	return editedIndex.isValid();
+	const ItemID			originalAscentID	= originalAscent->ascentID;
+	const QSet<ValidItemID>	originalHikerIDs	= QSet<ValidItemID>(originalAscent->hikerIDs);
+	const QList<Photo>		originalPhotos		= QList<Photo>(originalAscent->photos);
+	
+	const QString windowTitle = AscentDialog::tr("Edit ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	extractedAscent->ascentID = FORCE_VALID(originalAscentID);
+	
+	db.ascentsTable.updateRow(parent, *extractedAscent);
+	if (extractedAscent->hikerIDs != originalHikerIDs) {
+		db.participatedTable.updateRows(parent, *extractedAscent);
+	}
+	if (extractedAscent->photos != originalPhotos) {
+		db.photosTable.updateRows(parent, *extractedAscent);
+	}
+	
+	return true;
+}
+
+/**
+ * Opens a multi-edit ascent dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the ascents to edit.
+ * @param initBufferRowIndex	The index of the ascent whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Ascent> originalAscent = db.getAscentAt(initBufferRowIndex);
+	
+	const QString windowTitle = AscentDialog::tr("Edit %1 ascents").arg(bufferRowIndices.size());
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	extractedAscent->ascentID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	const bool saveHikers = columnsToSave.contains(&db.participatedTable.ascentIDColumn);
+	const bool savePhotos = columnsToSave.contains(&db.photosTable.ascentIDColumn);
+	
+	QList<const Column*> ascentColumnsToSave = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	if (saveHikers)	ascentColumnsToSave.removeAll(&db.participatedTable.ascentIDColumn);
+	if (savePhotos)	ascentColumnsToSave.removeAll(&db.photosTable.ascentIDColumn);
+	const bool saveAscent = !ascentColumnsToSave.isEmpty();
+	
+	if (saveAscent) {
+		db.ascentsTable.updateRows(parent, bufferRowIndices, ascentColumnsToSave, *extractedAscent);
+	}
+	
+	if (saveHikers || savePhotos) {
+		QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();
+		for (const BufferRowIndex& ascentBufferRow : bufferRowIndices) {
+			ascentIDs.insert(VALID_ITEM_ID(db.ascentsTable.primaryKeyColumn.getValueAt(ascentBufferRow)));
+		}
+		
+		if (saveHikers) {
+			db.participatedTable.updateRows(parent, ascentIDs, *extractedAscent);
+		}
+		if (savePhotos) {
+			db.photosTable.updateRows(parent, ascentIDs, extractedAscent->photos);
+		}
+	}
+	
+	return true;
 }
 
 /**
@@ -623,7 +736,7 @@ bool openEditAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Data
  * @param bufferRowIndices	The indices of the ascents to delete in the database's ascent table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -649,63 +762,6 @@ bool openDeleteAscentsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 
 
 /**
- * Opens a purpose-generic ascent dialog and applies the resulting changes to the database.
- *
- * @param parent			The parent window.
- * @param mainWindow		The application's main window.
- * @param db				The project database.
- * @param purpose			The purpose of the dialog.
- * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
- * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent)
-{
-	assert((bool) originalAscent != (purpose == newItem));
-	
-	const ItemID			originalAscentID	= (purpose != newItem)	? originalAscent->ascentID						: ItemID();
-	const QSet<ValidItemID>	originalHikerIDs	= (purpose == editItem)	? QSet<ValidItemID>(originalAscent->hikerIDs)	: QSet<ValidItemID>();
-	const QList<Photo>		originalPhotos		= (purpose == editItem)	? QList<Photo>(originalAscent->photos)			: QList<Photo>();
-	if (purpose == duplicateItem) {
-		originalAscent->ascentID = ItemID();
-	}
-	BufferRowIndex newAscentIndex = BufferRowIndex();
-	
-	AscentDialog dialog = AscentDialog(parent, mainWindow, db, purpose, std::move(originalAscent));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Ascent> extractedAscent = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
-			db.participatedTable.addRows(parent, *extractedAscent);
-			db.photosTable.addRows(parent, *extractedAscent);
-			break;
-		case editItem:
-			extractedAscent->ascentID = FORCE_VALID(originalAscentID);
-			
-			db.ascentsTable.updateRow(parent, *extractedAscent);
-			if (extractedAscent->hikerIDs != originalHikerIDs) {
-				db.participatedTable.updateRows(parent, *extractedAscent);
-			}
-			if (extractedAscent->photos != originalPhotos) {
-				db.photosTable.updateRows(parent, *extractedAscent);
-			}
-			
-			// Set result to existing buffer row to signal that changes were made
-			newAscentIndex = db.ascentsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalAscentID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newAscentIndex;
-}
-
-
-
-/**
  * Opens a file dialog for selecting a single image file.
  * 
  * @param parent				The parent window.
@@ -713,12 +769,12 @@ BufferRowIndex openAscentDialogAndStore(QWidget* parent, QMainWindow* mainWindow
  * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
  * @return						The selected filepath, or an empty QString if the dialog was cancelled.
  */
-QString openFileDialogForSinglePhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
+QString openFileDialogForSinglePhotoSelection(QWidget& parent, QString preSelectedDir, QString overrideWindowTitle)
 {
 	QString caption = AscentDialog::tr("Select photo of ascent");
 	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
 	QString filter = getImageFileDialogFilterString();
-	QString filepath = QFileDialog::getOpenFileName(parent, caption, preSelectedDir, filter);
+	QString filepath = QFileDialog::getOpenFileName(&parent, caption, preSelectedDir, filter);
 	
 	QStringList checkedPath = checkFilepathsAndAskUser(parent, {filepath});
 	if (checkedPath.isEmpty()) return QString();
@@ -733,12 +789,12 @@ QString openFileDialogForSinglePhotoSelection(QWidget* parent, QString preSelect
  * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
  * @return						The selected filepaths, or an empty QStringList if the dialog was cancelled.
  */
-QStringList openFileDialogForMultiPhotoSelection(QWidget* parent, QString preSelectedDir, QString overrideWindowTitle)
+QStringList openFileDialogForMultiPhotoSelection(QWidget& parent, QString preSelectedDir, QString overrideWindowTitle)
 {
 	QString caption = AscentDialog::tr("Select photos of ascent");
 	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
 	QString filter = getImageFileDialogFilterString();
-	QStringList filepaths = QFileDialog::getOpenFileNames(parent, caption, preSelectedDir, filter);
+	QStringList filepaths = QFileDialog::getOpenFileNames(&parent, caption, preSelectedDir, filter);
 	
 	filepaths = checkFilepathsAndAskUser(parent, filepaths);
 	
@@ -763,7 +819,7 @@ QString getImageFileDialogFilterString()
  * @param filepaths		The filepaths to check.
  * @return				The filepaths which are unproblematic  or confirmed by the user. Empty if the user cancels.
  */
-QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths)
+QStringList checkFilepathsAndAskUser(QWidget& parent, QStringList filepaths)
 {
 	bool noToAll = false;
 	
@@ -786,7 +842,7 @@ QStringList checkFilepathsAndAskUser(QWidget* parent, QStringList filepaths)
 		if (filepaths.size() - 1 > i) {
 			buttons |= QMessageBox::YesToAll | QMessageBox::NoToAll;
 		}
-		auto pressedButton = QMessageBox::warning(parent, title, message, buttons);
+		auto pressedButton = QMessageBox::warning(&parent, title, message, buttons);
 		
 		if (pressedButton == QMessageBox::Yes) {
 			// Do nothing

@@ -204,9 +204,9 @@ void MainWindow::connectUI()
 	connect(mainAreaTabs,					&QTabWidget::currentChanged,	this,	&MainWindow::handle_tabChanged);
 	// Double clicks on table
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		auto handlerFunction = &MainWindow::handle_editSelectedItem;
+		auto handlerFunction = &MainWindow::editSelectedItems;
 		if (mapper->type == ItemTypeAscent) {
-			handlerFunction = &MainWindow::handle_viewSelectedItem;
+			handlerFunction = &MainWindow::viewSelectedItem;
 		}
 		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	handlerFunction);
 		connect(mapper->compTable,			&CompositeTable::wasResorted,	this,	&MainWindow::scrollToTopAfterSorting);
@@ -242,7 +242,7 @@ void MainWindow::setupTableTabs()
 		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
 		splitter->setStretchFactor(1, 1);
-		restoreSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+		restoreSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		
 		// Setup stats panels
 		mapper->statsEngine->setupStatsPanel();
@@ -363,7 +363,7 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 	}
 	mapper->tableView->sortByColumn(sorting.column->getIndex(), sorting.order);
 	
-	if (!sortingSettingValid) mapper->sortingSetting->clear(this);
+	if (!sortingSettingValid) mapper->sortingSetting->clear(*this);
 }
 
 
@@ -407,10 +407,10 @@ void MainWindow::initTableContextMenuAndShortcuts()
 	openAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
 	deleteAction->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
-	connect(openAction,			&QAction::triggered,	this,	&MainWindow::handle_viewSelectedItem);
-	connect(editAction,			&QAction::triggered,	this,	&MainWindow::handle_editSelectedItem);
-	connect(duplicateAction,	&QAction::triggered,	this,	&MainWindow::handle_duplicateAndEditSelectedItem);
-	connect(deleteAction,		&QAction::triggered,	this,	&MainWindow::handle_deleteSelectedItems);
+	connect(openAction,			&QAction::triggered, this, &MainWindow::viewSelectedItem);
+	connect(editAction,			&QAction::triggered, this, &MainWindow::editSelectedItems);
+	connect(duplicateAction,	&QAction::triggered, this, &MainWindow::duplicateAndEditSelectedItem);
+	connect(deleteAction,		&QAction::triggered, this, &MainWindow::deleteSelectedItems);
 	
 	// Keyboard shortcuts
 	QList<QTableView*> tableViews = mainAreaTabs->findChildren<QTableView*>();
@@ -425,10 +425,16 @@ void MainWindow::initTableContextMenuAndShortcuts()
 		shortcuts.append(duplicateShortcut);
 		shortcuts.append(deleteShortcut);
 		
-		connect(openShortcut,		&QShortcut::activated, this, &MainWindow::handle_viewSelectedItem);
-		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::handle_editSelectedItem);
-		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::handle_duplicateAndEditSelectedItem);
-		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::handle_deleteSelectedItems);
+		auto handle_enter = [this]() {
+			const ItemTypeMapper* activeMapper = getActiveMapperOrNull();
+			if (!activeMapper) return;
+			if (activeMapper->type == ItemTypeAscent) return viewSelectedItem();
+			return editSelectedItems();
+		};
+		connect(openShortcut,		&QShortcut::activated, this, handle_enter);
+		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::editSelectedItems);
+		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::duplicateAndEditSelectedItem);
+		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::deleteSelectedItems);
 	}
 }
 
@@ -463,7 +469,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 	setVisible(true);
 	updateTopBarButtonVisibilities();
 	
-	bool dbOpened = db.openExisting(this, filepath);
+	bool dbOpened = db.openExisting(*this, filepath);
 	
 	if (dbOpened) {
 		setWindowTitleFilename(filepath);
@@ -535,7 +541,8 @@ void MainWindow::initCompositeBuffers()
 	progress.setLabel(new QLabel(tr("Preparing tables..."), &progress));
 	
 	bool prepareAll = !Settings::onlyPrepareActiveTableOnStartup.get();
-	QTableView* currentTableView = getCurrentTableView();
+	const ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
+	const QTableView* const currentTableView = activeMapper ? activeMapper->tableView : nullptr;
 	
 	int numCells = 0;
 	if (prepareAll) {
@@ -543,7 +550,6 @@ void MainWindow::initCompositeBuffers()
 			numCells += mapper->compTable->getNumberOfCellsToInit();
 		}
 	} else {
-		const ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
 		if (activeMapper) {
 			numCells += activeMapper->compTable->getNumberOfCellsToInit();
 		}
@@ -722,19 +728,21 @@ void MainWindow::currentFiltersChanged()
 // EXECUTE USER COMMANDS
 
 /**
- * Opens the item specified by the given ItemTypeMapper and view row index for viewing.
- * 
- * @param mapper		The ItemTypeMapper for the type of item to open.
- * @param viewRowIndex	The view row index of the item to open.
+ * Opens the item at the primary selected row in the currently active table.
  */
-void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::viewSelectedItem()
 {
-	switch (mapper.type) {
-	case ItemTypeAscent:
-		AscentViewer(this, db, typesHandler, viewRowIndex).exec();
-		return;
-	default:
-		assert(false);
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	const BufferRowIndex primaryBufferRow = getSelectedRows(activeMapper).second;
+	if (primaryBufferRow.isInvalid()) return;
+	
+	switch (activeMapper.type) {
+	case ItemTypeAscent: {
+		const ViewRowIndex markedViewRow = activeMapper.compTable->findViewRowIndexForBufferRow(primaryBufferRow);
+		AscentViewer(this, db, typesHandler, markedViewRow).exec();
+		break;
+	}
+	default: assert(false);
 	}
 }
 
@@ -747,81 +755,86 @@ void MainWindow::viewItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowInde
  */
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(this, this, db);
-	if (newBufferRowIndex == -1) return;
+	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(*this, *this, db);
+	if (newBufferRowIndex.isInvalid()) return;
 	
-	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable.getItemNameSingularLowercase()));
+	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 }
 
 /**
- * Opens a dialog for creating a new item of the type specified by the given ItemTypeMapper as a
- * duplicate of the item specified by the given view row index.
+ * Opens a dialog for creating a new item for the currently active table as a duplicate of the item
+ * at the primary selected row.
  * 
  * If a new item was created, performs the necessary updates to the UI.
- * 
- * @param mapper		The ItemTypeMapper for the type of item to duplicate.
- * @param viewRowIndex	The view row index of the item to duplicate.
  */
-void MainWindow::duplicateAndEditItem(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
+void MainWindow::duplicateAndEditSelectedItem()
 {
-	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	BufferRowIndex newBufferRowIndex = mapper.openDuplicateItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
-	if (newBufferRowIndex == -1) return;
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	const BufferRowIndex primaryBufferRow = getSelectedRows(activeMapper).second;
+	if (primaryBufferRow.isInvalid()) return;
 	
-	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
-	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable.getItemNameSingularLowercase()));
+	BufferRowIndex newBufferRowIndex = activeMapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, primaryBufferRow);
+	if (newBufferRowIndex.isInvalid()) return;
+	
+	setStatusLine(tr("Saved new %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
+	performUpdatesAfterUserAction(activeMapper, true, newBufferRowIndex);
 }
 
 /**
- * Opens a dialog for editing the item specified by the given ItemTypeMapper and view row index.
+ * Opens a dialog for editing the items at the selected rows in the currently active table.
  * 
- * If the item was edited, performs the necessary updates to the UI.
- * 
- * @param mapper		The ItemTypeMapper for the type of item to edit.
- * @param viewRowIndex	The view row index of the item to edit.
+ * If the items were edited, performs the necessary updates to the UI.
  */
-void MainWindow::editItem(const ItemTypeMapper& mapper, const QModelIndex& index)
+void MainWindow::editSelectedItems()
 {
-	ViewRowIndex viewRowIndex = ViewRowIndex(index.row());
-	BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-	bool changesMade = mapper.openEditItemDialogAndStoreMethod(this, this, db, bufferRowIndex);
-	if (!changesMade) return;
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	const QPair<QSet<BufferRowIndex>, BufferRowIndex> selectedAndMarkedBufferRows = getSelectedRows(activeMapper);
+	const QSet<BufferRowIndex>& selectedBufferRows = selectedAndMarkedBufferRows.first;
+	const BufferRowIndex markedBufferRow = selectedAndMarkedBufferRows.second;
+	if (selectedBufferRows.isEmpty()) return;
 	
-	performUpdatesAfterUserAction(mapper, false, bufferRowIndex);
-	setStatusLine(tr("Saved changes in %1.").arg(mapper.baseTable.getItemNameSingularLowercase()));
+	if (selectedBufferRows.size() < 2) {
+		const bool changesMade = activeMapper.openEditItemDialogAndStoreMethod(*this, *this, db, markedBufferRow);
+		if (!changesMade) return;
+		
+		setStatusLine(tr("Saved changes in %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
+	}
+	else {
+		const bool changesMade = activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow);
+		if (!changesMade) return;
+		
+		setStatusLine(tr("Saved changes in %1 %2.").arg(selectedBufferRows.size()).arg(activeMapper.baseTable.getItemNamePluralLowercase()));
+	}
+	performUpdatesAfterUserAction(activeMapper, false);
 }
 
 /**
- * Opens a dialog for deleting the items specified by the given ItemTypeMapper and a set of view row
- * indices.
+ * Opens a dialog for deleting the selected items in the currently active table.
  * 
  * If the item was deleted, performs the necessary updates to the UI.
- * 
- * @param mapper			The ItemTypeMapper for the type of item to delete.
- * @param viewRowIndices	The view row indices of the items to delete.
  */
-void MainWindow::deleteItems(const ItemTypeMapper& mapper, QSet<ViewRowIndex> viewRowIndices)
+void MainWindow::deleteSelectedItems()
 {
-	if (viewRowIndices.isEmpty()) return;
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	const QSet<BufferRowIndex> selectedBufferRows = getSelectedRows(activeMapper).first;
+	if (selectedBufferRows.isEmpty()) return;
 	
-	QSet<BufferRowIndex> bufferRowIndices = QSet<BufferRowIndex>();
-	ViewRowIndex minViewIndex = *viewRowIndices.begin();
-	for (const ViewRowIndex& viewRowIndex : viewRowIndices) {
-		BufferRowIndex bufferIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-		bufferRowIndices += bufferIndex;
-		if (viewRowIndex < minViewIndex) minViewIndex = viewRowIndex;
+	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
+	for (const QModelIndex& index : getActiveMapper().tableView->selectionModel()->selectedRows()) {
+		selectedViewRowIndices += ViewRowIndex(index.row());
 	}
+	if (selectedViewRowIndices.isEmpty()) return;
 	
-	bool deleted = mapper.openDeleteItemsDialogAndExecuteMethod(this, this, db, bufferRowIndices);
+	const bool deleted = activeMapper.openDeleteItemsDialogAndExecuteMethod(*this, *this, db, selectedBufferRows);
 	if (!deleted) return;
-	
-	if (minViewIndex.get() >= mapper.compTable->rowCount()) {
-		minViewIndex = ViewRowIndex(mapper.compTable->rowCount());
+
+	if (selectedBufferRows.size() == 1) {
+		setStatusLine(tr("Deleted %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
+	} else {
+		setStatusLine(tr("Deleted %1 %2.").arg(selectedBufferRows.size()).arg(activeMapper.baseTable.getItemNamePluralLowercase()));
 	}
-	BufferRowIndex bufferRowToSelect = mapper.compTable->getBufferRowIndexForViewRow(minViewIndex);
-	performUpdatesAfterUserAction(mapper, true, bufferRowToSelect);
-	setStatusLine(tr("Deleted %1.").arg(mapper.baseTable.getItemNameSingularLowercase()));
+	performUpdatesAfterUserAction(activeMapper, true);
 }
 
 
@@ -1065,22 +1078,21 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
  */
 void MainWindow::handle_rightClickInTable(QPoint pos)
 {
-	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex index = currentTableView->indexAt(pos);
+	QTableView& currentTableView = *getActiveMapper().tableView;
+	QModelIndex index = currentTableView.indexAt(pos);
 	if (!index.isValid()) return;
 	
-	bool singleRowSelected = currentTableView->selectionModel()->selectedRows().size() == 1;
-	bool viewableItemTable = currentTableView == ascentsTableView;
-	bool duplicatableItemTable = currentTableView == ascentsTableView || currentTableView == peaksTableView;
+	const bool singleRowSelected = currentTableView.selectionModel()->selectedRows().size() == 1;
+	const bool viewableItemTable = &currentTableView == ascentsTableView;
+	const bool duplicatableItemTable = &currentTableView == ascentsTableView || &currentTableView == peaksTableView;
 	
 	tableContextMenuOpenAction		->setVisible(singleRowSelected && viewableItemTable);
-	tableContextMenuEditAction		->setVisible(singleRowSelected);
 	tableContextMenuDuplicateAction	->setVisible(singleRowSelected && duplicatableItemTable);
 	
 	QString deleteString = tr("Delete") + (Settings::confirmDelete.get() ? "..." : "");
 	tableContextMenuDeleteAction->setText(deleteString);
 	
-	tableContextMenu.popup(currentTableView->viewport()->mapToGlobal(pos));
+	tableContextMenu.popup(currentTableView.viewport()->mapToGlobal(pos));
 }
 
 
@@ -1127,81 +1139,6 @@ void MainWindow::handle_unhideColumn()
 
 
 
-// TABLE CONTEXT MENU ACTION HANDLERS
-
-/**
- * Event handler for the view action in the table context menu.
- * 
- * Opens the currently selected item in the active table for viewing.
- */
-void MainWindow::handle_viewSelectedItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex selectedIndex = currentTableView->currentIndex();
-	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	if (mapper.type == ItemTypeAscent) {
-		viewItem(mapper, ViewRowIndex(selectedIndex.row()));
-	} else {
-		editItem(mapper, selectedIndex);
-	}
-}
-
-/**
- * Event handler for the edit action in the table context menu.
- * 
- * Opens the currently selected item in the active table for editing.
- */
-void MainWindow::handle_editSelectedItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex selectedIndex = currentTableView->currentIndex();
-	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	editItem(mapper, selectedIndex);
-}
-
-/**
- * Event handler for the duplicate action in the table context menu.
- * 
- * Opens the currently selected item in the active table for editing as a new duplicate.
- */
-void MainWindow::handle_duplicateAndEditSelectedItem()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	QModelIndex selectedIndex = currentTableView->currentIndex();
-	if (!selectedIndex.isValid() || selectedIndex.row() < 0) return;
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	duplicateAndEditItem(mapper, ViewRowIndex(selectedIndex.row()));
-}
-
-/**
- * Event handler for the delete action in the table context menu.
- * 
- * Opens a dialog for deleting the currently selected items in the active table.
- */
-void MainWindow::handle_deleteSelectedItems()
-{
-	QTableView* currentTableView = getCurrentTableView();
-	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
-	for (const QModelIndex& index : currentTableView->selectionModel()->selectedRows()) {
-		selectedViewRowIndices += ViewRowIndex(index.row());
-	}
-	if (selectedViewRowIndices.isEmpty()) return;
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	deleteItems(mapper, selectedViewRowIndices);
-}
-
-
-
 // FILE MENU ACTION HANDLERS
 
 /**
@@ -1225,7 +1162,7 @@ void MainWindow::handle_newDatabase()
 	if (projectOpen) handle_closeDatabase();
 	
 	setWindowTitleFilename(filepath);
-	db.createNew(this, filepath);
+	db.createNew(*this, filepath);
 	
 	// Build buffers and update size info
 	initCompositeBuffers();
@@ -1239,7 +1176,7 @@ void MainWindow::handle_newDatabase()
 	addToRecentFilesList(filepath);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow(this, this, db, true).exec();
+		ProjectSettingsWindow(*this, *this, db, true).exec();
 	}
 	
 	getActiveMapper().openingTab();
@@ -1332,7 +1269,7 @@ void MainWindow::handle_saveDatabaseAs()
 		QFile(filepath).remove();
 	}
 	
-	bool success = db.saveAs(this, filepath);
+	bool success = db.saveAs(*this, filepath);
 	if (!success) {
 		QString title = tr("Save database as");
 		QString message = tr("Writing database file failed:")
@@ -1381,7 +1318,7 @@ void MainWindow::handle_closeDatabase()
  */
 void MainWindow::handle_openProjectSettings()
 {
-	ProjectSettingsWindow(this, this, db).exec();
+	ProjectSettingsWindow(*this, *this, db).exec();
 }
 
 /**
@@ -1391,7 +1328,7 @@ void MainWindow::handle_openProjectSettings()
  */
 void MainWindow::handle_openSettings()
 {
-	SettingsWindow(this).exec();
+	SettingsWindow(*this).exec();
 }
 
 
@@ -1423,7 +1360,7 @@ void MainWindow::handle_showStatsPanelChanged()
 	if (mapper.statsScrollArea->isVisible()) {
 		// Save splitter sizes before closing
 		QSplitter* const splitter = mapper.tab->findChild<QSplitter*>();
-		saveSplitterSizes(splitter, mapper.statsPanelSplitterSizesSetting);
+		saveSplitterSizes(*splitter, *mapper.statsPanelSplitterSizesSetting);
 	}
 	
 	const bool showStatsPanel = showItemStatsPanelAction->isChecked();
@@ -1459,7 +1396,7 @@ void MainWindow::handle_hideAllStatsPanels()
 		if (mapper->tabHasBeenOpened(true) && mapper->statsScrollArea->isVisible()) {
 			// Save splitter sizes before closing
 			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		}
 		mapper->statsScrollArea->setVisible(false);
 		mapper->statsEngine->setCurrentlyVisible(false);
@@ -1553,7 +1490,7 @@ void MainWindow::handle_clearTableSelection()
  */
 void MainWindow::handle_relocatePhotos()
 {
-	RelocatePhotosDialog(this, db).exec();
+	RelocatePhotosDialog(*this, db).exec();
 }
 
 /**
@@ -1563,7 +1500,7 @@ void MainWindow::handle_relocatePhotos()
  */
 void MainWindow::handle_exportData()
 {
-	DataExportDialog(this, typesHandler).exec();
+	DataExportDialog(*this, *typesHandler).exec();
 }
 
 
@@ -1577,7 +1514,7 @@ void MainWindow::handle_exportData()
  */
 void MainWindow::handle_about()
 {
-	AboutWindow(this).exec();
+	AboutWindow(*this).exec();
 }
 
 
@@ -1606,8 +1543,8 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings.mainWindow_currentTabIndex	.set(this, mainAreaTabs->currentIndex());
-	db.projectSettings.mainWindow_showFilterBar		.set(this, showFiltersAction->isChecked());
+	db.projectSettings.mainWindow_currentTabIndex	.set(*this, mainAreaTabs->currentIndex());
+	db.projectSettings.mainWindow_showFilterBar		.set(*this, showFiltersAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
@@ -1630,7 +1567,7 @@ void MainWindow::saveGlobalImplicitSettings()
 		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
 		if (mapper->tabHasBeenOpened(true) && mapper->itemStatsPanelCurrentlySetVisible()) {
 			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(splitter, mapper->statsPanelSplitterSizesSetting);
+			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
 		}
 	}
 }
@@ -1673,9 +1610,9 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 			orderMap[columnName] = visualIndex;
 		}
 	}
-	mapper->columnWidthsSetting	->set(this, widthsMap);
-	mapper->columnOrderSetting	->set(this, orderMap);
-	mapper->hiddenColumnsSetting->set(this, hiddenMap);
+	mapper->columnWidthsSetting	->set(*this, widthsMap);
+	mapper->columnOrderSetting	->set(*this, orderMap);
+	mapper->hiddenColumnsSetting->set(*this, hiddenMap);
 }
 
 /**
@@ -1688,7 +1625,7 @@ void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
 	const auto& [column, order] = mapper->compTable->getCurrentSorting();
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
 	QString settingValue = column->name + ", " + orderString;
-	mapper->sortingSetting->set(this, settingValue);
+	mapper->sortingSetting->set(*this, settingValue);
 }
 
 
@@ -1720,18 +1657,6 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 // GENERAL HELPERS
 
 /**
- * Returns the view of the table in the currently active tab.
- * 
- * @return	The active table view.
- */
-QTableView* MainWindow::getCurrentTableView() const
-{
-	const ItemTypeMapper* const activeMapper = typesHandler->getActiveMapperOrNull();
-	if (!activeMapper) return nullptr;
-	return activeMapper->tableView;
-}
-
-/**
  * Returns the ItemTypeMapper for the currently active tab, or nullptr if no item tab is active.
  * 
  * @return	The active ItemTypeMapper, or nullptr if no item tab is active.
@@ -1751,6 +1676,51 @@ ItemTypeMapper* MainWindow::getActiveMapperOrNull() const
 ItemTypeMapper& MainWindow::getActiveMapper() const
 {
 	return typesHandler->getActiveMapper();
+}
+
+/**
+ * Returns the indices of selected rows and marked row in the table specified by the given
+ * ItemTypeMapper.
+ * 
+ * Marked rows which are not selected are ignored and replaced with the buffer row which corresponds
+ * with the lowest view row index of the selected rows.
+ * 
+ * @return	The selected rows in the currently active table.
+ */
+QPair<QSet<BufferRowIndex>, BufferRowIndex> MainWindow::getSelectedRows(const ItemTypeMapper& mapper) const
+{
+	const QModelIndex markedModelIndex = mapper.tableView->currentIndex();
+	const QModelIndexList selectedModelIndices = mapper.tableView->selectionModel()->selectedRows();
+	
+	if (selectedModelIndices.isEmpty()) {
+		if (!markedModelIndex.isValid()) return {{}, BufferRowIndex()};
+		
+		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
+		const BufferRowIndex marked = mapper.compTable->getBufferRowIndexForViewRow(markedViewRow);
+		return {{ marked }, marked};
+	}
+	
+	QSet<BufferRowIndex> selected = QSet<BufferRowIndex>();
+	for (const QModelIndex& modelIndex : selectedModelIndices) {
+		const ViewRowIndex viewRowIndex = ViewRowIndex(modelIndex.row());
+		const BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+		assert(bufferRowIndex.isValid(mapper.compTable->rowCount()));
+		selected.insert(bufferRowIndex);
+	}
+	
+	if (markedModelIndex.isValid()) {
+		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
+		const BufferRowIndex marked = mapper.compTable->getBufferRowIndexForViewRow(markedViewRow);
+		
+		if (selected.contains(marked)) {
+			return {selected, marked};
+		}
+	}
+	auto bufferRowCompare = [&mapper](const BufferRowIndex& index1, const BufferRowIndex& index2) {
+		return mapper.compTable->findViewRowIndexForBufferRow(index1) < mapper.compTable->findViewRowIndexForBufferRow(index2);
+	};
+	const BufferRowIndex minBufferRow = *std::min_element(selected.constBegin(), selected.constEnd(), bufferRowCompare);
+	return {selected, minBufferRow};
 }
 
 /**

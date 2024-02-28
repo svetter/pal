@@ -40,7 +40,7 @@ class DataExportDialog : public QDialog, public Ui_DataExportDialog
 	Q_OBJECT
 	
 	/** The project item types handler. */
-	const ItemTypesHandler* typesHandler;
+	const ItemTypesHandler& typesHandler;
 	
 	/** Indicates whether the worker thread is running. */
 	bool running;
@@ -55,7 +55,7 @@ class DataExportDialog : public QDialog, public Ui_DataExportDialog
 	QList<QString> csvSeparators;
 	
 public:
-	DataExportDialog(QWidget* parent, const ItemTypesHandler* typesHandler);
+	DataExportDialog(QWidget& parent, const ItemTypesHandler& typesHandler);
 	
 private slots:
 	void handle_filepathChanged();

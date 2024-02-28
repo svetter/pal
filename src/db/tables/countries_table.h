@@ -43,8 +43,9 @@ public:
 	
 	CountriesTable();
 	
-	BufferRowIndex addRow(QWidget* parent, Country& country);
-	void updateRow(QWidget* parent, ValidItemID countryID, const Country& country);
+	BufferRowIndex addRow(QWidget& parent, Country& country);
+	void updateRow(QWidget& parent, ValidItemID countryID, const Country& country);
+	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Country& country);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Country& country) const;
 	

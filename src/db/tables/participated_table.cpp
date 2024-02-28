@@ -47,7 +47,7 @@ ParticipatedTable::ParticipatedTable(PrimaryKeyColumn& foreignAscentIDColumn, Pr
  * @param parent	The parent widget.
  * @param ascent	The ascent containing the hikers list to use.
  */
-void ParticipatedTable::addRows(QWidget* parent, const Ascent& ascent)
+void ParticipatedTable::addRows(QWidget& parent, const Ascent& ascent)
 {
 	for (const ValidItemID& hikerID : ascent.hikerIDs) {
 		QList<const Column*> columns = getColumnList();
@@ -66,12 +66,37 @@ void ParticipatedTable::addRows(QWidget* parent, const Ascent& ascent)
  * @param parent	The parent widget.
  * @param ascent	The ascent for which to update the table contents.
  */
-void ParticipatedTable::updateRows(QWidget* parent, const Ascent& ascent)
+void ParticipatedTable::updateRows(QWidget& parent, const Ascent& ascent)
 {
-	// delete pre-existing rows
+	// Delete pre-existing rows
 	removeMatchingRows(parent, ascentIDColumn, FORCE_VALID(ascent.ascentID));
-	// add back all current rows
+	// Add back all current rows
 	addRows(parent, ascent);
+}
+
+/**
+ * Updates the table contents for the ascents with the given ascentIDs.
+ * 
+ * First removes all existing rows for the ascent, then adds rows for all hikers in the given
+ * ascent object, for each of the given ascentIDs.
+ * 
+ * @param parent	The parent widget.
+ * @param ascentIDs	The ascentIDs for which to update the table contents.
+ * @param ascent	The ascent from which to take the hikerIDs.
+ */
+void ParticipatedTable::updateRows(QWidget& parent, const QSet<ValidItemID>& ascentIDs, const Ascent& ascent)
+{
+	// Delete pre-existing rows
+	removeMatchingRows(parent, ascentIDColumn, ascentIDs);
+	// Add back all current rows
+	QList<const Column*> columns = getColumnList();
+	for (const ValidItemID& ascentID : ascentIDs) {
+		for (const ValidItemID& hikerID : ascent.hikerIDs) {
+			const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascentID, hikerID);
+			
+			AssociativeTable::addRow(parent, columnDataPairs);
+		}
+	}
 }
 
 

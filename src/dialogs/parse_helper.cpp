@@ -31,8 +31,8 @@
  * @param lineEdit	The line edit to parse.
  * @return			The parsed string.
  */
-QString parseLineEdit(const QLineEdit* lineEdit) {
-	QString raw = lineEdit->text();
+QString parseLineEdit(const QLineEdit& lineEdit) {
+	QString raw = lineEdit.text();
 	if (raw.isEmpty()) {
 		return QString();
 	} else {
@@ -46,9 +46,9 @@ QString parseLineEdit(const QLineEdit* lineEdit) {
  * @param plainTextEdit	The plain text edit to parse.
  * @return				The parsed string.
  */
-QString parsePlainTextEdit(const QPlainTextEdit* plainTextEdit)
+QString parsePlainTextEdit(const QPlainTextEdit& plainTextEdit)
 {
-	QString raw = plainTextEdit->toPlainText();
+	QString raw = plainTextEdit.toPlainText();
 	if (raw.isEmpty()) {
 		raw = QString();
 	}
@@ -61,9 +61,9 @@ QString parsePlainTextEdit(const QPlainTextEdit* plainTextEdit)
  * @param spinBox	The spinner to parse.
  * @return			The parsed int.
  */
-int parseSpinner(const QSpinBox* spinBox)
+int parseSpinner(const QSpinBox& spinBox)
 {
-	return spinBox->value();
+	return spinBox.value();
 }
 
 /**
@@ -73,12 +73,12 @@ int parseSpinner(const QSpinBox* spinBox)
  * @param itemIDs	The list of item IDs corresponding to the entries in the combo box.
  * @return			The parsed ItemID, which may be invalid.
  */
-ItemID parseItemCombo(const QComboBox* combo, const QList<ValidItemID>& itemIDs)
+ItemID parseItemCombo(const QComboBox& combo, const QList<ValidItemID>& itemIDs)
 {
-	if (combo->currentIndex() < 1) {
+	if (combo.currentIndex() < 1) {
 		return ItemID();
 	}
-	return itemIDs.at(combo->currentIndex() - 1);
+	return itemIDs.at(combo.currentIndex() - 1);
 }
 
 /**
@@ -88,10 +88,10 @@ ItemID parseItemCombo(const QComboBox* combo, const QList<ValidItemID>& itemIDs)
  * @param defaultToZero	Whether to return 0 if there is no valid selection.
  * @return				The parsed row index, which may be invalid.
  */
-int parseEnumCombo(const QComboBox* combo, bool defaultToZero)
+int parseEnumCombo(const QComboBox& combo, bool defaultToZero)
 {
-	if (defaultToZero && combo->currentIndex() < 0) return 0;
-	return combo->currentIndex();
+	if (defaultToZero && combo.currentIndex() < 0) return 0;
+	return combo.currentIndex();
 }
 
 /**
@@ -100,9 +100,9 @@ int parseEnumCombo(const QComboBox* combo, bool defaultToZero)
  * @param checkbox	The checkbox to parse.
  * @return			True if the checkbox is checked, false otherwise.
  */
-bool parseCheckbox(const QCheckBox* checkbox)
+bool parseCheckbox(const QCheckBox& checkbox)
 {
-	return checkbox->isChecked();
+	return checkbox.isChecked();
 }
 
 /**
@@ -111,9 +111,9 @@ bool parseCheckbox(const QCheckBox* checkbox)
  * @param dateEdit	The date edit to parse.
  * @return			The parsed date.
  */
-QDate parseDateWidget(const QDateEdit* dateEdit)
+QDate parseDateWidget(const QDateEdit& dateEdit)
 {
-	return dateEdit->date();
+	return dateEdit.date();
 }
 
 /**
@@ -122,7 +122,7 @@ QDate parseDateWidget(const QDateEdit* dateEdit)
  * @param timeEdit	The time edit to parse.
  * @return			The parsed time.
  */
-QTime parseTimeWidget(const QTimeEdit* timeEdit)
+QTime parseTimeWidget(const QTimeEdit& timeEdit)
 {
-	return timeEdit->time();
+	return timeEdit.time();
 }

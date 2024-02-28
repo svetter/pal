@@ -37,27 +37,141 @@
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  */
-ItemDialog::ItemDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose):
-	QDialog(parent),
+ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle):
+	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
 	db(db),
-	purpose(purpose)
-{}
+	purpose(purpose),
+	multiEditCheckboxes(QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>()),
+	tristateCheckboxes(QMap<QCheckBox*, QSet<const Column*>>()),
+	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
+{
+	setWindowTitle(windowTitle);
+}
 
 
 
 /**
- * Exchanges all relevant strings to prepare the item dialog for editing an existing item.
+ * Sets the pointers to the UI elements that are relevant for editing multiple items at once.
  * 
- * @param okButton	The ok button.
+ * @param saveButton			The dialog's save button.
+ * @param multiEditCheckboxes	The checkboxes which control which values are edited when the dialog is used for multi-editing, along with all widgets that are affected by each checkbox and the corresponding column in the item table.
+ * @param tristateCheckboxes	The checkboxes which need to be turned into tristate checkboxes when editing multiple items, along with the corresponding column in the item table.
  */
-void ItemDialog::changeStringsForEdit(QPushButton* okButton)
+void ItemDialog::setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes)
 {
-	if (purpose != editItem) return;
-	setWindowTitle(getEditWindowTitle());
-	okButton->setText(tr("Save changes"));
+	this->saveButton = saveButton;
+	this->multiEditCheckboxes = multiEditCheckboxes;
+	this->tristateCheckboxes = tristateCheckboxes;
+}
+
+
+
+/**
+ * Makes changes to the UI which are specific to the purpose of the dialog.
+ */
+void ItemDialog::changeUIForPurpose()
+{
+	if (purpose == multiEdit) {
+		for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
+			const QSet<QWidget*>& widgets = widgetsAndColumns.first;
+			checkbox->setToolTip(tr("Set for all selected items"));
+			for (QWidget* widget : qAsConst(widgets)) {
+				savedWidgetEnabledStates[checkbox][widget] = widget->isEnabled();
+				widget->setEnabled(false);
+			}
+			connect(checkbox, &QPushButton::clicked, this, &ItemDialog::handle_multiEditCheckboxClicked);
+		}
+		for (const auto& [checkbox, _] : tristateCheckboxes.asKeyValueRange()) {
+			checkbox->setTristate(true);
+			checkbox->setCheckState(Qt::CheckState::PartiallyChecked);
+			checkbox->setToolTip(tr("Set yes/no for all selected items or leave as is"));
+		}
+		saveButton->setText(tr("Save changes for all"));
+	}
+	else {
+		const QList<QCheckBox*> checkboxes = multiEditCheckboxes.keys();
+		for (QCheckBox* checkbox : checkboxes) {
+			assert(checkbox);
+			checkbox->setVisible(false);
+		}
+	}
+	
+	if (purpose == editItem) {
+		saveButton->setText(tr("Save changes"));
+	}
+}
+
+/**
+ * Generic event handler for clicks on multi-edit checkboxes.
+ * 
+ * Enables or disables the widgets that are controlled by the checkbox, depending on its state.
+ */
+void ItemDialog::handle_multiEditCheckboxClicked()
+{
+	QCheckBox* const checkbox = (QCheckBox*) QObject::sender();
+	const QSet<QWidget*>& widgets = multiEditCheckboxes.value(checkbox).first;
+	for (QWidget* const widget : widgets) {
+		if (checkbox->isChecked()) {
+			// Restore state
+			QMap<QWidget*, bool>& enabledStateMap = savedWidgetEnabledStates[checkbox];
+			const bool previousState = enabledStateMap.value(widget);
+			enabledStateMap.remove(widget);
+			widget->setEnabled(previousState);
+		} else {
+			// Save state and disable
+			savedWidgetEnabledStates[checkbox][widget] = widget->isEnabled();
+			widget->setEnabled(false);
+		}
+	}
+}
+
+/**
+ * Indicates whether any multi-edit checkboxes are currently checked, or in the case of bool values,
+ * whether any of their tristate checkboxes are not in the partially checked state.
+ * 
+ * @return	True if any multi-edit values are set to be changed, false otherwise.
+ */
+bool ItemDialog::anyMultiEditChanges()
+{
+	bool changes = false;
+	for (const auto& [checkbox, _] : multiEditCheckboxes.asKeyValueRange()) {
+		changes = changes || checkbox->isChecked();
+	}
+	for (const auto& [checkbox, _] : tristateCheckboxes.asKeyValueRange()) {
+		changes = changes || checkbox->checkState() != Qt::CheckState::PartiallyChecked;
+	}
+	return changes;
+}
+
+/**
+ * For multi-edit mode, returns the columns whose values are currently set to be edited.
+ * 
+ * @pre The dialog purpose is multi-edit.
+ * 
+ * @return	A set of pointers to the columns whose values are currently set to be edited.
+ */
+QSet<const Column*> ItemDialog::getMultiEditColumns()
+{
+	assert(purpose == multiEdit);
+	
+	QSet<const Column*> set = QSet<const Column*>();
+	
+	for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
+		if (checkbox->isChecked()) {
+			set.unite(widgetsAndColumns.second);
+		}
+	}
+	for (const auto& [checkbox, columns] : tristateCheckboxes.asKeyValueRange()) {
+		if (checkbox->checkState() != Qt::PartiallyChecked) {
+			set.unite(columns);
+		}
+	}
+	
+	return set;
 }
 
 
@@ -70,16 +184,21 @@ void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString em
 {
 	aboutToClose();
 	
-	QString itemName = nameLineEdit->text();
+	const QString itemName = nameLineEdit->text();
 	if (itemName.isEmpty()) {
 		QMessageBox::information(this, emptyNameWindowTitle, emptyNameMessage, QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 	
-	if (Settings::warnAboutDuplicateNames.get() && (purpose != editItem || itemName != initName)) {
-		// only check for duplicates if the name has changed
-		bool proceed = checkNameForDuplicatesAndWarn(itemName, nameColumn);
-		if (!proceed) return;	// abort saving
+	if (Settings::warnAboutDuplicateNames.get()) {
+		bool check = true;
+		if (purpose == editItem)	check = itemName != initName;	// Edit: only check if name was changed
+		if (purpose == multiEdit)	check = false;					// Multi-edit: never check
+		
+		if (check) {
+			bool proceed = checkNameForDuplicatesAndWarn(itemName, nameColumn);
+			if (!proceed) return;	// abort saving
+		}
 	}
 	
 	accept();
@@ -158,7 +277,7 @@ bool ItemDialog::checkNameForDuplicatesAndWarn(QString name, const ValueColumn& 
  * @param whatIfResults	The determined results of the deletion.
  * @return				True if the user confirmed the deletion, false otherwise.
  */
-bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
+bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QList<WhatIfDeleteResult>& whatIfResults)
 {
 	QString question;
 	if (whatIfResults.isEmpty()) {
@@ -171,7 +290,7 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 	QMessageBox::StandardButton resultButton = QMessageBox::Yes;
 	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto selected = QMessageBox::Cancel;
-	resultButton = QMessageBox::question(parent, windowTitle, question, options, selected);
+	resultButton = QMessageBox::question(&parent, windowTitle, question, options, selected);
 	return resultButton == QMessageBox::Yes;
 }
 
@@ -180,9 +299,9 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
 /**
  * Repopulates the given combo box with the given table's entries, filtered and sorted according to
  * the given parameters, and writes the IDs of the entries to the referenced list.
- * 
- * @param displayAndSortColumn		The column of the table to use for displaying and sorting the entries.
+ *
  * @param combo						The combo box to populate.
+ * @param displayAndSortColumn		The column of the table to use for displaying and sorting the entries.
  * @param idList					The list in which to store the IDs of the entries.
  * @param overrideFirstLine			If not empty, this string will be used as the first line of the combo box instead of the table's none string.
  * @param distinctionKeyColumn		If not null, this column will be used to point to a cell in distinctionContentColumn.
@@ -192,18 +311,18 @@ bool displayDeleteWarning(QWidget* parent, QString windowTitle, const QList<What
  * @param prefixColumn				If not null, this column will be used to add a prefix to the display names of the entries. Must be in the same table as displayAndSortColumn.
  * @param prefixValueToString		A function to convert the value of prefixColumn to a string. Must be provided iff prefixColumn is not null.
  */
-void populateItemCombo(const ValueColumn& displayAndSortColumn, QComboBox* combo, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID, const ValueColumn* prefixColumn, std::function<QString (const QVariant&)> prefixValueToString)
+void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID, const ValueColumn* prefixColumn, std::function<QString (const QVariant&)> prefixValueToString)
 {
 	assert(!(!filterColumn && filterID.isValid()));
 	assert((bool) prefixColumn == (bool) prefixValueToString);
 	
 	const NormalTable& table = (NormalTable&) displayAndSortColumn.table;
 	
-	combo->clear();
+	combo.clear();
 	idList.clear();
 	QString noneString = table.getNoneString();
 	if (!overrideFirstLine.isEmpty()) noneString = overrideFirstLine;
-	combo->addItem(noneString);
+	combo.addItem(noneString);
 	
 	// Get pairs of ID and display/sort field
 	QList<QPair<ValidItemID, QVariant>> selectableItems = table.pairIDWith(displayAndSortColumn);
@@ -271,50 +390,50 @@ void populateItemCombo(const ValueColumn& displayAndSortColumn, QComboBox* combo
 	// Save IDs and populate combo box
 	for (const auto& [itemID, name] : selectableItems) {
 		idList.append(itemID);
-		combo->addItem(name.toString());
+		combo.addItem(name.toString());
 	}
 }
 
 
-void populatePeakCombo(Database& db, QComboBox* peakCombo, QList<ValidItemID>& selectablePeakIDs, ItemID regionFilterID)
+void populatePeakCombo(Database& db, QComboBox& peakCombo, QList<ValidItemID>& selectablePeakIDs, ItemID regionFilterID)
 {
 	if (regionFilterID.isValid()) {
-		populateItemCombo(db.peaksTable.nameColumn, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionFilterID);
+		populateItemCombo(peakCombo, db.peaksTable.nameColumn, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn, &db.peaksTable.regionIDColumn, regionFilterID);
 	} else {
-		populateItemCombo(db.peaksTable.nameColumn, peakCombo, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
+		populateItemCombo(peakCombo, db.peaksTable.nameColumn, selectablePeakIDs, QString(), &db.peaksTable.regionIDColumn, &db.regionsTable.nameColumn);
 	}
 }
 
-void populateTripCombo(Database& db, QComboBox* tripCombo, QList<ValidItemID>& selectableTripIDs)
+void populateTripCombo(Database& db, QComboBox& tripCombo, QList<ValidItemID>& selectableTripIDs)
 {
 	auto prefixValueToString = [](const QVariant& prefixValue) {
 		if (!prefixValue.canConvert<QDate>()) return QString();
 		return QString::number(prefixValue.toDate().year());
 	};
 	
-	populateItemCombo(db.tripsTable.nameColumn, tripCombo, selectableTripIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.tripsTable.startDateColumn, prefixValueToString);
+	populateItemCombo(tripCombo, db.tripsTable.nameColumn, selectableTripIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.tripsTable.startDateColumn, prefixValueToString);
 }
 
-void populateHikerCombo(Database& db, QComboBox* hikerCombo, QList<ValidItemID>& selectableHikerIDs)
+void populateHikerCombo(Database& db, QComboBox& hikerCombo, QList<ValidItemID>& selectableHikerIDs)
 {
-	populateItemCombo(db.hikersTable.nameColumn, hikerCombo, selectableHikerIDs);
+	populateItemCombo(hikerCombo, db.hikersTable.nameColumn, selectableHikerIDs);
 }
 
-void populateRegionCombo(Database& db, QComboBox* regionCombo, QList<ValidItemID>& selectableRegionIDs, bool asFilter)
+void populateRegionCombo(Database& db, QComboBox& regionCombo, QList<ValidItemID>& selectableRegionIDs, bool asFilter)
 {
 	if (asFilter) {
-		populateItemCombo(db.regionsTable.nameColumn, regionCombo, selectableRegionIDs, ItemDialog::tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+		populateItemCombo(regionCombo, db.regionsTable.nameColumn, selectableRegionIDs, ItemDialog::tr("All regions (no filter)"), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 	} else {
-		populateItemCombo(db.regionsTable.nameColumn, regionCombo, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
+		populateItemCombo(regionCombo, db.regionsTable.nameColumn, selectableRegionIDs, QString(), &db.regionsTable.rangeIDColumn, &db.rangesTable.nameColumn);
 	}
 }
 
-void populateRangeCombo(Database& db, QComboBox* rangeCombo, QList<ValidItemID>& selectableRangeIDs)
+void populateRangeCombo(Database& db, QComboBox& rangeCombo, QList<ValidItemID>& selectableRangeIDs)
 {
-	populateItemCombo(db.rangesTable.nameColumn, rangeCombo, selectableRangeIDs);
+	populateItemCombo(rangeCombo, db.rangesTable.nameColumn, selectableRangeIDs);
 }
 
-void populateCountryCombo(Database& db, QComboBox* countryCombo, QList<ValidItemID>& selectableCountryIDs)
+void populateCountryCombo(Database& db, QComboBox& countryCombo, QList<ValidItemID>& selectableCountryIDs)
 {
-	populateItemCombo(db.countriesTable.nameColumn, countryCombo, selectableCountryIDs);
+	populateItemCombo(countryCombo, db.countriesTable.nameColumn, selectableCountryIDs);
 }

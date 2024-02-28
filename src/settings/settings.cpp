@@ -108,13 +108,13 @@ void Settings::checkForVersionChange()
  * @param mainWindow		The application's main window (for determining relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void saveDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
+void saveDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>& geometrySetting)
 {
-	QRect absoluteGeometry = dialog->geometry();
+	QRect absoluteGeometry = dialog.geometry();
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		absoluteGeometry.translate(- mainWindow->pos());
+		absoluteGeometry.translate(- mainWindow.pos());
 	}
-	geometrySetting->set(absoluteGeometry);
+	geometrySetting.set(absoluteGeometry);
 }
 
 /**
@@ -124,19 +124,19 @@ void saveDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<
  * @param mainWindow		The application's main window (for restoring relative position).
  * @param geometrySetting	The geometry setting corresponding to the dialog.
  */
-void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setting<QRect>* geometrySetting)
+void restoreDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setting<QRect>& geometrySetting)
 {
 	if (!Settings::rememberWindowPositions.present()) return;
 	
-	QRect savedGeometry = geometrySetting->get();
+	QRect savedGeometry = geometrySetting.get();
 	if (savedGeometry.isEmpty()) return;
 	
 	if (Settings::rememberWindowPositionsRelative.get()) {
-		savedGeometry.translate(mainWindow->pos());
+		savedGeometry.translate(mainWindow.pos());
 		
 		// Change size if bigger than screen
 		const QScreen* screen = QGuiApplication::screenAt(savedGeometry.center());
-		if (!screen) screen = mainWindow->screen();
+		if (!screen) screen = mainWindow.screen();
 		assert(screen);
 		QRect screenGeometry = screen->availableGeometry();
 		const int frameTopHeight = 30;	// Extra space for window top bar
@@ -151,7 +151,7 @@ void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setti
 		if (savedGeometry.bottom() > screenGeometry.bottom())	savedGeometry.moveBottom(screenGeometry.bottom());
 	}
 	
-	dialog->setGeometry(savedGeometry);
+	dialog.setGeometry(savedGeometry);
 }
 
 
@@ -162,14 +162,14 @@ void restoreDialogGeometry(QWidget* dialog, QMainWindow* mainWindow, const Setti
  * @param splitter				The splitter to save the sizes of.
  * @param splitterSizesSetting	The setting to save the splitter sizes to.
  */
-void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+void saveSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting)
 {
-	QList<int> leftSplitterSizes = splitter->sizes();
+	QList<int> leftSplitterSizes = splitter.sizes();
 	QStringList stringList;
 	for (int size : leftSplitterSizes) {
 		stringList.append(QString::number(size));
 	}
-	splitterSizesSetting->set(stringList);
+	splitterSizesSetting.set(stringList);
 }
 
 /**
@@ -178,16 +178,16 @@ void saveSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitter
  * @param splitter				The splitter to restore the sizes of.
  * @param splitterSizesSetting	The setting to load the splitter sizes from.
  */
-void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* splitterSizesSetting)
+void restoreSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting)
 {
-	QStringList splitterSizeStrings = splitterSizesSetting->get();
-	if (splitterSizeStrings.size() != splitter->sizes().size()) {
+	QStringList splitterSizeStrings = splitterSizesSetting.get();
+	if (splitterSizeStrings.size() != splitter.sizes().size()) {
 		// Can't restore splitter sizes from settings
 		if (!splitterSizeStrings.isEmpty()) {
 			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Expected %1 numbers, but got %2")
-							.arg(splitter->sizes().size()).arg(splitterSizeStrings.size());
+							.arg(splitter.sizes().size()).arg(splitterSizeStrings.size());
 		}
-		splitterSizesSetting->clear();
+		splitterSizesSetting.clear();
 		return;
 	}
 	
@@ -197,11 +197,11 @@ void restoreSplitterSizes(QSplitter* splitter, const Setting<QStringList>* split
 		int size = sizeString.toInt(&conversionOk);
 		if (!conversionOk) {
 			qDebug() << QString("Couldn't restore splitter sizes for ascent viewer: Value(s) couldn't be converted to int");
-			splitterSizesSetting->clear();
+			splitterSizesSetting.clear();
 			return;
 		}
 		splitterSizes.append(size);
 	}
 	
-	splitter->setSizes(splitterSizes);
+	splitter.setSizes(splitterSizes);
 }

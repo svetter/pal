@@ -44,18 +44,25 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The region data to initialize the dialog with and store as initial data. RegionDialog takes ownership of this pointer.
  */
-RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Region> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+RegionDialog::RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Region> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init)),
 	selectableRangeIDs(QList<ValidItemID>()),
 	selectableCountryIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{{ nameLineEdit },						{ &db.regionsTable.nameColumn }}},
+		{rangeCheckbox,		{{ rangeCombo, newRangeButton },		{ &db.regionsTable.rangeIDColumn }}},
+		{countryCheckbox,	{{ countryCombo, newCountryButton },	{ &db.regionsTable.countryIDColumn }}}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::regionDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::regionDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -74,12 +81,13 @@ RegionDialog::RegionDialog(QWidget* parent, QMainWindow* mainWindow, Database& d
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
+	case multiEdit:
 		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -91,25 +99,13 @@ RegionDialog::~RegionDialog()
 
 
 /**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString RegionDialog::getEditWindowTitle()
-{
-	return tr("Edit region");
-}
-
-
-
-/**
  * Populates the dialog's combo boxes with data from the database.
  */
 void RegionDialog::populateComboBoxes()
 {
-	populateRangeCombo(db, rangeCombo, selectableRangeIDs);
+	populateRangeCombo(db, *rangeCombo, selectableRangeIDs);
 	
-	populateCountryCombo(db, countryCombo, selectableCountryIDs);
+	populateCountryCombo(db, *countryCombo, selectableCountryIDs);
 }
 
 
@@ -143,9 +139,9 @@ void RegionDialog::insertInitData()
  */
 unique_ptr<Region> RegionDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	ItemID	rangeID		= parseItemCombo	(rangeCombo, selectableRangeIDs);
-	ItemID	countryID	= parseItemCombo	(countryCombo, selectableCountryIDs);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	ItemID	rangeID		= parseItemCombo	(*rangeCombo, selectableRangeIDs);
+	ItemID	countryID	= parseItemCombo	(*countryCombo, selectableCountryIDs);
 	
 	return make_unique<Region>(ItemID(), name, rangeID, countryID);
 }
@@ -159,6 +155,10 @@ unique_ptr<Region> RegionDialog::extractData()
  */
 bool RegionDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
@@ -171,10 +171,10 @@ bool RegionDialog::changesMade()
  */
 void RegionDialog::handle_newRange()
 {
-	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newRangeIndex = openNewRangeDialogAndStore(*this, mainWindow, db);
 	if (newRangeIndex.isInvalid()) return;
 	
-	populateRangeCombo(db, rangeCombo, selectableRangeIDs);
+	populateRangeCombo(db, *rangeCombo, selectableRangeIDs);
 	const ValidItemID newRangeID = db.rangesTable.getPrimaryKeyAt(newRangeIndex);
 	rangeCombo->setCurrentIndex(selectableRangeIDs.indexOf(newRangeID) + 1);	// 0 is None
 }
@@ -186,10 +186,10 @@ void RegionDialog::handle_newRange()
  */
 void RegionDialog::handle_newCountry()
 {
-	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newCountryIndex = openNewCountryDialogAndStore(*this, mainWindow, db);
 	if (newCountryIndex.isInvalid()) return;
 	
-	populateCountryCombo(db, countryCombo, selectableCountryIDs);
+	populateCountryCombo(db, *countryCombo, selectableCountryIDs);
 	const ValidItemID newCountryID = db.countriesTable.getPrimaryKeyAt(newCountryIndex);
 	countryCombo->setCurrentIndex(selectableCountryIDs.indexOf(newCountryID) + 1);	// 0 is None
 }
@@ -215,7 +215,7 @@ void RegionDialog::handle_ok()
  */
 void RegionDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::regionDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::regionDialog_geometry);
 }
 
 
@@ -230,9 +230,19 @@ void RegionDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new region in the database's region table buffer.
  */
-BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openRegionDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = RegionDialog::tr("New region");
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	
+	const BufferRowIndex newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
+	return newRegionIndex;
 }
 
 /**
@@ -244,11 +254,54 @@ BufferRowIndex openNewRegionDialogAndStore(QWidget* parent, QMainWindow* mainWin
  * @param bufferRowIndex	The index of the region to edit in the database's region table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Region> originalRegion = db.getRegionAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRegionDialogAndStore(parent, mainWindow, db, editItem, std::move(originalRegion));
-	return editedIndex.isValid();
+	const ItemID originalRegionID = originalRegion->regionID;
+	
+	const QString windowTitle = RegionDialog::tr("Edit region");
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalRegion));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	
+	db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
+	return true;
+}
+
+/**
+ * Opens a multi-edit region dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the regions to edit.
+ * @param initBufferRowIndex	The index of the region whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditRegionsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Region> originalRegion = db.getRegionAt(initBufferRowIndex);
+	
+	const QString windowTitle = RegionDialog::tr("Edit %1 regions").arg(bufferRowIndices.size());
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalRegion));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	extractedRegion->regionID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.regionsTable.updateRows(parent, bufferRowIndices, columnList, *extractedRegion);
+	return true;
 }
 
 /**
@@ -260,7 +313,7 @@ bool openEditRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Data
  * @param bufferRowIndices	The indices of the regions to delete in the database's region table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRegionsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -281,49 +334,4 @@ bool openDeleteRegionsDialogAndExecute(QWidget* parent, QMainWindow* mainWindow,
 
 	db.removeRows(parent, db.regionsTable, regionIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic region dialog and applies the resulting changes to the database.
- *
- * @param parent			The parent window.
- * @param mainWindow		The application's main window.
- * @param db				The project database.
- * @param purpose			The purpose of the dialog.
- * @param originalRegion	The region data to initialize the dialog with and store as initial data. Region takes ownership of this pointer.
- * @return					The index of the new region in the database's region table buffer, or existing index of edited region. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openRegionDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion)
-{
-	assert((bool) originalRegion != (purpose == newItem));
-	
-	const ItemID originalRegionID = (purpose != newItem) ? originalRegion->regionID : ItemID();
-	if (purpose == duplicateItem) {
-		originalRegion->regionID = ItemID();
-	}
-	BufferRowIndex newRegionIndex = BufferRowIndex();
-	
-	RegionDialog dialog = RegionDialog(parent, mainWindow, db, purpose, std::move(originalRegion));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Region> extractedRegion = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
-			break;
-		case editItem:
-			db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newRegionIndex = db.regionsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalRegionID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newRegionIndex;
 }

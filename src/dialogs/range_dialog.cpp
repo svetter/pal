@@ -43,16 +43,22 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
  */
-RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Range> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Range> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init))
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{{ nameLineEdit },		{ &db.rangesTable.nameColumn }}},
+		{continentCheckbox,	{{ continentCombo },	{ &db.rangesTable.continentColumn }}}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::rangeDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::rangeDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
@@ -68,12 +74,13 @@ RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
+	case multiEdit:
 		insertInitData();
 		break;
 	default:
 		assert(false);
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -81,18 +88,6 @@ RangeDialog::RangeDialog(QWidget* parent, QMainWindow* mainWindow, Database& db,
  */
 RangeDialog::~RangeDialog()
 {}
-
-
-
-/**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString RangeDialog::getEditWindowTitle()
-{
-	return tr("Edit mountain range");
-}
 
 
 
@@ -125,8 +120,8 @@ void RangeDialog::insertInitData()
  */
 unique_ptr<Range> RangeDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	int		continent	= parseEnumCombo	(continentCombo, true);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	int		continent	= parseEnumCombo	(*continentCombo, true);
 	
 	return make_unique<Range>(ItemID(), name, continent);
 }
@@ -140,6 +135,10 @@ unique_ptr<Range> RangeDialog::extractData()
  */
 bool RangeDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
@@ -164,7 +163,7 @@ void RangeDialog::handle_ok()
  */
 void RangeDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::rangeDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::rangeDialog_geometry);
 }
 
 
@@ -179,9 +178,19 @@ void RangeDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new range in the database's range table buffer.
  */
-BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openRangeDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = RangeDialog::tr("New mountain range");
+	
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Range> extractedRange = dialog.extractData();
+	
+	const BufferRowIndex newRangeIndex = db.rangesTable.addRow(parent, *extractedRange);
+	return newRangeIndex;
 }
 
 /**
@@ -193,11 +202,54 @@ BufferRowIndex openNewRangeDialogAndStore(QWidget* parent, QMainWindow* mainWind
  * @param bufferRowIndex	The index of the range to edit in the database's range table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Range> originalRange = db.getRangeAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRangeDialogAndStore(parent, mainWindow, db, editItem, std::move(originalRange));
-	return editedIndex.isValid();
+	const ItemID originalRangeID = originalRange->rangeID;
+	
+	const QString windowTitle = RangeDialog::tr("Edit mountain range");
+	
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalRange));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Range> extractedRange = dialog.extractData();
+	
+	db.rangesTable.updateRow(parent, FORCE_VALID(originalRangeID), *extractedRange);
+	return true;
+}
+
+/**
+ * Opens a multi-edit range dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the ranges to edit.
+ * @param initBufferRowIndex	The index of the range whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditRangesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Range> originalRange = db.getRangeAt(initBufferRowIndex);
+	
+	const QString windowTitle = RangeDialog::tr("Edit %1 mountain ranges").arg(bufferRowIndices.size());
+	
+	RangeDialog dialog = RangeDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalRange));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Range> extractedRange = dialog.extractData();
+	extractedRange->rangeID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.rangesTable.updateRows(parent, bufferRowIndices, columnList, *extractedRange);
+	return true;
 }
 
 /**
@@ -209,7 +261,7 @@ bool openEditRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Datab
  * @param bufferRowIndices	The indices of the ranges to delete in the database's range table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeleteRangesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -230,49 +282,4 @@ bool openDeleteRangesDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, 
 
 	db.removeRows(parent, db.rangesTable, rangeIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic range dialog and applies the resulting changes to the database.
- *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalRange	The range data to initialize the dialog with and store as initial data. RangeDialog takes ownership of this pointer.
- * @return				The index of the new range in the database's range table buffer, or existing index of edited range. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openRangeDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange)
-{
-	assert((bool) originalRange != (purpose == newItem));
-	
-	const ItemID originalRangeID = (purpose != newItem) ? originalRange->rangeID : ItemID();
-	if (purpose == duplicateItem) {
-		originalRange->rangeID = ItemID();
-	}
-	BufferRowIndex newRangeIndex = BufferRowIndex();
-	
-	RangeDialog dialog = RangeDialog(parent, mainWindow, db, purpose, std::move(originalRange));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Range> extractedRange = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newRangeIndex = db.rangesTable.addRow(parent, *extractedRange);
-			break;
-		case editItem:
-			db.rangesTable.updateRow(parent, FORCE_VALID(originalRangeID), *extractedRange);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newRangeIndex = db.rangesTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalRangeID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newRangeIndex;
 }

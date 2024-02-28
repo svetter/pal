@@ -43,32 +43,44 @@ using std::unique_ptr, std::make_unique;
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param purpose		The purpose of the dialog.
+ * @param windowTitle	The title of the dialog window.
  * @param init			The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
  */
-PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init) :
-	ItemDialog(parent, mainWindow, db, purpose),
+PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Peak> init) :
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>())
 {
 	setupUi(this);
+	setUIPointers(okButton, {
+		{nameCheckbox,		{{ nameLineEdit },							{ &db.peaksTable.nameColumn }}},
+		{regionCheckbox,	{{ regionCombo, newRegionButton },			{ &db.peaksTable.regionIDColumn }}},
+		{heightCheckbox,	{{ heightSpecifyCheckbox, heightSpinner },	{ &db.peaksTable.heightColumn }}},
+		{mapsCheckbox,		{{ mapsLineEdit },							{ &db.peaksTable.mapsLinkColumn }}},
+		{earthCheckbox,		{{ earthLineEdit },							{ &db.peaksTable.earthLinkColumn }}},
+		{wikipediaCheckbox,	{{ wikipediaLineEdit },						{ &db.peaksTable.wikiLinkColumn }}}
+	}, {
+		{volcanoCheckbox, { &db.peaksTable.volcanoColumn }}
+	});
+	
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
 	
-	restoreDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
+	restoreDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
 	
 	
 	populateComboBoxes();
 	
 	
-	connect(heightCheckbox,		&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
-	connect(newRegionButton,	&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
+	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
+	connect(newRegionButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
 	
-	connect(okButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
-	connect(cancelButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
+	connect(okButton,				&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
+	connect(cancelButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
 	
 	
 	// Set initial height
-	heightCheckbox->setChecked(Settings::peakDialog_heightEnabledInitially.get());
+	heightSpecifyCheckbox->setChecked(Settings::peakDialog_heightEnabledInitially.get());
 	handle_heightSpecifiedChanged();
 	heightSpinner->setValue(Settings::peakDialog_initialHeight.get());
 	
@@ -78,7 +90,7 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 		this->init = extractData();
 		break;
 	case editItem:
-		changeStringsForEdit(okButton);
+	case multiEdit:
 		insertInitData();
 		break;
 	case duplicateItem:
@@ -87,6 +99,7 @@ PeakDialog::PeakDialog(QWidget* parent, QMainWindow* mainWindow, Database& db, D
 		this->init = std::move(blankPeak);
 		break;
 	}
+	changeUIForPurpose();
 }
 
 /**
@@ -98,23 +111,11 @@ PeakDialog::~PeakDialog()
 
 
 /**
- * Returns the window title to use when the dialog is used to edit an item.
- *
- * @return	The window title for editing an item
- */
-QString PeakDialog::getEditWindowTitle()
-{
-	return tr("Edit peak");
-}
-
-
-
-/**
  * Populates the dialog's combo boxes with data from the database.
  */
 void PeakDialog::populateComboBoxes()
 {
-	populateRegionCombo(db, regionCombo, selectableRegionIDs);
+	populateRegionCombo(db, *regionCombo, selectableRegionIDs);
 }
 
 
@@ -128,11 +129,10 @@ void PeakDialog::insertInitData()
 	nameLineEdit->setText(init->name);
 	// Height
 	bool heightSpecified = init->heightSpecified();
-	heightCheckbox->setChecked(heightSpecified);
+	heightSpecifyCheckbox->setChecked(heightSpecified);
 	if (heightSpecified) {
 		heightSpinner->setValue(init->height);
 	}
-	handle_heightSpecifiedChanged();
 	// Volcano
 	volcanoCheckbox->setChecked(init->volcano);
 	// Region
@@ -142,8 +142,8 @@ void PeakDialog::insertInitData()
 		regionCombo->setCurrentIndex(0);
 	}
 	// Links
-	googleMapsLineEdit->setText(init->mapsLink);
-	googleEarthLineEdit->setText(init->earthLink);
+	mapsLineEdit->setText(init->mapsLink);
+	earthLineEdit->setText(init->earthLink);
 	wikipediaLineEdit->setText(init->wikiLink);
 }
 
@@ -155,15 +155,15 @@ void PeakDialog::insertInitData()
  */
 unique_ptr<Peak> PeakDialog::extractData()
 {
-	QString	name		= parseLineEdit		(nameLineEdit);
-	int		height		= parseSpinner		(heightSpinner);
-	bool	volcano		= parseCheckbox		(volcanoCheckbox);
-	ItemID	regionID	= parseItemCombo	(regionCombo, selectableRegionIDs);
-	QString	mapsLink	= parseLineEdit		(googleMapsLineEdit);
-	QString	earthLink	= parseLineEdit		(googleEarthLineEdit);
-	QString	wikiLink	= parseLineEdit		(wikipediaLineEdit);
+	QString	name		= parseLineEdit		(*nameLineEdit);
+	int		height		= parseSpinner		(*heightSpinner);
+	bool	volcano		= parseCheckbox		(*volcanoCheckbox);
+	ItemID	regionID	= parseItemCombo	(*regionCombo, selectableRegionIDs);
+	QString	mapsLink	= parseLineEdit		(*mapsLineEdit);
+	QString	earthLink	= parseLineEdit		(*earthLineEdit);
+	QString	wikiLink	= parseLineEdit		(*wikipediaLineEdit);
 	
-	if (!heightCheckbox->isChecked())	height = -1;
+	if (!heightSpecifyCheckbox->isChecked()) height = -1;
 	
 	return make_unique<Peak>(ItemID(), name, height, volcano, regionID, mapsLink, earthLink, wikiLink);
 }
@@ -176,6 +176,10 @@ unique_ptr<Peak> PeakDialog::extractData()
  */
 bool PeakDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
@@ -188,7 +192,7 @@ bool PeakDialog::changesMade()
  */
 void PeakDialog::handle_heightSpecifiedChanged()
 {
-	bool enabled = heightCheckbox->isChecked();
+	bool enabled = heightSpecifyCheckbox->isChecked();
 	heightSpinner->setEnabled(enabled);
 }
 
@@ -199,10 +203,10 @@ void PeakDialog::handle_heightSpecifiedChanged()
  */
 void PeakDialog::handle_newRegion()
 {
-	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(this, mainWindow, db);
+	BufferRowIndex newRegionIndex = openNewRegionDialogAndStore(*this, mainWindow, db);
 	if (newRegionIndex.isInvalid()) return;
 	
-	populateRegionCombo(db, regionCombo, selectableRegionIDs);
+	populateRegionCombo(db, *regionCombo, selectableRegionIDs);
 	const ValidItemID newRegionID = db.regionsTable.getPrimaryKeyAt(newRegionIndex);
 	regionCombo->setCurrentIndex(selectableRegionIDs.indexOf(newRegionID) + 1);	// 0 is None
 }
@@ -228,7 +232,7 @@ void PeakDialog::handle_ok()
  */
 void PeakDialog::aboutToClose()
 {
-	saveDialogGeometry(this, mainWindow, &Settings::peakDialog_geometry);
+	saveDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
 }
 
 
@@ -243,9 +247,19 @@ void PeakDialog::aboutToClose()
  * @param db			The project database.
  * @return				The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db)
+BufferRowIndex openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openPeakDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = PeakDialog::tr("New peak");
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Peak> extractedPeak = dialog.extractData();
+	
+	const BufferRowIndex newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
+	return newPeakIndex;
 }
 
 /**
@@ -257,10 +271,22 @@ BufferRowIndex openNewPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindo
  * @param bufferRowIndex	The index of the peak to duplicate in the database's peak table buffer.
  * @return					The index of the new peak in the database's peak table buffer.
  */
-BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+BufferRowIndex openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
-	return openPeakDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalPeak));
+	originalPeak->peakID = ItemID();
+	
+	const QString windowTitle = PeakDialog::tr("New peak");
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, duplicateItem, windowTitle, std::move(originalPeak));
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Peak> extractedPeak = dialog.extractData();
+	
+	const BufferRowIndex newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
+	return newPeakIndex;
 }
 
 /**
@@ -272,11 +298,54 @@ BufferRowIndex openDuplicatePeakDialogAndStore(QWidget* parent, QMainWindow* mai
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+bool openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Peak> originalPeak = db.getPeakAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openPeakDialogAndStore(parent, mainWindow, db, editItem, std::move(originalPeak));
-	return editedIndex.isValid();
+	const ItemID originalPeakID = originalPeak->peakID;
+	
+	const QString windowTitle = PeakDialog::tr("Edit peak");
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalPeak));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Peak> extractedPeak = dialog.extractData();
+	
+	db.peaksTable.updateRow(parent, FORCE_VALID(originalPeakID), *extractedPeak);
+	return true;
+}
+
+/**
+ * Opens a multi-edit peak dialog and saves the changes to the database.
+ * 
+ * @param parent				The parent window.
+ * @param mainWindow			The application's main window.
+ * @param db					The project database.
+ * @param bufferRowIndices		The buffer row indices of the peaks to edit.
+ * @param initBufferRowIndex	The index of the peak whose data to initialize the dialog with.
+ * @return						True if any changes were made, false otherwise.
+ */
+bool openMultiEditPeaksDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+{
+	assert(!bufferRowIndices.isEmpty());
+	
+	unique_ptr<Peak> originalPeak = db.getPeakAt(initBufferRowIndex);
+	
+	const QString windowTitle = PeakDialog::tr("Edit %1 peaks").arg(bufferRowIndices.size());
+	
+	PeakDialog dialog = PeakDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalPeak));
+	if (dialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+	
+	unique_ptr<Peak> extractedPeak = dialog.extractData();
+	extractedPeak->peakID = ItemID();
+	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
+	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+	
+	db.peaksTable.updateRows(parent, bufferRowIndices, columnList, *extractedPeak);
+	return true;
 }
 
 /**
@@ -288,7 +357,7 @@ bool openEditPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Databa
  * @param bufferRowIndices	The indices of the peaks to delete in the database's peak table buffer.
  * @return					True if any items were deleted, false otherwise.
  */
-bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, Database& db, QSet<BufferRowIndex> bufferRowIndices)
+bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices)
 {
 	Q_UNUSED(mainWindow);
 	if (bufferRowIndices.isEmpty()) return false;
@@ -309,49 +378,4 @@ bool openDeletePeaksDialogAndExecute(QWidget* parent, QMainWindow* mainWindow, D
 
 	db.removeRows(parent, db.peaksTable, peakIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic peak dialog and applies the resulting changes to the database.
- *
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param originalPeak	The peak data to initialize the dialog with and store as initial data. PeakDialog takes ownership of this pointer.
- * @return				The index of the new peak in the database's peak table buffer, or existing index of edited peak. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openPeakDialogAndStore(QWidget* parent, QMainWindow* mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Peak> originalPeak)
-{
-	assert((bool) originalPeak != (purpose == newItem));
-	
-	const ItemID originalPeakID = (purpose != newItem) ? originalPeak->peakID : ItemID();
-	if (purpose == duplicateItem) {
-		originalPeak->peakID = ItemID();
-	}
-	BufferRowIndex newPeakIndex = BufferRowIndex();
-	
-	PeakDialog dialog = PeakDialog(parent, mainWindow, db, purpose, std::move(originalPeak));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Peak> extractedPeak = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
-			break;
-		case editItem:
-			db.peaksTable.updateRow(parent, FORCE_VALID(originalPeakID), *extractedPeak);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newPeakIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalPeakID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newPeakIndex;
 }

@@ -48,7 +48,7 @@ CountriesTable::CountriesTable() :
  * @param country	The country to add.
  * @return			The index of the new country in the table buffer.
  */
-BufferRowIndex CountriesTable::addRow(QWidget* parent, Country& country)
+BufferRowIndex CountriesTable::addRow(QWidget& parent, Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
@@ -66,12 +66,28 @@ BufferRowIndex CountriesTable::addRow(QWidget* parent, Country& country)
  * @param parent	The parent widget.
  * @param country	The country to update.
  */
-void CountriesTable::updateRow(QWidget* parent, ValidItemID countryID, const Country& country)
+void CountriesTable::updateRow(QWidget& parent, ValidItemID countryID, const Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
 	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
 	
 	NormalTable::updateRow(parent, countryID, columnDataPairs);
+}
+
+/**
+ * Updates the contents of existing countries in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the countries to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param country		The new data for the countries. The countryID will be ignored.
+ */
+void CountriesTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Country& country)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
 }
 
 

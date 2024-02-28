@@ -103,7 +103,7 @@ void Database::reset()
  * @param parent	The parent window.
  * @param filepath	The filepath of the new database file.
  */
-void Database::createNew(QWidget* parent, const QString& filepath)
+void Database::createNew(QWidget& parent, const QString& filepath)
 {
 	assert(!databaseLoaded);
 	qDebug() << "Creating new database file at" << filepath;
@@ -142,7 +142,7 @@ void Database::createNew(QWidget* parent, const QString& filepath)
  * @param filepath	The filepath of the existing database file.
  * @return			True if the open was successful, false otherwise.
  */
-bool Database::openExisting(QWidget* parent, const QString& filepath)
+bool Database::openExisting(QWidget& parent, const QString& filepath)
 {
 	assert(!databaseLoaded);
 	qDebug() << "Opening database file" << filepath;
@@ -159,7 +159,7 @@ bool Database::openExisting(QWidget* parent, const QString& filepath)
 	
 	// Upgrade database version
 	DatabaseUpgrader upgrader = DatabaseUpgrader(*this, parent);
-	bool abort = !upgrader.checkDatabaseVersionAndUpgrade([this, parent] () {
+	bool abort = !upgrader.checkDatabaseVersionAndUpgrade([this, &parent] () {
 		// After database structure was updated if needed:
 		populateBuffers(parent);
 	});
@@ -177,7 +177,7 @@ bool Database::openExisting(QWidget* parent, const QString& filepath)
  * @param parent	The parent window.
  * @return			True if the save was successful and the new file is now opened, false otherwise.
  */
-bool Database::saveAs(QWidget* parent, const QString& filepath)
+bool Database::saveAs(QWidget& parent, const QString& filepath)
 {
 	assert(databaseLoaded);
 	qDebug() << "Saving database file as" << filepath;
@@ -233,7 +233,7 @@ QString Database::getCurrentFilepath() const
  * 
  * @param parent	The parent window.
  */
-void Database::populateBuffers(QWidget* parent)
+void Database::populateBuffers(QWidget& parent)
 {
 	assert(databaseLoaded);
 	
@@ -753,11 +753,11 @@ QList<WhatIfDeleteResult> Database::whatIf_removeRows(NormalTable& table, QSet<V
  * @param table			The table to remove the row from.
  * @param primaryKeys	The primary keys of the rows to remove.
  */
-void Database::removeRows(QWidget* parent, NormalTable& table, QSet<ValidItemID> primaryKeys)
+void Database::removeRows(QWidget& parent, NormalTable& table, QSet<ValidItemID> primaryKeys)
 {
 	assert(databaseLoaded);
 	
-	Database::removeRows_referenceSearch(parent, false, table, primaryKeys);
+	Database::removeRows_referenceSearch(&parent, false, table, primaryKeys);
 	
 	for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
 		table.removeRow(parent, {&table.primaryKeyColumn}, {primaryKey});
@@ -809,7 +809,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			// EXECUTE
 			else {
 				for (const ValidItemID& primaryKey : primaryKeys) {
-					candidateAssociativeTable.removeMatchingRows(parent, *matchingColumn, primaryKey);
+					candidateAssociativeTable.removeMatchingRows(*parent, *matchingColumn, primaryKey);
 				}
 			}
 		}
@@ -849,7 +849,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 					for (const BufferRowIndex& rowIndex : rowIndices) {
 						ValidItemID primaryKey = VALID_ITEM_ID(affectedPrimaryKeyColumn.getValueAt(rowIndex));
 						// Remove single instance of reference to the key about to be removed
-						candidateNormalTable.updateCell(parent, primaryKey, *affectedColumn, ItemID().asQVariant());
+						candidateNormalTable.updateCell(*parent, primaryKey, *affectedColumn, ItemID().asQVariant());
 					}
 				}
 			}

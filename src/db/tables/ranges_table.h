@@ -45,8 +45,9 @@ public:
 	
 	RangesTable();
 	
-	BufferRowIndex addRow(QWidget* parent, Range& range);
-	void updateRow(QWidget* parent, ValidItemID rangeID, const Range& range);
+	BufferRowIndex addRow(QWidget& parent, Range& range);
+	void updateRow(QWidget& parent, ValidItemID rangeID, const Range& range);
+	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Range& range);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Range& range) const;
 	
