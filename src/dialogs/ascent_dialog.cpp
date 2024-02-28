@@ -698,14 +698,17 @@ bool openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow
 	unique_ptr<Ascent> extractedAscent = dialog.extractData();
 	extractedAscent->ascentID = ItemID();
 	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
-	const bool saveHikers	= columnsToSave.contains(&db.participatedTable.ascentIDColumn);
-	const bool savePhotos	= columnsToSave.contains(&db.photosTable.ascentIDColumn);
+	const bool saveHikers = columnsToSave.contains(&db.participatedTable.ascentIDColumn);
+	const bool savePhotos = columnsToSave.contains(&db.photosTable.ascentIDColumn);
 	
 	QList<const Column*> ascentColumnsToSave = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 	if (saveHikers)	ascentColumnsToSave.removeAll(&db.participatedTable.ascentIDColumn);
 	if (savePhotos)	ascentColumnsToSave.removeAll(&db.photosTable.ascentIDColumn);
+	const bool saveAscent = !ascentColumnsToSave.isEmpty();
 	
-	db.ascentsTable.updateRows(parent, bufferRowIndices, ascentColumnsToSave, *extractedAscent);
+	if (saveAscent) {
+		db.ascentsTable.updateRows(parent, bufferRowIndices, ascentColumnsToSave, *extractedAscent);
+	}
 	
 	if (saveHikers || savePhotos) {
 		QSet<ValidItemID> ascentIDs = QSet<ValidItemID>();

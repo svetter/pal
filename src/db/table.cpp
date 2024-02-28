@@ -758,6 +758,8 @@ void Table::updateCellOfNormalTableInSql(QWidget& parent, const ValidItemID prim
  */
 void Table::updateRowInSql(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
 {
+	assert(!columnDataPairs.isEmpty());
+	
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	const Column& primaryKeyColumn = *primaryKeyColumns.first();
 	
@@ -792,6 +794,8 @@ void Table::updateRowInSql(QWidget& parent, const ValidItemID primaryKey, const 
  */
 void Table::removeRowFromSql(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
+	assert(!primaryKeys.isEmpty());
+	
 	QString condition = "";
 	for (int i = 0; i < primaryKeys.size(); i++) {
 		if (i > 0) condition.append(" AND ");
