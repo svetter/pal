@@ -52,6 +52,7 @@ public:
 	BufferRowIndex addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs);
 	void updateCell(QWidget& parent, const ValidItemID primaryKey, const Column& column, const QVariant& data);
 	void updateRow(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
+	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs);
 	// removeRow(...) doesn't exist to avoid row removal without reference search. Outside interface is Database::removeRow(...)
 	
 	// Translation strings

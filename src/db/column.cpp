@@ -219,9 +219,13 @@ void Column::registerChangeListener(shared_ptr<const ColumnChangeListener> newLi
 /**
  * Returns the set of all change listeners registered for this column.
  */
-const QSet<shared_ptr<const ColumnChangeListener>>& Column::getChangeListeners() const
+const QSet<const ColumnChangeListener*> Column::getChangeListeners() const
 {
-	return changeListeners;
+	QSet<const ColumnChangeListener*> copySet = QSet<const ColumnChangeListener*>();
+	for (const shared_ptr<const ColumnChangeListener>& listener : changeListeners) {
+		copySet.insert(listener.get());
+	}
+	return copySet;
 }
 
 

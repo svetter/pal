@@ -148,6 +148,20 @@ void NormalTable::updateRow(QWidget& parent, const ValidItemID primaryKey, const
 	return Table::updateRowInNormalTable(parent, primaryKey, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing rows in the table, specified by buffer indices.
+ * 
+ * Delegates to Table::updateRowsInNormalTable().
+ * 
+ * @param parent			The parent window.
+ * @param bufferIndices		The indices of the rows to update in the table buffer.
+ * @param columnDataPairs	Pairs of columns and corresponding data to update in all given rows.
+ */
+void NormalTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs)
+{
+	return Table::updateRowsInNormalTable(parent, bufferIndices, columnDataPairs);
+}
+
 
 
 // QABSTRACTIMTEMMODEL IMPLEMENTATION

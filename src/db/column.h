@@ -97,7 +97,7 @@ public:
 	QString getSqlSpecificationString() const;
 	
 	void registerChangeListener(shared_ptr<const ColumnChangeListener> newListener);
-	const QSet<shared_ptr<const ColumnChangeListener>>& getChangeListeners() const;
+	const QSet<const ColumnChangeListener*> getChangeListeners() const;
 };
 
 

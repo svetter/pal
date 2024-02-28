@@ -354,20 +354,28 @@ void Table::setRowChangeListener(unique_ptr<const RowChangeListener> newListener
 }
 
 /**
+ * Notifies all column change listeners of the given columns that data in the columns has changed.
+ * 
+ * @param changedColumns	The columns whose data has changed.
+ */
+void Table::notifyChangeListeners(const QSet<const Column*>& changedColumns)
+{
+	QSet<const ColumnChangeListener*> columnListeners = QSet<const ColumnChangeListener*>();
+	for (const Column* const column : changedColumns) {
+		columnListeners.unite(column->getChangeListeners());
+	}
+	for (const ColumnChangeListener* listener : columnListeners) {
+		listener->columnDataChanged(changedColumns);
+	}
+}
+
+/**
  * Notifies all column change listeners of all columns that the data in the columns has changed.
  */
-void Table::notifyAllColumns()
+void Table::notifyForAllColumns()
 {
-	// Collect change listeners and notify them
-	QSet<shared_ptr<const ColumnChangeListener>> changeListeners = QSet<shared_ptr<const ColumnChangeListener>>();
-	QSet<const Column*> columnSet = QSet<const Column*>();
-	for (const Column* column : columns) {
-		changeListeners.unite(column->getChangeListeners());
-		columnSet.insert(column);
-	}
-	for (const shared_ptr<const ColumnChangeListener>& changeListener : changeListeners) {
-		changeListener->columnDataChanged(columnSet);
-	}
+	QSet<const Column*> columnSet = QSet<const Column*>(columns.constBegin(), columns.constEnd());
+	notifyChangeListeners(columnSet);
 }
 
 
@@ -406,7 +414,7 @@ BufferRowIndex Table::addRow(QWidget& parent, const QList<ColumnDataPair>& colum
 	if (rowChangeListener) rowChangeListener->bufferRowJustInserted(newItemBufferRowIndex);
 	
 	// Row was added, all columns affected => Notify all column-attached change listeners
-	notifyAllColumns();
+	notifyForAllColumns();
 	
 	return newItemBufferRowIndex;
 }
@@ -442,9 +450,58 @@ void Table::updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKe
 	Q_EMIT dataChanged(updateIndexNormal, updateIndexNormal, updatedDatumRoles);
 	Q_EMIT dataChanged(updateIndexNullable, updateIndexNullable, updatedDatumRoles);
 	// Collect column's change listeners and notify them
-	QSet<shared_ptr<const ColumnChangeListener>> changeListeners = column.getChangeListeners();
-	for (const shared_ptr<const ColumnChangeListener>& changeListener : changeListeners) {
+	QSet<const ColumnChangeListener*> changeListeners = column.getChangeListeners();
+	for (const ColumnChangeListener* const changeListener : changeListeners) {
 		changeListener->columnDataChanged({&column});
+	}
+}
+
+/**
+ * Updates rows in the table, specified by buffer indices, provided it is a normal table.
+ * 
+ * @pre The table is not associative.
+ * 
+ * @param parent			The parent window.
+ * @param bufferIndices		The buffer indices of the rows to update.
+ * @param columnDataPairs	Pairs of columns and corresponding data to update.
+ */
+void Table::updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs)
+{
+	assert(!isAssociative);
+	const Column* const primaryKeyColumn = getPrimaryKeyColumnList().first();
+	
+	BufferRowIndex minBufferRow = BufferRowIndex(getNumberOfRows());
+	BufferRowIndex maxBufferRow = BufferRowIndex(0);
+	
+	for (const BufferRowIndex& bufferIndex : bufferIndices) {
+		const ValidItemID primaryKey = VALID_ITEM_ID(primaryKeyColumn->getValueAt(bufferIndex));
+		
+		// Update row in SQL database
+		updateRowInSql(parent, primaryKey, columnDataPairs);
+		
+		// Update buffer
+		for (const auto& [column, data] : columnDataPairs) {
+			buffer.replaceCell(bufferIndex, column->getIndex(), data);
+		}
+		
+		if (bufferIndex < minBufferRow) minBufferRow = bufferIndex;
+		if (bufferIndex > maxBufferRow) maxBufferRow = bufferIndex;
+	}
+	
+	// Announce changed data
+	QModelIndex updateIndexLeft		= index(minBufferRow.get(), 0,							getNormalRootModelIndex());
+	QModelIndex updateIndexRight	= index(maxBufferRow.get(), getNumberOfColumns() - 1,	getNormalRootModelIndex());
+	const QList<int> updatedDatumRoles = { Qt::CheckStateRole, Qt::DisplayRole };
+	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, updatedDatumRoles);
+	// Notify column-attached change listeners
+	QSet<const Column*> affectedColumns = QSet<const Column*>();
+	QSet<const ColumnChangeListener*> columnListeners = QSet<const ColumnChangeListener*>();
+	for (const auto& [column, _] : columnDataPairs) {
+		affectedColumns.insert(column);
+		columnListeners.unite(column->getChangeListeners());
+	}
+	for (const ColumnChangeListener* listener : columnListeners) {
+		listener->columnDataChanged(affectedColumns);
 	}
 }
 
@@ -463,22 +520,8 @@ void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
 	
-	// Update cell in SQL database
-	updateRowInSql(parent, primaryKey, columnDataPairs);
-	
-	// Update buffer
-	BufferRowIndex bufferRowIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
-	for (const auto& [column, data] : columnDataPairs) {
-		buffer.replaceCell(bufferRowIndex, column->getIndex(), data);
-	}
-	
-	// Announce changed data
-	QModelIndex updateIndexLeft		= index(bufferRowIndex.get(), 0,						getNormalRootModelIndex());
-	QModelIndex updateIndexRight	= index(bufferRowIndex.get(), getNumberOfColumns() - 1,	getNormalRootModelIndex());
-	const QList<int> updatedDatumRoles = { Qt::CheckStateRole, Qt::DisplayRole };
-	Q_EMIT dataChanged(updateIndexLeft, updateIndexRight, updatedDatumRoles);
-	// Whole row was updated, all columns affected => Notify all column-attached change listeners
-	notifyAllColumns();
+	const BufferRowIndex bufferIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	updateRowsInNormalTable(parent, { bufferIndex }, columnDataPairs);
 }
 
 /**
@@ -510,7 +553,7 @@ void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyCol
 	// Announce end of row removal
 	endRemoveRows();
 	// Row was removed, all columns affected => Notify all column-attached change listeners
-	notifyAllColumns();
+	notifyForAllColumns();
 }
 
 /**
@@ -546,7 +589,7 @@ void Table::removeMatchingRows(QWidget& parent, const Column& column, ValidItemI
 	}
 	
 	// Rows were removed, all columns affected => Notify all column-attached change listeners
-	notifyAllColumns();
+	notifyForAllColumns();
 }
 
 
