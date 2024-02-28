@@ -184,16 +184,21 @@ void ItemDialog::handle_ok(QLineEdit* nameLineEdit, QString initName, QString em
 {
 	aboutToClose();
 	
-	QString itemName = nameLineEdit->text();
+	const QString itemName = nameLineEdit->text();
 	if (itemName.isEmpty()) {
 		QMessageBox::information(this, emptyNameWindowTitle, emptyNameMessage, QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 	
-	if (Settings::warnAboutDuplicateNames.get() && (purpose != editItem || itemName != initName)) {
-		// only check for duplicates if the name has changed
-		bool proceed = checkNameForDuplicatesAndWarn(itemName, nameColumn);
-		if (!proceed) return;	// abort saving
+	if (Settings::warnAboutDuplicateNames.get()) {
+		bool check = true;
+		if (purpose == editItem)	check = itemName != initName;	// Edit: only check if name was changed
+		if (purpose == multiEdit)	check = false;					// Multi-edit: never check
+		
+		if (check) {
+			bool proceed = checkNameForDuplicatesAndWarn(itemName, nameColumn);
+			if (!proceed) return;	// abort saving
+		}
 	}
 	
 	accept();
