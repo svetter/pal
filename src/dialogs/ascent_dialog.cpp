@@ -65,20 +65,20 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{titleCheckbox,			{ titleLineEdit }},
-		{peakCheckbox,			{ regionFilterCombo, peakCombo, newPeakButton }},
-		{dateCheckbox,			{ dateSpecifyCheckbox, dateWidget }},
-		{peakIndexCheckbox,		{ peakIndexSpinner }},
-		{timeCheckbox,			{ timeSpecifyCheckbox, timeWidget }},
-		{elevationGainCheckbox,	{ elevationGainSpecifyCheckbox, elevationGainSpinner }},
-		{hikeKindCheckbox,		{ hikeKindCombo }},
-		{difficultyCheckbox,	{ difficultySystemCombo, difficultyGradeCombo }},
-		{tripCheckbox,			{ tripCombo, newTripButton }},
-		{hikersCheckbox,		{ hikersListView, addHikerButton, removeHikersButton }},
-		{photosCheckbox,		{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit }},
-		{descriptionCheckbox,	{ descriptionEditor }}
+		{titleCheckbox,			{{ titleLineEdit },																	{ &db.ascentsTable.titleColumn }}},
+		{peakCheckbox,			{{ regionFilterCombo, peakCombo, newPeakButton },									{ &db.ascentsTable.peakIDColumn }}},
+		{dateCheckbox,			{{ dateSpecifyCheckbox, dateWidget },												{ &db.ascentsTable.dateColumn }}},
+		{peakIndexCheckbox,		{{ peakIndexSpinner },																{ &db.ascentsTable.peakOnDayColumn }}},
+		{timeCheckbox,			{{ timeSpecifyCheckbox, timeWidget },												{ &db.ascentsTable.timeColumn }}},
+		{elevationGainCheckbox,	{{ elevationGainSpecifyCheckbox, elevationGainSpinner },							{ &db.ascentsTable.elevationGainColumn }}},
+		{hikeKindCheckbox,		{{ hikeKindCombo },																	{ &db.ascentsTable.hikeKindColumn }}},
+		{difficultyCheckbox,	{{ difficultySystemCombo, difficultyGradeCombo },									{ &db.ascentsTable.difficultySystemColumn, &db.ascentsTable.difficultyGradeColumn }}},
+		{tripCheckbox,			{{ tripCombo, newTripButton },														{ &db.ascentsTable.tripIDColumn }}},
+		{hikersCheckbox,		{{ hikersListView, addHikerButton, removeHikersButton },							{ &db.ascentsTable.descriptionColumn }}},
+		{photosCheckbox,		{{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit },	{ &db.participatedTable.ascentIDColumn }}},
+		{descriptionCheckbox,	{{ descriptionEditor },																{ &db.photosTable.ascentIDColumn }}}
 	}, {
-		traverseCheckbox
+		{traverseCheckbox,	{ &db.ascentsTable.traverseColumn }}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/ascent_multisize_square.ico"));

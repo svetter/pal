@@ -52,8 +52,8 @@ RangeDialog::RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,		{ nameLineEdit }},
-		{continentCheckbox,	{ continentCombo }}
+		{nameCheckbox,		{{ nameLineEdit },		{ &db.rangesTable.nameColumn }}},
+		{continentCheckbox,	{{ continentCombo },	{ &db.rangesTable.continentColumn }}}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/range_multisize_square.ico"));

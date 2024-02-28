@@ -68,10 +68,10 @@ protected:
 private:
 	/** The dialog's save button. */
 	QPushButton* saveButton;
-	/** The checkboxes which control which values are edited when the dialog is used for multi-editing, along with all widgets that are affected by each checkbox. */
-	QMap<QCheckBox*, QSet<QWidget*>> multiEditCheckboxes;
-	/** The checkboxes which need to be turned into tristate checkboxes when editing multiple items. */
-	QSet<QCheckBox*> tristateCheckboxes;
+	/** The checkboxes which control which values are edited when the dialog is used for multi-editing, along with all widgets that are affected by each checkbox and the corresponding column in the item table. */
+	QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>> multiEditCheckboxes;
+	/** The checkboxes which need to be turned into tristate checkboxes when editing multiple items, along with the corresponding column in the item table. */
+	QMap<QCheckBox*, QSet<const Column*>> tristateCheckboxes;
 	
 	/** The previous enable states of all widgets currently disabled because of a multi-edit checkbox. */
 	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
@@ -79,7 +79,7 @@ private:
 protected:
 	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle);
 	
-	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QSet<QWidget*>>& multiEditCheckboxes, const QSet<QCheckBox*>& tristateCheckboxes = QSet<QCheckBox*>());
+	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes = QMap<QCheckBox*, QSet<const Column*>>());
 	void changeUIForPurpose();
 	void handle_multiEditCheckboxClicked();
 	

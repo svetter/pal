@@ -51,7 +51,7 @@ HikerDialog::HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db,
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,	{ nameLineEdit }}
+		{nameCheckbox,	{{ nameLineEdit }, { &db.hikersTable.nameColumn }}}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/hiker_multisize_square.ico"));

@@ -51,9 +51,9 @@ TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,			{ nameLineEdit }},
-		{datesCheckbox,			{ startDateLabel, startDateWidget, endDateLabel, endDateWidget, datesUnspecifiedCheckbox }},
-		{descriptionCheckbox,	{ descriptionEditor }}
+		{nameCheckbox,			{{ nameLineEdit },																				{ &db.tripsTable.nameColumn }}},
+		{datesCheckbox,			{{ startDateLabel, startDateWidget, endDateLabel, endDateWidget, datesUnspecifiedCheckbox },	{ &db.tripsTable.startDateColumn, &db.tripsTable.endDateColumn }}},
+		{descriptionCheckbox,	{{ descriptionEditor },																			{ &db.tripsTable.descriptionColumn }}}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));

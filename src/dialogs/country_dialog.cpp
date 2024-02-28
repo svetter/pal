@@ -51,7 +51,7 @@ CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database&
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,	{ nameLineEdit }}
+		{nameCheckbox,	{{ nameLineEdit },	{ &db.countriesTable.nameColumn }}}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));

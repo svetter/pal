@@ -55,9 +55,9 @@ RegionDialog::RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,		{ nameLineEdit }},
-		{rangeCheckbox,		{ rangeCombo, newRangeButton }},
-		{countryCheckbox,	{ countryCombo, newCountryButton }}
+		{nameCheckbox,		{{ nameLineEdit },						{ &db.regionsTable.nameColumn }}},
+		{rangeCheckbox,		{{ rangeCombo, newRangeButton },		{ &db.regionsTable.rangeIDColumn }}},
+		{countryCheckbox,	{{ countryCombo, newCountryButton },	{ &db.regionsTable.countryIDColumn }}}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/region_multisize_square.ico"));

@@ -53,14 +53,14 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 {
 	setupUi(this);
 	setUIPointers(okButton, {
-		{nameCheckbox,		{ nameLineEdit }},
-		{regionCheckbox,	{ regionCombo, newRegionButton }},
-		{heightCheckbox,	{ heightSpecifyCheckbox, heightSpinner }},
-		{mapsCheckbox,		{ mapsLineEdit }},
-		{earthCheckbox,		{ earthLineEdit }},
-		{wikipediaCheckbox,	{ wikipediaLineEdit }}
+		{nameCheckbox,		{{ nameLineEdit },							{ &db.peaksTable.nameColumn }}},
+		{regionCheckbox,	{{ regionCombo, newRegionButton },			{ &db.peaksTable.regionIDColumn }}},
+		{heightCheckbox,	{{ heightSpecifyCheckbox, heightSpinner },	{ &db.peaksTable.heightColumn }}},
+		{mapsCheckbox,		{{ mapsLineEdit },							{ &db.peaksTable.mapsLinkColumn }}},
+		{earthCheckbox,		{{ earthLineEdit },							{ &db.peaksTable.earthLinkColumn }}},
+		{wikipediaCheckbox,	{{ wikipediaLineEdit },						{ &db.peaksTable.wikiLinkColumn }}}
 	}, {
-		volcanoCheckbox
+		{volcanoCheckbox, { &db.peaksTable.volcanoColumn }}
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
