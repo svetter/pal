@@ -74,9 +74,9 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 		{hikeKindCheckbox,		{{ hikeKindCombo },																	{ &db.ascentsTable.hikeKindColumn }}},
 		{difficultyCheckbox,	{{ difficultySystemCombo, difficultyGradeCombo },									{ &db.ascentsTable.difficultySystemColumn, &db.ascentsTable.difficultyGradeColumn }}},
 		{tripCheckbox,			{{ tripCombo, newTripButton },														{ &db.ascentsTable.tripIDColumn }}},
-		{hikersCheckbox,		{{ hikersListView, addHikerButton, removeHikersButton },							{ &db.ascentsTable.descriptionColumn }}},
-		{photosCheckbox,		{{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit },	{ &db.participatedTable.ascentIDColumn }}},
-		{descriptionCheckbox,	{{ descriptionEditor },																{ &db.photosTable.ascentIDColumn }}}
+		{hikersCheckbox,		{{ hikersListView, addHikerButton, removeHikersButton },							{ &db.participatedTable.ascentIDColumn }}},
+		{photosCheckbox,		{{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit },	{ &db.photosTable.ascentIDColumn }}},
+		{descriptionCheckbox,	{{ descriptionEditor },																{ &db.ascentsTable.descriptionColumn }}}
 	}, {
 		{traverseCheckbox,	{ &db.ascentsTable.traverseColumn }}
 	});
