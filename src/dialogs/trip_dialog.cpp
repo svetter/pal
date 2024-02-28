@@ -115,7 +115,6 @@ void TripDialog::insertInitData()
 		startDateWidget->setDate(init->startDate);
 		endDateWidget->setDate(init->endDate);
 	}
-	handle_datesSpecifiedChanged();
 	// Description
 	descriptionEditor->setPlainText(init->description);
 }

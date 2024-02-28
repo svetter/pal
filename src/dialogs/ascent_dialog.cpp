@@ -204,7 +204,6 @@ void AscentDialog::insertInitData()
 	if (dateSpecified) {
 		dateWidget->setDate(init->date);
 	}
-	handle_dateSpecifiedChanged();
 	// Peak on day
 	peakIndexSpinner->setValue(init->perDayIndex);
 	// Time
@@ -213,14 +212,12 @@ void AscentDialog::insertInitData()
 	if (timeSpecified) {
 		timeWidget->setTime(init->time);
 	}
-	handle_timeSpecifiedChanged();
 	// Elevation gain
 	bool elevationGainSpecified = init->elevationGainSpecified();
 	elevationGainSpecifyCheckbox->setChecked(elevationGainSpecified);
 	if (elevationGainSpecified) {
 		elevationGainSpinner->setValue(init->elevationGain);
 	}
-	handle_elevationGainSpecifiedChanged();
 	// Kind of hike
 	hikeKindCombo->setCurrentIndex(init->hikeKind);
 	// Traverse
