@@ -119,6 +119,10 @@ unique_ptr<Country> CountryDialog::extractData()
  */
 bool CountryDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

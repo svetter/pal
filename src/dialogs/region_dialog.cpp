@@ -157,6 +157,10 @@ unique_ptr<Region> RegionDialog::extractData()
  */
 bool RegionDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

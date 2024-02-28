@@ -129,6 +129,51 @@ void ItemDialog::handle_multiEditCheckboxClicked()
 	}
 }
 
+/**
+ * Indicates whether any multi-edit checkboxes are currently checked, or in the case of bool values,
+ * whether any of their tristate checkboxes are not in the partially checked state.
+ * 
+ * @return	True if any multi-edit values are set to be changed, false otherwise.
+ */
+bool ItemDialog::anyMultiEditChanges()
+{
+	bool changes = false;
+	for (const auto& [checkbox, _] : multiEditCheckboxes.asKeyValueRange()) {
+		changes = changes || checkbox->isChecked();
+	}
+	for (const auto& [checkbox, _] : tristateCheckboxes.asKeyValueRange()) {
+		changes = changes || checkbox->checkState() != Qt::CheckState::PartiallyChecked;
+	}
+	return changes;
+}
+
+/**
+ * For multi-edit mode, returns the columns whose values are currently set to be edited.
+ * 
+ * @pre The dialog purpose is multi-edit.
+ * 
+ * @return	A set of pointers to the columns whose values are currently set to be edited.
+ */
+QSet<const Column*> ItemDialog::getMultiEditColumns()
+{
+	assert(purpose == multiEdit);
+	
+	QSet<const Column*> set = QSet<const Column*>();
+	
+	for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
+		if (checkbox->isChecked()) {
+			set.unite(widgetsAndColumns.second);
+		}
+	}
+	for (const auto& [checkbox, columns] : tristateCheckboxes.asKeyValueRange()) {
+		if (checkbox->checkState() != Qt::PartiallyChecked) {
+			set.unite(columns);
+		}
+	}
+	
+	return set;
+}
+
 
 
 /**

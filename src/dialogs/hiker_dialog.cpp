@@ -119,6 +119,10 @@ unique_ptr<Hiker> HikerDialog::extractData()
  */
 bool HikerDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

@@ -137,6 +137,10 @@ unique_ptr<Range> RangeDialog::extractData()
  */
 bool RangeDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

@@ -285,6 +285,10 @@ unique_ptr<Ascent> AscentDialog::extractData()
  */
 bool AscentDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

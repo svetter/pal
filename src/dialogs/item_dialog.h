@@ -82,7 +82,11 @@ protected:
 	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes = QMap<QCheckBox*, QSet<const Column*>>());
 	void changeUIForPurpose();
 	void handle_multiEditCheckboxClicked();
+	bool anyMultiEditChanges();
+public:
+	QSet<const Column*> getMultiEditColumns();
 	
+protected:
 	void handle_ok(QLineEdit* nameLineEdit, QString initName, QString emptyNameWindowTitle, QString emptyNameMessage, const ValueColumn& nameColumn);
 	/**
 	 * Event handler for the OK button.

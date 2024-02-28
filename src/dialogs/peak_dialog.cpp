@@ -178,6 +178,10 @@ unique_ptr<Peak> PeakDialog::extractData()
  */
 bool PeakDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 

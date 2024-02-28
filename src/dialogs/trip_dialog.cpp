@@ -146,6 +146,10 @@ unique_ptr<Trip> TripDialog::extractData()
  */
 bool TripDialog::changesMade()
 {
+	if (purpose == multiEdit) {
+		return anyMultiEditChanges();
+	}
+	
 	return !extractData()->equalTo(*init);
 }
 
