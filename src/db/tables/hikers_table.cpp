@@ -74,6 +74,22 @@ void HikersTable::updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& h
 	NormalTable::updateRow(parent, hikerID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing hikers in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the hikers to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param hiker			The new data for the hikers. The hikerID will be ignored.
+ */
+void HikersTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Hiker& hiker)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a hiker to a list of column-data pairs.

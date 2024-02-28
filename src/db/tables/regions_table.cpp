@@ -81,6 +81,22 @@ void RegionsTable::updateRow(QWidget& parent, ValidItemID regionID, const Region
 	NormalTable::updateRow(parent, regionID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing regions in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the regions to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param region		The new data for the regions. The regionID will be ignored.
+ */
+void RegionsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Region& region)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, region);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a region to a list of column-data pairs.

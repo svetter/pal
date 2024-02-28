@@ -80,6 +80,22 @@ void TripsTable::updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip
 	NormalTable::updateRow(parent, tripID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing trips in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the trips to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param trip			The new data for the trips. The tripID will be ignored.
+ */
+void TripsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Trip& trip)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a trip to a list of column-data pairs.

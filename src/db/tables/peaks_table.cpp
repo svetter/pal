@@ -88,6 +88,22 @@ void PeaksTable::updateRow(QWidget& parent, ValidItemID peakID, const Peak& peak
 	NormalTable::updateRow(parent, peakID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing peaks in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the peaks to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param peak			The new data for the peaks. The peakID will be ignored.
+ */
+void PeaksTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Peak& peak)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a peak to a list of column-data pairs.

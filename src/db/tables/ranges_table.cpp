@@ -78,6 +78,22 @@ void RangesTable::updateRow(QWidget& parent, ValidItemID rangeID, const Range& r
 	NormalTable::updateRow(parent, rangeID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing ranges in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the ranges to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param ascent		The new data for the ranges. The rangeID will be ignored.
+ */
+void RangesTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Range& range)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, range);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a range to a list of column-data pairs.

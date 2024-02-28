@@ -74,6 +74,22 @@ void CountriesTable::updateRow(QWidget& parent, ValidItemID countryID, const Cou
 	NormalTable::updateRow(parent, countryID, columnDataPairs);
 }
 
+/**
+ * Updates the contents of existing countries in the table.
+ * 
+ * @param parent		The parent widget.
+ * @param rowIndices	The indices of the countries to update in the table buffer.
+ * @param columns		The columns to update. Can not contain the primary key column.
+ * @param country		The new data for the countries. The countryID will be ignored.
+ */
+void CountriesTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Country& country)
+{
+	assert(!columns.contains(&primaryKeyColumn));
+	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
+	
+	NormalTable::updateRows(parent, rowIndices, columnDataPairs);
+}
+
 
 /**
  * Translates the data of a country to a list of column-data pairs.

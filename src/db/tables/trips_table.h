@@ -51,6 +51,7 @@ public:
 	
 	BufferRowIndex addRow(QWidget& parent, Trip& trip);
 	void updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip);
+	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Trip& trip);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip& trip) const;
 	

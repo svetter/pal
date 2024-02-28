@@ -48,6 +48,7 @@ public:
 	
 	void addRows(QWidget& parent, const Ascent& ascent);
 	void updateRows(QWidget& parent, const Ascent& ascent);
+	void updateRows(QWidget& parent, const QSet<ValidItemID>& ascentIDs, const Ascent& ascent);
 private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, ValidItemID ascentID, ValidItemID hikerID) const;
 };

@@ -115,9 +115,9 @@ void PhotosTable::addRows(QWidget& parent, const Ascent& ascent)
  */
 void PhotosTable::updateRows(QWidget& parent, ValidItemID ascentID, const QList<Photo>& photos)
 {
-	// delete pre-existing rows
+	// Delete pre-existing rows
 	removeMatchingRows(parent, ascentIDColumn, ascentID);
-	// add back all current rows
+	// Add back all current rows
 	addRows(parent, ascentID, photos);
 }
 
@@ -130,6 +130,31 @@ void PhotosTable::updateRows(QWidget& parent, ValidItemID ascentID, const QList<
 void PhotosTable::updateRows(QWidget& parent, const Ascent& ascent)
 {
 	return updateRows(parent, FORCE_VALID(ascent.ascentID), ascent.photos);
+}
+
+/**
+ * Updates the table contents for a given set of ascentIDs.
+ * 
+ * First removes all existing rows where the ascentID matches, then adds rows for all photos in the
+ * given list, for each ascentID.
+ *
+ * @param parent		The parent widget.
+ * @param ascentIDs	The ascentIDs for which to update the table contents.
+ * @param photos		The photos to add.
+ */
+void PhotosTable::updateRows(QWidget& parent, const QSet<ValidItemID>& ascentIDs, const QList<Photo>& photos)
+{
+	// Delete pre-existing rows
+	removeMatchingRows(parent, ascentIDColumn, ascentIDs);
+	// Add back all current rows
+	QList<const Column*> columns = getNonPrimaryKeyColumnList();
+	for (const ValidItemID& ascentID : ascentIDs) {
+		for (int i = 0; i < photos.size(); i++) {
+			const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascentID, i, photos.at(i).filepath, photos.at(i).description);
+			
+			NormalTable::addRow(parent, columnDataPairs);
+		}
+	}
 }
 
 /**
