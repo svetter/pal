@@ -69,8 +69,6 @@ BufferRowIndex	openNewTripDialogAndStore		(QWidget& parent, QMainWindow& mainWin
 bool			openEditTripDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteTripsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
-BufferRowIndex	openTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Trip> originalTrip, const QSet<BufferRowIndex>& bufferRowIndices = QSet<BufferRowIndex>());
-
 
 
 #endif // TRIP_DIALOG_H

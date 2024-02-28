@@ -160,7 +160,17 @@ void CountryDialog::aboutToClose()
  */
 BufferRowIndex openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openCountryDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = CountryDialog::tr("New country");
+	
+	CountryDialog dialog = CountryDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Country> extractedCountry = dialog.extractData();
+	
+	const BufferRowIndex newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
+	return newCountryIndex;
 }
 
 /**
@@ -175,8 +185,19 @@ BufferRowIndex openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWi
 bool openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Country> originalCountry = db.getCountryAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openCountryDialogAndStore(parent, mainWindow, db, editItem, std::move(originalCountry));
-	return editedIndex.isValid();
+	const ItemID originalCountryID = originalCountry->countryID;
+	
+	const QString windowTitle = CountryDialog::tr("Edit country");
+	
+	CountryDialog dialog = CountryDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalCountry));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Country> extractedCountry = dialog.extractData();
+	
+	db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
+	return true;
 }
 
 /**
@@ -209,60 +230,4 @@ bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindo
 	
 	db.removeRows(parent, db.countriesTable, countryIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic country dialog and applies the resulting changes to the database.
- *
- * @param parent			The parent window.
- * @param mainWindow		The application's main window.
- * @param db				The project database.
- * @param purpose			The purpose of the dialog.
- * @param originalCountry	The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
- * @param bufferRowIndices	The buffer row indices of the countries to edit, if purpose is multiEdit.
- * @return					The index of the new country in the database's country table buffer, or existing index of edited country. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Country> originalCountry, const QSet<BufferRowIndex>& bufferRowIndices)
-{
-	assert((bool) originalCountry != (purpose == newItem));
-	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
-	
-	const ItemID originalCountryID = (purpose != newItem) ? originalCountry->countryID : ItemID();
-	if (purpose == duplicateItem) {
-		originalCountry->countryID = ItemID();
-	}
-	BufferRowIndex newCountryIndex = BufferRowIndex();
-	
-	QString windowTitle;
-	switch (purpose) {
-	case newItem:
-	case duplicateItem:	windowTitle = CountryDialog::tr("New country");										break;
-	case editItem:		windowTitle = CountryDialog::tr("Edit country");									break;
-	case multiEdit:		windowTitle = CountryDialog::tr("Edit %1 countries").arg(bufferRowIndices.size());	break;
-	default: assert(false);
-	}
-	
-	CountryDialog dialog = CountryDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalCountry));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Country> extractedCountry = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
-			break;
-		case editItem:
-			db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newCountryIndex = db.countriesTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalCountryID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newCountryIndex;
 }

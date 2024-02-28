@@ -230,7 +230,17 @@ void RegionDialog::aboutToClose()
  */
 BufferRowIndex openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openRegionDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = RegionDialog::tr("New region");
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	
+	const BufferRowIndex newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
+	return newRegionIndex;
 }
 
 /**
@@ -245,8 +255,19 @@ BufferRowIndex openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWin
 bool openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Region> originalRegion = db.getRegionAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openRegionDialogAndStore(parent, mainWindow, db, editItem, std::move(originalRegion));
-	return editedIndex.isValid();
+	const ItemID originalRegionID = originalRegion->regionID;
+	
+	const QString windowTitle = RegionDialog::tr("Edit region");
+	
+	RegionDialog dialog = RegionDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalRegion));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Region> extractedRegion = dialog.extractData();
+	
+	db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
+	return true;
 }
 
 /**
@@ -279,60 +300,4 @@ bool openDeleteRegionsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
 
 	db.removeRows(parent, db.regionsTable, regionIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic region dialog and applies the resulting changes to the database.
- *
- * @param parent			The parent window.
- * @param mainWindow		The application's main window.
- * @param db				The project database.
- * @param purpose			The purpose of the dialog.
- * @param originalRegion	The region data to initialize the dialog with and store as initial data. Region takes ownership of this pointer.
- * @param bufferRowIndices	The buffer row indices of the regions to edit, if purpose is multiEdit.
- * @return					The index of the new region in the database's region table buffer, or existing index of edited region. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Region> originalRegion, const QSet<BufferRowIndex>& bufferRowIndices)
-{
-	assert((bool) originalRegion != (purpose == newItem));
-	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
-	
-	const ItemID originalRegionID = (purpose != newItem) ? originalRegion->regionID : ItemID();
-	if (purpose == duplicateItem) {
-		originalRegion->regionID = ItemID();
-	}
-	BufferRowIndex newRegionIndex = BufferRowIndex();
-	
-	QString windowTitle;
-	switch (purpose) {
-	case newItem:
-	case duplicateItem:	windowTitle = RegionDialog::tr("New region");									break;
-	case editItem:		windowTitle = RegionDialog::tr("Edit region");									break;
-	case multiEdit:		windowTitle = RegionDialog::tr("Edit %1 regions").arg(bufferRowIndices.size());	break;
-	default: assert(false);
-	}
-	
-	RegionDialog dialog = RegionDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalRegion));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Region> extractedRegion = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
-			break;
-		case editItem:
-			db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
-			
-			// Set result to existing buffer row to signal that changes were made
-			newRegionIndex = db.regionsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalRegionID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newRegionIndex;
 }

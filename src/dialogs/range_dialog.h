@@ -66,8 +66,6 @@ BufferRowIndex	openNewRangeDialogAndStore			(QWidget& parent, QMainWindow& mainW
 bool			openEditRangeDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
 bool			openDeleteRangesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
-BufferRowIndex	openRangeDialogAndStore				(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Range> originalRange, const QSet<BufferRowIndex>& bufferRowIndices = QSet<BufferRowIndex>());
-
 
 
 #endif // RANGE_DIALOG_H

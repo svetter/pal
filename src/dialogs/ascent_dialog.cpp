@@ -589,7 +589,20 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
  */
 BufferRowIndex openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
 {
-	return openAscentDialogAndStore(parent, mainWindow, db, newItem, nullptr);
+	const QString windowTitle = AscentDialog::tr("New ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	const BufferRowIndex newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
+	db.participatedTable.addRows(parent, *extractedAscent);
+	db.photosTable.addRows(parent, *extractedAscent);
+	
+	return newAscentIndex;
 }
 
 /**
@@ -604,7 +617,22 @@ BufferRowIndex openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWin
 BufferRowIndex openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
-	return openAscentDialogAndStore(parent, mainWindow, db, duplicateItem, std::move(originalAscent));
+	originalAscent->ascentID = ItemID();
+	
+	QString windowTitle = AscentDialog::tr("New ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, duplicateItem, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted) {
+		return BufferRowIndex();
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	const BufferRowIndex newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
+	db.participatedTable.addRows(parent, *extractedAscent);
+	db.photosTable.addRows(parent, *extractedAscent);
+	
+	return newAscentIndex;
 }
 
 /**
@@ -619,8 +647,30 @@ BufferRowIndex openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& m
 bool openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
 {
 	unique_ptr<Ascent> originalAscent = db.getAscentAt(bufferRowIndex);
-	BufferRowIndex editedIndex = openAscentDialogAndStore(parent, mainWindow, db, editItem, std::move(originalAscent));
-	return editedIndex.isValid();
+	const ItemID			originalAscentID	= originalAscent->ascentID;
+	const QSet<ValidItemID>	originalHikerIDs	= QSet<ValidItemID>(originalAscent->hikerIDs);
+	const QList<Photo>		originalPhotos		= QList<Photo>(originalAscent->photos);
+	
+	const QString windowTitle = AscentDialog::tr("Edit ascent");
+	
+	AscentDialog dialog = AscentDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalAscent));
+	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
+		return false;
+	}
+	
+	unique_ptr<Ascent> extractedAscent = dialog.extractData();
+	
+	extractedAscent->ascentID = FORCE_VALID(originalAscentID);
+	
+	db.ascentsTable.updateRow(parent, *extractedAscent);
+	if (extractedAscent->hikerIDs != originalHikerIDs) {
+		db.participatedTable.updateRows(parent, *extractedAscent);
+	}
+	if (extractedAscent->photos != originalPhotos) {
+		db.photosTable.updateRows(parent, *extractedAscent);
+	}
+	
+	return true;
 }
 
 /**
@@ -653,74 +703,6 @@ bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
 	
 	db.removeRows(parent, db.ascentsTable, ascentIDs);
 	return true;
-}
-
-
-
-/**
- * Opens a purpose-generic ascent dialog and applies the resulting changes to the database.
- *
- * @param parent			The parent window.
- * @param mainWindow		The application's main window.
- * @param db				The project database.
- * @param purpose			The purpose of the dialog.
- * @param originalAscent	The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
- * @param bufferRowIndices	The buffer row indices of the ascents to edit, if purpose is multiEdit.
- * @return					The index of the new ascent in the database's ascent table buffer, or existing index of edited ascent. Invalid if the dialog was cancelled.
- */
-BufferRowIndex openAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<Ascent> originalAscent, const QSet<BufferRowIndex>& bufferRowIndices)
-{
-	assert((bool) originalAscent != (purpose == newItem));
-	assert(!bufferRowIndices.isEmpty() == (purpose == multiEdit));
-	
-	const ItemID			originalAscentID	= (purpose != newItem)	? originalAscent->ascentID						: ItemID();
-	const QSet<ValidItemID>	originalHikerIDs	= (purpose == editItem)	? QSet<ValidItemID>(originalAscent->hikerIDs)	: QSet<ValidItemID>();
-	const QList<Photo>		originalPhotos		= (purpose == editItem)	? QList<Photo>(originalAscent->photos)			: QList<Photo>();
-	if (purpose == duplicateItem) {
-		originalAscent->ascentID = ItemID();
-	}
-	BufferRowIndex newAscentIndex = BufferRowIndex();
-	
-	QString windowTitle;
-	switch (purpose) {
-	case newItem:
-	case duplicateItem:	windowTitle = AscentDialog::tr("New ascent");									break;
-	case editItem:		windowTitle = AscentDialog::tr("Edit ascent");									break;
-	case multiEdit:		windowTitle = AscentDialog::tr("Edit %1 ascents").arg(bufferRowIndices.size());	break;
-	default: assert(false);
-	}
-	
-	AscentDialog dialog = AscentDialog(parent, mainWindow, db, purpose, windowTitle, std::move(originalAscent));
-	if (dialog.exec() == QDialog::Accepted && (purpose != editItem || dialog.changesMade())) {
-		unique_ptr<Ascent> extractedAscent = dialog.extractData();
-		
-		switch (purpose) {
-		case newItem:
-		case duplicateItem:
-			newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
-			db.participatedTable.addRows(parent, *extractedAscent);
-			db.photosTable.addRows(parent, *extractedAscent);
-			break;
-		case editItem:
-			extractedAscent->ascentID = FORCE_VALID(originalAscentID);
-			
-			db.ascentsTable.updateRow(parent, *extractedAscent);
-			if (extractedAscent->hikerIDs != originalHikerIDs) {
-				db.participatedTable.updateRows(parent, *extractedAscent);
-			}
-			if (extractedAscent->photos != originalPhotos) {
-				db.photosTable.updateRows(parent, *extractedAscent);
-			}
-			
-			// Set result to existing buffer row to signal that changes were made
-			newAscentIndex = db.ascentsTable.getBufferIndexForPrimaryKey(FORCE_VALID(originalAscentID));
-			break;
-		default:
-			assert(false);
-		}
-	}
-	
-	return newAscentIndex;
 }
 
 
