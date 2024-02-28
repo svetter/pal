@@ -221,6 +221,20 @@ void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column,
 	return Table::removeMatchingRows(parent, column, primaryKey);
 }
 
+/**
+ * Removes all rows from the table where the given column has one of the given values.
+ * 
+ * Delegates to Table::removeMatchingRows(...).
+ *
+ * @param parent		The parent window.
+ * @param column		The column to check.
+ * @param primaryKeys	The values to check for.
+ */
+void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& primaryKeys)
+{
+	return Table::removeMatchingRows(parent, column, primaryKeys);
+}
+
 
 
 // QABSTRACTIMTEMMODEL IMPLEMENTATION

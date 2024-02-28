@@ -557,6 +557,45 @@ void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyCol
 }
 
 /**
+ * Removes all rows from the table where the given column has one of the given values.
+ * 
+ * @param parent	The parent window.
+ * @param column	The column to check.
+ * @param keys		The values to check for.
+ */
+void Table::removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& keys)
+{
+	assert(getColumnList().contains(&column));
+	assert(column.isKey());
+	assert(!keys.isEmpty());
+	
+	for (const ValidItemID& key : keys) {
+		// Remove rows from SQL database
+		removeMatchingRowsFromSql(parent, column, key);
+		
+		// Update buffer
+		QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
+		if (bufferRowIndices.isEmpty()) return;
+		
+		auto iter = bufferRowIndices.constEnd();
+		while (iter-- != bufferRowIndices.constBegin()) {
+			// Announce row removal
+			BufferRowIndex bufferRowIndex = *iter;
+			beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex.get(), bufferRowIndex.get());
+			if (rowChangeListener) rowChangeListener->bufferRowAboutToBeRemoved(bufferRowIndex);
+			
+			buffer.removeRow(bufferRowIndex);
+			
+			// Announce end of row removal
+			endRemoveRows();
+		}
+	}
+	
+	// Rows were removed, all columns affected => Notify all column-attached change listeners
+	notifyForAllColumns();
+}
+
+/**
  * Removes all rows from the table where the given column has the given value.
  * 
  * @param parent	The parent window.
@@ -565,31 +604,8 @@ void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyCol
  */
 void Table::removeMatchingRows(QWidget& parent, const Column& column, ValidItemID key)
 {
-	assert(getColumnList().contains(&column));
-	assert(column.isKey());
-	
-	// Remove rows from SQL database
-	removeMatchingRowsFromSql(parent, column, key);
-	
-	// Update buffer
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(column, key.asQVariant());
-	if (bufferRowIndices.isEmpty()) return;
-	
-	auto iter = bufferRowIndices.constEnd();
-	while (iter-- != bufferRowIndices.constBegin()) {
-		// Announce row removal
-		BufferRowIndex bufferRowIndex = *iter;
-		beginRemoveRows(getNormalRootModelIndex(), bufferRowIndex.get(), bufferRowIndex.get());
-		if (rowChangeListener) rowChangeListener->bufferRowAboutToBeRemoved(bufferRowIndex);
-		
-		buffer.removeRow(bufferRowIndex);
-		
-		// Announce end of row removal
-		endRemoveRows();
-	}
-	
-	// Rows were removed, all columns affected => Notify all column-attached change listeners
-	notifyForAllColumns();
+	QSet<ValidItemID> keys = { key };
+	return removeMatchingRows(parent, column, keys);
 }
 
 

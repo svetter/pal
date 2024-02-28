@@ -60,6 +60,7 @@ public:
 	void addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget& parent, const Column& column, ValidItemID primaryKey);
+	void removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& primaryKeys);
 	
 	// QAbstractItemModel implementation (completes implementation in Table)
 	void multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const override;
