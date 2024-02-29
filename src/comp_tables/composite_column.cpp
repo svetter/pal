@@ -486,7 +486,7 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
 	BufferRowIndex targetRowIndex = breadcrumbs.evaluateAsForwardChain(rowIndex);
 	
-	if (targetRowIndex.isInvalid()) return QVariant();
+	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return QVariant();
 	
 	// Look up content column at last row index
 	QVariant content = contentColumn.getValueAt(targetRowIndex);
@@ -547,7 +547,7 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
 	QVariant minuendContent = minuendColumn.getValueAt(rowIndex);
 	QVariant subtrahendContent = subtrahendColumn.getValueAt(rowIndex);
 	
-	if (!minuendContent.isValid() || !subtrahendContent.isValid()) return QVariant();
+	if (Q_UNLIKELY(!minuendContent.isValid() || !subtrahendContent.isValid())) return QVariant();
 	
 	switch (minuendColumn.type) {
 	case Integer: {
@@ -625,7 +625,7 @@ QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
 	int discerning = discerningContent.toInt();
 	int displayed = displayedContent.toInt();
 	
-	if (discerning < 1 || displayed < 1) return QVariant();
+	if (Q_UNLIKELY(discerning < 1 || displayed < 1)) return QVariant();
 	
 	return QVariant(QList<QVariant>({ discerning, displayed }));
 }
@@ -796,19 +796,19 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	int ordinal = 1;
 	for (const BufferRowIndex& rowIndex : order) {
 		ItemID currentKey = separatingColumn.getValueAt(rowIndex);
-		if (!currentKey.isValid()) {
+		if (Q_UNLIKELY(!currentKey.isValid())) {
 			// No key, reset ordinal and append empty
 			ordinal = 1;
 			lastKey = currentKey;
 			ordinals.replace(rowIndex.get(), QVariant());
-		} else if (currentKey == lastKey) {
-			// Same key, increase ordinal
-			ordinal++;
-			ordinals.replace(rowIndex.get(), ordinal);
-		} else {
+		} else if (Q_LIKELY(currentKey != lastKey)) {
 			// Next key, reset ordinal
 			ordinal = 1;
 			lastKey = currentKey;
+			ordinals.replace(rowIndex.get(), ordinal);
+		} else {
+			// Same key, increase ordinal
+			ordinal++;
 			ordinals.replace(rowIndex.get(), ordinal);
 		}
 	}

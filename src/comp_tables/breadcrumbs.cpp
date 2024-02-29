@@ -240,7 +240,7 @@ bool Breadcrumbs::goesVia(const Table& table) const
 {
 	for (int i = 1; i < list.size(); i++) {
 		const Breadcrumb& crumb = list.at(i);
-		if (&crumb.firstColumn.table == &table) {
+		if (Q_UNLIKELY(&crumb.firstColumn.table == &table)) {
 			return true;
 		}
 	}
@@ -256,9 +256,9 @@ bool Breadcrumbs::goesVia(const Table& table) const
  */
 bool Breadcrumbs::operator==(const Breadcrumbs& other) const
 {
-	if (list.size() != other.list.size()) return false;
+	if (Q_LIKELY(list.size() != other.list.size())) return false;
 	for (int i = 0; i < list.size(); i++) {
-		if (list.at(i) != other.list.at(i)) return false;
+		if (Q_UNLIKELY(list.at(i) != other.list.at(i))) return false;
 	}
 	return true;
 }
@@ -282,7 +282,7 @@ bool Breadcrumbs::operator!=(const Breadcrumbs& other) const
  */
 void Breadcrumbs::append(const Breadcrumb& breadcrumb)
 {
-	if (list.isEmpty()) {
+	if (Q_UNLIKELY(list.isEmpty())) {
 		assert(!breadcrumb.firstColumn.table.isAssociative);
 	} else {
 		assert(&list.last().secondColumn.table == &breadcrumb.firstColumn.table);
@@ -344,7 +344,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			currentKeySet.insert(FORCE_VALID(key));
 		}
 		
-		if (currentKeySet.isEmpty()) return QSet<BufferRowIndex>();
+		if (Q_UNLIKELY(currentKeySet.isEmpty())) return QSet<BufferRowIndex>();
 		
 		currentRowIndexSet.clear();
 		const Table& table = crumb.secondColumn.table;
@@ -370,7 +370,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 			}
 		}
 		
-		if (currentRowIndexSet.isEmpty()) return QSet<BufferRowIndex>();
+		if (Q_UNLIKELY(currentRowIndexSet.isEmpty())) return QSet<BufferRowIndex>();
 	}
 	
 	return currentRowIndexSet;
@@ -394,7 +394,7 @@ BufferRowIndex Breadcrumbs::evaluateAsForwardChain(BufferRowIndex initialBufferR
 		const ForeignKeyColumn& currentColumn = (ForeignKeyColumn&) crumb.firstColumn;
 		const ItemID key = currentColumn.getValueAt(currentRowIndex);
 		
-		if (key.isInvalid()) return BufferRowIndex();
+		if (Q_UNLIKELY(key.isInvalid())) return BufferRowIndex();
 		
 		// Get referenced primary key column of other table
 		const PrimaryKeyColumn& referencedColumn = currentColumn.getReferencedForeignColumn();
@@ -437,7 +437,7 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 			currentKeyList.append(FORCE_VALID(key));
 		}
 		
-		if (currentKeyList.isEmpty()) return QList<BufferRowIndex>();
+		if (Q_UNLIKELY(currentKeyList.isEmpty())) return QList<BufferRowIndex>();
 		
 		currentRowIndexList.clear();
 		const Table& table = crumb.secondColumn.table;
@@ -462,14 +462,14 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 			}
 		}
 		
-		if (crumb.firstColumn.table.isAssociative && initialBufferRowIndices.size() > 1) {
+		if (Q_UNLIKELY(crumb.firstColumn.table.isAssociative && initialBufferRowIndices.size() > 1)) {
 			// Coming out of associative table => Remove all duplicates
 			const QSet<BufferRowIndex> currentRowIndexSet = QSet<BufferRowIndex>(currentRowIndexList.constBegin(), currentRowIndexList.constEnd());
 			currentRowIndexList.clear();
 			currentRowIndexList = QList<BufferRowIndex>(currentRowIndexSet.constBegin(), currentRowIndexSet.constEnd());
 		}
 		
-		if (currentRowIndexList.isEmpty()) return QList<BufferRowIndex>();
+		if (Q_UNLIKELY(currentRowIndexList.isEmpty())) return QList<BufferRowIndex>();
 	}
 	
 	return currentRowIndexList;

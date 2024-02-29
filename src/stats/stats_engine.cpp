@@ -270,46 +270,46 @@ void GeneralStatsEngine::updateCharts()
 	
 	for (BufferRowIndex bufferIndex = BufferRowIndex(0); bufferIndex.isValid(db.ascentsTable.getNumberOfRows()); bufferIndex++) {
 		const QDate date = db.ascentsTable.dateColumn.getValueAt(bufferIndex).toDate();
-		if (!date.isValid()) continue;
+		if (Q_UNLIKELY(!date.isValid())) continue;
 		
 		const int year = date.year();
-		if (date < minDate || !minDate.isValid()) minDate = date;
-		if (date > maxDate || !maxDate.isValid()) maxDate = date;
+		if (Q_UNLIKELY(date < minDate || !minDate.isValid())) minDate = date;
+		if (Q_UNLIKELY(date > maxDate || !maxDate.isValid())) maxDate = date;
 		
 		QDateTime dateTime;
-		if (dirty.value(heightsScatterChart)) {
+		if (Q_LIKELY(dirty.value(heightsScatterChart))) {
 			QTime time = db.ascentsTable.timeColumn.getValueAt(bufferIndex).toTime();
 			if (!time.isValid()) time = QTime(12, 0);
 			dateTime = QDateTime(date, time);
 		}
 		
-		if (dirty.value(numAscentsPerYearChart)) {
+		if (Q_LIKELY(dirty.value(numAscentsPerYearChart))) {
 			yearNumAscents[year]++;
 		}
 		
-		if (dirty.value(elevGainPerYearChart) || dirty.value(heightsScatterChart)) {
+		if (Q_LIKELY(dirty.value(elevGainPerYearChart) || dirty.value(heightsScatterChart))) {
 			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(bufferIndex);
-			if (elevGainRaw.isValid()) {
+			if (Q_LIKELY(elevGainRaw.isValid())) {
 				const int elevGain = elevGainRaw.toInt();
 				
-				if (dirty.value(elevGainPerYearChart)) {
+				if (Q_LIKELY(dirty.value(elevGainPerYearChart))) {
 					yearElevGainSums[year] += elevGain;
 				}
-				if (dirty.value(heightsScatterChart)) {
+				if (Q_LIKELY(dirty.value(heightsScatterChart))) {
 					elevGainSeries.data.append({dateTime, elevGain});
-					if (elevGain > heightsMaxY) heightsMaxY = elevGain;
+					if (Q_UNLIKELY(elevGain > heightsMaxY)) heightsMaxY = elevGain;
 				}
 			}
 		}
 		
-		if (dirty.value(heightsScatterChart)) {
+		if (Q_LIKELY(dirty.value(heightsScatterChart))) {
 			const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferIndex);
-			if (peakID.isValid()) {
+			if (Q_LIKELY(peakID.isValid())) {
 				QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
-				if (peakHeightRaw.isValid()) {
+				if (Q_LIKELY(peakHeightRaw.isValid())) {
 					const int peakHeight = peakHeightRaw.toInt();
 					peakHeightSeries.data.append({dateTime, peakHeight});
-					if (peakHeight > heightsMaxY) heightsMaxY = peakHeight;
+					if (Q_UNLIKELY(peakHeight > heightsMaxY)) heightsMaxY = peakHeight;
 				}
 			}
 		}
@@ -318,32 +318,32 @@ void GeneralStatsEngine::updateCharts()
 	const int minYear = minDate.year();
 	const int maxYear = maxDate.year();
 	
-	if (dirty.value(numAscentsPerYearChart) || dirty.value(elevGainPerYearChart)) {
+	if (Q_LIKELY(dirty.value(numAscentsPerYearChart) || dirty.value(elevGainPerYearChart))) {
 		for (int year = minYear; year <= maxYear; year++) {
-			if (dirty.value(numAscentsPerYearChart)) {
+			if (Q_LIKELY(dirty.value(numAscentsPerYearChart))) {
 				const int numAscents = yearNumAscents.contains(year) ? yearNumAscents[year] : 0;
 				numAscentsPerYearSeries.append(numAscents);
-				if (numAscents > numAscentsPerYearMaxY) numAscentsPerYearMaxY = numAscents;
+				if (Q_UNLIKELY(numAscents > numAscentsPerYearMaxY)) numAscentsPerYearMaxY = numAscents;
 			}
-			if (dirty.value(elevGainPerYearChart)) {
+			if (Q_LIKELY(dirty.value(elevGainPerYearChart))) {
 				const int elevGainSum = yearElevGainSums.contains(year) ? yearElevGainSums[year] : 0;
 				const qreal elevGainSumKm = (qreal) elevGainSum / 1000;
 				elevGainPerYearSeries.append(elevGainSumKm);
-				if (elevGainSumKm > elevGainPerYearMaxY) elevGainPerYearMaxY = elevGainSumKm;
+				if (Q_UNLIKELY(elevGainSumKm > elevGainPerYearMaxY)) elevGainPerYearMaxY = elevGainSumKm;
 			}
 		}
 	}
 	
 	
-	if (dirty.value(numAscentsPerYearChart)) {
+	if (Q_LIKELY(dirty.value(numAscentsPerYearChart))) {
 		numAscentsPerYearChart->updateData(numAscentsPerYearSeries, minYear, maxYear, numAscentsPerYearMaxY, false);
 		dirty[numAscentsPerYearChart] = false;
 	}
-	if (dirty.value(elevGainPerYearChart)) {
+	if (Q_LIKELY(dirty.value(elevGainPerYearChart))) {
 		elevGainPerYearChart->updateData(elevGainPerYearSeries, minYear, maxYear, elevGainPerYearMaxY, false);
 		dirty[elevGainPerYearChart] = false;
 	}
-	if (dirty.value(heightsScatterChart)) {
+	if (Q_LIKELY(dirty.value(heightsScatterChart))) {
 		const QList<DateScatterSeries*> heightsScatterSeries = {&elevGainSeries, &peakHeightSeries};
 		heightsScatterChart->updateData(heightsScatterSeries, minDate, maxDate, heightsMaxY, false);
 		dirty[heightsScatterChart] = false;
@@ -677,10 +677,10 @@ void ItemStatsEngine::updateCharts()
 	
 	// Peak height histogram
 	
-	if (peakHeightHistChart) {
+	if (Q_LIKELY(peakHeightHistChart)) {
 		auto peakHeightClassFromPeakBufferRow = [this](const BufferRowIndex& peakBufferRow) {
 			const QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueAt(peakBufferRow);
-			if (!peakHeightRaw.isValid()) return -1;
+			if (Q_UNLIKELY(!peakHeightRaw.isValid())) return -1;
 			
 			const int peakHeight = peakHeightRaw.toInt();
 			return peakHeightHistChart->classifyValue(peakHeight);
@@ -693,10 +693,10 @@ void ItemStatsEngine::updateCharts()
 	
 	// Elevation gain histogram
 	
-	if (elevGainHistChart) {
+	if (Q_LIKELY(elevGainHistChart)) {
 		auto elevGainClassFromAscentBufferRow = [this](const BufferRowIndex& ascentBufferRow) {
 			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
-			if (!elevGainRaw.isValid()) return -1;
+			if (Q_UNLIKELY(!elevGainRaw.isValid())) return -1;
 			
 			const int elevGain = elevGainRaw.toInt();
 			return elevGainHistChart->classifyValue(elevGain);
@@ -709,30 +709,30 @@ void ItemStatsEngine::updateCharts()
 	
 	// Heights scatterplot
 	
-	if (heightsScatterChart) {
+	if (Q_LIKELY(heightsScatterChart)) {
 		DateScatterSeries elevGainScatterSeries		= DateScatterSeries(tr("Elevation gains"),	8,	QScatterSeries::MarkerShapeRotatedRectangle);
 		DateScatterSeries peakHeightScatterSeries	= DateScatterSeries(tr("Peak heights"),		8,	QScatterSeries::MarkerShapeTriangle);
 		
 		auto xyValuesFromTargetBufferRow = [this](const BufferRowIndex& ascentBufferIndex) {
 			const QDate date = db.ascentsTable.dateColumn.getValueAt(ascentBufferIndex).toDate();
-			if (!date.isValid()) return QPair<QDateTime, QList<qreal>>();
+			if (Q_UNLIKELY(!date.isValid())) return QPair<QDateTime, QList<qreal>>();
 			
 			QTime time = db.ascentsTable.timeColumn.getValueAt(ascentBufferIndex).toTime();
-			if (!time.isValid()) time = QTime(12, 0);
+			if (Q_LIKELY(!time.isValid())) time = QTime(12, 0);
 			const QDateTime dateTime = QDateTime(date, time);
 			
 			qreal elevGain		= -1;
 			qreal peakHeight	= -1;
 			
 			const QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferIndex);
-			if (elevGainRaw.isValid()) {
+			if (Q_LIKELY(elevGainRaw.isValid())) {
 				elevGain = elevGainRaw.toInt();
 			}
 			
 			const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferIndex);
-			if (peakID.isValid()) {
+			if (Q_LIKELY(peakID.isValid())) {
 				const QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueFor(FORCE_VALID(peakID));
-				if (peakHeightRaw.isValid()) {
+				if (Q_LIKELY(peakHeightRaw.isValid())) {
 					peakHeight = peakHeightRaw.toInt();
 				}
 			}
@@ -748,7 +748,7 @@ void ItemStatsEngine::updateCharts()
 	
 	// Top N with most ascents chart
 	
-	if (topNumAscentsChart) {
+	if (Q_LIKELY(topNumAscentsChart)) {
 		assert(itemType != ItemTypeAscent);
 		
 		auto numAscentsFromAscentBufferRows = [](const QList<BufferRowIndex>& ascentBufferRows) {
@@ -762,15 +762,15 @@ void ItemStatsEngine::updateCharts()
 	
 	// Top N with highest peaks chart
 	
-	if (topMaxPeakHeightChart) {
+	if (Q_LIKELY(topMaxPeakHeightChart)) {
 		auto maxPeakHeightFromPeakBufferRows = [this](const QList<BufferRowIndex>& peakBufferRows) {
 			int maxPeakHeight = 0;
 			for (const BufferRowIndex& peakBufferRow : peakBufferRows) {
 				QVariant peakHeightRaw = db.peaksTable.heightColumn.getValueAt(peakBufferRow);
-				if (!peakHeightRaw.isValid()) continue;
+				if (Q_UNLIKELY(!peakHeightRaw.isValid())) continue;
 				
 				int peakHeight = peakHeightRaw.toInt();
-				if (peakHeight > maxPeakHeight) maxPeakHeight = peakHeight;
+				if (Q_UNLIKELY(peakHeight > maxPeakHeight)) maxPeakHeight = peakHeight;
 			}
 			return maxPeakHeight;
 		};
@@ -782,15 +782,15 @@ void ItemStatsEngine::updateCharts()
 	
 	// Top N with highest single elevation gain chart
 	
-	if (topMaxElevGainChart) {
+	if (Q_LIKELY(topMaxElevGainChart)) {
 		auto maxElevGainFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
 			int maxElevGain = 0;
 			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
 				QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
-				if (!elevGainRaw.isValid()) continue;
+				if (Q_UNLIKELY(!elevGainRaw.isValid())) continue;
 				
 				int elevGain = elevGainRaw.toInt();
-				if (elevGain > maxElevGain) maxElevGain = elevGain;
+				if (Q_UNLIKELY(elevGain > maxElevGain)) maxElevGain = elevGain;
 			}
 			return maxElevGain;
 		};
@@ -802,14 +802,14 @@ void ItemStatsEngine::updateCharts()
 	
 	// Top N with highest elevation gain sum chart
 	
-	if (topElevGainSumChart) {
+	if (Q_LIKELY(topElevGainSumChart)) {
 		assert(itemType != ItemTypeAscent);
 		
 		auto elevGainSumFromAscentBufferRows = [this](const QList<BufferRowIndex>& ascentBufferRows) {
 			int elevGainSum = 0;
 			for (const BufferRowIndex& ascentBufferRow : ascentBufferRows) {
 				QVariant elevGainRaw = db.ascentsTable.elevationGainColumn.getValueAt(ascentBufferRow);
-				if (!elevGainRaw.isValid()) continue;
+				if (Q_UNLIKELY(!elevGainRaw.isValid())) continue;
 				
 				int elevGain = elevGainRaw.toInt();
 				elevGainSum += elevGain;
@@ -889,12 +889,12 @@ QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& c
 {
 	QList<BufferRowIndex> targetBufferRows = QList<BufferRowIndex>();
 	
-	if (crumbs.goesVia(db.participatedTable)) {
+	if (Q_UNLIKELY(crumbs.goesVia(db.participatedTable))) {
 		// Crumbs traverse an associative table, can't use caches for separately evaluated single rows
 		// Use cache for whole set of requested buffer rows instead
 		
 		// Check cache
-		if (crumbsWholeSetResultCache.contains(selectedBufferRows)) {
+		if (Q_LIKELY(crumbsWholeSetResultCache.contains(selectedBufferRows))) {
 			// Cache hit
 			targetBufferRows = crumbsWholeSetResultCache.value(selectedBufferRows);
 		}
@@ -912,7 +912,7 @@ QList<BufferRowIndex> ItemStatsEngine::evaluateCrumbsCached(const Breadcrumbs& c
 		QList<BufferRowIndex> newTargetBufferRows;
 		
 		// Check cache
-		if (crumbsSingleRowResultCache.contains(currentBufferRow)) {
+		if (Q_LIKELY(crumbsSingleRowResultCache.contains(currentBufferRow))) {
 			// Cache hit
 			newTargetBufferRows = crumbsSingleRowResultCache.value(currentBufferRow);
 		}
@@ -950,7 +950,7 @@ void ItemStatsEngine::updateHistogramChart(HistogramChart& chart, const QList<Bu
 		int histogramClass;
 		
 		// Check cache
-		if (cache.contains(targetBufferRow)) {
+		if (Q_LIKELY(cache.contains(targetBufferRow))) {
 			// Cache hit
 			histogramClass = cache.value(targetBufferRow);
 		}
@@ -962,10 +962,10 @@ void ItemStatsEngine::updateHistogramChart(HistogramChart& chart, const QList<Bu
 			cache.insert(targetBufferRow, histogramClass);
 		}
 		
-		if (histogramClass < 0) continue;
+		if (Q_UNLIKELY(histogramClass < 0)) continue;
 		
 		const qreal newClassCount = ++histogramData[histogramClass];
-		if (newClassCount > maxY) maxY = newClassCount;
+		if (Q_UNLIKELY(newClassCount > maxY)) maxY = newClassCount;
 	}
 	
 	chart.updateData(histogramData, maxY, currentlyAllRowsSelected);
@@ -993,11 +993,11 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<Date
 		QList<qreal> yValues = QList<qreal>(allSeries.size(), -1);
 		
 		// Check cache
-		if (cache.contains(targetBufferIndex)) {
+		if (Q_LIKELY(cache.contains(targetBufferIndex))) {
 			// Cache hit
 			const QPair<QDateTime, QList<qreal>>& cached = cache.value(targetBufferIndex);
 			dateTime = cached.first;
-			if (!dateTime.isValid()) continue;
+			if (Q_UNLIKELY(!dateTime.isValid())) continue;
 			
 			yValues = cached.second;
 			assert(yValues.size() == allSeries.size());
@@ -1006,7 +1006,7 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<Date
 			// Cache miss
 			QPair<QDateTime, QList<qreal>> xyValues = xyValuesFromTargetBufferRow(targetBufferIndex);
 			dateTime = xyValues.first;
-			if (!dateTime.isValid()) continue;
+			if (Q_UNLIKELY(!dateTime.isValid())) continue;
 			
 			yValues = xyValues.second;
 			assert(yValues.size() == allSeries.size());
@@ -1018,15 +1018,15 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<Date
 		// Append data and update minima/maxima
 		for (int i = 0; i < allSeries.size(); i++) {
 			const int yValue = yValues.at(i);
-			if (yValue == -1) continue;
+			if (Q_UNLIKELY(yValue == -1)) continue;
 			
 			allSeries[i]->data.append({dateTime, yValue});
-			if (yValue > maxY) maxY = yValue;
+			if (Q_UNLIKELY(yValue > maxY)) maxY = yValue;
 		}
 		
 		date = dateTime.date();
-		if (date < minDate || !minDate.isValid()) minDate = date;
-		if (date > maxDate || !maxDate.isValid()) maxDate = date;
+		if (Q_UNLIKELY(date < minDate || !minDate.isValid())) minDate = date;
+		if (Q_UNLIKELY(date > maxDate || !maxDate.isValid())) maxDate = date;
 	}
 	
 	chart.updateData(allSeries, minDate, maxDate, maxY, currentlyAllRowsSelected);
@@ -1052,7 +1052,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart& chart, const Breadcrumbs& crumb
 		qreal valueForCurrentStartIndex;
 		
 		// Check cache
-		if (cache.contains(currentStartBufferIndex)) {
+		if (Q_LIKELY(cache.contains(currentStartBufferIndex))) {
 			// Cache hit
 			valueForCurrentStartIndex = cache.value(currentStartBufferIndex);
 		}
@@ -1065,7 +1065,7 @@ void ItemStatsEngine::updateTopNChart(TopNChart& chart, const Breadcrumbs& crumb
 			cache.insert(currentStartBufferIndex, valueForCurrentStartIndex);
 		}
 		
-		if (valueForCurrentStartIndex <= 0) continue;
+		if (Q_UNLIKELY(valueForCurrentStartIndex <= 0)) continue;
 		
 		indexValuePairs.append({currentStartBufferIndex, valueForCurrentStartIndex});
 	}

@@ -218,7 +218,7 @@ bool ViewOrderBuffer::isEmpty() const
  */
 BufferRowIndex ViewOrderBuffer::getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const
 {
-	if (viewRowIndex.isInvalid(order.size())) return BufferRowIndex();
+	if (Q_UNLIKELY(viewRowIndex.isInvalid(order.size()))) return BufferRowIndex();
 	return order.at(viewRowIndex.get());
 }
 
@@ -233,7 +233,7 @@ BufferRowIndex ViewOrderBuffer::getBufferRowIndexForViewRow(ViewRowIndex viewRow
  */
 ViewRowIndex ViewOrderBuffer::findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const
 {
-	if (bufferRowIndex.isInvalid()) return ViewRowIndex();
+	if (Q_UNLIKELY(bufferRowIndex.isInvalid())) return ViewRowIndex();
 	return ViewRowIndex(order.indexOf(bufferRowIndex));
 }
 

@@ -104,7 +104,7 @@ int ItemID::get() const
  */
 QVariant ItemID::asQVariant() const
 {
-	if (isValid()) {
+	if (Q_LIKELY(isValid())) {
 		return QVariant(id);
 	} else {
 		return QVariant();
@@ -201,8 +201,8 @@ void ValidItemID::operator=(const ValidItemID& other)
  */
 bool operator==(const ItemID& id1, const ItemID& id2)
 {
-	if (id1.isInvalid() && id2.isInvalid()) return true;
-	if (id1.isValid() != id2.isValid()) return false;
+	if (Q_UNLIKELY(id1.isInvalid() && id2.isInvalid()))	return true;
+	if (Q_UNLIKELY(id1.isValid() != id2.isValid()))		return false;
 	return id1.get() == id2.get();
 }
 
