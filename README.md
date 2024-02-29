@@ -75,6 +75,8 @@ PAL employs an [SQLite](https://www.sqlite.org) database, so its project files c
 Building PAL
 ------------
 
+[![Build PAL status](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
+
 PAL is built on [Qt 6.6.2](https://wiki.qt.io/Qt_6.6_Release).
 
 If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
