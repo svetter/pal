@@ -144,21 +144,45 @@ QString PeaksTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "peak" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "peak" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new peak has been created.
+ * 
+ * @return	The translated message confirming creation of a new peak.
  */
-QString PeaksTable::getItemNameSingularLowercase() const
+QString PeaksTable::getCreationConfirmMessage() const
 {
-	return tr("peak");
+	return tr("Saved new peak.");
 }
 
 /**
- * Returns the translation of "peaks" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of peaks have been edited.
  *
- * @return	The translation of "peaks" (plural) for use mid-sentence.
+ * @param numEdited	The number of peaks that have been edited.
+ * @return			The translated message confirming the editing of the peaks.
  */
-QString PeaksTable::getItemNamePluralLowercase() const
+QString PeaksTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("peaks");
+	return tr("Saved changes in %Ln peak(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of peaks have been deleted.
+ *
+ * @param numDeleted	The number of peaks that have been deleted.
+ * @return				The translated message confirming the deletion of the peaks.
+ */
+QString PeaksTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln peak(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n peak(s)".
+ * 
+ * @param numItems	The number of peaks to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString PeaksTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln peak(s)", "", numItems);
 }

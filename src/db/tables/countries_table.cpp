@@ -124,23 +124,45 @@ QString CountriesTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "country" (singular), not capitalized unless the language requires
- * it.
- *
- * @return	The the translation of "country" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new country has been created.
+ * 
+ * @return	The translated message confirming creation of a new country.
  */
-QString CountriesTable::getItemNameSingularLowercase() const
+QString CountriesTable::getCreationConfirmMessage() const
 {
-	return tr("country");
+	return tr("Saved new country.");
 }
 
 /**
- * Returns the translation of "countries" (plural), not capitalized unless the language requires
- * it.
+ * Returns a translated message confirming that a number of countries have been edited.
  *
- * @return	The translation of "countries" (plural) for use mid-sentence.
+ * @param numEdited	The number of countries that have been edited.
+ * @return			The translated message confirming the editing of the countries.
  */
-QString CountriesTable::getItemNamePluralLowercase() const
+QString CountriesTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("countries");
+	return tr("Saved changes in %Ln country/countries.", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of countries have been deleted.
+ *
+ * @param numDeleted	The number of countries that have been deleted.
+ * @return				The translated message confirming the deletion of the countries.
+ */
+QString CountriesTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln country/countries.", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n country/countries".
+ * 
+ * @param numItems	The number of countries to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString CountriesTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln country/countries", "", numItems);
 }

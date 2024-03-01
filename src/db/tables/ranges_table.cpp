@@ -129,23 +129,45 @@ QString RangesTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "mountain range" (singular), not capitalized unless the language
- * requires it.
- *
- * @return	The translation of "mountain range" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new mountain range has been created.
+ * 
+ * @return	The translated message confirming creation of a new mountain range.
  */
-QString RangesTable::getItemNameSingularLowercase() const
+QString RangesTable::getCreationConfirmMessage() const
 {
-	return tr("mountain range");
+	return tr("Saved new mountain range.");
 }
 
 /**
- * Returns the translation of "mountain ranges" (plural), not capitalized unless the language
- * requires it.
+ * Returns a translated message confirming that a number of mountain ranges have been edited.
  *
- * @return	The translation of "mountain ranges" (plural) for use mid-sentence.
+ * @param numEdited	The number of mountain ranges that have been edited.
+ * @return			The translated message confirming the editing of the mountain ranges.
  */
-QString RangesTable::getItemNamePluralLowercase() const
+QString RangesTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("mountain ranges");
+	return tr("Saved changes in %Ln mountain ranges(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of mountain ranges have been deleted.
+ *
+ * @param numDeleted	The number of mountain ranges that have been deleted.
+ * @return				The translated message confirming the deletion of the mountain ranges.
+ */
+QString RangesTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln mountain ranges(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n mountain range(s)".
+ * 
+ * @param numItems	The number of mountain ranges to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString RangesTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln mountain range(s)", "", numItems);
 }

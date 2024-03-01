@@ -234,7 +234,9 @@ RC_ICONS = resources/icons/ico/logo_peak_multisize_square.ico
 
 
 TRANSLATIONS += \
+	translation/en.ts \
 	translation/de.ts
 
 DISTFILES += \
+	translation/en.ts \
 	translation/de.ts

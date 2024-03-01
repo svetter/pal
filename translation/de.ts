@@ -785,15 +785,34 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>None</source>
         <translation>Keine</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/ascents_table.cpp" line="171"/>
-        <source>ascent</source>
-        <translation>Besteigung</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ascents_table.cpp" line="205"/>
+        <source>%Ln ascent(s)</source>
+        <translation>
+            <numerusform>%Ln Besteigung</numerusform>
+            <numerusform>%Ln Besteigungen</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ascents_table.cpp" line="181"/>
-        <source>ascents</source>
-        <translation>Besteigungen</translation>
+        <location filename="../src/db/tables/ascents_table.cpp" line="171"/>
+        <source>Saved new ascent.</source>
+        <translation>Neue Besteigung gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ascents_table.cpp" line="182"/>
+        <source>Saved changes in %Ln ascent(s).</source>
+        <translation>
+            <numerusform>Änderungen in Besteigung gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Besteigungen gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ascents_table.cpp" line="193"/>
+        <source>Deleted %Ln ascent(s).</source>
+        <translation>
+            <numerusform>Besteigung gelöscht.</numerusform>
+            <numerusform>%Ln Besteigungen gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -1114,15 +1133,34 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>None</source>
         <translation>Keines</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/countries_table.cpp" line="134"/>
-        <source>country</source>
-        <translation>Land</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/countries_table.cpp" line="167"/>
+        <source>%Ln country/countries</source>
+        <translation>
+            <numerusform>%Ln Land</numerusform>
+            <numerusform>%Ln Länder</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/countries_table.cpp" line="145"/>
-        <source>countries</source>
-        <translation>Länder</translation>
+        <location filename="../src/db/tables/countries_table.cpp" line="133"/>
+        <source>Saved new country.</source>
+        <translation>Neues Land gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/countries_table.cpp" line="144"/>
+        <source>Saved changes in %Ln country/countries.</source>
+        <translation>
+            <numerusform>Änderungen in Land gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Ländern gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/countries_table.cpp" line="155"/>
+        <source>Deleted %Ln country/countries.</source>
+        <translation>
+            <numerusform>Land gelöscht.</numerusform>
+            <numerusform>%Ln Länder gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2061,15 +2099,34 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <source>None</source>
         <translation>Keiner</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/hikers_table.cpp" line="133"/>
-        <source>hiker</source>
-        <translation>Wanderer</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/hikers_table.cpp" line="167"/>
+        <source>%Ln hiker(s)</source>
+        <translation>
+            <numerusform>%Ln Wanderer</numerusform>
+            <numerusform>%Ln Wanderer</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/hikers_table.cpp" line="143"/>
-        <source>hikers</source>
-        <translation>Wanderer</translation>
+        <location filename="../src/db/tables/hikers_table.cpp" line="133"/>
+        <source>Saved new hiker.</source>
+        <translation>Neuer Wanderer gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/hikers_table.cpp" line="144"/>
+        <source>Saved changes in %Ln hiker(s).</source>
+        <translation>
+            <numerusform>Änderungen in Wanderer gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Wanderern gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/hikers_table.cpp" line="155"/>
+        <source>Deleted %Ln hiker(s).</source>
+        <translation>
+            <numerusform>Wanderer gelöscht.</numerusform>
+            <numerusform>%Ln Wanderer gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2416,176 +2473,150 @@ Trotzdem speichern?</translation>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="394"/>
+        <location filename="../src/main/main_window.cpp" line="395"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="396"/>
+        <location filename="../src/main/main_window.cpp" line="397"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="397"/>
+        <location filename="../src/main/main_window.cpp" line="398"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="537"/>
+        <location filename="../src/main/main_window.cpp" line="538"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="541"/>
+        <location filename="../src/main/main_window.cpp" line="542"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="572"/>
+        <location filename="../src/main/main_window.cpp" line="573"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="679"/>
+        <location filename="../src/main/main_window.cpp" line="680"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="684"/>
+        <location filename="../src/main/main_window.cpp" line="685"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="684"/>
+        <location filename="../src/main/main_window.cpp" line="685"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="686"/>
+        <location filename="../src/main/main_window.cpp" line="687"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="686"/>
+        <location filename="../src/main/main_window.cpp" line="687"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="696"/>
+        <location filename="../src/main/main_window.cpp" line="697"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="696"/>
+        <location filename="../src/main/main_window.cpp" line="697"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="699"/>
+        <location filename="../src/main/main_window.cpp" line="700"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="761"/>
-        <location filename="../src/main/main_window.cpp" line="780"/>
-        <source>Saved new %1.</source>
-        <translation>%1 gespeichert.</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="801"/>
-        <source>Saved changes in %1.</source>
-        <translation>Änderungen in %1 gespeichert.</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="807"/>
-        <source>Saved changes in %1 %2.</source>
-        <translation>Änderungen in %1 %2 gespeichert.</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="833"/>
-        <source>Deleted %1.</source>
-        <translation>%1 gelöscht.</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="835"/>
-        <source>Deleted %1 %2.</source>
-        <translation>%1 %2 gelöscht.</translation>
-    </message>
-    <message>
-        <location filename="../src/main/main_window.cpp" line="959"/>
+        <location filename="../src/main/main_window.cpp" line="952"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="960"/>
+        <location filename="../src/main/main_window.cpp" line="953"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="399"/>
-        <location filename="../src/main/main_window.cpp" line="1092"/>
+        <location filename="../src/main/main_window.cpp" line="400"/>
+        <location filename="../src/main/main_window.cpp" line="1085"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="376"/>
+        <location filename="../src/main/main_window.cpp" line="377"/>
         <source>Hide this column</source>
         <translation>Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="378"/>
+        <location filename="../src/main/main_window.cpp" line="379"/>
         <source>Restore hidden column</source>
         <translation>Spalte anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1154"/>
+        <location filename="../src/main/main_window.cpp" line="1147"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1194"/>
+        <location filename="../src/main/main_window.cpp" line="1187"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1197"/>
+        <location filename="../src/main/main_window.cpp" line="1190"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1197"/>
+        <location filename="../src/main/main_window.cpp" line="1190"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1250"/>
-        <location filename="../src/main/main_window.cpp" line="1260"/>
-        <location filename="../src/main/main_window.cpp" line="1274"/>
+        <location filename="../src/main/main_window.cpp" line="1243"/>
+        <location filename="../src/main/main_window.cpp" line="1253"/>
+        <location filename="../src/main/main_window.cpp" line="1267"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1261"/>
+        <location filename="../src/main/main_window.cpp" line="1254"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1262"/>
+        <location filename="../src/main/main_window.cpp" line="1255"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1262"/>
+        <location filename="../src/main/main_window.cpp" line="1255"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1275"/>
+        <location filename="../src/main/main_window.cpp" line="1268"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1277"/>
+        <location filename="../src/main/main_window.cpp" line="1270"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2757,15 +2788,34 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/peaks_table.cpp" line="153"/>
-        <source>peak</source>
-        <translation>Gipfel</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/peaks_table.cpp" line="187"/>
+        <source>%Ln peak(s)</source>
+        <translation>
+            <numerusform>%Ln Gipfel</numerusform>
+            <numerusform>%Ln Gipfel</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/peaks_table.cpp" line="163"/>
-        <source>peaks</source>
-        <translation>Gipfel</translation>
+        <location filename="../src/db/tables/peaks_table.cpp" line="153"/>
+        <source>Saved new peak.</source>
+        <translation>Neuer Gipfel gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/peaks_table.cpp" line="164"/>
+        <source>Saved changes in %Ln peak(s).</source>
+        <translation>
+            <numerusform>Änderungen in Gipfel gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Gipfeln gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/peaks_table.cpp" line="175"/>
+        <source>Deleted %Ln peak(s).</source>
+        <translation>
+            <numerusform>Gipfel gelöscht.</numerusform>
+            <numerusform>%Ln Gipfel gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2805,15 +2855,34 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keines</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="219"/>
-        <source>photo</source>
-        <translation>Foto</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/photos_table.cpp" line="253"/>
+        <source>%Ln photo(s)</source>
+        <translation>
+            <numerusform>%Ln Foto</numerusform>
+            <numerusform>%Ln Fotos</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="229"/>
-        <source>photos</source>
-        <translation>Fotos</translation>
+        <location filename="../src/db/tables/photos_table.cpp" line="219"/>
+        <source>Saved new photo.</source>
+        <translation>Neues Foto gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/photos_table.cpp" line="230"/>
+        <source>Saved changes in %Ln photo(s).</source>
+        <translation>
+            <numerusform>Änderungen in Foto gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Fotos gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/photos_table.cpp" line="241"/>
+        <source>Deleted %Ln photo(s).</source>
+        <translation>
+            <numerusform>Foto gelöscht.</numerusform>
+            <numerusform>%Ln Fotos gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2940,15 +3009,34 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keines</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/ranges_table.cpp" line="139"/>
-        <source>mountain range</source>
-        <translation>Gebirge</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ranges_table.cpp" line="172"/>
+        <source>%Ln mountain range(s)</source>
+        <translation>
+            <numerusform>%Ln Gebirge</numerusform>
+            <numerusform>%Ln Gebirge</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ranges_table.cpp" line="150"/>
-        <source>mountain ranges</source>
-        <translation>Gebirge</translation>
+        <location filename="../src/db/tables/ranges_table.cpp" line="138"/>
+        <source>Saved new mountain range.</source>
+        <translation>Neues Gebirge gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ranges_table.cpp" line="149"/>
+        <source>Saved changes in %Ln mountain ranges(s).</source>
+        <translation>
+            <numerusform>Änderungen in Gebirge gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Gebirgen gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/ranges_table.cpp" line="160"/>
+        <source>Deleted %Ln mountain ranges(s).</source>
+        <translation>
+            <numerusform>Gebirge gelöscht.</numerusform>
+            <numerusform>%Ln Gebirge gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3068,15 +3156,34 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keine</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/regions_table.cpp" line="142"/>
-        <source>region</source>
-        <translation>Region</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/regions_table.cpp" line="176"/>
+        <source>%Ln region(s)</source>
+        <translation>
+            <numerusform>%Ln Region</numerusform>
+            <numerusform>%Ln Regionen</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/regions_table.cpp" line="152"/>
-        <source>regions</source>
-        <translation>Regionen</translation>
+        <location filename="../src/db/tables/regions_table.cpp" line="142"/>
+        <source>Saved new region.</source>
+        <translation>Neue Region gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/regions_table.cpp" line="153"/>
+        <source>Saved changes in %Ln region(s).</source>
+        <translation>
+            <numerusform>Änderungen in Region gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Regionen gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/regions_table.cpp" line="164"/>
+        <source>Deleted %Ln region(s).</source>
+        <translation>
+            <numerusform>Region gelöscht.</numerusform>
+            <numerusform>%Ln Regionen gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3460,38 +3567,51 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
-    <message>
-        <location filename="../src/db/tables/trips_table.cpp" line="142"/>
-        <source>trip</source>
-        <translation>Urlaub</translation>
+    <message numerus="yes">
+        <location filename="../src/db/tables/trips_table.cpp" line="176"/>
+        <source>%Ln trip(s)</source>
+        <translation>
+            <numerusform>%Ln Urlaub</numerusform>
+            <numerusform>%Ln Urlaube</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/trips_table.cpp" line="152"/>
-        <source>trips</source>
-        <translation>Urlaube</translation>
+        <location filename="../src/db/tables/trips_table.cpp" line="142"/>
+        <source>Saved new trip.</source>
+        <translation>Neuer Urlaub gespeichert.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/trips_table.cpp" line="153"/>
+        <source>Saved changes in %Ln trip(s).</source>
+        <translation>
+            <numerusform>Änderungen in Urlaub gespeichert.</numerusform>
+            <numerusform>Änderungen in %Ln Urlauben gespeichert.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/db/tables/trips_table.cpp" line="164"/>
+        <source>Deleted %Ln trip(s).</source>
+        <translation>
+            <numerusform>Urlaub gelöscht.</numerusform>
+            <numerusform>%Ln Urlaube gelöscht.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>WhatIfDeleteResult</name>
     <message>
-        <location filename="../src/db/column.cpp" line="397"/>
-        <source>%1 %2</source>
-        <extracomment>This will be part of a listing of consequences of deleting an item. * An example would be: &quot;Hiker will be removed from 42 ascents.&quot; * Here, the string &quot;42 ascents&quot; would have been the result of using the base string &quot;%1 %2&quot; * and replacing &quot;%1&quot; with &quot;42&quot; and &quot;%2% with &quot;ascents&quot;. * A translation for %2 is retrieved from elsewhere.</extracomment>
-        <translation>%1 %2</translation>
-    </message>
-    <message>
-        <location filename="../src/db/column.cpp" line="409"/>
+        <location filename="../src/db/column.cpp" line="384"/>
         <source>The item will be removed from %1.</source>
         <translation>Referenzen in folgenden Einträge sind betroffen: %1.</translation>
     </message>
     <message>
-        <location filename="../src/db/column.cpp" line="411"/>
+        <location filename="../src/db/column.cpp" line="386"/>
         <source>, </source>
         <extracomment>This goes in between any two entries in a list, but not before the last entry</extracomment>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="../src/db/column.cpp" line="413"/>
+        <location filename="../src/db/column.cpp" line="388"/>
         <source>, and </source>
         <extracomment>This goes in between the last and second-to-last entries in a list</extracomment>
         <translation> und </translation>

@@ -63,19 +63,36 @@ public:
 	 */
 	virtual QString getNoneString() const = 0;
 	/**
-	 * Returns the translated name of this table's item type in singular, not capitalized unless
-	 * the language requires it.
+	 * Returns a translated message confirming that a new item of this table's type has been
+	 * created.
 	 * 
-	 * @return	The translated name of the item type in singular for use mid-sentence.
+	 * @return	The translated message confirming creation of a new item.
 	 */
-	virtual QString getItemNameSingularLowercase() const = 0;
+	virtual QString getCreationConfirmMessage() const = 0;
 	/**
-	 * Returns the translated name of this table's item type in plural, not capitalized unless the
-	 * language requires it.
-	 *
-	 * @return	The translated name of the item type in plural for use mid-sentence.
+	 * Returns a translated message confirming that a number of items of this table's type have been
+	 * edited.
+	 * 
+	 * @param numEdited	The number of items that have been edited.
+	 * @return			The translated message confirming the editing of the items.
 	 */
-	virtual QString getItemNamePluralLowercase() const = 0;
+	virtual QString getEditConfirmMessage(int numEdited) const = 0;
+	/**
+	 * Returns a translated message confirming that a number of items of this table's type have been
+	 * deleted.
+	 * 
+	 * @param numDeleted	The number of items that have been deleted.
+	 * @return				The translated message confirming the deletion of the items.
+	 */
+	virtual QString getDeleteConfirmMessage(int numDeleted) const = 0;
+	/**
+	 * Returns a translated string which can be used in lists of items and their counts, in the form
+	 * "n item(s)", e.g. "14 ascents" or "1 peak".
+	 * 
+	 * @param numItems	The number of items to list.
+	 * @return			A translated list entry naming the item type and a corresponding count.
+	 */
+	virtual QString getItemCountString(int numItems) const = 0;
 	
 	// QAbstractItemModel implementation (completes implementation in Table)
 	void multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const override;

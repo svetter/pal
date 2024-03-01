@@ -374,31 +374,6 @@ QString getColumnListStringOf(QList<const Column*> columns)
 
 
 /**
- * Returns a translated string detailing the given singular consequence of deleting an item.
- * 
- * @param whatIfResult	The consequence of deleting an item as previously calculated.
- * @return				A translated string representing the consequence of deleting the item.
- */
-QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& whatIfResult)
-{
-	int numAffectedItems = whatIfResult.numAffectedRowIndices;
-	QString itemName;
-	if (numAffectedItems == 1) {
-		itemName = whatIfResult.itemTable.getItemNameSingularLowercase();
-	} else {
-		itemName = whatIfResult.itemTable.getItemNamePluralLowercase();
-	}
-	/*: This will be part of a listing of consequences of deleting an item.
-	 *  An example would be: "Hiker will be removed from 42 ascents."
-	 *  Here, the string "42 ascents" would have been the result of using the base string "%1 %2"
-	 *  and replacing "%1" with "42" and "%2% with "ascents".
-	 *  A translation for %2 is retrieved from elsewhere.
-	 */
-	QString baseString = QCoreApplication::translate("WhatIfDeleteResult", "%1 %2");
-	return baseString.arg(numAffectedItems).arg(itemName);
-}
-
-/**
  * Returns a translated string listing the given consequences of deleting an item.
  * 
  * @param whatIfResults	The consequences of deleting an item as previously calculated.
@@ -415,7 +390,8 @@ QString getTranslatedWhatIfDeleteResultDescription(const QList<WhatIfDeleteResul
 	QString argumentString = "";
 	int iterationsLeft = whatIfResults.size();
 	for (const WhatIfDeleteResult whatIfResult : whatIfResults) {
-		argumentString.append(getTranslatedWhatIfDeleteResultDescription(whatIfResult));
+		const QString listEntry = whatIfResult.itemTable.getItemCountString(whatIfResult.numAffectedRowIndices);
+		argumentString.append(listEntry);
 		
 		switch (--iterationsLeft) {
 		case 0:

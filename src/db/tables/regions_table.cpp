@@ -133,21 +133,45 @@ QString RegionsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "region" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "region" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new region has been created.
+ * 
+ * @return	The translated message confirming creation of a new region.
  */
-QString RegionsTable::getItemNameSingularLowercase() const
+QString RegionsTable::getCreationConfirmMessage() const
 {
-	return tr("region");
+	return tr("Saved new region.");
 }
 
 /**
- * Returns the translation of "regions" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of regions have been edited.
  *
- * @return	The translation of "regions" (plural) for use mid-sentence.
+ * @param numEdited	The number of regions that have been edited.
+ * @return			The translated message confirming the editing of the regions.
  */
-QString RegionsTable::getItemNamePluralLowercase() const
+QString RegionsTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("regions");
+	return tr("Saved changes in %Ln region(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of regions have been deleted.
+ *
+ * @param numDeleted	The number of regions that have been deleted.
+ * @return				The translated message confirming the deletion of the regions.
+ */
+QString RegionsTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln region(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n region(s)".
+ * 
+ * @param numItems	The number of regions to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString RegionsTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln region(s)", "", numItems);
 }

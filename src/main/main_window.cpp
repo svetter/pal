@@ -759,7 +759,7 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(*this, *this, db);
 	if (newBufferRowIndex.isInvalid()) return;
 	
-	setStatusLine(tr("Saved new %1.").arg(mapper.baseTable.getItemNameSingularLowercase()));
+	setStatusLine(mapper.baseTable.getCreationConfirmMessage());
 	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
 }
 
@@ -778,7 +778,7 @@ void MainWindow::duplicateAndEditSelectedItem()
 	BufferRowIndex newBufferRowIndex = activeMapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, primaryBufferRow);
 	if (newBufferRowIndex.isInvalid()) return;
 	
-	setStatusLine(tr("Saved new %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
+	setStatusLine(activeMapper.baseTable.getCreationConfirmMessage());
 	performUpdatesAfterUserAction(activeMapper, true, newBufferRowIndex);
 }
 
@@ -795,18 +795,15 @@ void MainWindow::editSelectedItems()
 	const BufferRowIndex markedBufferRow = selectedAndMarkedBufferRows.second;
 	if (selectedBufferRows.isEmpty()) return;
 	
-	if (selectedBufferRows.size() < 2) {
+	if (selectedBufferRows.size() == 1) {
 		const bool changesMade = activeMapper.openEditItemDialogAndStoreMethod(*this, *this, db, markedBufferRow);
 		if (!changesMade) return;
-		
-		setStatusLine(tr("Saved changes in %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
-	}
-	else {
+	} else {
 		const bool changesMade = activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow);
 		if (!changesMade) return;
-		
-		setStatusLine(tr("Saved changes in %1 %2.").arg(selectedBufferRows.size()).arg(activeMapper.baseTable.getItemNamePluralLowercase()));
 	}
+
+	setStatusLine(activeMapper.baseTable.getEditConfirmMessage(selectedBufferRows.size()));
 	performUpdatesAfterUserAction(activeMapper, false);
 }
 
@@ -829,12 +826,8 @@ void MainWindow::deleteSelectedItems()
 	
 	const bool deleted = activeMapper.openDeleteItemsDialogAndExecuteMethod(*this, *this, db, selectedBufferRows);
 	if (!deleted) return;
-
-	if (selectedBufferRows.size() == 1) {
-		setStatusLine(tr("Deleted %1.").arg(activeMapper.baseTable.getItemNameSingularLowercase()));
-	} else {
-		setStatusLine(tr("Deleted %1 %2.").arg(selectedBufferRows.size()).arg(activeMapper.baseTable.getItemNamePluralLowercase()));
-	}
+	
+	setStatusLine(activeMapper.baseTable.getDeleteConfirmMessage(selectedBufferRows.size()));
 	performUpdatesAfterUserAction(activeMapper, true);
 }
 

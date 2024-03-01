@@ -133,21 +133,45 @@ QString TripsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "trip" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "trip" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new trip has been created.
+ * 
+ * @return	The translated message confirming creation of a new trip.
  */
-QString TripsTable::getItemNameSingularLowercase() const
+QString TripsTable::getCreationConfirmMessage() const
 {
-	return tr("trip");
+	return tr("Saved new trip.");
 }
 
 /**
- * Returns the translation of "trips" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of trips have been edited.
  *
- * @return	The translation of "trips" (plural) for use mid-sentence.
+ * @param numEdited	The number of trips that have been edited.
+ * @return			The translated message confirming the editing of the trips.
  */
-QString TripsTable::getItemNamePluralLowercase() const
+QString TripsTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("trips");
+	return tr("Saved changes in %Ln trip(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of trips have been deleted.
+ *
+ * @param numDeleted	The number of items that have been deleted.
+ * @return				The translated message confirming the deletion of the trips.
+ */
+QString TripsTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln trip(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n trip(s)".
+ * 
+ * @param numItems	The number of trips to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString TripsTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln trip(s)", "", numItems);
 }

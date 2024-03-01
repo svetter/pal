@@ -51,8 +51,10 @@ private:
 	
 public:
 	virtual QString getNoneString() const;
-	virtual QString getItemNameSingularLowercase() const;
-	virtual QString getItemNamePluralLowercase() const;
+	virtual QString getCreationConfirmMessage() const;
+	virtual QString getEditConfirmMessage(int numEdited) const;
+	virtual QString getDeleteConfirmMessage(int numDeleted) const;
+	virtual QString getItemCountString(int numItems) const;
 };
 
 

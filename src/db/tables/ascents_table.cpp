@@ -162,21 +162,45 @@ QString AscentsTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "ascent" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "ascent" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new ascent has been created.
+ * 
+ * @return	The translated message confirming creation of a new ascent.
  */
-QString AscentsTable::getItemNameSingularLowercase() const
+QString AscentsTable::getCreationConfirmMessage() const
 {
-	return tr("ascent");
+	return tr("Saved new ascent.");
 }
 
 /**
- * Returns the translation of "ascents" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of ascents have been edited.
  *
- * @return	The translation of "ascents" (plural) for use mid-sentence.
+ * @param numEdited	The number of ascents that have been edited.
+ * @return			The translated message confirming the editing of the ascents.
  */
-QString AscentsTable::getItemNamePluralLowercase() const
+QString AscentsTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("ascents");
+	return tr("Saved changes in %Ln ascent(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of ascents have been deleted.
+ *
+ * @param numDeleted	The number of ascents that have been deleted.
+ * @return				The translated message confirming the deletion of the ascents.
+ */
+QString AscentsTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln ascent(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n ascent(s)".
+ * 
+ * @param numItems	The number of ascents to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString AscentsTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln ascent(s)", "", numItems);
 }

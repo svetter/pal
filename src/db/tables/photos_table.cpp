@@ -210,21 +210,45 @@ QString PhotosTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "photo" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "photo" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new photo has been created.
+ * 
+ * @return	The translated message confirming creation of a new photo.
  */
-QString PhotosTable::getItemNameSingularLowercase() const
+QString PhotosTable::getCreationConfirmMessage() const
 {
-	return tr("photo");
+	return tr("Saved new photo.");
 }
 
 /**
- * Returns the translation of "photos" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of photos have been edited.
  *
- * @return	The translation of "photos" (plural) for use mid-sentence.
+ * @param numEdited	The number of photos that have been edited.
+ * @return			The translated message confirming the editing of the photos.
  */
-QString PhotosTable::getItemNamePluralLowercase() const
+QString PhotosTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("photos");
+	return tr("Saved changes in %Ln photo(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of photos have been deleted.
+ *
+ * @param numDeleted	The number of photos that have been deleted.
+ * @return				The translated message confirming the deletion of the photos.
+ */
+QString PhotosTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln photo(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n photo(s)".
+ * 
+ * @param numItems	The number of photos to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString PhotosTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln photo(s)", "", numItems);
 }

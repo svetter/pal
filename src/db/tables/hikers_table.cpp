@@ -124,21 +124,45 @@ QString HikersTable::getNoneString() const
 }
 
 /**
- * Returns the translation of "hiker" (singular), not capitalized unless the language requires it.
- *
- * @return	The translation of "hiker" (singular) for use mid-sentence.
+ * Returns a translated message confirming that a new hiker has been created.
+ * 
+ * @return	The translated message confirming creation of a new hiker.
  */
-QString HikersTable::getItemNameSingularLowercase() const
+QString HikersTable::getCreationConfirmMessage() const
 {
-	return tr("hiker");
+	return tr("Saved new hiker.");
 }
 
 /**
- * Returns the translation of "hikers" (plural), not capitalized unless the language requires it.
+ * Returns a translated message confirming that a number of hikers have been edited.
  *
- * @return	The translation of "hikers" (plural) for use mid-sentence.
+ * @param numEdited	The number of hikers that have been edited.
+ * @return			The translated message confirming the editing of the hikers.
  */
-QString HikersTable::getItemNamePluralLowercase() const
+QString HikersTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("hikers");
+	return tr("Saved changes in %Ln hiker(s).", "", numEdited);
+}
+
+/**
+ * Returns a translated message confirming that a number of hikers have been deleted.
+ *
+ * @param numDeleted	The number of hikers that have been deleted.
+ * @return				The translated message confirming the deletion of the hikers.
+ */
+QString HikersTable::getDeleteConfirmMessage(int numDeleted) const
+{
+	return tr("Deleted %Ln hiker(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated string which can be used in lists of items and their counts, in the form
+ * "n hiker(s)".
+ * 
+ * @param numItems	The number of hikers to list.
+ * @return			A translated list entry naming the item type and a corresponding count.
+ */
+QString HikersTable::getItemCountString(int numItems) const
+{
+	return tr("%Ln hiker(s)", "", numItems);
 }

@@ -154,7 +154,6 @@ QString getColumnListStringOf(QList<const Column*> columns);
 
 
 
-QString getTranslatedWhatIfDeleteResultDescription(const WhatIfDeleteResult& whatIfResult);
 QString getTranslatedWhatIfDeleteResultDescription(const QList<WhatIfDeleteResult>& whatIfResults);
 
 
