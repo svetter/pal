@@ -797,10 +797,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			
 			// WHAT IF
 			if (searchNotExecute) {
-				int numAffectedRowIndices = 0;
-				for (const ValidItemID& primaryKey : primaryKeys) {
-					numAffectedRowIndices += candidateAssociativeTable.getNumberOfMatchingRows(*matchingColumn, primaryKey);
-				}
+				const int numAffectedRowIndices = candidateAssociativeTable.getNumberOfMatchingOtherPrimaryKeys(*matchingColumn, primaryKeys);
 				if (numAffectedRowIndices > 0) {
 					const NormalTable& itemTable = candidateAssociativeTable.traverseAssociativeRelation(primaryKeyColumn);
 					result.append(WhatIfDeleteResult(candidateAssociativeTable, itemTable, numAffectedRowIndices));
@@ -808,9 +805,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			}
 			// EXECUTE
 			else {
-				for (const ValidItemID& primaryKey : primaryKeys) {
-					candidateAssociativeTable.removeMatchingRows(*parent, *matchingColumn, primaryKey);
-				}
+				candidateAssociativeTable.removeMatchingRows(*parent, *matchingColumn, primaryKeys);
 			}
 		}
 		
@@ -825,7 +820,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 				if (!otherTableColumn->isForeignKey()) continue;
 				if (&otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
 				
-				for (const ValidItemID& primaryKey : primaryKeys) {
+				for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
 					QList<BufferRowIndex> rowIndexList = candidateNormalTable.getMatchingBufferRowIndices(*otherTableColumn, ID_GET(primaryKey));
 					QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
 					

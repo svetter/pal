@@ -134,22 +134,28 @@ const NormalTable& AssociativeTable::traverseAssociativeRelation(const PrimaryKe
 // BUFFER ACCESS
 
 /**
- * Returns the number of rows in the buffer which match the given primary key in the given column.
+ * Returns the number of keys on the other side of the given column which are associated with any
+ * of the given primary keys from the given column.
  * 
- * @param column		The column to search in.
- * @param primaryKey	The primary key to search for.
- * @return				The number of rows in the buffer which match the given primary key in the given column.
+ * @param column		The column in which to search for the given primary keys.
+ * @param primaryKeys	The primary keys to search for in the given column.
+ * @return				The number of unique keys on the other side of the given column connected to any of the given primary keys.
  */
-int AssociativeTable::getNumberOfMatchingRows(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const
+int AssociativeTable::getNumberOfMatchingOtherPrimaryKeys(const PrimaryForeignKeyColumn& column, const QSet<ValidItemID>& primaryKeys) const
 {
 	assert(&column == &column1 || &column == &column2);
-	int numberOfMatches = 0;
+	const PrimaryForeignKeyColumn& otherColumn = getOtherColumn(column);
+	
+	QSet<ValidItemID> otherSideKeys = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column.getIndex()) == ID_GET(primaryKey)) {
-			numberOfMatches++;
+		for (const ValidItemID& primaryKey : primaryKeys) {
+			if (Q_UNLIKELY(bufferRow->at(column.getIndex()) == ID_GET(primaryKey))) {
+				otherSideKeys.insert(VALID_ITEM_ID(bufferRow->at(otherColumn.getIndex())));
+				break;
+			}
 		}
 	}
-	return numberOfMatches;
+	return otherSideKeys.size();
 }
 
 /**
@@ -169,8 +175,8 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyCo
 	const PrimaryForeignKeyColumn& otherColumn = getOtherColumn(column);
 	QSet<ValidItemID> filtered = QSet<ValidItemID>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(column.getIndex()) == ID_GET(primaryKey)) {
-			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn.getIndex()).toInt()));
+		if (Q_UNLIKELY(bufferRow->at(column.getIndex()) == ID_GET(primaryKey))) {
+			filtered.insert(VALID_ITEM_ID(bufferRow->at(otherColumn.getIndex())));
 		}
 	}
 	return filtered;

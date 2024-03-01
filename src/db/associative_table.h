@@ -53,7 +53,7 @@ public:
 	const NormalTable& traverseAssociativeRelation(const PrimaryKeyColumn& foreignColumn) const;
 	
 	// Buffer access
-	int getNumberOfMatchingRows(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const;
+	int getNumberOfMatchingOtherPrimaryKeys(const PrimaryForeignKeyColumn& column, const QSet<ValidItemID>& primaryKeys) const;
 	QSet<ValidItemID> getMatchingEntries(const PrimaryForeignKeyColumn& column, ValidItemID primaryKey) const;
 	
 	// Modifications (passthrough)
