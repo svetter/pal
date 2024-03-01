@@ -64,6 +64,8 @@ protected:
 	Database& db;
 	/** The purpose of the dialog. */
 	const DialogPurpose purpose;
+	/** The title of the dialog window. */
+	const QString windowTitle;
 	
 private:
 	/** The dialog's save button. */

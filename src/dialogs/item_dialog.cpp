@@ -45,12 +45,11 @@ ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	mainWindow(mainWindow),
 	db(db),
 	purpose(purpose),
+	windowTitle(windowTitle),
 	multiEditCheckboxes(QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>()),
 	tristateCheckboxes(QMap<QCheckBox*, QSet<const Column*>>()),
 	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
-{
-	setWindowTitle(windowTitle);
-}
+{}
 
 
 
@@ -75,6 +74,8 @@ void ItemDialog::setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, Q
  */
 void ItemDialog::changeUIForPurpose()
 {
+	setWindowTitle(windowTitle);
+	
 	if (purpose == multiEdit) {
 		for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
 			const QSet<QWidget*>& widgets = widgetsAndColumns.first;
