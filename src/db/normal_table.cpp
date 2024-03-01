@@ -68,7 +68,7 @@ BufferRowIndex NormalTable::getBufferIndexForPrimaryKey(ValidItemID primaryKey) 
 {
 	BufferRowIndex index = BufferRowIndex(0);
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		if (bufferRow->at(0) == ID_GET(primaryKey)) return index;
+		if (Q_UNLIKELY(bufferRow->at(0) == ID_GET(primaryKey))) return index;
 		index++;
 	}
 	return BufferRowIndex();

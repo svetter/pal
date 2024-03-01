@@ -339,7 +339,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 			}
 			newRow->append(newCell);
 			
-			if (progressDialog && !computeWholeColumn) progressDialog->setValue(progressDialog->value() + 1);
+			if (Q_LIKELY(progressDialog && !computeWholeColumn)) progressDialog->setValue(progressDialog->value() + 1);
 		}
 		buffer.appendRow(newRow);
 	}
@@ -353,7 +353,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 		QList<QVariant> cells = computeWholeColumnContent(column->getIndex());
 		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable.getNumberOfRows()); bufferRowIndex++) {
 			buffer.replaceCell(bufferRowIndex, column->getIndex(), cells.at(bufferRowIndex.get()));
-			if (progressDialog) progressDialog->setValue(progressDialog->value() + 1);
+			if (Q_LIKELY(progressDialog)) progressDialog->setValue(progressDialog->value() + 1);
 		}
 	}
 	
@@ -1016,7 +1016,7 @@ QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int c
 	const CompositeColumn& column = *columns.at(columnIndex);
 	QVariant result = column.computeValueAt(bufferRowIndex);
 	
-	if (!result.isValid()) return QVariant();
+	if (Q_UNLIKELY(!result.isValid())) return QVariant();
 	
 	return result;
 }

@@ -63,7 +63,7 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 		{volcanoCheckbox, { &db.peaksTable.volcanoColumn }}
 	});
 	
-	setWindowIcon(QIcon(":/icons/ico/peak_multisize_square.ico"));
+	setWindowIcon(QIcon(":/icons/ico/logo_peak_multisize_square.ico"));
 	
 	restoreDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());

@@ -56,6 +56,7 @@ MainWindow::MainWindow() :
 {
 	setupUi(this);
 	createTypesHandler();
+	setWindowIcon(QIcon(":/icons/ico/logo_peak_multisize_square.ico"));
 	setupMenuIcons();
 	statusbar->addPermanentWidget(statusBarTableSizeLabel);
 	statusbar->addPermanentWidget(statusBarFiltersLabel);

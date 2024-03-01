@@ -55,7 +55,7 @@ Each peak itself has the following associated fields:
 	- Mountain range
 	- Country
 	- Continent
-- Links to Wikipedia, Google Earth/Maps
+- Links to Wikipedia, Google Maps/Earth
 
 Other features:
 
@@ -68,16 +68,18 @@ Other features:
 
 The codebase is fully documented.
 
-PAL uses Qt's [SQLite](https://www.sqlite.org) driver, so its project files can be opened, inspected and manipulated with any compatible software.
+PAL employs an [SQLite](https://www.sqlite.org) database, so its project files can be opened, inspected and manipulated with any compatible software.
 
 
 
 Building PAL
 ------------
 
+[![Build PAL status](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
+
 PAL is built on [Qt 6.6.2](https://wiki.qt.io/Qt_6.6_Release).
 
-If there is no release suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt Creator, open the top-level project file [PAL.pro], let Qt Creator configure the project and click build.
+If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
 
 
 
