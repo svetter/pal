@@ -75,7 +75,8 @@ PAL employs an [SQLite](https://www.sqlite.org) database, so its project files c
 Building PAL
 ------------
 
-[![Build PAL status](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
+[![Build](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
+[![Test](https://github.com/svetter/pal/actions/workflows/test.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/test.yml)
 
 PAL is built on [Qt 6.6.2](https://wiki.qt.io/Qt_6.6_Release).
 
