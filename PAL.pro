@@ -33,8 +33,20 @@ QT += charts
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++17
-CONFIG += lrelease
-CONFIG += embed_translations
+CONFIG += lrelease embed_translations
+
+
+
+test_conf {
+	TARGET = PAL_test
+	QT += testlib
+	CONFIG += qt warn_on depend_includepath testcase
+
+	SOURCES += \
+		src/test/startup_test.cpp
+} else {
+	SOURCES += src/main/main.cpp
+}
 
 
 
@@ -165,7 +177,6 @@ SOURCES += \
 	src/main/about_window.cpp \
 	src/main/ascent_filter_bar.cpp \
 	src/main/helpers.cpp \
-	src/main/main.cpp \
 	src/main/main_window.cpp \
 	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
