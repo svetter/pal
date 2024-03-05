@@ -33,13 +33,14 @@
 /**
  * Creates a new base item dialog.
  * 
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param windowTitle	The title of the dialog window.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param windowTitle		The title of the dialog window.
+ * @param enableSizeGrip	Whether to enable the size grip in the bottom right corner of the dialog.
  */
-ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle):
+ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, bool enableSizeGrip):
 	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
@@ -49,7 +50,9 @@ ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	multiEditCheckboxes(QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>()),
 	tristateCheckboxes(QMap<QCheckBox*, QSet<const Column*>>()),
 	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
-{}
+{
+	setSizeGripEnabled(enableSizeGrip);
+}
 
 
 

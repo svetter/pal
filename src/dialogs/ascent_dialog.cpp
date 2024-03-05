@@ -55,7 +55,7 @@ using std::unique_ptr, std::make_unique;
  * @param init			The ascent data to initialize the dialog with and store as initial data. AscentDialog takes ownership of this pointer.
  */
 AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Ascent> init) :
-	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle, true),
 	init(std::move(init)),
 	selectableRegionIDs(QList<ValidItemID>()),
 	selectablePeakIDs(QList<ValidItemID>()),

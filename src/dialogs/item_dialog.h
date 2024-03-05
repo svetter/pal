@@ -79,7 +79,7 @@ private:
 	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
 	
 protected:
-	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle);
+	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, bool enableSizeGrip = false);
 	
 	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes = QMap<QCheckBox*, QSet<const Column*>>());
 	void changeUIForPurpose();

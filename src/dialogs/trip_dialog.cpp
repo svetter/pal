@@ -46,7 +46,7 @@ using std::unique_ptr, std::make_unique;
  * @param init			The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
  */
 TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Trip> init) :
-	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
+	ItemDialog(parent, mainWindow, db, purpose, windowTitle, true),
 	init(std::move(init))
 {
 	setupUi(this);
