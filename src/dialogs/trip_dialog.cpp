@@ -38,15 +38,15 @@ using std::unique_ptr, std::make_unique;
  * Sets up the UI, restores geometry, populates combo boxes, connects interactive UI elements, sets
  * initial values, and performs purpose-specific preparations.
  * 
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param windowTitle	The title of the dialog window.
- * @param init			The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param init				The trip data to initialize the dialog with and store as initial data. TripDialog takes ownership of this pointer.
+ * @param numItemsToEdit	The number of items to edit, if the purpose is multi-edit.
  */
-TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Trip> init) :
-	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
+TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init, int numItemsToEdit) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(std::move(init))
 {
 	setupUi(this);
@@ -57,6 +57,13 @@ TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/trip_multisize_square.ico"));
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	setWindowTitle(tr("New trip"));								break;
+	case editItem:
+	case multiEdit:		setWindowTitle(tr("Edit %Ln trip(s)", "", numItemsToEdit));	break;
+	}
+	setSizeGripEnabled(true);
 	
 	restoreDialogGeometry(*this, mainWindow, Settings::tripDialog_geometry);
 	
@@ -226,21 +233,28 @@ void TripDialog::aboutToClose()
  * @param parent		The parent window.
  * @param mainWindow	The application's main window.
  * @param db			The project database.
+ * @param callWhenDone	The function to call after the dialog has closed.
  * @return				The index of the new trip in the database's trip table buffer.
  */
-BufferRowIndex openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
+void openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
-	const QString windowTitle = TripDialog::tr("New trip");
+	TripDialog* dialog = new TripDialog(parent, mainWindow, db, newItem, nullptr);
 	
-	TripDialog dialog = TripDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
-	if (dialog.exec() != QDialog::Accepted) {
-		return BufferRowIndex();
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		BufferRowIndex newTripIndex = BufferRowIndex();
+		
+		if (dialog->result() == QDialog::Accepted) {
+			unique_ptr<Trip> extractedTrip = dialog->extractData();
+			
+			newTripIndex = db.tripsTable.addRow(parent, *extractedTrip);
+		}
+		
+		delete dialog;
+		return callWhenDone(newTripIndex);
+	};
+	TripDialog::connect(dialog, &TripDialog::finished, callWhenClosed);
 	
-	unique_ptr<Trip> extractedTrip = dialog.extractData();
-	
-	const BufferRowIndex newTripIndex = db.tripsTable.addRow(parent, *extractedTrip);
-	return newTripIndex;
+	dialog->open();
 }
 
 /**
@@ -250,24 +264,32 @@ BufferRowIndex openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindo
  * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the trip to edit in the database's trip table buffer.
+ * @param callWhenDone		The function to call after the dialog has closed.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+void openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
 	unique_ptr<Trip> originalTrip = db.getTripAt(bufferRowIndex);
 	const ItemID originalTripID = originalTrip->tripID;
 	
-	const QString windowTitle = TripDialog::tr("Edit trip");
+	TripDialog* dialog = new TripDialog(parent, mainWindow, db, editItem, std::move(originalTrip));
 	
-	TripDialog dialog = TripDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalTrip));
-	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
-		return false;
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		bool changesMade = false;
+		
+		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
+			unique_ptr<Trip> extractedTrip = dialog->extractData();
+			
+			db.tripsTable.updateRow(parent, FORCE_VALID(originalTripID), *extractedTrip);
+			changesMade = true;
+		}
+		
+		delete dialog;
+		return callWhenDone(changesMade);
+	};
+	TripDialog::connect(dialog, &TripDialog::finished, callWhenClosed);
 	
-	unique_ptr<Trip> extractedTrip = dialog.extractData();
-	
-	db.tripsTable.updateRow(parent, FORCE_VALID(originalTripID), *extractedTrip);
-	return true;
+	dialog->open();
 }
 
 /**
@@ -278,28 +300,36 @@ bool openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param db					The project database.
  * @param bufferRowIndices		The buffer row indices of the trips to edit.
  * @param initBufferRowIndex	The index of the trip whose data to initialize the dialog with.
+ * @param callWhenDone			The function to call after the dialog has closed.
  * @return						True if any changes were made, false otherwise.
  */
-bool openMultiEditTripsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+void openMultiEditTripsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {
 	assert(!bufferRowIndices.isEmpty());
 	
 	unique_ptr<Trip> originalTrip = db.getTripAt(initBufferRowIndex);
 	
-	const QString windowTitle = TripDialog::tr("Edit %1 trips").arg(bufferRowIndices.size());
+	TripDialog* dialog = new TripDialog(parent, mainWindow, db, multiEdit, std::move(originalTrip), bufferRowIndices.size());
 	
-	TripDialog dialog = TripDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalTrip));
-	if (dialog.exec() != QDialog::Accepted) {
-		return false;
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		bool changesMade = false;
+		
+		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
+			unique_ptr<Trip> extractedTrip = dialog->extractData();
+			extractedTrip->tripID = ItemID();
+			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
+			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+			
+			db.tripsTable.updateRows(parent, bufferRowIndices, columnList, *extractedTrip);
+			changesMade = true;
+		}
+		
+		delete dialog;
+		return callWhenDone(changesMade);
+	};
+	TripDialog::connect(dialog, &TripDialog::finished, callWhenClosed);
 	
-	unique_ptr<Trip> extractedTrip = dialog.extractData();
-	extractedTrip->tripID = ItemID();
-	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
-	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
-	
-	db.tripsTable.updateRows(parent, bufferRowIndices, columnList, *extractedTrip);
-	return true;
+	dialog->open();
 }
 
 /**
@@ -324,8 +354,7 @@ bool openDeleteTripsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, D
 	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.tripsTable, tripIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		bool plural = tripIDs.size() > 1;
-		QString windowTitle = plural ? TripDialog::tr("Delete trips") : TripDialog::tr("Delete trip");
+		const QString windowTitle = TripDialog::tr("Delete %Ln trip(s)", "", tripIDs.size());
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}

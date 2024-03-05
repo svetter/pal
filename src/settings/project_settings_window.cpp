@@ -138,12 +138,15 @@ void ProjectSettingsWindow::saveSettings()
  */
 void ProjectSettingsWindow::handle_newHiker()
 {
-	BufferRowIndex newHikerIndex = openNewHikerDialogAndStore(*this, mainWindow, db);
-	if (newHikerIndex.isInvalid()) return;
+	auto callWhenDone = [this](const BufferRowIndex newHikerIndex) {
+		if (newHikerIndex.isInvalid()) return;
+		
+		repopulateHikerCombo();
+		const ValidItemID newHikerID = db.hikersTable.getPrimaryKeyAt(newHikerIndex);
+		defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
+	};
 	
-	repopulateHikerCombo();
-	const ValidItemID newHikerID = db.hikersTable.getPrimaryKeyAt(newHikerIndex);
-	defaultHikerCombo->setCurrentIndex(selectableHikerIDs.indexOf(newHikerID) + 1);	// 0 is None
+	openNewHikerDialogAndStore(*this, mainWindow, db, callWhenDone);
 }
 
 

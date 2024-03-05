@@ -46,7 +46,7 @@ class PeakDialog : public ItemDialog, public Ui_PeakDialog
 	QList<ValidItemID> selectableRegionIDs;
 	
 public:
-	PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Peak> init);
+	PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Peak> init, int numItemsToEdit = -1);
 	~PeakDialog();
 	
 	unique_ptr<Peak> extractData();
@@ -69,11 +69,11 @@ private:
 
 
 
-BufferRowIndex	openNewPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-BufferRowIndex	openDuplicatePeakDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openEditPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditPeaksDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeletePeaksDialogAndExecute		(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openDuplicatePeakDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditPeakDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditPeaksDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeletePeaksDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

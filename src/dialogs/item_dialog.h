@@ -64,8 +64,6 @@ protected:
 	Database& db;
 	/** The purpose of the dialog. */
 	const DialogPurpose purpose;
-	/** The title of the dialog window. */
-	const QString windowTitle;
 	
 private:
 	/** The dialog's save button. */
@@ -79,7 +77,7 @@ private:
 	QMap<QCheckBox*, QMap<QWidget*, bool>> savedWidgetEnabledStates;
 	
 protected:
-	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle);
+	ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose);
 	
 	void setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>& multiEditCheckboxes, const QMap<QCheckBox*, QSet<const Column*>>& tristateCheckboxes = QMap<QCheckBox*, QSet<const Column*>>());
 	void changeUIForPurpose();

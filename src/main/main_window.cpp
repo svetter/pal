@@ -740,7 +740,9 @@ void MainWindow::viewSelectedItem()
 	switch (activeMapper.type) {
 	case ItemTypeAscent: {
 		const ViewRowIndex markedViewRow = activeMapper.compTable->findViewRowIndexForBufferRow(primaryBufferRow);
-		AscentViewer(this, db, typesHandler, markedViewRow).exec();
+		AscentViewer* viewer = new AscentViewer(this, db, typesHandler, markedViewRow);
+		connect(viewer, &AscentViewer::finished, [=]() { delete viewer; });
+		viewer->open();
 		break;
 	}
 	default: assert(false);
@@ -756,11 +758,12 @@ void MainWindow::viewSelectedItem()
  */
 void MainWindow::newItem(const ItemTypeMapper& mapper)
 {
-	BufferRowIndex newBufferRowIndex = mapper.openNewItemDialogAndStoreMethod(*this, *this, db);
-	if (newBufferRowIndex.isInvalid()) return;
-	
-	setStatusLine(mapper.baseTable.getCreationConfirmMessage());
-	performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
+	mapper.openNewItemDialogAndStoreMethod(*this, *this, db, [this, &mapper](BufferRowIndex newBufferRowIndex) {
+		if (newBufferRowIndex.isInvalid()) return;
+		
+		setStatusLine(mapper.baseTable.getCreationConfirmMessage());
+		performUpdatesAfterUserAction(mapper, true, newBufferRowIndex);
+	});
 }
 
 /**
@@ -775,11 +778,12 @@ void MainWindow::duplicateAndEditSelectedItem()
 	const BufferRowIndex primaryBufferRow = getSelectedRows(activeMapper).second;
 	if (primaryBufferRow.isInvalid()) return;
 	
-	BufferRowIndex newBufferRowIndex = activeMapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, primaryBufferRow);
-	if (newBufferRowIndex.isInvalid()) return;
-	
-	setStatusLine(activeMapper.baseTable.getCreationConfirmMessage());
-	performUpdatesAfterUserAction(activeMapper, true, newBufferRowIndex);
+	activeMapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, primaryBufferRow, [this, &activeMapper](BufferRowIndex newBufferRowIndex) {
+		if (newBufferRowIndex.isInvalid()) return;
+		
+		setStatusLine(activeMapper.baseTable.getCreationConfirmMessage());
+		performUpdatesAfterUserAction(activeMapper, true, newBufferRowIndex);
+	});
 }
 
 /**
@@ -795,16 +799,18 @@ void MainWindow::editSelectedItems()
 	const BufferRowIndex markedBufferRow = selectedAndMarkedBufferRows.second;
 	if (selectedBufferRows.isEmpty()) return;
 	
+	const int numSelectedRows = selectedBufferRows.size();
+	auto callWhenDone = [=, &activeMapper](bool changedMade) {
+		if (!changedMade) return;
+		setStatusLine(activeMapper.baseTable.getEditConfirmMessage(numSelectedRows));
+		performUpdatesAfterUserAction(activeMapper, false);
+	};
+	
 	if (selectedBufferRows.size() == 1) {
-		const bool changesMade = activeMapper.openEditItemDialogAndStoreMethod(*this, *this, db, markedBufferRow);
-		if (!changesMade) return;
+		activeMapper.openEditItemDialogAndStoreMethod(*this, *this, db, markedBufferRow, callWhenDone);
 	} else {
-		const bool changesMade = activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow);
-		if (!changesMade) return;
+		activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow, callWhenDone);
 	}
-
-	setStatusLine(activeMapper.baseTable.getEditConfirmMessage(selectedBufferRows.size()));
-	performUpdatesAfterUserAction(activeMapper, false);
 }
 
 /**
@@ -1169,11 +1175,13 @@ void MainWindow::handle_newDatabase()
 	
 	addToRecentFilesList(filepath);
 	
-	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow(*this, *this, db, true).exec();
-	}
-	
 	getActiveMapper().openingTab();
+	
+	if (Settings::openProjectSettingsOnNewDatabase.get()) {
+		ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db, true);
+		connect(dialog, &ProjectSettingsWindow::finished, [=]() { delete dialog; });
+		dialog->open();
+	}
 }
 
 /**
@@ -1312,7 +1320,9 @@ void MainWindow::handle_closeDatabase()
  */
 void MainWindow::handle_openProjectSettings()
 {
-	ProjectSettingsWindow(*this, *this, db).exec();
+	ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db);
+	connect(dialog, &ProjectSettingsWindow::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 /**
@@ -1322,7 +1332,9 @@ void MainWindow::handle_openProjectSettings()
  */
 void MainWindow::handle_openSettings()
 {
-	SettingsWindow(*this).exec();
+	SettingsWindow* dialog = new SettingsWindow(*this);
+	connect(dialog, &SettingsWindow::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 
@@ -1484,7 +1496,9 @@ void MainWindow::handle_clearTableSelection()
  */
 void MainWindow::handle_relocatePhotos()
 {
-	RelocatePhotosDialog(*this, db).exec();
+	RelocatePhotosDialog* dialog = new RelocatePhotosDialog(*this, db);
+	connect(dialog, &RelocatePhotosDialog::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 /**
@@ -1494,7 +1508,9 @@ void MainWindow::handle_relocatePhotos()
  */
 void MainWindow::handle_exportData()
 {
-	DataExportDialog(*this, *typesHandler).exec();
+	DataExportDialog* dialog = new DataExportDialog(*this, *typesHandler);
+	connect(dialog, &DataExportDialog::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 
@@ -1508,7 +1524,9 @@ void MainWindow::handle_exportData()
  */
 void MainWindow::handle_about()
 {
-	AboutWindow(*this).exec();
+	AboutWindow* dialog = new AboutWindow(*this);
+	connect(dialog, &AboutWindow::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 

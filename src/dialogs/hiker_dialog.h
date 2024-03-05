@@ -44,7 +44,7 @@ class HikerDialog : public ItemDialog, public Ui_HikerDialog
 	unique_ptr<const Hiker> init;
 	
 public:
-	HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Hiker> init);
+	HikerDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Hiker> init, int numItemsToEdit = -1);
 	~HikerDialog();
 	
 	unique_ptr<Hiker> extractData();
@@ -63,10 +63,10 @@ private:
 
 
 
-BufferRowIndex	openNewHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditHikersDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeleteHikersDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewHikerDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditHikerDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditHikersDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeleteHikersDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

@@ -43,7 +43,7 @@ class TripDialog : public ItemDialog, public Ui_TripDialog
 	unique_ptr<const Trip> init;
 	
 public:
-	TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Trip> init);
+	TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Trip> init, int numItemsToEdit = -1);
 	~TripDialog();
 	
 	unique_ptr<Trip> extractData();
@@ -66,10 +66,10 @@ private:
 
 
 
-BufferRowIndex	openNewTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditTripsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeleteTripsDialogAndExecute		(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditTripDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditTripsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeleteTripsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "src/main/about_window.h"
 #include "src/main/main_window.h"
+#include "src/settings/settings_window.h"
 
 
 
@@ -12,16 +14,51 @@ class StartupTest : public QObject
 {
 	Q_OBJECT
 	
+	MainWindow* mainWindow;
+	
+	
+	
 private slots:
-	/**
-	 * Test whether the application starts up and shuts down without crashing.
-	 */
+	void initTestCase()
+	{
+		mainWindow = new MainWindow();
+		wait();
+	}
+	
 	void testStartup()
 	{
-		MainWindow mainWindow = MainWindow();
-		
-		QTest::qWait(1000);
-		QTest::keySequence(&mainWindow, QKeySequence(Qt::Key_Alt + Qt::Key_F4));
+		QVERIFY(mainWindow->isVisible() || QGuiApplication::platformName() == "offscreen");
+		mainWindow->findChild<QAction*>("closeDatabaseAction")->trigger();
+		wait();
+	}
+	
+	void testSettingsWindow()
+	{
+		mainWindow->findChild<QAction*>("settingsAction")->trigger();
+		wait();
+		QTest::keyClick(mainWindow->findChild<SettingsWindow*>("SettingsWindow"), Qt::Key_Escape);
+		wait();
+	}
+	
+	void testAboutWindow()
+	{
+		mainWindow->findChild<QAction*>("aboutAction")->trigger();
+		wait();
+		QTest::keyClick(mainWindow->findChild<AboutWindow*>("AboutWindow"), Qt::Key_Escape);
+		wait();
+	}
+	
+	void cleanupTestCase()
+	{
+		delete mainWindow;
+	}
+	
+	
+	
+private:
+	void wait()
+	{
+		QTest::qWait(200);
 	}
 };
 

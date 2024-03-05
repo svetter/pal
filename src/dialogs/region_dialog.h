@@ -48,7 +48,7 @@ class RegionDialog : public ItemDialog, public Ui_RegionDialog
 	QList<ValidItemID> selectableCountryIDs;
 	
 public:
-	RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Region> init);
+	RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Region> init, int numItemsToEdit = -1);
 	~RegionDialog();
 	
 	unique_ptr<Region> extractData();
@@ -71,10 +71,10 @@ private:
 
 
 
-BufferRowIndex	openNewRegionDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditRegionDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditRegionsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeleteRegionsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewRegionDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditRegionDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditRegionsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeleteRegionsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

@@ -38,15 +38,15 @@ using std::unique_ptr, std::make_unique;
  * Sets up the UI, restores geometry, connects interactive UI elements, and performs purpose-
  * specific preparations.
  * 
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param windowTitle	The title of the dialog window.
- * @param init			The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
+ * @param init				The country data to initialize the dialog with and store as initial data. CountryDialog takes ownership of this pointer.
+ * @param numItemsToEdit	The number of items to edit, if the purpose is multi-edit.
  */
-CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Country> init) :
-	ItemDialog(parent, mainWindow, db, purpose, windowTitle),
+CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Country> init, int numItemsToEdit) :
+	ItemDialog(parent, mainWindow, db, purpose),
 	init(std::move(init))
 {
 	setupUi(this);
@@ -55,6 +55,12 @@ CountryDialog::CountryDialog(QWidget& parent, QMainWindow& mainWindow, Database&
 	});
 	
 	setWindowIcon(QIcon(":/icons/ico/country_multisize_square.ico"));
+	switch (purpose) {
+	case newItem:
+	case duplicateItem:	setWindowTitle(tr("New country"));										break;
+	case editItem:
+	case multiEdit:		setWindowTitle(tr("Edit %Ln country/countries", "", numItemsToEdit));	break;
+	}
 	
 	restoreDialogGeometry(*this, mainWindow, Settings::countryDialog_geometry);
 	setFixedHeight(minimumSizeHint().height());
@@ -158,21 +164,28 @@ void CountryDialog::aboutToClose()
  * @param parent		The parent window.
  * @param mainWindow	The application's main window.
  * @param db			The project database.
+ * @param callWhenDone	The function to call after the dialog has closed.
  * @return				The index of the new country in the database's country table buffer.
  */
-BufferRowIndex openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db)
+void openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
-	const QString windowTitle = CountryDialog::tr("New country");
+	CountryDialog* dialog = new CountryDialog(parent, mainWindow, db, newItem, nullptr);
 	
-	CountryDialog dialog = CountryDialog(parent, mainWindow, db, newItem, windowTitle, nullptr);
-	if (dialog.exec() != QDialog::Accepted) {
-		return BufferRowIndex();
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		BufferRowIndex newCountryIndex = BufferRowIndex();
+		
+		if (dialog->result() == QDialog::Accepted) {
+			unique_ptr<Country> extractedCountry = dialog->extractData();
+			
+			newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
+		}
+		
+		delete dialog;
+		return callWhenDone(newCountryIndex);
+	};
+	CountryDialog::connect(dialog, &CountryDialog::finished, callWhenClosed);
 	
-	unique_ptr<Country> extractedCountry = dialog.extractData();
-	
-	const BufferRowIndex newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
-	return newCountryIndex;
+	dialog->open();
 }
 
 /**
@@ -182,24 +195,32 @@ BufferRowIndex openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWi
  * @param mainWindow		The application's main window.
  * @param db				The project database.
  * @param bufferRowIndex	The index of the country to edit in the database's country table buffer.
+ * @param callWhenDone		The function to call after the dialog has closed.
  * @return					True if any changes were made, false otherwise.
  */
-bool openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex)
+void openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
 	unique_ptr<Country> originalCountry = db.getCountryAt(bufferRowIndex);
 	const ItemID originalCountryID = originalCountry->countryID;
 	
-	const QString windowTitle = CountryDialog::tr("Edit country");
+	CountryDialog* dialog = new CountryDialog(parent, mainWindow, db, editItem, std::move(originalCountry));
 	
-	CountryDialog dialog = CountryDialog(parent, mainWindow, db, editItem, windowTitle, std::move(originalCountry));
-	if (dialog.exec() != QDialog::Accepted || !dialog.changesMade()) {
-		return false;
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		bool changesMade = false;
+		
+		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
+			unique_ptr<Country> extractedCountry = dialog->extractData();
+			
+			db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
+			changesMade = true;
+		}
+		
+		delete dialog;
+		return callWhenDone(changesMade);
+	};
+	CountryDialog::connect(dialog, &CountryDialog::finished, callWhenClosed);
 	
-	unique_ptr<Country> extractedCountry = dialog.extractData();
-	
-	db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
-	return true;
+	dialog->open();
 }
 
 /**
@@ -210,28 +231,36 @@ bool openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Dat
  * @param db					The project database.
  * @param bufferRowIndices		The buffer row indices of the countries to edit.
  * @param initBufferRowIndex	The index of the country whose data to initialize the dialog with.
+ * @param callWhenDone			The function to call after the dialog has closed.
  * @return						True if any changes were made, false otherwise.
  */
-bool openMultiEditCountriesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex)
+void openMultiEditCountriesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {
 	assert(!bufferRowIndices.isEmpty());
 	
 	unique_ptr<Country> originalCountry = db.getCountryAt(initBufferRowIndex);
 	
-	const QString windowTitle = CountryDialog::tr("Edit %1 countries").arg(bufferRowIndices.size());
+	CountryDialog* dialog = new CountryDialog(parent, mainWindow, db, multiEdit, std::move(originalCountry), bufferRowIndices.size());
 	
-	CountryDialog dialog = CountryDialog(parent, mainWindow, db, multiEdit, windowTitle, std::move(originalCountry));
-	if (dialog.exec() != QDialog::Accepted) {
-		return false;
-	}
+	auto callWhenClosed = [=, &parent, &db]() {
+		bool changesMade = false;
+		
+		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
+			unique_ptr<Country> extractedCountry = dialog->extractData();
+			extractedCountry->countryID = ItemID();
+			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
+			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
+			
+			db.countriesTable.updateRows(parent, bufferRowIndices, columnList, *extractedCountry);
+			changesMade = true;
+		}
+		
+		delete dialog;
+		return callWhenDone(changesMade);
+	};
+	CountryDialog::connect(dialog, &CountryDialog::finished, callWhenClosed);
 	
-	unique_ptr<Country> extractedCountry = dialog.extractData();
-	extractedCountry->countryID = ItemID();
-	QSet<const Column*> columnsToSave = dialog.getMultiEditColumns();
-	QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
-	
-	db.countriesTable.updateRows(parent, bufferRowIndices, columnList, *extractedCountry);
-	return true;
+	dialog->open();
 }
 
 /**
@@ -256,8 +285,7 @@ bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindo
 	QList<WhatIfDeleteResult> whatIfResults = db.whatIf_removeRows(db.countriesTable, countryIDs);
 	
 	if (Settings::confirmDelete.get()) {
-		bool plural = countryIDs.size() > 1;
-		QString windowTitle = plural ? CountryDialog::tr("Delete countries") : CountryDialog::tr("Delete country");
+		const QString windowTitle = CountryDialog::tr("Delete %Ln country/countries", "", countryIDs.size());
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}

@@ -43,7 +43,7 @@ class RangeDialog : public ItemDialog, public Ui_RangeDialog
 	unique_ptr<const Range> init;
 	
 public:
-	RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Range> init);
+	RangeDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Range> init, int numItemsToEdit = -1);
 	~RangeDialog();
 	
 	unique_ptr<Range> extractData();
@@ -63,10 +63,10 @@ private:
 
 
 
-BufferRowIndex	openNewRangeDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-bool			openEditRangeDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditRangesDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeleteRangesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewRangeDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditRangeDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditRangesDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeleteRangesDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 

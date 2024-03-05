@@ -58,7 +58,7 @@ class AscentDialog : public ItemDialog, public Ui_AscentDialog
 	PhotosOfAscent photosModel;
 	
 public:
-	AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle, unique_ptr<const Ascent> init);
+	AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, unique_ptr<const Ascent> init, int numItemsToEdit = -1);
 	~AscentDialog();
 	
 	unique_ptr<Ascent> extractData();
@@ -93,11 +93,11 @@ private:
 
 
 
-BufferRowIndex	openNewAscentDialogAndStore			(QWidget& parent, QMainWindow& mainWindow, Database& db);
-BufferRowIndex	openDuplicateAscentDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openEditAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex);
-bool			openMultiEditAscentsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex);
-bool			openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
+void openNewAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone);
+void openDuplicateAscentDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (BufferRowIndex)> callWhenDone);
+void openEditAscentDialogAndStore		(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone);
+void openMultiEditAscentsDialogAndStore	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndex, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone);
+bool openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
 QString		openFileDialogForSinglePhotoSelection	(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());

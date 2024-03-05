@@ -33,23 +33,23 @@
 /**
  * Creates a new base item dialog.
  * 
- * @param parent		The parent window.
- * @param mainWindow	The application's main window.
- * @param db			The project database.
- * @param purpose		The purpose of the dialog.
- * @param windowTitle	The title of the dialog window.
+ * @param parent			The parent window.
+ * @param mainWindow		The application's main window.
+ * @param db				The project database.
+ * @param purpose			The purpose of the dialog.
  */
-ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose, const QString& windowTitle):
+ItemDialog::ItemDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, DialogPurpose purpose):
 	QDialog(&parent),
 	parent(parent),
 	mainWindow(mainWindow),
 	db(db),
 	purpose(purpose),
-	windowTitle(windowTitle),
 	multiEditCheckboxes(QMap<QCheckBox*, QPair<QSet<QWidget*>, QSet<const Column*>>>()),
 	tristateCheckboxes(QMap<QCheckBox*, QSet<const Column*>>()),
 	savedWidgetEnabledStates(QMap<QCheckBox*, QMap<QWidget*, bool>>())
-{}
+{
+	setObjectName("itemDialog");
+}
 
 
 
@@ -74,8 +74,6 @@ void ItemDialog::setUIPointers(QPushButton* saveButton, const QMap<QCheckBox*, Q
  */
 void ItemDialog::changeUIForPurpose()
 {
-	setWindowTitle(windowTitle);
-	
 	if (purpose == multiEdit) {
 		for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
 			const QSet<QWidget*>& widgets = widgetsAndColumns.first;

@@ -121,15 +121,15 @@ public:
 	ProjectSetting<QString>* const		sortingSetting;
 
 	/** The method opening the dialog for creating a new item of this type. */
-	BufferRowIndex	(* const openNewItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&);
+	void (* const openNewItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, std::function<void (BufferRowIndex)>);
 	/** The method opening the dialog for duplicating an item of this type. */
-	BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex);
+	void (* const openDuplicateItemDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, BufferRowIndex, std::function<void (BufferRowIndex)>);
 	/** The method opening the dialog for editing an item of this type. */
-	bool			(* const openEditItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, BufferRowIndex);
+	void (* const openEditItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, BufferRowIndex, std::function<void (bool)>);
 	/** The method opening the dialog for editing multiple items of this type. */
-	bool			(* const openMultiEditItemsDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&, BufferRowIndex);
+	void (* const openMultiEditItemsDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&, BufferRowIndex, std::function<void (bool)>);
 	/** The method opening the dialog for deleting an item of this type. */
-	bool			(* const openDeleteItemsDialogAndExecuteMethod)		(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&);
+	bool (* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&);
 	
 	
 private:
@@ -177,11 +177,11 @@ public:
 		const Setting<QRect>*		dialogGeometrySetting,
 		const Setting<bool>*		showStatsPanelSetting,
 		const Setting<QStringList>*	statsPanelSplitterSizesSetting,
-		BufferRowIndex	(* const openNewItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&),
-		BufferRowIndex	(* const openDuplicateItemDialogAndStoreMethod)		(QWidget&, QMainWindow&, Database&, BufferRowIndex),
-		bool			(* const openEditItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, BufferRowIndex),
-		bool			(* const openMultiEditItemsDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&, BufferRowIndex),
-		bool			(* const openDeleteItemsDialogAndExecuteMethod)		(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&)
+		void (* const openNewItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, std::function<void (BufferRowIndex)>),
+		void (* const openDuplicateItemDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, BufferRowIndex, std::function<void (BufferRowIndex)>),
+		void (* const openEditItemDialogAndStoreMethod)			(QWidget&, QMainWindow&, Database&, BufferRowIndex, std::function<void (bool)>),
+		void (* const openMultiEditItemsDialogAndStoreMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&, BufferRowIndex, std::function<void (bool)>),
+		bool (* const openDeleteItemsDialogAndExecuteMethod)	(QWidget&, QMainWindow&, Database&, const QSet<BufferRowIndex>&)
 	) :
 		type									(type),
 		name									(name),
