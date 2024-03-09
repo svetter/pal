@@ -192,6 +192,8 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 		else if (column == &descriptionColumn)	{ data = description;			}
 		else assert(false);
 		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
+		
 		columnDataPairs.append({column, data});
 	}
 	return columnDataPairs;

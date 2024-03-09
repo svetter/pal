@@ -75,7 +75,7 @@ BufferRowIndex TripsTable::addRow(QWidget& parent, Trip& trip)
 void TripsTable::updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
+	QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, trip);
 	
 	NormalTable::updateRow(parent, tripID, columnDataPairs);
 }
@@ -114,6 +114,8 @@ const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<con
 		else if (column == &endDateColumn)		{ data = trip.endDate;		}
 		else if (column == &descriptionColumn)	{ data = trip.description;	}
 		else assert(false);
+		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
 		
 		columnDataPairs.append({column, data});
 	}

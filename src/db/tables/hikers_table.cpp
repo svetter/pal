@@ -69,7 +69,7 @@ BufferRowIndex HikersTable::addRow(QWidget& parent, Hiker& hiker)
 void HikersTable::updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
+	QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, hiker);
 	
 	NormalTable::updateRow(parent, hikerID, columnDataPairs);
 }
@@ -105,6 +105,8 @@ const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<co
 		QVariant data;
 		     if (column == &nameColumn)	{ data = hiker.name;	}
 		else assert(false);
+		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
 		
 		columnDataPairs.append({column, data});
 	}

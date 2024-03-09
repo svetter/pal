@@ -26,6 +26,7 @@
 #include "db_error.h"
 
 #include <QSqlQuery>
+#include <QDateTime>
 
 using std::unique_ptr, std::shared_ptr;
 
@@ -468,7 +469,7 @@ void Table::updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKe
 void Table::updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs)
 {
 	assert(!isAssociative);
-	const Column* const primaryKeyColumn = getPrimaryKeyColumnList().first();
+	const Column* const primaryKeyColumn = getPrimaryKeyColumnList().at(0);
 	
 	BufferRowIndex minBufferRow = BufferRowIndex(getNumberOfRows());
 	BufferRowIndex maxBufferRow = BufferRowIndex(0);
@@ -508,19 +509,31 @@ void Table::updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>&
 /**
  * Updates a row in the table, specified by primary key, provided it is a normal table.
  * 
+ * Removes all column data pairs from the list which do not represent actual changes in the
+ * database.
+ * 
  * @pre The table is not associative.
  * 
  * @param parent			The parent window.
  * @param primaryKey		The primary key of the row to update.
  * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
+void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, QList<ColumnDataPair>& columnDataPairs)
 {
 	assert(!isAssociative);
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
 	
 	const BufferRowIndex bufferIndex = getMatchingBufferRowIndex(primaryKeyColumns, { primaryKey });
+	
+	// Drop column data pairs with no change
+	for (int i = columnDataPairs.size() - 1; i >= 0; i--) {
+		const Column* const column = columnDataPairs.at(i).first;
+		const QVariant newValue = columnDataPairs.at(i).second;
+		const QVariant currentValue = buffer.getCell(bufferIndex, column->getIndex());
+		if (currentValue == newValue) columnDataPairs.remove(i);
+	}
+	
 	updateRowsInNormalTable(parent, { bufferIndex }, columnDataPairs);
 }
 
@@ -675,6 +688,14 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget& parent) const
 		int columnIndex = 0;
 		for (const Column* column : columns) {
 			QVariant value = query.value(columnIndex);
+			switch (column->type) {
+			case Bit:		value = value.toBool();	break;
+			case Date:		value = value.toDate();	break;
+			case Time:		value = value.toTime();	break;
+			case IDList:	value = value.toList();	break;
+			case String:	if (value.toString().isEmpty()) value = QVariant();	break;
+			default: break;
+			}
 			assert(column->nullable || !value.isNull());
 			if (value.isNull()) value = QVariant();
 			result.at(rowIndex)->append(value);

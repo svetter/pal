@@ -96,7 +96,7 @@ BufferRowIndex AscentsTable::addRow(QWidget& parent, Ascent& ascent)
 void AscentsTable::updateRow(QWidget& parent, const Ascent& ascent)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
+	QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, ascent);
 	
 	NormalTable::updateRow(parent, FORCE_VALID(ascent.ascentID), columnDataPairs);
 }
@@ -143,6 +143,8 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 		else if (column == &tripIDColumn)			{ data = ascent.tripID.asQVariant();			}
 		else if (column == &descriptionColumn)		{ data = ascent.description;					}
 		else assert(false);
+		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
 		
 		columnDataPairs.append({column, data});
 	}

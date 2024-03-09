@@ -137,13 +137,14 @@ void NormalTable::updateCell(QWidget& parent, const ValidItemID primaryKey, cons
 /**
  * Updates a row in the table, specified by primary key.
  *
- * Delegates to Table::updateRowInNormalTable().
+ * Delegates to Table::updateRowInNormalTable(). Removes all column data pairs from the list which
+ * do not represent actual changes in the database.
  *
  * @param parent			The parent window.
  * @param primaryKey		The primary key of the row to update.
  * @param columnDataPairs	Pairs of columns and corresponding data to update.
  */
-void NormalTable::updateRow(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs)
+void NormalTable::updateRow(QWidget& parent, const ValidItemID primaryKey, QList<ColumnDataPair>& columnDataPairs)
 {
 	return Table::updateRowInNormalTable(parent, primaryKey, columnDataPairs);
 }

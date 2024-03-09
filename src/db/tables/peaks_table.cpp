@@ -83,7 +83,7 @@ BufferRowIndex PeaksTable::addRow(QWidget& parent, Peak& peak)
 void PeaksTable::updateRow(QWidget& parent, ValidItemID peakID, const Peak& peak)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
+	QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, peak);
 	
 	NormalTable::updateRow(parent, peakID, columnDataPairs);
 }
@@ -125,6 +125,8 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 		else if (column == &earthLinkColumn)	{ data = peak.earthLink;				}
 		else if (column == &wikiLinkColumn)		{ data = peak.wikiLink;					}
 		else assert(false);
+		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
 		
 		columnDataPairs.append({column, data});
 	}

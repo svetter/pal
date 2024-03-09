@@ -105,7 +105,7 @@ protected:
 	BufferRowIndex addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs);
 	void updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKey, const Column& column, const QVariant& data);
 	void updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs);
-	void updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, const QList<ColumnDataPair>& columnDataPairs);
+	void updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, QList<ColumnDataPair>& columnDataPairs);
 	void removeRow(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys);
 	void removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& keys);
 	void removeMatchingRows(QWidget& parent, const Column& column, ValidItemID key);

@@ -69,7 +69,7 @@ BufferRowIndex CountriesTable::addRow(QWidget& parent, Country& country)
 void CountriesTable::updateRow(QWidget& parent, ValidItemID countryID, const Country& country)
 {
 	QList<const Column*> columns = getNonPrimaryKeyColumnList();
-	const QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
+	QList<ColumnDataPair> columnDataPairs = mapDataToColumnDataPairs(columns, country);
 	
 	NormalTable::updateRow(parent, countryID, columnDataPairs);
 }
@@ -105,6 +105,8 @@ const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList
 		QVariant data;
 		     if (column == &nameColumn)	{ data = country.name;	}
 		else assert(false);
+		
+		if (column->type == String && data.toString().isEmpty()) data = QVariant();
 		
 		columnDataPairs.append({column, data});
 	}
