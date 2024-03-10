@@ -43,17 +43,18 @@ using std::unique_ptr, std::make_unique;
 Database::Database() :
 	databaseLoaded(false),
 	tables(QList<Table*>()),
+	acceptDataModifications(false),
 	breadcrumbMatrix(QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>>()),
-	tripsTable			(TripsTable()),
-	hikersTable			(HikersTable()),
-	rangesTable			(RangesTable()),
-	countriesTable		(CountriesTable()),
-	regionsTable		(RegionsTable(rangesTable.primaryKeyColumn, countriesTable.primaryKeyColumn)),
-	peaksTable			(PeaksTable(regionsTable.primaryKeyColumn)),
-	ascentsTable		(AscentsTable(peaksTable.primaryKeyColumn, tripsTable.primaryKeyColumn)),
-	photosTable			(PhotosTable(ascentsTable.primaryKeyColumn)),
-	participatedTable	(ParticipatedTable(ascentsTable.primaryKeyColumn, hikersTable.primaryKeyColumn)),
-	settingsTable		(SettingsTable()),
+	tripsTable			(TripsTable			(*this)),
+	hikersTable			(HikersTable		(*this)),
+	rangesTable			(RangesTable		(*this)),
+	countriesTable		(CountriesTable		(*this)),
+	regionsTable		(RegionsTable		(*this, rangesTable.primaryKeyColumn, countriesTable.primaryKeyColumn)),
+	peaksTable			(PeaksTable			(*this, regionsTable.primaryKeyColumn)),
+	ascentsTable		(AscentsTable		(*this, peaksTable.primaryKeyColumn, tripsTable.primaryKeyColumn)),
+	photosTable			(PhotosTable		(*this, ascentsTable.primaryKeyColumn)),
+	participatedTable	(ParticipatedTable	(*this, ascentsTable.primaryKeyColumn, hikersTable.primaryKeyColumn)),
+	settingsTable		(SettingsTable		(*this)),
 	projectSettings		(ProjectSettings(settingsTable))
 {
 	tables.append(&ascentsTable);
@@ -88,6 +89,8 @@ Database::~Database()
  */
 void Database::reset()
 {
+	assert(!acceptDataModifications);
+	
 	for (Table* table : tables) {
 		table->resetBuffer();
 	}
@@ -710,6 +713,44 @@ unique_ptr<Country> Database::getCountryAt(BufferRowIndex rowIndex) const
 	QString	name	= row->at(countriesTable.nameColumn.getIndex()).toString();
 	
 	return make_unique<Country>(countryID, name);
+}
+
+
+
+/**
+ * Announces that one or more methods modifying data in the database are about to be called.
+ * 
+ * This method has to be called before a sequence of data-modifying methods is called. It does not
+ * serve any purpose other than preventing the frontend to make changes without flushing change
+ * notifications after all changes have been made. This is done using finishChangingData().
+ */
+void Database::beginChangingData()
+{
+	assert(!acceptDataModifications);
+	acceptDataModifications = true;
+}
+
+/**
+ * Announce that changes to the data have been completed and all change notifications should be
+ * flushed.
+ */
+void Database::finishChangingData()
+{
+	assert(acceptDataModifications);
+
+	// TODO report changes to frontend
+
+	acceptDataModifications = false;
+}
+
+/**
+ * Indicates whether the database is currently accepting changes to its data.
+ * 
+ * @return	True if the database is currently accepting changes to its data, false otherwise.
+ */
+bool Database::currentlyAcceptingChanges()
+{
+	return acceptDataModifications;
 }
 
 

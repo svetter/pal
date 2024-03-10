@@ -30,9 +30,11 @@
 
 /**
  * Creates a new CountriesTable.
+ * 
+ * @param db	The database to which the table belongs.
  */
-CountriesTable::CountriesTable() :
-	NormalTable(QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
+CountriesTable::CountriesTable(Database& db) :
+	NormalTable(db, QString("Countries"), tr("Countries"), "countryID", tr("Country ID")),
 	//									name	uiName		type	nullable
 	nameColumn	(ValueColumn	(*this,	"name",	tr("Name"),	String,	false))
 {

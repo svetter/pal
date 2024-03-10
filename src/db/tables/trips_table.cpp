@@ -30,9 +30,11 @@
 
 /**
  * Creates a new TripsTable.
+ * 
+ * @param db	The database to which the table belongs.
  */
-TripsTable::TripsTable() :
-	NormalTable(QString("Trips"), tr("Trips"), "tripID", tr("Trip ID")),
+TripsTable::TripsTable(Database& db) :
+	NormalTable(db, QString("Trips"), tr("Trips"), "tripID", tr("Trip ID")),
 	//										name			uiName				type	nullable
 	nameColumn			(ValueColumn(*this,	"name",			tr("Name"),			String,	false)),
 	startDateColumn		(ValueColumn(*this,	"startDate",	tr("Start date"),	Date,	true)),

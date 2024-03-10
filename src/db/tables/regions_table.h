@@ -43,7 +43,7 @@ public:
 	/** The country ID column. */
 	ForeignKeyColumn countryIDColumn;
 	
-	RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn);
+	RegionsTable(Database& db, PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn);
 	
 	BufferRowIndex addRow(QWidget& parent, Region& region);
 	void updateRow(QWidget& parent, ValidItemID regionID, const Region& region);

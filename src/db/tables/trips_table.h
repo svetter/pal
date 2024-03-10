@@ -47,7 +47,7 @@ public:
 	/** The description column. */
 	ValueColumn descriptionColumn;
 	
-	TripsTable();
+	TripsTable(Database& db);
 	
 	BufferRowIndex addRow(QWidget& parent, Trip& trip);
 	void updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip);

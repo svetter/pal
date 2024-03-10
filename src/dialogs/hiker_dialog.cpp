@@ -177,7 +177,9 @@ void openNewHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Hiker> extractedHiker = dialog->extractData();
 			
+			db.beginChangingData();
 			newHikerIndex = db.hikersTable.addRow(parent, *extractedHiker);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -211,7 +213,9 @@ void openEditHikerDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Hiker> extractedHiker = dialog->extractData();
 			
+			db.beginChangingData();
 			db.hikersTable.updateRow(parent, FORCE_VALID(originalHikerID), *extractedHiker);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -251,7 +255,9 @@ void openMultiEditHikersDialogAndStore(QWidget& parent, QMainWindow& mainWindow,
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.hikersTable.updateRows(parent, bufferRowIndices, columnList, *extractedHiker);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -290,13 +296,14 @@ bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, 
 		if (!proceed) return false;
 	}
 	
+	db.beginChangingData();
 	for (const ItemID& hikerID : qAsConst(hikerIDs)) {
 		if (db.projectSettings.defaultHiker.get() == ID_GET(hikerID)) {
 			db.projectSettings.defaultHiker.clear(parent);
 			break;
 		}
 	}
-	
 	db.removeRows(parent, db.hikersTable, hikerIDs);
+	db.finishChangingData();
 	return true;
 }

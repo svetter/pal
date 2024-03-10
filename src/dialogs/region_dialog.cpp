@@ -253,7 +253,9 @@ void openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Region> extractedRegion = dialog->extractData();
 			
+			db.beginChangingData();
 			newRegionIndex = db.regionsTable.addRow(parent, *extractedRegion);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -287,7 +289,9 @@ void openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Region> extractedRegion = dialog->extractData();
 			
+			db.beginChangingData();
 			db.regionsTable.updateRow(parent, FORCE_VALID(originalRegionID), *extractedRegion);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -327,7 +331,9 @@ void openMultiEditRegionsDialogAndStore(QWidget& parent, QMainWindow& mainWindow
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.regionsTable.updateRows(parent, bufferRowIndices, columnList, *extractedRegion);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -365,7 +371,9 @@ bool openDeleteRegionsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}
-
+	
+	db.beginChangingData();
 	db.removeRows(parent, db.regionsTable, regionIDs);
+	db.finishChangingData();
 	return true;
 }

@@ -246,7 +246,9 @@ void openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databas
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Trip> extractedTrip = dialog->extractData();
 			
+			db.beginChangingData();
 			newTripIndex = db.tripsTable.addRow(parent, *extractedTrip);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -280,7 +282,9 @@ void openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Trip> extractedTrip = dialog->extractData();
 			
+			db.beginChangingData();
 			db.tripsTable.updateRow(parent, FORCE_VALID(originalTripID), *extractedTrip);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -320,7 +324,9 @@ void openMultiEditTripsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, 
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.tripsTable.updateRows(parent, bufferRowIndices, columnList, *extractedTrip);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -358,7 +364,9 @@ bool openDeleteTripsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, D
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}
-
+	
+	db.beginChangingData();
 	db.removeRows(parent, db.tripsTable, tripIDs);
+	db.finishChangingData();
 	return true;
 }

@@ -40,7 +40,7 @@ public:
 	/** The primary key column of this table. */
 	PrimaryKeyColumn primaryKeyColumn;
 	
-	NormalTable(QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName);
+	NormalTable(Database& db, QString name, QString uiName, const QString& primaryKeyColumnName, const QString& primaryKeyColumnUIName);
 	virtual ~NormalTable();
 	
 	// Buffer access

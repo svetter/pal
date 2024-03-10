@@ -63,6 +63,9 @@ class Database {
 	/** The (functionally static) list of tables in any project database. Caution: Contains the project settings table! */
 	QList<Table*> tables;
 	
+	/** Indicates whether the database is currently accepting changes to its data. */
+	bool acceptDataModifications;
+	
 	/** A precomputed matrix of breadcrumb connections from any normal table to any other normal table in the project (settings table always excluded). */
 	QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>> breadcrumbMatrix;
 	
@@ -119,6 +122,10 @@ public:
 	unique_ptr<Region>	getRegionAt		(BufferRowIndex	rowIndex)	const;
 	unique_ptr<Range>	getRangeAt		(BufferRowIndex	rowIndex)	const;
 	unique_ptr<Country>	getCountryAt	(BufferRowIndex	rowIndex)	const;
+	
+	void beginChangingData();
+	void finishChangingData();
+	bool currentlyAcceptingChanges();
 	
 	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable& table, QSet<ValidItemID> primaryKeys);
 	void removeRows(QWidget& parent, NormalTable& table, QSet<ValidItemID> primaryKeys);

@@ -41,7 +41,7 @@ public:
 	/** The name column. */
 	ValueColumn nameColumn;
 	
-	CountriesTable();
+	CountriesTable(Database& db);
 	
 	BufferRowIndex addRow(QWidget& parent, Country& country);
 	void updateRow(QWidget& parent, ValidItemID countryID, const Country& country);

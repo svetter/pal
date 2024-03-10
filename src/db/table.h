@@ -36,6 +36,8 @@ using std::unique_ptr;
 
 typedef QPair<const Column*, QVariant> ColumnDataPair;
 
+class Database;
+
 
 
 /**
@@ -44,6 +46,10 @@ typedef QPair<const Column*, QVariant> ColumnDataPair;
  * This class is a QAbstractItemModel, so it can be used as a model for a QTableView.
  */
 class Table : public QAbstractItemModel {
+protected:
+	Database& db;
+	
+private:
 	/** The columns of this table. */
 	QList<const Column*> columns;
 	
@@ -62,7 +68,7 @@ protected:
 	/** The buffer for this table. */
 	TableBuffer buffer;
 	
-	Table(QString name, QString uiName, bool isAssociative);
+	Table(Database& db, QString name, QString uiName, bool isAssociative);
 public:
 	virtual ~Table();
 	
@@ -83,7 +89,7 @@ public:
 	QString getPrimaryKeyColumnListString() const;
 	int getColumnIndex(const Column& column) const;
 	const Column& getColumnByIndex(int index) const;
-
+	
 	// Buffer access
 	void initBuffer(QWidget& parent);
 	void resetBuffer();

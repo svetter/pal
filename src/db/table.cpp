@@ -24,6 +24,7 @@
 #include "table.h"
 
 #include "db_error.h"
+#include "database.h"
 
 #include <QSqlQuery>
 #include <QDateTime>
@@ -35,11 +36,13 @@ using std::unique_ptr, std::shared_ptr;
 /**
  * Creates a new Table.
  * 
+ * @param db			The database to which the table belongs.
  * @param name			The name of the table in the SQL database.
  * @param uiName		The name of the table as it should be displayed in the UI.
  * @param isAssociative	Whether the table is associative.
  */
-Table::Table(QString name, QString uiName, bool isAssociative) :
+Table::Table(Database& db, QString name, QString uiName, bool isAssociative) :
+	db(db),
 	rowChangeListener(nullptr),
 	name(name),
 	uiName(uiName),
@@ -392,6 +395,8 @@ void Table::notifyForAllColumns()
  */
 BufferRowIndex Table::addRow(QWidget& parent, const QList<ColumnDataPair>& columnDataPairs)
 {
+	assert(db.currentlyAcceptingChanges());
+	
 	// Announce row insertion
 	BufferRowIndex newItemBufferRowIndex = BufferRowIndex(buffer.numRows());
 	beginInsertRows(getNormalRootModelIndex(),		newItemBufferRowIndex.get(), newItemBufferRowIndex.get());
@@ -432,7 +437,9 @@ BufferRowIndex Table::addRow(QWidget& parent, const QList<ColumnDataPair>& colum
  */
 void Table::updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKey, const Column& column, const QVariant& data)
 {
+	assert(db.currentlyAcceptingChanges());
 	assert(!isAssociative);
+	
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
 	assert(&column.table == this);
@@ -468,7 +475,9 @@ void Table::updateCellInNormalTable(QWidget& parent, const ValidItemID primaryKe
  */
 void Table::updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs)
 {
+	assert(db.currentlyAcceptingChanges());
 	assert(!isAssociative);
+	
 	const Column* const primaryKeyColumn = getPrimaryKeyColumnList().at(0);
 	
 	BufferRowIndex minBufferRow = BufferRowIndex(getNumberOfRows());
@@ -520,7 +529,9 @@ void Table::updateRowsInNormalTable(QWidget& parent, const QSet<BufferRowIndex>&
  */
 void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey, QList<ColumnDataPair>& columnDataPairs)
 {
+	assert(db.currentlyAcceptingChanges());
 	assert(!isAssociative);
+	
 	QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
 	assert(primaryKeyColumns.size() == 1);
 	
@@ -546,6 +557,8 @@ void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey
  */
 void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys)
 {
+	assert(db.currentlyAcceptingChanges());
+	
 	int numPrimaryKeys = getNumberOfPrimaryKeyColumns();
 	assert(primaryKeyColumns.size() == numPrimaryKeys);
 	assert(primaryKeys.size() == numPrimaryKeys);
@@ -578,6 +591,7 @@ void Table::removeRow(QWidget& parent, const QList<const Column*>& primaryKeyCol
  */
 void Table::removeMatchingRows(QWidget& parent, const Column& column, const QSet<ValidItemID>& keys)
 {
+	assert(db.currentlyAcceptingChanges());
 	assert(getColumnList().contains(&column));
 	assert(column.isKey());
 	assert(!keys.isEmpty());
@@ -617,6 +631,8 @@ void Table::removeMatchingRows(QWidget& parent, const Column& column, const QSet
  */
 void Table::removeMatchingRows(QWidget& parent, const Column& column, ValidItemID key)
 {
+	assert(db.currentlyAcceptingChanges());
+	
 	QSet<ValidItemID> keys = { key };
 	return removeMatchingRows(parent, column, keys);
 }

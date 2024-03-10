@@ -32,10 +32,11 @@
 /**
  * Creates a new PhotosTable.
  * 
+ * @param db					The database to which the table belongs.
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  */
-PhotosTable::PhotosTable(PrimaryKeyColumn& foreignAscentIDColumn) :
-	NormalTable(QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
+PhotosTable::PhotosTable(Database& db, PrimaryKeyColumn& foreignAscentIDColumn) :
+	NormalTable(db, QString("Photos"), tr("Photos"), "photoID", tr("Photo ID")),
 	//												name			uiName				type		nullable	foreignColumn
 	ascentIDColumn		(ForeignKeyColumn	(*this,	"ascentID",		tr("Ascent ID"),				true,		foreignAscentIDColumn)),
 	sortIndexColumn		(ValueColumn		(*this,	"sortIndex",	tr("Sort index"),	Integer,	true)),

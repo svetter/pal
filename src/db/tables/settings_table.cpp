@@ -24,14 +24,17 @@
 #include "settings_table.h"
 
 #include "src/settings/project_settings.h"
+#include "src/db/database.h"
 
 
 
 /**
  * Creates a new SettingsTable.
+ * 
+ * @param db	The database to which the table belongs.
  */
-SettingsTable::SettingsTable() :
-	Table("ProjectSettings", tr("Project settings"), false),
+SettingsTable::SettingsTable(Database& db) :
+	Table(db, "ProjectSettings", tr("Project settings"), false),
 	//												name				uiName							type	nullable
 	primaryKeyColumn	(PrimaryKeyColumn	(*this,	"projectSettingID",	tr("Project setting ID"))),
 	settingKeyColumn	(ValueColumn		(*this,	"settingKey",		tr("Project setting key"),		String,	false)),
@@ -53,9 +56,10 @@ SettingsTable::SettingsTable() :
  */
 bool SettingsTable::settingIsPresent(const GenericProjectSetting& setting, QWidget* parent)
 {
-	ItemID settingID = findSettingID(setting, parent);
+	const ItemID settingID = findSettingID(setting, parent);
 	if (settingID.isInvalid()) return false;
-	QVariant value = settingValueColumn.getValueFor(FORCE_VALID(settingID));
+	
+	const QVariant value = settingValueColumn.getValueFor(FORCE_VALID(settingID));
 	return value.isValid();
 }
 
@@ -80,7 +84,9 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting& setting, QWidget
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 		columnDataPairs.append({&settingKeyColumn,		setting.key});
 		columnDataPairs.append({&settingValueColumn,	setting.defaultValue});
+		db.beginChangingData();
 		BufferRowIndex newBufferIndex = addRow(*parent, columnDataPairs);
+		db.finishChangingData();
 		id = primaryKeyColumn.getValueAt(newBufferIndex);
 	}
 	
@@ -97,16 +103,21 @@ QVariant SettingsTable::getSetting(const GenericProjectSetting& setting, QWidget
  */
 void SettingsTable::setSetting(QWidget& parent, const GenericProjectSetting& setting, QVariant value)
 {
-	ItemID id = findSettingID(setting, &parent);
+	const ItemID id = findSettingID(setting, &parent);
 	if (id.isValid()) {
 		// Update setting
+		db.beginChangingData();
 		updateCellInNormalTable(parent, FORCE_VALID(id), settingValueColumn, value);
+		db.finishChangingData();
 	} else {
 		// Add setting
 		QList<ColumnDataPair> columnDataPairs = QList<ColumnDataPair>();
 		columnDataPairs.append({&settingKeyColumn,		setting.key});
 		columnDataPairs.append({&settingValueColumn,	value});
+		
+		db.beginChangingData();
 		addRow(parent, columnDataPairs);
+		db.finishChangingData();
 	}
 }
 
@@ -118,9 +129,12 @@ void SettingsTable::setSetting(QWidget& parent, const GenericProjectSetting& set
  */
 void SettingsTable::clearSetting(QWidget& parent, const GenericProjectSetting& setting)
 {
-	ItemID id = findSettingID(setting, &parent);
+	const ItemID id = findSettingID(setting, &parent);
 	if (id.isInvalid()) return;
+	
+	db.beginChangingData();
 	updateCellInNormalTable(parent, FORCE_VALID(id), settingValueColumn, QVariant());
+	db.finishChangingData();
 }
 
 /**
@@ -131,9 +145,12 @@ void SettingsTable::clearSetting(QWidget& parent, const GenericProjectSetting& s
  */
 void SettingsTable::removeSetting(QWidget& parent, const GenericProjectSetting& setting)
 {
-	ItemID id = findSettingID(setting, &parent);
+	const ItemID id = findSettingID(setting, &parent);
 	if (id.isInvalid()) return;
+	
+	db.beginChangingData();
 	removeMatchingRows(parent, settingKeyColumn, FORCE_VALID(id));
+	db.finishChangingData();
 }
 
 
@@ -148,8 +165,10 @@ void SettingsTable::clearAllSettings(QWidget& parent, const QString& baseKey)
 	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
 		QString key = settingKeyColumn.getValueAt(rowIndex).toString();
 		if (key.startsWith(baseKey)) {
-			ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
+			const ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
+			db.beginChangingData();
 			removeMatchingRows(parent, primaryKeyColumn, settingID);
+			db.finishChangingData();
 		}
 	}
 }
@@ -181,8 +200,10 @@ ItemID SettingsTable::findSettingID(const GenericProjectSetting& setting, QWidge
 		if (parent) {
 			for (const BufferRowIndex& rowIndex : bufferRowIndices) {
 				if (rowIndex == settingIndex) continue;	// Leave the last one in place
-				ValidItemID id = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
+				const ValidItemID id = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
+				db.beginChangingData();
 				removeMatchingRows(*parent, settingKeyColumn, id);
+				db.finishChangingData();
 			}
 		}
 	}

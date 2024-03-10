@@ -31,11 +31,12 @@
 /**
  * Creates a new RegionsTable.
  * 
+ * @param db						The database to which the table belongs.
  * @param foreignRangeIDColumn		The primary key column of the RangesTable.
  * @param foreignCountryIDColumn	The primary key column of the CountriesTable.
  */
-RegionsTable::RegionsTable(PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn) :
-	NormalTable(QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
+RegionsTable::RegionsTable(Database& db, PrimaryKeyColumn& foreignRangeIDColumn, PrimaryKeyColumn& foreignCountryIDColumn) :
+	NormalTable(db, QString("Regions"), tr("Regions"), "regionID", tr("Region ID")),
 	//											name			uiName						type	nullable	foreignColumn
 	nameColumn		(ValueColumn		(*this,	"name",			tr("Name"),					String,	false)),
 	rangeIDColumn	(ForeignKeyColumn	(*this,	"rangeID",		tr("Mountain range ID"),			true,		foreignRangeIDColumn)),

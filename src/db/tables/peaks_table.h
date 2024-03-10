@@ -53,7 +53,7 @@ public:
 	/** The Wikipedia link column. */
 	ValueColumn			wikiLinkColumn;
 	
-	PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn);
+	PeaksTable(Database& db, PrimaryKeyColumn& foreignRegionIDColumn);
 	
 	BufferRowIndex addRow(QWidget& parent, Peak& peak);
 	void updateRow(QWidget& parent, ValidItemID peakID, const Peak& peak);

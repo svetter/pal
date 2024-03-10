@@ -195,7 +195,9 @@ void openNewRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Range> extractedRange = dialog->extractData();
 			
+			db.beginChangingData();
 			newRangeIndex = db.rangesTable.addRow(parent, *extractedRange);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -229,7 +231,9 @@ void openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Range> extractedRange = dialog->extractData();
 			
+			db.beginChangingData();
 			db.rangesTable.updateRow(parent, FORCE_VALID(originalRangeID), *extractedRange);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -269,7 +273,9 @@ void openMultiEditRangesDialogAndStore(QWidget& parent, QMainWindow& mainWindow,
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.rangesTable.updateRows(parent, bufferRowIndices, columnList, *extractedRange);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -307,7 +313,9 @@ bool openDeleteRangesDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, 
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}
-
+	
+	db.beginChangingData();
 	db.removeRows(parent, db.rangesTable, rangeIDs);
+	db.finishChangingData();
 	return true;
 }

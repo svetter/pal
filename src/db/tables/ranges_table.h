@@ -43,7 +43,7 @@ public:
 	/** The continent column. */
 	ValueColumn continentColumn;
 	
-	RangesTable();
+	RangesTable(Database& db);
 	
 	BufferRowIndex addRow(QWidget& parent, Range& range);
 	void updateRow(QWidget& parent, ValidItemID rangeID, const Range& range);

@@ -42,7 +42,7 @@ class AssociativeTable : public Table {
 	PrimaryForeignKeyColumn column2;
 	
 public:
-	AssociativeTable(QString name, QString uiName, PrimaryKeyColumn& foreignKeyColumn1, PrimaryKeyColumn& foreignKeyColumn2);
+	AssociativeTable(Database& db, QString name, QString uiName, PrimaryKeyColumn& foreignKeyColumn1, PrimaryKeyColumn& foreignKeyColumn2);
 	virtual ~AssociativeTable();
 	
 	// Column info

@@ -120,12 +120,16 @@ void ProjectSettingsWindow::saveSettings()
 		
 		QString newDefaultHikerName = newDefaultHikerLineEdit->text();
 		unique_ptr<Hiker> newDefaultHiker = make_unique<Hiker>(ItemID(), newDefaultHikerName);
-		db.hikersTable.addRow(*this, *newDefaultHiker);
 		
+		db.beginChangingData();
+		db.hikersTable.addRow(*this, *newDefaultHiker);
 		db.projectSettings.defaultHiker.set(*this, newDefaultHiker->hikerID.asQVariant());
+		db.finishChangingData();
 	}
 	else {
+		db.beginChangingData();
 		db.projectSettings.defaultHiker.set(*this, parseItemCombo(*defaultHikerCombo, selectableHikerIDs).asQVariant());
+		db.finishChangingData();
 	}
 }
 

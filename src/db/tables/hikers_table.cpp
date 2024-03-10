@@ -30,9 +30,11 @@
 
 /**
  * Creates a new HikersTable.
+ * 
+ * @param db	The database to which the table belongs.
  */
-HikersTable::HikersTable() :
-	NormalTable(QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
+HikersTable::HikersTable(Database& db) :
+	NormalTable(db, QString("Hikers"), tr("Hikers"), "hikerID", tr("Hiker ID")),
 	//									name	uiName		type	nullable
 	nameColumn	(ValueColumn	(*this,	"name",	tr("Name"),	String,	false))
 {

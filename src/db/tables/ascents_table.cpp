@@ -33,11 +33,12 @@
 /**
  * Creates a new AscentsTable.
  * 
+ * @param db					The database to which the table belongs.
  * @param foreignPeakIDColumn	The primary key column of the PeaksTable.
  * @param foreignTripIDColumn	The primary key column of the TripsTable.
  */
-AscentsTable::AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyColumn& foreignTripIDColumn) :
-	NormalTable(QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
+AscentsTable::AscentsTable(Database& db, PrimaryKeyColumn& foreignPeakIDColumn,  PrimaryKeyColumn& foreignTripIDColumn) :
+	NormalTable(db, QString("Ascents"), tr("Ascents"), "ascentID", tr("Ascent ID")),
 	//													name				uiName				type		nullable	foreignColumn/enumNames/enumNameLists
 	titleColumn				(ValueColumn		(*this,	"title",			tr("Title"),		String,		true)),
 	peakIDColumn			(ForeignKeyColumn	(*this,	"peakID",			tr("Peak ID"),					true,		foreignPeakIDColumn)),

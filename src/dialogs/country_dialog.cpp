@@ -177,7 +177,9 @@ void openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Country> extractedCountry = dialog->extractData();
 			
+			db.beginChangingData();
 			newCountryIndex = db.countriesTable.addRow(parent, *extractedCountry);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -211,7 +213,9 @@ void openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Dat
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Country> extractedCountry = dialog->extractData();
 			
+			db.beginChangingData();
 			db.countriesTable.updateRow(parent, FORCE_VALID(originalCountryID), *extractedCountry);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -251,7 +255,9 @@ void openMultiEditCountriesDialogAndStore(QWidget& parent, QMainWindow& mainWind
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.countriesTable.updateRows(parent, bufferRowIndices, columnList, *extractedCountry);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -290,6 +296,8 @@ bool openDeleteCountriesDialogAndExecute(QWidget& parent, QMainWindow& mainWindo
 		if (!proceed) return false;
 	}
 	
+	db.beginChangingData();
 	db.removeRows(parent, db.countriesTable, countryIDs);
+	db.finishChangingData();
 	return true;
 }

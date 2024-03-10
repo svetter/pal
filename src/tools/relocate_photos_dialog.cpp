@@ -115,7 +115,9 @@ void RelocatePhotosDialog::handle_start()
 	connect(workerThread, &PhotoRelocationThread::callback_updateFilepathAt,	this,	&RelocatePhotosDialog::handle_callback_updateFilepath);
 	connect(workerThread, &PhotoRelocationThread::finished,						this,	&RelocatePhotosDialog::handle_finished);
 	
+	db.beginChangingData();
 	workerThread->start();
+	db.finishChangingData();
 }
 
 /**

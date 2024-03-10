@@ -41,7 +41,7 @@ public:
 	/** The name column. */
 	ValueColumn nameColumn;
 	
-	HikersTable();
+	HikersTable(Database& db);
 	
 	BufferRowIndex addRow(QWidget& parent, Hiker& hiker);
 	void updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker);

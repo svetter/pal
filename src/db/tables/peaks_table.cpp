@@ -31,10 +31,11 @@
 /**
  * Creates a new PeaksTable.
  * 
+ * @param db					The database to which the table belongs.
  * @param foreignRegionIDColumn	The primary key column of the RegionsTable.
  */
-PeaksTable::PeaksTable(PrimaryKeyColumn& foreignRegionIDColumn) :
-	NormalTable(QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
+PeaksTable::PeaksTable(Database& db, PrimaryKeyColumn& foreignRegionIDColumn) :
+	NormalTable(db, QString("Peaks"), tr("Peaks"), "peakID", tr("Peak ID")),
 	//											name			uiName						type		nullable	foreignColumn
 	nameColumn		(ValueColumn		(*this,	"name",			tr("Name"),					String,		false)),
 	heightColumn	(ValueColumn		(*this,	"height",		tr("Height"),				Integer,	true)),

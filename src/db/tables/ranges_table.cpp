@@ -32,9 +32,11 @@
 
 /**
  * Creates a new RangesTable.
+ * 
+ * @param db	The database to which the table belongs.
  */
-RangesTable::RangesTable() :
-	NormalTable(QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
+RangesTable::RangesTable(Database& db) :
+	NormalTable(db, QString("Ranges"), tr("Mountain ranges"), "rangeID", tr("Mountain range ID")),
 	//										name			uiName				type	nullable	enumNames
 	nameColumn		(ValueColumn	(*this,	"name",			tr("Name"),			String,	false)),
 	continentColumn	(ValueColumn	(*this,	"continent",	tr("Continent"),	Enum,	false,		&EnumNames::continentNames))

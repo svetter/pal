@@ -30,11 +30,12 @@
 /**
  * Creates a new ParticipatedTable.
  * 
+ * @param db					The database to which the table belongs.
  * @param foreignAscentIDColumn	The primary key column of the AscentsTable.
  * @param foreignHikerIDColumn	The primary key column of the HikersTable.
  */
-ParticipatedTable::ParticipatedTable(PrimaryKeyColumn& foreignAscentIDColumn, PrimaryKeyColumn& foreignHikerIDColumn) :
-	AssociativeTable(QString("Participated"), tr("Ascent participation of hikers"), foreignAscentIDColumn, foreignHikerIDColumn),
+ParticipatedTable::ParticipatedTable(Database& db, PrimaryKeyColumn& foreignAscentIDColumn, PrimaryKeyColumn& foreignHikerIDColumn) :
+	AssociativeTable(db, QString("Participated"), tr("Ascent participation of hikers"), foreignAscentIDColumn, foreignHikerIDColumn),
 	ascentIDColumn(getColumn1()),
 	hikerIDColumn(getColumn2())
 {}

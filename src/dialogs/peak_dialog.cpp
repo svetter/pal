@@ -267,7 +267,9 @@ void openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databas
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Peak> extractedPeak = dialog->extractData();
 			
+			db.beginChangingData();
 			newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -301,7 +303,9 @@ void openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, D
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Peak> extractedPeak = dialog->extractData();
 			
+			db.beginChangingData();
 			newPeakIndex = db.peaksTable.addRow(parent, *extractedPeak);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -335,7 +339,9 @@ void openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
 		if (dialog->result() == QDialog::Accepted && dialog->changesMade()) {
 			unique_ptr<Peak> extractedPeak = dialog->extractData();
 			
+			db.beginChangingData();
 			db.peaksTable.updateRow(parent, FORCE_VALID(originalPeakID), *extractedPeak);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -375,7 +381,9 @@ void openMultiEditPeaksDialogAndStore(QWidget& parent, QMainWindow& mainWindow, 
 			QSet<const Column*> columnsToSave = dialog->getMultiEditColumns();
 			QList<const Column*> columnList = QList<const Column*>(columnsToSave.constBegin(), columnsToSave.constEnd());
 			
+			db.beginChangingData();
 			db.peaksTable.updateRows(parent, bufferRowIndices, columnList, *extractedPeak);
+			db.finishChangingData();
 			changesMade = true;
 		}
 		
@@ -413,7 +421,9 @@ bool openDeletePeaksDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, D
 		bool proceed = displayDeleteWarning(parent, windowTitle, whatIfResults);
 		if (!proceed) return false;
 	}
-
+	
+	db.beginChangingData();
 	db.removeRows(parent, db.peaksTable, peakIDs);
+	db.finishChangingData();
 	return true;
 }

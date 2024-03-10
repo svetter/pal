@@ -63,7 +63,7 @@ public:
 	/** The ascent description column. */
 	ValueColumn descriptionColumn;
 	
-	AscentsTable(PrimaryKeyColumn& foreignPeakIDColumn, PrimaryKeyColumn& foreignTripIDColumn);
+	AscentsTable(Database& db, PrimaryKeyColumn& foreignPeakIDColumn, PrimaryKeyColumn& foreignTripIDColumn);
 	
 	BufferRowIndex addRow(QWidget& parent, Ascent& ascent);
 	void updateRow(QWidget& parent, const Ascent& ascent);

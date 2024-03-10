@@ -45,7 +45,7 @@ class SettingsTable : public Table {
 	ValueColumn settingValueColumn;
 	
 public:
-	SettingsTable();
+	SettingsTable(Database& db);
 	
 	bool settingIsPresent(const GenericProjectSetting& setting, QWidget* parent = nullptr);
 	QVariant getSetting(const GenericProjectSetting& setting, QWidget* parent = nullptr);

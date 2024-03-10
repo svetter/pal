@@ -50,7 +50,7 @@ public:
 	/** The description column. */
 	ValueColumn descriptionColumn;
 	
-	PhotosTable(PrimaryKeyColumn& foreignAscentIDColumn);
+	PhotosTable(Database& db, PrimaryKeyColumn& foreignAscentIDColumn);
 	
 	QList<Photo> getPhotosForAscent(ValidItemID ascentID) const;
 	

@@ -44,7 +44,7 @@ public:
 	/** The hiker ID column. */
 	PrimaryForeignKeyColumn& hikerIDColumn;
 	
-	ParticipatedTable(PrimaryKeyColumn& foreignAscentIDColumn, PrimaryKeyColumn& foreignHikerIDColumn);
+	ParticipatedTable(Database& db, PrimaryKeyColumn& foreignAscentIDColumn, PrimaryKeyColumn& foreignHikerIDColumn);
 	
 	void addRows(QWidget& parent, const Ascent& ascent);
 	void updateRows(QWidget& parent, const Ascent& ascent);

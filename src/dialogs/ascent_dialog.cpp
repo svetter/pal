@@ -611,9 +611,11 @@ void openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Ascent> extractedAscent = dialog->extractData();
 			
+			db.beginChangingData();
 			newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
 			db.participatedTable.addRows(parent, *extractedAscent);
 			db.photosTable.addRows(parent, *extractedAscent);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -647,9 +649,11 @@ void openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow,
 		if (dialog->result() == QDialog::Accepted) {
 			unique_ptr<Ascent> extractedAscent = dialog->extractData();
 			
+			db.beginChangingData();
 			newAscentIndex = db.ascentsTable.addRow(parent, *extractedAscent);
 			db.participatedTable.addRows(parent, *extractedAscent);
 			db.photosTable.addRows(parent, *extractedAscent);
+			db.finishChangingData();
 		}
 		
 		delete dialog;
@@ -687,6 +691,7 @@ void openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 			
 			extractedAscent->ascentID = FORCE_VALID(originalAscentID);
 			
+			db.beginChangingData();
 			db.ascentsTable.updateRow(parent, *extractedAscent);
 			if (extractedAscent->hikerIDs != originalHikerIDs) {
 				db.participatedTable.updateRows(parent, *extractedAscent);
@@ -694,6 +699,7 @@ void openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
 			if (extractedAscent->photos != originalPhotos) {
 				db.photosTable.updateRows(parent, *extractedAscent);
 			}
+			db.finishChangingData();
 			
 			changesMade = true;
 		}
@@ -740,6 +746,8 @@ void openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow
 			if (savePhotos)	ascentColumnsToSave.removeAll(&db.photosTable.ascentIDColumn);
 			const bool saveAscent = !ascentColumnsToSave.isEmpty();
 			
+			db.beginChangingData();
+			
 			if (saveAscent) {
 				db.ascentsTable.updateRows(parent, bufferRowIndices, ascentColumnsToSave, *extractedAscent);
 			}
@@ -757,6 +765,8 @@ void openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow
 					db.photosTable.updateRows(parent, ascentIDs, extractedAscent->photos);
 				}
 			}
+			
+			db.finishChangingData();
 			
 			changesMade = true;
 		}
@@ -796,7 +806,9 @@ bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
 		if (!proceed) return false;
 	}
 	
+	db.beginChangingData();
 	db.removeRows(parent, db.ascentsTable, ascentIDs);
+	db.finishChangingData();
 	return true;
 }
 
