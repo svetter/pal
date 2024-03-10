@@ -52,12 +52,12 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="121"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="124"/>
         <source>Can&apos;t add hiker</source>
         <translation>Wanderer kann nicht hinzugefügt werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="122"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="125"/>
         <source>You have to select a hiker.</source>
         <translation>Es muss ein Wanderer ausgewählt werden.</translation>
     </message>
@@ -66,8 +66,7 @@
     <name>AscentDialog</name>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="591"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="621"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="87"/>
         <source>New ascent</source>
         <translation>Neue Besteigung</translation>
     </message>
@@ -144,7 +143,7 @@
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="585"/>
         <location filename="../src/ui/ascent_dialog.ui" line="628"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="373"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="384"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -189,57 +188,53 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="653"/>
-        <source>Edit ascent</source>
-        <translation>Besteigung bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="369"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="380"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="691"/>
-        <source>Edit %1 ascents</source>
-        <translation>%1 Besteigungen bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="89"/>
+        <source>Edit %Ln ascent(s)</source>
+        <translation>
+            <numerusform>Besteigung bearbeiten</numerusform>
+            <numerusform>%Ln Besteigungen bearbeiten</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="794"/>
+        <source>Delete %Ln ascent(s)</source>
+        <translation>
+            <numerusform>Besteigung löschen</numerusform>
+            <numerusform>%Ln Besteigungen löschen</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="753"/>
-        <source>Delete ascent</source>
-        <translation>Besteigung löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="753"/>
-        <source>Delete ascents</source>
-        <translation>Besteigungen löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="774"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="815"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="794"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="835"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="810"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="851"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="811"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="852"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="836"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="877"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="837"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="878"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -693,17 +688,17 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Bilddatei ersetzen: %1</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1256"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1272"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1257"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1273"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1258"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1274"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -781,12 +776,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ascents_table.cpp" line="161"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="163"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="205"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="207"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln Besteigung</numerusform>
@@ -794,12 +789,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ascents_table.cpp" line="171"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="173"/>
         <source>Saved new ascent.</source>
         <translation>Neue Besteigung gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="182"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="184"/>
         <source>Saved changes in %Ln ascent(s).</source>
         <translation>
             <numerusform>Änderungen in Besteigung gespeichert.</numerusform>
@@ -807,7 +802,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="193"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="195"/>
         <source>Deleted %Ln ascent(s).</source>
         <translation>
             <numerusform>Besteigung gelöscht.</numerusform>
@@ -1129,12 +1124,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/countries_table.cpp" line="123"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="125"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="167"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="169"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln Land</numerusform>
@@ -1142,12 +1137,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/countries_table.cpp" line="133"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="135"/>
         <source>Saved new country.</source>
         <translation>Neues Land gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="144"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="146"/>
         <source>Saved changes in %Ln country/countries.</source>
         <translation>
             <numerusform>Änderungen in Land gespeichert.</numerusform>
@@ -1155,7 +1150,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="155"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="157"/>
         <source>Deleted %Ln country/countries.</source>
         <translation>
             <numerusform>Land gelöscht.</numerusform>
@@ -1167,7 +1162,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     <name>CountryDialog</name>
     <message>
         <location filename="../src/ui/country_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/country_dialog.cpp" line="165"/>
+        <location filename="../src/dialogs/country_dialog.cpp" line="60"/>
         <source>New country</source>
         <translation>Neues Land</translation>
     </message>
@@ -1191,35 +1186,31 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="192"/>
-        <source>Edit country</source>
-        <translation>Land bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/country_dialog.cpp" line="62"/>
+        <source>Edit %Ln country/countries</source>
+        <translation>
+            <numerusform>Land bearbeiten</numerusform>
+            <numerusform>%Ln Länder bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="137"/>
+        <location filename="../src/dialogs/country_dialog.cpp" line="143"/>
         <source>Can&apos;t save country</source>
         <translation>Land kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="138"/>
+        <location filename="../src/dialogs/country_dialog.cpp" line="144"/>
         <source>The country needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="221"/>
-        <source>Edit %1 countries</source>
-        <translation>%1 Länder bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="260"/>
-        <source>Delete country</source>
-        <translation>Land löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/country_dialog.cpp" line="260"/>
-        <source>Delete countries</source>
-        <translation>Länder löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/country_dialog.cpp" line="288"/>
+        <source>Delete %Ln country/countries</source>
+        <translation>
+            <numerusform>Land löschen</numerusform>
+            <numerusform>%Ln Länder löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2022,7 +2013,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     <name>HikerDialog</name>
     <message>
         <location filename="../src/ui/hiker_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="165"/>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="60"/>
         <source>New hiker</source>
         <translation>Neuer Wanderer</translation>
     </message>
@@ -2046,35 +2037,31 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="192"/>
-        <source>Edit hiker</source>
-        <translation>Wanderer bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="62"/>
+        <source>Edit %Ln hiker(s)</source>
+        <translation>
+            <numerusform>Wanderer bearbeiten</numerusform>
+            <numerusform>%Ln Wanderer bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="137"/>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="143"/>
         <source>Can&apos;t save hiker</source>
         <translation>Wanderer kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="138"/>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="144"/>
         <source>The hiker needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="221"/>
-        <source>Edit %1 hikers</source>
-        <translation>%1 Wanderer bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="260"/>
-        <source>Delete hiker</source>
-        <translation>Wanderer löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="260"/>
-        <source>Delete hikers</source>
-        <translation>Wanderer löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="288"/>
+        <source>Delete %Ln hiker(s)</source>
+        <translation>
+            <numerusform>Wanderer löschen</numerusform>
+            <numerusform>%Ln Wanderer löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2095,12 +2082,12 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/hikers_table.cpp" line="123"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="125"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="167"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="169"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln Wanderer</numerusform>
@@ -2108,12 +2095,12 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/hikers_table.cpp" line="133"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="135"/>
         <source>Saved new hiker.</source>
         <translation>Neuer Wanderer gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="144"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="146"/>
         <source>Saved changes in %Ln hiker(s).</source>
         <translation>
             <numerusform>Änderungen in Wanderer gespeichert.</numerusform>
@@ -2121,7 +2108,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="155"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="157"/>
         <source>Deleted %Ln hiker(s).</source>
         <translation>
             <numerusform>Wanderer gelöscht.</numerusform>
@@ -2132,60 +2119,60 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
 <context>
     <name>ItemDialog</name>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="82"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="80"/>
         <source>Set for all selected items</source>
         <translation>Wert für alle markierten Einträge setzen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="92"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="90"/>
         <source>Set yes/no for all selected items or leave as is</source>
         <translation>Für alle markierten Einträge auf ja/nein setzen oder nicht ändern</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="94"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="92"/>
         <source>Save changes for all</source>
         <translation>Änderungen speichern für alle</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="105"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="103"/>
         <source>Save changes</source>
         <translation>Änderungen speichern</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="221"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="219"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="223"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="221"/>
         <source>Discard unsaved data</source>
         <translation>Ungesicherte Änderungen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="225"/>
-        <location filename="../src/dialogs/item_dialog.cpp" line="288"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="223"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="286"/>
         <source>Are you sure?</source>
         <translation>Sollen die Änderungen wirklich verworfen werden?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="260"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="258"/>
         <source>Duplicate item name</source>
         <translation>Name bereits vorhanden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="261"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="259"/>
         <source>There is already an item with this name.
 Do you want to save it anyway?</source>
         <translation>Ein Eintrag mit diesem Namen ist bereits vorhanden.
 Trotzdem speichern?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="285"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="283"/>
         <source>Are you sure you want to delete this item?</source>
         <translation>Soll dieser Eintrag wirklich gelöscht werden?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="426"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="424"/>
         <source>All regions (no filter)</source>
         <translation>Alle Regionen (kein Filter)</translation>
     </message>
@@ -2543,18 +2530,18 @@ Trotzdem speichern?</translation>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="952"/>
+        <location filename="../src/main/main_window.cpp" line="962"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="953"/>
+        <location filename="../src/main/main_window.cpp" line="963"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
         <location filename="../src/main/main_window.cpp" line="400"/>
-        <location filename="../src/main/main_window.cpp" line="1085"/>
+        <location filename="../src/main/main_window.cpp" line="1095"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -2569,54 +2556,54 @@ Trotzdem speichern?</translation>
         <translation>Spalte anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1147"/>
+        <location filename="../src/main/main_window.cpp" line="1157"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1187"/>
+        <location filename="../src/main/main_window.cpp" line="1199"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1190"/>
+        <location filename="../src/main/main_window.cpp" line="1202"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1190"/>
+        <location filename="../src/main/main_window.cpp" line="1202"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1243"/>
-        <location filename="../src/main/main_window.cpp" line="1253"/>
-        <location filename="../src/main/main_window.cpp" line="1267"/>
+        <location filename="../src/main/main_window.cpp" line="1255"/>
+        <location filename="../src/main/main_window.cpp" line="1265"/>
+        <location filename="../src/main/main_window.cpp" line="1279"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1254"/>
+        <location filename="../src/main/main_window.cpp" line="1266"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1255"/>
+        <location filename="../src/main/main_window.cpp" line="1267"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1255"/>
+        <location filename="../src/main/main_window.cpp" line="1267"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1268"/>
+        <location filename="../src/main/main_window.cpp" line="1280"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1270"/>
+        <location filename="../src/main/main_window.cpp" line="1282"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2633,8 +2620,7 @@ Trotzdem speichern?</translation>
     <name>PeakDialog</name>
     <message>
         <location filename="../src/ui/peak_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="252"/>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="279"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="69"/>
         <source>New peak</source>
         <translation>Neuer Gipfel</translation>
     </message>
@@ -2705,35 +2691,31 @@ Trotzdem speichern?</translation>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="306"/>
-        <source>Edit peak</source>
-        <translation>Gipfel bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/peak_dialog.cpp" line="71"/>
+        <source>Edit %Ln peak(s)</source>
+        <translation>
+            <numerusform>Gipfel bearbeiten</numerusform>
+            <numerusform>%Ln Gipfel bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="224"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="233"/>
         <source>Can&apos;t save peak</source>
         <translation>Gipfel kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="225"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="234"/>
         <source>The peak needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="335"/>
-        <source>Edit %1 peaks</source>
-        <translation>%1 Gipfel bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="374"/>
-        <source>Delete peak</source>
-        <translation>Gipfel löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="374"/>
-        <source>Delete peaks</source>
-        <translation>Gipfel löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/peak_dialog.cpp" line="412"/>
+        <source>Delete %Ln peak(s)</source>
+        <translation>
+            <numerusform>Gipfel löschen</numerusform>
+            <numerusform>%Ln Gipfel löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -2784,12 +2766,12 @@ Trotzdem speichern?</translation>
         <translation>Wikipedia-Link</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/peaks_table.cpp" line="143"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="145"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="187"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="189"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln Gipfel</numerusform>
@@ -2797,12 +2779,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/peaks_table.cpp" line="153"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="155"/>
         <source>Saved new peak.</source>
         <translation>Neuer Gipfel gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="164"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="166"/>
         <source>Saved changes in %Ln peak(s).</source>
         <translation>
             <numerusform>Änderungen in Gipfel gespeichert.</numerusform>
@@ -2810,7 +2792,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="175"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="177"/>
         <source>Deleted %Ln peak(s).</source>
         <translation>
             <numerusform>Gipfel gelöscht.</numerusform>
@@ -2851,12 +2833,12 @@ Trotzdem speichern?</translation>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="209"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="211"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="253"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="255"/>
         <source>%Ln photo(s)</source>
         <translation>
             <numerusform>%Ln Foto</numerusform>
@@ -2864,12 +2846,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/photos_table.cpp" line="219"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="221"/>
         <source>Saved new photo.</source>
         <translation>Neues Foto gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="230"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="232"/>
         <source>Saved changes in %Ln photo(s).</source>
         <translation>
             <numerusform>Änderungen in Foto gespeichert.</numerusform>
@@ -2877,7 +2859,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="241"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="243"/>
         <source>Deleted %Ln photo(s).</source>
         <translation>
             <numerusform>Foto gelöscht.</numerusform>
@@ -2917,7 +2899,7 @@ Trotzdem speichern?</translation>
     <name>RangeDialog</name>
     <message>
         <location filename="../src/ui/range_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/range_dialog.cpp" line="183"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="62"/>
         <source>New mountain range</source>
         <translation>Neues Gebirge</translation>
     </message>
@@ -2951,35 +2933,31 @@ Trotzdem speichern?</translation>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="210"/>
-        <source>Edit mountain range</source>
-        <translation>Gebirge bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/range_dialog.cpp" line="64"/>
+        <source>Edit %Ln mountain range(s)</source>
+        <translation>
+            <numerusform>Gebirge bearbeiten</numerusform>
+            <numerusform>%Ln Gebirge bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="155"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="161"/>
         <source>Can&apos;t save mountain range</source>
         <translation>Gebirge kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="156"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="162"/>
         <source>The mountain range needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="239"/>
-        <source>Edit %1 mountain ranges</source>
-        <translation>%1 Gebirge bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="278"/>
-        <source>Delete mountain range</source>
-        <translation>Gebirge löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/range_dialog.cpp" line="278"/>
-        <source>Delete mountain ranges</source>
-        <translation>Gebirge löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/range_dialog.cpp" line="306"/>
+        <source>Delete %Ln mountain range(s)</source>
+        <translation>
+            <numerusform>Gebirge löschen</numerusform>
+            <numerusform>%Ln Gebirge löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3005,12 +2983,12 @@ Trotzdem speichern?</translation>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ranges_table.cpp" line="128"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="130"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="172"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="174"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln Gebirge</numerusform>
@@ -3018,12 +2996,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/ranges_table.cpp" line="138"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="140"/>
         <source>Saved new mountain range.</source>
         <translation>Neues Gebirge gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="149"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="151"/>
         <source>Saved changes in %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Änderungen in Gebirge gespeichert.</numerusform>
@@ -3031,7 +3009,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="160"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="162"/>
         <source>Deleted %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Gebirge gelöscht.</numerusform>
@@ -3043,7 +3021,7 @@ Trotzdem speichern?</translation>
     <name>RegionDialog</name>
     <message>
         <location filename="../src/ui/region_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/region_dialog.cpp" line="235"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="66"/>
         <source>New region</source>
         <translation>Neue Region</translation>
     </message>
@@ -3093,35 +3071,31 @@ Trotzdem speichern?</translation>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="262"/>
-        <source>Edit region</source>
-        <translation>Region bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/region_dialog.cpp" line="68"/>
+        <source>Edit %Ln region(s)</source>
+        <translation>
+            <numerusform>Region bearbeiten</numerusform>
+            <numerusform>%Ln Regionen bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="207"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="219"/>
         <source>Can&apos;t save region</source>
         <translation>Region kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="208"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="220"/>
         <source>The region needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="291"/>
-        <source>Edit %1 regions</source>
-        <translation>%1 Regionen bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="330"/>
-        <source>Delete region</source>
-        <translation>Region löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="330"/>
-        <source>Delete regions</source>
-        <translation>Regionen löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/region_dialog.cpp" line="364"/>
+        <source>Delete %Ln region(s)</source>
+        <translation>
+            <numerusform>Region löschen</numerusform>
+            <numerusform>%Ln Regionen löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3152,12 +3126,12 @@ Trotzdem speichern?</translation>
         <translation>Land-ID</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/regions_table.cpp" line="132"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="134"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="176"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="178"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln Region</numerusform>
@@ -3165,12 +3139,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/regions_table.cpp" line="142"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="144"/>
         <source>Saved new region.</source>
         <translation>Neue Region gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="153"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="155"/>
         <source>Saved changes in %Ln region(s).</source>
         <translation>
             <numerusform>Änderungen in Region gespeichert.</numerusform>
@@ -3178,7 +3152,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="164"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="166"/>
         <source>Deleted %Ln region(s).</source>
         <translation>
             <numerusform>Region gelöscht.</numerusform>
@@ -3450,7 +3424,7 @@ Trotzdem speichern?</translation>
     <name>TripDialog</name>
     <message>
         <location filename="../src/ui/trip_dialog.ui" line="14"/>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="233"/>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="62"/>
         <source>New trip</source>
         <translation>Neuer Urlaub</translation>
     </message>
@@ -3499,35 +3473,31 @@ Trotzdem speichern?</translation>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="260"/>
-        <source>Edit trip</source>
-        <translation>Urlaub bearbeiten</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/trip_dialog.cpp" line="64"/>
+        <source>Edit %Ln trip(s)</source>
+        <translation>
+            <numerusform>Urlaub bearbeiten</numerusform>
+            <numerusform>%Ln Urlaube bearbeiten</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="205"/>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="212"/>
         <source>Can&apos;t save trip</source>
         <translation>Urlaub kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="206"/>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="213"/>
         <source>The trip needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
-    <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="289"/>
-        <source>Edit %1 trips</source>
-        <translation>%1 Urlaube bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="328"/>
-        <source>Delete trip</source>
-        <translation>Urlaub löschen</translation>
-    </message>
-    <message>
-        <location filename="../src/dialogs/trip_dialog.cpp" line="328"/>
-        <source>Delete trips</source>
-        <translation>Urlaube löschen</translation>
+    <message numerus="yes">
+        <location filename="../src/dialogs/trip_dialog.cpp" line="357"/>
+        <source>Delete %Ln trip(s)</source>
+        <translation>
+            <numerusform>Urlaub löschen</numerusform>
+            <numerusform>%Ln Urlaube löschen</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -3563,12 +3533,12 @@ Trotzdem speichern?</translation>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables/trips_table.cpp" line="132"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="134"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="176"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="178"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln Urlaub</numerusform>
@@ -3576,12 +3546,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables/trips_table.cpp" line="142"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="144"/>
         <source>Saved new trip.</source>
         <translation>Neuer Urlaub gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="153"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="155"/>
         <source>Saved changes in %Ln trip(s).</source>
         <translation>
             <numerusform>Änderungen in Urlaub gespeichert.</numerusform>
@@ -3589,7 +3559,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="164"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="166"/>
         <source>Deleted %Ln trip(s).</source>
         <translation>
             <numerusform>Urlaub gelöscht.</numerusform>

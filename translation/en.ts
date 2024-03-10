@@ -2,9 +2,28 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>AscentDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="89"/>
+        <source>Edit %Ln ascent(s)</source>
+        <translation>
+            <numerusform>Edit ascent</numerusform>
+            <numerusform>Edit %Ln ascents</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="794"/>
+        <source>Delete %Ln ascent(s)</source>
+        <translation>
+            <numerusform>Delete ascent</numerusform>
+            <numerusform>Delete %Ln ascents</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>AscentsTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="182"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="184"/>
         <source>Saved changes in %Ln ascent(s).</source>
         <translation>
             <numerusform>Saved changes in ascent.</numerusform>
@@ -12,7 +31,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="193"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="195"/>
         <source>Deleted %Ln ascent(s).</source>
         <translation>
             <numerusform>Deleted ascent.</numerusform>
@@ -20,7 +39,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ascents_table.cpp" line="205"/>
+        <location filename="../src/db/tables/ascents_table.cpp" line="207"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln ascent</numerusform>
@@ -31,7 +50,7 @@
 <context>
     <name>CountriesTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="144"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="146"/>
         <source>Saved changes in %Ln country/countries.</source>
         <translation>
             <numerusform>Saved changes in country.</numerusform>
@@ -39,7 +58,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="155"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="157"/>
         <source>Deleted %Ln country/countries.</source>
         <translation>
             <numerusform>Deleted country.</numerusform>
@@ -47,7 +66,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/countries_table.cpp" line="167"/>
+        <location filename="../src/db/tables/countries_table.cpp" line="169"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln country</numerusform>
@@ -56,9 +75,47 @@
     </message>
 </context>
 <context>
+    <name>CountryDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/country_dialog.cpp" line="62"/>
+        <source>Edit %Ln country/countries</source>
+        <translation>
+            <numerusform>Edit country</numerusform>
+            <numerusform>Edit %Ln countried</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/country_dialog.cpp" line="288"/>
+        <source>Delete %Ln country/countries</source>
+        <translation>
+            <numerusform>Delete country</numerusform>
+            <numerusform>Delete %Ln countries</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>HikerDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="62"/>
+        <source>Edit %Ln hiker(s)</source>
+        <translation>
+            <numerusform>Edit hiker</numerusform>
+            <numerusform>Edit %Ln hikers</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="288"/>
+        <source>Delete %Ln hiker(s)</source>
+        <translation>
+            <numerusform>Delete hiker</numerusform>
+            <numerusform>Delete %Ln hikers</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>HikersTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="144"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="146"/>
         <source>Saved changes in %Ln hiker(s).</source>
         <translation>
             <numerusform>Saved changes in hiker.</numerusform>
@@ -66,7 +123,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="155"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="157"/>
         <source>Deleted %Ln hiker(s).</source>
         <translation>
             <numerusform>Deleted hiker.</numerusform>
@@ -74,7 +131,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/hikers_table.cpp" line="167"/>
+        <location filename="../src/db/tables/hikers_table.cpp" line="169"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln hiker</numerusform>
@@ -83,9 +140,28 @@
     </message>
 </context>
 <context>
+    <name>PeakDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/peak_dialog.cpp" line="71"/>
+        <source>Edit %Ln peak(s)</source>
+        <translation>
+            <numerusform>Edit peak</numerusform>
+            <numerusform>Edit %Ln peaks</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/peak_dialog.cpp" line="412"/>
+        <source>Delete %Ln peak(s)</source>
+        <translation>
+            <numerusform>Delete peak</numerusform>
+            <numerusform>Delete %Ln peaks</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>PeaksTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="164"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="166"/>
         <source>Saved changes in %Ln peak(s).</source>
         <translation>
             <numerusform>Saved changes in peak.</numerusform>
@@ -93,7 +169,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="175"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="177"/>
         <source>Deleted %Ln peak(s).</source>
         <translation>
             <numerusform>Deleted peak.</numerusform>
@@ -101,7 +177,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/peaks_table.cpp" line="187"/>
+        <location filename="../src/db/tables/peaks_table.cpp" line="189"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln peak</numerusform>
@@ -112,7 +188,7 @@
 <context>
     <name>PhotosTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="230"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="232"/>
         <source>Saved changes in %Ln photo(s).</source>
         <translation>
             <numerusform>Saved changes in photo.</numerusform>
@@ -120,7 +196,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="241"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="243"/>
         <source>Deleted %Ln photo(s).</source>
         <translation>
             <numerusform>Deleted photo.</numerusform>
@@ -128,7 +204,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/photos_table.cpp" line="253"/>
+        <location filename="../src/db/tables/photos_table.cpp" line="255"/>
         <source>%Ln photo(s)</source>
         <translation>
             <numerusform>%Ln photo</numerusform>
@@ -137,9 +213,28 @@
     </message>
 </context>
 <context>
+    <name>RangeDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/range_dialog.cpp" line="64"/>
+        <source>Edit %Ln mountain range(s)</source>
+        <translation>
+            <numerusform>Edit mountain range</numerusform>
+            <numerusform>Edit %Ln mountain ranges</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/range_dialog.cpp" line="306"/>
+        <source>Delete %Ln mountain range(s)</source>
+        <translation>
+            <numerusform>Delete mountain range</numerusform>
+            <numerusform>Delete %Ln mountain ranges</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>RangesTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="149"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="151"/>
         <source>Saved changes in %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Saved changes in mountain range.</numerusform>
@@ -147,7 +242,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="160"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="162"/>
         <source>Deleted %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Deleted mountain range.</numerusform>
@@ -155,7 +250,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/ranges_table.cpp" line="172"/>
+        <location filename="../src/db/tables/ranges_table.cpp" line="174"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln mountain range</numerusform>
@@ -164,9 +259,28 @@
     </message>
 </context>
 <context>
+    <name>RegionDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/region_dialog.cpp" line="68"/>
+        <source>Edit %Ln region(s)</source>
+        <translation>
+            <numerusform>Edit region</numerusform>
+            <numerusform>Edit %Ln regions</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/region_dialog.cpp" line="364"/>
+        <source>Delete %Ln region(s)</source>
+        <translation>
+            <numerusform>Delete region</numerusform>
+            <numerusform>Delete %Ln regions</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>RegionsTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="153"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="155"/>
         <source>Saved changes in %Ln region(s).</source>
         <translation>
             <numerusform>Saved changes in region.</numerusform>
@@ -174,7 +288,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="164"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="166"/>
         <source>Deleted %Ln region(s).</source>
         <translation>
             <numerusform>Deleted region.</numerusform>
@@ -182,7 +296,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/regions_table.cpp" line="176"/>
+        <location filename="../src/db/tables/regions_table.cpp" line="178"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln region</numerusform>
@@ -191,9 +305,28 @@
     </message>
 </context>
 <context>
+    <name>TripDialog</name>
+    <message numerus="yes">
+        <location filename="../src/dialogs/trip_dialog.cpp" line="64"/>
+        <source>Edit %Ln trip(s)</source>
+        <translation>
+            <numerusform>Edit %Ln trip</numerusform>
+            <numerusform>Edit %Ln trips</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/dialogs/trip_dialog.cpp" line="357"/>
+        <source>Delete %Ln trip(s)</source>
+        <translation>
+            <numerusform>Delete trip</numerusform>
+            <numerusform>Delete %Ln trips</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>TripsTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="153"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="155"/>
         <source>Saved changes in %Ln trip(s).</source>
         <translation>
             <numerusform>Saved changes in trip.</numerusform>
@@ -201,7 +334,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="164"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="166"/>
         <source>Deleted %Ln trip(s).</source>
         <translation>
             <numerusform>Deleted trip.</numerusform>
@@ -209,7 +342,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables/trips_table.cpp" line="176"/>
+        <location filename="../src/db/tables/trips_table.cpp" line="178"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln trip</numerusform>
