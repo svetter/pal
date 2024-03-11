@@ -46,7 +46,7 @@ class Database;
  * This class is a QAbstractItemModel, so it can be used as a model for a QTableView.
  */
 class Table : public QAbstractItemModel {
-protected:
+public:
 	Database& db;
 	
 private:
