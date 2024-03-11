@@ -76,7 +76,7 @@ class NumericFoldCompositeColumn : public FoldCompositeColumn {
 public:
 	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn);
 	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs);
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column& contentColumn);
+	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };
@@ -88,7 +88,7 @@ public:
  */
 class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
-	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column& contentColumn, const QStringList* enumNames = nullptr);
+	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, Column& contentColumn, const QStringList* enumNames = nullptr);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
@@ -105,7 +105,7 @@ public:
  */
 class HikerListFoldCompositeColumn : public ListStringFoldCompositeColumn {
 public:
-	HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn& contentColumn);
+	HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, ValueColumn& contentColumn);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;

@@ -32,6 +32,7 @@
  * Creates a CompositeColumn.
  * 
  * @param table						The CompositeTable that this column belongs to.
+ * @param name						The internal name for this column.
  * @param uiName					The name of this column as it should be displayed in the UI.
  * @param contentType				The type of data the column contents.
  * @param cellsAreInterdependent	Whether the contents of the cells in this column depend on each other.
@@ -418,7 +419,6 @@ const ProjectSettings& CompositeColumn::getProjectSettings() const
  * Creates a DirectCompositeColumn.
  * 
  * @param table			The CompositeTable that this column belongs to.
- * @param uiName		The name of this column as it should be displayed in the UI.
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
  */
@@ -460,15 +460,15 @@ const QSet<Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 /**
  * Creates a ReferenceCompositeColumn.
  *
- * @param table						The CompositeTable that this column belongs to.
- * @param uiName					The name of this column as it should be displayed in the UI.
- * @param suffix					A suffix to append to the content of each cell.
- * @param foreignKeyColumnSequence	The sequence of foreign key columns to follow to get to the content column's table.
- * @param contentColumn				The column from which to take the actual cell content.
+ * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param contentColumn	The column from which to take the actual cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Column& contentColumn) :
 	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
-	breadcrumbs(breadcrumbs),
+	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
 	contentColumn(contentColumn)
 {
 	assert(&contentColumn.table == &breadcrumbs.getTargetTable());
@@ -517,6 +517,7 @@ const QSet<Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
  * Creates a DifferenceCompositeColumn.
  *
  * @param table				The CompositeTable that this column belongs to.
+ * @param name				The internal name for this column.
  * @param uiName			The name of this column as it should be displayed in the UI.
  * @param suffix			A suffix to append to the content of each cell.
  * @param minuendColumn		The column from which to take the minuends.
@@ -591,10 +592,10 @@ const QSet<Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
  * Creates a DependentEnumCompositeColumn.
  *
  * @param table					The CompositeTable that this column belongs to.
+ * @param name					The internal name for this column.
  * @param uiName				The name of this column as it should be displayed in the UI.
  * @param discerningEnumColumn	The column from which to take the discerning enum.
  * @param displayedEnumColumn	The column from which to take the displayed enum.
- * @param enumNameLists			An optional list of enum name lists with which to replace the raw cell content.
  */
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable& table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn) :
 	CompositeColumn(table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn.enumNameLists),
@@ -650,10 +651,11 @@ const QSet<Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns() cons
 /**
  * Creates a CompositeColumn.
  *
- * @param table		The CompositeTable that this column belongs to.
- * @param uiName	The name of this column as it should be displayed in the UI.
- * @param suffix	A suffix to append to the content of each cell.
- * @param sorting	The list of sorting passes in order of priority, each containing column and order.
+ * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param sortingPasses	The list of sorting passes in order of priority, each containing column and order.
  */
 IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
 	CompositeColumn(table, name, uiName, Integer, true, true, suffix),
@@ -753,10 +755,11 @@ const QSet<Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
 /**
  * Creates a CompositeColumn.
  *
- * @param table		The CompositeTable that this column belongs to.
- * @param uiName	The name of this column as it should be displayed in the UI.
- * @param suffix	A suffix to append to the content of each cell.
- * @param sorting	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
+ * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
+ * @param uiName		The name of this column as it should be displayed in the UI.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param sortingPasses	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
  */
 OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
 	IndexCompositeColumn(table, name, uiName, suffix, sortingPasses),

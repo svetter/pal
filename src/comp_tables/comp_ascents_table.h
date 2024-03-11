@@ -101,25 +101,25 @@ public:
 	 */
 	inline CompositeAscentsTable(Database& db, QTableView* tableView) :
 		CompositeTable(db, db.ascentsTable, tableView),
-		//																name				uiName						suffix		fold op		[breadcrumbs +] content column
+		//																name				uiName						suffix		fold op		content column / breadcrumbs / sorting passes
 		indexColumn				(IndexCompositeColumn			(*this,	"index",			tr("Index"),				noSuffix,				{ {db.ascentsTable.dateColumn,			Qt::AscendingOrder},					{db.ascentsTable.peakOnDayColumn,	Qt::AscendingOrder},	{db.ascentsTable.timeColumn,		Qt::AscendingOrder} })),
 		dateColumn				(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.dateColumn)),
-		peakColumn				(ReferenceCompositeColumn		(*this,	"peak",				tr("Peak"),					noSuffix,				crumbsTo(db, db.peaksTable),			db.peaksTable.nameColumn)),
+		peakColumn				(ReferenceCompositeColumn		(*this,	"peak",				tr("Peak"),					noSuffix,				db.peaksTable.nameColumn)),
 		titleColumn				(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.titleColumn)),
-		peakHeightColumn		(ReferenceCompositeColumn		(*this,	"peakHeight",		tr("Height"),				mSuffix,				crumbsTo(db, db.peaksTable),			db.peaksTable.heightColumn)),
-		countryColumn			(ReferenceCompositeColumn		(*this,	"country",			tr("Country"),				noSuffix,				crumbsTo(db, db.countriesTable),		db.countriesTable.nameColumn)),
-		regionColumn			(ReferenceCompositeColumn		(*this,	"region",			tr("Region"),				noSuffix,				crumbsTo(db, db.regionsTable),			db.regionsTable.nameColumn)),
-		rangeColumn				(ReferenceCompositeColumn		(*this,	"range",			tr("Mountain range"),		noSuffix,				crumbsTo(db, db.rangesTable),			db.rangesTable.nameColumn)),
-		continentColumn			(ReferenceCompositeColumn		(*this,	"continent",		tr("Continent"),			noSuffix,				crumbsTo(db, db.rangesTable),			db.rangesTable.continentColumn)),
+		peakHeightColumn		(ReferenceCompositeColumn		(*this,	"peakHeight",		tr("Height"),				mSuffix,				db.peaksTable.heightColumn)),
+		countryColumn			(ReferenceCompositeColumn		(*this,	"country",			tr("Country"),				noSuffix,				db.countriesTable.nameColumn)),
+		regionColumn			(ReferenceCompositeColumn		(*this,	"region",			tr("Region"),				noSuffix,				db.regionsTable.nameColumn)),
+		rangeColumn				(ReferenceCompositeColumn		(*this,	"range",			tr("Mountain range"),		noSuffix,				db.rangesTable.nameColumn)),
+		continentColumn			(ReferenceCompositeColumn		(*this,	"continent",		tr("Continent"),			noSuffix,				db.rangesTable.continentColumn)),
 		elevationGainColumn		(DirectCompositeColumn			(*this,													mSuffix,				db.ascentsTable.elevationGainColumn)),
-		hikersColumn			(HikerListFoldCompositeColumn	(*this,	"hikers",			tr("Participants"),									crumbsTo(db, db.hikersTable),			db.hikersTable.nameColumn)),
-		tripColumn				(ReferenceCompositeColumn		(*this,	"trip",				tr("Trip"),					noSuffix,				crumbsTo(db, db.tripsTable),			db.tripsTable.nameColumn)),
+		hikersColumn			(HikerListFoldCompositeColumn	(*this,	"hikers",			tr("Participants"),									db.hikersTable.nameColumn)),
+		tripColumn				(ReferenceCompositeColumn		(*this,	"trip",				tr("Trip"),					noSuffix,				db.tripsTable.nameColumn)),
 		hikeKindColumn			(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.hikeKindColumn)),
 		traverseColumn			(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.traverseColumn)),
 		difficultyColumn		(DependentEnumCompositeColumn	(*this,	"difficulty",		tr("Difficulty"),									db.ascentsTable.difficultySystemColumn,	db.ascentsTable.difficultyGradeColumn)),
-		volcanoColumn			(ReferenceCompositeColumn		(*this,	"volcano",			tr("Volcano"),				noSuffix,				crumbsTo(db, db.peaksTable),			db.peaksTable.volcanoColumn)),
+		volcanoColumn			(ReferenceCompositeColumn		(*this,	"volcano",			tr("Volcano"),				noSuffix,				db.peaksTable.volcanoColumn)),
 		peakOrdinalColumn		(OrdinalCompositeColumn			(*this,	"peakOrdinal",		tr("Nth ascent of peak"),	".",					{ {db.ascentsTable.peakIDColumn,		Qt::AscendingOrder},					{db.ascentsTable.dateColumn,		Qt::AscendingOrder},	{db.ascentsTable.peakOnDayColumn,	Qt::AscendingOrder},	{db.ascentsTable.timeColumn,	Qt::AscendingOrder} })),
-		numPhotosColumn			(NumericFoldCompositeColumn		(*this,	"numPhotos",		tr("Num. photos"),			noSuffix,	CountFold,	crumbsTo(db, db.photosTable))),
+		numPhotosColumn			(NumericFoldCompositeColumn		(*this,	"numPhotos",		tr("Num. photos"),			noSuffix,	CountFold,	crumbsTo(db.photosTable))),
 		
 		// === BACKEND COLUMNS ===
 		
@@ -127,13 +127,13 @@ public:
 		peakOnDayColumn			(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.peakOnDayColumn)),
 		timeColumn				(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.timeColumn)),
 		descriptionColumn		(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.descriptionColumn)),
-		tripStartDateColumn		(ReferenceCompositeColumn		(*this,	"tripStartDate",	tr("Trip start date"),		noSuffix,				crumbsTo(db, db.tripsTable),			db.tripsTable.startDateColumn)),
-		tripEndDateColumn		(ReferenceCompositeColumn		(*this,	"tripEndDate",		tr("Trip end date"),		noSuffix,				crumbsTo(db, db.tripsTable),			db.tripsTable.endDateColumn)),
-		tripDescriptionColumn	(ReferenceCompositeColumn		(*this,	"tripDescription",	tr("Trip description"),		noSuffix,				crumbsTo(db, db.tripsTable),			db.tripsTable.descriptionColumn)),
+		tripStartDateColumn		(ReferenceCompositeColumn		(*this,	"tripStartDate",	tr("Trip start date"),		noSuffix,				db.tripsTable.startDateColumn)),
+		tripEndDateColumn		(ReferenceCompositeColumn		(*this,	"tripEndDate",		tr("Trip end date"),		noSuffix,				db.tripsTable.endDateColumn)),
+		tripDescriptionColumn	(ReferenceCompositeColumn		(*this,	"tripDescription",	tr("Trip description"),		noSuffix,				db.tripsTable.descriptionColumn)),
 		
 		// Filter-only columns
-		rangeIDColumn			(ReferenceCompositeColumn		(*this,	"rangeID",			tr("Range ID"),				noSuffix,				crumbsTo(db, db.rangesTable),			db.rangesTable.primaryKeyColumn)),
-		hikerIDsColumn			(NumericFoldCompositeColumn		(*this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	crumbsTo(db, db.hikersTable),			db.hikersTable.primaryKeyColumn))
+		rangeIDColumn			(ReferenceCompositeColumn		(*this,	"rangeID",			tr("Range ID"),				noSuffix,				db.rangesTable.primaryKeyColumn)),
+		hikerIDsColumn			(NumericFoldCompositeColumn		(*this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold, db.hikersTable.primaryKeyColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(dateColumn);

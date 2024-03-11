@@ -23,6 +23,7 @@
 
 #include "fold_composite_column.h"
 
+#include "src/comp_tables/composite_table.h"
 #include "src/db/tables/hikers_table.h"
 
 
@@ -31,6 +32,7 @@
  * Constructs a new FoldCompositeColumn.
  * 
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
  * @param contentType	The type of data the column contents.
  * @param isStatistical	Whether the contents of this column display statistical data which can be excluded from exports.
@@ -69,9 +71,11 @@ const QSet<Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
  * Constructs a new NumericFoldCompositeColumn.
  *
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
- * @param op			The operation to perform on the content column values.
  * @param suffix		A suffix to append to the content of each cell.
+ * @param op			The operation to perform on the content column values.
+ * @param contentType	The type of data the column contents.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
@@ -86,9 +90,10 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * Constructs a new NumericFoldCompositeColumn with FoldOp CountFold.
  *
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
- * @param op			The operation to perform on the content column values.
  * @param suffix		A suffix to append to the content of each cell.
+ * @param op			The operation to perform on the content column values.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  */
 NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs) :
@@ -99,14 +104,14 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * Constructs a new NumericFoldCompositeColumn.
  *
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
- * @param op			The operation to perform on the content column values.
  * @param suffix		A suffix to append to the content of each cell.
- * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param op			The operation to perform on the content column values.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs, Column& contentColumn) :
-	NumericFoldCompositeColumn(table, name, uiName, suffix, op, op == IDListFold ? IDList : contentColumn.type, breadcrumbs, &contentColumn)
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, Column& contentColumn) :
+	NumericFoldCompositeColumn(table, name, uiName, suffix, op, op == IDListFold ? IDList : contentColumn.type, table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn)
 {}
 
 /**
@@ -190,12 +195,13 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
  * Constructs a new ListStringFoldCompositeColumn.
  *
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
- * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to list.
+ * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
-ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, Column& contentColumn, const QStringList* enumNames) :
-	FoldCompositeColumn(table, name, uiName, String, false, QString(), breadcrumbs, &contentColumn, enumNames)
+ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, Column& contentColumn, const QStringList* enumNames) :
+	FoldCompositeColumn(table, name, uiName, String, false, QString(), table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn, enumNames)
 {}
 
 /**
@@ -258,12 +264,12 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
  * Constructs a new HikerListCompositeColumn.
  *
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
- * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The hiker name column whose values to list.
  */
-HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Breadcrumbs breadcrumbs, ValueColumn& contentColumn) :
-	ListStringFoldCompositeColumn(table, name, uiName, breadcrumbs, contentColumn)
+HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, ValueColumn& contentColumn) :
+	ListStringFoldCompositeColumn(table, name, uiName, contentColumn)
 {}
 
 /**

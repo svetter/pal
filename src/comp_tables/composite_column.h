@@ -150,7 +150,7 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	Column& contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Breadcrumbs breadcrumbs, Column& contentColumn);
+	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
