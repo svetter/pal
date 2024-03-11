@@ -42,7 +42,9 @@ FoldCompositeColumn::FoldCompositeColumn(CompositeTable& table, QString name, QS
 	CompositeColumn(table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
 	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
-{}
+{
+	assert(!contentColumn || &contentColumn->table == &breadcrumbs.getTargetTable());
+}
 
 
 

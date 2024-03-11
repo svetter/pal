@@ -133,7 +133,7 @@ public:
 		
 		// Filter-only columns
 		rangeIDColumn			(ReferenceCompositeColumn		(*this,	"rangeID",			tr("Range ID"),				noSuffix,				crumbsTo(db, db.rangesTable),			db.rangesTable.primaryKeyColumn)),
-		hikerIDsColumn			(NumericFoldCompositeColumn		(*this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	crumbsTo(db, db.hikersTable),			db.participatedTable.hikerIDColumn))
+		hikerIDsColumn			(NumericFoldCompositeColumn		(*this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold,	crumbsTo(db, db.hikersTable),			db.hikersTable.primaryKeyColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(dateColumn);
