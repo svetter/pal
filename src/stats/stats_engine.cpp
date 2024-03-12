@@ -155,9 +155,12 @@ GeneralStatsEngine::GeneralStatsEngine(Database& db, QVBoxLayout** const statist
 	statisticsTabLayoutPtr(statisticsTabLayoutPtr),
 	numAscentsPerYearChart(nullptr),
 	elevGainPerYearChart(nullptr),
-	heightsScatterChart(nullptr)
+	heightsScatterChart(nullptr),
+	changeListener(TableChangeListenerGeneralStatsEngine(*this))
 {
 	assert(statisticsTabLayoutPtr);
+	
+	db.registerChangeListener(&changeListener);
 }
 
 /**
@@ -201,15 +204,6 @@ void GeneralStatsEngine::setupStatsTab()
 	// Mark all charts as dirty
 	for (Chart* const chart : qAsConst(charts)) {
 		dirty[chart] = true;
-	}
-	
-	// Create and register change listeners
-	const QHash<Column*, QSet<Chart*>> chartsPerColumn = getAffectedChartsPerColumn();
-	const QList<Column*> columns = chartsPerColumn.keys();
-	for (Column* const column : columns) {
-		const QSet<Chart*> affectedCharts = chartsPerColumn.value(column);
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerGeneralStatsEngine>(ColumnChangeListenerGeneralStatsEngine(*this, affectedCharts));
-		column->registerChangeListener(std::move(changeListener));
 	}
 }
 
@@ -357,7 +351,7 @@ void GeneralStatsEngine::updateCharts()
  * 
  * @return	A set of underlying columns for each chart in this stats engine.
  */
-QHash<Chart*, QSet<Column*>> GeneralStatsEngine::getUsedColumnSets() const
+QHash<Chart*, QSet<const Column*>> GeneralStatsEngine::getUsedColumnSets() const
 {
 	return {
 		{numAscentsPerYearChart, {
@@ -383,15 +377,15 @@ QHash<Chart*, QSet<Column*>> GeneralStatsEngine::getUsedColumnSets() const
  * 
  * @return	A map of columns and sets of charts affected by changes to each column.
  */
-QHash<Column*, QSet<Chart*>> GeneralStatsEngine::getAffectedChartsPerColumn() const
+QHash<const Column*, QSet<Chart*>> GeneralStatsEngine::getAffectedChartsPerColumn() const
 {
 	auto usedColumnsPerChart = getUsedColumnSets();
-	QHash<Column*, QSet<Chart*>> chartsPerColumn = QHash<Column*, QSet<Chart*>>();
+	QHash<const Column*, QSet<Chart*>> chartsPerColumn = QHash<const Column*, QSet<Chart*>>();
 	
 	for (auto iter = usedColumnsPerChart.constBegin(); iter != usedColumnsPerChart.constEnd(); iter++) {
 		Chart* const chart = iter.key();
-		const QSet<Column*>& columns = iter.value();
-		for (Column* const column : columns) {
+		const QSet<const Column*>& columns = iter.value();
+		for (const Column* const column : columns) {
 			chartsPerColumn[column].insert(chart);
 		}
 	}
@@ -416,6 +410,7 @@ ItemStatsEngine::ItemStatsEngine(Database& db, PALItemType itemType, const Norma
 	itemType	(itemType),
 	baseTable	(baseTable),
 	statsLayout	(statsLayout),
+	changeListener(TableChangeListenerItemStatsEngine(*this)),
 	ascentCrumbs	(db.getBreadcrumbsFor(baseTable, db.ascentsTable)),
 	peakCrumbs		(db.getBreadcrumbsFor(baseTable, db.peaksTable)),
 	peakHeightHistChart		(nullptr),
@@ -441,12 +436,7 @@ ItemStatsEngine::ItemStatsEngine(Database& db, PALItemType itemType, const Norma
 {
 	assert(statsLayout);
 	
-	// Create and register change listeners
-	listener = make_shared<const ColumnChangeListenerItemStatsEngine>(ColumnChangeListenerItemStatsEngine(this));
-	const QSet<Column*> underlyingColumns = getUsedColumnSet();
-	for (Column* const column : underlyingColumns) {
-		column->registerChangeListener(listener);
-	}
+	db.registerChangeListener(&changeListener);
 }
 
 /**
@@ -561,19 +551,12 @@ void ItemStatsEngine::resetStatsPanel()
  */
 void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedColumns)
 {
-	auto intersect = [](const QSet<Column*>& set1, const QSet<const Column*>& set2) {
-		for (const Column* const column : set1) {
-			if (set2.contains(column)) return true;
-		}
-		return false;
-	};
-	
 	// === LEVEL 1 ===
 	// Changes under breadcrumbs always require breadcrumb and derivative chart cache reset
 	const QHash<const Breadcrumbs*, QSet<Chart*>> breadcrumbDependencies = getBreadcrumbDependencyMap();
 	const QList<const Breadcrumbs*> allBreadcrumbs = breadcrumbDependencies.keys();
 	for (const Breadcrumbs* const breadcrumbs : allBreadcrumbs) {
-		if (!intersect(breadcrumbs->getColumnSet(), changedColumns)) continue;
+		if (!breadcrumbs->getColumnSet().intersects(changedColumns)) continue;
 		
 		clearBreadcrumbCachesFor(breadcrumbs);
 		
@@ -587,11 +570,11 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 	
 	// === LEVEL 2 ===
 	// Changes under columns used for chart-specific caches require resetting those caches
-	const QHash<Chart*, QSet<Column*>> columnsPerChart = getPostCrumbsUnderlyingColumnSetPerChart();
+	const QHash<Chart*, QSet<const Column*>> columnsPerChart = getPostCrumbsUnderlyingColumnSetPerChart();
 	QList<Chart*> charts = columnsPerChart.keys();
 	for (Chart* const chart : charts) {
-		const QSet<Column*> columns = columnsPerChart.value(chart);
-		if (!intersect(columns, changedColumns)) continue;
+		const QSet<const Column*> columns = columnsPerChart.value(chart);
+		if (!columns.intersects(changedColumns)) continue;
 		
 		dirty[chart] = true;
 		clearChartCacheFor(*chart);
@@ -599,11 +582,11 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 	
 	// === LEVEL 3 ===
 	// Changes under columns used only for item labels only require chart regeneration without any cache resets (only relevant for top-n charts)
-	const QHash<Chart*, QSet<Column*>> labelColumnsPerChart = getItemLabelUnderlyingColumnSetPerChart();
+	const QHash<Chart*, QSet<const Column*>> labelColumnsPerChart = getItemLabelUnderlyingColumnSetPerChart();
 	charts = labelColumnsPerChart.keys();
 	for (Chart* const chart : charts) {
-		const QSet<Column*> columns = labelColumnsPerChart.value(chart);
-		if (!intersect(columns, changedColumns)) continue;
+		const QSet<const Column*> columns = labelColumnsPerChart.value(chart);
+		if (!columns.intersects(changedColumns)) continue;
 		
 		dirty[chart] = true;
 	}
@@ -620,8 +603,6 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
  */
 void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRows, bool allRows)
 {
-	if (currentStartBufferRows == newBufferRows && currentlyAllRowsSelected == allRows) return;
-	
 	currentStartBufferRows = newBufferRows;
 	currentlyAllRowsSelected = allRows;
 	
@@ -1229,7 +1210,7 @@ QHash<const Breadcrumbs*, QSet<Chart*>> ItemStatsEngine::getBreadcrumbDependency
  * 
  * @return	A map of charts and the sets of columns on which they depend.
  */
-QHash<Chart*, QSet<Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPerChart() const
+QHash<Chart*, QSet<const Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPerChart() const
 {
 	return {
 		{peakHeightHistChart, {
@@ -1263,7 +1244,7 @@ QHash<Chart*, QSet<Column*>> ItemStatsEngine::getPostCrumbsUnderlyingColumnSetPe
  * 
  * @return	The set of columns used for the item labels.
  */
-QSet<Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
+QSet<const Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
 {
 	switch (itemType) {
 	case ItemTypeAscent:	return {&db.ascentsTable.peakIDColumn,	&db.peaksTable.nameColumn,	&db.ascentsTable.dateColumn};
@@ -1275,7 +1256,7 @@ QSet<Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
 	case ItemTypeCountry:	return {&db.countriesTable.nameColumn};
 	default: assert(false);
 	}
-	return QSet<Column*>();
+	return QSet<const Column*>();
 }
 
 /**
@@ -1283,9 +1264,9 @@ QSet<Column*> ItemStatsEngine::getItemLabelUnderlyingColumnSet() const
  * 
  * @return	A map of charts and the sets of columns on which they depend for the item labels.
  */
-QHash<Chart*, QSet<Column*>> ItemStatsEngine::getItemLabelUnderlyingColumnSetPerChart() const
+QHash<Chart*, QSet<const Column*>> ItemStatsEngine::getItemLabelUnderlyingColumnSetPerChart() const
 {
-	const QSet<Column*> labelColumns = getItemLabelUnderlyingColumnSet();
+	const QSet<const Column*> labelColumns = getItemLabelUnderlyingColumnSet();
 	return {
 		{peakHeightHistChart,	{}},
 		{elevGainHistChart,		{}},
@@ -1304,87 +1285,19 @@ QHash<Chart*, QSet<Column*>> ItemStatsEngine::getItemLabelUnderlyingColumnSetPer
  * 
  * @return	The set of columns used by this ItemStatsEngine.
  */
-QSet<Column*> ItemStatsEngine::getUsedColumnSet() const
+QSet<const Column*> ItemStatsEngine::getUsedColumnSet() const
 {
-	QSet<Column*> underlyingColumns = QSet<Column*>();
+	QSet<const Column*> underlyingColumns = QSet<const Column*>();
 	
 	underlyingColumns.unite(ascentCrumbs.getColumnSet());
 	underlyingColumns.unite(peakCrumbs.getColumnSet());
 	
-	const QHash<Chart*, QSet<Column*>> columnsUnderCaches = getPostCrumbsUnderlyingColumnSetPerChart();
-	for (const QSet<Column*>& columns : columnsUnderCaches) {
+	const QHash<Chart*, QSet<const Column*>> columnsUnderCaches = getPostCrumbsUnderlyingColumnSetPerChart();
+	for (const QSet<const Column*>& columns : columnsUnderCaches) {
 		underlyingColumns.unite(columns);
 	}
 	
 	underlyingColumns.unite(getItemLabelUnderlyingColumnSet());
 	
 	return underlyingColumns;
-}
-
-
-
-
-
-/**
- * Creates a ColumnChangeListenerGeneralStatsEngine.
- *
- * @param listener			The ItemStatsEngine to notify about changes.
- * @param affectedCharts	The set of charts affected by changes to the column.
- */
-ColumnChangeListenerGeneralStatsEngine::ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine& listener, const QSet<Chart*>& affectedCharts) :
-	ColumnChangeListener(),
-	listener(listener),
-	affectedCharts(affectedCharts)
-{}
-
-/**
- * Destroys the ColumnChangeListenerGeneralStatsEngine.
- */
-ColumnChangeListenerGeneralStatsEngine::~ColumnChangeListenerGeneralStatsEngine()
-{}
-
-
-
-/**
- * Notifies the listening GeneralStatsEngine that the data in the column has
- * changed.
- * 
- * @param affectedColumns	The set of columns whose contents have changed.
- */
-void ColumnChangeListenerGeneralStatsEngine::columnDataChanged(QSet<const Column*> affectedColumns) const
-{
-	Q_UNUSED(affectedColumns);
-	listener.markChartsDirty(affectedCharts);
-}
-
-
-
-
-
-/**
- * Creates a ColumnChangeListenerItemStatsEngine.
- *
- * @param listener	The ItemStatsEngine to notify about changes.
- */
-ColumnChangeListenerItemStatsEngine::ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener) :
-	ColumnChangeListener(),
-	listener(listener)
-{}
-
-/**
- * Destroys the ColumnChangeListenerItemStatsEngine.
- */
-ColumnChangeListenerItemStatsEngine::~ColumnChangeListenerItemStatsEngine()
-{}
-
-
-
-/**
- * Notifies the listening ItemStatsEngine that the data in the column has changed.
- * 
- * @param affectedColumns	The set of columns whose contents have changed.
- */
-void ColumnChangeListenerItemStatsEngine::columnDataChanged(QSet<const Column*> affectedColumns) const
-{
-	listener->announceColumnChanges(affectedColumns);
 }

@@ -173,9 +173,9 @@ Breadcrumbs::Breadcrumbs(std::initializer_list<Breadcrumb> initList) :
  * 
  * @return	A set of all base table columns used as breadcrumbs.
  */
-const QSet<Column*> Breadcrumbs::getColumnSet() const
+const QSet<const Column*> Breadcrumbs::getColumnSet() const
 {
-	QSet<Column*> result = QSet<Column*>();
+	QSet<const Column*> result = QSet<const Column*>();
 	for (const auto& [firstColumn, secondColumn] : list) {
 		result.insert(&firstColumn);
 		result.insert(&secondColumn);

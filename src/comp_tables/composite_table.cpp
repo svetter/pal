@@ -22,8 +22,9 @@
  */
 
 #include "composite_table.h"
+#include "src/db/database.h"
 
-#include "qscrollbar.h"
+#include <QScrollBar>
 
 using std::unique_ptr, std::make_unique;
 
@@ -36,7 +37,7 @@ using std::unique_ptr, std::make_unique;
  * @param baseTable	The database table this table is based on.
  * @param tableView	The view this table is displayed in.
  */
-CompositeTable::CompositeTable(const Database& db, NormalTable& baseTable, QTableView* tableView) :
+CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView* tableView) :
 	QAbstractTableModel(),
 	db(db),
 	baseTable(baseTable),
@@ -53,11 +54,11 @@ CompositeTable::CompositeTable(const Database& db, NormalTable& baseTable, QTabl
 	hiddenColumns(QSet<const CompositeColumn*>()),
 	updateImmediately(false),
 	tableToAutoResizeAfterCompute(nullptr),
+	changeListener(TableChangeListenerCompositeTable(*this)),
 	name(baseTable.name),
 	uiName(baseTable.uiName)
 {
-	unique_ptr changeListener = make_unique<const RowChangeListenerCompositeTable>(RowChangeListenerCompositeTable(*this));
-	baseTable.setRowChangeListener(std::move(changeListener));
+	db.registerChangeListener(&changeListener);
 }
 
 /**
@@ -78,13 +79,6 @@ void CompositeTable::addColumn(const CompositeColumn& column)
 	assert(firstFilterColumnIndex < 0);
 	
 	columns.append(&column);
-	
-	// Register as change listener at all underlying columns
-	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
-	for (Column* underlyingColumn : underlyingColumns) {
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(column));
-		underlyingColumn->registerChangeListener(std::move(changeListener));
-	}
 }
 
 /**
@@ -111,13 +105,6 @@ void CompositeTable::addFilterColumn(const CompositeColumn& column)
 	if (firstFilterColumnIndex < 0) firstFilterColumnIndex = columns.size();
 	
 	columns.append(&column);
-	
-	// Register as change listener at all underlying columns
-	const QSet<Column*> underlyingColumns = column.getAllUnderlyingColumns();
-	for (Column* underlyingColumn : underlyingColumns) {
-		unique_ptr changeListener = make_unique<const ColumnChangeListenerCompositeColumn>(ColumnChangeListenerCompositeColumn(column));
-		underlyingColumn->registerChangeListener(std::move(changeListener));
-	}
 }
 
 
@@ -484,12 +471,13 @@ void CompositeTable::updateBufferColumns(QSet<const CompositeColumn*> columnsToU
 			}
 		}
 		
+		dirtyColumns.remove(column);
+		
 		QModelIndex topLeftIndex		= index(0, columnIndex);
 		QModelIndex bottomRightIndex	= index(viewOrder.numRows(), columnIndex);
 		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	}
-	
-	dirtyColumns.subtract(columnsToUpdate);
+	assert(!dirtyColumns.intersects(columnsToUpdate));
 }
 
 /**
@@ -749,68 +737,43 @@ void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialo
 	}
 }
 
+
 /**
- * Notifies the composite table that a row has been inserted into its base table.
+ * Receives a notification of changes in the database, changes buffer sizes, marks affected columns
+ * as dirty, and updates the buffer if the table is set to update immediately.
  * 
- * @param bufferRowIndex	The index in the buffer of the new row.
+ * @param affectedColumns		The database columns in which changes occurred.
+ * @param rowsAddedOrRemoved	The rows which were added or removed, and whether they were added (true) or removed (false).
  */
-void CompositeTable::bufferRowJustInserted(BufferRowIndex bufferRowIndex)
+void CompositeTable::announceChanges(const QSet<const Column*>& affectedColumns, const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved)
 {
 	assert(bufferInitialized);
+	const bool rowChanges = !rowsAddedOrRemoved.isEmpty();
+	assert(!rowChanges || !affectedColumns.isEmpty());
 	
-	QList<QVariant>* newRow = new QList<QVariant>();
-	for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-		QVariant newCell;
-		if (getColumnAt(columnIndex).cellsAreInterdependent) {
-			// Computing single cell is expensive and whole column will be completely recomputed anyway
-			// => leave cell empty for now
-			newCell = QVariant();
+	/* Update number of rows in buffer. Contents will be updated later.
+	 * CAUTION: This method cannot be used to accurately insert and remove the correct rows if rows
+	 * were both added and removed in the same call. All columns need to be marked dirty and updated
+	 * before reading the buffer again.
+	 */
+	for (const auto& [bufferRowIndex, addedNotRemoved] : rowsAddedOrRemoved) {
+		if (addedNotRemoved) {
+			buffer.insertRow(bufferRowIndex, new QList<QVariant>(columns.size(), QVariant()));
 		} else {
-			newCell = computeCellContent(bufferRowIndex, columnIndex);
+			buffer.removeRow(bufferRowIndex);
 		}
-		newRow->append(newCell);
 	}
-	buffer.insertRow(bufferRowIndex, newRow);
 	
-	rebuildOrderBuffer(false);
-}
-
-/**
- * Notifies the composite table that a row is about to be removed from its base table.
- * 
- * @param bufferRowIndex	The index in the buffer of the row which will be removed.
- */
-void CompositeTable::bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex)
-{
-	assert(bufferInitialized);
-	
-	ViewRowIndex viewRowIndex = findViewRowIndexForBufferRow(bufferRowIndex);
-	if (viewRowIndex.isValid()) {
-		beginRemoveRows(QModelIndex(), viewRowIndex.get(), viewRowIndex.get());
-		viewOrder.removeViewRow(viewRowIndex);
-		endRemoveRows();
+	bool anyDataChanged = rowChanges;
+	for (const CompositeColumn* const column : columns) {
+		const bool affected = rowChanges || column->getAllUnderlyingColumns().intersects(affectedColumns);
+		if (!affected) continue;
 		
-		// Update order buffer
-		for (ViewRowIndex viewRow = ViewRowIndex(0); viewRow.isValid(viewOrder.numRows()); viewRow++) {
-			BufferRowIndex currentBufferRowIndex = viewOrder.getBufferRowIndexForViewRow(viewRow);
-			if (currentBufferRowIndex > bufferRowIndex) {
-				viewOrder.replaceBufferRowIndexAtViewRowIndex(viewRow, currentBufferRowIndex - 1);
-			}
-		}
+		dirtyColumns.insert(column);
+		anyDataChanged = true;
 	}
 	
-	buffer.removeRow(bufferRowIndex);
-}
-
-/**
- * Notifies the composite table that data in a column it depends on has changed.
- * 
- * @param columnIndex	The index of the affected column among the composite table's columns.
- */
-void CompositeTable::announceChangesUnderColumn(int columnIndex)
-{
-	dirtyColumns.insert(columns.at(columnIndex));
-	if (updateImmediately) updateBothBuffers();
+	if (anyDataChanged && updateImmediately) updateBothBuffers();
 }
 
 
@@ -892,9 +855,10 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	BufferRowIndex bufferRowIndex = viewOrder.getBufferRowIndexForViewRow(viewRowIndex);
 	assert(bufferRowIndex.isValid(buffer.numRows()));
 	
-	int columnIndex = index.column();
+	const int columnIndex = index.column();
 	assert(columnIndex >= 0 && columnIndex < columns.size());
 	const CompositeColumn& column = *columns.at(columnIndex);
+	assert(!hiddenColumns.contains(&column));
 	
 	if (role == Qt::TextAlignmentRole) {
 		return column.alignment;
@@ -1060,46 +1024,4 @@ Breadcrumbs CompositeTable::crumbsTo(const NormalTable& targetTable) const
 const ProjectSettings& CompositeTable::getProjectSettings() const
 {
 	return db.projectSettings;
-}
-
-
-
-
-
-/**
- * Creates a new ColumnChangeListenerCompositeColumn.
- * 
- * @param listener	The composite column to notify of changes.
- */
-RowChangeListenerCompositeTable::RowChangeListenerCompositeTable(CompositeTable& listener) :
-	RowChangeListener(),
-	listener(listener)
-{}
-
-/**
- * Destroys this ColumnChangeListenerCompositeColumn.
- */
-RowChangeListenerCompositeTable::~RowChangeListenerCompositeTable()
-{}
-
-
-
-/**
- * Notifies the listening CompositeTable that a row has been inserted into its base table.
- *
- * @param bufferRowIndex	The index in the buffer of the new row.
- */
-void RowChangeListenerCompositeTable::bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const
-{
-	listener.bufferRowJustInserted(bufferRowIndex);
-}
-
-/**
- * Notifies the listening CompositeTable that a row is about to be removed from its base table.
- *
- * @param bufferRowIndex	The index in the buffer of the row which will be removed.
- */
-void RowChangeListenerCompositeTable::bufferRowAboutToBeRemoved(const BufferRowIndex& bufferRowIndex) const
-{
-	listener.bufferRowAboutToBeRemoved(bufferRowIndex);
 }

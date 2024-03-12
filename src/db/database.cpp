@@ -44,6 +44,8 @@ Database::Database() :
 	databaseLoaded(false),
 	tables(QList<Table*>()),
 	acceptDataModifications(false),
+	changedColumns(QSet<const Column*>()),
+	rowsAddedOrRemovedPerTable(QHash<const Table*, QList<QPair<BufferRowIndex, bool>>>()),
 	breadcrumbMatrix(QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>>()),
 	tripsTable			(TripsTable			(*this)),
 	hikersTable			(HikersTable		(*this)),
@@ -244,153 +246,6 @@ void Database::populateBuffers(QWidget& parent)
 		assert(table->getNumberOfRows() == 0);
 		table->initBuffer(parent);
 	}
-}
-
-
-
-/**
- * For all pairs of normal tables (always excluding the project settings table), * computes the
- * breadcrumbs for the connection between them and stores them in the breadcrumbMatrix.
- * 
- * The algorithm consists of three steps:
- * 1.	Fill the diagonal with empty breadcrumbs (since connecting a table to itself does not
- * 		require any breadcrumbs).
- * 2.	Fill all trivial connections by iterating through all tables and adding breadcrumbs
- * 		consisting of a single column pair for each foreign key column.
- * 		This step adds two breadcrumbs for each table, one for either direction.
- * 		Associative tables are also included here, by adding connections between the two foreign
- * 		tables, traversing the associative table in either direction.
- * 3.	Iteratively find the remaining connections by chaining existing ones together. During this
- * 		process, the maximum length of accepted new breadcrumb chains is gradually increased to
- * 		prevent forming connections which turn back on themselves.
- */
-void Database::computeBreadcrumbMatrix()
-{
-	const QList<Table*> tables = getItemTableList();
-	const QList<NormalTable*> normalTables = getNormalItemTableList();
-	const int numNormalTables = normalTables.size();
-	const int numCells = numNormalTables * numNormalTables;
-	int numFilled = 0;
-	
-	// Fill empty diagonal (normal table to itself)
-	for (const NormalTable* const normalTable : normalTables) {
-		breadcrumbMatrix[normalTable][normalTable] = Breadcrumbs();
-		numFilled++;
-	}
-	
-	// Fill trivial connections (one crumb or two over an associative table)
-	for (const Table* const table : tables) {
-		if (table->isAssociative) {
-			// Associative table
-			AssociativeTable* const associativeTable = (AssociativeTable*) table;
-			PrimaryForeignKeyColumn& column1 = associativeTable->getColumn1();
-			PrimaryForeignKeyColumn& column2 = associativeTable->getColumn2();
-			PrimaryKeyColumn& foreignColumn1 = column1.getReferencedForeignColumn();
-			PrimaryKeyColumn& foreignColumn2 = column2.getReferencedForeignColumn();
-			const NormalTable& foreignTable1 = (NormalTable&) foreignColumn1.table;
-			const NormalTable& foreignTable2 = (NormalTable&) foreignColumn2.table;
-			
-			assert(breadcrumbMatrix[&foreignTable1][&foreignTable2].isEmpty());
-			assert(breadcrumbMatrix[&foreignTable2][&foreignTable1].isEmpty());
-			
-			// Foreign table to other foreign table via associative table (either side)
-			breadcrumbMatrix[&foreignTable1][&foreignTable2] = Breadcrumbs({
-				{foreignColumn1,	column1},
-				{column2,			foreignColumn2}
-			});
-			breadcrumbMatrix[&foreignTable2][&foreignTable1] = Breadcrumbs({
-				{foreignColumn2,	column2},
-				{column1,			foreignColumn1}
-			});
-			numFilled += 2;
-		}
-		
-		else {
-			// Normal table
-			const NormalTable& normalTable = (NormalTable&) *table;
-			QList<const ForeignKeyColumn*> foreignKeyColumns = normalTable.getForeignKeyColumnTypedList();
-			for (const ForeignKeyColumn* const column : foreignKeyColumns) {
-				ForeignKeyColumn& localColumn = (ForeignKeyColumn&) *column;	// This is casting the const away
-				PrimaryKeyColumn& foreignColumn = column->getReferencedForeignColumn();
-				NormalTable& foreignTable = (NormalTable&) foreignColumn.table;
-				
-				assert(breadcrumbMatrix[&normalTable][&foreignTable].isEmpty());
-				assert(breadcrumbMatrix[&foreignTable][&normalTable].isEmpty());
-				
-				breadcrumbMatrix[&normalTable][&foreignTable] = Breadcrumbs({
-					{localColumn, foreignColumn}
-				});
-				breadcrumbMatrix[&foreignTable][&normalTable] = Breadcrumbs({
-					{foreignColumn, localColumn}
-				});
-				numFilled += 2;
-			}
-		}
-	}
-	
-	// Iteratively find the remaining connections by chaining existing ones
-	int connectionLengthLimit = 2;
-	// Gradually increase the maximum length of combined connections which are accepted to prevent
-	// ending up with connections which turn back on themselves.
-	while (numFilled < numCells) {
-		const int numFilledBeforeIter = numFilled;
-		
-		for (const NormalTable* const tableA : normalTables) {
-			for (const NormalTable* const tableB : normalTables) {
-				if (tableA == tableB) continue;
-				if (breadcrumbMatrix[tableA][tableB].isEmpty()) continue;
-				// We are on a connection A -> B which has already been found.
-				// We are now looking for another existing connection B -> C. We then derive A -> C.
-				
-				for (const NormalTable* const tableC : normalTables) {
-					if (tableB == tableC || tableA == tableC) continue;
-					if (breadcrumbMatrix[tableB][tableC].isEmpty()) continue;
-					// We have found an existing connection B -> C.
-					if (!breadcrumbMatrix[tableA][tableC].isEmpty()) continue;
-					
-					const Breadcrumbs& breadcrumbsAtoB = breadcrumbMatrix[tableA][tableB];
-					const Breadcrumbs& breadcrumbsBtoC = breadcrumbMatrix[tableB][tableC];
-					
-					int candidateLength = breadcrumbsAtoB.length() + breadcrumbsBtoC.length();
-					if (candidateLength > connectionLengthLimit) continue;
-					
-					breadcrumbMatrix[tableA][tableC] = breadcrumbsAtoB + breadcrumbsBtoC;
-					numFilled++;
-				}
-			}
-		}
-		
-		assert(numFilled > numFilledBeforeIter);
-		connectionLengthLimit++;
-	}
-}
-
-/**
- * Returns the pre-computed breadcrumbs for the connection between the given normal tables.
- * 
- * @param startTable	The table to start from (e.g. where the user made a selection).
- * @param targetTable	The table which must be reached.
- * @return				The breadcrumbs for the connection between the given tables.
- */
-Breadcrumbs Database::getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const
-{
-	assert(breadcrumbMatrix.contains(&startTable));
-	assert(breadcrumbMatrix.value(&startTable).contains(&targetTable));
-	
-	return breadcrumbMatrix.value(&startTable).value(&targetTable);
-}
-
-
-
-/**
- * Translates the given string under the context "Database".
- * 
- * @param string	The string to translate.
- * @return			The translated string.
- */
-QString Database::tr(const QString& string)
-{
-	return QCoreApplication::translate("Database", string.toStdString().c_str());
 }
 
 
@@ -718,44 +573,6 @@ unique_ptr<Country> Database::getCountryAt(BufferRowIndex rowIndex) const
 
 
 /**
- * Announces that one or more methods modifying data in the database are about to be called.
- * 
- * This method has to be called before a sequence of data-modifying methods is called. It does not
- * serve any purpose other than preventing the frontend to make changes without flushing change
- * notifications after all changes have been made. This is done using finishChangingData().
- */
-void Database::beginChangingData()
-{
-	assert(!acceptDataModifications);
-	acceptDataModifications = true;
-}
-
-/**
- * Announce that changes to the data have been completed and all change notifications should be
- * flushed.
- */
-void Database::finishChangingData()
-{
-	assert(acceptDataModifications);
-
-	// TODO report changes to frontend
-
-	acceptDataModifications = false;
-}
-
-/**
- * Indicates whether the database is currently accepting changes to its data.
- * 
- * @return	True if the database is currently accepting changes to its data, false otherwise.
- */
-bool Database::currentlyAcceptingChanges()
-{
-	return acceptDataModifications;
-}
-
-
-
-/**
  * Returns a list of consequences of removing the rows with the given primary keys from the given
  * normal table.
  * 
@@ -893,6 +710,279 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 		
 	}
 	return result;
+}
+
+
+
+/**
+ * Registers the given change listener to receive change notifications from the database.
+ * 
+ * @param listener	The change listener to register.
+ */
+void Database::registerChangeListener(const TableChangeListener* listener)
+{
+	changeListeners.insert(listener);
+}
+
+
+/**
+ * Announces that one or more methods modifying data in the database are about to be called.
+ * 
+ * This method has to be called before a sequence of data-modifying methods is called. It does not
+ * serve any purpose other than preventing the frontend to make changes without flushing change
+ * notifications after all changes have been made. This is done using finishChangingData().
+ */
+void Database::beginChangingData()
+{
+	assert(!acceptDataModifications);
+	acceptDataModifications = true;
+}
+
+/**
+ * Announce that changes to the data have been completed and all change notifications should be
+ * flushed.
+ */
+void Database::finishChangingData()
+{
+	assert(acceptDataModifications);
+	acceptDataModifications = false;
+	
+	for (const TableChangeListener* const listener : qAsConst(changeListeners)) {
+		listener->dataChanged(changedColumns, rowsAddedOrRemovedPerTable);
+	}
+	
+	changedColumns.clear();
+	rowsAddedOrRemovedPerTable.clear();
+}
+
+/**
+ * Indicates whether the database is currently accepting changes to its data.
+ * 
+ * @return	True if the database is currently accepting changes to its data, false otherwise.
+ */
+bool Database::currentlyAcceptingChanges()
+{
+	return acceptDataModifications;
+}
+
+
+/**
+ * Notifies the database that one or more rows have been removed from the given table.
+ * 
+ * To be called by the application backend when rows are removed from a table.
+ * 
+ * @param table			The table from which rows have been removed.
+ * @param removedRows	The buffer row indices of the removed rows.
+ */
+void Database::rowsRemoved(const Table& table, const QSet<BufferRowIndex>& removedRows)
+{
+	for (const BufferRowIndex& removedRow : removedRows) {
+		rowsAddedOrRemovedPerTable[&table].append({removedRow, false});
+	}
+	columnDataChanged(table.columns);
+}
+
+/**
+ * Notifies the database that one or more rows have been added to the given table.
+ * 
+ * To be called by the application backend when rows are added to a table.
+ * 
+ * @param table		The table to which rows have been added.
+ * @param addedRows	The buffer row indices of the added rows.
+ */
+void Database::rowsAdded(const Table& table, const QSet<BufferRowIndex>& addedRows)
+{
+	for (const BufferRowIndex& addedRow : addedRows) {
+		rowsAddedOrRemovedPerTable[&table].append({addedRow, true});
+	}
+	columnDataChanged(table.columns);
+}
+
+/**
+ * Notifies the database that the data in the given column has changed.
+ * 
+ * To be called by the application backend when the data in a column is modified.
+ * 
+ * @param affectedColumn	The column whose data was changed.
+ */
+void Database::columnDataChanged(const Column* affectedColumn)
+{
+	changedColumns.insert(affectedColumn);
+}
+
+/**
+ * Notifies the database that the data in the given columns has changed.
+ * 
+ * To be called by the application backend when the data in multiple columns is modified.
+ * 
+ * @param affectedColumns	The columns whose data was changed.
+ */
+void Database::columnDataChanged(const QSet<const Column*>& affectedColumns)
+{
+	for (const Column* const column : affectedColumns) {
+		columnDataChanged(column);
+	}
+}
+
+/**
+ * Notifies the database that the data in the given columns has changed.
+ *
+ * To be called by the application backend when the data in multiple columns is modified.
+ *
+ * @param affectedColumns	The columns whose data was changed.
+ */
+void Database::columnDataChanged(const QList<const Column*>& affectedColumns)
+{
+	for (const Column* const column : affectedColumns) {
+		columnDataChanged(column);
+	}
+}
+
+
+
+/**
+ * For all pairs of normal tables (always excluding the project settings table), computes the
+ * breadcrumbs for the connection between them and stores them in the breadcrumbMatrix.
+ * 
+ * The algorithm consists of three steps:
+ * 1.	Fill the diagonal with empty breadcrumbs (since connecting a table to itself does not
+ * 		require any breadcrumbs).
+ * 2.	Fill all trivial connections by iterating through all tables and adding breadcrumbs
+ * 		consisting of a single column pair for each foreign key column.
+ * 		This step adds two breadcrumbs for each table, one for either direction.
+ * 		Associative tables are also included here, by adding connections between the two foreign
+ * 		tables, traversing the associative table in either direction.
+ * 3.	Iteratively find the remaining connections by chaining existing ones together. During this
+ * 		process, the maximum length of accepted new breadcrumb chains is gradually increased to
+ * 		prevent forming connections which turn back on themselves.
+ */
+void Database::computeBreadcrumbMatrix()
+{
+	const QList<Table*> tables = getItemTableList();
+	const QList<NormalTable*> normalTables = getNormalItemTableList();
+	const int numNormalTables = normalTables.size();
+	const int numCells = numNormalTables * numNormalTables;
+	int numFilled = 0;
+	
+	// Fill empty diagonal (normal table to itself)
+	for (const NormalTable* const normalTable : normalTables) {
+		breadcrumbMatrix[normalTable][normalTable] = Breadcrumbs();
+		numFilled++;
+	}
+	
+	// Fill trivial connections (one crumb or two over an associative table)
+	for (const Table* const table : tables) {
+		if (table->isAssociative) {
+			// Associative table
+			AssociativeTable* const associativeTable = (AssociativeTable*) table;
+			PrimaryForeignKeyColumn& column1 = associativeTable->getColumn1();
+			PrimaryForeignKeyColumn& column2 = associativeTable->getColumn2();
+			PrimaryKeyColumn& foreignColumn1 = column1.getReferencedForeignColumn();
+			PrimaryKeyColumn& foreignColumn2 = column2.getReferencedForeignColumn();
+			const NormalTable& foreignTable1 = (NormalTable&) foreignColumn1.table;
+			const NormalTable& foreignTable2 = (NormalTable&) foreignColumn2.table;
+			
+			assert(breadcrumbMatrix[&foreignTable1][&foreignTable2].isEmpty());
+			assert(breadcrumbMatrix[&foreignTable2][&foreignTable1].isEmpty());
+			
+			// Foreign table to other foreign table via associative table (either side)
+			breadcrumbMatrix[&foreignTable1][&foreignTable2] = Breadcrumbs({
+				{foreignColumn1,	column1},
+				{column2,			foreignColumn2}
+			});
+			breadcrumbMatrix[&foreignTable2][&foreignTable1] = Breadcrumbs({
+				{foreignColumn2,	column2},
+				{column1,			foreignColumn1}
+			});
+			numFilled += 2;
+		}
+		
+		else {
+			// Normal table
+			const NormalTable& normalTable = (NormalTable&) *table;
+			QList<const ForeignKeyColumn*> foreignKeyColumns = normalTable.getForeignKeyColumnTypedList();
+			for (const ForeignKeyColumn* const column : foreignKeyColumns) {
+				ForeignKeyColumn& localColumn = (ForeignKeyColumn&) *column;	// This is casting the const away
+				PrimaryKeyColumn& foreignColumn = column->getReferencedForeignColumn();
+				NormalTable& foreignTable = (NormalTable&) foreignColumn.table;
+				
+				assert(breadcrumbMatrix[&normalTable][&foreignTable].isEmpty());
+				assert(breadcrumbMatrix[&foreignTable][&normalTable].isEmpty());
+				
+				breadcrumbMatrix[&normalTable][&foreignTable] = Breadcrumbs({
+					{localColumn, foreignColumn}
+				});
+				breadcrumbMatrix[&foreignTable][&normalTable] = Breadcrumbs({
+					{foreignColumn, localColumn}
+				});
+				numFilled += 2;
+			}
+		}
+	}
+	
+	// Iteratively find the remaining connections by chaining existing ones
+	int connectionLengthLimit = 2;
+	// Gradually increase the maximum length of combined connections which are accepted to prevent
+	// ending up with connections which turn back on themselves.
+	while (numFilled < numCells) {
+		const int numFilledBeforeIter = numFilled;
+		
+		for (const NormalTable* const tableA : normalTables) {
+			for (const NormalTable* const tableB : normalTables) {
+				if (tableA == tableB) continue;
+				if (breadcrumbMatrix[tableA][tableB].isEmpty()) continue;
+				// We are on a connection A -> B which has already been found.
+				// We are now looking for another existing connection B -> C. We then derive A -> C.
+				
+				for (const NormalTable* const tableC : normalTables) {
+					if (tableB == tableC || tableA == tableC) continue;
+					if (breadcrumbMatrix[tableB][tableC].isEmpty()) continue;
+					// We have found an existing connection B -> C.
+					if (!breadcrumbMatrix[tableA][tableC].isEmpty()) continue;
+					
+					const Breadcrumbs& breadcrumbsAtoB = breadcrumbMatrix[tableA][tableB];
+					const Breadcrumbs& breadcrumbsBtoC = breadcrumbMatrix[tableB][tableC];
+					
+					int candidateLength = breadcrumbsAtoB.length() + breadcrumbsBtoC.length();
+					if (candidateLength > connectionLengthLimit) continue;
+					
+					breadcrumbMatrix[tableA][tableC] = breadcrumbsAtoB + breadcrumbsBtoC;
+					numFilled++;
+				}
+			}
+		}
+		
+		assert(numFilled > numFilledBeforeIter);
+		connectionLengthLimit++;
+	}
+}
+
+/**
+ * Returns the pre-computed breadcrumbs for the connection between the given normal tables.
+ * 
+ * @param startTable	The table to start from (e.g. where the user made a selection).
+ * @param targetTable	The table which must be reached.
+ * @return				The breadcrumbs for the connection between the given tables.
+ */
+Breadcrumbs Database::getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const
+{
+	assert(breadcrumbMatrix.contains(&startTable));
+	assert(breadcrumbMatrix.value(&startTable).contains(&targetTable));
+	
+	return breadcrumbMatrix.value(&startTable).value(&targetTable);
+}
+
+
+
+/**
+ * Translates the given string under the context "Database".
+ * 
+ * @param string	The string to translate.
+ * @return			The translated string.
+ */
+QString Database::tr(const QString& string)
+{
+	return QCoreApplication::translate("Database", string.toStdString().c_str());
 }
 
 

@@ -24,16 +24,13 @@
 #ifndef STATS_ENGINE_H
 #define STATS_ENGINE_H
 
-#include "src/db/database.h"
-#include "chart.h"
 #include "src/data/item_types.h"
+#include "src/db/database.h"
+#include "src/stats/chart.h"
+#include "src/stats/stats_listeners.h"
 
 #include <QObject>
-#include <QBoxLayout>
-
-using std::shared_ptr;
-
-class ColumnChangeListenerItemStatsEngine;
+#include <QVBoxLayout>
 
 
 
@@ -94,6 +91,9 @@ class GeneralStatsEngine : public StatsEngine
 	/** A chart showing elevation gain and peak height for every logged ascent. */
 	TimeScatterChart*	heightsScatterChart;
 	
+	/** The change listener registered with the database to receive change notifications. */
+	TableChangeListenerGeneralStatsEngine changeListener;
+	
 public:
 	GeneralStatsEngine(Database& db, QVBoxLayout** const statisticsTabLayoutPtr);
 	virtual ~GeneralStatsEngine();
@@ -105,9 +105,11 @@ public:
 	virtual void updateCharts();
 	
 protected:
-	QHash<Chart*, QSet<Column*>> getUsedColumnSets() const;
+	QHash<Chart*, QSet<const Column*>> getUsedColumnSets() const;
 private:
-	QHash<Column*, QSet<Chart*>> getAffectedChartsPerColumn() const;
+	QHash<const Column*, QSet<Chart*>> getAffectedChartsPerColumn() const;
+	
+	friend class TableChangeListenerGeneralStatsEngine;
 };
 
 
@@ -126,8 +128,8 @@ class ItemStatsEngine : public StatsEngine
 	/** The layout in which to display the charts. */
 	QVBoxLayout* const statsLayout;
 	
-	/** The column change listener used to keep charts up to date. */
-	shared_ptr<const ColumnChangeListenerItemStatsEngine> listener;
+	/** The change listener registered with the database to receive change notifications. */
+	TableChangeListenerItemStatsEngine changeListener;
 	
 	// Constants
 	/** The number of items to show in the top N charts. */
@@ -212,45 +214,10 @@ private:
 	void clearChartCacheFor(Chart& chart);
 	
 	QHash<const Breadcrumbs*, QSet<Chart*>> getBreadcrumbDependencyMap() const;
-	QHash<Chart*, QSet<Column*>> getPostCrumbsUnderlyingColumnSetPerChart() const;
-	QSet<Column*> getItemLabelUnderlyingColumnSet() const;
-	QHash<Chart*, QSet<Column*>> getItemLabelUnderlyingColumnSetPerChart() const;
-	QSet<Column*> getUsedColumnSet() const;
-};
-
-
-
-/**
- * A column change listener which notifies a GeneralStatsEngine about changes in an underlying
- * column.
- */
-class ColumnChangeListenerGeneralStatsEngine : public ColumnChangeListener {
-	/** The ColumnChangeListenerGeneralStatsEngine to notify about column changes. */
-	GeneralStatsEngine& listener;
-	/** The charts affected by the column changes. */
-	QSet<Chart*> affectedCharts;
-	
-public:
-	ColumnChangeListenerGeneralStatsEngine(GeneralStatsEngine& listener, const QSet<Chart*>& affectedCharts);
-	virtual ~ColumnChangeListenerGeneralStatsEngine();
-	
-	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
-};
-
-
-
-/**
- * A column change listener which notifies a ItemStatsEngine about changes in an underlying column.
- */
-class ColumnChangeListenerItemStatsEngine : public ColumnChangeListener {
-	/** The ColumnChangeListenerItemStatsEngine to notify about column changes. */
-	ItemStatsEngine* const listener;
-	
-public:
-	ColumnChangeListenerItemStatsEngine(ItemStatsEngine* listener);
-	virtual ~ColumnChangeListenerItemStatsEngine();
-	
-	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
+	QHash<Chart*, QSet<const Column*>> getPostCrumbsUnderlyingColumnSetPerChart() const;
+	QSet<const Column*> getItemLabelUnderlyingColumnSet() const;
+	QHash<Chart*, QSet<const Column*>> getItemLabelUnderlyingColumnSetPerChart() const;
+	QSet<const Column*> getUsedColumnSet() const;
 };
 
 

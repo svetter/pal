@@ -32,6 +32,7 @@
 #include "src/data/region.h"
 #include "src/data/range.h"
 #include "src/data/country.h"
+#include "src/db/table_listener.h"
 #include "src/db/tables/ascents_table.h"
 #include "src/db/tables/countries_table.h"
 #include "src/db/tables/hikers_table.h"
@@ -63,8 +64,14 @@ class Database {
 	/** The (functionally static) list of tables in any project database. Caution: Contains the project settings table! */
 	QList<Table*> tables;
 	
+	/** The change listeners registered to this database. */
+	QSet<const TableChangeListener*> changeListeners;
 	/** Indicates whether the database is currently accepting changes to its data. */
 	bool acceptDataModifications;
+	/** The set of columns whose data has been changed since the last changes flush. */
+	QSet<const Column*> changedColumns;
+	/** An index list of rows that have been added or removed since the last changes flush, mapped to their table. In the list of pairs, the bool indicates an added row if true, and a removed row if false. */
+	QHash<const Table*, QList<QPair<BufferRowIndex, bool>>> rowsAddedOrRemovedPerTable;
 	
 	/** A precomputed matrix of breadcrumb connections from any normal table to any other normal table in the project (settings table always excluded). */
 	QMap<const NormalTable*, QMap<const NormalTable*, Breadcrumbs>> breadcrumbMatrix;
@@ -104,6 +111,8 @@ public:
 	bool saveAs(QWidget& parent, const QString& filepath);
 	QString getCurrentFilepath() const;
 	
+	void populateBuffers(QWidget& parent);
+	
 	QList<Table*> getItemTableList() const;
 	QList<NormalTable*> getNormalItemTableList() const;
 	
@@ -123,16 +132,25 @@ public:
 	unique_ptr<Range>	getRangeAt		(BufferRowIndex	rowIndex)	const;
 	unique_ptr<Country>	getCountryAt	(BufferRowIndex	rowIndex)	const;
 	
-	void beginChangingData();
-	void finishChangingData();
-	bool currentlyAcceptingChanges();
-	
+public:
 	QList<WhatIfDeleteResult> whatIf_removeRows(NormalTable& table, QSet<ValidItemID> primaryKeys);
 	void removeRows(QWidget& parent, NormalTable& table, QSet<ValidItemID> primaryKeys);
 private:
 	QList<WhatIfDeleteResult> removeRows_referenceSearch(QWidget* parent, bool searchNotExecute, NormalTable& table, QSet<ValidItemID> primaryKeys);
 	
-	void populateBuffers(QWidget& parent);
+public:
+	void registerChangeListener(const TableChangeListener* listener);
+	
+	void beginChangingData();
+	void finishChangingData();
+	bool currentlyAcceptingChanges();
+	
+protected:
+	void rowsRemoved(const Table& table, const QSet<BufferRowIndex>& removedRows);
+	void rowsAdded(const Table& table, const QSet<BufferRowIndex>& addedRows);
+	void columnDataChanged(const Column* affectedColumn);
+	void columnDataChanged(const QSet<const Column*>& affectedColumns);
+	void columnDataChanged(const QList<const Column*>& affectedColumns);
 	
 	void computeBreadcrumbMatrix();
 public:
@@ -140,6 +158,7 @@ public:
 	
 	static QString tr(const QString& string);
 	
+	friend class Table;
 	friend class DatabaseUpgrader;
 };
 

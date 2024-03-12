@@ -25,7 +25,6 @@
 #define COLUMN_H
 
 #include "src/db/row_index.h"
-#include "src/db/listeners.h"
 #include "src/data/item_id.h"
 
 #include <QSet>
@@ -75,10 +74,6 @@ public:
 	/** A list of enum name lists corresponding to the nested enum used for this column, or nullptr. */
 	const QList<QPair<QString, QStringList>>* const enumNameLists;
 	
-private:
-	/** The column change listeners registered to be notified when data in this column changes. */
-	QSet<shared_ptr<const ColumnChangeListener>> changeListeners;
-	
 protected:
 	Column(const Table& table, QString name, QString uiName, bool primaryKey, PrimaryKeyColumn* foreignKey, DataType type, bool nullable, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
@@ -95,9 +90,6 @@ public:
 	bool anyCellMatches(QVariant value) const;
 	
 	QString getSqlSpecificationString() const;
-	
-	void registerChangeListener(shared_ptr<const ColumnChangeListener> newListener);
-	const QSet<const ColumnChangeListener*> getChangeListeners() const;
 };
 
 

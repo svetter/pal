@@ -53,9 +53,6 @@ private:
 	/** The columns of this table. */
 	QList<const Column*> columns;
 	
-	/** The row change listener which needs to be notified of row changes. */
-	unique_ptr<const RowChangeListener> rowChangeListener;
-	
 public:
 	/** The internal name of the table. */
 	const QString	name;
@@ -99,12 +96,6 @@ public:
 	BufferRowIndex getMatchingBufferRowIndex(const QList<const Column*>& primaryKeyColumns, const QList<ValidItemID>& primaryKeys) const;
 	// Debugging
 	void printBuffer() const;
-	
-	// Change propagation
-	void setRowChangeListener(unique_ptr<const RowChangeListener> newListener);
-private:
-	void notifyChangeListeners(const QSet<const Column*>& changedColumns);
-	void notifyForAllColumns();
 	
 protected:
 	// Modifications

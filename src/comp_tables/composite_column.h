@@ -106,15 +106,13 @@ public:
 	
 	void applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const;
 	
-	void announceChangedData() const;
-	
 	/**
 	 * Returns a set of all columns in the base tables which are used to compute the content of
 	 * this column.
 	 * 
 	 * @return	A set of all base table columns which are used to compute contents of this column.
 	 */
-	virtual const QSet<Column*> getAllUnderlyingColumns() const = 0;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const = 0;
 	
 protected:
 	const ProjectSettings& getProjectSettings() const;
@@ -134,7 +132,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -154,7 +152,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -174,7 +172,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -194,7 +192,7 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
-	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 
@@ -223,7 +221,7 @@ public:
 	QList<QVariant> computeWholeColumn() const override;
 	QList<BufferRowIndex> getRowIndexOrderList() const;
 	
-	virtual const QSet<Column*> getAllUnderlyingColumns() const override;
+	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 /**
@@ -239,22 +237,6 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
-};
-
-
-
-/**
- * A column change listener which notifies a CompositeColumn about changes in a base table column.
- */
-class ColumnChangeListenerCompositeColumn : public ColumnChangeListener {
-	/** The CompositeColumn to notify about column changes. */
-	const CompositeColumn& listener;
-	
-public:
-	ColumnChangeListenerCompositeColumn(const CompositeColumn& listener);
-	virtual ~ColumnChangeListenerCompositeColumn();
-	
-	virtual void columnDataChanged(QSet<const Column*> affectedColumns) const;
 };
 
 

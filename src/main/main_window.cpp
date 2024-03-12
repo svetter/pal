@@ -887,8 +887,8 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 	if (bufferRowToSelectIndex.isValid()) {
 		ViewRowIndex viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
-	} else if (numberOfEntriesChanged) {
-		handle_clearTableSelection();
+	} else {
+		if (numberOfEntriesChanged) handle_clearTableSelection();
 		handle_tableSelectionChanged();
 	}
 	// Update table size info

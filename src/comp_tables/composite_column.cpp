@@ -390,18 +390,6 @@ void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& o
 
 
 /**
- * This function can be called to announce that some data from which this column is computed has
- * changed, and the column needs to be updated.
- */
-void CompositeColumn::announceChangedData() const
-{
-	int thisColumnIndex = table.getIndexOf(*this);
-	table.announceChangesUnderColumn(thisColumnIndex);
-}
-
-
-
-/**
  * Returns the project settings of the table this column belongs to.
  * 
  * @return	The project settings.
@@ -448,7 +436,7 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
+const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { &contentColumn };
 }
@@ -502,9 +490,9 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
+const QSet<const Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column*> result = { &contentColumn };
+	QSet<const Column*> result = { &contentColumn };
 	result.unite(breadcrumbs.getColumnSet());
 	return result;
 }
@@ -579,7 +567,7 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
+const QSet<const Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { &minuendColumn, &subtrahendColumn };
 }
@@ -639,7 +627,7 @@ QVariant DependentEnumCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
+const QSet<const Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns() const
 {
 	return { &discerningEnumColumn, &displayedEnumColumn };
 }
@@ -739,9 +727,9 @@ QList<BufferRowIndex> IndexCompositeColumn::getRowIndexOrderList() const
  *
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
-const QSet<Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
+const QSet<const Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<Column*> columns = QSet<Column*>();
+	QSet<const Column*> columns = QSet<const Column*>();
 	for (const auto& [column, order] : sortingPasses) {
 		columns += &column;
 	}
@@ -817,37 +805,4 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	}
 	
 	return ordinals;
-}
-
-
-
-
-
-/**
- * Creates a ColumnChangeListenerCompositeColumn.
- * 
- * @param listener	The CompositeColumn to notify about changes.
- */
-ColumnChangeListenerCompositeColumn::ColumnChangeListenerCompositeColumn(const CompositeColumn& listener) :
-	ColumnChangeListener(),
-	listener(listener)
-{}
-
-/**
- * Destroys the ColumnChangeListenerCompositeColumn.
- */
-ColumnChangeListenerCompositeColumn::~ColumnChangeListenerCompositeColumn()
-{}
-
-
-
-/**
- * Notifies the listening CompositeColumn that the data in the column has changed.
- * 
- * @param affectedColumns	The columns whose contents have changed.
- */
-void ColumnChangeListenerCompositeColumn::columnDataChanged(QSet<const Column*> affectedColumns) const
-{
-	Q_UNUSED(affectedColumns);
-	listener.announceChangedData();
 }

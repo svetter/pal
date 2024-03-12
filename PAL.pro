@@ -58,6 +58,7 @@ HEADERS += \
 	src/comp_tables/comp_peaks_table.h \
 	src/comp_tables/comp_ranges_table.h \
 	src/comp_tables/comp_regions_table.h \
+	src/comp_tables/comp_table_listener.h \
 	src/comp_tables/comp_trips_table.h \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
@@ -79,7 +80,7 @@ HEADERS += \
 	src/db/database.h \
 	src/db/db_error.h \
 	src/db/db_upgrade.h \
-	src/db/listeners.h \
+	src/db/table_listener.h \
 	src/db/normal_table.h \
 	src/db/row_index.h \
 	src/db/table.h \
@@ -117,6 +118,7 @@ HEADERS += \
 	src/settings/settings_window.h \
 	src/stats/chart.h \
 	src/stats/stats_engine.h \
+	src/stats/stats_listeners.h \
 	src/tools/export_decls.h \
 	src/tools/export_dialog.h \
 	src/tools/export_thread.h \
@@ -130,6 +132,7 @@ HEADERS += \
 
 SOURCES += \
 	src/comp_tables/breadcrumbs.cpp \
+	src/comp_tables/comp_table_listener.cpp \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
 	src/comp_tables/fold_composite_column.cpp \
@@ -184,6 +187,7 @@ SOURCES += \
 	src/settings/settings_window.cpp \
 	src/stats/chart.cpp \
 	src/stats/stats_engine.cpp \
+	src/stats/stats_listeners.cpp \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
 	src/tools/export_writer.cpp \

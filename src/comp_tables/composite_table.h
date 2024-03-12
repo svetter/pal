@@ -24,13 +24,11 @@
 #ifndef COMPOSITE_TABLE_H
 #define COMPOSITE_TABLE_H
 
-#include "composite_column.h"
-#include "src/db/row_index.h"
-#include "src/db/database.h"
+#include "src/comp_tables/comp_table_listener.h"
+#include "src/comp_tables/composite_column.h"
 
-#include <QAbstractTableModel>
-#include <QProgressDialog>
 #include <QTableView>
+#include <QProgressDialog>
 
 
 
@@ -61,17 +59,6 @@ struct SortingPass {
  * actually needed. In the latter case, the affected columns are marked as dirty and their update
  * deferred.
  * 
- * The change annunciation consists of two parts:
- * First, the CompositeTable must be notified when a row is inserted or removed from the base table.
- * This is done by registering the table as a row change listener with the base table, which then
- * calls bufferRowJustInserted() or bufferRowAboutToBeRemoved() on the CompositeTable.
- * Second, the CompositeTable must be notified when data in any of the columns it depends on changes
- * (without adding or removing rows). This is done by registering each composite column as a change
- * listener with every column it depends on using Column::registerChangeListener().
- * Any changes in a base column then trigger a call to CompositeColumn::announceChangedData(), which
- * in turn calls announceChangesUnderColumn(), which either updates the column immediately or marks
- * it as dirty.
- * 
  * The CompositeTable is also responsible for sorting and filtering its content. For controlling
  * which rows are actually displayed and in which order, a ViewOrderBuffer is used. This buffer is
  * updated whenever the sorting or filtering changes. The buffer is then used to map the indices of
@@ -87,7 +74,7 @@ class CompositeTable : public QAbstractTableModel {
 	Q_OBJECT
 	
 	/** The project database. */
-	const Database& db;
+	Database& db;
 	/** The database table this table is based on. */
 	const NormalTable& baseTable;
 	/** The UI table view this table is displayed in. */
@@ -120,6 +107,9 @@ class CompositeTable : public QAbstractTableModel {
 	/** A pointer to the UI table view which, if set, is automatically resized after the buffer is computed. */
 	QTableView* tableToAutoResizeAfterCompute;
 	
+	/** The change listener for all changes under this composite table. */
+	TableChangeListenerCompositeTable changeListener;
+	
 public:
 	/** The internal name of the table (not for display in the UI). */
 	const QString name;
@@ -132,7 +122,7 @@ protected:
 	/** The suffix to append to all values given in meters. */
 	static inline QString mSuffix = " m";
 	
-	CompositeTable(const Database& db, NormalTable& baseTable, QTableView* tableView);
+	CompositeTable(Database& db, NormalTable& baseTable, QTableView* tableView);
 public:
 	~CompositeTable();
 	
@@ -183,9 +173,7 @@ public:
 	void markAllColumnsUnhidden();
 	// Change annunciation
 	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
-	void bufferRowJustInserted(BufferRowIndex bufferRowIndex);
-	void bufferRowAboutToBeRemoved(BufferRowIndex bufferRowIndex);
-	void announceChangesUnderColumn(int columnIndex);
+	void announceChanges(const QSet<const Column*>& affectedColumns, const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved);
 	
 	// QAbstractTableModel implementation
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -209,23 +197,6 @@ signals:
 	 * Emitted after the table was resorted.
 	 */
 	void wasResorted();
-};
-
-
-
-/**
- * A row change listener which notifies a CompositeTable about row changes in a base table.
- */
-class RowChangeListenerCompositeTable : public RowChangeListener {
-	/** The CompositeTable to notify about row changes. */
-	CompositeTable& listener;
-	
-public:
-	RowChangeListenerCompositeTable(CompositeTable& listener);
-	virtual ~RowChangeListenerCompositeTable();
-	
-	virtual void bufferRowJustInserted(const BufferRowIndex& bufferRowIndex) const;
-	virtual void bufferRowAboutToBeRemoved(const BufferRowIndex& bufferRowIndex) const;
 };
 
 
