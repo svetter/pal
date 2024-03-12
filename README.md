@@ -61,6 +61,7 @@ Other features:
 
 - Interactive statistics (selection-specific)
 - Filtering the ascents table by date, peak height, difficulty and more
+- Editing items in bulk
 - Changing paths of referenced photos in bulk
 - Data export in multiple modes and formats
 - PAL supports dark mode with Qt's "Fusion" theme
