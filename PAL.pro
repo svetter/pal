@@ -51,15 +51,14 @@ test_conf {
 
 
 HEADERS += \
-	src/comp_tables/breadcrumbs.h \
-	src/comp_tables/comp_ascents_table.h \
-	src/comp_tables/comp_countries_table.h \
-	src/comp_tables/comp_hikers_table.h \
-	src/comp_tables/comp_peaks_table.h \
-	src/comp_tables/comp_ranges_table.h \
-	src/comp_tables/comp_regions_table.h \
+	src/comp_tables/comp_item_tables/comp_ascents_table.h \
+	src/comp_tables/comp_item_tables/comp_countries_table.h \
+	src/comp_tables/comp_item_tables/comp_hikers_table.h \
+	src/comp_tables/comp_item_tables/comp_peaks_table.h \
+	src/comp_tables/comp_item_tables/comp_ranges_table.h \
+	src/comp_tables/comp_item_tables/comp_regions_table.h \
+	src/comp_tables/comp_item_tables/comp_trips_table.h \
 	src/comp_tables/comp_table_listener.h \
-	src/comp_tables/comp_trips_table.h \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
 	src/comp_tables/filter.h \
@@ -76,6 +75,7 @@ HEADERS += \
 	src/data/region.h \
 	src/data/trip.h \
 	src/db/associative_table.h \
+	src/db/breadcrumbs.h \
 	src/db/column.h \
 	src/db/database.h \
 	src/db/db_error.h \
@@ -85,16 +85,16 @@ HEADERS += \
 	src/db/row_index.h \
 	src/db/table.h \
 	src/db/table_buffer.h \
-	src/db/tables/ascents_table.h \
-	src/db/tables/countries_table.h \
-	src/db/tables/hikers_table.h \
-	src/db/tables/participated_table.h \
-	src/db/tables/peaks_table.h \
-	src/db/tables/photos_table.h \
-	src/db/tables/ranges_table.h \
-	src/db/tables/regions_table.h \
-	src/db/tables/settings_table.h \
-	src/db/tables/trips_table.h \
+	src/db/tables_spec/ascents_table.h \
+	src/db/tables_spec/countries_table.h \
+	src/db/tables_spec/hikers_table.h \
+	src/db/tables_spec/participated_table.h \
+	src/db/tables_spec/peaks_table.h \
+	src/db/tables_spec/photos_table.h \
+	src/db/tables_spec/ranges_table.h \
+	src/db/tables_spec/regions_table.h \
+	src/db/tables_spec/settings_table.h \
+	src/db/tables_spec/trips_table.h \
 	src/dialogs/add_hiker_dialog.h \
 	src/dialogs/ascent_dialog.h \
 	src/dialogs/country_dialog.h \
@@ -131,7 +131,6 @@ HEADERS += \
 	src/viewer/scalable_image_label.h
 
 SOURCES += \
-	src/comp_tables/breadcrumbs.cpp \
 	src/comp_tables/comp_table_listener.cpp \
 	src/comp_tables/composite_column.cpp \
 	src/comp_tables/composite_table.cpp \
@@ -147,6 +146,7 @@ SOURCES += \
 	src/data/region.cpp \
 	src/data/trip.cpp \
 	src/db/associative_table.cpp \
+	src/db/breadcrumbs.cpp \
 	src/db/column.cpp \
 	src/db/database.cpp \
 	src/db/db_error.cpp \
@@ -155,16 +155,16 @@ SOURCES += \
 	src/db/row_index.cpp \
 	src/db/table.cpp \
 	src/db/table_buffer.cpp \
-	src/db/tables/ascents_table.cpp \
-	src/db/tables/countries_table.cpp \
-	src/db/tables/hikers_table.cpp \
-	src/db/tables/participated_table.cpp \
-	src/db/tables/peaks_table.cpp \
-	src/db/tables/photos_table.cpp \
-	src/db/tables/ranges_table.cpp \
-	src/db/tables/regions_table.cpp \
-	src/db/tables/settings_table.cpp \
-	src/db/tables/trips_table.cpp \
+	src/db/tables_spec/ascents_table.cpp \
+	src/db/tables_spec/countries_table.cpp \
+	src/db/tables_spec/hikers_table.cpp \
+	src/db/tables_spec/participated_table.cpp \
+	src/db/tables_spec/peaks_table.cpp \
+	src/db/tables_spec/photos_table.cpp \
+	src/db/tables_spec/ranges_table.cpp \
+	src/db/tables_spec/regions_table.cpp \
+	src/db/tables_spec/settings_table.cpp \
+	src/db/tables_spec/trips_table.cpp \
 	src/dialogs/add_hiker_dialog.cpp \
 	src/dialogs/country_dialog.cpp \
 	src/dialogs/hiker_dialog.cpp \

@@ -24,7 +24,7 @@
 #include "fold_composite_column.h"
 
 #include "src/comp_tables/composite_table.h"
-#include "src/db/tables/hikers_table.h"
+#include "src/db/tables_spec/hikers_table.h"
 
 
 

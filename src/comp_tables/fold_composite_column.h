@@ -25,7 +25,7 @@
 #define FOLD_COMPOSITE_COLUMN_H
 
 #include "composite_column.h"
-#include "src/comp_tables/breadcrumbs.h"
+#include "src/db/breadcrumbs.h"
 
 
 

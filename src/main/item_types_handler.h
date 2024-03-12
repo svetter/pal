@@ -25,13 +25,13 @@
 #ifndef ITEM_TYPES_HANDLER_H
 #define ITEM_TYPES_HANDLER_H
 
-#include "src/comp_tables/comp_ascents_table.h"
-#include "src/comp_tables/comp_countries_table.h"
-#include "src/comp_tables/comp_hikers_table.h"
-#include "src/comp_tables/comp_peaks_table.h"
-#include "src/comp_tables/comp_ranges_table.h"
-#include "src/comp_tables/comp_regions_table.h"
-#include "src/comp_tables/comp_trips_table.h"
+#include "src/comp_tables/comp_item_tables/comp_ascents_table.h"
+#include "src/comp_tables/comp_item_tables/comp_countries_table.h"
+#include "src/comp_tables/comp_item_tables/comp_hikers_table.h"
+#include "src/comp_tables/comp_item_tables/comp_peaks_table.h"
+#include "src/comp_tables/comp_item_tables/comp_ranges_table.h"
+#include "src/comp_tables/comp_item_tables/comp_regions_table.h"
+#include "src/comp_tables/comp_item_tables/comp_trips_table.h"
 #include "src/comp_tables/composite_table.h"
 #include "src/dialogs/ascent_dialog.h"
 #include "src/dialogs/country_dialog.h"

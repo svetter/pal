@@ -24,7 +24,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include "src/comp_tables/breadcrumbs.h"
+#include "src/db/breadcrumbs.h"
 #include "src/data/ascent.h"
 #include "src/data/peak.h"
 #include "src/data/trip.h"
@@ -33,15 +33,15 @@
 #include "src/data/range.h"
 #include "src/data/country.h"
 #include "src/db/table_listener.h"
-#include "src/db/tables/ascents_table.h"
-#include "src/db/tables/countries_table.h"
-#include "src/db/tables/hikers_table.h"
-#include "src/db/tables/participated_table.h"
-#include "src/db/tables/peaks_table.h"
-#include "src/db/tables/photos_table.h"
-#include "src/db/tables/ranges_table.h"
-#include "src/db/tables/regions_table.h"
-#include "src/db/tables/trips_table.h"
+#include "src/db/tables_spec/ascents_table.h"
+#include "src/db/tables_spec/countries_table.h"
+#include "src/db/tables_spec/hikers_table.h"
+#include "src/db/tables_spec/participated_table.h"
+#include "src/db/tables_spec/peaks_table.h"
+#include "src/db/tables_spec/photos_table.h"
+#include "src/db/tables_spec/ranges_table.h"
+#include "src/db/tables_spec/regions_table.h"
+#include "src/db/tables_spec/trips_table.h"
 #include "src/settings/project_settings.h"
 
 #include <QSqlQuery>
