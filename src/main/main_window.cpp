@@ -1178,7 +1178,9 @@ void MainWindow::handle_newDatabase()
 	
 	addToRecentFilesList(filepath);
 	
-	getActiveMapper().openingTab();
+	ItemTypeMapper& activeMapper = getActiveMapper();
+	activeMapper.openingTab();
+	activeMapper.statsEngine->setCurrentlyVisible(true);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
 		ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db, true);
