@@ -747,7 +747,8 @@ void CompositeTable::setUpdateImmediately(bool updateImmediately, QProgressDialo
  */
 void CompositeTable::announceChanges(const QSet<const Column*>& affectedColumns, const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved)
 {
-	assert(bufferInitialized);
+	if (!bufferInitialized) return;
+	
 	const bool rowChanges = !rowsAddedOrRemoved.isEmpty();
 	assert(!rowChanges || !affectedColumns.isEmpty());
 	

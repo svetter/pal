@@ -123,13 +123,11 @@ void ProjectSettingsWindow::saveSettings()
 		
 		db.beginChangingData();
 		db.hikersTable.addRow(*this, *newDefaultHiker);
-		db.projectSettings.defaultHiker.set(*this, newDefaultHiker->hikerID.asQVariant());
 		db.finishChangingData();
+		db.projectSettings.defaultHiker.set(*this, newDefaultHiker->hikerID.asQVariant());
 	}
 	else {
-		db.beginChangingData();
 		db.projectSettings.defaultHiker.set(*this, parseItemCombo(*defaultHikerCombo, selectableHikerIDs).asQVariant());
-		db.finishChangingData();
 	}
 }
 
