@@ -63,6 +63,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));
+	setSizeGripEnabled(true);
 	additionalUISetup();
 	
 	connectUI();
