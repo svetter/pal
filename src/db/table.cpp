@@ -489,6 +489,7 @@ void Table::updateRowInNormalTable(QWidget& parent, const ValidItemID primaryKey
 		const QVariant currentValue = buffer.getCell(bufferIndex, column->getIndex());
 		if (currentValue == newValue) columnDataPairs.remove(i);
 	}
+	if (columnDataPairs.isEmpty()) return;
 	
 	updateRowsInNormalTable(parent, { bufferIndex }, columnDataPairs);
 }

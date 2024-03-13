@@ -832,7 +832,9 @@ void AscentViewer::savePhotosList()
 	for (int i = 0; i < photos.size(); i++) {
 		photos[0].sortIndex = i;
 	}
+	db.beginChangingData();
 	db.photosTable.updateRows(*this, FORCE_VALID(currentAscentID), photos);
+	db.finishChangingData();
 }
 
 
@@ -849,7 +851,9 @@ void AscentViewer::saveDescription()
 	QString newDescription = descriptionTextBrowser->toPlainText();
 	bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
 	if (descriptionChanged) {
+		db.beginChangingData();
 		db.ascentsTable.updateCell(*this, FORCE_VALID(currentAscentID), db.ascentsTable.descriptionColumn, newDescription);
+		db.finishChangingData();
 	}
 }
 
