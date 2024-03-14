@@ -1721,7 +1721,7 @@ QPair<QSet<BufferRowIndex>, BufferRowIndex> MainWindow::getSelectedRows(const It
 	for (const QModelIndex& modelIndex : selectedModelIndices) {
 		const ViewRowIndex viewRowIndex = ViewRowIndex(modelIndex.row());
 		const BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
-		assert(bufferRowIndex.isValid(mapper.compTable->rowCount()));
+		assert(bufferRowIndex.isValid(mapper.baseTable.getNumberOfRows()));
 		selected.insert(bufferRowIndex);
 	}
 	
