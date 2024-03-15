@@ -7,12 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>60</height>
+    <height>86</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <layout class="QHBoxLayout" name="ascentsFilterBarLayout">
    <property name="spacing">
-    <number>15</number>
+    <number>10</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -27,12 +33,18 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="filterControlButtonsLayout">
+    <layout class="QVBoxLayout" name="filterControlButtonsLayout" stretch="1,1">
      <property name="spacing">
-      <number>5</number>
+      <number>10</number>
      </property>
      <item>
       <widget class="QPushButton" name="applyFiltersButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Apply filters</string>
        </property>
@@ -43,6 +55,12 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Clear filters</string>
        </property>
@@ -51,491 +69,530 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="dateFilterBox">
-     <property name="title">
-      <string>Date</string>
+    <widget class="QScrollArea" name="filtersScrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
-     <property name="checkable">
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+     <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="dateFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
+     <widget class="QWidget" name="filtersScrollAreaWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1406</width>
+        <height>70</height>
+       </rect>
       </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QDateEdit" name="dateFilterMinWidget">
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="calendarPopup">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="dateFilterSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>5</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="dateFilterMaxCheckbox">
-        <property name="toolTip">
-         <string>Specify latest ascent date</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDateEdit" name="dateFilterMaxWidget">
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="calendarPopup">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <layout class="QHBoxLayout" name="filtersScrollAreaLayout" stretch="0,0,0,0,0,0,0">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetFixedSize</enum>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="dateFilterBox">
+         <property name="title">
+          <string>Date</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="dateFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QDateEdit" name="dateFilterMinWidget">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="dateFilterSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="dateFilterMaxCheckbox">
+            <property name="toolTip">
+             <string>Specify latest ascent date</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="dateFilterMaxWidget">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="peakHeightFilterBox">
+         <property name="title">
+          <string>Peak height</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="peakHeightFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="peakHeightFilterMinCombo">
+            <property name="placeholderText">
+             <string>Minimum</string>
+            </property>
+            <item>
+             <property name="text">
+              <string notr="true">&lt;1000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">1000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">2000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">3000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">4000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">5000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">6000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">7000</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">8000</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="peakHeightFilterSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>5</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="peakHeightFilterMaxCheckbox">
+            <property name="toolTip">
+             <string>Specify maximum height</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="peakHeightFilterMaxCombo">
+            <property name="placeholderText">
+             <string>Maximum</string>
+            </property>
+            <item>
+             <property name="text">
+              <string notr="true">999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">1999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">2999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">3999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">4999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">5999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">6999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">7999</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">8999</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="volcanoFilterBox">
+         <property name="title">
+          <string>Volcano</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="volcanoFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="volcanoFilterYesRadio">
+            <property name="text">
+             <string>Yes</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="volcanoFilterNoRadio">
+            <property name="text">
+             <string>No</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="rangeFilterBox">
+         <property name="title">
+          <string>Mountain range</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="rangeFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="rangeFilterCombo">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="hikeKindFilterBox">
+         <property name="title">
+          <string>Kind of hike</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="hikeKindFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="hikeKindFilterCombo">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="difficultyFilterBox">
+         <property name="title">
+          <string>Difficulty</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="difficultyFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="difficultyFilterSystemCombo">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="difficultyFilterGradeCombo">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="hikerFilterBox">
+         <property name="title">
+          <string>Hiker</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" name="hikerFilterBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="hikerFilterCombo">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="peakHeightFilterBox">
-     <property name="title">
-      <string>Peak height</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="peakHeightFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="peakHeightFilterMinCombo">
-        <property name="placeholderText">
-         <string>Minimum</string>
-        </property>
-        <item>
-         <property name="text">
-          <string notr="true">&lt;1000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">1000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">2000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">3000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">4000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">5000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">6000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">7000</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">8000</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <spacer name="peakHeightFilterSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>5</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="peakHeightFilterMaxCheckbox">
-        <property name="toolTip">
-         <string>Specify maximum height</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="peakHeightFilterMaxCombo">
-        <property name="placeholderText">
-         <string>Maximum</string>
-        </property>
-        <item>
-         <property name="text">
-          <string notr="true">999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">1999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">2999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">3999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">4999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">5999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">6999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">7999</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string notr="true">8999</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="volcanoFilterBox">
-     <property name="title">
-      <string>Volcano</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="volcanoFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QRadioButton" name="volcanoFilterYesRadio">
-        <property name="text">
-         <string>Yes</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="volcanoFilterNoRadio">
-        <property name="text">
-         <string>No</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="rangeFilterBox">
-     <property name="title">
-      <string>Mountain range</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="rangeFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="rangeFilterCombo">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="hikeKindFilterBox">
-     <property name="title">
-      <string>Kind of hike</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="hikeKindFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="hikeKindFilterCombo">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="difficultyFilterBox">
-     <property name="title">
-      <string>Difficulty</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="difficultyFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="difficultyFilterSystemCombo">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="difficultyFilterGradeCombo">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="hikerFilterBox">
-     <property name="title">
-      <string>Hiker</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <layout class="QHBoxLayout" name="hikerFilterBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QComboBox" name="hikerFilterCombo">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <spacer name="filtersSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

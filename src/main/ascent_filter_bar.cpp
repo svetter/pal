@@ -49,6 +49,7 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 	
 	applyFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	clearFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+	filtersScrollAreaWidget->setBackgroundRole(QPalette::Base);
 	
 	
 	connectUI();
