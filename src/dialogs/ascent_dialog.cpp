@@ -379,6 +379,7 @@ void AscentDialog::handle_difficultySystemChanged()
 	if (systemSelected) {
 		difficultyGradeCombo->setPlaceholderText(tr("Select grade"));
 		QStringList translatedList = EnumNames::translateList(EnumNames::difficultyNames.at(system).second);
+		translatedList.removeAt(1);
 		difficultyGradeCombo->insertItems(1, translatedList);
 	} else {
 		difficultyGradeCombo->setPlaceholderText(tr("None"));

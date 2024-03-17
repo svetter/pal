@@ -110,6 +110,16 @@ HEADERS += \
 	src/dialogs/parse_helper.h \
 	src/main/about_window.h \
 	src/main/ascent_filter_bar.h \
+	src/main/filters/bool_filter_box.h \
+	src/main/filters/date_filter_box.h \
+	src/main/filters/dual_enum_filter_box.h \
+	src/main/filters/enum_filter_box.h \
+	src/main/filters/filter_box.h \
+	src/main/filters/id_filter_box.h \
+	src/main/filters/int_class_filter_box.h \
+	src/main/filters/int_filter_box.h \
+	src/main/filters/string_filter_box.h \
+	src/main/filters/time_filter_box.h \
 	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
@@ -180,6 +190,15 @@ SOURCES += \
 	src/dialogs/trip_dialog.cpp \
 	src/main/about_window.cpp \
 	src/main/ascent_filter_bar.cpp \
+	src/main/filters/bool_filter_box.cpp \
+	src/main/filters/date_filter_box.cpp \
+	src/main/filters/dual_enum_filter_box.cpp \
+	src/main/filters/enum_filter_box.cpp \
+	src/main/filters/id_filter_box.cpp \
+	src/main/filters/int_class_filter_box.cpp \
+	src/main/filters/int_filter_box.cpp \
+	src/main/filters/string_filter_box.cpp \
+	src/main/filters/time_filter_box.cpp \
 	src/main/helpers.cpp \
 	src/main/main_window.cpp \
 	src/settings/project_settings.cpp \
@@ -202,6 +221,7 @@ FORMS += \
 	src/ui/ascent_filter_bar.ui \
 	src/ui/ascent_viewer.ui \
 	src/ui/export_dialog.ui \
+	src/ui/filter_box.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \

@@ -26,8 +26,15 @@
 #include "main_window.h"
 #include "src/dialogs/parse_helper.h"
 #include "src/data/enum_names.h"
-
-#include <QCalendarWidget>
+#include "src/main/filters/bool_filter_box.h"
+#include "src/main/filters/date_filter_box.h"
+#include "src/main/filters/dual_enum_filter_box.h"
+#include "src/main/filters/enum_filter_box.h"
+#include "src/main/filters/id_filter_box.h"
+#include "src/main/filters/int_class_filter_box.h"
+#include "src/main/filters/int_filter_box.h"
+#include "src/main/filters/string_filter_box.h"
+#include "src/main/filters/time_filter_box.h"
 
 
 
@@ -50,6 +57,16 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 	applyFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
 	clearFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
 	filtersScrollArea->setBackgroundRole(QPalette::Base);
+	
+	filtersScrollAreaLayout->insertWidget(0, new DateFilterBox(filtersScrollAreaWidget, "Date"));
+	filtersScrollAreaLayout->insertWidget(1, new TimeFilterBox(filtersScrollAreaWidget, "Time"));
+	filtersScrollAreaLayout->insertWidget(2, new IntFilterBox(filtersScrollAreaWidget, "Integer"));
+	filtersScrollAreaLayout->insertWidget(3, new IntClassFilterBox(filtersScrollAreaWidget, "Integer classes", 1000, 0, 8488));
+	filtersScrollAreaLayout->insertWidget(4, new BoolFilterBox(filtersScrollAreaWidget, "Bool"));
+	filtersScrollAreaLayout->insertWidget(5, new StringFilterBox(filtersScrollAreaWidget, "String"));
+	filtersScrollAreaLayout->insertWidget(6, new IDFilterBox(filtersScrollAreaWidget, "Range", [this](QComboBox& combo, QList<ValidItemID>& selectableItemIDs) { return populateRangeCombo(*db, combo, selectableItemIDs); }));
+	filtersScrollAreaLayout->insertWidget(7, new EnumFilterBox(filtersScrollAreaWidget, "Enum", EnumNames::translateList(EnumNames::hikeKindNames)));
+	filtersScrollAreaLayout->insertWidget(8, new DualEnumFilterBox(filtersScrollAreaWidget, "DualEnum", EnumNames::difficultyNames));
 	
 	
 	connectUI();
@@ -530,6 +547,7 @@ void AscentFilterBar::handle_difficultyFilterSystemChanged()
 	if (systemSelected) {
 		difficultyFilterGradeCombo->setPlaceholderText(tr("Select grade"));
 		QStringList translatedList = EnumNames::translateList(EnumNames::difficultyNames.at(system).second);
+		translatedList.removeAt(0);
 		difficultyFilterGradeCombo->insertItems(1, translatedList);
 	} else {
 		difficultyFilterGradeCombo->setPlaceholderText(tr("None"));

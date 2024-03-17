@@ -75,20 +75,27 @@ const QStringList EnumNames::hikeKindNames = {
  * Two-dimensional list of English names for hike difficulty systems and their difficulty grades.
  * 
  * The first dimension is the difficulty system, the second dimension is the difficulty grade.
- * The first entry in the system dimension is "None" with an empty list of difficulty levels.
- * The first entry in the grade dimension is also "None" for every difficulty system except at
- * index 0.
+ * The first entry in the system dimension is "None" with a list of difficulty levels which is empty
+ * other than the "None" placeholder entry.
+ * The first and second entries in the grade dimension are always "None" and "All" for every
+ * difficulty system except the first one (which is itself "None"). For selecting a difficulty
+ * grade, the first entry ("None") is used and the second one dropped, while for use in filters,
+ * the second entry ("All") is used and the first one dropped.
  * 
  * The systems and their grades are taken from this source:
  * https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
  */
 const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
-	qMakePair<QString, QStringList>(QT_TR_NOOP("None"), {}),
+	qMakePair<QString, QStringList>(QT_TR_NOOP("No difficulty"),
+		{
+			QT_TR_NOOP("No grade")
+		}),
 	qMakePair<QString, QStringList>(
 		QT_TR_NOOP("SAC hiking scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Wandern/2020_Berg_Alpinwanderskala_EN.pdf
 		{
-			QT_TR_NOOP("None"),
+			QT_TR_NOOP("No grade"),
+			QT_TR_NOOP("All grades"),
 			QT_TR_NOOP("T1 (Hiking)"),
 			QT_TR_NOOP("T2 (Mountain hiking)"),
 			QT_TR_NOOP("T3 (Difficult mountain hiking)"),
@@ -100,7 +107,8 @@ const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
 	qMakePair<QString, QStringList>(
 		QT_TR_NOOP("SAC mountaneering scale"),
 		{
-			QT_TR_NOOP("None"),
+			QT_TR_NOOP("No grade"),
+			QT_TR_NOOP("All grades"),
 			QT_TR_NOOP("F (Easy)"),
 			QT_TR_NOOP("F+ (Easy)"),
 			QT_TR_NOOP("PD- (Moderate)"),
@@ -126,7 +134,8 @@ const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
 		QT_TR_NOOP("SAC ski tours scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Skitour/2020_Skitourenskala_EN.pdf
 		{
-			QT_TR_NOOP("None"),
+			QT_TR_NOOP("No grade"),
+			QT_TR_NOOP("All grades"),
 			QT_TR_NOOP("L (Easy)"),
 			QT_TR_NOOP("WS (Moderate)"),
 			QT_TR_NOOP("ZS (Somewhat difficult)"),
@@ -140,7 +149,8 @@ const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
 		QT_TR_NOOP("SAC snowshoe tours scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Schneeschuhtour/2020_Schneeschuhtourenskala_EN.pdf
 		{
-			QT_TR_NOOP("None"),
+			QT_TR_NOOP("No grade"),
+			QT_TR_NOOP("All grades"),
 			QT_TR_NOOP("WT1 (Easy snowshoe hike)"),
 			QT_TR_NOOP("WT2 (Moderate snowshoe hike)"),
 			QT_TR_NOOP("WT3 (Difficult snowshoe hike)"),
@@ -153,7 +163,8 @@ const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
 		QT_TR_NOOP("UIAA climbing scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Klettern/SAC-Kletterskala-UIAA-v0.1.pdf
 		{
-			QT_TR_NOOP("None"),
+			QT_TR_NOOP("No grade"),
+			QT_TR_NOOP("All grades"),
 			QT_TR_NOOP("I (Easy)"),
 			QT_TR_NOOP("I+ (Easy)"),
 			QT_TR_NOOP("II- (Moderate)"),

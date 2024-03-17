@@ -111,10 +111,11 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 		QList<QVariant> intList = rawCellContent.toList();
 		assert(intList.size() == 2);
 		assert(intList.at(0).canConvert<int>() && intList.at(1).canConvert<int>());
-		int discerningEnumIndex	= intList.at(0).toInt();
-		int displayedEnumIndex	= intList.at(1).toInt();
+		const int discerningEnumIndex	= intList.at(0).toInt();
+		const int displayedEnumIndex	= intList.at(1).toInt();
 		assert(discerningEnumIndex >= 0 && discerningEnumIndex <= enumNameLists->size());
-		QList<QString> specifiedEnumNames = EnumNames::translateList(enumNameLists->at(discerningEnumIndex).second);
+		QStringList specifiedEnumNames = EnumNames::translateList(enumNameLists->at(discerningEnumIndex).second);
+		specifiedEnumNames.removeAt(1);
 		assert(displayedEnumIndex >= 0 && displayedEnumIndex <= specifiedEnumNames.size());
 		result = specifiedEnumNames.at(displayedEnumIndex);
 	}

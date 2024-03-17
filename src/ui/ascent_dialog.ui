@@ -559,6 +559,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
+         </property>
          <property name="placeholderText">
           <string>Select system</string>
          </property>
@@ -580,6 +583,9 @@
            <width>150</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QComboBox::AdjustToContents</enum>
          </property>
          <property name="placeholderText">
           <string>None</string>
