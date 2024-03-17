@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
+    <width>1200</width>
     <height>86</height>
    </rect>
   </property>
@@ -93,11 +93,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1406</width>
+        <width>1473</width>
         <height>70</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="filtersScrollAreaLayout" stretch="0,0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="filtersScrollAreaLayout" stretch="0,0,0,0,0,0,0,0,0">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -588,6 +588,26 @@
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="addFilterLine">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="addFilterButton">
+         <property name="text">
+          <string>Add filter</string>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::MenuButtonPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
         </widget>
        </item>
       </layout>

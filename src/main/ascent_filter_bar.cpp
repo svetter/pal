@@ -68,6 +68,12 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 	filtersScrollAreaLayout->insertWidget(7, new EnumFilterBox(filtersScrollAreaWidget, "Enum", EnumNames::translateList(EnumNames::hikeKindNames)));
 	filtersScrollAreaLayout->insertWidget(8, new DualEnumFilterBox(filtersScrollAreaWidget, "DualEnum", EnumNames::difficultyNames));
 	
+	QMenu* addFilterMenu = new QMenu(this);
+	addFilterMenu->addAction("action 1");
+	addFilterMenu->addAction("action 2");
+	addFilterButton->setMenu(addFilterMenu);
+	connect(addFilterButton, &QToolButton::clicked, addFilterButton, &QToolButton::showMenu);
+	
 	
 	connectUI();
 }
