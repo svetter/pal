@@ -76,6 +76,7 @@ public:
 	const NormalTable& getTargetTable() const;
 	bool isEmpty() const;
 	int length() const;
+	bool isForwardOnly() const;
 	bool goesVia(const Table& table) const;
 	
 	bool operator==(const Breadcrumbs& other) const;

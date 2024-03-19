@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>86</height>
+    <height>93</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,7 +16,7 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QHBoxLayout" name="ascentsFilterBarLayout">
+  <layout class="QHBoxLayout" name="ascentsFilterBarLayout" stretch="0,1">
    <property name="spacing">
     <number>10</number>
    </property>
@@ -33,10 +33,36 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="filterControlButtonsLayout" stretch="1,1">
+    <layout class="QVBoxLayout" name="filterControlButtonsLayout" stretch="0,0,1,1">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
+     <item>
+      <widget class="QToolButton" name="addFilterButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Add filter...</string>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::MenuButtonPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="filterControlButtonsLine">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="applyFiltersButton">
        <property name="sizePolicy">
@@ -93,11 +119,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1473</width>
-        <height>70</height>
+        <width>1365</width>
+        <height>77</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="filtersScrollAreaLayout" stretch="0,0,0,0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="filtersScrollAreaLayout" stretch="0,0,0,0,0,0,0">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -588,26 +614,6 @@
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="addFilterLine">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="addFilterButton">
-         <property name="text">
-          <string>Add filter</string>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::MenuButtonPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
-         </property>
         </widget>
        </item>
       </layout>

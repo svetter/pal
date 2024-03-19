@@ -30,6 +30,7 @@
 #include "src/main/filters/date_filter_box.h"
 #include "src/main/filters/dual_enum_filter_box.h"
 #include "src/main/filters/enum_filter_box.h"
+#include "src/main/filters/filter_wizard.h"
 #include "src/main/filters/id_filter_box.h"
 #include "src/main/filters/int_class_filter_box.h"
 #include "src/main/filters/int_filter_box.h"
@@ -67,12 +68,6 @@ AscentFilterBar::AscentFilterBar(QWidget* parent) :
 	filtersScrollAreaLayout->insertWidget(6, new IDFilterBox(filtersScrollAreaWidget, "Range", [this](QComboBox& combo, QList<ValidItemID>& selectableItemIDs) { return populateRangeCombo(*db, combo, selectableItemIDs); }));
 	filtersScrollAreaLayout->insertWidget(7, new EnumFilterBox(filtersScrollAreaWidget, "Enum", EnumNames::translateList(EnumNames::hikeKindNames)));
 	filtersScrollAreaLayout->insertWidget(8, new DualEnumFilterBox(filtersScrollAreaWidget, "DualEnum", EnumNames::difficultyNames));
-	
-	QMenu* addFilterMenu = new QMenu(this);
-	addFilterMenu->addAction("action 1");
-	addFilterMenu->addAction("action 2");
-	addFilterButton->setMenu(addFilterMenu);
-	connect(addFilterButton, &QToolButton::clicked, addFilterButton, &QToolButton::showMenu);
 	
 	
 	connectUI();
@@ -165,6 +160,21 @@ void AscentFilterBar::additionalUISetup()
 	hikeKindFilterBox	->setPalette(disabledPalette);
 	difficultyFilterBox	->setPalette(disabledPalette);
 	hikerFilterBox		->setPalette(disabledPalette);
+	
+	
+	
+	QMenu* addFilterMenu = new QMenu(this);
+	addFilterMenu->setTitle("New filter");
+	for (const Column* const column : db->ascentsTable.getColumnList()) {
+		addFilterMenu->addAction(column->uiName);
+	}
+	addFilterButton->setMenu(addFilterMenu);
+	
+	FilterWizard* wizard = new FilterWizard(this, *db);
+	connect(addFilterButton, &QToolButton::clicked, wizard, [wizard]() {
+		wizard->restart();
+		wizard->show();
+	});
 }
 
 

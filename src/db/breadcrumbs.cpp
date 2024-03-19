@@ -231,6 +231,19 @@ int Breadcrumbs::length() const
 }
 
 /**
+ * Indicates whether the breadcrumb trail contains only forward-referencing crumbs.
+ * 
+ * @return	True if every crumb in the trail is forward-referencing or the trail is empty, false otherwise.
+ */
+bool Breadcrumbs::isForwardOnly() const
+{
+	for (const Breadcrumb& crumb : list) {
+		if (!crumb.isForward()) return false;
+	}
+	return true;
+}
+
+/**
  * Indicates whether the breadcrumb trail includes a given table.
  * 
  * @param table	The table to check for.

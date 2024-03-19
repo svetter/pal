@@ -115,6 +115,7 @@ HEADERS += \
 	src/main/filters/dual_enum_filter_box.h \
 	src/main/filters/enum_filter_box.h \
 	src/main/filters/filter_box.h \
+	src/main/filters/filter_wizard.h \
 	src/main/filters/id_filter_box.h \
 	src/main/filters/int_class_filter_box.h \
 	src/main/filters/int_filter_box.h \
@@ -194,6 +195,7 @@ SOURCES += \
 	src/main/filters/date_filter_box.cpp \
 	src/main/filters/dual_enum_filter_box.cpp \
 	src/main/filters/enum_filter_box.cpp \
+	src/main/filters/filter_wizard.cpp \
 	src/main/filters/id_filter_box.cpp \
 	src/main/filters/int_class_filter_box.cpp \
 	src/main/filters/int_filter_box.cpp \
