@@ -62,7 +62,6 @@ HEADERS += \
 	src/comp_tables/comp_table_listener.h \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
-	src/comp_tables/filter.h \
 	src/comp_tables/fold_composite_column.h \
 	src/data/ascent.h \
 	src/data/country.h \
@@ -108,19 +107,28 @@ HEADERS += \
 	src/dialogs/region_dialog.h \
 	src/dialogs/trip_dialog.h \
 	src/dialogs/parse_helper.h \
+	src/filters/bool_filter.h \
+	src/filters/date_filter.h \
+	src/filters/dual_enum_filter.h \
+	src/filters/enum_filter.h \
+	src/filters/filter.h \
+	src/filters/filter_widgets/bool_filter_box.h \
+	src/filters/filter_widgets/date_filter_box.h \
+	src/filters/filter_widgets/dual_enum_filter_box.h \
+	src/filters/filter_widgets/enum_filter_box.h \
+	src/filters/filter_widgets/filter_box.h \
+	src/filters/filter_widgets/id_filter_box.h \
+	src/filters/filter_widgets/int_class_filter_box.h \
+	src/filters/filter_widgets/int_filter_box.h \
+	src/filters/filter_widgets/string_filter_box.h \
+	src/filters/filter_widgets/time_filter_box.h \
+	src/filters/id_filter.h \
+	src/filters/int_filter.h \
+	src/filters/string_filter.h \
+	src/filters/time_filter.h \
 	src/main/about_window.h \
-	src/main/ascent_filter_bar.h \
-	src/main/filters/bool_filter_box.h \
-	src/main/filters/date_filter_box.h \
-	src/main/filters/dual_enum_filter_box.h \
-	src/main/filters/enum_filter_box.h \
-	src/main/filters/filter_box.h \
-	src/main/filters/filter_wizard.h \
-	src/main/filters/id_filter_box.h \
-	src/main/filters/int_class_filter_box.h \
-	src/main/filters/int_filter_box.h \
-	src/main/filters/string_filter_box.h \
-	src/main/filters/time_filter_box.h \
+	src/main/filter_bar.h \
+	src/main/filter_wizard.h \
 	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
@@ -189,18 +197,27 @@ SOURCES += \
 	src/dialogs/peak_dialog.cpp \
 	src/dialogs/region_dialog.cpp \
 	src/dialogs/trip_dialog.cpp \
+	src/filters/bool_filter.cpp \
+	src/filters/date_filter.cpp \
+	src/filters/dual_enum_filter.cpp \
+	src/filters/enum_filter.cpp \
+	src/filters/filter.cpp \
+	src/filters/filter_widgets/bool_filter_box.cpp \
+	src/filters/filter_widgets/date_filter_box.cpp \
+	src/filters/filter_widgets/dual_enum_filter_box.cpp \
+	src/filters/filter_widgets/enum_filter_box.cpp \
+	src/filters/filter_widgets/id_filter_box.cpp \
+	src/filters/filter_widgets/int_class_filter_box.cpp \
+	src/filters/filter_widgets/int_filter_box.cpp \
+	src/filters/filter_widgets/string_filter_box.cpp \
+	src/filters/filter_widgets/time_filter_box.cpp \
+	src/filters/id_filter.cpp \
+	src/filters/int_filter.cpp \
+	src/filters/string_filter.cpp \
+	src/filters/time_filter.cpp \
 	src/main/about_window.cpp \
-	src/main/ascent_filter_bar.cpp \
-	src/main/filters/bool_filter_box.cpp \
-	src/main/filters/date_filter_box.cpp \
-	src/main/filters/dual_enum_filter_box.cpp \
-	src/main/filters/enum_filter_box.cpp \
-	src/main/filters/filter_wizard.cpp \
-	src/main/filters/id_filter_box.cpp \
-	src/main/filters/int_class_filter_box.cpp \
-	src/main/filters/int_filter_box.cpp \
-	src/main/filters/string_filter_box.cpp \
-	src/main/filters/time_filter_box.cpp \
+	src/main/filter_bar.cpp \
+	src/main/filter_wizard.cpp \
 	src/main/helpers.cpp \
 	src/main/main_window.cpp \
 	src/settings/project_settings.cpp \
@@ -220,10 +237,9 @@ SOURCES += \
 
 FORMS += \
 	src/ui/about_window.ui \
-	src/ui/ascent_filter_bar.ui \
 	src/ui/ascent_viewer.ui \
 	src/ui/export_dialog.ui \
-	src/ui/filter_box.ui \
+	src/ui/filter_bar.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \

@@ -375,7 +375,7 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="AscentFilterBar" name="ascentFilterBar" native="true"/>
+         <widget class="FilterBar" name="ascentFilterBar" native="true"/>
         </item>
         <item>
          <layout class="QHBoxLayout" name="ascentsTableAndStatsLayout" stretch="0">
@@ -1576,9 +1576,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AscentFilterBar</class>
+   <class>FilterBar</class>
    <extends>QWidget</extends>
-   <header>src/main/ascent_filter_bar.h</header>
+   <header>src/main/filter_bar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

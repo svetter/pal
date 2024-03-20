@@ -559,7 +559,7 @@ void MainWindow::initCompositeBuffers()
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
-	QSet<Filter> ascentFilters = QSet<Filter>();
+	QSet<Filter*> ascentFilters = QSet<Filter*>();
 	if (Settings::rememberFilters.get()) {
 		ascentFilters = ascentFilterBar->parseFiltersFromProjectSettings();
 		ascentFilterBar->insertFiltersIntoUI(ascentFilters);
@@ -920,8 +920,7 @@ void MainWindow::scrollToTopAfterSorting()
  */
 void MainWindow::updateFilters(const ItemTypeMapper* mapper)
 {
-	if (!mapper || mapper->type == ItemTypeRange)	ascentFilterBar->updateRangeCombo();
-	if (!mapper || mapper->type == ItemTypeHiker)	ascentFilterBar->updateHikerCombo();
+	ascentFilterBar->updateIDCombos();
 }
 
 /**

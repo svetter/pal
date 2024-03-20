@@ -25,7 +25,7 @@
 #define COMPOSITE_COLUMN_H
 
 #include "src/db/breadcrumbs.h"
-#include "src/comp_tables/filter.h"
+#include "src/filters/filter.h"
 #include "src/db/column.h"
 #include "src/settings/project_settings.h"
 

@@ -394,6 +394,33 @@ void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn
 }
 
 
+/**
+ * Repopulates the given combo box for ascents.
+ * 
+ * Ascents are shown as their date followed by the description, if present.
+ * 
+ * @param db					The project database.
+ * @param ascentCombo			The combo box to populate.
+ * @param selectableAscentIDs	The list in which to store the IDs of the entries.
+ */
+void populateAscentCombo(Database& db, QComboBox& ascentCombo, QList<ValidItemID>& selectableAscentIDs)
+{
+	auto prefixValueToString = [](const QVariant& prefixValue) {
+		if (!prefixValue.canConvert<QDate>()) return QString();
+		return prefixValue.toDate().toString("dd.MM.yyyy");
+	};
+	
+	populateItemCombo(ascentCombo, db.ascentsTable.descriptionColumn, selectableAscentIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.ascentsTable.dateColumn, prefixValueToString);
+}
+
+/**
+ * Repopulates the given combo box for peaks, optionally filtered by region.
+ * 
+ * @param db				The project database.
+ * @param peakCombo			The combo box to populate.
+ * @param selectablePeakIDs	The list in which to store the IDs of the entries.
+ * @param regionFilterID	The ID of the region to filter by, or an invalid ID to show all peaks.
+ */
 void populatePeakCombo(Database& db, QComboBox& peakCombo, QList<ValidItemID>& selectablePeakIDs, ItemID regionFilterID)
 {
 	if (regionFilterID.isValid()) {
@@ -403,6 +430,15 @@ void populatePeakCombo(Database& db, QComboBox& peakCombo, QList<ValidItemID>& s
 	}
 }
 
+/**
+ * Repopulates the given combo box for trips.
+ * 
+ * Trips are shown as their start year followed by the name.
+ * 
+ * @param db				The project database.
+ * @param tripCombo			The combo box to populate.
+ * @param selectableTripIDs	The list in which to store the IDs of the entries.
+ */
 void populateTripCombo(Database& db, QComboBox& tripCombo, QList<ValidItemID>& selectableTripIDs)
 {
 	auto prefixValueToString = [](const QVariant& prefixValue) {
@@ -413,11 +449,30 @@ void populateTripCombo(Database& db, QComboBox& tripCombo, QList<ValidItemID>& s
 	populateItemCombo(tripCombo, db.tripsTable.nameColumn, selectableTripIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.tripsTable.startDateColumn, prefixValueToString);
 }
 
+/**
+ * Repopulates the given combo box for hikers.
+ * 
+ * @param db					The project database.
+ * @param hikerCombo			The combo box to populate.
+ * @param selectableHikerIDs	The list in which to store the IDs of the entries.
+ */
 void populateHikerCombo(Database& db, QComboBox& hikerCombo, QList<ValidItemID>& selectableHikerIDs)
 {
 	populateItemCombo(hikerCombo, db.hikersTable.nameColumn, selectableHikerIDs);
 }
 
+/**
+ * Repopulates the given combo box for regions, optionally as a filter combo for ascents.
+ * 
+ * In case of duplicate region names, the corresponding range name is given to distinguish them.
+ * 
+ * If asFilter is true, the first entry of the combo box will be "All regions (no filter)".
+ * 
+ * @param db					The project database.
+ * @param regionCombo			The combo box to populate.
+ * @param selectableRegionIDs	The list in which to store the IDs of the entries.
+ * @param asFilter				Use the combo box as a filter combo for ascents.
+ */
 void populateRegionCombo(Database& db, QComboBox& regionCombo, QList<ValidItemID>& selectableRegionIDs, bool asFilter)
 {
 	if (asFilter) {
@@ -427,11 +482,25 @@ void populateRegionCombo(Database& db, QComboBox& regionCombo, QList<ValidItemID
 	}
 }
 
+/**
+ * Repopulates the given combo box for ranges.
+ * 
+ * @param db					The project database.
+ * @param rangeCombo			The combo box to populate.
+ * @param selectableRangeIDs	The list in which to store the IDs of the entries.
+ */
 void populateRangeCombo(Database& db, QComboBox& rangeCombo, QList<ValidItemID>& selectableRangeIDs)
 {
 	populateItemCombo(rangeCombo, db.rangesTable.nameColumn, selectableRangeIDs);
 }
 
+/**
+ * Repopulates the given combo box for countries.
+ * 
+ * @param db					The project database.
+ * @param countryCombo			The combo box to populate.
+ * @param selectableCountryIDs	The list in which to store the IDs of the entries.
+ */
 void populateCountryCombo(Database& db, QComboBox& countryCombo, QList<ValidItemID>& selectableCountryIDs)
 {
 	populateItemCombo(countryCombo, db.countriesTable.nameColumn, selectableCountryIDs);

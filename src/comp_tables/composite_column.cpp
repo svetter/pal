@@ -256,123 +256,45 @@ bool CompositeColumn::compare(const QVariant& value1, const QVariant& value2) co
 void CompositeColumn::applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const
 {
 	if (orderBuffer.isEmpty()) return;
-	assert(&filter.column == this);
-	
-	const QVariant value		= filter.value;
-	const bool hasSecond		= filter.hasSecond;
-	const QVariant secondValue	= filter.secondValue;
-	
-	const bool isInt	= value.canConvert<int>()	&& (!hasSecond || secondValue.canConvert<int>());
-	const bool isBool	= value.canConvert<bool>()	&& (!hasSecond || secondValue.canConvert<bool>());
-	const bool isDate	= value.canConvert<QDate>()	&& (!hasSecond || secondValue.canConvert<QDate>());
-	const bool isTime	= value.canConvert<QTime>()	&& (!hasSecond || secondValue.canConvert<QTime>());
 	
 	std::function<bool (QVariant)> valuePasses = nullptr;
+	// TODO
 	
 	switch (contentType) {
 	case Integer: {
-		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter values are not"; return; }
-		int value1 = value.toInt();
-		if (hasSecond) {
-			int value2 = secondValue.toInt();
-			valuePasses = [value1, value2] (QVariant valueToFilter) {
-				return value1 <= valueToFilter.toInt() && valueToFilter.toInt() <= value2;
-			};
-		} else {
-			valuePasses = [value1] (QVariant valueToFilter) {
-				return valueToFilter.toInt() == value1;
-			};
-		}
+		
 		break;
 	}
 	case ID: {
-		ItemID id = isInt ? value.toInt() : ItemID();
-		valuePasses = [id] (QVariant valueToFilter) {
-			if (id.isInvalid()) return ItemID(valueToFilter).isInvalid();
-			return valueToFilter == id.asQVariant();
-		};
+		
 		break;
 	}
 	case IDList: {
-		ItemID id = isInt ? value.toInt() : ItemID();
-		valuePasses = [id] (QVariant valueToFilter) {
-			QList<QVariant> list = valueToFilter.toList();
-			if (id.isInvalid()) return list.isEmpty();
-			return list.contains(id.asQVariant());
-		};
+		
 		break;
 	}
 	case Enum: {
-		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is Enum but filter value is not int"; return; }
-		int intValue = value.toInt();
-		if (intValue < 0) { qDebug() << "Problem with parsing filter: Column content type is Integer but filter value is invalid as an enum"; return; }
-		valuePasses = [intValue] (QVariant valueToFilter) {
-			return valueToFilter.toInt() == intValue;
-		};
+		
 		break;
 	}
 	case DualEnum: {
-		if (!hasSecond) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter only has one value"; return; }
-		if (!isInt) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is not int"; return; }
-		int discerning = value.toInt();
-		if (discerning < 0) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is invalid as an enum"; return; }
-		int displayed = secondValue.toInt();
-		if (displayed < 0) { qDebug() << "Problem with parsing filter: Column content type is DualEnum but filter value list value is invalid as an enum"; return; }
-		valuePasses = [discerning, displayed] (QVariant valueToFilter) {
-			QList<QVariant> list = valueToFilter.toList();
-			if (list.size() < 2) return discerning == 0;
-			return list.at(0) == discerning && list.at(1) == displayed;
-		};
+		
 		break;
 	}
 	case Bit: {
-		if (!isBool) { qDebug() << "Problem with parsing filter: Column content type is Bit but filter value is not bool"; return; }
-		bool boolValue = value.toBool();
-		valuePasses = [boolValue] (QVariant valueToFilter) {
-			return valueToFilter.toBool() == boolValue;
-		};
+		
 		break;
 	}
 	case String: {
-		qDebug() << "WARNING: Case String in CompositeColumn::applySingleFilter() should probably not be used";
-		QString stringValue = value.toString();
-		valuePasses = [stringValue] (QVariant valueToFilter) {
-			return valueToFilter.toString() == stringValue;
-		};
+		
 		break;
 	}
 	case Date: {
-		if (!isDate) { qDebug() << "Problem with parsing filter: Column content type is Date but filter values are not QDate"; return; }
-		QDate value1 = value.toDate();
-		if (!value1.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value is invalid as QDate"; return; }
-		if (hasSecond) {
-			QDate value2 = secondValue.toDate();
-			if (!value2.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Date but filter value is invalid as QDate"; return; }
-			valuePasses = [value1, value2] (QVariant valueToFilter) {
-				return value1 <= valueToFilter.toDate() && valueToFilter.toDate() <= value2;
-			};
-		} else {
-			valuePasses = [value1] (QVariant valueToFilter) {
-				return valueToFilter.toDate() == value1;
-			};
-		}
+		
 		break;
 	}
 	case Time: {
-		if (!isTime) { qDebug() << "Problem with parsing filter: Column content type is Time but filter values are not QTime"; return; }
-		QTime value1 = value.toTime();
-		if (!value1.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value is invalid as QTime"; return; }
-		if (hasSecond) {
-			QTime value2 = secondValue.toTime();
-			if (!value2.isValid()) { qDebug() << "Problem with parsing filter: Column content type is Time but filter value list value is invalid as QTime"; return; }
-			valuePasses = [value1, value2] (QVariant valueToFilter) {
-				return value1 <= valueToFilter.toTime() && valueToFilter.toTime() <= value2;
-			};
-		} else {
-			valuePasses = [value1] (QVariant valueToFilter) {
-				return valueToFilter.toTime() == value1;
-			};
-		}
+		
 		break;
 	}
 	default: assert(false);
