@@ -99,7 +99,7 @@ public:
 	T getDefault() const;
 	
 	void set(QWidget& parent, const QMap<QString, T>& subKeyValueMap);
-	void clear(QWidget& parent, SettingsTable* settingsTable) const;
+	void removeAll(QWidget& parent, SettingsTable* settingsTable) const;
 	
 private:
 	void createSettingIfMissing(const QString& subKey);
@@ -193,28 +193,6 @@ public:
 	/** Remembered sorting of the countries table in the main window. */
 	ProjectSetting<QString>		sorting_countriesTable;
 	
-	// Ascent table filters
-	/** The primary date filter setting. Represents a filter for only this date when no max setting is present, and as a minimum date otherwise. */
-	ProjectSetting<QDate>		ascentFilters_date;
-	/** The maximum date filter setting. */
-	ProjectSetting<QDate>		ascentFilters_maxDate;
-	/** The primary peak height filter setting. Represents a filter for only this 1000s class of height when no max setting is present, and as a minimum height otherwise. */
-	ProjectSetting<int>			ascentFilters_peakHeight;
-	/** The maximum peak height filter setting. */
-	ProjectSetting<int>			ascentFilters_maxPeakHeight;
-	/** The volcano filter setting. */
-	ProjectSetting<bool>		ascentFilters_volcano;
-	/** The range filter setting. */
-	ProjectSetting<int>			ascentFilters_range;
-	/** The hike kind filter setting. */
-	ProjectSetting<int>			ascentFilters_hikeKind;
-	/** The difficulty system filter setting. Only valid when the difficulty grade setting is also present. */
-	ProjectSetting<int>			ascentFilters_difficultySystem;
-	/** The difficulty grade filter setting. */
-	ProjectSetting<int>			ascentFilters_difficultyGrade;
-	/** The hiker filter setting. */
-	ProjectSetting<int>			ascentFilters_hiker;
-	
 	
 	
 	/**
@@ -273,19 +251,7 @@ public:
 		sorting_hikersTable				(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/hikersTable")),
 		sorting_regionsTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/regionsTable")),
 		sorting_rangesTable				(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/rangesTable")),
-		sorting_countriesTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/countriesTable")),
-		
-		// Ascent table filters
-		ascentFilters_date				(ProjectSetting<QDate>		(table,	"implicit/mainWindow/filters/ascentsTable/date")),
-		ascentFilters_maxDate			(ProjectSetting<QDate>		(table,	"implicit/mainWindow/filters/ascentsTable/dateMax")),
-		ascentFilters_peakHeight		(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/peakHeight")),
-		ascentFilters_maxPeakHeight		(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/peakHeightMax")),
-		ascentFilters_volcano			(ProjectSetting<bool>		(table,	"implicit/mainWindow/filters/ascentsTable/volcano")),
-		ascentFilters_range				(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/range")),
-		ascentFilters_hikeKind			(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/hikeKind")),
-		ascentFilters_difficultySystem	(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/difficultySystem")),
-		ascentFilters_difficultyGrade	(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/difficultyGrade")),
-		ascentFilters_hiker				(ProjectSetting<int>		(table,	"implicit/mainWindow/filters/ascentsTable/hiker"))
+		sorting_countriesTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/countriesTable"))
 	{}
 };
 

@@ -282,9 +282,9 @@ void ProjectMultiSetting<T>::set(QWidget& parent, const QMap<QString, T>& subKey
  * Removes all of the settings from the project settings storage.
  */
 template<typename T>
-void ProjectMultiSetting<T>::clear(QWidget& parent, SettingsTable* settingsTable) const
+void ProjectMultiSetting<T>::removeAll(QWidget& parent, SettingsTable* settingsTable) const
 {
-	settingsTable->clearAllSettings(parent, baseKey);
+	settingsTable->removeAllMatchingSettings(parent, baseKey);
 }
 
 

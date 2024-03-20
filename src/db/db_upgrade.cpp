@@ -40,7 +40,7 @@
  */
 DatabaseUpgrader::DatabaseUpgrader(Database& db, QWidget& parent) :
 	db(db),
-	parent(&parent)
+	parent(parent)
 {}
 
 
@@ -112,7 +112,7 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		// Remove old project settings table
 		removeSettingsTableFromBeforeV1_2_0();
 		// Create new project settings table
-		db.settingsTable.createTableInSql(*parent);
+		db.settingsTable.createTableInSql(parent);
 	}
 	
 	
@@ -130,15 +130,21 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 	if (versionOlderThan(currentDbVersion, "1.2.0")) {
 		// Save extracted default hiker back to new table, if present
 		if (v1_2_0_defaultHikerToCarryOver.isValid()) {
-			db.projectSettings.defaultHiker.set(*parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
+			db.projectSettings.defaultHiker.set(parent, ID_GET(v1_2_0_defaultHikerToCarryOver));
 		}
+	}
+	
+	// 1.4.0
+	if (versionOlderThan(currentDbVersion, "1.5.0")) {
+		// Filter system changed, clear old filters settings
+		db.settingsTable.removeAllMatchingSettings(parent, "implicit/mainWindow/filters/ascentsTable/");
 	}
 	
 	
 	// Set new version
 	if (versionOlderThan(currentDbVersion, appVersion)) {
 		qDebug().noquote().nospace() << "Upgrading database from v" << currentDbVersion << " to v" << appVersion;
-		db.projectSettings.databaseVersion.set(*parent, appVersion);
+		db.projectSettings.databaseVersion.set(parent, appVersion);
 		
 		showUpgradeSuccessMessage(currentDbVersion, appVersion);
 	}
@@ -162,7 +168,7 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 	// Check project settings table structure
 	QString queryString = "PRAGMA table_info(ProjectSettings)";
 	QSqlQuery query(queryString);
-	if (!query.exec()) displayError(*parent, query.lastError(), queryString);
+	if (!query.exec()) displayError(parent, query.lastError(), queryString);
 	QStringList columnNames;
 	while (query.next()) {
 		QString columnName = query.value(1).toString();
@@ -183,7 +189,7 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 		"\nWHERE settingKey='%1'").arg(db.projectSettings.databaseVersion.key);
 	query = QSqlQuery();
 	if (!query.prepare(queryString) || !query.exec()) {
-		displayError(*parent, query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	}
 	assert(query.next());
 	QString versionString = query.value(0).toString();
@@ -218,7 +224,7 @@ bool DatabaseUpgrader::promptUserAboutUpgradeAndBackup(const QString& oldDbVersi
 	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto defaultButton = QMessageBox::Cancel;
 	
-	auto response = QMessageBox::question(parent, windowTitle, message, buttons, defaultButton);
+	auto response = QMessageBox::question(&parent, windowTitle, message, buttons, defaultButton);
 	
 	bool abort = response != QMessageBox::Yes;
 	if (abort) return false;
@@ -250,7 +256,7 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
 	auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto defaultButton = QMessageBox::Cancel;
 	
-	auto response = QMessageBox::warning(parent, windowTitle, message, buttons, defaultButton);
+	auto response = QMessageBox::warning(&parent, windowTitle, message, buttons, defaultButton);
 	bool abort = response != QMessageBox::Yes;
 	if (abort) return false;
 	
@@ -290,7 +296,7 @@ bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion,
 		auto buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 		auto defaultButton = QMessageBox::Cancel;
 		
-		auto response = QMessageBox::question(parent, windowTitle, message, buttons, defaultButton);
+		auto response = QMessageBox::question(&parent, windowTitle, message, buttons, defaultButton);
 		
 		return response == QMessageBox::Yes;
 	}
@@ -308,7 +314,7 @@ void DatabaseUpgrader::showUpgradeSuccessMessage(const QString& previousVersion,
 	QString windowTitle = Database::tr("Database upgrade successful");
 	QString message = Database::tr("The database was successfully upgraded from version %1 to version %2.")
 			.arg(previousVersion, newVersion);
-	QMessageBox::information(parent, windowTitle, message);
+	QMessageBox::information(&parent, windowTitle, message);
 }
 
 
@@ -326,7 +332,7 @@ ItemID DatabaseUpgrader::extractDefaultHikerFromBeforeV1_2_0()
 		"\nWHERE projectSettingsID=1");
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString) || !query.exec()) {
-		displayError(*parent, query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	}
 	assert(query.next());
 	QVariant value = query.value(0);
@@ -341,6 +347,6 @@ void DatabaseUpgrader::removeSettingsTableFromBeforeV1_2_0()
 	QString queryString = QString("DROP TABLE ProjectSettings");
 	QSqlQuery query = QSqlQuery();
 	if (!query.prepare(queryString) || !query.exec()) {
-		displayError(*parent, query.lastError(), queryString);
+		displayError(parent, query.lastError(), queryString);
 	}
 }

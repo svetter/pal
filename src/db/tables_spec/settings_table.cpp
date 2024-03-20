@@ -155,22 +155,23 @@ void SettingsTable::removeSetting(QWidget& parent, const GenericProjectSetting& 
 
 
 /**
- * Removes the value from the setting in the project settings table.
+ * Removes all project settings whose key starts with the given base key from the project settings
+ * table.
  * 
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
-void SettingsTable::clearAllSettings(QWidget& parent, const QString& baseKey)
+void SettingsTable::removeAllMatchingSettings(QWidget& parent, const QString& baseKey)
 {
-	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows()); rowIndex.isValid(); rowIndex--) {
-		QString key = settingKeyColumn.getValueAt(rowIndex).toString();
+	db.beginChangingData();
+	for (BufferRowIndex rowIndex = BufferRowIndex(buffer.numRows() - 1); rowIndex.isValid(); rowIndex--) {
+		const QString key = settingKeyColumn.getValueAt(rowIndex).toString();
 		if (key.startsWith(baseKey)) {
 			const ValidItemID settingID = VALID_ITEM_ID(primaryKeyColumn.getValueAt(rowIndex));
-			db.beginChangingData();
 			removeMatchingRows(parent, primaryKeyColumn, settingID);
-			db.finishChangingData();
 		}
 	}
+	db.finishChangingData();
 }
 
 

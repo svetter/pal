@@ -38,7 +38,7 @@ class DatabaseUpgrader
 	/** The database object. */
 	Database& db;
 	/** The parent window. */
-	QWidget* const parent;
+	QWidget& parent;
 	
 public:
 	DatabaseUpgrader(Database& db, QWidget& parent);
