@@ -48,9 +48,9 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	mainWindow(parent),
 	db(db),
 	typesHandler(typesHandler),
-	compAscents((CompositeAscentsTable*) typesHandler->get(ItemTypeAscent).compTable),
-	compPeaks((CompositePeaksTable*) typesHandler->get(ItemTypePeak).compTable),
-	compTrips((CompositeTripsTable*) typesHandler->get(ItemTypeTrip).compTable),
+	compAscents	((CompositeAscentsTable&)	typesHandler->get(ItemTypeAscent).compTable),
+	compPeaks	((CompositePeaksTable&)		typesHandler->get(ItemTypePeak).compTable),
+	compTrips	((CompositeTripsTable&)		typesHandler->get(ItemTypeTrip).compTable),
 	currentViewRowIndex(viewRowIndex),
 	currentAscentID(ItemID()),
 	photos(QList<Photo>()),
@@ -258,7 +258,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	savePhotoDescription();
 	
 	currentViewRowIndex	= viewRowIndex;
-	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(viewRowIndex);
+	BufferRowIndex bufferRowIndex = compAscents.getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID = db.ascentsTable.getPrimaryKeyAt(bufferRowIndex);
 	// Update main window selection
 	mainWindow->updateSelectionAfterUserAction(typesHandler->get(ItemTypeAscent), currentViewRowIndex);
@@ -321,17 +321,17 @@ void AscentViewer::updateInfoArea()
 {
 	resetInfoLabels();
 	
-	BufferRowIndex ascentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex ascentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	
 	ItemID tripID = db.ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
 	if (tripID.isValid()) {
 		BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
-		tripNameLabel			->setText	(compAscents->tripColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
-		QString startDate					= compTrips->startDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
-		QString endDate						= compTrips->endDateColumn			.getFormattedValueAt(tripBufferRowIndex).toString();
+		tripNameLabel			->setText	(compAscents.tripColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
+		QString startDate					= compTrips.startDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
+		QString endDate						= compTrips.endDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
 		QString dateRange = startDate;
 		if (startDate != endDate) {
-			QString length = compTrips->lengthColumn.getFormattedValueAt(tripBufferRowIndex).toString();
+			QString length = compTrips.lengthColumn.getFormattedValueAt(tripBufferRowIndex).toString();
 			dateRange = startDate + " – " + endDate + " (" + length + (")");
 		}
 		tripDatesLabel			->setText	(dateRange);
@@ -340,16 +340,16 @@ void AscentViewer::updateInfoArea()
 	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
 	if (peakID.isValid()) {
 		BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
-		peakNameLabel			->setText	(compAscents->peakColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
-		peakHeightLabel			->setText	(compAscents->peakHeightColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
-		peakVolcanoCheckbox		->setChecked(compAscents->volcanoColumn			.getRawValueAt(ascentBufferRowIndex).toBool());
-		peakRegionLabel			->setText	(compAscents->regionColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
-		peakRangeLabel			->setText	(compAscents->rangeColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
-		peakCountryLabel		->setText	(compAscents->countryColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
-		peakContinentLabel		->setText	(compAscents->continentColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
-		QString mapsLink					= db.peaksTable.mapsLinkColumn		.getValueAt(peakBufferRowIndex).toString();
-		QString earthLink					= db.peaksTable.earthLinkColumn		.getValueAt(peakBufferRowIndex).toString();
-		QString wikiLink					= db.peaksTable.wikiLinkColumn		.getValueAt(peakBufferRowIndex).toString();
+		peakNameLabel			->setText	(compAscents.peakColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakHeightLabel			->setText	(compAscents.peakHeightColumn	.getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakVolcanoCheckbox		->setChecked(compAscents.volcanoColumn		.getRawValueAt(ascentBufferRowIndex).toBool());
+		peakRegionLabel			->setText	(compAscents.regionColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakRangeLabel			->setText	(compAscents.rangeColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakCountryLabel		->setText	(compAscents.countryColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
+		peakContinentLabel		->setText	(compAscents.continentColumn	.getFormattedValueAt(ascentBufferRowIndex).toString());
+		QString mapsLink					= db.peaksTable.mapsLinkColumn	.getValueAt(peakBufferRowIndex).toString();
+		QString earthLink					= db.peaksTable.earthLinkColumn	.getValueAt(peakBufferRowIndex).toString();
+		QString wikiLink					= db.peaksTable.wikiLinkColumn	.getValueAt(peakBufferRowIndex).toString();
 		if (!mapsLink.isEmpty() || !earthLink.isEmpty() || !wikiLink.isEmpty()) peakLinksBox->setVisible(true);
 		if (!mapsLink.isEmpty()) {
 			peakMapsLinkLabel		->setText("[" + tr("Google Maps") + "](" + mapsLink + ")");
@@ -365,22 +365,22 @@ void AscentViewer::updateInfoArea()
 		}
 	}
 	
-	QString ascentTitle						= compAscents->titleColumn			.getFormattedValueAt(ascentBufferRowIndex).toString();
+	QString ascentTitle						= compAscents.titleColumn		.getFormattedValueAt(ascentBufferRowIndex).toString();
 	if (!ascentTitle.isEmpty()) {
-		ascentTitleLabel		->setText	(compAscents->titleColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
+		ascentTitleLabel		->setText	(compAscents.titleColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
 		ascentTitleLabel		->setVisible(true);
 		ascentInfoLine			->setVisible(true);
 	}
-	ascentDateLabel				->setText	(db.ascentsTable.dateColumn			.getValueAt				(ascentBufferRowIndex).toDate().toString("dd.MM.yyyy"));
-	ascentTimeLabel				->setText	(db.ascentsTable.timeColumn			.getValueAt				(ascentBufferRowIndex).toTime().toString("HH:mm"));
-	ascentPeakOnDayLabel		->setText	(db.ascentsTable.peakOnDayColumn	.getValueAt				(ascentBufferRowIndex).toString() + ".");
-	ascentElevationGainLabel	->setText	(compAscents->elevationGainColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
-	ascentHikeKindLabel			->setText	(compAscents->hikeKindColumn		.getFormattedValueAt	(ascentBufferRowIndex).toString());
-	ascentTraverseCheckbox		->setChecked(compAscents->traverseColumn		.getRawValueAt			(ascentBufferRowIndex).toBool());
-	ascentDifficultyLabel		->setText	(compAscents->difficultyColumn		.getFormattedValueAt	(ascentBufferRowIndex).toString());
-	ascentPeakOrdinalLabel		->setText	(compAscents->peakOrdinalColumn		.getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentDateLabel				->setText	(db.ascentsTable.dateColumn		.getValueAt				(ascentBufferRowIndex).toDate().toString("dd.MM.yyyy"));
+	ascentTimeLabel				->setText	(db.ascentsTable.timeColumn		.getValueAt				(ascentBufferRowIndex).toTime().toString("HH:mm"));
+	ascentPeakOnDayLabel		->setText	(db.ascentsTable.peakOnDayColumn.getValueAt				(ascentBufferRowIndex).toString() + ".");
+	ascentElevationGainLabel	->setText	(compAscents.elevationGainColumn.getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentHikeKindLabel			->setText	(compAscents.hikeKindColumn		.getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentTraverseCheckbox		->setChecked(compAscents.traverseColumn		.getRawValueAt			(ascentBufferRowIndex).toBool());
+	ascentDifficultyLabel		->setText	(compAscents.difficultyColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
+	ascentPeakOrdinalLabel		->setText	(compAscents.peakOrdinalColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
 	
-	QString hikersList = compAscents->hikersColumn.getFormattedValueAt(ascentBufferRowIndex).toString();
+	QString hikersList = compAscents.hikersColumn.getFormattedValueAt(ascentBufferRowIndex).toString();
 	if (!hikersList.isEmpty()) {
 		ascentParticipantsLabel	->setText	(hikersList);
 		ascentParticipantsBox->setVisible(true);
@@ -403,7 +403,7 @@ void AscentViewer::updateInfoArea()
  */
 void AscentViewer::updateAscentNavigationTargets()
 {
-	numShownAscents = compAscents->rowCount();
+	numShownAscents = compAscents.rowCount();
 	const ViewRowIndex minViewRowIndex	= ViewRowIndex(0);
 	const ViewRowIndex maxViewRowIndex	= ViewRowIndex(numShownAscents - 1);
 	
@@ -420,14 +420,14 @@ void AscentViewer::updateAscentNavigationTargets()
 	currentAscentOfPeakIndex	= -1;
 	numAscentsOfPeak			= 0;
 	
-	BufferRowIndex bufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	BufferRowIndex bufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferRowIndex);
 	if (peakID.isValid()) {
 		QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, peakID.asQVariant());
 		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
 		QList<ViewRowIndex> ascentOfPeakViewRowIndices = QList<ViewRowIndex>();
 		for (const BufferRowIndex& matchingBufferRowIndex : matchingBufferRowIndices) {
-			ViewRowIndex matchingViewRowIndex = compAscents->findViewRowIndexForBufferRow(matchingBufferRowIndex);
+			ViewRowIndex matchingViewRowIndex = compAscents.findViewRowIndexForBufferRow(matchingBufferRowIndex);
 			if (matchingViewRowIndex.isInvalid()) continue;
 			ascentOfPeakViewRowIndices.append(matchingViewRowIndex);
 		}
@@ -1170,7 +1170,7 @@ void AscentViewer::handle_photoDescriptionEditableChanged()
  */
 void AscentViewer::handle_editAscent()
 {
-	const BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	
 	openEditAscentDialogAndStore(*this, *mainWindow, db, oldAscentBufferRowIndex, [=](bool changesMade) {
 		if (changesMade) handleChangesToUnderlyingData(oldAscentBufferRowIndex);
@@ -1182,7 +1182,7 @@ void AscentViewer::handle_editAscent()
  */
 void AscentViewer::handle_editPeak()
 {
-	const BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	const ValidItemID peakID = VALID_ITEM_ID(db.ascentsTable.peakIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
 	const BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(peakID);
 	
@@ -1196,7 +1196,7 @@ void AscentViewer::handle_editPeak()
  */
 void AscentViewer::handle_editTrip()
 {
-	const BufferRowIndex oldAscentBufferRowIndex = compAscents->getBufferRowIndexForViewRow(currentViewRowIndex);
+	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	const ValidItemID tripID = VALID_ITEM_ID(db.ascentsTable.tripIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
 	const BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(tripID);
 	
@@ -1266,7 +1266,7 @@ void AscentViewer::popupInfoContextMenu(QPoint pos)
 void AscentViewer::handleChangesToUnderlyingData(BufferRowIndex currentBufferRowIndex)
 {
 	// Filtering and sorting may have changed, update view row index
-	ViewRowIndex newViewRowIndex = compAscents->findViewRowIndexForBufferRow(currentBufferRowIndex);
+	ViewRowIndex newViewRowIndex = compAscents.findViewRowIndexForBufferRow(currentBufferRowIndex);
 	
 	if (newViewRowIndex.isValid()) {	// Current ascent still in table
 		changeToAscent(newViewRowIndex);
@@ -1279,7 +1279,7 @@ void AscentViewer::handleChangesToUnderlyingData(BufferRowIndex currentBufferRow
 			+ "\n" + tr("Clear or modify the active filters to see it again.");
 	QMessageBox::information(this, title, message);
 	
-	int numberOfVisibleRows = compAscents->rowCount();
+	int numberOfVisibleRows = compAscents.rowCount();
 	if (numberOfVisibleRows < 1) {	// Filtered table now empty
 		return reject();
 	}

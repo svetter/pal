@@ -43,11 +43,11 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** The application's item types handler. */
 	const ItemTypesHandler* typesHandler;
 	/** The composite ascents table. */
-	CompositeAscentsTable* const compAscents;
+	CompositeAscentsTable& compAscents;
 	/** The composite peaks table. */
-	CompositePeaksTable* const compPeaks;
+	CompositePeaksTable& compPeaks;
 /** The composite trips table. */
-	CompositeTripsTable* const compTrips;
+	CompositeTripsTable& compTrips;
 	
 	/** The current view row index. */
 	ViewRowIndex currentViewRowIndex;

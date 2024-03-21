@@ -75,7 +75,7 @@ MainWindow::MainWindow() :
 	pinStatsRangesAction->setChecked(Settings::itemStats_pinRanges.get());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->filterBar->supplyPointers(this, &db, mapper->compTable);
+		mapper->filterBar.supplyPointers(this, &db, &mapper->compTable);
 	}
 	
 	
@@ -188,11 +188,8 @@ void MainWindow::connectUI()
 			newItem(*mapper);
 		};
 		
-		connect(mapper->newItemAction,		&QAction::triggered,			this,	newFunction);
-		// Big new item buttons
-		if (mapper->newItemButton) {
-			connect(mapper->newItemButton,	&QPushButton::clicked,			this,	newFunction);
-		}
+		connect(&mapper->newItemAction,		&QAction::triggered,			this,	newFunction);
+		connect(&mapper->newItemButton,		&QPushButton::clicked,			this,	newFunction);
 	}
 	// Menu "Tools"
 	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
@@ -211,8 +208,8 @@ void MainWindow::connectUI()
 		if (mapper->type == ItemTypeAscent) {
 			handlerFunction = &MainWindow::viewSelectedItem;
 		}
-		connect(mapper->tableView,			&QTableView::doubleClicked,		this,	handlerFunction);
-		connect(mapper->compTable,			&CompositeTable::wasResorted,	this,	&MainWindow::scrollToTopAfterSorting);
+		connect(&mapper->tableView,			&QTableView::doubleClicked,		this,	handlerFunction);
+		connect(&mapper->compTable,			&CompositeTable::wasResorted,	this,	&MainWindow::scrollToTopAfterSorting);
 	}
 }
 
@@ -224,33 +221,33 @@ void MainWindow::setupTableTabs()
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		// Set model
-		mapper->tableView->setModel(mapper->compTable);
-		mapper->compTable->setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
+		mapper->tableView.setModel(&mapper->compTable);
+		mapper->compTable.setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
 		
 		// Enable column header reordering
-		mapper->tableView->horizontalHeader()->setSectionsMovable(true);
+		mapper->tableView.horizontalHeader()->setSectionsMovable(true);
 		
 		// Enable context menus
-		mapper->tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-		connect(mapper->tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindow::handle_rightClickOnColumnHeader);
-		connect(mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
+		mapper->tableView.horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(mapper->tableView.horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindow::handle_rightClickOnColumnHeader);
+		connect(&mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
 		
 		// Connect selection change listener
-		connect(mapper->tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
+		connect(mapper->tableView.selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
 		
 		// Stats visibility
-		const bool statsEnabled = mapper->showStatsPanelSetting->get();
-		mapper->statsScrollArea->setVisible(statsEnabled);
+		const bool statsEnabled = mapper->showStatsPanelSetting.get();
+		mapper->statsScrollArea.setVisible(statsEnabled);
 		// Restore splitter sizes
-		QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
+		QSplitter* const splitter = mapper->tab.findChild<QSplitter*>();
 		splitter->setStretchFactor(0, 3);
 		splitter->setStretchFactor(1, 1);
-		restoreSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
+		restoreSplitterSizes(*splitter, mapper->statsPanelSplitterSizesSetting);
 		
 		// Setup stats panels
-		mapper->statsEngine->setupStatsPanel();
-		mapper->statsEngine->setCurrentlyVisible(false);
-		mapper->statsEngine->setRangesPinned(pinStatsRangesAction->isChecked());
+		mapper->statsEngine.setupStatsPanel();
+		mapper->statsEngine.setCurrentlyVisible(false);
+		mapper->statsEngine.setRangesPinned(pinStatsRangesAction->isChecked());
 	}
 }
 
@@ -261,20 +258,20 @@ void MainWindow::setupTableTabs()
  */
 void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
 {
-	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
-	if (mapper->columnWidthsSetting->nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
+	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
+	if (mapper->columnWidthsSetting.nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
 	
-	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
-	const QMap<QString, int> columnWidthMap = mapper->columnWidthsSetting->get(normalColumnNames);
+	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
+	const QMap<QString, int> columnWidthMap = mapper->columnWidthsSetting.get(normalColumnNames);
 	
 	// Restore column widths
-	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(columnIndex).name;
+	for (int columnIndex = 0; columnIndex < mapper->compTable.getNumberOfNormalColumns(); columnIndex++) {
+		const QString& columnName = mapper->compTable.getColumnAt(columnIndex).name;
 		int columnWidth = columnWidthMap[columnName];
 		if (columnWidth < 1) {
-			columnWidth = mapper->tableView->horizontalHeader()->sizeHintForColumn(columnIndex);
+			columnWidth = mapper->tableView.horizontalHeader()->sizeHintForColumn(columnIndex);
 		}
-		mapper->tableView->setColumnWidth(columnIndex, columnWidth);
+		mapper->tableView.setColumnWidth(columnIndex, columnWidth);
 	}
 }
 
@@ -285,16 +282,16 @@ void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
  */
 void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 {
-	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
-	if (mapper->columnOrderSetting->nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
+	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
+	if (mapper->columnOrderSetting.nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
 	
-	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
-	const QMap<QString, int> columnOrderMap = mapper->columnOrderSetting->get(normalColumnNames);
+	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
+	const QMap<QString, int> columnOrderMap = mapper->columnOrderSetting.get(normalColumnNames);
 	// Sort by visual index
 	QList<QPair<const CompositeColumn*, int>> columnOrderList = QList<QPair<const CompositeColumn*, int>>();
 	for (const QPair<QString, int>& columnOrderPair : columnOrderMap.asKeyValueRange()) {
 		if (columnOrderPair.second < 0) continue;	// Visual index invalid, ignore column
-		const CompositeColumn* column = mapper->compTable->getColumnByNameOrNull(columnOrderPair.first);
+		const CompositeColumn* column = mapper->compTable.getColumnByNameOrNull(columnOrderPair.first);
 		if (!column) continue;
 		columnOrderList.append({column, columnOrderPair.second});
 	}
@@ -304,7 +301,7 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
 	std::sort(columnOrderList.begin(), columnOrderList.end(), comparator);
 	
 	// Restore column order
-	QHeaderView* header = mapper->tableView->horizontalHeader();
+	QHeaderView* header = mapper->tableView.horizontalHeader();
 	for (int visualIndex = 0; visualIndex < columnOrderList.size(); visualIndex++) {
 		const CompositeColumn& column = *columnOrderList.at(visualIndex).first;
 		int logicalIndex = column.getIndex();
@@ -320,19 +317,19 @@ void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
  */
 void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
 {
-	QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
-	if (mapper->hiddenColumnsSetting->nonePresent(columnNameSet)) return;	// Only restore if any column are in the settings
+	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
+	if (mapper->hiddenColumnsSetting.nonePresent(columnNameSet)) return;	// Only restore if any column are in the settings
 	
-	const QSet<QString> normalColumnNames = mapper->compTable->getNormalColumnNameSet();
-	const QMap<QString, bool> columnHiddenMap = mapper->hiddenColumnsSetting->get(normalColumnNames);
+	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
+	const QMap<QString, bool> columnHiddenMap = mapper->hiddenColumnsSetting.get(normalColumnNames);
 	
 	// Restore column hidden status
-	for (int columnIndex = 0; columnIndex < mapper->compTable->getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(columnIndex).name;
+	for (int columnIndex = 0; columnIndex < mapper->compTable.getNumberOfNormalColumns(); columnIndex++) {
+		const QString& columnName = mapper->compTable.getColumnAt(columnIndex).name;
 		bool storedColumnHiddenStatus = columnHiddenMap[columnName];
 		if (!storedColumnHiddenStatus) continue;
-		mapper->tableView->horizontalHeader()->setSectionHidden(columnIndex, true);
-		mapper->compTable->markColumnHidden(columnIndex);
+		mapper->tableView.horizontalHeader()->setSectionHidden(columnIndex, true);
+		mapper->compTable.markColumnHidden(columnIndex);
 	}
 }
 
@@ -344,16 +341,16 @@ void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
  */
 void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 {
-	SortingPass sorting = mapper->compTable->getDefaultSorting();
+	SortingPass sorting = mapper->compTable.getDefaultSorting();
 	bool sortingSettingValid = true;
 	
-	while (Settings::rememberSorting.get() && mapper->sortingSetting->present()) {
+	while (Settings::rememberSorting.get() && mapper->sortingSetting.present()) {
 		sortingSettingValid = false;
 		
-		QStringList saved = mapper->sortingSetting->get().split(",");
+		QStringList saved = mapper->sortingSetting.get().split(",");
 		if (saved.size() != 2) break;
 		
-		const CompositeColumn* column = mapper->compTable->getColumnByNameOrNull(saved.at(0).trimmed());
+		const CompositeColumn* column = mapper->compTable.getColumnByNameOrNull(saved.at(0).trimmed());
 		if (!column) break;
 		
 		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
@@ -364,9 +361,9 @@ void MainWindow::setSorting(const ItemTypeMapper* const mapper)
 		sortingSettingValid = true;
 		break;
 	}
-	mapper->tableView->sortByColumn(sorting.column->getIndex(), sorting.order);
+	mapper->tableView.sortByColumn(sorting.column->getIndex(), sorting.order);
 	
-	if (!sortingSettingValid) mapper->sortingSetting->clear(*this);
+	if (!sortingSettingValid) mapper->sortingSetting.clear(*this);
 }
 
 
@@ -490,14 +487,14 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		if (activeMapper) {
 			activeMapper->openingTab();
 			showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
-			activeMapper->statsEngine->setCurrentlyVisible(true, true);
+			activeMapper->statsEngine.setCurrentlyVisible(true, true);
 			showFiltersAction->setChecked(activeMapper->filterBarCurrentlySetVisible());
 		}
 		generalStatsEngine.setCurrentlyVisible(!activeMapper);
 		
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 			// Filter bar
-			mapper->filterBar->setVisible(mapper->showFilterBarSetting->get(this));
+			mapper->filterBar.setVisible(mapper->showFilterBarSetting.get(this));
 			// Column widths
 			if (Settings::rememberColumnWidths.get()) {
 				restoreColumnWidths(mapper);
@@ -546,16 +543,16 @@ void MainWindow::initCompositeBuffers()
 	
 	bool prepareAll = !Settings::onlyPrepareActiveTableOnStartup.get();
 	const ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
-	const QTableView* const currentTableView = activeMapper ? activeMapper->tableView : nullptr;
+	const QTableView* const currentTableView = activeMapper ? &activeMapper->tableView : nullptr;
 	
 	int numCells = 0;
 	if (prepareAll) {
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-			numCells += mapper->compTable->getNumberOfCellsToInit();
+			numCells += mapper->compTable.getNumberOfCellsToInit();
 		}
 	} else {
 		if (activeMapper) {
-			numCells += activeMapper->compTable->getNumberOfCellsToInit();
+			numCells += activeMapper->compTable.getNumberOfCellsToInit();
 		}
 	}
 	progress.setMinimum(0);
@@ -565,33 +562,33 @@ void MainWindow::initCompositeBuffers()
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper->baseTable.uiName));
 		
-		const bool isOpen = mapper->tableView == currentTableView;
+		const bool isOpen = &mapper->tableView == currentTableView;
 		
 		// Load filters
 		QSet<const Filter*> filters = QSet<const Filter*>();
 		if (Settings::rememberFilters.get()) {
-			filters = mapper->filterBar->parseFiltersFromProjectSettings();
-			mapper->filterBar->insertFiltersIntoUI(filters);
+			filters = mapper->filterBar.parseFiltersFromProjectSettings();
+			mapper->filterBar.insertFiltersIntoUI(filters);
 			if (!mapper->filterBarCurrentlySetVisible()) {
 				// Hidden filters are not allowed to be applied
 				filters.clear();
 			}
 		}
-		mapper->compTable->setInitialFilters(filters);
+		mapper->compTable.setInitialFilters(filters);
 		
 		// Check whether table needs to be fully prepared
 		const bool prepareThisTable = prepareAll || isOpen;
 		
 		// Check whether columns should be auto-resized after preparation
-		const QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
-		const bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper->columnWidthsSetting->nonePresent(columnNameSet);
+		const QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
+		const bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper->columnWidthsSetting.nonePresent(columnNameSet);
 		
 		// Collect buffer initialization parameters
 		QProgressDialog* const updateProgress = prepareThisTable ? &progress : nullptr;
 		const bool deferCompute = !prepareThisTable;
-		QTableView* const tableToAutoResizeAfterCompute = autoResizeColumns ? mapper->tableView : nullptr;
+		QTableView* const tableToAutoResizeAfterCompute = autoResizeColumns ? &mapper->tableView : nullptr;
 		
-		mapper->compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
+		mapper->compTable.initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
 		if (isOpen) mapper->openingTab();
 	}
 }
@@ -618,7 +615,7 @@ void MainWindow::setUIEnabled(bool enabled)
 	toolsMenu				->setEnabled(enabled);
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->newItemButton->setEnabled(enabled);
+		mapper->newItemButton.setEnabled(enabled);
 	}
 	mainAreaTabs						->setEnabled(enabled);
 	ascentCounterSegmentNumber			->setEnabled(enabled);
@@ -685,7 +682,7 @@ void MainWindow::updateItemCountDisplays(bool reset)
 			countText = tr("Table is empty");
 		}
 		else if (activeMapper->type == ItemTypeAscent) {
-			int displayed = activeMapper->compTable->rowCount();
+			int displayed = activeMapper->compTable.rowCount();
 			int filtered = total - displayed;
 			countText = (total == 1 ? tr("%2 of %1 entry shown (%3 filtered out)") : tr("%2 of %1 entries shown (%3 filtered out)")).arg(total).arg(displayed).arg(filtered);
 		} else {
@@ -697,7 +694,7 @@ void MainWindow::updateItemCountDisplays(bool reset)
 	QString filterText = QString();
 	bool filteredAscentsCounterVisible = false;
 	if (activeMapper && activeMapper->type == ItemTypeAscent) {
-		int numFiltersApplied = activeMapper->compTable->getCurrentFilters().size();
+		int numFiltersApplied = activeMapper->compTable.getCurrentFilters().size();
 		if (numFiltersApplied > 0) {
 			filterText = (numFiltersApplied == 1 ? tr("%1 filter applied") : tr("%1 filters applied")).arg(numFiltersApplied);
 			filteredAscentsCounterVisible = true;
@@ -710,7 +707,7 @@ void MainWindow::updateItemCountDisplays(bool reset)
 	ascentCounterSegmentNumber->setProperty("value", QVariant(db.ascentsTable.getNumberOfRows()));
 	
 	// Set number of filtered rows
-	const int numAscentsShown = typesHandler->get(ItemTypeAscent).compTable->rowCount();
+	const int numAscentsShown = typesHandler->get(ItemTypeAscent).compTable.rowCount();
 	ascentCounterFilteredSegmentNumber->setProperty("value", QVariant(numAscentsShown));
 	setFilteredAscentsCounterVisible(filteredAscentsCounterVisible);
 }
@@ -744,7 +741,7 @@ void MainWindow::viewSelectedItem()
 	
 	switch (activeMapper.type) {
 	case ItemTypeAscent: {
-		const ViewRowIndex markedViewRow = activeMapper.compTable->findViewRowIndexForBufferRow(primaryBufferRow);
+		const ViewRowIndex markedViewRow = activeMapper.compTable.findViewRowIndexForBufferRow(primaryBufferRow);
 		AscentViewer* viewer = new AscentViewer(this, db, typesHandler, markedViewRow);
 		connect(viewer, &AscentViewer::finished, [=]() { delete viewer; });
 		viewer->open();
@@ -830,7 +827,7 @@ void MainWindow::deleteSelectedItems()
 	if (selectedBufferRows.isEmpty()) return;
 	
 	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
-	for (const QModelIndex& index : getActiveMapper().tableView->selectionModel()->selectedRows()) {
+	for (const QModelIndex& index : getActiveMapper().tableView.selectionModel()->selectedRows()) {
 		selectedViewRowIndices += ViewRowIndex(index.row());
 	}
 	if (selectedViewRowIndices.isEmpty()) return;
@@ -872,9 +869,9 @@ void MainWindow::updateTopBarButtonVisibilities()
 	
 	setUpdatesEnabled(false);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		QPushButton* const button = mapper->newItemButton;
-		const bool buttonVisible = button->x() + button->width() < leftmostCounterLabel->x() - 40;
-		button->setVisible(buttonVisible);
+		QPushButton& button = mapper->newItemButton;
+		const bool buttonVisible = button.x() + button.width() < leftmostCounterLabel->x() - 40;
+		button.setVisible(buttonVisible);
 	}
 	setUpdatesEnabled(true);
 }
@@ -890,7 +887,7 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 {
 	// Update selection in table
 	if (bufferRowToSelectIndex.isValid()) {
-		ViewRowIndex viewRowToSelectIndex = mapper.compTable->findViewRowIndexForBufferRow(bufferRowToSelectIndex);
+		ViewRowIndex viewRowToSelectIndex = mapper.compTable.findViewRowIndexForBufferRow(bufferRowToSelectIndex);
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
 	} else {
 		if (numberOfEntriesChanged) handle_clearTableSelection();
@@ -912,10 +909,10 @@ void MainWindow::scrollToTopAfterSorting()
 	ItemTypeMapper* activeMapper = getActiveMapperOrNull();
 	if (!activeMapper) return;
 	
-	QTableView* const tableView = activeMapper->tableView;
-	const int horizontalScroll = tableView->horizontalScrollBar()->value();
-	tableView->scrollToTop();
-	tableView->horizontalScrollBar()->setValue(horizontalScroll);
+	QTableView& tableView = activeMapper->tableView;
+	const int horizontalScroll = tableView.horizontalScrollBar()->value();
+	tableView.scrollToTop();
+	tableView.horizontalScrollBar()->setValue(horizontalScroll);
 }
 
 /**
@@ -927,7 +924,7 @@ void MainWindow::updateFilters(const ItemTypeMapper* onlyForMapper)
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		if (!mapper || mapper == onlyForMapper) {
-			mapper->filterBar->updateIDCombos();
+			mapper->filterBar.updateIDCombos();
 		}
 	}
 }
@@ -941,9 +938,9 @@ void MainWindow::updateFilters(const ItemTypeMapper* onlyForMapper)
  */
 void MainWindow::updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex)
 {
-	QModelIndex modelIndex = mapper.compTable->index(viewRowIndex.get(), 0);
-	mapper.tableView->setCurrentIndex(modelIndex);
-	mapper.tableView->scrollTo(modelIndex);
+	QModelIndex modelIndex = mapper.compTable.index(viewRowIndex.get(), 0);
+	mapper.tableView.setCurrentIndex(modelIndex);
+	mapper.tableView.scrollTo(modelIndex);
 }
 
 
@@ -973,17 +970,17 @@ void MainWindow::handle_tabChanged()
 	progress.setCancelButton(nullptr);
 	progress.setMinimumDuration(100);
 	
-	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		if (mapper == activeMapper) continue;
 		
-		mapper->compTable->setUpdateImmediately(false);
-		mapper->statsEngine->setCurrentlyVisible(false);
+		mapper->compTable.setUpdateImmediately(false);
+		mapper->statsEngine.setCurrentlyVisible(false);
 	}
 	
 	if (activeMapper) {
 		// Make sure active table is up to date
-		progress.setMaximum(activeMapper->compTable->getNumberOfCellsToUpdate());
-		activeMapper->compTable->setUpdateImmediately(true, &progress);
+		progress.setMaximum(activeMapper->compTable.getNumberOfCellsToUpdate());
+		activeMapper->compTable.setUpdateImmediately(true, &progress);
 		activeMapper->openingTab();
 		
 		// Filter bar visibility
@@ -993,7 +990,7 @@ void MainWindow::handle_tabChanged()
 		// Item stats panel visibility
 		const bool statsShown = activeMapper->itemStatsPanelCurrentlySetVisible();
 		showItemStatsPanelAction->setChecked(statsShown);
-		activeMapper->statsEngine->setCurrentlyVisible(statsShown, true);
+		activeMapper->statsEngine.setCurrentlyVisible(statsShown, true);
 	}
 	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	
@@ -1016,13 +1013,13 @@ void MainWindow::handle_tableSelectionChanged()
 	const ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
 	if (!activeMapper) return;
 	
-	const QItemSelection selection = activeMapper->tableView->selectionModel()->selection();
+	const QItemSelection selection = activeMapper->tableView.selectionModel()->selection();
 	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
 	if (selection.isEmpty()) {
 		// Instead of showing an empty chart, show chart for all rows (except filtered out)
-		int numRowsShown = activeMapper->compTable->rowCount();
+		int numRowsShown = activeMapper->compTable.rowCount();
 		for (ViewRowIndex viewIndex = ViewRowIndex(0); viewIndex.isValid(numRowsShown); viewIndex++) {
-			BufferRowIndex bufferIndex = activeMapper->compTable->getBufferRowIndexForViewRow(viewIndex);
+			BufferRowIndex bufferIndex = activeMapper->compTable.getBufferRowIndexForViewRow(viewIndex);
 			selectedBufferRows.insert(bufferIndex);
 		}
 	}
@@ -1035,13 +1032,13 @@ void MainWindow::handle_tableSelectionChanged()
 			}
 		}
 		for (const ViewRowIndex& viewIndex : selectedViewRows) {
-			BufferRowIndex bufferIndex = activeMapper->compTable->getBufferRowIndexForViewRow(viewIndex);
+			BufferRowIndex bufferIndex = activeMapper->compTable.getBufferRowIndexForViewRow(viewIndex);
 			selectedBufferRows.insert(bufferIndex);
 		}
 	}
 	
-	const bool allSelected = activeMapper->compTable->rowCount() == selectedBufferRows.size();
-	activeMapper->statsEngine->setStartBufferRows(selectedBufferRows, allSelected);
+	const bool allSelected = activeMapper->compTable.rowCount() == selectedBufferRows.size();
+	activeMapper->statsEngine.setStartBufferRows(selectedBufferRows, allSelected);
 }
 
 /**
@@ -1056,7 +1053,7 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
 	// Get index of clicked column
-	QHeaderView* header = mapper.tableView->horizontalHeader();
+	QHeaderView* header = mapper.tableView.horizontalHeader();
 	int logicalIndexClicked = header->logicalIndexAt(pos);
 	if (logicalIndexClicked < 0) return;
 	
@@ -1071,7 +1068,7 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 			continue;
 		}
 		
-		const QString& columnName = mapper.compTable->getColumnAt(logicalIndex).uiName;
+		const QString& columnName = mapper.compTable.getColumnAt(logicalIndex).uiName;
 		QAction* restoreColumnAction = columnContextMenuRestoreColumnMenu->addAction(columnName);
 		restoreColumnAction->setData(logicalIndex);
 		connect(restoreColumnAction, &QAction::triggered, this, &MainWindow::handle_unhideColumn);
@@ -1093,7 +1090,7 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
  */
 void MainWindow::handle_rightClickInTable(QPoint pos)
 {
-	QTableView& currentTableView = *getActiveMapper().tableView;
+	QTableView& currentTableView = getActiveMapper().tableView;
 	QModelIndex index = currentTableView.indexAt(pos);
 	if (!index.isValid()) return;
 	
@@ -1128,8 +1125,8 @@ void MainWindow::handle_hideColumn()
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	mapper.tableView->horizontalHeader()->setSectionHidden(logicalIndex, true);
-	mapper.compTable->markColumnHidden(logicalIndex);
+	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, true);
+	mapper.compTable.markColumnHidden(logicalIndex);
 	
 }
 
@@ -1147,9 +1144,9 @@ void MainWindow::handle_unhideColumn()
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	mapper.tableView->horizontalHeader()->setSectionHidden(logicalIndex, false);
-	mapper.compTable->markColumnUnhidden(logicalIndex);
-	mapper.compTable->updateBothBuffers();
+	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, false);
+	mapper.compTable.markColumnUnhidden(logicalIndex);
+	mapper.compTable.updateBothBuffers();
 }
 
 
@@ -1192,7 +1189,7 @@ void MainWindow::handle_newDatabase()
 	
 	ItemTypeMapper& activeMapper = getActiveMapper();
 	activeMapper.openingTab();
-	activeMapper.statsEngine->setCurrentlyVisible(true);
+	activeMapper.statsEngine.setCurrentlyVisible(true);
 	
 	if (Settings::openProjectSettingsOnNewDatabase.get()) {
 		ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db, true);
@@ -1316,15 +1313,15 @@ void MainWindow::handle_closeDatabase()
 	setWindowTitleFilename();
 	setUIEnabled(false);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->filterBar->resetUI();
+		mapper->filterBar.resetUI();
 	}
 
 	db.reset();
 	projectOpen = false;
 
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->compTable->resetBuffer();
-		mapper->statsEngine->resetStatsPanel();
+		mapper->compTable.resetBuffer();
+		mapper->statsEngine.resetStatsPanel();
 	}
 	generalStatsEngine.resetStatsTab();
 	updateItemCountDisplays(true);
@@ -1373,11 +1370,11 @@ void MainWindow::handle_showFiltersChanged()
 	
 	if (activeMapper.filterBarCurrentlySetVisible()) {
 		// No hidden filters can be active
-		activeMapper.filterBar->handle_clearFilters();
+		activeMapper.filterBar.handle_clearFilters();
 	}
 	
 	const bool showFilters = showFiltersAction->isChecked();
-	activeMapper.filterBar->setVisible(showFilters);
+	activeMapper.filterBar.setVisible(showFilters);
 }
 
 /**
@@ -1392,13 +1389,13 @@ void MainWindow::handle_showStatsPanelChanged()
 	
 	if (activeMapper.itemStatsPanelCurrentlySetVisible()) {
 		// Save splitter sizes before closing
-		QSplitter* const splitter = activeMapper.tab->findChild<QSplitter*>();
-		saveSplitterSizes(*splitter, *activeMapper.statsPanelSplitterSizesSetting);
+		QSplitter* const splitter = activeMapper.tab.findChild<QSplitter*>();
+		saveSplitterSizes(*splitter, activeMapper.statsPanelSplitterSizesSetting);
 	}
 	
 	const bool showStatsPanel = showItemStatsPanelAction->isChecked();
-	activeMapper.statsScrollArea->setVisible(showStatsPanel);
-	activeMapper.statsEngine->setCurrentlyVisible(showStatsPanel);
+	activeMapper.statsScrollArea.setVisible(showStatsPanel);
+	activeMapper.statsEngine.setCurrentlyVisible(showStatsPanel);
 }
 
 /**
@@ -1411,9 +1408,9 @@ void MainWindow::handle_showAllStatsPanels()
 {
 	showItemStatsPanelAction->setChecked(true);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsScrollArea->setVisible(true);
+		mapper->statsScrollArea.setVisible(true);
 	}
-	getActiveMapper().statsEngine->setCurrentlyVisible(true);
+	getActiveMapper().statsEngine.setCurrentlyVisible(true);
 }
 
 /**
@@ -1426,13 +1423,13 @@ void MainWindow::handle_hideAllStatsPanels()
 {
 	showItemStatsPanelAction->setChecked(false);
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (mapper->tabHasBeenOpened(true) && mapper->statsScrollArea->isVisible()) {
+		if (mapper->tabHasBeenOpened(true) && mapper->statsScrollArea.isVisible()) {
 			// Save splitter sizes before closing
-			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
+			QSplitter* const splitter = mapper->tab.findChild<QSplitter*>();
+			saveSplitterSizes(*splitter, mapper->statsPanelSplitterSizesSetting);
 		}
-		mapper->statsScrollArea->setVisible(false);
-		mapper->statsEngine->setCurrentlyVisible(false);
+		mapper->statsScrollArea.setVisible(false);
+		mapper->statsEngine.setCurrentlyVisible(false);
 	}
 }
 
@@ -1445,7 +1442,7 @@ void MainWindow::handle_chartRangesPinnedChanged()
 {
 	const bool pin = pinStatsRangesAction->isChecked();
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->statsEngine->setRangesPinned(pin);
+		mapper->statsEngine.setRangesPinned(pin);
 	}
 }
 
@@ -1458,12 +1455,12 @@ void MainWindow::handle_autoResizeColumns()
 {
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	QTableView* tableView = mapper.tableView;
-	int numColumns = mapper.compTable->columnCount();
+	QTableView& tableView = mapper.tableView;
+	int numColumns = mapper.compTable.columnCount();
 	
-	tableView->resizeColumnsToContents();
+	tableView.resizeColumnsToContents();
 	for (int i = 0; i < numColumns; i++) {
-		if (tableView->columnWidth(i) > 400) tableView->setColumnWidth(i, 400);
+		if (tableView.columnWidth(i) > 400) tableView.setColumnWidth(i, 400);
 	}
 }
 
@@ -1476,7 +1473,7 @@ void MainWindow::handle_resetColumnOrder()
 {
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	QHeaderView* header = mapper.tableView->horizontalHeader();
+	QHeaderView* header = mapper.tableView.horizontalHeader();
 	for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
 		int currentVisualIndex = header->visualIndex(logicalIndex);
 		header->moveSection(currentVisualIndex, logicalIndex);
@@ -1492,12 +1489,12 @@ void MainWindow::handle_restoreHiddenColumns()
 {
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	QHeaderView* const header = mapper.tableView->horizontalHeader();
+	QHeaderView* const header = mapper.tableView.horizontalHeader();
 	for (int columnIndex = 0; columnIndex < header->count(); columnIndex++) {
 		header->setSectionHidden(columnIndex, false);
 	}
-	mapper.compTable->markAllColumnsUnhidden();
-	mapper.compTable->updateBothBuffers();
+	mapper.compTable.markAllColumnsUnhidden();
+	mapper.compTable.updateBothBuffers();
 }
 
 /**
@@ -1509,7 +1506,7 @@ void MainWindow::handle_clearTableSelection()
 {
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
-	mapper.tableView->selectionModel()->clearSelection();
+	mapper.tableView.selectionModel()->clearSelection();
 }
 
 
@@ -1587,7 +1584,7 @@ void MainWindow::saveProjectImplicitSettings()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
 		saveSorting(mapper);
-		mapper->showFilterBarSetting->set(*this, mapper->filterBarCurrentlySetVisible());
+		mapper->showFilterBarSetting.set(*this, mapper->filterBarCurrentlySetVisible());
 	}
 }
 
@@ -1603,10 +1600,10 @@ void MainWindow::saveGlobalImplicitSettings()
 	Settings::itemStats_pinRanges.set(pinStatsRangesAction->isChecked());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->showStatsPanelSetting->set(mapper->itemStatsPanelCurrentlySetVisible());
+		mapper->showStatsPanelSetting.set(mapper->itemStatsPanelCurrentlySetVisible());
 		if (mapper->tabHasBeenOpened(true) && mapper->itemStatsPanelCurrentlySetVisible()) {
-			QSplitter* const splitter = mapper->tab->findChild<QSplitter*>();
-			saveSplitterSizes(*splitter, *mapper->statsPanelSplitterSizesSetting);
+			QSplitter* const splitter = mapper->tab.findChild<QSplitter*>();
+			saveSplitterSizes(*splitter, mapper->statsPanelSplitterSizesSetting);
 		}
 	}
 }
@@ -1619,13 +1616,13 @@ void MainWindow::saveGlobalImplicitSettings()
 void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 {
 	if (!mapper->tabHasBeenOpened(false)) return;	// Only save if table was actually shown
-	QHeaderView* header = mapper->tableView->horizontalHeader();
+	QHeaderView* header = mapper->tableView.horizontalHeader();
 	
 	QMap<QString, int>	widthsMap;
 	QMap<QString, int>	orderMap;
 	QMap<QString, bool>	hiddenMap;
-	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable->columnCount(); logicalColumnIndex++) {
-		const QString& columnName = mapper->compTable->getColumnAt(logicalColumnIndex).name;
+	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable.columnCount(); logicalColumnIndex++) {
+		const QString& columnName = mapper->compTable.getColumnAt(logicalColumnIndex).name;
 		
 		// Hidden status
 		const bool hidden = header->isSectionHidden(logicalColumnIndex);
@@ -1633,9 +1630,9 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 		
 		// Column width (not available if column is hidden)
 		if (!hidden) {
-			int currentColumnWidth = mapper->tableView->columnWidth(logicalColumnIndex);
+			int currentColumnWidth = mapper->tableView.columnWidth(logicalColumnIndex);
 			if (currentColumnWidth <= 0) {
-				qDebug() << "Saving column widths: Couldn't read column width for column" << columnName << "in table" << mapper->compTable->name << "- skipping column";
+				qDebug() << "Saving column widths: Couldn't read column width for column" << columnName << "in table" << mapper->compTable.name << "- skipping column";
 			} else {
 				widthsMap[columnName] = currentColumnWidth;
 			}
@@ -1644,14 +1641,14 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 		// Column order
 		int visualIndex = header->visualIndex(logicalColumnIndex);
 		if (visualIndex < 0) {
-			qDebug() << "Saving column order: Couldn't read column order for column" << columnName << "in table" << mapper->compTable->name << "- skipping column";
+			qDebug() << "Saving column order: Couldn't read column order for column" << columnName << "in table" << mapper->compTable.name << "- skipping column";
 		} else {
 			orderMap[columnName] = visualIndex;
 		}
 	}
-	mapper->columnWidthsSetting	->set(*this, widthsMap);
-	mapper->columnOrderSetting	->set(*this, orderMap);
-	mapper->hiddenColumnsSetting->set(*this, hiddenMap);
+	mapper->columnWidthsSetting	.set(*this, widthsMap);
+	mapper->columnOrderSetting	.set(*this, orderMap);
+	mapper->hiddenColumnsSetting.set(*this, hiddenMap);
 }
 
 /**
@@ -1661,10 +1658,10 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
  */
 void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
 {
-	const auto& [column, order] = mapper->compTable->getCurrentSorting();
+	const auto& [column, order] = mapper->compTable.getCurrentSorting();
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
 	QString settingValue = column->name + ", " + orderString;
-	mapper->sortingSetting->set(*this, settingValue);
+	mapper->sortingSetting.set(*this, settingValue);
 }
 
 
@@ -1728,35 +1725,35 @@ ItemTypeMapper& MainWindow::getActiveMapper() const
  */
 QPair<QSet<BufferRowIndex>, BufferRowIndex> MainWindow::getSelectedRows(const ItemTypeMapper& mapper) const
 {
-	const QModelIndex markedModelIndex = mapper.tableView->currentIndex();
-	const QModelIndexList selectedModelIndices = mapper.tableView->selectionModel()->selectedRows();
+	const QModelIndex markedModelIndex = mapper.tableView.currentIndex();
+	const QModelIndexList selectedModelIndices = mapper.tableView.selectionModel()->selectedRows();
 	
 	if (selectedModelIndices.isEmpty()) {
 		if (!markedModelIndex.isValid()) return {{}, BufferRowIndex()};
 		
 		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
-		const BufferRowIndex marked = mapper.compTable->getBufferRowIndexForViewRow(markedViewRow);
+		const BufferRowIndex marked = mapper.compTable.getBufferRowIndexForViewRow(markedViewRow);
 		return {{ marked }, marked};
 	}
 	
 	QSet<BufferRowIndex> selected = QSet<BufferRowIndex>();
 	for (const QModelIndex& modelIndex : selectedModelIndices) {
 		const ViewRowIndex viewRowIndex = ViewRowIndex(modelIndex.row());
-		const BufferRowIndex bufferRowIndex = mapper.compTable->getBufferRowIndexForViewRow(viewRowIndex);
+		const BufferRowIndex bufferRowIndex = mapper.compTable.getBufferRowIndexForViewRow(viewRowIndex);
 		assert(bufferRowIndex.isValid(mapper.baseTable.getNumberOfRows()));
 		selected.insert(bufferRowIndex);
 	}
 	
 	if (markedModelIndex.isValid()) {
 		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
-		const BufferRowIndex marked = mapper.compTable->getBufferRowIndexForViewRow(markedViewRow);
+		const BufferRowIndex marked = mapper.compTable.getBufferRowIndexForViewRow(markedViewRow);
 		
 		if (selected.contains(marked)) {
 			return {selected, marked};
 		}
 	}
 	auto bufferRowCompare = [&mapper](const BufferRowIndex& index1, const BufferRowIndex& index2) {
-		return mapper.compTable->findViewRowIndexForBufferRow(index1) < mapper.compTable->findViewRowIndexForBufferRow(index2);
+		return mapper.compTable.findViewRowIndexForBufferRow(index1) < mapper.compTable.findViewRowIndexForBufferRow(index2);
 	};
 	const BufferRowIndex minBufferRow = *std::min_element(selected.constBegin(), selected.constEnd(), bufferRowCompare);
 	return {selected, minBufferRow};

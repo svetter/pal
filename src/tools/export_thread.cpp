@@ -120,11 +120,11 @@ void DataExportThread::exportOneTable()
 {
 	// Assemble column info list
 	const ItemTypeMapper& mapper = typesHandler.get(ItemTypeAscent);
-	CompositeTable& compTable = *mapper.compTable;
+	CompositeTable& compTable = mapper.compTable;
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	{
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper.compTable->getCompleteExportColumnList()) {
+		for (const CompositeColumn* column : mapper.compTable.getCompleteExportColumnList()) {
 			// Determine whether to skip this column
 			bool skipColumn = false;
 			skipColumn |= column->isFilterOnlyColumn();
@@ -208,15 +208,15 @@ void DataExportThread::exportAsShown()
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	for (const ItemTypeMapper* const mapper : typesHandler.getAllMappers()) {
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper->compTable->getNormalColumnList()) {
+		for (const CompositeColumn* column : mapper->compTable.getNormalColumnList()) {
 			bool skipColumn = !includeStats && column->isStatistical;
 			if (skipColumn) continue;
 			
 			columnInfos.append({false, column->getIndex(), column->uiName, column->contentType, column->enumNames, column->enumNameLists});
 		}
 		
-		compTables.append(mapper->compTable);
-		tableNames.append(mapper->compTable->uiName);
+		compTables.append(&mapper->compTable);
+		tableNames.append(mapper->compTable.uiName);
 		allColumnInfos.append(columnInfos);
 	}
 	
