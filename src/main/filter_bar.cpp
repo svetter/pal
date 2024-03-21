@@ -25,6 +25,14 @@
 
 #include "main_window.h"
 #include "src/filters/filter_widgets/id_filter_box.h"
+#include "src/filters/bool_filter.h"
+#include "src/filters/date_filter.h"
+#include "src/filters/dual_enum_filter.h"
+#include "src/filters/enum_filter.h"
+#include "src/filters/id_filter.h"
+#include "src/filters/int_filter.h"
+#include "src/filters/string_filter.h"
+#include "src/filters/time_filter.h"
 
 
 
@@ -37,8 +45,7 @@ FilterBar::FilterBar(QWidget* parent) :
 	QWidget(parent),
 	mainWindow(nullptr),
 	db(nullptr),
-	compAscents(nullptr),
-	temporarilyIgnoreChangeEvents(false),
+	compTable(nullptr),
 	addFilterMenu(QMenu(this)),
 	filterWizard(nullptr),
 	filterBoxes(QList<FilterBox*>())
@@ -64,7 +71,7 @@ FilterBar::~FilterBar()
 // INITIAL SETUP
 
 /**
- * Supplies pointers to the main window, the database and the ascent table.
+ * Supplies pointers to the main window, the database and the composite table.
  * 
  * This function is called only once from the MainWindow constructor.
  * It exists so that the FilterBar can be placed in the UI form file, which means that its
@@ -72,23 +79,56 @@ FilterBar::~FilterBar()
  * 
  * @param mainWindow	The main window.
  * @param db			The database.
- * @param compAscents	The ascent table.
+ * @param compTable		The composite table.
  */
-void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents)
+void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeTable* compTable)
 {
 	this->mainWindow	= mainWindow;
 	this->db			= db;
-	this->compAscents	= compAscents;
-	
+	this->compTable		= compTable;
+
+
+	// Create filter wizard
+	filterWizard = new FilterWizard(this, compTable->getBaseTable());
+	connect(addFilterButton, &QToolButton::clicked, this, &FilterBar::handle_newFilterButtonPressed);
+	connect(filterWizard, &FilterWizard::accepted, this, &FilterBar::handle_filterWizardAccepted);
+
+	// Create filter shortcuts
 	addFilterMenu.setTitle("New filter");
-	for (const Column* const column : db->ascentsTable.getColumnList()) {
-		addFilterMenu.addAction(column->uiName);
+	
+	createFilterShortcuts.clear();
+	for (const Column* const column : compTable->getBaseTable().getColumnList()) {
+		// Create name
+		QString name = QString();
+		if (column->foreignColumn) {
+			const Table& foreignTable = column->getReferencedForeignColumn().table;
+			assert(!foreignTable.isAssociative);
+			const NormalTable& targetTable = (const NormalTable&) foreignTable;
+			name = targetTable.getItemNameSingular();
+		} else {
+			name = column->uiName;
+		}
+		
+		if (column->type == DualEnum) {
+			const bool isLastColumn = column->getIndex() == column->table.getNumberOfColumns() - 1;
+			if (isLastColumn) continue;
+			const Column& nextColumn = column->table.getColumnByIndex(column->getIndex() + 1);
+			const bool belongsToNextColumn = nextColumn.enumNameLists == column->enumNameLists;
+			if (belongsToNextColumn) {
+				name += "/" + nextColumn.uiName;
+			} else {
+				continue;
+			}
+		}
+		
+		// Create action
+		QAction* action = addFilterMenu.addAction(name);
+		
+		createFilterShortcuts.insert(action, column);
+		
+		connect(action, &QAction::triggered, this, &FilterBar::handle_filterCreationShortcutUsed);
 	}
 	addFilterButton->setMenu(&addFilterMenu);
-	
-	filterWizard = new FilterWizard(this, db->ascentsTable);
-	connect(addFilterButton,	&QToolButton::clicked,		this,	&FilterBar::handle_newFilterButtonPressed);
-	connect(filterWizard,		&FilterWizard::accepted,	this,	&FilterBar::handle_newFilterCreated);
 	
 	resetUI();
 }
@@ -155,8 +195,6 @@ void FilterBar::updateIDCombos()
  */
 void FilterBar::handle_filtersChanged()
 {
-	if (temporarilyIgnoreChangeEvents) return;
-	
 	bool anyFilterEnabled = false;
 	for (const FilterBox* const filterBox : filterBoxes) {
 		anyFilterEnabled |= filterBox->isChecked();
@@ -178,11 +216,46 @@ void FilterBar::handle_newFilterButtonPressed()
 	filterWizard->show();
 }
 
-void FilterBar::handle_newFilterCreated()
+void FilterBar::handle_filterWizardAccepted()
 {
 	assert(filterWizard);
 	
 	unique_ptr<Filter> newFilter = filterWizard->getFinishedFilter();
+	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
+	filterBoxes.append(newFilterBox);
+	filtersScrollAreaLayout->addWidget(newFilterBox);
+	
+	QApplication::processEvents();
+	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	
+	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
+	connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
+	
+	handle_filtersChanged();
+}
+
+void FilterBar::handle_filterCreationShortcutUsed()
+{
+	QAction* action = (QAction*) sender();
+	assert(action);
+	const QString name = action->text();
+	const Column* const columnToUse = createFilterShortcuts.value(action);
+	assert(columnToUse);
+	const NormalTable& tableToFilter = compTable->getBaseTable();
+	
+	unique_ptr<Filter> newFilter = nullptr;
+	switch (columnToUse->type) {
+	case Integer:	newFilter = make_unique<IntFilter>		(tableToFilter, *columnToUse, name);	break;
+	case ID:		newFilter = make_unique<IDFilter>		(tableToFilter, *columnToUse, name);	break;
+	case Enum:		newFilter = make_unique<EnumFilter>		(tableToFilter, *columnToUse, name);	break;
+	case DualEnum:	newFilter = make_unique<DualEnumFilter>	(tableToFilter, *columnToUse, name);	break;
+	case Bit:		newFilter = make_unique<BoolFilter>		(tableToFilter, *columnToUse, name);	break;
+	case String:	newFilter = make_unique<StringFilter>	(tableToFilter, *columnToUse, name);	break;
+	case Date:		newFilter = make_unique<DateFilter>		(tableToFilter, *columnToUse, name);	break;
+	case Time:		newFilter = make_unique<TimeFilter>		(tableToFilter, *columnToUse, name);	break;
+	default: assert(false);
+	}
+	
 	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
@@ -226,7 +299,7 @@ void FilterBar::handle_applyFilters()
 	clearFiltersButton->setEnabled(true);
 	
 	QSet<const Filter*> filters = collectFilters();
-	compAscents->applyFilters(filters);
+	compTable->applyFilters(filters);
 	saveFilters(filters);
 	
 	mainWindow->currentFiltersChanged();
@@ -240,7 +313,7 @@ void FilterBar::handle_applyFilters()
  */
 void FilterBar::handle_clearFilters()
 {
-	compAscents->clearFilters();
+	compTable->clearFilters();
 	
 	handle_filtersChanged();	// Potentially enable apply button
 	

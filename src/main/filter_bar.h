@@ -24,6 +24,7 @@
 #ifndef FILTER_BAR_H
 #define FILTER_BAR_H
 
+#include "src/comp_tables/composite_table.h"
 #include "src/filters/filter.h"
 #include "src/db/database.h"
 #include "src/filters/filter_widgets/filter_box.h"
@@ -45,25 +46,24 @@ class FilterBar : public QWidget, public Ui_FilterBar
 {
 	Q_OBJECT
 	
-	/** The main window containing the ascent table and filter bar. */
+	/** The main window containing the composite table and filter bar. */
 	MainWindow* mainWindow;
 	/** The project's database. */
 	Database* db;
-	/** The ascent table. */
-	CompositeAscentsTable* compAscents;
+	/** The composite table. */
+	CompositeTable* compTable;
 	
-	/** Flag indicating whether the UI is currently being updated and change events should be ignored. */
-	bool temporarilyIgnoreChangeEvents;
+	QList<FilterBox*> filterBoxes;
 	
 	QMenu addFilterMenu;
+	QHash<QAction*, const Column*> createFilterShortcuts;
 	FilterWizard* filterWizard;
-	QList<FilterBox*> filterBoxes;
 	
 public:
 	FilterBar(QWidget* parent);
 	~FilterBar();
 	// Initial setup
-	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeAscentsTable* compAscents);
+	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeTable* compTable);
 	
 public:
 	// Project setup
@@ -81,7 +81,8 @@ private slots:
 public:
 	// Execute filter actions
 	void handle_newFilterButtonPressed();
-	void handle_newFilterCreated();
+	void handle_filterWizardAccepted();
+	void handle_filterCreationShortcutUsed();
 	void handle_removeFilter();
 	void handle_applyFilters();
 	void handle_clearFilters();

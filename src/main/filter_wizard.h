@@ -160,7 +160,7 @@ class FilterWizard : public QWizard
 	FilterWizardNamePage namePage;
 	
 public:
-	FilterWizard(QWidget* parent, NormalTable& tableToFilter);
+	FilterWizard(QWidget* parent, const NormalTable& tableToFilter);
 	~FilterWizard();
 	
 	unique_ptr<Filter> getFinishedFilter();

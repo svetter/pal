@@ -327,7 +327,10 @@ QString FilterWizardNamePage::generateFilterName() const
 	}
 	
 	if (columnToUse->foreignColumn) {
-		name += columnToUse->getReferencedForeignColumn().table.uiName;
+		const Table& foreignTable = columnToUse->getReferencedForeignColumn().table;
+		assert(!foreignTable.isAssociative);
+		const NormalTable& targetTable = (const NormalTable&) foreignTable;
+		name = targetTable.getItemNameSingular();
 	} else {
 		name += columnToUse->uiName;
 	}
@@ -348,7 +351,7 @@ QString FilterWizardNamePage::generateFilterName() const
 
 
 
-FilterWizard::FilterWizard(QWidget* parent, NormalTable& tableToFilter) :
+FilterWizard::FilterWizard(QWidget* parent, const NormalTable& tableToFilter) :
 	QWizard(parent),
 	tableToFilter(tableToFilter),
 	tablePage(FilterWizardTablePage(parent, tableToFilter)),
