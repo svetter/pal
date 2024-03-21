@@ -46,9 +46,9 @@ FilterBar::FilterBar(QWidget* parent) :
 	mainWindow(nullptr),
 	db(nullptr),
 	compTable(nullptr),
+	filterBoxes(QList<FilterBox*>()),
 	addFilterMenu(QMenu(this)),
-	filterWizard(nullptr),
-	filterBoxes(QList<FilterBox*>())
+	filterWizard(nullptr)
 {
 	setupUi(this);
 	

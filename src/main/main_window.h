@@ -128,7 +128,7 @@ private:
 	void updateTopBarButtonVisibilities();
 	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void scrollToTopAfterSorting();
-	void updateFilters(const ItemTypeMapper* mapper = nullptr);
+	void updateFilters(const ItemTypeMapper* onlyForMapper = nullptr);
 public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	

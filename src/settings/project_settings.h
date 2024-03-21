@@ -126,8 +126,6 @@ public:
 	// View state
 	/** Remembered index of open tab in the main window. */
 	ProjectSetting<int>			mainWindow_currentTabIndex;
-	/** Remember filters in the main window as being visible. */
-	ProjectSetting<bool>		mainWindow_showFilterBar;
 	
 	// Column widths
 	/** Remembered column widths of the ascents table in the main window. */
@@ -193,6 +191,22 @@ public:
 	/** Remembered sorting of the countries table in the main window. */
 	ProjectSetting<QString>		sorting_countriesTable;
 	
+	// Filter bar visibility
+	/** Remember filters in the ascents tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_ascentsTab;
+	/** Remember filters in the peaks tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_peaksTab;
+	/** Remember filters in the trips tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_tripsTab;
+	/** Remember filters in the hikers tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_hikersTab;
+	/** Remember filters in the regions tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_regionsTab;
+	/** Remember filters in the ranges tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_rangesTab;
+	/** Remember filters in the countries tab as being visible. */
+	ProjectSetting<bool>		showFilterBar_countriesTab;
+	
 	
 	
 	/**
@@ -203,7 +217,7 @@ public:
 	 * or opened.
 	 */
 	inline ProjectSettings(SettingsTable& table) :
-		//															key																		default value
+		//																	key																default value
 		databaseVersion					(ProjectSetting<QString>	(table,	"databaseVersion")),
 		
 		// === EXPLICIT PROJECT SETTINGS ===
@@ -215,7 +229,6 @@ public:
 		
 		// View state
 		mainWindow_currentTabIndex		(ProjectSetting<int>		(table,	"implicit/mainWindow/currentTabIndex",							0)),
-		mainWindow_showFilterBar		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters",								true)),
 		
 		// Column widths
 		columnWidths_ascentsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/ascentsTable",				100)),
@@ -251,7 +264,16 @@ public:
 		sorting_hikersTable				(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/hikersTable")),
 		sorting_regionsTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/regionsTable")),
 		sorting_rangesTable				(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/rangesTable")),
-		sorting_countriesTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/countriesTable"))
+		sorting_countriesTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/countriesTable")),
+		
+		// Filter bar visibility
+		showFilterBar_ascentsTab		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/ascentsTab",					true)),
+		showFilterBar_peaksTab			(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/peaksTab",						false)),
+		showFilterBar_tripsTab			(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/tripsTab",						false)),
+		showFilterBar_hikersTab			(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/hikersTab",					false)),
+		showFilterBar_regionsTab		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/regionsTab",					false)),
+		showFilterBar_rangesTab			(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/rangesTab",					false)),
+		showFilterBar_countriesTab		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/countriesTab",					false))
 	{}
 };
 

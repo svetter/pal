@@ -134,10 +134,11 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		}
 	}
 	
-	// 1.4.0
+	// 1.5.0
 	if (versionOlderThan(currentDbVersion, "1.5.0")) {
 		// Filter system changed, clear old filters settings
 		db.settingsTable.removeAllMatchingSettings(parent, "implicit/mainWindow/filters/ascentsTable/");
+		db.settingsTable.removeAllMatchingSettings(parent, "implicit/mainWindow/showFilters");
 	}
 	
 	
@@ -174,15 +175,15 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 		QString columnName = query.value(1).toString();
 		columnNames.append(columnName);
 	}
-
-	QStringList columnNamesBeforeV1_2_0 = { "projectSettingsID", "defaultHiker", "dateFilter", "peakHeightFilter", "volcanoFilter", "rangeFilter", "hikeKindFilter", "difficultyFilter", "hikerFilter" };
-	QStringList columnNamesAfterV1_2_0 = { "projectSettingID", "settingKey", "settingValue" };
-
+	
+	const QStringList columnNamesBeforeV1_2_0 = { "projectSettingsID", "defaultHiker", "dateFilter", "peakHeightFilter", "volcanoFilter", "rangeFilter", "hikeKindFilter", "difficultyFilter", "hikerFilter" };
+	const QStringList columnNamesAfterV1_2_0 = { "projectSettingID", "settingKey", "settingValue" };
+	
 	if (columnNames == columnNamesBeforeV1_2_0) {
 		return "1.1.1";
 	}
 	assert(columnNames == columnNamesAfterV1_2_0);
-
+	
 	// Settings table has current format, get version
 	queryString = QString(
 		"SELECT settingValue FROM ProjectSettings"

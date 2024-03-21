@@ -74,7 +74,9 @@ MainWindow::MainWindow() :
 	
 	pinStatsRangesAction->setChecked(Settings::itemStats_pinRanges.get());
 	
-	ascentFilterBar->supplyPointers(this, &db, (CompositeAscentsTable*) typesHandler->get(ItemTypeAscent).compTable);
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->filterBar->supplyPointers(this, &db, mapper->compTable);
+	}
 	
 	
 	connectUI();
@@ -116,13 +118,13 @@ void MainWindow::createTypesHandler()
 {
 	typesHandler = new ItemTypesHandler(db,
 		{
-			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		ascentsTableView,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton}	},
-			{ItemTypePeak,		TypeMapperPointers{peaksTab,		peaksTableView,		peaksStatsScrollArea,		newPeakAction,		newPeakButton}		},
-			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		tripsTableView,		tripsStatsScrollArea,		newTripAction,		newTripButton}		},
-			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		hikersTableView,	hikersStatsScrollArea,		newHikerAction,		newHikerButton}		},
-			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		regionsTableView,	regionsStatsScrollArea,		newRegionAction,	newRegionButton}	},
-			{ItemTypeRange,		TypeMapperPointers{rangesTab,		rangesTableView,	rangesStatsScrollArea,		newRangeAction,		newRangeButton}		},
-			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	countriesTableView,	countriesStatsScrollArea,	newCountryAction,	newCountryButton}	}
+			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		ascentsTableView,	ascentFilterBar,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton}	},
+			{ItemTypePeak,		TypeMapperPointers{peaksTab,		peaksTableView,		peakFilterBar,		peaksStatsScrollArea,		newPeakAction,		newPeakButton}		},
+			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		tripsTableView,		tripFilterBar,		tripsStatsScrollArea,		newTripAction,		newTripButton}		},
+			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		hikersTableView,	hikerFilterBar,		hikersStatsScrollArea,		newHikerAction,		newHikerButton}		},
+			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		regionsTableView,	regionFilterBar,	regionsStatsScrollArea,		newRegionAction,	newRegionButton}	},
+			{ItemTypeRange,		TypeMapperPointers{rangesTab,		rangesTableView,	rangeFilterBar,		rangesStatsScrollArea,		newRangeAction,		newRangeButton}		},
+			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	countriesTableView,	countryFilterBar,	countriesStatsScrollArea,	newCountryAction,	newCountryButton}	}
 		}
 	);
 }
@@ -477,8 +479,6 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		updateFilters();
 		
 		// Restore project-specific implicit settings:
-		// Filter bar
-		showFiltersAction->setChecked(db.projectSettings.mainWindow_showFilterBar.get(this));
 		// Open tab
 		int tabIndex = 0;
 		if (Settings::rememberTab.get()) {
@@ -491,10 +491,13 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			activeMapper->openingTab();
 			showItemStatsPanelAction->setChecked(activeMapper->itemStatsPanelCurrentlySetVisible());
 			activeMapper->statsEngine->setCurrentlyVisible(true, true);
+			showFiltersAction->setChecked(activeMapper->filterBarCurrentlySetVisible());
 		}
 		generalStatsEngine.setCurrentlyVisible(!activeMapper);
 		
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+			// Filter bar
+			mapper->filterBar->setVisible(mapper->showFilterBarSetting->get(this));
 			// Column widths
 			if (Settings::rememberColumnWidths.get()) {
 				restoreColumnWidths(mapper);
@@ -538,7 +541,7 @@ void MainWindow::initCompositeBuffers()
 	progress.setWindowTitle(tr("Opening database"));
 	progress.setMinimumWidth(250);
 	progress.setCancelButton(nullptr);
-	progress.setMinimumDuration(250);
+	progress.setMinimumDuration(100);
 	progress.setLabel(new QLabel(tr("Preparing tables..."), &progress));
 	
 	bool prepareAll = !Settings::onlyPrepareActiveTableOnStartup.get();
@@ -559,29 +562,34 @@ void MainWindow::initCompositeBuffers()
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
-	QSet<const Filter*> ascentFilters = QSet<const Filter*>();
-	if (Settings::rememberFilters.get()) {
-		ascentFilters = ascentFilterBar->parseFiltersFromProjectSettings();
-		ascentFilterBar->insertFiltersIntoUI(ascentFilters);
-		if (!ascentFilters.isEmpty()) {
-			showFiltersAction->setChecked(true);
-		}
-	}
-	typesHandler->get(ItemTypeAscent).compTable->setInitialFilters(ascentFilters);
-	
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		progress.setLabelText(tr("Preparing table %1...").arg(mapper->baseTable.uiName));
 		
-		bool isOpen = mapper->tableView == currentTableView;
-		bool prepareThisTable = prepareAll || isOpen;
+		const bool isOpen = mapper->tableView == currentTableView;
 		
-		QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
-		bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper->columnWidthsSetting->nonePresent(columnNameSet);
+		// Load filters
+		QSet<const Filter*> filters = QSet<const Filter*>();
+		if (Settings::rememberFilters.get()) {
+			filters = mapper->filterBar->parseFiltersFromProjectSettings();
+			mapper->filterBar->insertFiltersIntoUI(filters);
+			if (!mapper->filterBarCurrentlySetVisible()) {
+				// Hidden filters are not allowed to be applied
+				filters.clear();
+			}
+		}
+		mapper->compTable->setInitialFilters(filters);
+		
+		// Check whether table needs to be fully prepared
+		const bool prepareThisTable = prepareAll || isOpen;
+		
+		// Check whether columns should be auto-resized after preparation
+		const QSet<QString> columnNameSet = mapper->compTable->getNormalColumnNameSet();
+		const bool autoResizeColumns = !Settings::rememberColumnWidths.get() || mapper->columnWidthsSetting->nonePresent(columnNameSet);
 		
 		// Collect buffer initialization parameters
-		QProgressDialog* updateProgress = prepareThisTable ? &progress : nullptr;
-		bool deferCompute = !prepareThisTable;
-		QTableView* tableToAutoResizeAfterCompute = autoResizeColumns ? mapper->tableView : nullptr;
+		QProgressDialog* const updateProgress = prepareThisTable ? &progress : nullptr;
+		const bool deferCompute = !prepareThisTable;
+		QTableView* const tableToAutoResizeAfterCompute = autoResizeColumns ? mapper->tableView : nullptr;
 		
 		mapper->compTable->initBuffer(updateProgress, deferCompute, tableToAutoResizeAfterCompute);
 		if (isOpen) mapper->openingTab();
@@ -599,18 +607,15 @@ void MainWindow::initCompositeBuffers()
  */
 void MainWindow::setUIEnabled(bool enabled)
 {
-	int currentTabIndex = mainAreaTabs->currentIndex();
-	bool statsTabOpen = currentTabIndex == mainAreaTabs->indexOf(statisticsTab);
-	bool ascentsTabOpen = currentTabIndex == mainAreaTabs->indexOf(ascentsTab);
+	const int currentTabIndex = mainAreaTabs->currentIndex();
+	const bool statsTabOpen = currentTabIndex == mainAreaTabs->indexOf(statisticsTab);
 	
-	saveDatabaseAsAction		->setEnabled(enabled);
-	closeDatabaseAction			->setEnabled(enabled);
-	projectSettingsAction		->setEnabled(enabled);
-	viewMenu					->setEnabled(enabled && !statsTabOpen);
-	newMenu						->setEnabled(enabled);
-	toolsMenu					->setEnabled(enabled);
-	
-	showFiltersAction			->setVisible(enabled && ascentsTabOpen);
+	saveDatabaseAsAction	->setEnabled(enabled);
+	closeDatabaseAction		->setEnabled(enabled);
+	projectSettingsAction	->setEnabled(enabled);
+	viewMenu				->setEnabled(enabled && !statsTabOpen);
+	newMenu					->setEnabled(enabled);
+	toolsMenu				->setEnabled(enabled);
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->newItemButton->setEnabled(enabled);
@@ -914,13 +919,17 @@ void MainWindow::scrollToTopAfterSorting()
 }
 
 /**
- * Updates elements of the ascent filter bar which depend on contents of the composite tables.
+ * Updates elements of the filter bars which depend on contents of the database.
  * 
- * @param mapper The ItemTypeMapper for the table that was changed.
+ * @param onlyForMapper	The ItemTypeMapper for the table that was changed. Set to nullptr to update all filter bars.
  */
-void MainWindow::updateFilters(const ItemTypeMapper* mapper)
+void MainWindow::updateFilters(const ItemTypeMapper* onlyForMapper)
 {
-	ascentFilterBar->updateIDCombos();
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		if (!mapper || mapper == onlyForMapper) {
+			mapper->filterBar->updateIDCombos();
+		}
+	}
 }
 
 /**
@@ -962,7 +971,7 @@ void MainWindow::handle_tabChanged()
 	progress.setLabel(new QLabel(tr("Updating table..."), &progress));
 	progress.setMinimumWidth(250);
 	progress.setCancelButton(nullptr);
-	progress.setMinimumDuration(500);
+	progress.setMinimumDuration(100);
 	
 	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		if (mapper == activeMapper) continue;
@@ -976,6 +985,10 @@ void MainWindow::handle_tabChanged()
 		progress.setMaximum(activeMapper->compTable->getNumberOfCellsToUpdate());
 		activeMapper->compTable->setUpdateImmediately(true, &progress);
 		activeMapper->openingTab();
+		
+		// Filter bar visibility
+		const bool filterBarShown = activeMapper->filterBarCurrentlySetVisible();
+		showFiltersAction->setChecked(filterBarShown);
 		
 		// Item stats panel visibility
 		const bool statsShown = activeMapper->itemStatsPanelCurrentlySetVisible();
@@ -1302,10 +1315,13 @@ void MainWindow::handle_closeDatabase()
 	saveProjectImplicitSettings();
 	setWindowTitleFilename();
 	setUIEnabled(false);
-	ascentFilterBar->resetUI();
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->filterBar->resetUI();
+	}
+
 	db.reset();
 	projectOpen = false;
-	updateFilters();
+
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->compTable->resetBuffer();
 		mapper->statsEngine->resetStatsPanel();
@@ -1352,9 +1368,16 @@ void MainWindow::handle_openSettings()
  */
 void MainWindow::handle_showFiltersChanged()
 {
-	bool showFilters = showFiltersAction->isChecked();
-	ascentFilterBar->setVisible(showFilters);
-	if (projectOpen && !showFilters) ascentFilterBar->handle_clearFilters();
+	if (!projectOpen) return;
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	
+	if (activeMapper.filterBarCurrentlySetVisible()) {
+		// No hidden filters can be active
+		activeMapper.filterBar->handle_clearFilters();
+	}
+	
+	const bool showFilters = showFiltersAction->isChecked();
+	activeMapper.filterBar->setVisible(showFilters);
 }
 
 /**
@@ -1365,17 +1388,17 @@ void MainWindow::handle_showFiltersChanged()
 void MainWindow::handle_showStatsPanelChanged()
 {
 	if (!projectOpen) return;
-	ItemTypeMapper& mapper = getActiveMapper();
+	ItemTypeMapper& activeMapper = getActiveMapper();
 	
-	if (mapper.statsScrollArea->isVisible()) {
+	if (activeMapper.itemStatsPanelCurrentlySetVisible()) {
 		// Save splitter sizes before closing
-		QSplitter* const splitter = mapper.tab->findChild<QSplitter*>();
-		saveSplitterSizes(*splitter, *mapper.statsPanelSplitterSizesSetting);
+		QSplitter* const splitter = activeMapper.tab->findChild<QSplitter*>();
+		saveSplitterSizes(*splitter, *activeMapper.statsPanelSplitterSizesSetting);
 	}
 	
 	const bool showStatsPanel = showItemStatsPanelAction->isChecked();
-	mapper.statsScrollArea->setVisible(showStatsPanel);
-	mapper.statsEngine->setCurrentlyVisible(showStatsPanel);
+	activeMapper.statsScrollArea->setVisible(showStatsPanel);
+	activeMapper.statsEngine->setCurrentlyVisible(showStatsPanel);
 }
 
 /**
@@ -1559,12 +1582,12 @@ void MainWindow::saveProjectImplicitSettings()
 {
 	assert(projectOpen);
 	
-	db.projectSettings.mainWindow_currentTabIndex	.set(*this, mainAreaTabs->currentIndex());
-	db.projectSettings.mainWindow_showFilterBar		.set(*this, showFiltersAction->isChecked());
+	db.projectSettings.mainWindow_currentTabIndex.set(*this, mainAreaTabs->currentIndex());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
 		saveSorting(mapper);
+		mapper->showFilterBarSetting->set(*this, mapper->filterBarCurrentlySetVisible());
 	}
 }
 

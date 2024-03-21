@@ -378,115 +378,108 @@
          <widget class="FilterBar" name="ascentFilterBar" native="true"/>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="ascentsTableAndStatsLayout" stretch="0">
-          <property name="spacing">
+         <widget class="QSplitter" name="ascentsSplitter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="handleWidth">
            <number>10</number>
           </property>
-          <item>
-           <widget class="QSplitter" name="ascentsSplitter">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QTableView" name="ascentsTableView">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>250</height>
+            </size>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="cornerButtonEnabled">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderDefaultSectionSize">
+            <number>20</number>
+           </attribute>
+           <attribute name="verticalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+          <widget class="QScrollArea" name="ascentsStatsScrollArea">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>250</height>
+            </size>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
+           </property>
+           <widget class="QWidget" name="ascentsStatsScrollAreaWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>248</width>
+              <height>623</height>
+             </rect>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="handleWidth">
-             <number>10</number>
-            </property>
-            <property name="childrenCollapsible">
-             <bool>false</bool>
-            </property>
-            <widget class="QTableView" name="ascentsTableView">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>250</height>
-              </size>
+            <layout class="QVBoxLayout" name="ascentsStatsScrollAreaLayout">
+             <property name="spacing">
+              <number>10</number>
              </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+             <property name="leftMargin">
+              <number>10</number>
              </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
+             <property name="topMargin">
+              <number>10</number>
              </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
+             <property name="rightMargin">
+              <number>10</number>
              </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
+             <property name="bottomMargin">
+              <number>10</number>
              </property>
-             <property name="horizontalScrollMode">
-              <enum>QAbstractItemView::ScrollPerPixel</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>true</bool>
-             </property>
-             <property name="cornerButtonEnabled">
-              <bool>false</bool>
-             </property>
-             <attribute name="horizontalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderDefaultSectionSize">
-              <number>20</number>
-             </attribute>
-             <attribute name="verticalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-            </widget>
-            <widget class="QScrollArea" name="ascentsStatsScrollArea">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>250</height>
-              </size>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignHCenter|Qt::AlignTop</set>
-             </property>
-             <widget class="QWidget" name="ascentsStatsScrollAreaWidget">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>248</width>
-                <height>621</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="ascentsStatsScrollAreaLayout">
-               <property name="spacing">
-                <number>10</number>
-               </property>
-               <property name="leftMargin">
-                <number>10</number>
-               </property>
-               <property name="topMargin">
-                <number>10</number>
-               </property>
-               <property name="rightMargin">
-                <number>10</number>
-               </property>
-               <property name="bottomMargin">
-                <number>10</number>
-               </property>
-              </layout>
-             </widget>
-            </widget>
+            </layout>
            </widget>
-          </item>
-         </layout>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -498,7 +491,7 @@
        <attribute name="title">
         <string>Peaks</string>
        </attribute>
-       <layout class="QHBoxLayout" name="peaksTabLayout">
+       <layout class="QVBoxLayout" name="peaksTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -514,6 +507,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="peakFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="peaksSplitter">
           <property name="sizePolicy">
@@ -591,7 +587,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="peaksStatsScrollAreaLayout">
@@ -625,7 +621,7 @@
        <attribute name="title">
         <string>Trips</string>
        </attribute>
-       <layout class="QHBoxLayout" name="tripsTabLayout">
+       <layout class="QVBoxLayout" name="tripsTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -641,6 +637,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="tripFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="tripsSplitter">
           <property name="sizePolicy">
@@ -721,7 +720,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="tripsStatsScrollAreaLayout">
@@ -755,7 +754,7 @@
        <attribute name="title">
         <string>Hikers</string>
        </attribute>
-       <layout class="QHBoxLayout" name="hikersTabLayout">
+       <layout class="QVBoxLayout" name="hikersTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -771,6 +770,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="hikerFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="hikersSplitter">
           <property name="sizePolicy">
@@ -848,7 +850,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="hikersStatsScrollAreaLayout">
@@ -882,7 +884,7 @@
        <attribute name="title">
         <string>Regions</string>
        </attribute>
-       <layout class="QHBoxLayout" name="regionsTabLayout">
+       <layout class="QVBoxLayout" name="regionsTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -898,6 +900,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="regionFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="regionsSplitter">
           <property name="sizePolicy">
@@ -975,7 +980,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="regionsStatsScrollAreaLayout">
@@ -1009,7 +1014,7 @@
        <attribute name="title">
         <string>Mountain ranges</string>
        </attribute>
-       <layout class="QHBoxLayout" name="rangesTabLayout">
+       <layout class="QVBoxLayout" name="rangesTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -1025,6 +1030,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="rangeFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="rangesSplitter">
           <property name="sizePolicy">
@@ -1102,7 +1110,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="rangesStatsScrollAreaLayout">
@@ -1136,7 +1144,7 @@
        <attribute name="title">
         <string>Countries</string>
        </attribute>
-       <layout class="QHBoxLayout" name="countriesTabLayout">
+       <layout class="QVBoxLayout" name="countriesTabLayout">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -1152,6 +1160,9 @@
         <property name="bottomMargin">
          <number>10</number>
         </property>
+        <item>
+         <widget class="FilterBar" name="countryFilterBar" native="true"/>
+        </item>
         <item>
          <widget class="QSplitter" name="countriesSplitter">
           <property name="sizePolicy">
@@ -1229,7 +1240,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>248</height>
+              <height>643</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="countriesStatsScrollAreaLayout">
