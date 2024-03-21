@@ -126,6 +126,16 @@ const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<c
 
 
 /**
+ * Returns the translation of "Region" (singular).
+ *
+ * @return	The translation of "Region" (singular).
+ */
+QString RegionsTable::getItemNameSingular() const
+{
+	return tr("Region");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no region is selected.
  *
  * @return	The translated string representing absence of a region.

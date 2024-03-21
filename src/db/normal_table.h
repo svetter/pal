@@ -57,6 +57,12 @@ public:
 	
 	// Translation strings
 	/**
+	 * Returns the translation of the item name in singular form.
+	 * 
+	 * @return	The translation of the item name in singular form.
+	 */
+	virtual QString getItemNameSingular() const = 0;
+	/**
 	 * Returns the translated string to be displayed to indicate that no item is selected.
 	 * 
 	 * @return	The translated string representing absence of an item of the table's type.

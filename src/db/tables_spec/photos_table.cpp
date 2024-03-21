@@ -203,6 +203,16 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 
 
 /**
+ * Returns the translation of "Photo" (singular).
+ *
+ * @return	The translation of "Photo" (singular).
+ */
+QString PhotosTable::getItemNameSingular() const
+{
+	return tr("Photo");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no photo is selected.
  *
  * @return	The translated string representing absence of a photo.

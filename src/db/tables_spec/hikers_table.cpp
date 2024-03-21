@@ -118,6 +118,16 @@ const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<co
 
 
 /**
+ * Returns the translation of "Hiker" (singular).
+ *
+ * @return	The translation of "Hiker" (singular).
+ */
+QString HikersTable::getItemNameSingular() const
+{
+	return tr("Hiker");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no hiker is selected.
  *
  * @return	The translated string representing absence of a hiker.

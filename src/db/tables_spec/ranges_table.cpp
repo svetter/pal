@@ -123,6 +123,16 @@ const QList<ColumnDataPair> RangesTable::mapDataToColumnDataPairs(const QList<co
 
 
 /**
+ * Returns the translation of "Mountain range" (singular).
+ *
+ * @return	The translation of "Mountain range" (singular).
+ */
+QString RangesTable::getItemNameSingular() const
+{
+	return tr("Mountain range");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no range is selected.
  *
  * @return	The translated string representing absence of a mountain range.

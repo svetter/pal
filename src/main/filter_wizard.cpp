@@ -36,8 +36,18 @@ FilterWizardTablePage::FilterWizardTablePage(QWidget* parent, const NormalTable&
 	otherTableCombo->setPlaceholderText(tr("Choose table"));
 	for (const NormalTable* const table: tableToFilter.db.getNormalItemTableList()) {
 		if (table == &tableToFilter) continue;
+		
+		const Breadcrumbs& crumbs = tableToFilter.db.getBreadcrumbsFor(tableToFilter, *table);
+		const bool useSingular = crumbs.isForwardOnly();
+		QString comboEntry = QString();
+		if (useSingular) {
+			comboEntry = table->getItemNameSingular();
+		} else {
+			comboEntry = table->uiName;
+		}
+		
 		otherTableList.append(table);
-		otherTableCombo->addItem(table->uiName);
+		otherTableCombo->addItem(comboEntry);
 	}
 	layout->addWidget(otherTableCombo);
 	
@@ -194,9 +204,9 @@ void FilterWizardFoldOpPage::initializePage()
 	assert(columnToUse);
 	
 	if (columnToUse->type == Integer) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can work on a list of those values, their count, or on their maximum, minimum, sum, or average."));
+		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values, their count, or on their maximum, minimum, sum, or average."));
 	} else {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can work on a list of those values, or on their count."));
+		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values, or on their count."));
 	}
 	
 	foldOpList.clear();
@@ -306,7 +316,14 @@ QString FilterWizardNamePage::generateFilterName() const
 	
 	QString name = "";
 	if (tableToUse != &tableToFilter) {
-		name += tableToUse->uiName + ": ";
+		const Breadcrumbs& crumbs = tableToFilter.db.getBreadcrumbsFor(tableToFilter, *tableToUse);
+		const bool useSingular = crumbs.isForwardOnly();
+		if (useSingular) {
+			name += tableToUse->getItemNameSingular();
+		} else {
+			name += tableToUse->uiName;
+		}
+		name += ": ";
 	}
 	
 	if (columnToUse->foreignColumn) {

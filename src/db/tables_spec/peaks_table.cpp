@@ -137,6 +137,16 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 
 
 /**
+ * Returns the translation of "Peak" (singular).
+ *
+ * @return	The translation of "Peak" (singular).
+ */
+QString PeaksTable::getItemNameSingular() const
+{
+	return tr("Peak");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no peak is selected.
  *
  * @return	The translated string representing absence of a peak.

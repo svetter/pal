@@ -127,6 +127,16 @@ const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<con
 
 
 /**
+ * Returns the translation of "Trip" (singular).
+ *
+ * @return	The translation of "Trip" (singular).
+ */
+QString TripsTable::getItemNameSingular() const
+{
+	return tr("Trip");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no trip is selected.
  *
  * @return	The translated string representing absence of a trip.

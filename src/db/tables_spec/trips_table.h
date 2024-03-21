@@ -56,6 +56,7 @@ private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Trip& trip) const;
 	
 public:
+	virtual QString getItemNameSingular() const;
 	virtual QString getNoneString() const;
 	virtual QString getCreationConfirmMessage() const;
 	virtual QString getEditConfirmMessage(int numEdited) const;

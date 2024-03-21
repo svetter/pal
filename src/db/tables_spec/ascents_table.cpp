@@ -155,6 +155,16 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 
 
 /**
+ * Returns the translation of "Ascent" (singular).
+ * 
+ * @return	The translation of "Ascent" (singular).
+ */
+QString AscentsTable::getItemNameSingular() const
+{
+	return tr("Ascent");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no ascent is selected.
  *
  * @return	The translated string representing absence of an ascent.

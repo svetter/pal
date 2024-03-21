@@ -118,6 +118,16 @@ const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList
 
 
 /**
+ * Returns the translation of "Country" (singular).
+ *
+ * @return	The translation of "Country" (singular).
+ */
+QString CountriesTable::getItemNameSingular() const
+{
+	return tr("Country");
+}
+
+/**
  * Returns the translated string to be displayed to indicate that no country is selected.
  *
  * @return	The translated string representing absence of a country.
