@@ -2,12 +2,14 @@
 #define FILTER_BOX_H
 
 #include "src/db/column.h"
+#include "src/filters/filter.h"
 #include "ui_filter_box.h"
 
 #include <QGroupBox>
 #include <QToolButton>
 #include <QButtonGroup>
-#include <QStyle>
+
+using std::unique_ptr, std::make_unique;
 
 
 
@@ -24,76 +26,22 @@ private:
 	QButtonGroup invertButtonGroup;
 	
 protected:
-	inline explicit FilterBox(QWidget* parent, DataType type, const QString& title) :
-		QGroupBox(parent),
-		type(type),
-		title(title),
-		removeButton(new QToolButton(parent)),
-		invertButtonGroup(QButtonGroup())
-	{
-		setupUi(this);
-		
-		setTitle(title);
-		
-		invertButtonGroup.addButton(includeRadiobutton);
-		invertButtonGroup.addButton(excludeRadiobutton);
-		
-		removeButton->setObjectName("filterRemoveButton");
-		removeButton->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
-		removeButton->setFixedSize(12, 12);
-		
-		connect(includeRadiobutton,	&QRadioButton::clicked,	this,	&FilterBox::handle_invertChanged);
-		connect(excludeRadiobutton,	&QRadioButton::clicked,	this,	&FilterBox::handle_invertChanged);
-		connect(removeButton,		&QToolButton::clicked,	this,	&FilterBox::handle_removeButtonPressed);
-		
-		FilterBox::reset();
-	}
+	FilterBox(QWidget* parent, DataType type, const QString& title);
 	
 public:
-	inline virtual ~FilterBox()
-	{
-		removeButton->deleteLater();
-	}
+	virtual ~FilterBox();
 	
 	virtual void setup() = 0;
-	inline virtual void reset() {
-		includeRadiobutton->setChecked(true);
-		excludeRadiobutton->setChecked(false);
-	}
+	virtual void reset();
 	
-	inline void positionRemoveButton()
-	{
-		const int removeButtonX = frameGeometry().right()   - removeButton->width()  / 2;
-		const int removeButtonY = frameGeometry().top() + 9 - removeButton->height() / 2;
-		removeButton->move(removeButtonX, removeButtonY);
-		removeButton->setVisible(true);
-	}
-	
-private slots:
-	inline void handle_invertChanged()
-	{
-		assert(includeRadiobutton->isChecked() != excludeRadiobutton->isChecked());
-		
-		emit filterChanged();
-	}
-	
-	inline void handle_removeButtonPressed()
-	{
-		emit removeRequested();
-	}
+	virtual const Filter* getFilter() const = 0;
 	
 protected:
-	inline virtual void resizeEvent(QResizeEvent* event) override
-	{
-		QGroupBox::resizeEvent(event);
-		positionRemoveButton();
-	}
+	virtual void resizeEvent(QResizeEvent* event);
+	virtual void moveEvent(QMoveEvent* event);
 	
-	inline virtual void moveEvent(QMoveEvent* event) override
-	{
-		QGroupBox::moveEvent(event);
-		positionRemoveButton();
-	}
+private:
+	void positionRemoveButton();
 	
 signals:
 	void filterChanged();

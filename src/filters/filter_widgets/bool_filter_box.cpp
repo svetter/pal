@@ -2,22 +2,25 @@
 
 
 
-BoolFilterBox::BoolFilterBox(QWidget* parent, const QString& title) :
+BoolFilterBox::BoolFilterBox(QWidget* parent, const QString& title, unique_ptr<BoolFilter> filter) :
 	FilterBox(parent, Bit, title),
+	filter(std::move(filter)),
 	yesRadiobutton(new QRadioButton(this)),
 	noRadiobutton(new QRadioButton(this)),
+	valueButtonGroup(QButtonGroup()),
 	spacerL(new QSpacerItem(QSizePolicy::Expanding, QSizePolicy::Ignored)),
 	spacerR(new QSpacerItem(QSizePolicy::Expanding, QSizePolicy::Ignored))
 {
-	connect(yesRadiobutton,	&QRadioButton::clicked,	this,	&BoolFilterBox::handle_radiobuttonClicked);
-	connect(noRadiobutton,	&QRadioButton::clicked,	this,	&BoolFilterBox::handle_radiobuttonClicked);
+	connect(&valueButtonGroup,	&QButtonGroup::buttonClicked,	this,	&FilterBox::filterChanged);
 	
 	BoolFilterBox::setup();
 	BoolFilterBox::reset();
 }
 
 BoolFilterBox::~BoolFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -30,6 +33,9 @@ void BoolFilterBox::setup()
 	noRadiobutton->setObjectName("noRadiobutton");
 	noRadiobutton->setText(tr("No"));
 	noRadiobutton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	
+	valueButtonGroup.addButton(yesRadiobutton);
+	valueButtonGroup.addButton(noRadiobutton);
 	
 	filterLayout->addItem(spacerL);
 	filterLayout->addWidget(yesRadiobutton);
@@ -47,8 +53,7 @@ void BoolFilterBox::reset()
 
 
 
-void BoolFilterBox::handle_radiobuttonClicked()
+const Filter* BoolFilterBox::getFilter() const
 {
-	assert(yesRadiobutton->isChecked() != noRadiobutton->isChecked());
-	emit filterChanged();
+	return filter.get();
 }

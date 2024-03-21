@@ -18,7 +18,32 @@ void BoolFilter::setValue(bool value)
 
 
 
-FilterBox* BoolFilter::getFilterBox(QWidget* parent) const
+unique_ptr<FilterBox> BoolFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
-	return new BoolFilterBox(parent, name);
+	BoolFilter* const castPointer = (BoolFilter*) thisFilter.release();
+	unique_ptr<BoolFilter> castUnique = unique_ptr<BoolFilter>(castPointer);
+	
+	return make_unique<BoolFilterBox>(parent, name, std::move(castUnique));
+}
+
+
+
+QStringList BoolFilter::encodeTypeSpecific() const
+{
+	return {
+		encodeBool("value", value)
+	};
+}
+
+unique_ptr<BoolFilter> BoolFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+{
+	bool ok = false;
+	
+	const bool value = decodeBool(restOfEncoding, "value", ok, true);
+	if (!ok) return nullptr;
+	
+	unique_ptr<BoolFilter> filter = make_unique<BoolFilter>(tableToFilter, columnToFilterBy, name);
+	filter->value = value;
+	
+	return filter;
 }

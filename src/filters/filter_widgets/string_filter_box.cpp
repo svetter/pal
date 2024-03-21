@@ -2,8 +2,9 @@
 
 
 
-StringFilterBox::StringFilterBox(QWidget* parent, const QString& title) :
+StringFilterBox::StringFilterBox(QWidget* parent, const QString& title, unique_ptr<StringFilter> filter) :
 	FilterBox(parent, String, title),
+	filter(std::move(filter)),
 	lineEdit(new QLineEdit(this))
 {
 	connect(lineEdit,	&QLineEdit::textChanged,	this,	&StringFilterBox::filterChanged);
@@ -13,7 +14,9 @@ StringFilterBox::StringFilterBox(QWidget* parent, const QString& title) :
 }
 
 StringFilterBox::~StringFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -31,4 +34,11 @@ void StringFilterBox::reset()
 	FilterBox::reset();
 	
 	lineEdit->clear();
+}
+
+
+
+const Filter* StringFilterBox::getFilter() const
+{
+	return filter.get();
 }

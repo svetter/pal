@@ -59,6 +59,8 @@ FilterBar::~FilterBar()
 	qDeleteAll(filterBoxes);
 }
 
+
+
 // INITIAL SETUP
 
 /**
@@ -97,12 +99,12 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeAs
 
 /**
  * Resets all UI elements to their default state.
- * 
- * Project-specific combo boxes stay populated.
  */
 void FilterBar::resetUI()
 {
-	// TODO
+	while (!filterBoxes.isEmpty()) {
+		emit filterBoxes.first()->removeRequested();
+	}
 }
 
 /**
@@ -110,7 +112,7 @@ void FilterBar::resetUI()
  * 
  * @param filters	The set of active filters to represent in the UI.
  */
-void FilterBar::insertFiltersIntoUI(QSet<Filter*> filters)
+void FilterBar::insertFiltersIntoUI(const QSet<const Filter*>& filters)
 {
 	resetUI();
 	
@@ -131,7 +133,7 @@ void FilterBar::insertFiltersIntoUI(QSet<Filter*> filters)
 
 void FilterBar::updateIDCombos()
 {
-	for (FilterBox* const filterBox : filterBoxes) {
+	for (const FilterBox* const filterBox : filterBoxes) {
 		if (filterBox->type == ID) {
 			IDFilterBox* idFilterBox = (IDFilterBox*) filterBox;
 			idFilterBox->setComboEntries();
@@ -155,7 +157,13 @@ void FilterBar::handle_filtersChanged()
 {
 	if (temporarilyIgnoreChangeEvents) return;
 	
-	// TODO
+	bool anyFilterEnabled = false;
+	for (const FilterBox* const filterBox : filterBoxes) {
+		anyFilterEnabled |= filterBox->isChecked();
+	}
+	applyFiltersButton->setEnabled(anyFilterEnabled);
+	
+	clearFiltersButton->setEnabled(false); // TODO
 }
 
 
@@ -175,14 +183,17 @@ void FilterBar::handle_newFilterCreated()
 	assert(filterWizard);
 	
 	unique_ptr<Filter> newFilter = filterWizard->getFinishedFilter();
-	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget);
+	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
 	QApplication::processEvents();
 	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
 	
-	connect(newFilterBox, &FilterBox::removeRequested, this, &FilterBar::handle_removeFilter);
+	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
+	connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
+	
+	handle_filtersChanged();
 }
 
 void FilterBar::handle_removeFilter()
@@ -194,6 +205,8 @@ void FilterBar::handle_removeFilter()
 	
 	QApplication::processEvents();
 	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	
+	handle_filtersChanged();
 }
 
 
@@ -212,7 +225,7 @@ void FilterBar::handle_applyFilters()
 	applyFiltersButton->setEnabled(false);
 	clearFiltersButton->setEnabled(true);
 	
-	QSet<Filter*> filters = collectFilters();
+	QSet<const Filter*> filters = collectFilters();
 	compAscents->applyFilters(filters);
 	saveFilters(filters);
 	
@@ -245,11 +258,13 @@ void FilterBar::handle_clearFilters()
  * 
  * @return	A set representing the active filters currently specified in the UI.
  */
-QSet<Filter*> FilterBar::collectFilters()
+QSet<const Filter*> FilterBar::collectFilters()
 {
-	QSet<Filter*> filters = QSet<Filter*>();
+	QSet<const Filter*> filters = QSet<const Filter*>();
 	
-	// TODO
+	for (const FilterBox* const filterBox : filterBoxes) {
+		filterBox->getFilter();
+	}
 	
 	return filters;
 }
@@ -265,7 +280,7 @@ QSet<Filter*> FilterBar::collectFilters()
  * 
  * @param filters	The set of filters to save.
  */
-void FilterBar::saveFilters(const QSet<Filter*> filters)
+void FilterBar::saveFilters(const QSet<const Filter*>& filters)
 {
 	// TODO
 	
@@ -285,9 +300,9 @@ void FilterBar::saveFilters(const QSet<Filter*> filters)
  * 
  * @return	A set of filters representing the ones saved in the project settings.
  */
-QSet<Filter*> FilterBar::parseFiltersFromProjectSettings()
+QSet<const Filter*> FilterBar::parseFiltersFromProjectSettings()
 {
-	QSet<Filter*> filters = QSet<Filter*>();
+	QSet<const Filter*> filters = QSet<const Filter*>();
 	
 	ProjectSettings& settings = db->projectSettings;
 	

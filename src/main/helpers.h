@@ -45,4 +45,10 @@ QPair<QStringList, QStringList> getSupportedStyles();
 
 
 
+// String
+
+QString fromHtmlEscaped(const QString& escapedString);
+
+
+
 #endif // HELPERS_H

@@ -35,11 +35,57 @@ void IntFilter::setMinMax(int min, int max)
 
 
 
-FilterBox* IntFilter::getFilterBox(QWidget* parent) const
+unique_ptr<FilterBox> IntFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
+	IntFilter* const castPointer = (IntFilter*) thisFilter.release();
+	unique_ptr<IntFilter> castUnique = unique_ptr<IntFilter>(castPointer);
+	
 	if (useClasses) {
-		return new IntClassFilterBox(parent, name, classIncrement, classesMinValue, classesMaxValue);
+		return make_unique<IntClassFilterBox>(parent, name, classIncrement, classesMinValue, classesMaxValue, std::move(castUnique));
 	} else {
-		return new IntFilterBox(parent, name);
+		return make_unique<IntFilterBox>(parent, name, std::move(castUnique));
 	}
+}
+
+
+
+QStringList IntFilter::encodeTypeSpecific() const
+{
+	return {
+		encodeBool("useClasses",		useClasses),
+		encodeInt("classIncrement",		classIncrement),
+		encodeInt("classesMinValue",	classesMinValue),
+		encodeInt("classesMaxValue",	classesMaxValue),
+		encodeInt("min",				min),
+		encodeInt("max",				max)
+	};
+}
+
+unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+{
+	bool ok = false;
+	
+	const bool useClasses = decodeBool(restOfEncoding, "useClasses", ok);
+	if (!ok) return nullptr;
+	const int classIncrement = decodeInt(restOfEncoding, "classIncrement", ok);
+	if (!ok && useClasses) return nullptr;
+	const int classesMinValue = decodeInt(restOfEncoding, "classesMinValue", ok);
+	if (!ok && useClasses) return nullptr;
+	const int classesMaxValue = decodeInt(restOfEncoding, "classesMaxValue", ok);
+	if (!ok && useClasses) return nullptr;
+	const int min = decodeInt(restOfEncoding, "min", ok);
+	if (!ok) return nullptr;
+	const int max = decodeInt(restOfEncoding, "min", ok, true);
+	if (!ok) return nullptr;
+	
+	unique_ptr<IntFilter> filter = nullptr;
+	if (useClasses) {
+		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, name, classIncrement, classesMinValue, classesMaxValue);
+	} else {
+		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, name);
+	}
+	filter->min = min;
+	filter->max = max;
+	
+	return filter;
 }

@@ -2,8 +2,9 @@
 
 
 
-IntFilterBox::IntFilterBox(QWidget* parent, const QString& title) :
+IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, unique_ptr<IntFilter> filter) :
 	FilterBox(parent, Integer, title),
+	filter(std::move(filter)),
 	minSpinner(new QSpinBox(this)),
 	maxSpinner(new QSpinBox(this)),
 	setMaxCheckbox(new QCheckBox(this)),
@@ -18,7 +19,9 @@ IntFilterBox::IntFilterBox(QWidget* parent, const QString& title) :
 }
 
 IntFilterBox::~IntFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -46,6 +49,13 @@ void IntFilterBox::reset()
 	minSpinner		->setValue(0);
 	maxSpinner		->setValue(0);
 	setMaxCheckbox	->setChecked(true);
+}
+
+
+
+const Filter* IntFilterBox::getFilter() const
+{
+	return filter.get();
 }
 
 

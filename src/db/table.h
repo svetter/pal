@@ -70,7 +70,7 @@ public:
 	virtual ~Table();
 	
 protected:
-	void addColumn(const Column& column);
+	void addColumn(const Column& newColumn);
 	
 public:
 	// Column info

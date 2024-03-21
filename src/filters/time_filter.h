@@ -15,9 +15,15 @@ class TimeFilter : public Filter
 public:
 	TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
 	
-	void setValues(const QTime& min, const QTime& max);
+	void setMinMax(const QTime& min, const QTime& max);
 	
-	virtual FilterBox* getFilterBox(QWidget* parent) const;
+	virtual unique_ptr<FilterBox> getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+	static unique_ptr<TimeFilter> decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	
+	friend class Filter;
 };
 
 

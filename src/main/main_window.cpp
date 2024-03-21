@@ -559,7 +559,7 @@ void MainWindow::initCompositeBuffers()
 	progress.setMaximum(numCells);
 	progress.setValue(0);
 	
-	QSet<Filter*> ascentFilters = QSet<Filter*>();
+	QSet<const Filter*> ascentFilters = QSet<const Filter*>();
 	if (Settings::rememberFilters.get()) {
 		ascentFilters = ascentFilterBar->parseFiltersFromProjectSettings();
 		ascentFilterBar->insertFiltersIntoUI(ascentFilters);

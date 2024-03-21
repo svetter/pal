@@ -391,10 +391,7 @@ unique_ptr<Filter> FilterWizard::getFinishedFilter()
 		return make_unique<EnumFilter>(tableToFilter, *columnToUse, name);
 	}
 	case DualEnum: {
-		const Column& secondColumn = columnToUse->table.getColumnByIndex(columnToUse->getIndex() + 1);
-		assert(secondColumn.enumNameLists == columnToUse->enumNameLists);
-		
-		return make_unique<DualEnumFilter>(tableToFilter, *columnToUse, secondColumn, name);
+		return make_unique<DualEnumFilter>(tableToFilter, *columnToUse, name);
 	}
 	case Bit: {
 		return make_unique<BoolFilter>(tableToFilter, *columnToUse, name);

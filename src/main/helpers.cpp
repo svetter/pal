@@ -151,3 +151,28 @@ QPair<QStringList, QStringList> getSupportedStyles()
 	
 	return {codes, names};
 }
+
+
+
+
+
+/**
+ * Reverse of QString::toHtmlEscaped. Converts a string which was HTML-escaped by
+ * QString::toHtmlEscaped back to its original form.
+ * 
+ * @param escapedString	The escaped string.
+ * @return				The HTML-escaped string.
+ */
+QString fromHtmlEscaped(const QString& escapedString)
+{
+	/* QString::toHtmlEscaped() documentation:
+	 * Converts a plain text string to an HTML string with HTML metacharacters <, >, &, and "
+	 * replaced by HTML entities.
+	 */
+	QString stringCopy = escapedString;
+	return stringCopy
+		.replace("&lt;",	"<")
+		.replace("&gt;",	">")
+		.replace("&amp;",	"&")
+		.replace("&quot;",	"\"");
+}

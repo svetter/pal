@@ -96,7 +96,7 @@ class CompositeTable : public QAbstractTableModel {
 	/** The currently applied sorting, as a pair of the column to sort by and the sort order. */
 	SortingPass currentSorting;
 	/** The set of currently applied filters. */
-	QSet<Filter*> currentFilters;
+	QSet<const Filter*> currentFilters;
 	
 	/** The current set of dirty columns which need to be updated before reading the buffer. */
 	QSet<const CompositeColumn*> dirtyColumns;
@@ -127,7 +127,7 @@ public:
 	~CompositeTable();
 	
 protected:
-	void addColumn(const CompositeColumn& column);
+	void addColumn(const CompositeColumn& newColumn);
 	void addExportOnlyColumn(const CompositeColumn& column);
 	void addFilterColumn(const CompositeColumn& column);
 public:
@@ -160,10 +160,10 @@ public:
 	virtual SortingPass getDefaultSorting() const = 0;
 	SortingPass getCurrentSorting() const;
 	
-	void setInitialFilters(QSet<Filter*> filters);
-	void applyFilters(QSet<Filter*> filters);
+	void setInitialFilters(const QSet<const Filter*>& filters);
+	void applyFilters(const QSet<const Filter*>& filters);
 	void clearFilters();
-	QSet<Filter*> getCurrentFilters() const;
+	QSet<const Filter*> getCurrentFilters() const;
 	bool filterIsActive() const;
 	
 public:

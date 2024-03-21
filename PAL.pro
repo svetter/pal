@@ -78,6 +78,7 @@ HEADERS += \
 	src/db/breadcrumbs.h \
 	src/db/column.h \
 	src/db/database.h \
+	src/db/db_data_type.h \
 	src/db/db_error.h \
 	src/db/db_upgrade.h \
 	src/db/table_listener.h \
@@ -206,6 +207,7 @@ SOURCES += \
 	src/filters/filter_widgets/date_filter_box.cpp \
 	src/filters/filter_widgets/dual_enum_filter_box.cpp \
 	src/filters/filter_widgets/enum_filter_box.cpp \
+	src/filters/filter_widgets/filter_box.cpp \
 	src/filters/filter_widgets/id_filter_box.cpp \
 	src/filters/filter_widgets/int_class_filter_box.cpp \
 	src/filters/filter_widgets/int_filter_box.cpp \

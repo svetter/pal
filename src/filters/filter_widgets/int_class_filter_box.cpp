@@ -2,8 +2,9 @@
 
 
 
-IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue) :
+IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, unique_ptr<IntFilter> filter) :
 	FilterBox(parent, Integer, title),
+	filter(std::move(filter)),
 	classIncrement(classIncrement),
 	minValue(minValue),
 	maxValue(maxValue),
@@ -21,7 +22,9 @@ IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int 
 }
 
 IntClassFilterBox::~IntClassFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -59,6 +62,13 @@ void IntClassFilterBox::reset()
 	minCombo		->setCurrentIndex(0);
 	maxCombo		->setCurrentIndex(0);
 	setMaxCheckbox	->setChecked(false);
+}
+
+
+
+const Filter* IntClassFilterBox::getFilter() const
+{
+	return filter.get();
 }
 
 

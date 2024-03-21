@@ -62,9 +62,13 @@ Table::~Table()
  * 
  * @param column	The column to add. The table takes ownership of the column.
  */
-void Table::addColumn(const Column& column)
+void Table::addColumn(const Column& newColumn)
 {
-	columns.append(&column);
+	for (const Column* const column : columns) {
+		assert(column->name != newColumn.name);
+	}
+	
+	columns.append(&newColumn);
 }
 
 

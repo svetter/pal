@@ -24,6 +24,7 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
+#include "src/db/db_data_type.h"
 #include "src/db/row_index.h"
 #include "src/data/item_id.h"
 
@@ -34,17 +35,6 @@ using std::shared_ptr;
 class PrimaryKeyColumn;
 class Table;
 struct WhatIfDeleteResult;
-
-
-
-/**
- * Specifies the type of data contained in a database column.
- * 
- * Items correspond to SQL data types, except for the ID type.
- */
-enum DataType {
-	Integer, ID, Enum, DualEnum, Bit, String, Date, Time, IDList
-};
 
 
 

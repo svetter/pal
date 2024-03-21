@@ -2,8 +2,9 @@
 
 
 
-DateFilterBox::DateFilterBox(QWidget* parent, const QString& title) :
+DateFilterBox::DateFilterBox(QWidget* parent, const QString& title, unique_ptr<DateFilter> filter) :
 	FilterBox(parent, Date, title),
+	filter(std::move(filter)),
 	minDateWidget(new QDateEdit(this)),
 	maxDateWidget(new QDateEdit(this)),
 	setMaxDateCheckbox(new QCheckBox(this)),
@@ -18,7 +19,9 @@ DateFilterBox::DateFilterBox(QWidget* parent, const QString& title) :
 }
 
 DateFilterBox::~DateFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -48,6 +51,13 @@ void DateFilterBox::reset()
 	minDateWidget		->setDate(QDateTime::currentDateTime().date());
 	maxDateWidget		->setDate(QDateTime::currentDateTime().date());
 	setMaxDateCheckbox	->setChecked(true);
+}
+
+
+
+const Filter* DateFilterBox::getFilter() const
+{
+	return filter.get();
 }
 
 

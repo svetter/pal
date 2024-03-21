@@ -49,7 +49,7 @@ CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView*
 	buffer(TableBuffer()),
 	viewOrder(ViewOrderBuffer()),
 	currentSorting({nullptr, Qt::AscendingOrder}),
-	currentFilters(QSet<Filter*>()),
+	currentFilters(QSet<const Filter*>()),
 	dirtyColumns(QSet<const CompositeColumn*>()),
 	hiddenColumns(QSet<const CompositeColumn*>()),
 	updateImmediately(false),
@@ -72,13 +72,19 @@ CompositeTable::~CompositeTable()
 /**
  * Adds a normal column to this table during initialization.
  * 
+ * @pre No column with the same internal name has been added.
+ * 
  * @param column	The composite column to add.
  */
-void CompositeTable::addColumn(const CompositeColumn& column)
+void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
 	assert(firstFilterColumnIndex < 0);
 	
-	columns.append(&column);
+	for (const CompositeColumn* const column : columns) {
+		assert(column->name != newColumn.name);
+	}
+	
+	columns.append(&newColumn);
 }
 
 /**
@@ -622,10 +628,10 @@ SortingPass CompositeTable::getCurrentSorting() const
  * 
  * @param filters	The filters to apply once the table is populated.
  */
-void CompositeTable::setInitialFilters(QSet<Filter*> filters)
+void CompositeTable::setInitialFilters(const QSet<const Filter*>& filters)
 {
 	assert(!bufferInitialized && viewOrder.isEmpty());
-	//currentFilters = filters;	// TODO
+	currentFilters = filters;
 }
 
 /**
@@ -634,13 +640,13 @@ void CompositeTable::setInitialFilters(QSet<Filter*> filters)
  * 
  * @param filters	The filters to apply.
  */
-void CompositeTable::applyFilters(QSet<Filter*> filters)
+void CompositeTable::applyFilters(const QSet<const Filter*>& filters)
 {
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
 	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
 	bool skipRepopulate = currentFilters.isEmpty();
-	//currentFilters = filters;	// TODO
+	currentFilters = filters;
 	updateBufferColumns(getColumnsToUpdate());	// Filter column(s) might need to be updated if hidden
 	rebuildOrderBuffer(skipRepopulate);
 	
@@ -666,7 +672,7 @@ void CompositeTable::clearFilters()
  * 
  * @return	The set of currently applied filters.
  */
-QSet<Filter*> CompositeTable::getCurrentFilters() const
+QSet<const Filter*> CompositeTable::getCurrentFilters() const
 {
 	return currentFilters;
 }

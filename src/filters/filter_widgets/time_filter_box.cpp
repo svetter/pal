@@ -2,8 +2,9 @@
 
 
 
-TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title) :
+TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, unique_ptr<TimeFilter> filter) :
 	FilterBox(parent, Time, title),
+	filter(std::move(filter)),
 	minTimeWidget(new QTimeEdit(this)),
 	maxTimeWidget(new QTimeEdit(this)),
 	setMaxTimeCheckbox(new QCheckBox(this)),
@@ -18,7 +19,9 @@ TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title) :
 }
 
 TimeFilterBox::~TimeFilterBox()
-{}
+{
+	// Widgets deleted by layout
+}
 
 
 
@@ -41,9 +44,16 @@ void TimeFilterBox::reset()
 {
 	FilterBox::reset();
 	
-	minTimeWidget		->setTime(QDateTime::currentDateTime().time());
-	maxTimeWidget		->setTime(QDateTime::currentDateTime().time());
+	minTimeWidget		->setTime(QTime(12, 00));
+	maxTimeWidget		->setTime(QTime(12, 00));
 	setMaxTimeCheckbox	->setChecked(true);
+}
+
+
+
+const Filter* TimeFilterBox::getFilter() const
+{
+	return filter.get();
 }
 
 

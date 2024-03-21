@@ -22,8 +22,11 @@ void IDFilter::setValue(const ItemID& value)
 
 
 
-FilterBox* IDFilter::getFilterBox(QWidget* parent) const
+unique_ptr<FilterBox> IDFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
+	IDFilter* const castPointer = (IDFilter*) thisFilter.release();
+	unique_ptr<IDFilter> castUnique = unique_ptr<IDFilter>(castPointer);
+	
 	Database& db = tableToFilter.db;
 	assert(columnToFilterBy.isForeignKey());
 	NormalTable* idTable = (NormalTable*) &columnToFilterBy.getReferencedForeignColumn().table;
@@ -38,5 +41,27 @@ FilterBox* IDFilter::getFilterBox(QWidget* parent) const
 	else if (idTable == &db.countriesTable)	populateItemCombo = std::bind(populateCountryCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
 	else assert(false);
 	
-	return new IDFilterBox(parent, name, populateItemCombo);
+	return make_unique<IDFilterBox>(parent, name, populateItemCombo, std::move(castUnique));
+}
+
+
+
+QStringList IDFilter::encodeTypeSpecific() const
+{
+	return {
+		encodeID("value", value)
+	};
+}
+
+unique_ptr<IDFilter> IDFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+{
+	bool ok = false;
+	
+	const ItemID value = decodeID(restOfEncoding, "value", ok, true);
+	if (!ok) return nullptr;
+	
+	unique_ptr<IDFilter> filter = make_unique<IDFilter>(tableToFilter, columnToFilterBy, name);
+	filter->value = value;
+	
+	return filter;
 }
