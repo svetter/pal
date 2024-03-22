@@ -74,8 +74,8 @@ MainWindow::MainWindow() :
 	
 	pinStatsRangesAction->setChecked(Settings::itemStats_pinRanges.get());
 	
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->filterBar.supplyPointers(this, &db, &mapper->compTable);
+	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		mapper->filterBar.supplyPointers(this, &db, mapper);
 	}
 	
 	
@@ -565,7 +565,7 @@ void MainWindow::initCompositeBuffers()
 		const bool isOpen = &mapper->tableView == currentTableView;
 		
 		// Load filters
-		QList<const Filter*> filters = QList<const Filter*>();
+		QList<Filter*> filters = QList<Filter*>();
 		if (Settings::rememberFilters.get()) {
 			filters = mapper->filterBar.parseFiltersFromProjectSettings();
 			mapper->filterBar.insertFiltersIntoUI(filters);
@@ -574,7 +574,8 @@ void MainWindow::initCompositeBuffers()
 				filters.clear();
 			}
 		}
-		mapper->compTable.setInitialFilters(filters);
+		const QList<const Filter*> constFilters = QList<const Filter*>(filters.constBegin(), filters.constEnd());
+		mapper->compTable.setInitialFilters(constFilters);
 		
 		// Check whether table needs to be fully prepared
 		const bool prepareThisTable = prepareAll || isOpen;

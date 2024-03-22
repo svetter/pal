@@ -51,15 +51,12 @@ bool IntFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> IntFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* IntFilter::createFilterBox(QWidget* parent)
 {
-	IntFilter* const castPointer = (IntFilter*) thisFilter.release();
-	unique_ptr<IntFilter> castUnique = unique_ptr<IntFilter>(castPointer);
-	
 	if (useClasses) {
-		return make_unique<IntClassFilterBox>(parent, name, classIncrement, classesMinValue, classesMaxValue, std::move(castUnique));
+		return new IntClassFilterBox(parent, name, classIncrement, classesMinValue, classesMaxValue, *this);
 	} else {
-		return make_unique<IntFilterBox>(parent, name, std::move(castUnique));
+		return new IntFilterBox(parent, name, *this);
 	}
 }
 
@@ -77,7 +74,7 @@ QStringList IntFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
+IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -94,11 +91,11 @@ unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFi
 	const int max = decodeInt(restOfEncoding, "min", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<IntFilter> filter = nullptr;
+	IntFilter* filter = nullptr;
 	if (useClasses) {
-		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, foldOp, name, classIncrement, classesMinValue, classesMaxValue);
+		filter = new IntFilter(tableToFilter, columnToFilterBy, foldOp, name, classIncrement, classesMinValue, classesMaxValue);
 	} else {
-		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, foldOp, name);
+		filter = new IntFilter(tableToFilter, columnToFilterBy, foldOp, name);
 	}
 	filter->min = min;
 	filter->max = max;

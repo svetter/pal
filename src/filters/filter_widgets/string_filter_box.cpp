@@ -2,9 +2,9 @@
 
 
 
-StringFilterBox::StringFilterBox(QWidget* parent, const QString& title, unique_ptr<StringFilter> filter) :
-	FilterBox(parent, String, title),
-	filter(std::move(filter)),
+StringFilterBox::StringFilterBox(QWidget* parent, const QString& title, StringFilter& filter) :
+	FilterBox(parent, String, title, filter),
+	filter(filter),
 	lineEdit(new QLineEdit(this))
 {
 	connect(lineEdit,	&QLineEdit::textChanged,	this,	&StringFilterBox::updateFilterTypeSpecific);
@@ -40,18 +40,13 @@ void StringFilterBox::reset()
 
 void StringFilterBox::updateFilterTypeSpecific()
 {
-	filter->setValue(lineEdit->text());
+	filter.setValue(lineEdit->text());
 	emit filterChanged();
 }
 
 
 
-const Filter* StringFilterBox::getFilter() const
+const Filter& StringFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* StringFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }

@@ -191,7 +191,17 @@ QVariant Filter::getRawRowValue(const BufferRowIndex filteredTableBufferRow) con
 
 
 
-QString Filter::encodeToString() const
+QString Filter::encodeToString(QList<const Filter*> filters)
+{
+	QStringList entries = QStringList();
+	for (const Filter* const filter : filters) {
+		entries.append(filter->encodeSingleFilterToString());
+	}
+	const QString encodedFilters = entries.join(",");
+	return encodedFilters;
+}
+
+QString Filter::encodeSingleFilterToString() const
 {
 	const QString header = DataTypeNames::getName(type) + "Filter(";
 	
@@ -207,12 +217,36 @@ QString Filter::encodeToString() const
 	parameters += encodeBool	("inverted",					inverted);
 	parameters += encodeTypeSpecific();
 	
-	return header + parameters.join(",");
+	return header + parameters.join(",") + ")";
 }
 
-unique_ptr<Filter> Filter::decodeFromString(const QString& encoded, Database& db)
+QList<Filter*> Filter::decodeFromString(const QString& encoded, Database& db)
 {
 	QString restOfString = encoded;
+	QList<Filter*> filters = QList<Filter*>();
+	
+	while (!restOfString.isEmpty()) {
+		Filter* const parsedFilter = decodeSingleFilterFromString(restOfString, db);
+		if (!parsedFilter) {
+			qDebug() << "WARNING: Aborted parsing filters from string:" << encoded;
+			break;
+		}
+		
+		filters.append(parsedFilter);
+		
+		if (restOfString.isEmpty()) break;
+		if (!restOfString.startsWith(",")) {
+			qDebug() << "WARNING: Aborted parsing filters from string:" << encoded;
+			break;
+		}
+		restOfString.remove(0, 1);
+	}
+	
+	return filters;
+}
+
+Filter* Filter::decodeSingleFilterFromString(QString& restOfString, Database& db)
+{
 	bool ok = false;
 	
 	const DataType type = decodeHeader(restOfString, ok);
@@ -239,7 +273,7 @@ unique_ptr<Filter> Filter::decodeFromString(const QString& encoded, Database& db
 	const bool inverted = decodeBool(restOfString, "inverted", ok);
 	if (!ok) return nullptr;
 	
-	unique_ptr<Filter> filter = nullptr;
+	Filter* filter = nullptr;
 	
 	switch (type) {
 	case Integer:	filter =      IntFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy, foldOp,	name, restOfString);	break;
@@ -278,7 +312,7 @@ QString Filter::encodeBool(const QString& paramName, bool value)
 
 QString Filter::encodeString(const QString& paramName, const QString& value)
 {
-	return paramName + "=" + value.toHtmlEscaped();
+	return paramName + "=\"" + value.toHtmlEscaped() + "\"";
 }
 
 QString Filter::encodeDate(const QString& paramName, const QDate& value)
@@ -351,7 +385,7 @@ int Filter::decodeInt(QString& restOfString, const QString& paramName, bool& ok,
 	const QString valueString = restOfString.first(valueLength);
 	const int result = valueString.toInt(&ok);
 	if (!ok) return fail();
-	restOfString.remove(0, valueLength);
+	restOfString.remove(0, valueLength + endDelimiter.length());
 	
 	ok = true;
 	return result;
@@ -359,7 +393,7 @@ int Filter::decodeInt(QString& restOfString, const QString& paramName, bool& ok,
 
 ItemID Filter::decodeID(QString& restOfString, const QString& paramName, bool& ok, bool lastParam)
 {
-	const int parsedInt  = decodeInt(restOfString, paramName, lastParam, ok);
+	const int parsedInt = decodeInt(restOfString, paramName, lastParam, ok);
 	
 	if (!ok) return ItemID(-1);
 	return ItemID(parsedInt);
@@ -379,7 +413,7 @@ bool Filter::decodeBool(QString& restOfString, const QString& paramName, bool& o
 	const QString valueString = restOfString.first(valueLength);
 	if (valueString != "true" && valueString != "false") return fail();
 	const bool result = valueString == "true";
-	restOfString.remove(0, valueLength);
+	restOfString.remove(0, valueLength + endDelimiter.length());
 	
 	ok = true;
 	return result;
@@ -389,7 +423,7 @@ QString Filter::decodeString(QString& restOfString, const QString& paramName, bo
 {
 	auto fail = [&]() { ok = false; return QString(); };
 	
-	const QString expectedStart = paramName + "=";
+	const QString expectedStart = paramName + "=\"";
 	if (!restOfString.startsWith(expectedStart)) return fail();
 	restOfString.remove(0, expectedStart.size());
 	
@@ -398,7 +432,7 @@ QString Filter::decodeString(QString& restOfString, const QString& paramName, bo
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfString.first(valueLength);
 	const QString name = fromHtmlEscaped(valueString);
-	restOfString.remove(0, valueString.size());
+	restOfString.remove(0, valueString.size() + endDelimiter.length());
 	
 	ok = true;
 	return name;
@@ -418,7 +452,7 @@ QDate Filter::decodeDate(QString& restOfString, const QString& paramName, bool& 
 	const QString valueString = restOfString.first(valueLength);
 	const QDate result = QDate::fromString(valueString, Qt::ISODate);
 	if (!result.isValid()) return fail();
-	restOfString.remove(0, valueLength);
+	restOfString.remove(0, valueLength + endDelimiter.length());
 	
 	ok = true;
 	return result;
@@ -438,7 +472,7 @@ QTime Filter::decodeTime(QString& restOfString, const QString& paramName, bool& 
 	const QString valueString = restOfString.first(valueLength);
 	const QTime result = QTime::fromString(valueString, Qt::ISODate);
 	if (!result.isValid()) return fail();
-	restOfString.remove(0, valueLength);
+	restOfString.remove(0, valueLength + endDelimiter.length());
 	
 	ok = true;
 	return result;

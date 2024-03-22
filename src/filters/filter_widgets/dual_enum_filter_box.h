@@ -12,14 +12,14 @@ class DualEnumFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<DualEnumFilter> filter;
+	DualEnumFilter& filter;
 	
 	QComboBox* comboDiscerning;
 	QComboBox* comboDependent;
 	const QList<QPair<QString, QStringList>> entries;
 	
 public:
-	explicit DualEnumFilterBox(QWidget* parent, const QString& title, const QList<QPair<QString, QStringList>>& entries, unique_ptr<DualEnumFilter> filter);
+	explicit DualEnumFilterBox(QWidget* parent, const QString& title, const QList<QPair<QString, QStringList>>& entries, DualEnumFilter& filter);
 	virtual ~DualEnumFilterBox();
 	
 	virtual void setup();
@@ -27,9 +27,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 	
 private slots:
 	void handle_discerningComboChanged();

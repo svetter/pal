@@ -4,8 +4,9 @@
 
 
 
-FilterBox::FilterBox(QWidget* parent, DataType type, const QString& title) :
+FilterBox::FilterBox(QWidget* parent, DataType type, const QString& title, Filter& filter) :
 	QGroupBox(parent),
+	genericFilter(filter),
 	type(type),
 	title(title),
 	removeButton(new QToolButton(parent)),
@@ -45,8 +46,8 @@ void FilterBox::reset() {
 
 void FilterBox::updateFilter()
 {
-	getFilter()->setEnabled(isChecked());
-	getFilter()->setInverted(excludeRadiobutton->isChecked());
+	genericFilter.setEnabled(isChecked());
+	genericFilter.setInverted(excludeRadiobutton->isChecked());
 	emit filterChanged();
 }
 

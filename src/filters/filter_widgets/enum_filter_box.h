@@ -12,13 +12,13 @@ class EnumFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<EnumFilter> filter;
+	EnumFilter& filter;
 	
 	QComboBox* combo;
 	const QStringList entries;
 	
 public:
-	explicit EnumFilterBox(QWidget* parent, const QString& title, const QStringList& entries, unique_ptr<EnumFilter> filter);
+	explicit EnumFilterBox(QWidget* parent, const QString& title, const QStringList& entries, EnumFilter& filter);
 	virtual ~EnumFilterBox();
 	
 	virtual void setup();
@@ -26,9 +26,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 };
 
 

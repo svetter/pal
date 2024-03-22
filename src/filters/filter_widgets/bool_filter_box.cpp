@@ -2,9 +2,9 @@
 
 
 
-BoolFilterBox::BoolFilterBox(QWidget* parent, const QString& title, unique_ptr<BoolFilter> filter) :
-	FilterBox(parent, Bit, title),
-	filter(std::move(filter)),
+BoolFilterBox::BoolFilterBox(QWidget* parent, const QString& title, BoolFilter& filter) :
+	FilterBox(parent, Bit, title, filter),
+	filter(filter),
 	yesRadiobutton(new QRadioButton(this)),
 	noRadiobutton(new QRadioButton(this)),
 	yesNoButtonGroup(QButtonGroup()),
@@ -55,18 +55,13 @@ void BoolFilterBox::reset()
 
 void BoolFilterBox::updateFilterTypeSpecific()
 {
-	filter->setValue(!noRadiobutton->isChecked());
+	filter.setValue(!noRadiobutton->isChecked());
 	emit filterChanged();
 }
 
 
 
-const Filter* BoolFilterBox::getFilter() const
+const Filter& BoolFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* BoolFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }

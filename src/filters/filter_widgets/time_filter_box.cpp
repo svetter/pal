@@ -2,9 +2,9 @@
 
 
 
-TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, unique_ptr<TimeFilter> filter) :
-	FilterBox(parent, Time, title),
-	filter(std::move(filter)),
+TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& filter) :
+	FilterBox(parent, Time, title, filter),
+	filter(filter),
 	minTimeWidget(new QTimeEdit(this)),
 	maxTimeWidget(new QTimeEdit(this)),
 	setMaxTimeCheckbox(new QCheckBox(this)),
@@ -53,20 +53,15 @@ void TimeFilterBox::reset()
 
 void TimeFilterBox::updateFilterTypeSpecific()
 {
-	filter->setMinMax(minTimeWidget->time(), maxTimeWidget->time());
+	filter.setMinMax(minTimeWidget->time(), maxTimeWidget->time());
 	emit filterChanged();
 }
 
 
 
-const Filter* TimeFilterBox::getFilter() const
+const Filter& TimeFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* TimeFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }
 
 

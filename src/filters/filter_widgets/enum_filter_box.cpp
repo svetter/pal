@@ -6,9 +6,9 @@
 
 
 
-EnumFilterBox::EnumFilterBox(QWidget* parent, const QString& title, const QStringList& entries, unique_ptr<EnumFilter> filter) :
-	FilterBox(parent, Enum, title),
-	filter(std::move(filter)),
+EnumFilterBox::EnumFilterBox(QWidget* parent, const QString& title, const QStringList& entries, EnumFilter& filter) :
+	FilterBox(parent, Enum, title, filter),
+	filter(filter),
 	combo(new QComboBox(this)),
 	entries(entries)
 {
@@ -48,18 +48,13 @@ void EnumFilterBox::reset()
 
 void EnumFilterBox::updateFilterTypeSpecific()
 {
-	filter->setValue(combo->currentIndex());
+	filter.setValue(combo->currentIndex());
 	emit filterChanged();
 }
 
 
 
-const Filter* EnumFilterBox::getFilter() const
+const Filter& EnumFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* EnumFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }

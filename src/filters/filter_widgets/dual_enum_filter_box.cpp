@@ -6,9 +6,9 @@
 
 
 
-DualEnumFilterBox::DualEnumFilterBox(QWidget* parent, const QString& title, const QList<QPair<QString, QStringList>>& entries, unique_ptr<DualEnumFilter> filter) :
-	FilterBox(parent, DualEnum, title),
-	filter(std::move(filter)),
+DualEnumFilterBox::DualEnumFilterBox(QWidget* parent, const QString& title, const QList<QPair<QString, QStringList>>& entries, DualEnumFilter& filter) :
+	FilterBox(parent, DualEnum, title, filter),
+	filter(filter),
 	comboDiscerning(new QComboBox(this)),
 	comboDependent(new QComboBox(this)),
 	entries(entries)
@@ -66,20 +66,15 @@ void DualEnumFilterBox::reset()
 
 void DualEnumFilterBox::updateFilterTypeSpecific()
 {
-	filter->setValues(comboDiscerning->currentIndex(), comboDependent->currentIndex());
+	filter.setValues(comboDiscerning->currentIndex(), comboDependent->currentIndex());
 	emit filterChanged();
 }
 
 
 
-const Filter* DualEnumFilterBox::getFilter() const
+const Filter& DualEnumFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* DualEnumFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }
 
 

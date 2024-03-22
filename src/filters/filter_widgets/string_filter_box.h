@@ -12,12 +12,12 @@ class StringFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<StringFilter> filter;
+	StringFilter& filter;
 	
 	QLineEdit* lineEdit;
 	
 public:
-	explicit StringFilterBox(QWidget* parent, const QString& title, unique_ptr<StringFilter> filter);
+	explicit StringFilterBox(QWidget* parent, const QString& title, StringFilter& filter);
 	virtual ~StringFilterBox();
 	
 	virtual void setup();
@@ -25,9 +25,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 };
 
 

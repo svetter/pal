@@ -13,7 +13,7 @@ class TimeFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<TimeFilter> filter;
+	TimeFilter& filter;
 	
 	QTimeEdit* minTimeWidget;
 	QTimeEdit* maxTimeWidget;
@@ -21,7 +21,7 @@ class TimeFilterBox : public FilterBox
 	QSpacerItem* spacer;
 	
 public:
-	explicit TimeFilterBox(QWidget* parent, const QString& title, unique_ptr<TimeFilter> filter);
+	explicit TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& filter);
 	virtual ~TimeFilterBox();
 	
 	virtual void setup();
@@ -29,9 +29,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 	
 private slots:
 	void handle_minTimeChanged();

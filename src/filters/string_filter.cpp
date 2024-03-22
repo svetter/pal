@@ -60,12 +60,9 @@ bool StringFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> StringFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* StringFilter::createFilterBox(QWidget* parent)
 {
-	StringFilter* const castPointer = (StringFilter*) thisFilter.release();
-	unique_ptr<StringFilter> castUnique = unique_ptr<StringFilter>(castPointer);
-	
-	return make_unique<StringFilterBox>(parent, name, std::move(castUnique));
+	return new StringFilterBox(parent, name, *this);
 }
 
 
@@ -77,14 +74,14 @@ QStringList StringFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<StringFilter> StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
+StringFilter* StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const QString value = decodeString(restOfEncoding, "value", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<StringFilter> filter = make_unique<StringFilter>(tableToFilter, columnToFilterBy, foldOp, name);
+	StringFilter* const filter = new StringFilter(tableToFilter, columnToFilterBy, foldOp, name);
 	filter->value = value;
 	
 	return filter;

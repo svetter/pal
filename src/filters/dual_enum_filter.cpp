@@ -90,13 +90,10 @@ bool DualEnumFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> DualEnumFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* DualEnumFilter::createFilterBox(QWidget* parent)
 {
-	DualEnumFilter* const castPointer = (DualEnumFilter*) thisFilter.release();
-	unique_ptr<DualEnumFilter> castUnique = unique_ptr<DualEnumFilter>(castPointer);
-	
 	const QList<QPair<QString, QStringList>>& entries = *columnToFilterBy.enumNameLists;
-	return make_unique<DualEnumFilterBox>(parent, name, entries, std::move(castUnique));
+	return new DualEnumFilterBox(parent, name, entries, *this);
 }
 
 
@@ -109,7 +106,7 @@ QStringList DualEnumFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<DualEnumFilter> DualEnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+DualEnumFilter* DualEnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -118,7 +115,7 @@ unique_ptr<DualEnumFilter> DualEnumFilter::decodeTypeSpecific(const NormalTable&
 	const int dependentValue = decodeInt(restOfEncoding, "dependentValue", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<DualEnumFilter> filter = make_unique<DualEnumFilter>(tableToFilter, columnToFilterBy, name);
+	DualEnumFilter* const filter = new DualEnumFilter(tableToFilter, columnToFilterBy, name);
 	filter->discerningValue = discerningValue;
 	filter->dependentValue = dependentValue;
 	

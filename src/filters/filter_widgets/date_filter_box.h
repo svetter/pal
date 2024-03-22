@@ -13,7 +13,7 @@ class DateFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<DateFilter> filter;
+	DateFilter& filter;
 	
 	QDateEdit* minDateWidget;
 	QDateEdit* maxDateWidget;
@@ -21,7 +21,7 @@ class DateFilterBox : public FilterBox
 	QSpacerItem* spacer;
 	
 public:
-	explicit DateFilterBox(QWidget* parent, const QString& title, unique_ptr<DateFilter> filter);
+	explicit DateFilterBox(QWidget* parent, const QString& title, DateFilter& filter);
 	virtual ~DateFilterBox();
 	
 	virtual void setup();
@@ -29,9 +29,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 	
 private slots:
 	void handle_minDateChanged();

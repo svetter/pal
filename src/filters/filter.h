@@ -7,8 +7,6 @@
 
 class FilterBox;
 
-using std::unique_ptr, std::make_unique;
-
 
 
 class Filter
@@ -20,7 +18,7 @@ public:
 	const Column& columnToFilterBy;
 	const FilterFoldOp foldOp;
 protected:
-	const Breadcrumbs& crumbs;
+	const Breadcrumbs crumbs;
 public:
 	const bool isLocalFilter;
 	const bool singleValuePerRow;
@@ -47,12 +45,17 @@ protected:
 	virtual bool evaluate(const QVariant& rawRowValue) const = 0;
 	
 public:
-	virtual unique_ptr<FilterBox> createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const = 0;
+	virtual FilterBox* createFilterBox(QWidget* parent) = 0;
 	
 	
 	// Encoding & Decoding
-	QString encodeToString() const;
-	static unique_ptr<Filter> decodeFromString(const QString& encoded, Database& db);
+	static QString encodeToString(QList<const Filter*> filters);
+private:
+	QString encodeSingleFilterToString() const;
+public:
+	static QList<Filter*> decodeFromString(const QString& encoded, Database& db);
+private:
+	static Filter* decodeSingleFilterFromString(QString& restOfString, Database& db);
 protected:
 	virtual QStringList encodeTypeSpecific() const = 0;
 	

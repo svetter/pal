@@ -39,12 +39,9 @@ bool DateFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> DateFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* DateFilter::createFilterBox(QWidget* parent)
 {
-	DateFilter* const castPointer = (DateFilter*) thisFilter.release();
-	unique_ptr<DateFilter> castUnique = unique_ptr<DateFilter>(castPointer);
-	
-	return make_unique<DateFilterBox>(parent, name, std::move(castUnique));
+	return new DateFilterBox(parent, name, *this);
 }
 
 
@@ -57,7 +54,7 @@ QStringList DateFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<DateFilter> DateFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+DateFilter* DateFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -66,7 +63,7 @@ unique_ptr<DateFilter> DateFilter::decodeTypeSpecific(const NormalTable& tableTo
 	const QDate max = decodeDate(restOfEncoding, "min", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<DateFilter> filter = make_unique<DateFilter>(tableToFilter, columnToFilterBy, name);
+	DateFilter* const filter = new DateFilter(tableToFilter, columnToFilterBy, name);
 	filter->min = min;
 	filter->max = max;
 	

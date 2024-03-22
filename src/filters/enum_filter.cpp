@@ -34,13 +34,10 @@ bool EnumFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> EnumFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* EnumFilter::createFilterBox(QWidget* parent)
 {
-	EnumFilter* const castPointer = (EnumFilter*) thisFilter.release();
-	unique_ptr<EnumFilter> castUnique = unique_ptr<EnumFilter>(castPointer);
-	
 	const QStringList& entries = *columnToFilterBy.enumNames;
-	return make_unique<EnumFilterBox>(parent, name, entries, std::move(castUnique));
+	return new EnumFilterBox(parent, name, entries, *this);
 }
 
 
@@ -52,14 +49,14 @@ QStringList EnumFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<EnumFilter> EnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+EnumFilter* EnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const int value = decodeInt(restOfEncoding, "value", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<EnumFilter> filter = make_unique<EnumFilter>(tableToFilter, columnToFilterBy, name);
+	EnumFilter* const filter = new EnumFilter(tableToFilter, columnToFilterBy, name);
 	filter->value = value;
 	
 	return filter;

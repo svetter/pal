@@ -2,9 +2,9 @@
 
 
 
-IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, unique_ptr<IntFilter> filter) :
-	FilterBox(parent, Integer, title),
-	filter(std::move(filter)),
+IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, IntFilter& filter) :
+	FilterBox(parent, Integer, title, filter),
+	filter(filter),
 	classIncrement(classIncrement),
 	minValue(minValue),
 	maxValue(maxValue),
@@ -70,20 +70,15 @@ void IntClassFilterBox::updateFilterTypeSpecific()
 {
 	const int newMin =  minCombo->currentIndex()      * classIncrement;
 	const int newMax = (maxCombo->currentIndex() + 1) * classIncrement - 1;
-	filter->setMinMax(newMin, newMax);
+	filter.setMinMax(newMin, newMax);
 	emit filterChanged();
 }
 
 
 
-const Filter* IntClassFilterBox::getFilter() const
+const Filter& IntClassFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* IntClassFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }
 
 

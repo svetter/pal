@@ -6,9 +6,9 @@
 
 
 
-IDFilterBox::IDFilterBox(QWidget* parent, const QString& title, std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo, unique_ptr<IDFilter> filter) :
-	FilterBox(parent, ID, title),
-	filter(std::move(filter)),
+IDFilterBox::IDFilterBox(QWidget* parent, const QString& title, std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo, IDFilter& filter) :
+	FilterBox(parent, ID, title, filter),
+	filter(filter),
 	combo(new QComboBox(this)),
 	populateItemCombo(populateItemCombo),
 	selectableItemIDs(QList<ValidItemID>())
@@ -72,18 +72,13 @@ void IDFilterBox::reset()
 
 void IDFilterBox::updateFilterTypeSpecific()
 {
-	filter->setValue(combo->currentIndex());
+	filter.setValue(combo->currentIndex());
 	emit filterChanged();
 }
 
 
 
-const Filter* IDFilterBox::getFilter() const
+const Filter& IDFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* IDFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }

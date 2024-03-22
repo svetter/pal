@@ -12,7 +12,7 @@ class BoolFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<BoolFilter> filter;
+	BoolFilter& filter;
 	
 	QRadioButton* yesRadiobutton;
 	QRadioButton* noRadiobutton;
@@ -21,7 +21,7 @@ class BoolFilterBox : public FilterBox
 	QSpacerItem* spacerR;
 	
 public:
-	explicit BoolFilterBox(QWidget* parent, const QString& title, unique_ptr<BoolFilter> filter);
+	explicit BoolFilterBox(QWidget* parent, const QString& title, BoolFilter& filter);
 	virtual ~BoolFilterBox();
 	
 	virtual void setup();
@@ -29,9 +29,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 };
 
 

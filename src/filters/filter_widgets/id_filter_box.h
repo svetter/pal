@@ -13,7 +13,7 @@ class IDFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<IDFilter> filter;
+	IDFilter& filter;
 	
 	QComboBox* combo;
 	std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo;
@@ -21,7 +21,7 @@ class IDFilterBox : public FilterBox
 	QList<ValidItemID> selectableItemIDs;
 	
 public:
-	explicit IDFilterBox(QWidget* parent, const QString& title, std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo, unique_ptr<IDFilter> filter);
+	explicit IDFilterBox(QWidget* parent, const QString& title, std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo, IDFilter& filter);
 	virtual ~IDFilterBox();
 	
 	virtual void setup();
@@ -30,9 +30,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 };
 
 

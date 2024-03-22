@@ -25,11 +25,11 @@ public:
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	
-	virtual unique_ptr<FilterBox> createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const override;
+	virtual FilterBox* createFilterBox(QWidget* parent) override;
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static unique_ptr<IntFilter> decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding);
+	static IntFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
 };

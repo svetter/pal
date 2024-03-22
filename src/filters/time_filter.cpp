@@ -39,12 +39,9 @@ bool TimeFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> TimeFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* TimeFilter::createFilterBox(QWidget* parent)
 {
-	TimeFilter* const castPointer = (TimeFilter*) thisFilter.release();
-	unique_ptr<TimeFilter> castUnique = unique_ptr<TimeFilter>(castPointer);
-	
-	return make_unique<TimeFilterBox>(parent, name, std::move(castUnique));
+	return new TimeFilterBox(parent, name, *this);
 }
 
 
@@ -57,7 +54,7 @@ QStringList TimeFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<TimeFilter> TimeFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+TimeFilter* TimeFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -66,7 +63,7 @@ unique_ptr<TimeFilter> TimeFilter::decodeTypeSpecific(const NormalTable& tableTo
 	const QTime max = decodeTime(restOfEncoding, "min", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<TimeFilter> filter = make_unique<TimeFilter>(tableToFilter, columnToFilterBy, name);
+	TimeFilter* const filter = new TimeFilter(tableToFilter, columnToFilterBy, name);
 	filter->min = min;
 	filter->max = max;
 	

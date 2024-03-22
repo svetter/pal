@@ -34,12 +34,9 @@ bool BoolFilter::evaluate(const QVariant& rawRowValue) const
 
 
 
-unique_ptr<FilterBox> BoolFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+FilterBox* BoolFilter::createFilterBox(QWidget* parent)
 {
-	BoolFilter* const castPointer = (BoolFilter*) thisFilter.release();
-	unique_ptr<BoolFilter> castUnique = unique_ptr<BoolFilter>(castPointer);
-	
-	return make_unique<BoolFilterBox>(parent, name, std::move(castUnique));
+	return new BoolFilterBox(parent, name, *this);
 }
 
 
@@ -51,14 +48,14 @@ QStringList BoolFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<BoolFilter> BoolFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+BoolFilter* BoolFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const bool value = decodeBool(restOfEncoding, "value", ok, true);
 	if (!ok) return nullptr;
 	
-	unique_ptr<BoolFilter> filter = make_unique<BoolFilter>(tableToFilter, columnToFilterBy, name);
+	BoolFilter* const filter = new BoolFilter(tableToFilter, columnToFilterBy, name);
 	filter->value = value;
 	
 	return filter;

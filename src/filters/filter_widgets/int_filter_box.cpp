@@ -2,9 +2,9 @@
 
 
 
-IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, unique_ptr<IntFilter> filter) :
-	FilterBox(parent, Integer, title),
-	filter(std::move(filter)),
+IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, IntFilter& filter) :
+	FilterBox(parent, Integer, title, filter),
+	filter(filter),
 	minSpinner(new QSpinBox(this)),
 	maxSpinner(new QSpinBox(this)),
 	setMaxCheckbox(new QCheckBox(this)),
@@ -55,20 +55,15 @@ void IntFilterBox::reset()
 
 void IntFilterBox::updateFilterTypeSpecific()
 {
-	filter->setMinMax(minSpinner->value(), maxSpinner->value());
+	filter.setMinMax(minSpinner->value(), maxSpinner->value());
 	emit filterChanged();
 }
 
 
 
-const Filter* IntFilterBox::getFilter() const
+const Filter& IntFilterBox::getFilter() const
 {
-	return filter.get();
-}
-
-Filter* IntFilterBox::getFilter()
-{
-	return filter.get();
+	return filter;
 }
 
 

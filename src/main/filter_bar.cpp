@@ -79,15 +79,16 @@ FilterBar::~FilterBar()
  * 
  * @param mainWindow	The main window.
  * @param db			The database.
- * @param compTable		The composite table.
+ * @param mapper		The item type mapper for the table connected to the filter bar.
  */
-void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeTable* compTable)
+void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMapper* mapper)
 {
 	this->mainWindow	= mainWindow;
 	this->db			= db;
-	this->compTable		= compTable;
-
-
+	this->compTable		= &mapper->compTable;
+	this->mapper		= mapper;
+	
+	
 	// Create filter wizard
 	filterWizard = new FilterWizard(this, compTable->getBaseTable());
 	connect(addFilterButton, &QToolButton::clicked, this, &FilterBar::handle_newFilterButtonPressed);
@@ -154,19 +155,26 @@ void FilterBar::resetUI()
  * 
  * @param filters	The set of active filters to represent in the UI.
  */
-void FilterBar::insertFiltersIntoUI(const QList<const Filter*>& filters)
+void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 {
 	resetUI();
 	
 	if (filters.isEmpty()) return;
 	
-	for (const Filter* const filter : filters) {
-		// TODO
+	for (Filter* const filter : filters) {
+		FilterBox* const newFilterBox = filter->createFilterBox(filtersScrollAreaWidget);
+		
+		filterBoxes.append(newFilterBox);
+		filtersScrollAreaLayout->addWidget(newFilterBox);
+		
+		connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
+		connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
 	}
 	
+	QApplication::processEvents();
+	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	
 	handle_filtersChanged();
-	applyFiltersButton->setEnabled(false);
-	clearFiltersButton->setEnabled(true);
 }
 
 
@@ -223,7 +231,7 @@ void FilterBar::handle_filterWizardAccepted()
 	assert(filterWizard);
 	
 	unique_ptr<Filter> newFilter = filterWizard->getFinishedFilter();
-	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
+	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget);
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
@@ -247,20 +255,20 @@ void FilterBar::handle_filterCreationShortcutUsed()
 	const NormalTable& tableToFilter = compTable->getBaseTable();
 	const FilterFoldOp foldOp = FilterFoldOp(-1);
 	
-	unique_ptr<Filter> newFilter = nullptr;
+	Filter* newFilter = nullptr;
 	switch (columnToUse->type) {
-	case Integer:	newFilter = make_unique<IntFilter>		(tableToFilter, *columnToUse, foldOp,	name);	break;
-	case ID:		newFilter = make_unique<IDFilter>		(tableToFilter, *columnToUse,			name);	break;
-	case Enum:		newFilter = make_unique<EnumFilter>		(tableToFilter, *columnToUse,			name);	break;
-	case DualEnum:	newFilter = make_unique<DualEnumFilter>	(tableToFilter, *columnToUse,			name);	break;
-	case Bit:		newFilter = make_unique<BoolFilter>		(tableToFilter, *columnToUse,			name);	break;
-	case String:	newFilter = make_unique<StringFilter>	(tableToFilter, *columnToUse, foldOp,	name);	break;
-	case Date:		newFilter = make_unique<DateFilter>		(tableToFilter, *columnToUse,			name);	break;
-	case Time:		newFilter = make_unique<TimeFilter>		(tableToFilter, *columnToUse,			name);	break;
+	case Integer:	newFilter = new IntFilter		(tableToFilter, *columnToUse, foldOp,	name);	break;
+	case ID:		newFilter = new IDFilter		(tableToFilter, *columnToUse,			name);	break;
+	case Enum:		newFilter = new EnumFilter		(tableToFilter, *columnToUse,			name);	break;
+	case DualEnum:	newFilter = new DualEnumFilter	(tableToFilter, *columnToUse,			name);	break;
+	case Bit:		newFilter = new BoolFilter		(tableToFilter, *columnToUse,			name);	break;
+	case String:	newFilter = new StringFilter	(tableToFilter, *columnToUse, foldOp,	name);	break;
+	case Date:		newFilter = new DateFilter		(tableToFilter, *columnToUse,			name);	break;
+	case Time:		newFilter = new TimeFilter		(tableToFilter, *columnToUse,			name);	break;
 	default: assert(false);
 	}
 	
-	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
+	FilterBox* const newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget);
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
@@ -339,7 +347,7 @@ QList<const Filter*> FilterBar::collectAllFilters()
 	QList<const Filter*> filters = QList<const Filter*>();
 	
 	for (const FilterBox* const filterBox : filterBoxes) {
-		filters.append(filterBox->getFilter());
+		filters.append(&filterBox->getFilter());
 	}
 	
 	return filters;
@@ -358,7 +366,7 @@ QList<const Filter*> FilterBar::collectEnabledFilters()
 	
 	for (const FilterBox* const filterBox : filterBoxes) {
 		if (filterBox->isChecked()) {
-			filters.append(filterBox->getFilter());
+			filters.append(&filterBox->getFilter());
 		}
 	}
 	
@@ -378,11 +386,8 @@ QList<const Filter*> FilterBar::collectEnabledFilters()
  */
 void FilterBar::saveFilters(const QList<const Filter*>& filters)
 {
-	// TODO
-	
-	for (const Filter* const filter : filters) {
-		// TODO
-	}
+	const QString encodedFilters = Filter::encodeToString(filters);
+	mapper->filtersSetting.set(*this, encodedFilters);
 }
 
 
@@ -394,13 +399,9 @@ void FilterBar::saveFilters(const QList<const Filter*>& filters)
  * 
  * @return	A list of filters representing the ones saved in the project settings.
  */
-QList<const Filter*> FilterBar::parseFiltersFromProjectSettings()
+QList<Filter*> FilterBar::parseFiltersFromProjectSettings()
 {
-	QList<const Filter*> filters = QList<const Filter*>();
-	
-	ProjectSettings& settings = db->projectSettings;
-	
-	// TODO
-	
+	const QString encodedFilters = mapper->filtersSetting.get(this);
+	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, mapper->baseTable.db);
 	return filters;
 }

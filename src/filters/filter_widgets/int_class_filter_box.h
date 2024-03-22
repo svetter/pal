@@ -13,7 +13,7 @@ class IntClassFilterBox : public FilterBox
 {
 	Q_OBJECT
 	
-	unique_ptr<IntFilter> filter;
+	IntFilter& filter;
 	
 	const int classIncrement;
 	const int minValue;
@@ -25,7 +25,7 @@ class IntClassFilterBox : public FilterBox
 	QSpacerItem* spacer;
 	
 public:
-	explicit IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, unique_ptr<IntFilter> filter);
+	explicit IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, IntFilter& filter);
 	virtual ~IntClassFilterBox();
 	
 	virtual void setup();
@@ -33,9 +33,7 @@ public:
 	
 	virtual void updateFilterTypeSpecific();
 	
-	virtual const Filter* getFilter() const;
-protected:
-	virtual Filter* getFilter();
+	virtual const Filter& getFilter() const;
 	
 private slots:
 	void handle_minChanged();

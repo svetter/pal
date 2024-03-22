@@ -36,6 +36,7 @@
 #include <QMenu>
 
 class MainWindow;
+class ItemTypeMapper;
 
 
 
@@ -52,6 +53,7 @@ class FilterBar : public QWidget, public Ui_FilterBar
 	Database* db;
 	/** The composite table. */
 	CompositeTable* compTable;
+	ItemTypeMapper* mapper;
 	
 	QList<FilterBox*> filterBoxes;
 	
@@ -63,12 +65,12 @@ public:
 	FilterBar(QWidget* parent);
 	~FilterBar();
 	// Initial setup
-	void supplyPointers(MainWindow* mainWindow, Database* db, CompositeTable* compTable);
+	void supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMapper* mapper);
 	
 public:
 	// Project setup
 	void resetUI();
-	void insertFiltersIntoUI(const QList<const Filter*>& filters);
+	void insertFiltersIntoUI(const QList<Filter*>& filters);
 	
 public:
 	// Update UI
@@ -97,7 +99,7 @@ private:
 	
 public:
 	// Retrieving filters from project settings
-	QList<const Filter*> parseFiltersFromProjectSettings();
+	QList<Filter*> parseFiltersFromProjectSettings();
 };
 
 

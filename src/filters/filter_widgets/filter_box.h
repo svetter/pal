@@ -16,6 +16,8 @@ class FilterBox : public QGroupBox, public Ui_FilterBox
 {
 	Q_OBJECT
 	
+	Filter& genericFilter;
+	
 public:
 	const DataType type;
 	const QString title;
@@ -25,7 +27,7 @@ private:
 	QButtonGroup invertButtonGroup;
 	
 protected:
-	FilterBox(QWidget* parent, DataType type, const QString& title);
+	FilterBox(QWidget* parent, DataType type, const QString& title, Filter& genericFilter);
 	
 public:
 	virtual ~FilterBox();
@@ -39,9 +41,7 @@ protected:
 	virtual void updateFilterTypeSpecific() = 0;
 	
 public:
-	virtual const Filter* getFilter() const = 0;
-protected:
-	virtual Filter* getFilter() = 0;
+	virtual const Filter& getFilter() const = 0;
 	
 protected:
 	virtual void resizeEvent(QResizeEvent* event);
