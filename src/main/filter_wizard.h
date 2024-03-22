@@ -71,15 +71,6 @@ protected:
 
 
 
-enum FilterFoldOp {
-	FilterFoldOp_StringList,
-	FilterFoldOp_Count,
-	FilterFoldOp_Max,
-	FilterFoldOp_Min,
-	FilterFoldOp_Sum,
-	FilterFoldOp_Average
-};
-
 class FilterWizardFoldOpPage : public QWizardPage
 {
 	Q_OBJECT

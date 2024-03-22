@@ -653,7 +653,6 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget& parent) const
 			case Bit:		value = value.toBool();	break;
 			case Date:		value = value.toDate();	break;
 			case Time:		value = value.toTime();	break;
-			case IDList:	value = value.toList();	break;
 			case String:	if (value.toString().isEmpty()) value = QVariant();	break;
 			default: break;
 			}

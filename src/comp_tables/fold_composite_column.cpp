@@ -111,7 +111,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
 NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, Column& contentColumn) :
-	NumericFoldCompositeColumn(table, name, uiName, suffix, op, op == IDListFold ? IDList : contentColumn.type, table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn)
+	NumericFoldCompositeColumn(table, name, uiName, suffix, op, contentColumn.type, table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn)
 {}
 
 /**
@@ -131,8 +131,6 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 		switch (op) {
 		case CountFold:
 			return 0;
-		case IDListFold:
-			return QList<QVariant>();
 		case AverageFold:
 		case SumFold:
 		case MaxFold:
@@ -141,17 +139,10 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 		}
 	}
 	
-	// COUNT / ID LIST
+	// COUNT
 	
 	if (op == CountFold) {
 		return rowIndexSet.size();
-	}
-	if (op == IDListFold) {
-		QList<QVariant> list = QList<QVariant>();
-		for (const BufferRowIndex& rowIndex : rowIndexSet) {
-			list.append(contentColumn->getValueAt(rowIndex));
-		}
-		return list;
 	}
 	
 	// AVERAGE / SUM / MAX

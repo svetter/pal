@@ -104,8 +104,6 @@ public:
 	
 	bool compare(const QVariant& value1, const QVariant& value2) const;
 	
-	void applySingleFilter(const Filter& filter, ViewOrderBuffer& orderBuffer) const;
-	
 	/**
 	 * Returns a set of all columns in the base tables which are used to compute the content of
 	 * this column.

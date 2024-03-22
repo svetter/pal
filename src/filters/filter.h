@@ -1,7 +1,9 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+#include "src/db/breadcrumbs.h"
 #include "src/db/normal_table.h"
+#include "src/filters/filter_fold_op.h"
 
 class FilterBox;
 
@@ -13,8 +15,15 @@ class Filter
 {
 public:
 	const DataType type;
+	const DataType sourceType;
 	const NormalTable& tableToFilter;
 	const Column& columnToFilterBy;
+	const FilterFoldOp foldOp;
+protected:
+	const Breadcrumbs& crumbs;
+public:
+	const bool isLocalFilter;
+	const bool singleValuePerRow;
 	
 	const QString name;
 	
@@ -23,7 +32,7 @@ private:
 	bool inverted;
 	
 protected:
-	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
 	
 public:
 	bool isEnabled() const;
@@ -31,9 +40,16 @@ public:
 	void setEnabled(bool enabled);
 	void setInverted(bool inverted);
 	
-	virtual unique_ptr<FilterBox> getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const = 0;
+	void applyToOrderBuffer(ViewOrderBuffer& viewOrderBuffer) const;
+private:
+	QVariant getRawRowValue(const BufferRowIndex filteredTableBufferRow) const;
+protected:
+	virtual bool evaluate(const QVariant& rawRowValue) const = 0;
 	
-
+public:
+	virtual unique_ptr<FilterBox> createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const = 0;
+	
+	
 	// Encoding & Decoding
 	QString encodeToString() const;
 	static unique_ptr<Filter> decodeFromString(const QString& encoded, Database& db);

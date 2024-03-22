@@ -66,7 +66,22 @@ void IntClassFilterBox::reset()
 
 
 
+void IntClassFilterBox::updateFilterTypeSpecific()
+{
+	const int newMin =  minCombo->currentIndex()      * classIncrement;
+	const int newMax = (maxCombo->currentIndex() + 1) * classIncrement - 1;
+	filter->setMinMax(newMin, newMax);
+	emit filterChanged();
+}
+
+
+
 const Filter* IntClassFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* IntClassFilterBox::getFilter()
 {
 	return filter.get();
 }
@@ -82,7 +97,7 @@ void IntClassFilterBox::handle_minChanged()
 		maxCombo->setCurrentIndex(minCombo->currentIndex());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void IntClassFilterBox::handle_maxChanged()
@@ -91,7 +106,7 @@ void IntClassFilterBox::handle_maxChanged()
 		return minCombo->setCurrentIndex(maxCombo->currentIndex());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void IntClassFilterBox::handle_setMaxChanged()

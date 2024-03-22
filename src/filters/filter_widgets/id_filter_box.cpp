@@ -13,7 +13,7 @@ IDFilterBox::IDFilterBox(QWidget* parent, const QString& title, std::function<vo
 	populateItemCombo(populateItemCombo),
 	selectableItemIDs(QList<ValidItemID>())
 {
-	connect(combo,	&QComboBox::currentIndexChanged,	this,	&IDFilterBox::filterChanged);
+	connect(combo,	&QComboBox::currentIndexChanged,	this,	&IDFilterBox::updateFilterTypeSpecific);
 	
 	IDFilterBox::setup();
 	IDFilterBox::reset();
@@ -70,7 +70,20 @@ void IDFilterBox::reset()
 
 
 
+void IDFilterBox::updateFilterTypeSpecific()
+{
+	filter->setValue(combo->currentIndex());
+	emit filterChanged();
+}
+
+
+
 const Filter* IDFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* IDFilterBox::getFilter()
 {
 	return filter.get();
 }

@@ -9,7 +9,7 @@
 
 
 IDFilter::IDFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(ID, tableToFilter, columnToFilterBy, name),
+	Filter(ID, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
 	value(ItemID())
 {}
 
@@ -22,7 +22,43 @@ void IDFilter::setValue(const ItemID& value)
 
 
 
-unique_ptr<FilterBox> IDFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+bool IDFilter::evaluate(const QVariant& rawRowValue) const
+{
+	/*                              ╔═══════════════════════════════════════════════╗
+	 *                              ║           Value from filtered table           ║
+	 * ╔════════════════════════════╬───────────────┬────────────────┬──────────────╢
+	 * ║        Filter              ║ QVariant null │ Invalid ItemID │ Valid ItemID ║
+	 * ╟───────────┬────────────────╬═══════════════╪════════════════╪══════════════╣
+	 * ║  Include  │ Invalid ItemID ║ true          │ true           │ false        ║
+	 * ║    i.e.   ├────────────────╫───────────────┼────────────────┼──────────────╢
+	 * ║ !inverted │   Valid ItemID ║ false         │ false          │ match        ║
+	 * ╟───────────┼────────────────╫───────────────┼────────────────┼──────────────╢
+	 * ║  Exclude  │ Invalid ItemID ║ false         │ false          │ true         ║
+	 * ║    i.e.   ├────────────────╫───────────────┼────────────────┼──────────────╢
+	 * ║  inverted │   Valid ItemID ║ true          │ true           │ !match       ║
+	 * ╚═══════════╧════════════════╩═══════════════╧════════════════╧══════════════╝
+	 */
+	
+	if (rawRowValue.isNull()) {
+		return value.isValid() == isInverted();
+	}
+	else {
+		assert(rawRowValue.canConvert<int>());
+		const ItemID convertedValue = ItemID(rawRowValue.toInt());
+		
+		if (convertedValue.isInvalid()) {
+			return value.isValid() == isInverted();
+		}
+		else {
+			const bool match = convertedValue == value;
+			return match != isInverted();
+		}
+	}
+}
+
+
+
+unique_ptr<FilterBox> IDFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
 	IDFilter* const castPointer = (IDFilter*) thisFilter.release();
 	unique_ptr<IDFilter> castUnique = unique_ptr<IDFilter>(castPointer);

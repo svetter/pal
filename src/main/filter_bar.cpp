@@ -98,6 +98,8 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, CompositeTa
 	
 	createFilterShortcuts.clear();
 	for (const Column* const column : compTable->getBaseTable().getColumnList()) {
+		if (column->isPrimaryKey()) continue;
+		
 		// Create name
 		QString name = QString();
 		if (column->foreignColumn) {
@@ -152,7 +154,7 @@ void FilterBar::resetUI()
  * 
  * @param filters	The set of active filters to represent in the UI.
  */
-void FilterBar::insertFiltersIntoUI(const QSet<const Filter*>& filters)
+void FilterBar::insertFiltersIntoUI(const QList<const Filter*>& filters)
 {
 	resetUI();
 	
@@ -201,7 +203,7 @@ void FilterBar::handle_filtersChanged()
 	}
 	applyFiltersButton->setEnabled(anyFilterEnabled);
 	
-	clearFiltersButton->setEnabled(false); // TODO
+	clearFiltersButton->setEnabled(compTable->filterIsActive());
 }
 
 
@@ -221,12 +223,13 @@ void FilterBar::handle_filterWizardAccepted()
 	assert(filterWizard);
 	
 	unique_ptr<Filter> newFilter = filterWizard->getFinishedFilter();
-	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
+	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
 	QApplication::processEvents();
 	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	filtersScrollArea->ensureWidgetVisible(newFilterBox);
 	
 	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
 	connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
@@ -242,26 +245,28 @@ void FilterBar::handle_filterCreationShortcutUsed()
 	const Column* const columnToUse = createFilterShortcuts.value(action);
 	assert(columnToUse);
 	const NormalTable& tableToFilter = compTable->getBaseTable();
+	const FilterFoldOp foldOp = FilterFoldOp(-1);
 	
 	unique_ptr<Filter> newFilter = nullptr;
 	switch (columnToUse->type) {
-	case Integer:	newFilter = make_unique<IntFilter>		(tableToFilter, *columnToUse, name);	break;
-	case ID:		newFilter = make_unique<IDFilter>		(tableToFilter, *columnToUse, name);	break;
-	case Enum:		newFilter = make_unique<EnumFilter>		(tableToFilter, *columnToUse, name);	break;
-	case DualEnum:	newFilter = make_unique<DualEnumFilter>	(tableToFilter, *columnToUse, name);	break;
-	case Bit:		newFilter = make_unique<BoolFilter>		(tableToFilter, *columnToUse, name);	break;
-	case String:	newFilter = make_unique<StringFilter>	(tableToFilter, *columnToUse, name);	break;
-	case Date:		newFilter = make_unique<DateFilter>		(tableToFilter, *columnToUse, name);	break;
-	case Time:		newFilter = make_unique<TimeFilter>		(tableToFilter, *columnToUse, name);	break;
+	case Integer:	newFilter = make_unique<IntFilter>		(tableToFilter, *columnToUse, foldOp,	name);	break;
+	case ID:		newFilter = make_unique<IDFilter>		(tableToFilter, *columnToUse,			name);	break;
+	case Enum:		newFilter = make_unique<EnumFilter>		(tableToFilter, *columnToUse,			name);	break;
+	case DualEnum:	newFilter = make_unique<DualEnumFilter>	(tableToFilter, *columnToUse,			name);	break;
+	case Bit:		newFilter = make_unique<BoolFilter>		(tableToFilter, *columnToUse,			name);	break;
+	case String:	newFilter = make_unique<StringFilter>	(tableToFilter, *columnToUse, foldOp,	name);	break;
+	case Date:		newFilter = make_unique<DateFilter>		(tableToFilter, *columnToUse,			name);	break;
+	case Time:		newFilter = make_unique<TimeFilter>		(tableToFilter, *columnToUse,			name);	break;
 	default: assert(false);
 	}
 	
-	FilterBox* newFilterBox = newFilter->getFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
+	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget, std::move(newFilter)).release();
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
 	QApplication::processEvents();
 	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	filtersScrollArea->ensureWidgetVisible(newFilterBox);
 	
 	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
 	connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
@@ -298,7 +303,7 @@ void FilterBar::handle_applyFilters()
 	applyFiltersButton->setEnabled(false);
 	clearFiltersButton->setEnabled(true);
 	
-	QSet<const Filter*> filters = collectFilters();
+	QList<const Filter*> filters = collectEnabledFilters();
 	compTable->applyFilters(filters);
 	saveFilters(filters);
 	
@@ -325,18 +330,36 @@ void FilterBar::handle_clearFilters()
 // PARSING FILTERS FROM UI
 
 /**
- * Assembles the set of active filters specified in the UI.
+ * Assembles the list of all filters currently shown in the UI.
  * 
- * Any filter whose checkbox is enabled is included in the set, and vice versa.
- * 
- * @return	A set representing the active filters currently specified in the UI.
+ * @return	A list representing all filters currently shown in the UI.
  */
-QSet<const Filter*> FilterBar::collectFilters()
+QList<const Filter*> FilterBar::collectAllFilters()
 {
-	QSet<const Filter*> filters = QSet<const Filter*>();
+	QList<const Filter*> filters = QList<const Filter*>();
 	
 	for (const FilterBox* const filterBox : filterBoxes) {
-		filterBox->getFilter();
+		filters.append(filterBox->getFilter());
+	}
+	
+	return filters;
+}
+
+/**
+ * Assembles the list of all filters currently active in the UI.
+ *
+ * Any filter whose checkbox is enabled is included in the set, and vice versa.
+ *
+ * @return	A list representing the active filters currently shown in the UI.
+ */
+QList<const Filter*> FilterBar::collectEnabledFilters()
+{
+	QList<const Filter*> filters = QList<const Filter*>();
+	
+	for (const FilterBox* const filterBox : filterBoxes) {
+		if (filterBox->isChecked()) {
+			filters.append(filterBox->getFilter());
+		}
 	}
 	
 	return filters;
@@ -347,13 +370,13 @@ QSet<const Filter*> FilterBar::collectFilters()
 // SAVING FILTERS
 
 /**
- * Saves the given set of filters to the project settings.
+ * Saves the given list of filters to the project settings.
  * 
- * Any filter not included in the set will be cleared from the project settings.
+ * All previous filters will be cleared from the project settings.
  * 
- * @param filters	The set of filters to save.
+ * @param filters	The list of filters to save.
  */
-void FilterBar::saveFilters(const QSet<const Filter*>& filters)
+void FilterBar::saveFilters(const QList<const Filter*>& filters)
 {
 	// TODO
 	
@@ -367,15 +390,13 @@ void FilterBar::saveFilters(const QSet<const Filter*>& filters)
 // RETRIEVING FILTERS FROM PROJECT SETTINGS
 
 /**
- * Retrieves the set of filters saved in the project settings.
+ * Retrieves the list of filters saved in the project settings.
  * 
- * Filters not set in the project settings will not be included in the set.
- * 
- * @return	A set of filters representing the ones saved in the project settings.
+ * @return	A list of filters representing the ones saved in the project settings.
  */
-QSet<const Filter*> FilterBar::parseFiltersFromProjectSettings()
+QList<const Filter*> FilterBar::parseFiltersFromProjectSettings()
 {
-	QSet<const Filter*> filters = QSet<const Filter*>();
+	QList<const Filter*> filters = QList<const Filter*>();
 	
 	ProjectSettings& settings = db->projectSettings;
 	

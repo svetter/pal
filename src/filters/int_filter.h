@@ -18,16 +18,18 @@ private:
 	int max;
 	
 public:
-	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
-	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue);
+	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
+	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue);
 	
 	void setMinMax(int min, int max);
 	
-	virtual unique_ptr<FilterBox> getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const;
+	virtual bool evaluate(const QVariant& rawRowValue) const override;
+	
+	virtual unique_ptr<FilterBox> createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
-	static unique_ptr<IntFilter> decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	virtual QStringList encodeTypeSpecific() const override;
+	static unique_ptr<IntFilter> decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
 };

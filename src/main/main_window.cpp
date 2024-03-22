@@ -565,7 +565,7 @@ void MainWindow::initCompositeBuffers()
 		const bool isOpen = &mapper->tableView == currentTableView;
 		
 		// Load filters
-		QSet<const Filter*> filters = QSet<const Filter*>();
+		QList<const Filter*> filters = QList<const Filter*>();
 		if (Settings::rememberFilters.get()) {
 			filters = mapper->filterBar.parseFiltersFromProjectSettings();
 			mapper->filterBar.insertFiltersIntoUI(filters);

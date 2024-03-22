@@ -7,11 +7,11 @@ BoolFilterBox::BoolFilterBox(QWidget* parent, const QString& title, unique_ptr<B
 	filter(std::move(filter)),
 	yesRadiobutton(new QRadioButton(this)),
 	noRadiobutton(new QRadioButton(this)),
-	valueButtonGroup(QButtonGroup()),
+	yesNoButtonGroup(QButtonGroup()),
 	spacerL(new QSpacerItem(QSizePolicy::Expanding, QSizePolicy::Ignored)),
 	spacerR(new QSpacerItem(QSizePolicy::Expanding, QSizePolicy::Ignored))
 {
-	connect(&valueButtonGroup,	&QButtonGroup::buttonClicked,	this,	&FilterBox::filterChanged);
+	connect(&yesNoButtonGroup,	&QButtonGroup::buttonClicked,	this,	&BoolFilterBox::updateFilterTypeSpecific);
 	
 	BoolFilterBox::setup();
 	BoolFilterBox::reset();
@@ -34,8 +34,8 @@ void BoolFilterBox::setup()
 	noRadiobutton->setText(tr("No"));
 	noRadiobutton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	
-	valueButtonGroup.addButton(yesRadiobutton);
-	valueButtonGroup.addButton(noRadiobutton);
+	yesNoButtonGroup.addButton(yesRadiobutton);
+	yesNoButtonGroup.addButton(noRadiobutton);
 	
 	filterLayout->addItem(spacerL);
 	filterLayout->addWidget(yesRadiobutton);
@@ -53,7 +53,20 @@ void BoolFilterBox::reset()
 
 
 
+void BoolFilterBox::updateFilterTypeSpecific()
+{
+	filter->setValue(!noRadiobutton->isChecked());
+	emit filterChanged();
+}
+
+
+
 const Filter* BoolFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* BoolFilterBox::getFilter()
 {
 	return filter.get();
 }

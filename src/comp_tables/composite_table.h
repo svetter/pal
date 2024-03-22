@@ -82,8 +82,6 @@ class CompositeTable : public QAbstractTableModel {
 	
 	/** The composite columns of this table in their default order. */
 	QList<const CompositeColumn*> columns;
-	/** The index of the first column which is never shown in UI, but only used for filtering. */
-	int firstFilterColumnIndex;
 	/** The composite columns of this table which are only used for exporting, not for display in the UI. Paired with the index of the normal column they come in front of. */
 	QList<QPair<int, const CompositeColumn*>> exportColumns;
 	
@@ -96,7 +94,7 @@ class CompositeTable : public QAbstractTableModel {
 	/** The currently applied sorting, as a pair of the column to sort by and the sort order. */
 	SortingPass currentSorting;
 	/** The set of currently applied filters. */
-	QSet<const Filter*> currentFilters;
+	QList<const Filter*> currentFilters;
 	
 	/** The current set of dirty columns which need to be updated before reading the buffer. */
 	QSet<const CompositeColumn*> dirtyColumns;
@@ -129,7 +127,6 @@ public:
 protected:
 	void addColumn(const CompositeColumn& newColumn);
 	void addExportOnlyColumn(const CompositeColumn& column);
-	void addFilterColumn(const CompositeColumn& column);
 public:
 	int getNumberOfNormalColumns() const;
 	int getNumberOfColumnsForCompleteExport() const;
@@ -160,10 +157,10 @@ public:
 	virtual SortingPass getDefaultSorting() const = 0;
 	SortingPass getCurrentSorting() const;
 	
-	void setInitialFilters(const QSet<const Filter*>& filters);
-	void applyFilters(const QSet<const Filter*>& filters);
+	void setInitialFilters(const QList<const Filter*>& filters);
+	void applyFilters(const QList<const Filter*>& filters);
 	void clearFilters();
-	QSet<const Filter*> getCurrentFilters() const;
+	QList<const Filter*> getCurrentFilters() const;
 	bool filterIsActive() const;
 	
 public:

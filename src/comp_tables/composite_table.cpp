@@ -43,13 +43,12 @@ CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView*
 	baseTable(baseTable),
 	tableView(tableView),
 	columns(QList<const CompositeColumn*>()),
-	firstFilterColumnIndex(-1),
 	exportColumns(QList<QPair<int, const CompositeColumn*>>()),
 	bufferInitialized(false),
 	buffer(TableBuffer()),
 	viewOrder(ViewOrderBuffer()),
 	currentSorting({nullptr, Qt::AscendingOrder}),
-	currentFilters(QSet<const Filter*>()),
+	currentFilters(QList<const Filter*>()),
 	dirtyColumns(QSet<const CompositeColumn*>()),
 	hiddenColumns(QSet<const CompositeColumn*>()),
 	updateImmediately(false),
@@ -78,8 +77,6 @@ CompositeTable::~CompositeTable()
  */
 void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
-	assert(firstFilterColumnIndex < 0);
-	
 	for (const CompositeColumn* const column : columns) {
 		assert(column->name != newColumn.name);
 	}
@@ -94,24 +91,9 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
  */
 void CompositeTable::addExportOnlyColumn(const CompositeColumn& column)
 {
-	assert(firstFilterColumnIndex < 0);
-	
 	exportColumns.append({columns.size(), &column});
 }
 
-/**
- * Adds a filter-only column to this table during initialization.
- * 
- * @pre All normal and export-only columns have been added already.
- *
- * @param column	The composite column to add as a filter-only column.
- */
-void CompositeTable::addFilterColumn(const CompositeColumn& column)
-{
-	if (firstFilterColumnIndex < 0) firstFilterColumnIndex = columns.size();
-	
-	columns.append(&column);
-}
 
 
 /**
@@ -121,7 +103,6 @@ void CompositeTable::addFilterColumn(const CompositeColumn& column)
  */
 int CompositeTable::getNumberOfNormalColumns() const
 {
-	if (firstFilterColumnIndex >= 0) return firstFilterColumnIndex;
 	return columns.size();
 }
 
@@ -393,7 +374,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	
 	// Filter order buffer
 	for (const Filter* const filter : qAsConst(currentFilters)) {
-		//filter.column.applySingleFilter(filter, viewOrder);	// TODO
+		filter->applyToOrderBuffer(viewOrder);
 	}
 	
 	// Sort order buffer
@@ -416,9 +397,6 @@ QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
 	QSet<const CompositeColumn*> canStayDirty = QSet<const CompositeColumn*>(hiddenColumns);
 	if (currentSorting.column) {
 		canStayDirty.remove(currentSorting.column);
-	}
-	for (const Filter* const filter : currentFilters) {
-		//canStayDirty.remove(&filter.column);	// TODO
 	}
 	
 	columnsToUpdate.subtract(canStayDirty);
@@ -628,7 +606,7 @@ SortingPass CompositeTable::getCurrentSorting() const
  * 
  * @param filters	The filters to apply once the table is populated.
  */
-void CompositeTable::setInitialFilters(const QSet<const Filter*>& filters)
+void CompositeTable::setInitialFilters(const QList<const Filter*>& filters)
 {
 	assert(!bufferInitialized && viewOrder.isEmpty());
 	currentFilters = filters;
@@ -640,14 +618,13 @@ void CompositeTable::setInitialFilters(const QSet<const Filter*>& filters)
  * 
  * @param filters	The filters to apply.
  */
-void CompositeTable::applyFilters(const QSet<const Filter*>& filters)
+void CompositeTable::applyFilters(const QList<const Filter*>& filters)
 {
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
 	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
-	bool skipRepopulate = currentFilters.isEmpty();
+	const bool skipRepopulate = currentFilters.isEmpty();
 	currentFilters = filters;
-	updateBufferColumns(getColumnsToUpdate());	// Filter column(s) might need to be updated if hidden
 	rebuildOrderBuffer(skipRepopulate);
 	
 	// Restore selection
@@ -672,7 +649,7 @@ void CompositeTable::clearFilters()
  * 
  * @return	The set of currently applied filters.
  */
-QSet<const Filter*> CompositeTable::getCurrentFilters() const
+QList<const Filter*> CompositeTable::getCurrentFilters() const
 {
 	return currentFilters;
 }
@@ -1018,7 +995,7 @@ QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
  */
 Breadcrumbs CompositeTable::crumbsTo(const NormalTable& targetTable) const
 {
-	return targetTable.db.getBreadcrumbsFor(baseTable, targetTable);
+	return db.getBreadcrumbsFor(baseTable, targetTable);
 }
 
 

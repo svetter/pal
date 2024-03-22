@@ -5,8 +5,8 @@
 
 
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Integer, tableToFilter, columnToFilterBy, name),
+IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name) :
+	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
 	useClasses(false),
 	classIncrement(-1),
 	classesMinValue(-1),
@@ -15,8 +15,8 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	max(0)
 {}
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
-	Filter(Integer, tableToFilter, columnToFilterBy, name),
+IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
+	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
 	useClasses(true),
 	classIncrement(classIncrement),
 	classesMinValue(classesMinValue),
@@ -35,7 +35,23 @@ void IntFilter::setMinMax(int min, int max)
 
 
 
-unique_ptr<FilterBox> IntFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+bool IntFilter::evaluate(const QVariant& rawRowValue) const
+{
+	if (rawRowValue.isNull()) {
+		return isInverted();
+	}
+	else {
+		assert(rawRowValue.canConvert<int>());
+		const int convertedValue = rawRowValue.toInt();
+		const bool match = convertedValue >= min && convertedValue <= max;
+		
+		return match != isInverted();
+	}
+}
+
+
+
+unique_ptr<FilterBox> IntFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
 	IntFilter* const castPointer = (IntFilter*) thisFilter.release();
 	unique_ptr<IntFilter> castUnique = unique_ptr<IntFilter>(castPointer);
@@ -61,7 +77,7 @@ QStringList IntFilter::encodeTypeSpecific() const
 	};
 }
 
-unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -80,9 +96,9 @@ unique_ptr<IntFilter> IntFilter::decodeTypeSpecific(const NormalTable& tableToFi
 	
 	unique_ptr<IntFilter> filter = nullptr;
 	if (useClasses) {
-		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, name, classIncrement, classesMinValue, classesMaxValue);
+		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, foldOp, name, classIncrement, classesMinValue, classesMaxValue);
 	} else {
-		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, name);
+		filter = make_unique<IntFilter>(tableToFilter, columnToFilterBy, foldOp, name);
 	}
 	filter->min = min;
 	filter->max = max;

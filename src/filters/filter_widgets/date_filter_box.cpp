@@ -55,7 +55,20 @@ void DateFilterBox::reset()
 
 
 
+void DateFilterBox::updateFilterTypeSpecific()
+{
+	filter->setMinMax(minDateWidget->date(), maxDateWidget->date());
+	emit filterChanged();
+}
+
+
+
 const Filter* DateFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* DateFilterBox::getFilter()
 {
 	return filter.get();
 }
@@ -71,7 +84,7 @@ void DateFilterBox::handle_minDateChanged()
 		maxDateWidget->setDate(minDateWidget->date());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void DateFilterBox::handle_maxDateChanged()
@@ -80,7 +93,7 @@ void DateFilterBox::handle_maxDateChanged()
 		return minDateWidget->setDate(maxDateWidget->date());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void DateFilterBox::handle_setMaxDateChanged()

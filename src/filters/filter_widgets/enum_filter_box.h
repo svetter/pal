@@ -24,7 +24,11 @@ public:
 	virtual void setup();
 	virtual void reset();
 	
+	virtual void updateFilterTypeSpecific();
+	
 	virtual const Filter* getFilter() const;
+protected:
+	virtual Filter* getFilter();
 };
 
 

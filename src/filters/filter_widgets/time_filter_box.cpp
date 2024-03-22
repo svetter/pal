@@ -51,7 +51,20 @@ void TimeFilterBox::reset()
 
 
 
+void TimeFilterBox::updateFilterTypeSpecific()
+{
+	filter->setMinMax(minTimeWidget->time(), maxTimeWidget->time());
+	emit filterChanged();
+}
+
+
+
 const Filter* TimeFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* TimeFilterBox::getFilter()
 {
 	return filter.get();
 }
@@ -67,7 +80,7 @@ void TimeFilterBox::handle_minTimeChanged()
 		maxTimeWidget->setTime(minTimeWidget->time());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void TimeFilterBox::handle_maxTimeChanged()
@@ -76,7 +89,7 @@ void TimeFilterBox::handle_maxTimeChanged()
 		return minTimeWidget->setTime(maxTimeWidget->time());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void TimeFilterBox::handle_setMaxTimeChanged()

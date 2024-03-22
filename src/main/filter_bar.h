@@ -68,7 +68,7 @@ public:
 public:
 	// Project setup
 	void resetUI();
-	void insertFiltersIntoUI(const QSet<const Filter*>& filters);
+	void insertFiltersIntoUI(const QList<const Filter*>& filters);
 	
 public:
 	// Update UI
@@ -89,14 +89,15 @@ public:
 	
 private:
 	// Parsing filters from UI
-	QSet<const Filter*> collectFilters();
+	QList<const Filter*> collectAllFilters();
+	QList<const Filter*> collectEnabledFilters();
 	
 	// Saving filters
-	void saveFilters(const QSet<const Filter*>& filters);
+	void saveFilters(const QList<const Filter*>& filters);
 	
 public:
 	// Retrieving filters from project settings
-	QSet<const Filter*> parseFiltersFromProjectSettings();
+	QList<const Filter*> parseFiltersFromProjectSettings();
 };
 
 

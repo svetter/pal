@@ -85,12 +85,6 @@ public:
 	const ReferenceCompositeColumn		tripEndDateColumn;
 	const ReferenceCompositeColumn		tripDescriptionColumn;
 	
-	// Filter-only columns
-	/** The ID of the mountain range the peak is assigned to. */
-	const ReferenceCompositeColumn		rangeIDColumn;
-	/** The IDs of all hikers who participated in the ascent. */
-	const NumericFoldCompositeColumn	hikerIDsColumn;
-	
 public:
 	/**
 	 * Creates a new CompositeAscentsTable.
@@ -130,11 +124,7 @@ public:
 		descriptionColumn		(DirectCompositeColumn			(*this,													noSuffix,				db.ascentsTable.descriptionColumn)),
 		tripStartDateColumn		(ReferenceCompositeColumn		(*this,	"tripStartDate",	tr("Trip start date"),		noSuffix,				db.tripsTable.startDateColumn)),
 		tripEndDateColumn		(ReferenceCompositeColumn		(*this,	"tripEndDate",		tr("Trip end date"),		noSuffix,				db.tripsTable.endDateColumn)),
-		tripDescriptionColumn	(ReferenceCompositeColumn		(*this,	"tripDescription",	tr("Trip description"),		noSuffix,				db.tripsTable.descriptionColumn)),
-		
-		// Filter-only columns
-		rangeIDColumn			(ReferenceCompositeColumn		(*this,	"rangeID",			tr("Range ID"),				noSuffix,				db.rangesTable.primaryKeyColumn)),
-		hikerIDsColumn			(NumericFoldCompositeColumn		(*this,	"hikerIDs",			tr("Hiker IDs"),			noSuffix,	IDListFold, db.hikersTable.primaryKeyColumn))
+		tripDescriptionColumn	(ReferenceCompositeColumn		(*this,	"tripDescription",	tr("Trip description"),		noSuffix,				db.tripsTable.descriptionColumn))
 	{
 		addColumn(indexColumn);
 		addColumn(dateColumn);
@@ -160,10 +150,6 @@ public:
 		addExportOnlyColumn(tripStartDateColumn);	// Export-only column
 		addExportOnlyColumn(tripEndDateColumn);		// Export-only column
 		addExportOnlyColumn(tripDescriptionColumn);	// Export-only column
-		
-		// Filter-only columns
-		addFilterColumn(rangeIDColumn);
-		addFilterColumn(hikerIDsColumn);
 	}
 	
 	

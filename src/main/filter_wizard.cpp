@@ -203,17 +203,21 @@ void FilterWizardFoldOpPage::initializePage()
 	const Column* const columnToUse = columnPage.getSelectedColumn();
 	assert(columnToUse);
 	
-	if (columnToUse->type == Integer) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values, their count, or on their maximum, minimum, sum, or average."));
+	if (columnToUse->type == String) {
+		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values or to their count."));
+	} else if (columnToUse->type == Integer) {
+		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to the count of those values, or to their maximum, minimum, sum, or average."));
 	} else {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values, or on their count."));
+		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to the count of those values."));
 	}
 	
 	foldOpList.clear();
 	foldOpCombo->clear();
 	
-	foldOpList.append(FilterFoldOp_StringList);	foldOpCombo->addItem(tr("List"));
 	foldOpList.append(FilterFoldOp_Count);		foldOpCombo->addItem(tr("Count"));
+	if (columnToUse->type == String) {
+		foldOpList.append(FilterFoldOp_StringList);	foldOpCombo->addItem(tr("List"));
+	}
 	if (columnToUse->type == Integer) {
 		foldOpList.append(FilterFoldOp_Max);		foldOpCombo->addItem(tr("Maximum"));
 		foldOpList.append(FilterFoldOp_Min);		foldOpCombo->addItem(tr("Minimum"));
@@ -399,9 +403,9 @@ unique_ptr<Filter> FilterWizard::getFinishedFilter()
 	case Integer: {
 		const bool useIntClasses = field("numberPref.class").toBool();
 		if (useIntClasses) {
-			return make_unique<IntFilter>(tableToFilter, *columnToUse, name, 1000, 0, 8848);
+			return make_unique<IntFilter>(tableToFilter, *columnToUse, foldOp, name, 1000, 0, 8848);
 		} else {
-			return make_unique<IntFilter>(tableToFilter, *columnToUse, name);
+			return make_unique<IntFilter>(tableToFilter, *columnToUse, foldOp, name);
 		}
 	}
 	case ID: {
@@ -417,7 +421,7 @@ unique_ptr<Filter> FilterWizard::getFinishedFilter()
 		return make_unique<BoolFilter>(tableToFilter, *columnToUse, name);
 	}
 	case String: {
-		return make_unique<StringFilter>(tableToFilter, *columnToUse, name);
+		return make_unique<StringFilter>(tableToFilter, *columnToUse, foldOp, name);
 	}
 	case Date: {
 		return make_unique<DateFilter>(tableToFilter, *columnToUse, name);
@@ -425,10 +429,7 @@ unique_ptr<Filter> FilterWizard::getFinishedFilter()
 	case Time: {
 		return make_unique<TimeFilter>(tableToFilter, *columnToUse, name);
 	}
-	case IDList: {
-		qDebug() << "FilterWizard::getFinishedFilter - hit unexpected case IDList";
+	default: assert(false);
 	}
-	}
-	assert(false);
 	return nullptr;
 }

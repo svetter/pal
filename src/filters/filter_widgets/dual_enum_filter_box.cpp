@@ -14,7 +14,7 @@ DualEnumFilterBox::DualEnumFilterBox(QWidget* parent, const QString& title, cons
 	entries(entries)
 {
 	connect(comboDiscerning,	&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::handle_discerningComboChanged);
-	connect(comboDependent,		&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::filterChanged);
+	connect(comboDependent,		&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::updateFilterTypeSpecific);
 	
 	DualEnumFilterBox::setup();
 	DualEnumFilterBox::reset();
@@ -64,7 +64,20 @@ void DualEnumFilterBox::reset()
 
 
 
+void DualEnumFilterBox::updateFilterTypeSpecific()
+{
+	filter->setValues(comboDiscerning->currentIndex(), comboDependent->currentIndex());
+	emit filterChanged();
+}
+
+
+
 const Filter* DualEnumFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* DualEnumFilterBox::getFilter()
 {
 	return filter.get();
 }
@@ -87,5 +100,5 @@ void DualEnumFilterBox::handle_discerningComboChanged()
 		comboDependent->setPlaceholderText(EnumNames::translateList(entries.at(0).second).at(0));
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }

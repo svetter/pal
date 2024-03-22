@@ -227,15 +227,6 @@ void CsvExportWriter::writeCell(const QVariant& value, const ExportColumnInfo& c
 		formattedValue = QString::number(value.toInt());
 		break;
 	}
-	case IDList: {
-		QList<QVariant> idList = value.toList();
-		formattedValue = "";
-		for (const QVariant& id : idList) {
-			if (!formattedValue.isEmpty()) formattedValue += ", ";
-			formattedValue += QString::number(id.toInt());
-		}
-		break;
-	}
 	case Enum: {
 		switch (mode) {
 		case OneTable:
@@ -490,7 +481,6 @@ void FodsExportWriter::beginExport(QList<QList<ExportColumnInfo>>& allColumnInfo
 			case Bit:
 			case Integer:
 			case ID:
-			case IDList:
 			case Enum:
 			case DualEnum: {
 				columnInfo.styleName = "Default";
@@ -589,16 +579,6 @@ void FodsExportWriter::writeCell(const QVariant& value, const ExportColumnInfo& 
 		formattedValue = QString::number(value.toInt());
 		xmlWriter->writeAttribute("office:value-type", "float");
 		xmlWriter->writeAttribute("office:value", formattedValue);
-		break;
-	}
-	case IDList: {
-		QList<QVariant> idList = value.toList();
-		formattedValue = "";
-		for (const QVariant& id : idList) {
-			if (!formattedValue.isEmpty()) formattedValue += ", ";
-			formattedValue += QString::number(id.toInt());
-		}
-		xmlWriter->writeAttribute("office:value-type", "string");
 		break;
 	}
 	case Enum: {

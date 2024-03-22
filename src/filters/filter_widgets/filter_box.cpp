@@ -22,8 +22,8 @@ FilterBox::FilterBox(QWidget* parent, DataType type, const QString& title) :
 	removeButton->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
 	removeButton->setFixedSize(12, 12);
 	
-	connect(this,				&QGroupBox::toggled,			this,	&FilterBox::filterChanged);
-	connect(&invertButtonGroup,	&QButtonGroup::buttonClicked,	this,	&FilterBox::filterChanged);
+	connect(this,				&QGroupBox::toggled,			this,	&FilterBox::updateFilter);
+	connect(&invertButtonGroup,	&QButtonGroup::buttonClicked,	this,	&FilterBox::updateFilter);
 	connect(removeButton,		&QToolButton::clicked,			this,	&FilterBox::removeRequested);
 	
 	FilterBox::reset();
@@ -39,6 +39,15 @@ FilterBox::~FilterBox()
 void FilterBox::reset() {
 	includeRadiobutton->setChecked(true);
 	excludeRadiobutton->setChecked(false);
+}
+
+
+
+void FilterBox::updateFilter()
+{
+	getFilter()->setEnabled(isChecked());
+	getFilter()->setInverted(excludeRadiobutton->isChecked());
+	emit filterChanged();
 }
 
 

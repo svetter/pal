@@ -16,7 +16,7 @@ class BoolFilterBox : public FilterBox
 	
 	QRadioButton* yesRadiobutton;
 	QRadioButton* noRadiobutton;
-	QButtonGroup valueButtonGroup;
+	QButtonGroup yesNoButtonGroup;
 	QSpacerItem* spacerL;
 	QSpacerItem* spacerR;
 	
@@ -27,7 +27,11 @@ public:
 	virtual void setup();
 	virtual void reset();
 	
+	virtual void updateFilterTypeSpecific();
+	
 	virtual const Filter* getFilter() const;
+protected:
+	virtual Filter* getFilter();
 };
 
 

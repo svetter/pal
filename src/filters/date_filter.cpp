@@ -5,7 +5,7 @@
 
 
 DateFilter::DateFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Date, tableToFilter, columnToFilterBy, name),
+	Filter(Date, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
 	min(QDate()),
 	max(QDate())
 {}
@@ -20,7 +20,26 @@ void DateFilter::setMinMax(const QDate& min, const QDate& max)
 
 
 
-unique_ptr<FilterBox> DateFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+bool DateFilter::evaluate(const QVariant& rawRowValue) const
+{
+	assert(!min.isNull());
+	assert(!max.isNull());
+	
+	if (rawRowValue.isNull()) {
+		return isInverted();
+	}
+	else {
+		assert(rawRowValue.canConvert<QDate>());
+		const QDate convertedValue = rawRowValue.toDate();
+		const bool match = convertedValue >= min && convertedValue <= max;
+		
+		return match != isInverted();
+	}
+}
+
+
+
+unique_ptr<FilterBox> DateFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
 	DateFilter* const castPointer = (DateFilter*) thisFilter.release();
 	unique_ptr<DateFilter> castUnique = unique_ptr<DateFilter>(castPointer);

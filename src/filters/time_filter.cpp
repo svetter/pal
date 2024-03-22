@@ -5,7 +5,7 @@
 
 
 TimeFilter::TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Time, tableToFilter, columnToFilterBy, name),
+	Filter(Time, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
 	min(QTime()),
 	max(QTime())
 {}
@@ -20,7 +20,26 @@ void TimeFilter::setMinMax(const QTime& min, const QTime& max)
 
 
 
-unique_ptr<FilterBox> TimeFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+bool TimeFilter::evaluate(const QVariant& rawRowValue) const
+{
+	assert(!min.isNull());
+	assert(!max.isNull());
+	
+	if (rawRowValue.isNull()) {
+		return isInverted();
+	}
+	else {
+		assert(rawRowValue.canConvert<QTime>());
+		const QTime convertedValue = rawRowValue.toTime();
+		const bool match = convertedValue >= min && convertedValue <= max;
+		
+		return match != isInverted();
+	}
+}
+
+
+
+unique_ptr<FilterBox> TimeFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
 	TimeFilter* const castPointer = (TimeFilter*) thisFilter.release();
 	unique_ptr<TimeFilter> castUnique = unique_ptr<TimeFilter>(castPointer);

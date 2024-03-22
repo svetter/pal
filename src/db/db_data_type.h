@@ -24,7 +24,7 @@
 #ifndef DB_DATA_TYPE_H
 #define DB_DATA_TYPE_H
 
-#include <QList>
+#include <QStringList>
 
 
 
@@ -34,7 +34,7 @@
  * Items correspond to SQL data types, except for the ID type.
  */
 enum DataType {
-	Integer, ID, Enum, DualEnum, Bit, String, Date, Time, IDList
+	Integer, ID, Enum, DualEnum, Bit, String, Date, Time
 };
 
 
@@ -46,8 +46,8 @@ enum DataType {
 struct DataTypeNames
 {
 	/** A list of the names of the data types, in the order of the DataType enum. */
-	inline static const QList<QString> dataTypeNames = {
-		"Integer", "ID", "Enum", "DualEnum", "Bit", "String", "Date", "Time", "IDList"
+	inline static const QStringList dataTypeNames = {
+		"Integer", "ID", "Enum", "DualEnum", "Bit", "String", "Date", "Time"
 	};
 	
 	/**
@@ -55,7 +55,7 @@ struct DataTypeNames
 	 * 
 	 * @param type	The data type.
 	 */
-	inline static QString getName(DataType type)
+	inline static QString getName(const DataType type)
 	{
 		if (type < 0 || type >= dataTypeNames.size()) return QString();
 		return dataTypeNames.at(type);

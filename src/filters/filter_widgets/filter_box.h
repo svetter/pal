@@ -1,7 +1,6 @@
 #ifndef FILTER_BOX_H
 #define FILTER_BOX_H
 
-#include "src/db/column.h"
 #include "src/filters/filter.h"
 #include "ui_filter_box.h"
 
@@ -34,7 +33,15 @@ public:
 	virtual void setup() = 0;
 	virtual void reset();
 	
+private:
+	void updateFilter();
+protected:
+	virtual void updateFilterTypeSpecific() = 0;
+	
+public:
 	virtual const Filter* getFilter() const = 0;
+protected:
+	virtual Filter* getFilter() = 0;
 	
 protected:
 	virtual void resizeEvent(QResizeEvent* event);

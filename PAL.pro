@@ -113,6 +113,7 @@ HEADERS += \
 	src/filters/dual_enum_filter.h \
 	src/filters/enum_filter.h \
 	src/filters/filter.h \
+	src/filters/filter_fold_op.h \
 	src/filters/filter_widgets/bool_filter_box.h \
 	src/filters/filter_widgets/date_filter_box.h \
 	src/filters/filter_widgets/dual_enum_filter_box.h \

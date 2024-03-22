@@ -58,7 +58,6 @@ public:
  */
 enum NumericFoldOp {
 	CountFold,
-	IDListFold,
 	AverageFold,
 	SumFold,
 	MaxFold

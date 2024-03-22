@@ -5,7 +5,7 @@
 
 
 EnumFilter::EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Enum, tableToFilter, columnToFilterBy, name),
+	Filter(Enum, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
 	value(-1)
 {}
 
@@ -18,7 +18,23 @@ void EnumFilter::setValue(int value)
 
 
 
-unique_ptr<FilterBox> EnumFilter::getFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
+bool EnumFilter::evaluate(const QVariant& rawRowValue) const
+{
+	if (rawRowValue.isNull()) {
+		return isInverted();
+	}
+	else {
+		assert(rawRowValue.canConvert<int>());
+		const int convertedValue = rawRowValue.toInt();
+		const bool match = convertedValue == value;
+		
+		return match != isInverted();
+	}
+}
+
+
+
+unique_ptr<FilterBox> EnumFilter::createFilterBox(QWidget* parent, unique_ptr<Filter> thisFilter) const
 {
 	EnumFilter* const castPointer = (EnumFilter*) thisFilter.release();
 	unique_ptr<EnumFilter> castUnique = unique_ptr<EnumFilter>(castPointer);

@@ -154,7 +154,7 @@ protected:
 	
 	void computeBreadcrumbMatrix();
 public:
-	Breadcrumbs getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const;
+	const Breadcrumbs getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const;
 	
 	static QString tr(const QString& string);
 	

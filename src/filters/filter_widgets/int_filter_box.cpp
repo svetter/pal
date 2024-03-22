@@ -53,7 +53,20 @@ void IntFilterBox::reset()
 
 
 
+void IntFilterBox::updateFilterTypeSpecific()
+{
+	filter->setMinMax(minSpinner->value(), maxSpinner->value());
+	emit filterChanged();
+}
+
+
+
 const Filter* IntFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* IntFilterBox::getFilter()
 {
 	return filter.get();
 }
@@ -69,7 +82,7 @@ void IntFilterBox::handle_minChanged()
 		maxSpinner->setValue(minSpinner->value());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void IntFilterBox::handle_maxChanged()
@@ -78,7 +91,7 @@ void IntFilterBox::handle_maxChanged()
 		return minSpinner->setValue(maxSpinner->value());
 	}
 	
-	emit filterChanged();
+	updateFilterTypeSpecific();
 }
 
 void IntFilterBox::handle_setMaxChanged()

@@ -12,7 +12,7 @@ EnumFilterBox::EnumFilterBox(QWidget* parent, const QString& title, const QStrin
 	combo(new QComboBox(this)),
 	entries(entries)
 {
-	connect(combo,	&QComboBox::currentIndexChanged,	this,	&EnumFilterBox::filterChanged);
+	connect(combo,	&QComboBox::currentIndexChanged,	this,	&EnumFilterBox::updateFilterTypeSpecific);
 	
 	EnumFilterBox::setup();
 	EnumFilterBox::reset();
@@ -46,7 +46,20 @@ void EnumFilterBox::reset()
 
 
 
+void EnumFilterBox::updateFilterTypeSpecific()
+{
+	filter->setValue(combo->currentIndex());
+	emit filterChanged();
+}
+
+
+
 const Filter* EnumFilterBox::getFilter() const
+{
+	return filter.get();
+}
+
+Filter* EnumFilterBox::getFilter()
 {
 	return filter.get();
 }

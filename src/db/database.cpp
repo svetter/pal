@@ -964,7 +964,7 @@ void Database::computeBreadcrumbMatrix()
  * @param targetTable	The table which must be reached.
  * @return				The breadcrumbs for the connection between the given tables.
  */
-Breadcrumbs Database::getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const
+const Breadcrumbs Database::getBreadcrumbsFor(const NormalTable& startTable, const NormalTable& targetTable) const
 {
 	assert(breadcrumbMatrix.contains(&startTable));
 	assert(breadcrumbMatrix.value(&startTable).contains(&targetTable));
