@@ -24,9 +24,6 @@ public:
 	explicit DateFilterBox(QWidget* parent, const QString& title, DateFilter& filter);
 	virtual ~DateFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

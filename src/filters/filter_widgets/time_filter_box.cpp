@@ -10,23 +10,6 @@ TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& 
 	setMaxTimeCheckbox(new QCheckBox(this)),
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
-	connect(minTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_minTimeChanged);
-	connect(setMaxTimeCheckbox,	&QCheckBox::stateChanged,	this,	&TimeFilterBox::handle_setMaxTimeChanged);
-	connect(maxTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_maxTimeChanged);
-	
-	TimeFilterBox::setup();
-	TimeFilterBox::reset();
-}
-
-TimeFilterBox::~TimeFilterBox()
-{
-	// Widgets deleted by layout
-}
-
-
-
-void TimeFilterBox::setup()
-{
 	minTimeWidget->setObjectName("minTimeWidget");
 	
 	setMaxTimeCheckbox->setObjectName("setMaxTimeCheckbox");
@@ -38,22 +21,27 @@ void TimeFilterBox::setup()
 	filterLayout->addItem(spacer);
 	filterLayout->addWidget(setMaxTimeCheckbox);
 	filterLayout->addWidget(maxTimeWidget);
+	
+	connect(minTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_minTimeChanged);
+	connect(setMaxTimeCheckbox,	&QCheckBox::stateChanged,	this,	&TimeFilterBox::handle_setMaxTimeChanged);
+	connect(maxTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_maxTimeChanged);
+	
+	minTimeWidget->setTime(filter.min);
+	maxTimeWidget->setTime(filter.max);
+	setMaxTimeCheckbox->setChecked(filter.min < filter.max);
 }
 
-void TimeFilterBox::reset()
+TimeFilterBox::~TimeFilterBox()
 {
-	FilterBox::reset();
-	
-	minTimeWidget		->setTime(QTime(12, 00));
-	maxTimeWidget		->setTime(QTime(12, 00));
-	setMaxTimeCheckbox	->setChecked(true);
+	// Widgets deleted by layout
 }
 
 
 
 void TimeFilterBox::updateFilterTypeSpecific()
 {
-	filter.setMinMax(minTimeWidget->time(), maxTimeWidget->time());
+	filter.min = minTimeWidget->time();
+	filter.max = maxTimeWidget->time();
 	emit filterChanged();
 }
 

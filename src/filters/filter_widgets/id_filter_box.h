@@ -24,9 +24,7 @@ public:
 	explicit IDFilterBox(QWidget* parent, const QString& title, std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo, IDFilter& filter);
 	virtual ~IDFilterBox();
 	
-	virtual void setup();
 	void setComboEntries();
-	virtual void reset();
 	
 	virtual void updateFilterTypeSpecific();
 	

@@ -13,11 +13,24 @@ IDFilterBox::IDFilterBox(QWidget* parent, const QString& title, std::function<vo
 	populateItemCombo(populateItemCombo),
 	selectableItemIDs(QList<ValidItemID>())
 {
+	combo->setObjectName("combo");
+	combo->setMaximumWidth(200);
+	combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	combo->view()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Ignored);
+	combo->view()->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	
+	filterLayout->addWidget(combo);
+	
+	setComboEntries();
+	
 	connect(combo,	&QComboBox::currentIndexChanged,	this,	&IDFilterBox::updateFilterTypeSpecific);
 	
-	IDFilterBox::setup();
-	IDFilterBox::reset();
-	setComboEntries();
+	for (int i = 0; i < selectableItemIDs.size(); i++) {
+		if (selectableItemIDs.at(i) == filter.value) {
+			combo->setCurrentIndex(i + 1);	// 0 is None
+			break;
+		}
+	}
 }
 
 IDFilterBox::~IDFilterBox()
@@ -27,17 +40,6 @@ IDFilterBox::~IDFilterBox()
 
 
 
-void IDFilterBox::setup()
-{
-	combo->setObjectName("combo");
-	combo->setMaximumWidth(200);
-	combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-	combo->view()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Ignored);
-	combo->view()->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	
-	filterLayout->addWidget(combo);
-}
-
 void IDFilterBox::setComboEntries()
 {
 	ItemID previouslySelectedItemID = ItemID();
@@ -45,6 +47,7 @@ void IDFilterBox::setComboEntries()
 	if (comboIndex > 0) {
 		previouslySelectedItemID = selectableItemIDs.at(comboIndex - 1);	// 0 is None
 	}
+	
 	populateItemCombo(*combo, selectableItemIDs);
 	
 	int newComboIndex = 0;
@@ -60,19 +63,18 @@ void IDFilterBox::setComboEntries()
 	}
 }
 
-void IDFilterBox::reset()
-{
-	FilterBox::reset();
-	
-	combo->clear();
-	combo->setCurrentIndex(0);
-}
-
 
 
 void IDFilterBox::updateFilterTypeSpecific()
 {
-	filter.setValue(combo->currentIndex());
+	const int comboIndex = combo->currentIndex();
+	if (comboIndex == 0) {
+		filter.value = ItemID();
+	}
+	else {
+		filter.value = selectableItemIDs.at(combo->currentIndex() - 1);	// 0 is None
+	}
+	
 	emit filterChanged();
 }
 

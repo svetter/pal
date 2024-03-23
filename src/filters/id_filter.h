@@ -12,8 +12,6 @@ class IDFilter : public Filter
 public:
 	IDFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
 	
-	void setValue(const ItemID& value);
-	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	
 	virtual FilterBox* createFilterBox(QWidget* parent) override;
@@ -23,6 +21,7 @@ protected:
 	static IDFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
+	friend class IDFilterBox;
 };
 
 

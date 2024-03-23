@@ -12,10 +12,18 @@ EnumFilterBox::EnumFilterBox(QWidget* parent, const QString& title, const QStrin
 	combo(new QComboBox(this)),
 	entries(entries)
 {
+	combo->setObjectName("combo");
+	combo->insertItems(0, EnumNames::translateList(entries));
+	combo->setMaximumWidth(200);
+	combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	combo->view()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Ignored);
+	combo->view()->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+	
+	filterLayout->addWidget(combo);
+	
 	connect(combo,	&QComboBox::currentIndexChanged,	this,	&EnumFilterBox::updateFilterTypeSpecific);
 	
-	EnumFilterBox::setup();
-	EnumFilterBox::reset();
+	combo->setCurrentIndex(filter.value);
 }
 
 EnumFilterBox::~EnumFilterBox()
@@ -25,30 +33,9 @@ EnumFilterBox::~EnumFilterBox()
 
 
 
-void EnumFilterBox::setup()
-{
-	combo->setObjectName("combo");
-	combo->insertItems(0, EnumNames::translateList(entries));
-	combo->setMaximumWidth(200);
-	combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-	combo->view()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Ignored);
-	combo->view()->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-	
-	filterLayout->addWidget(combo);
-}
-
-void EnumFilterBox::reset()
-{
-	FilterBox::reset();
-	
-	combo->setCurrentIndex(0);
-}
-
-
-
 void EnumFilterBox::updateFilterTypeSpecific()
 {
-	filter.setValue(combo->currentIndex());
+	filter.value = combo->currentIndex();
 	emit filterChanged();
 }
 

@@ -24,9 +24,6 @@ public:
 	explicit IntFilterBox(QWidget* parent, const QString& title, IntFilter& filter);
 	virtual ~IntFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

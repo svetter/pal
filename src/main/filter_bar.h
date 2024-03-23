@@ -94,10 +94,9 @@ private:
 	QList<const Filter*> collectAllFilters();
 	QList<const Filter*> collectEnabledFilters();
 	
-	// Saving filters
-	void saveFilters(const QList<const Filter*>& filters);
-	
 public:
+	// Saving filters
+	void saveFilters();
 	// Retrieving filters from project settings
 	QList<Filter*> parseFiltersFromProjectSettings();
 };

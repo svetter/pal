@@ -15,13 +15,6 @@ IDFilter::IDFilter(const NormalTable& tableToFilter, const Column& columnToFilte
 
 
 
-void IDFilter::setValue(const ItemID& value)
-{
-	this->value = value;
-}
-
-
-
 bool IDFilter::evaluate(const QVariant& rawRowValue) const
 {
 	/*                              ╔═══════════════════════════════════════════════╗

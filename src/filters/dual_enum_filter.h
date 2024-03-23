@@ -15,8 +15,6 @@ class DualEnumFilter : public Filter
 public:
 	DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name);
 	
-	void setValues(int discerningValue, int dependentValue);
-	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	
 	virtual FilterBox* createFilterBox(QWidget* parent) override;
@@ -26,6 +24,7 @@ protected:
 	static DualEnumFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
+	friend class DualEnumFilterBox;
 };
 
 

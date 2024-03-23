@@ -24,9 +24,6 @@ public:
 	explicit BoolFilterBox(QWidget* parent, const QString& title, BoolFilter& filter);
 	virtual ~BoolFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

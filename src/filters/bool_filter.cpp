@@ -11,13 +11,6 @@ BoolFilter::BoolFilter(const NormalTable& tableToFilter, const Column& columnToF
 
 
 
-void BoolFilter::setValue(bool value)
-{
-	this->value = value;
-}
-
-
-
 bool BoolFilter::evaluate(const QVariant& rawRowValue) const
 {
 	if (rawRowValue.isNull()) {

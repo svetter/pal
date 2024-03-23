@@ -12,7 +12,7 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	classesMinValue(-1),
 	classesMaxValue(-1),
 	min(0),
-	max(0)
+	max(1)
 {}
 
 IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
@@ -24,14 +24,6 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	min(0),
 	max(0)
 {}
-
-
-
-void IntFilter::setMinMax(int min, int max)
-{
-	this->min	= min;
-	this->max	= max;
-}
 
 
 
@@ -79,17 +71,23 @@ IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const
 	bool ok = false;
 	
 	const bool useClasses = decodeBool(restOfEncoding, "useClasses", ok);
-	if (!ok) return nullptr;
+	if (!ok)
+		return nullptr;
 	const int classIncrement = decodeInt(restOfEncoding, "classIncrement", ok);
-	if (!ok && useClasses) return nullptr;
+	if (!ok && useClasses)
+		return nullptr;
 	const int classesMinValue = decodeInt(restOfEncoding, "classesMinValue", ok);
-	if (!ok && useClasses) return nullptr;
+	if (!ok && useClasses)
+		return nullptr;
 	const int classesMaxValue = decodeInt(restOfEncoding, "classesMaxValue", ok);
-	if (!ok && useClasses) return nullptr;
+	if (!ok && useClasses)
+		return nullptr;
 	const int min = decodeInt(restOfEncoding, "min", ok);
-	if (!ok) return nullptr;
-	const int max = decodeInt(restOfEncoding, "min", ok, true);
-	if (!ok) return nullptr;
+	if (!ok)
+		return nullptr;
+	const int max = decodeInt(restOfEncoding, "max", ok, true);
+	if (!ok)
+		return nullptr;
 	
 	IntFilter* filter = nullptr;
 	if (useClasses) {

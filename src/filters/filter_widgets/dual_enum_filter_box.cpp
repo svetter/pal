@@ -13,22 +13,6 @@ DualEnumFilterBox::DualEnumFilterBox(QWidget* parent, const QString& title, cons
 	comboDependent(new QComboBox(this)),
 	entries(entries)
 {
-	connect(comboDiscerning,	&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::handle_discerningComboChanged);
-	connect(comboDependent,		&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::updateFilterTypeSpecific);
-	
-	DualEnumFilterBox::setup();
-	DualEnumFilterBox::reset();
-}
-
-DualEnumFilterBox::~DualEnumFilterBox()
-{
-	// Widgets deleted by layout
-}
-
-
-
-void DualEnumFilterBox::setup()
-{
 	comboDiscerning->setObjectName("comboDiscerning");
 	comboDiscerning->setMaximumWidth(150);
 	comboDiscerning->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -52,21 +36,25 @@ void DualEnumFilterBox::setup()
 	
 	filterLayout->addWidget(comboDiscerning);
 	filterLayout->addWidget(comboDependent);
+	
+	connect(comboDiscerning,	&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::handle_discerningComboChanged);
+	connect(comboDependent,		&QComboBox::currentIndexChanged,	this,	&DualEnumFilterBox::updateFilterTypeSpecific);
+	
+	comboDiscerning->setCurrentIndex(filter.discerningValue);
+	comboDependent->setCurrentIndex(filter.dependentValue);
 }
 
-void DualEnumFilterBox::reset()
+DualEnumFilterBox::~DualEnumFilterBox()
 {
-	FilterBox::reset();
-	
-	comboDiscerning->setCurrentIndex(0);
-	comboDependent->setCurrentIndex(0);
+	// Widgets deleted by layout
 }
 
 
 
 void DualEnumFilterBox::updateFilterTypeSpecific()
 {
-	filter.setValues(comboDiscerning->currentIndex(), comboDependent->currentIndex());
+	filter.discerningValue = comboDiscerning->currentIndex();
+	filter.dependentValue = comboDependent->currentIndex();
 	emit filterChanged();
 }
 

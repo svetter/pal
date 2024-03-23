@@ -6,17 +6,9 @@
 
 TimeFilter::TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
 	Filter(Time, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
-	min(QTime()),
-	max(QTime())
+	min(QTime(12, 0)),
+	max(QTime(12, 0))
 {}
-
-
-
-void TimeFilter::setMinMax(const QTime& min, const QTime& max)
-{
-	this->min = min;
-	this->max = max;
-}
 
 
 

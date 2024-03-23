@@ -22,9 +22,6 @@ public:
 	explicit DualEnumFilterBox(QWidget* parent, const QString& title, const QList<QPair<QString, QStringList>>& entries, DualEnumFilter& filter);
 	virtual ~DualEnumFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

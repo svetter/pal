@@ -20,9 +20,6 @@ public:
 	explicit StringFilterBox(QWidget* parent, const QString& title, StringFilter& filter);
 	virtual ~StringFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

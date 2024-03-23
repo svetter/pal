@@ -21,9 +21,6 @@ public:
 	explicit EnumFilterBox(QWidget* parent, const QString& title, const QStringList& entries, EnumFilter& filter);
 	virtual ~EnumFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

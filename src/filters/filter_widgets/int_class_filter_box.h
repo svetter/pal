@@ -16,8 +16,8 @@ class IntClassFilterBox : public FilterBox
 	IntFilter& filter;
 	
 	const int classIncrement;
-	const int minValue;
-	const int maxValue;
+	const int classMinValue;
+	const int classMaxValue;
 	
 	QComboBox* minCombo;
 	QComboBox* maxCombo;
@@ -25,11 +25,8 @@ class IntClassFilterBox : public FilterBox
 	QSpacerItem* spacer;
 	
 public:
-	explicit IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, IntFilter& filter);
+	explicit IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int classMinValue, int classMaxValue, IntFilter& filter);
 	virtual ~IntClassFilterBox();
-	
-	virtual void setup();
-	virtual void reset();
 	
 	virtual void updateFilterTypeSpecific();
 	

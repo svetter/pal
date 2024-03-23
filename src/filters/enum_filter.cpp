@@ -6,15 +6,8 @@
 
 EnumFilter::EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
 	Filter(Enum, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
-	value(-1)
+	value(0)
 {}
-
-
-
-void EnumFilter::setValue(int value)
-{
-	this->value = value;
-}
 
 
 

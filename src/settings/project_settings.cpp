@@ -140,7 +140,7 @@ template<typename T>
 T ProjectSetting<T>::get(QWidget* parent) const
 {
 	QVariant value = table.getSetting(*this, parent);
-	assert(value.canConvert<T>());
+	if (!value.canConvert<T>()) return T();
 	return value.value<T>();
 }
 

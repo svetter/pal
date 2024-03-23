@@ -32,9 +32,6 @@ protected:
 public:
 	virtual ~FilterBox();
 	
-	virtual void setup() = 0;
-	virtual void reset();
-	
 private:
 	void updateFilter();
 protected:

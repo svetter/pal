@@ -287,6 +287,8 @@ Filter* Filter::decodeSingleFilterFromString(QString& restOfString, Database& db
 	default: assert(false);
 	}
 	
+	if (!filter) return nullptr;
+	
 	filter->enabled = enabled;
 	filter->inverted = inverted;
 	
@@ -393,7 +395,7 @@ int Filter::decodeInt(QString& restOfString, const QString& paramName, bool& ok,
 
 ItemID Filter::decodeID(QString& restOfString, const QString& paramName, bool& ok, bool lastParam)
 {
-	const int parsedInt = decodeInt(restOfString, paramName, lastParam, ok);
+	const int parsedInt = decodeInt(restOfString, paramName, ok, lastParam);
 	
 	if (!ok) return ItemID(-1);
 	return ItemID(parsedInt);

@@ -174,7 +174,12 @@ void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 	QApplication::processEvents();
 	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
 	
-	handle_filtersChanged();
+	bool anyFilterEnabled = false;
+	for (const FilterBox* const filterBox : filterBoxes) {
+		anyFilterEnabled |= filterBox->isChecked();
+	}
+	applyFiltersButton->setEnabled(false);
+	clearFiltersButton->setEnabled(anyFilterEnabled);
 }
 
 
@@ -313,7 +318,6 @@ void FilterBar::handle_applyFilters()
 	
 	QList<const Filter*> filters = collectEnabledFilters();
 	compTable->applyFilters(filters);
-	saveFilters(filters);
 	
 	mainWindow->currentFiltersChanged();
 }
@@ -378,14 +382,13 @@ QList<const Filter*> FilterBar::collectEnabledFilters()
 // SAVING FILTERS
 
 /**
- * Saves the given list of filters to the project settings.
+ * Saves the current filters to the project settings.
  * 
  * All previous filters will be cleared from the project settings.
- * 
- * @param filters	The list of filters to save.
  */
-void FilterBar::saveFilters(const QList<const Filter*>& filters)
+void FilterBar::saveFilters()
 {
+	const QList<const Filter*> filters = collectAllFilters();
 	const QString encodedFilters = Filter::encodeToString(filters);
 	mapper->filtersSetting.set(*this, encodedFilters);
 }

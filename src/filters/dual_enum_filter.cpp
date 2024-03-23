@@ -7,18 +7,10 @@
 DualEnumFilter::DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name) :
 	Filter(DualEnum, tableToFilter, discerningColumnToFilterBy, FilterFoldOp(-1), name),
 	dependentColumnToFilterBy(discerningColumnToFilterBy.table.getColumnByIndex(discerningColumnToFilterBy.getIndex() + 1)),
-	discerningValue(-1),
-	dependentValue(-1)
+	discerningValue(0),
+	dependentValue(0)
 {
 	assert(discerningColumnToFilterBy.enumNameLists == dependentColumnToFilterBy.enumNameLists);
-}
-
-
-
-void DualEnumFilter::setValues(int discerningValue, int dependentValue)
-{
-	this->discerningValue	= discerningValue;
-	this->dependentValue	= dependentValue;
 }
 
 

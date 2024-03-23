@@ -7,10 +7,15 @@ StringFilterBox::StringFilterBox(QWidget* parent, const QString& title, StringFi
 	filter(filter),
 	lineEdit(new QLineEdit(this))
 {
+	lineEdit->setObjectName("lineEdit");
+	lineEdit->setMinimumWidth(150);
+	lineEdit->setPlaceholderText(tr("Contains..."));
+	
+	filterLayout->addWidget(lineEdit);
+	
 	connect(lineEdit,	&QLineEdit::textChanged,	this,	&StringFilterBox::updateFilterTypeSpecific);
 	
-	StringFilterBox::setup();
-	StringFilterBox::reset();
+	lineEdit->setText(filter.value);
 }
 
 StringFilterBox::~StringFilterBox()
@@ -20,27 +25,9 @@ StringFilterBox::~StringFilterBox()
 
 
 
-void StringFilterBox::setup()
-{
-	lineEdit->setObjectName("lineEdit");
-	lineEdit->setMinimumWidth(150);
-	lineEdit->setPlaceholderText(tr("Contains..."));
-	
-	filterLayout->addWidget(lineEdit);
-}
-
-void StringFilterBox::reset()
-{
-	FilterBox::reset();
-	
-	lineEdit->clear();
-}
-
-
-
 void StringFilterBox::updateFilterTypeSpecific()
 {
-	filter.setValue(lineEdit->text());
+	filter.value = lineEdit->text();
 	emit filterChanged();
 }
 

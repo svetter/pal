@@ -10,23 +10,6 @@ IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, IntFilter& fil
 	setMaxCheckbox(new QCheckBox(this)),
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
-	connect(minSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_minChanged);
-	connect(setMaxCheckbox,	&QCheckBox::stateChanged,	this,	&IntFilterBox::handle_setMaxChanged);
-	connect(maxSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_maxChanged);
-	
-	IntFilterBox::setup();
-	IntFilterBox::reset();
-}
-
-IntFilterBox::~IntFilterBox()
-{
-	// Widgets deleted by layout
-}
-
-
-
-void IntFilterBox::setup()
-{
 	minSpinner->setObjectName("minSpinner");
 	minSpinner->setMaximum(9999);
 	
@@ -40,22 +23,27 @@ void IntFilterBox::setup()
 	filterLayout->addItem(spacer);
 	filterLayout->addWidget(setMaxCheckbox);
 	filterLayout->addWidget(maxSpinner);
+	
+	connect(minSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_minChanged);
+	connect(setMaxCheckbox,	&QCheckBox::stateChanged,	this,	&IntFilterBox::handle_setMaxChanged);
+	connect(maxSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_maxChanged);
+	
+	minSpinner->setValue(filter.min);
+	maxSpinner->setValue(filter.max);
+	setMaxCheckbox->setChecked(filter.min < filter.max);
 }
 
-void IntFilterBox::reset()
+IntFilterBox::~IntFilterBox()
 {
-	FilterBox::reset();
-	
-	minSpinner		->setValue(0);
-	maxSpinner		->setValue(0);
-	setMaxCheckbox	->setChecked(true);
+	// Widgets deleted by layout
 }
 
 
 
 void IntFilterBox::updateFilterTypeSpecific()
 {
-	filter.setMinMax(minSpinner->value(), maxSpinner->value());
+	filter.min = minSpinner->value();
+	filter.max = maxSpinner->value();
 	emit filterChanged();
 }
 

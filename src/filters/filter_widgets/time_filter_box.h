@@ -24,9 +24,6 @@ public:
 	explicit TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& filter);
 	virtual ~TimeFilterBox();
 	
-	virtual void setup();
-	virtual void reset();
-	
 	virtual void updateFilterTypeSpecific();
 	
 	virtual const Filter& getFilter() const;

@@ -21,8 +21,6 @@ public:
 	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
 	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue);
 	
-	void setMinMax(int min, int max);
-	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	
 	virtual FilterBox* createFilterBox(QWidget* parent) override;
@@ -32,6 +30,8 @@ protected:
 	static IntFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
+	friend class IntFilterBox;
+	friend class IntClassFilterBox;
 };
 
 

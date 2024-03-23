@@ -10,23 +10,6 @@ DateFilterBox::DateFilterBox(QWidget* parent, const QString& title, DateFilter& 
 	setMaxDateCheckbox(new QCheckBox(this)),
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
-	connect(minDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_minDateChanged);
-	connect(setMaxDateCheckbox,	&QCheckBox::stateChanged,	this,	&DateFilterBox::handle_setMaxDateChanged);
-	connect(maxDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_maxDateChanged);
-	
-	DateFilterBox::setup();
-	DateFilterBox::reset();
-}
-
-DateFilterBox::~DateFilterBox()
-{
-	// Widgets deleted by layout
-}
-
-
-
-void DateFilterBox::setup()
-{
 	minDateWidget->setObjectName("minDateWidget");
 	minDateWidget->setMinimumSize(QSize(80, 0));
 	minDateWidget->setCalendarPopup(true);
@@ -42,22 +25,27 @@ void DateFilterBox::setup()
 	filterLayout->addItem(spacer);
 	filterLayout->addWidget(setMaxDateCheckbox);
 	filterLayout->addWidget(maxDateWidget);
+	
+	connect(minDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_minDateChanged);
+	connect(setMaxDateCheckbox,	&QCheckBox::stateChanged,	this,	&DateFilterBox::handle_setMaxDateChanged);
+	connect(maxDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_maxDateChanged);
+	
+	minDateWidget->setDate(filter.min);
+	maxDateWidget->setDate(filter.max);
+	setMaxDateCheckbox->setChecked(filter.min < filter.max);
 }
 
-void DateFilterBox::reset()
+DateFilterBox::~DateFilterBox()
 {
-	FilterBox::reset();
-	
-	minDateWidget		->setDate(QDateTime::currentDateTime().date());
-	maxDateWidget		->setDate(QDateTime::currentDateTime().date());
-	setMaxDateCheckbox	->setChecked(true);
+	// Widgets deleted by layout
 }
 
 
 
 void DateFilterBox::updateFilterTypeSpecific()
 {
-	filter.setMinMax(minDateWidget->date(), maxDateWidget->date());
+	filter.min = minDateWidget->date();
+	filter.max = maxDateWidget->date();
 	emit filterChanged();
 }
 

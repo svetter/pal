@@ -6,15 +6,8 @@
 
 StringFilter::StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name) :
 	Filter(String, tableToFilter, columnToFilterBy, foldOp, name),
-	value(QString())
+	value("")
 {}
-
-
-
-void StringFilter::setValue(const QString& value)
-{
-	this->value = value;
-}
 
 
 

@@ -2,38 +2,21 @@
 
 
 
-IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int minValue, int maxValue, IntFilter& filter) :
+IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int classIncrement, int classMinValue, int classMaxValue, IntFilter& filter) :
 	FilterBox(parent, Integer, title, filter),
 	filter(filter),
 	classIncrement(classIncrement),
-	minValue(minValue),
-	maxValue(maxValue),
+	classMinValue(classMinValue),
+	classMaxValue(classMaxValue),
 	minCombo(new QComboBox(this)),
 	maxCombo(new QComboBox(this)),
 	setMaxCheckbox(new QCheckBox(this)),
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
-	connect(minCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_minChanged);
-	connect(setMaxCheckbox,	&QCheckBox::stateChanged,			this,	&IntClassFilterBox::handle_setMaxChanged);
-	connect(maxCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_maxChanged);
-	
-	IntClassFilterBox::setup();
-	IntClassFilterBox::reset();
-}
-
-IntClassFilterBox::~IntClassFilterBox()
-{
-	// Widgets deleted by layout
-}
-
-
-
-void IntClassFilterBox::setup()
-{
-	int value = (minValue / classIncrement + 1) * classIncrement;
+	int value = (classMinValue / classIncrement + 1) * classIncrement;
 	QStringList minComboEntries = { "<" + QString::number(value) };
 	QStringList maxComboEntries = { QString::number(value - 1) };
-	while (value <= maxValue) {
+	while (value <= classMaxValue) {
 		minComboEntries.append(QString::number(value));
 		value += classIncrement;
 		maxComboEntries.append(QString::number(value - 1));
@@ -53,24 +36,29 @@ void IntClassFilterBox::setup()
 	filterLayout->addItem(spacer);
 	filterLayout->addWidget(setMaxCheckbox);
 	filterLayout->addWidget(maxCombo);
+	
+	connect(minCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_minChanged);
+	connect(setMaxCheckbox,	&QCheckBox::stateChanged,			this,	&IntClassFilterBox::handle_setMaxChanged);
+	connect(maxCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_maxChanged);
+	
+	minCombo->setCurrentIndex(filter.min / classIncrement - classMinValue / classIncrement);
+	maxCombo->setCurrentIndex(filter.max / classIncrement - classMinValue / classIncrement);
+	setMaxCheckbox->setChecked(minCombo->currentIndex() < maxCombo->currentIndex());
 }
 
-void IntClassFilterBox::reset()
+IntClassFilterBox::~IntClassFilterBox()
 {
-	FilterBox::reset();
-	
-	minCombo		->setCurrentIndex(0);
-	maxCombo		->setCurrentIndex(0);
-	setMaxCheckbox	->setChecked(false);
+	// Widgets deleted by layout
 }
 
 
 
 void IntClassFilterBox::updateFilterTypeSpecific()
 {
-	const int newMin =  minCombo->currentIndex()      * classIncrement;
-	const int newMax = (maxCombo->currentIndex() + 1) * classIncrement - 1;
-	filter.setMinMax(newMin, newMax);
+	const int newMin = (minCombo->currentIndex() + classMinValue / classIncrement    ) * classIncrement;
+	const int newMax = (maxCombo->currentIndex() + classMinValue / classIncrement + 1) * classIncrement - 1;
+	filter.min = newMin;
+	filter.max = newMax;
 	emit filterChanged();
 }
 

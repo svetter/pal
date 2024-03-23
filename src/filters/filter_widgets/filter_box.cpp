@@ -27,19 +27,13 @@ FilterBox::FilterBox(QWidget* parent, DataType type, const QString& title, Filte
 	connect(&invertButtonGroup,	&QButtonGroup::buttonClicked,	this,	&FilterBox::updateFilter);
 	connect(removeButton,		&QToolButton::clicked,			this,	&FilterBox::removeRequested);
 	
-	FilterBox::reset();
+	setChecked(filter.isEnabled());
+	excludeRadiobutton->setChecked(filter.isInverted());
 }
 
 FilterBox::~FilterBox()
 {
 	removeButton->deleteLater();
-}
-
-
-
-void FilterBox::reset() {
-	includeRadiobutton->setChecked(true);
-	excludeRadiobutton->setChecked(false);
 }
 
 

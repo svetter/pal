@@ -1585,6 +1585,7 @@ void MainWindow::saveProjectImplicitSettings()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		saveImplicitColumnSettings(mapper);
 		saveSorting(mapper);
+		mapper->filterBar.saveFilters();
 		mapper->showFilterBarSetting.set(*this, mapper->filterBarCurrentlySetVisible());
 	}
 }
