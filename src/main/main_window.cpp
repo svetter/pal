@@ -574,8 +574,11 @@ void MainWindow::initCompositeBuffers()
 				filters.clear();
 			}
 		}
-		const QList<const Filter*> constFilters = QList<const Filter*>(filters.constBegin(), filters.constEnd());
-		mapper->compTable.setInitialFilters(constFilters);
+		QList<const Filter*> filtersToApply = QList<const Filter*>();
+		for (const Filter* const filter : filters) {
+			if (filter->isEnabled()) filtersToApply.append(filter);
+		}
+		mapper->compTable.setInitialFilters(filtersToApply);
 		
 		// Check whether table needs to be fully prepared
 		const bool prepareThisTable = prepareAll || isOpen;
