@@ -159,8 +159,6 @@ void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 {
 	resetUI();
 	
-	if (filters.isEmpty()) return;
-	
 	for (Filter* const filter : filters) {
 		FilterBox* const newFilterBox = filter->createFilterBox(filtersScrollAreaWidget);
 		
