@@ -136,54 +136,54 @@
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="563"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="566"/>
         <source>Select system</source>
         <translation>System auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="585"/>
-        <location filename="../src/ui/ascent_dialog.ui" line="628"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="384"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="591"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="634"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="385"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="602"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="608"/>
         <source>During trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="641"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="647"/>
         <source>New trip...</source>
         <translation>Neuer Urlaub...</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="662"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="668"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="763"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="769"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="860"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="866"/>
         <source>Photo description</source>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="886"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="892"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="929"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="935"/>
         <source>Add ascent</source>
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="951"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="957"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -201,7 +201,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="804"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="805"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Besteigung löschen</numerusform>
@@ -209,32 +209,32 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="827"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="828"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="847"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="848"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="863"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="864"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="864"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="865"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="889"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="890"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="890"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="891"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -245,94 +245,6 @@ Do you want to use it anyway?</source>
 Grund: %2.
 
 Soll sie trotzdem verwendet werden?</translation>
-    </message>
-</context>
-<context>
-    <name>AscentFilterBar</name>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="37"/>
-        <source>Apply filters</source>
-        <translation>Filter anwenden</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="47"/>
-        <source>Clear filters</source>
-        <translation>Filter entfernen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="56"/>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="115"/>
-        <source>Specify latest ascent date</source>
-        <translation>Spätestes Besteigungsdatum angeben</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="138"/>
-        <source>Peak height</source>
-        <translation>Höhe des Gipfels</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="168"/>
-        <source>Minimum</source>
-        <translation>Minimal</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="236"/>
-        <source>Specify maximum height</source>
-        <translation>Maximale Höhe angeben</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="243"/>
-        <source>Maximum</source>
-        <translation>Maximal</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="298"/>
-        <source>Volcano</source>
-        <translation>Vulkan</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="328"/>
-        <source>Yes</source>
-        <translation>Ja</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="338"/>
-        <source>No</source>
-        <translation>Nein</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="348"/>
-        <source>Mountain range</source>
-        <translation>Gebirge</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="391"/>
-        <source>Kind of hike</source>
-        <translation>Art der Wanderung</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="434"/>
-        <source>Difficulty</source>
-        <translation>Schwierigkeit</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_filter_bar.ui" line="487"/>
-        <source>Hiker</source>
-        <translation>Dabei</translation>
-    </message>
-    <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="530"/>
-        <source>Select grade</source>
-        <translation>Grad auswählen</translation>
-    </message>
-    <message>
-        <location filename="../src/main/ascent_filter_bar.cpp" line="534"/>
-        <source>None</source>
-        <translation>Keine</translation>
     </message>
 </context>
 <context>
@@ -389,19 +301,19 @@ Soll sie trotzdem verwendet werden?</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="354"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="355"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="358"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="359"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="362"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="363"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -637,29 +549,29 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="199"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="200"/>
         <source>Edit ascent...</source>
         <translation>Besteigung bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="200"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="201"/>
         <source>Edit peak...</source>
         <translation>Gipfel bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="201"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="202"/>
         <source>Edit trip...</source>
         <translation>Urlaub bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="552"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="553"/>
         <source>
 More details: %1.</source>
         <translation>
 Mehr Details: &quot;%1.&quot;</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="562"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="563"/>
         <source>This image file cannot be shown:
 %1
 Reason: %2.%3
@@ -672,33 +584,33 @@ Grund: %2.%3
 Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="633"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="634"/>
         <source>No photos</source>
         <translation>Keine Fotos</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="635"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="636"/>
         <source>Photo %1 of %2</source>
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="801"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="802"/>
         <source>Replace %1</source>
         <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
         <translation>Bilddatei ersetzen: %1</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1272"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1277"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1273"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1278"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1274"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="1279"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -777,11 +689,16 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/db/tables_spec/ascents_table.cpp" line="164"/>
+        <source>Ascent</source>
+        <translation>Besteigung</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="174"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="208"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="218"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln Besteigung</numerusform>
@@ -789,12 +706,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="174"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="184"/>
         <source>Saved new ascent.</source>
         <translation>Neue Besteigung gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="185"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="195"/>
         <source>Saved changes in %Ln ascent(s).</source>
         <translation>
             <numerusform>Änderungen in Besteigung gespeichert.</numerusform>
@@ -802,7 +719,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="196"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="206"/>
         <source>Deleted %Ln ascent(s).</source>
         <translation>
             <numerusform>Besteigung gelöscht.</numerusform>
@@ -811,94 +728,97 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
 </context>
 <context>
+    <name>BoolFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/bool_filter_box.cpp" line="15"/>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <location filename="../src/filters/filter_widgets/bool_filter_box.cpp" line="19"/>
+        <source>No</source>
+        <translation>Nein</translation>
+    </message>
+</context>
+<context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="108"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="102"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="106"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="100"/>
         <source>Index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="110"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="104"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="112"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="106"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="113"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="107"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="122"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="116"/>
         <source>Nth ascent of peak</source>
         <translation>n/Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="123"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="117"/>
         <source>Num. photos</source>
         <translation>Anzahl Fotos</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="136"/>
-        <source>Range ID</source>
-        <translation>Gebirgs-ID</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="137"/>
-        <source>Hiker IDs</source>
-        <translation>Wanderer-ID</translation>
-    </message>
-    <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="131"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="125"/>
         <source>Trip start date</source>
         <translation>Datum Beginn Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="132"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="126"/>
         <source>Trip end date</source>
         <translation>Datum Ende Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="133"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="127"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="111"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="105"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="114"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="108"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="121"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="115"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="120"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="114"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="116"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="110"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="117"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="111"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
@@ -1125,11 +1045,16 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/db/tables_spec/countries_table.cpp" line="127"/>
+        <source>Country</source>
+        <translation>Land</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="137"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="171"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="181"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln Land</numerusform>
@@ -1137,12 +1062,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="137"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="147"/>
         <source>Saved new country.</source>
         <translation>Neues Land gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="148"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="158"/>
         <source>Saved changes in %Ln country/countries.</source>
         <translation>
             <numerusform>Änderungen in Land gespeichert.</numerusform>
@@ -1150,7 +1075,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="159"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="169"/>
         <source>Deleted %Ln country/countries.</source>
         <translation>
             <numerusform>Land gelöscht.</numerusform>
@@ -1433,13 +1358,13 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
     </message>
     <message>
         <location filename="../src/tools/export_writer.cpp" line="222"/>
-        <location filename="../src/tools/export_writer.cpp" line="583"/>
+        <location filename="../src/tools/export_writer.cpp" line="573"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
         <location filename="../src/tools/export_writer.cpp" line="222"/>
-        <location filename="../src/tools/export_writer.cpp" line="583"/>
+        <location filename="../src/tools/export_writer.cpp" line="573"/>
         <source>No</source>
         <translation>Nein</translation>
     </message>
@@ -1462,28 +1387,28 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
         <translation>Details:</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="207"/>
+        <location filename="../src/db/db_upgrade.cpp" line="214"/>
         <source>Database upgrade necessary</source>
         <translation>Datenbank muss aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="209"/>
+        <location filename="../src/db/db_upgrade.cpp" line="216"/>
         <source>After the upgrade, previous versions of PAL will no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="210"/>
+        <location filename="../src/db/db_upgrade.cpp" line="217"/>
         <source>After the upgrade, previous versions of PAL might no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei möglicherweise nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="211"/>
-        <location filename="../src/db/db_upgrade.cpp" line="241"/>
+        <location filename="../src/db/db_upgrade.cpp" line="218"/>
+        <location filename="../src/db/db_upgrade.cpp" line="248"/>
         <source>Note: A copy of the project file in its current state will be created as a backup.</source>
         <translation>Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="213"/>
+        <location filename="../src/db/db_upgrade.cpp" line="220"/>
         <source>Opening this project requires upgrading its database from version %1 to version %2.
 %3
 
@@ -1498,22 +1423,22 @@ Soll die Aktualisierung jetzt durchgeführt werden?
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="226"/>
+        <location filename="../src/db/db_upgrade.cpp" line="233"/>
         <source>Do you want to perform the upgrade anyway?</source>
         <translation>Soll die Aktualisierung trotzdem durchgeführt werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="240"/>
+        <location filename="../src/db/db_upgrade.cpp" line="247"/>
         <source>App version outdated</source>
         <translation>App-Version veraltet</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="242"/>
+        <location filename="../src/db/db_upgrade.cpp" line="249"/>
         <source>Do you want to open the file anyway?</source>
         <translation>Soll die Datei trotzdem geöffnet werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="244"/>
+        <location filename="../src/db/db_upgrade.cpp" line="251"/>
         <source>This project file has version %1, while the app has version %2.
 Opening a file with an older version of PAL can lead to errors, crashes and data corruption.It is strongly recommended to only use PAL version %1 or newer to open this file.
 
@@ -1528,7 +1453,7 @@ Eine Datei mit einer älteren Version von PAL zu öffnen, kann zu Fehlern, Abst�
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="286"/>
+        <location filename="../src/db/db_upgrade.cpp" line="293"/>
         <source>An error occurred while trying to create a backup of the project file.
 %1
 
@@ -1539,31 +1464,33 @@ Note: You can still create a backup manually before proceeding.</source>
 Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="284"/>
+        <location filename="../src/db/db_upgrade.cpp" line="291"/>
         <source>Error creating backup</source>
         <translation>Fehler beim Erstellen des Backups</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="308"/>
+        <location filename="../src/db/db_upgrade.cpp" line="315"/>
         <source>Database upgrade successful</source>
         <translation>Aktualisierung der Datenbank erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="309"/>
+        <location filename="../src/db/db_upgrade.cpp" line="316"/>
         <source>The database was successfully upgraded from version %1 to version %2.</source>
         <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
+    </message>
+</context>
+<context>
+    <name>DateFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/date_filter_box.cpp" line="18"/>
+        <source>Set a maximum date</source>
+        <translation>Maximales Datum angeben</translation>
     </message>
 </context>
 <context>
     <name>EnumNames</name>
     <message>
         <location filename="../src/data/enum_names.cpp" line="50"/>
-        <location filename="../src/data/enum_names.cpp" line="86"/>
-        <location filename="../src/data/enum_names.cpp" line="91"/>
-        <location filename="../src/data/enum_names.cpp" line="103"/>
-        <location filename="../src/data/enum_names.cpp" line="129"/>
-        <location filename="../src/data/enum_names.cpp" line="143"/>
-        <location filename="../src/data/enum_names.cpp" line="156"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
@@ -1623,319 +1550,505 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Skitour</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="88"/>
+        <location filename="../src/data/enum_names.cpp" line="89"/>
+        <source>No difficulty</source>
+        <translation>Keine Schwierigkeits-Bewertung</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="91"/>
+        <location filename="../src/data/enum_names.cpp" line="97"/>
+        <location filename="../src/data/enum_names.cpp" line="110"/>
+        <location filename="../src/data/enum_names.cpp" line="137"/>
+        <location filename="../src/data/enum_names.cpp" line="152"/>
+        <location filename="../src/data/enum_names.cpp" line="166"/>
+        <source>No grade</source>
+        <translation>Kein Schwierigkeitsgrad</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="94"/>
         <source>SAC hiking scale</source>
         <translation>SAC-Wanderskala</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="92"/>
+        <location filename="../src/data/enum_names.cpp" line="98"/>
+        <location filename="../src/data/enum_names.cpp" line="111"/>
+        <location filename="../src/data/enum_names.cpp" line="138"/>
+        <location filename="../src/data/enum_names.cpp" line="153"/>
+        <location filename="../src/data/enum_names.cpp" line="167"/>
+        <source>All grades</source>
+        <translation>Alle Schwierigkeitsgrade</translation>
+    </message>
+    <message>
+        <location filename="../src/data/enum_names.cpp" line="99"/>
         <source>T1 (Hiking)</source>
         <translation>T1 (Wandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="93"/>
+        <location filename="../src/data/enum_names.cpp" line="100"/>
         <source>T2 (Mountain hiking)</source>
         <translation>T2 (Bergwandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="94"/>
+        <location filename="../src/data/enum_names.cpp" line="101"/>
         <source>T3 (Difficult mountain hiking)</source>
         <translation>T3 (Anspruchsvolles Bergwandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="95"/>
+        <location filename="../src/data/enum_names.cpp" line="102"/>
         <source>T4 (Alpine hiking)</source>
         <translation>T4 (Alpinwandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="96"/>
+        <location filename="../src/data/enum_names.cpp" line="103"/>
         <source>T5 (Difficult alpine hiking)</source>
         <translation>T5 (Anspruchsvolles Alpinwandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="97"/>
+        <location filename="../src/data/enum_names.cpp" line="104"/>
         <source>T6 (Very difficult alpine hiking)</source>
         <translation>T6 (Schwieriges Alpinwandern)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="101"/>
+        <location filename="../src/data/enum_names.cpp" line="108"/>
         <source>SAC mountaneering scale</source>
         <translation>SAC-Berg-und Hochtourenskala</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="104"/>
+        <location filename="../src/data/enum_names.cpp" line="112"/>
         <source>F (Easy)</source>
         <translation>F (Leicht)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="105"/>
+        <location filename="../src/data/enum_names.cpp" line="113"/>
         <source>F+ (Easy)</source>
         <translation>F+ (Leicht)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="106"/>
+        <location filename="../src/data/enum_names.cpp" line="114"/>
         <source>PD- (Moderate)</source>
         <translation>PD- (Wenig schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="107"/>
+        <location filename="../src/data/enum_names.cpp" line="115"/>
         <source>PD (Moderate)</source>
         <translation>PD (Wenig schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="108"/>
+        <location filename="../src/data/enum_names.cpp" line="116"/>
         <source>PD+ (Moderate)</source>
         <translation>PD+ (Wenig schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="109"/>
+        <location filename="../src/data/enum_names.cpp" line="117"/>
         <source>AD- (Somewhat difficult)</source>
         <translation>AD- (Ziemlich schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="110"/>
+        <location filename="../src/data/enum_names.cpp" line="118"/>
         <source>AD (Somewhat difficult)</source>
         <translation>AD (Ziemlich schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="111"/>
+        <location filename="../src/data/enum_names.cpp" line="119"/>
         <source>AD+ (Somewhat difficult)</source>
         <translation>AD+ (Ziemlich schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="112"/>
+        <location filename="../src/data/enum_names.cpp" line="120"/>
         <source>D- (Difficult)</source>
         <translation>D- (Schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="113"/>
+        <location filename="../src/data/enum_names.cpp" line="121"/>
         <source>D (Difficult)</source>
         <translation>D (Schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="114"/>
+        <location filename="../src/data/enum_names.cpp" line="122"/>
         <source>D+ (Difficult)</source>
         <translation>D+ (Schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="115"/>
+        <location filename="../src/data/enum_names.cpp" line="123"/>
         <source>TD- (Very difficult)</source>
         <translation>TD- (Sehr schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="116"/>
+        <location filename="../src/data/enum_names.cpp" line="124"/>
         <source>TD (Very difficult)</source>
         <translation>TD (Sehr schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="117"/>
+        <location filename="../src/data/enum_names.cpp" line="125"/>
         <source>TD+ (Very difficult)</source>
         <translation>TD+ (Sehr schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="118"/>
+        <location filename="../src/data/enum_names.cpp" line="126"/>
         <source>ED- (Extremely difficult)</source>
         <translation>ED- (Äußerst schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="119"/>
+        <location filename="../src/data/enum_names.cpp" line="127"/>
         <source>ED (Extremely difficult)</source>
         <translation>ED (Äußerst schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="120"/>
+        <location filename="../src/data/enum_names.cpp" line="128"/>
         <source>ED+ (Extremely difficult)</source>
         <translation>ED+ (Äußerst schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="121"/>
+        <location filename="../src/data/enum_names.cpp" line="129"/>
         <source>ABO- (Abominably difficult)</source>
         <translation>ABO- (Extrem schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="122"/>
+        <location filename="../src/data/enum_names.cpp" line="130"/>
         <source>ABO (Abominably difficult)</source>
         <translation>ABO (Extrem schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="126"/>
+        <location filename="../src/data/enum_names.cpp" line="134"/>
         <source>SAC ski tours scale</source>
         <translation>SAC-Skitourenskala</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="130"/>
+        <location filename="../src/data/enum_names.cpp" line="139"/>
         <source>L (Easy)</source>
         <translation>L (Leicht)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="131"/>
+        <location filename="../src/data/enum_names.cpp" line="140"/>
         <source>WS (Moderate)</source>
         <translation>WS (Wenig schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="132"/>
+        <location filename="../src/data/enum_names.cpp" line="141"/>
         <source>ZS (Somewhat difficult)</source>
         <translation>ZS (Ziemlich schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="133"/>
+        <location filename="../src/data/enum_names.cpp" line="142"/>
         <source>S (Difficult)</source>
         <translation>S (Schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="134"/>
+        <location filename="../src/data/enum_names.cpp" line="143"/>
         <source>SS (Very difficult)</source>
         <translation>SS (Sehr schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="135"/>
+        <location filename="../src/data/enum_names.cpp" line="144"/>
         <source>AS (Exceptionally difficult)</source>
         <translation>AS (Außerordentlich schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="136"/>
+        <location filename="../src/data/enum_names.cpp" line="145"/>
         <source>EX (Extremely dificult)</source>
         <translation>EX (Extrem schwierig)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="140"/>
+        <location filename="../src/data/enum_names.cpp" line="149"/>
         <source>SAC snowshoe tours scale</source>
         <translation>SAC-Schneeschuhtourenskala</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="144"/>
+        <location filename="../src/data/enum_names.cpp" line="154"/>
         <source>WT1 (Easy snowshoe hike)</source>
         <translation>WT1 (Leichte Schneeschuhwanderung)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="145"/>
+        <location filename="../src/data/enum_names.cpp" line="155"/>
         <source>WT2 (Moderate snowshoe hike)</source>
         <translation>WT (Schneeschuhwanderung)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="146"/>
+        <location filename="../src/data/enum_names.cpp" line="156"/>
         <source>WT3 (Difficult snowshoe hike)</source>
         <translation>WT3 (Anspruchsvolle Schneeschuhwanderung)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="147"/>
+        <location filename="../src/data/enum_names.cpp" line="157"/>
         <source>WT4 (Snowshoe tour)</source>
         <translation>WT4 (Schneeschuhtour)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="148"/>
+        <location filename="../src/data/enum_names.cpp" line="158"/>
         <source>WT5 (Alpine snowshoe tour)</source>
         <translation>WT5 (Alpine Schneeschuhtour)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="149"/>
+        <location filename="../src/data/enum_names.cpp" line="159"/>
         <source>WT6 (Difficult alpine snowshoe tour)</source>
         <translation>WT6 (Anspruchsvolle alpine Schneeschuhtour)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="153"/>
+        <location filename="../src/data/enum_names.cpp" line="163"/>
         <source>UIAA climbing scale</source>
         <translation>UIAA-Kletterskala</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="157"/>
+        <location filename="../src/data/enum_names.cpp" line="168"/>
         <source>I (Easy)</source>
         <translation>I (Geringe Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="158"/>
+        <location filename="../src/data/enum_names.cpp" line="169"/>
         <source>I+ (Easy)</source>
         <translation>I+ (Geringe Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="159"/>
+        <location filename="../src/data/enum_names.cpp" line="170"/>
         <source>II- (Moderate)</source>
         <translation>II- (Mäßige Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="160"/>
+        <location filename="../src/data/enum_names.cpp" line="171"/>
         <source>II (Moderate)</source>
         <translation>II (Mäßige Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="161"/>
+        <location filename="../src/data/enum_names.cpp" line="172"/>
         <source>II+ (Moderate)</source>
         <translation>II+ (Mäßige Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="162"/>
+        <location filename="../src/data/enum_names.cpp" line="173"/>
         <source>III- (Somewhat difficult)</source>
         <translation>III- (Mittlere Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="163"/>
+        <location filename="../src/data/enum_names.cpp" line="174"/>
         <source>III (Somewhat difficult)</source>
         <translation>III (Mittlere Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="164"/>
+        <location filename="../src/data/enum_names.cpp" line="175"/>
         <source>III+ (Somewhat difficult)</source>
         <translation>III+ (Mittlere Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="165"/>
+        <location filename="../src/data/enum_names.cpp" line="176"/>
         <source>IV- (Difficult)</source>
         <translation>IV- (Große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="166"/>
+        <location filename="../src/data/enum_names.cpp" line="177"/>
         <source>IV (Difficult)</source>
         <translation>IV (Große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="167"/>
+        <location filename="../src/data/enum_names.cpp" line="178"/>
         <source>IV+ (Difficult)</source>
         <translation>IV+ (Große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="168"/>
+        <location filename="../src/data/enum_names.cpp" line="179"/>
         <source>V- (Very difficult)</source>
         <translation>V- (Sehr große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="169"/>
+        <location filename="../src/data/enum_names.cpp" line="180"/>
         <source>V (Very difficult)</source>
         <translation>V (Sehr große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="170"/>
+        <location filename="../src/data/enum_names.cpp" line="181"/>
         <source>V+ (Very difficult)</source>
         <translation>V+ (Sehr große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="171"/>
+        <location filename="../src/data/enum_names.cpp" line="182"/>
         <source>VI- (Incredibly difficult)</source>
         <translation>VI- (Überaus große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="172"/>
+        <location filename="../src/data/enum_names.cpp" line="183"/>
         <source>VI (Incredibly difficult)</source>
         <translation>VI (Überaus große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="173"/>
+        <location filename="../src/data/enum_names.cpp" line="184"/>
         <source>VI+ (Incredibly difficult)</source>
         <translation>VI+ (Überaus große Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="174"/>
+        <location filename="../src/data/enum_names.cpp" line="185"/>
         <source>VII- (Extremely difficult)</source>
         <translation>VII- (Außergewöhnliche Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="175"/>
+        <location filename="../src/data/enum_names.cpp" line="186"/>
         <source>VII (Extremely difficult)</source>
         <translation>VII (Außergewöhnliche Schwierigkeiten)</translation>
     </message>
     <message>
-        <location filename="../src/data/enum_names.cpp" line="176"/>
+        <location filename="../src/data/enum_names.cpp" line="187"/>
         <source>VII+ (Extremely difficult)</source>
         <translation>VII+ (Außergewöhnliche Schwierigkeiten)</translation>
+    </message>
+</context>
+<context>
+    <name>FilterBar</name>
+    <message>
+        <location filename="../src/ui/filter_bar.ui" line="49"/>
+        <source>Add filter...</source>
+        <translation>Neuer Filter...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/filter_bar.ui" line="75"/>
+        <source>Apply filters</source>
+        <translation>Filter anwenden</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/filter_bar.ui" line="91"/>
+        <source>Bypass filters</source>
+        <translation>Filterung aufheben</translation>
+    </message>
+</context>
+<context>
+    <name>FilterWizardColumnPage</name>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="99"/>
+        <source>Choose column</source>
+        <translation>Spalte auswählen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="100"/>
+        <source>Choose the column which contains the values the new filter will work on.</source>
+        <translation>Die Werte in der ausgewählten Spalte werden verwendet, um Einträge zu filtern.</translation>
+    </message>
+</context>
+<context>
+    <name>FilterWizardFoldOpPage</name>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="178"/>
+        <source>Choose fold operation</source>
+        <translation>Reduktions-Operator auswählen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="179"/>
+        <source>Choose a way to combine multiple values into one for filtering.</source>
+        <translation>Wenn eine Zeile mit mehreren Werten verknüpft ist, müssen diese für die Filterung auf einen Wert reduziert werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="207"/>
+        <source>The column you chose can contain multiple values for each row in the filtered table.
+A filter can be applied to a list of those values or to their count.</source>
+        <translation>Die ausgewählte Spalte kann mehrere Werte für jede Zeile der zu filternden Tabelle enthalten.\nEin Filter kann auf eine Auflistung dieser Werte oder auf ihre Anzahl angewendet werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="209"/>
+        <source>The column you chose can contain multiple values for each row in the filtered table.
+A filter can be applied to the count of those values, or to their maximum, minimum, sum, or average.</source>
+        <translation>Die ausgewählte Spalte kann mehrere Werte für jede Zeile der zu filternden Tabelle enthalten.\nEin Filter kann auf eine Auflistung dieser Werte, ihre Anzahl, oder auf ihr Minimum, Maximum, Summe oder Durchschnitt angewendet werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="211"/>
+        <source>The column you chose can contain multiple values for each row in the filtered table.
+A filter can be applied to the count of those values.</source>
+        <translation>Die ausgewählte Spalte kann mehrere Werte für jede Zeile der zu filternden Tabelle enthalten.\nEin Filter kann auf die Anzahl dieser Werte angewendet werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="217"/>
+        <source>Count</source>
+        <translation>Anzahl</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="219"/>
+        <source>List</source>
+        <translation>Liste</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="222"/>
+        <source>Maximum</source>
+        <translation>Maximum</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="223"/>
+        <source>Minimum</source>
+        <translation>Minimum</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="224"/>
+        <source>Sum</source>
+        <translation>Summe</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="225"/>
+        <source>Average</source>
+        <translation>Durchschnitt</translation>
+    </message>
+</context>
+<context>
+    <name>FilterWizardNamePage</name>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="289"/>
+        <source>Set filter name</source>
+        <translation>Name für Filter anpassen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="290"/>
+        <source>Choose a name for the new filter, or leave the automatic name in place.</source>
+        <translation>Der Name des neuen Filters kann angepasst werden, um seinen genauen Zweck zu verdeutlichen.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="292"/>
+        <source>Name the new filter</source>
+        <translation>Filtername angeben</translation>
+    </message>
+</context>
+<context>
+    <name>FilterWizardNumberPrefPage</name>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="252"/>
+        <source>Set number filter preferences</source>
+        <translation>Einstellungen für numerische Filterung</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="253"/>
+        <source>Choose how to filter numbers.</source>
+        <translation>Wie Zahlenwerte gefiltert werden sollen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="255"/>
+        <source>Filter by exact value</source>
+        <translation>Nach genauem Wert filtern</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="258"/>
+        <source>Filter by 1000s classes (1000-1999, 2000-2999, etc.)</source>
+        <translation>Nach 1000er-Klassen filtern (1000-1999, 2000-2999 usw.)</translation>
+    </message>
+</context>
+<context>
+    <name>FilterWizardTablePage</name>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="27"/>
+        <location filename="../src/main/filter_wizard.cpp" line="36"/>
+        <source>Choose table</source>
+        <translation>Tabelle auswählen</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="28"/>
+        <source>Choose the table which contains the values the new filter will work on.</source>
+        <translation>Spalten aus jeder Tabelle können zur Filterung verwendet werden. Ausgewertet werden diejenigen Werte, die mit der jeweiligen zu filternden Zeile verknüpft sind.</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="30"/>
+        <source>Use a value from the same table (%1)</source>
+        <translation>Eine Spalte derselben Tabelle verwenden (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="32"/>
+        <source>or</source>
+        <translation>oder</translation>
+    </message>
+    <message>
+        <location filename="../src/main/filter_wizard.cpp" line="33"/>
+        <source>Use a value from a different table:</source>
+        <translation>Eine Spalte einer der anderen Tabellen verwenden:</translation>
     </message>
 </context>
 <context>
@@ -2083,11 +2196,16 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     </message>
     <message>
         <location filename="../src/db/tables_spec/hikers_table.cpp" line="127"/>
+        <source>Hiker</source>
+        <translation>Wanderer</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="137"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="171"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="181"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln Wanderer</numerusform>
@@ -2095,12 +2213,12 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="137"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="147"/>
         <source>Saved new hiker.</source>
         <translation>Neuer Wanderer gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="148"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="158"/>
         <source>Saved changes in %Ln hiker(s).</source>
         <translation>
             <numerusform>Änderungen in Wanderer gespeichert.</numerusform>
@@ -2108,12 +2226,28 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="159"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="169"/>
         <source>Deleted %Ln hiker(s).</source>
         <translation>
             <numerusform>Wanderer gelöscht.</numerusform>
             <numerusform>%Ln Wanderer gelöscht.</numerusform>
         </translation>
+    </message>
+</context>
+<context>
+    <name>IntClassFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/int_class_filter_box.cpp" line="29"/>
+        <source>Set a maximum class</source>
+        <translation>Maximalen Wert angeben</translation>
+    </message>
+</context>
+<context>
+    <name>IntFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/int_filter_box.cpp" line="17"/>
+        <source>Set a maximum value</source>
+        <translation>Maximalen Wert angeben</translation>
     </message>
 </context>
 <context>
@@ -2172,7 +2306,7 @@ Trotzdem speichern?</translation>
         <translation>Soll dieser Eintrag wirklich gelöscht werden?</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/item_dialog.cpp" line="424"/>
+        <location filename="../src/dialogs/item_dialog.cpp" line="479"/>
         <source>All regions (no filter)</source>
         <translation>Alle Regionen (kein Filter)</translation>
     </message>
@@ -2234,19 +2368,19 @@ Trotzdem speichern?</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../src/ui/main_window.ui" line="80"/>
-        <location filename="../src/ui/main_window.ui" line="1432"/>
+        <location filename="../src/ui/main_window.ui" line="1443"/>
         <source>New ascent...</source>
         <translation>Neue Besteigung...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="103"/>
-        <location filename="../src/ui/main_window.ui" line="1444"/>
+        <location filename="../src/ui/main_window.ui" line="1455"/>
         <source>New peak...</source>
         <translation>Neuer Gipfel...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="126"/>
-        <location filename="../src/ui/main_window.ui" line="1453"/>
+        <location filename="../src/ui/main_window.ui" line="1464"/>
         <source>New trip...</source>
         <translation>Neuer Urlaub...</translation>
     </message>
@@ -2271,206 +2405,206 @@ Trotzdem speichern?</translation>
         <translation>Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="499"/>
+        <location filename="../src/ui/main_window.ui" line="492"/>
         <source>Peaks</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="626"/>
+        <location filename="../src/ui/main_window.ui" line="622"/>
         <source>Trips</source>
         <translation>Urlaube</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="756"/>
+        <location filename="../src/ui/main_window.ui" line="755"/>
         <source>Hikers</source>
         <translation>Wanderer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="883"/>
+        <location filename="../src/ui/main_window.ui" line="885"/>
         <source>Regions</source>
         <translation>Regionen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1010"/>
+        <location filename="../src/ui/main_window.ui" line="1015"/>
         <source>Mountain ranges</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1137"/>
+        <location filename="../src/ui/main_window.ui" line="1145"/>
         <source>Countries</source>
         <translation>Länder</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1264"/>
+        <location filename="../src/ui/main_window.ui" line="1275"/>
         <source>Statistics</source>
         <translation>Statistik</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1299"/>
+        <location filename="../src/ui/main_window.ui" line="1310"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1303"/>
+        <location filename="../src/ui/main_window.ui" line="1314"/>
         <source>Open recent database</source>
         <translation>Zuletzt geöffnet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1320"/>
+        <location filename="../src/ui/main_window.ui" line="1331"/>
         <source>View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1538"/>
+        <location filename="../src/ui/main_window.ui" line="1549"/>
         <source>Show statistics panel in this tab</source>
         <translation>Statistik-Bereich in diesem Tab anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1546"/>
+        <location filename="../src/ui/main_window.ui" line="1557"/>
         <source>Hide statistics in all tabs</source>
         <translation>Statistik in allen Tabs schließen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1551"/>
+        <location filename="../src/ui/main_window.ui" line="1562"/>
         <source>Show statistics in all tabs</source>
         <translation>Statistik in allen Tabs öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1337"/>
+        <location filename="../src/ui/main_window.ui" line="1348"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1349"/>
+        <location filename="../src/ui/main_window.ui" line="1360"/>
         <source>Tools</source>
         <translation>Werkzeuge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1356"/>
+        <location filename="../src/ui/main_window.ui" line="1367"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1374"/>
+        <location filename="../src/ui/main_window.ui" line="1385"/>
         <source>New database...</source>
         <translation>Neue Datenbank...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1379"/>
+        <location filename="../src/ui/main_window.ui" line="1390"/>
         <source>Open database...</source>
         <translation>Datenbank öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1384"/>
+        <location filename="../src/ui/main_window.ui" line="1395"/>
         <source>Clear list</source>
         <translation>Liste leeren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1389"/>
+        <location filename="../src/ui/main_window.ui" line="1400"/>
         <source>Save database as...</source>
         <translation>Datenbank speichern unter...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1397"/>
+        <location filename="../src/ui/main_window.ui" line="1408"/>
         <source>Close database</source>
         <translation>Datenbank schließen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1402"/>
+        <location filename="../src/ui/main_window.ui" line="1413"/>
         <source>Project settings...</source>
         <translation>Projekteinstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1407"/>
+        <location filename="../src/ui/main_window.ui" line="1418"/>
         <source>Settings...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1418"/>
+        <location filename="../src/ui/main_window.ui" line="1429"/>
         <source>Show filters</source>
         <translation>Filter anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1423"/>
+        <location filename="../src/ui/main_window.ui" line="1434"/>
         <source>Auto-resize columns</source>
         <translation>Spaltenbreiten optimieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1517"/>
+        <location filename="../src/ui/main_window.ui" line="1528"/>
         <source>Export data...</source>
         <translation>Daten exportieren...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1522"/>
+        <location filename="../src/ui/main_window.ui" line="1533"/>
         <source>Reset column order</source>
         <translation>Spaltenreihenfolge zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1527"/>
+        <location filename="../src/ui/main_window.ui" line="1538"/>
         <source>Restore hidden columns</source>
         <translation>Ausgeblendete Spalten anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1562"/>
+        <location filename="../src/ui/main_window.ui" line="1573"/>
         <source>Always use maximum axis ranges</source>
         <translation>Feste Achsenbereiche verwenden</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1570"/>
+        <location filename="../src/ui/main_window.ui" line="1581"/>
         <source>Clear table selection</source>
         <translation>Markierung in Tabelle zurücksetzen</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="149"/>
-        <location filename="../src/ui/main_window.ui" line="1462"/>
+        <location filename="../src/ui/main_window.ui" line="1473"/>
         <source>New hiker...</source>
         <translation>Neuer Wanderer...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="172"/>
-        <location filename="../src/ui/main_window.ui" line="1471"/>
+        <location filename="../src/ui/main_window.ui" line="1482"/>
         <source>New region...</source>
         <translation>Neue Region...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="195"/>
-        <location filename="../src/ui/main_window.ui" line="1480"/>
+        <location filename="../src/ui/main_window.ui" line="1491"/>
         <source>New mountain range...</source>
         <translation>Neues Gebirge...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.ui" line="218"/>
-        <location filename="../src/ui/main_window.ui" line="1489"/>
+        <location filename="../src/ui/main_window.ui" line="1500"/>
         <source>New country...</source>
         <translation>Neues Land...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1494"/>
+        <location filename="../src/ui/main_window.ui" line="1505"/>
         <source>Relocate photos...</source>
         <translation>Fotos umziehen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1503"/>
+        <location filename="../src/ui/main_window.ui" line="1514"/>
         <source>About PAL</source>
         <translation>Über PAL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.ui" line="1512"/>
+        <location filename="../src/ui/main_window.ui" line="1523"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="395"/>
+        <location filename="../src/main/main_window.cpp" line="394"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="397"/>
+        <location filename="../src/main/main_window.cpp" line="396"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="398"/>
+        <location filename="../src/main/main_window.cpp" line="397"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
@@ -2485,125 +2619,125 @@ Trotzdem speichern?</translation>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="573"/>
+        <location filename="../src/main/main_window.cpp" line="563"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="680"/>
+        <location filename="../src/main/main_window.cpp" line="686"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="685"/>
+        <location filename="../src/main/main_window.cpp" line="691"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="685"/>
+        <location filename="../src/main/main_window.cpp" line="691"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="687"/>
+        <location filename="../src/main/main_window.cpp" line="693"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="687"/>
+        <location filename="../src/main/main_window.cpp" line="693"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="697"/>
+        <location filename="../src/main/main_window.cpp" line="703"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="697"/>
+        <location filename="../src/main/main_window.cpp" line="703"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="700"/>
+        <location filename="../src/main/main_window.cpp" line="706"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="962"/>
+        <location filename="../src/main/main_window.cpp" line="971"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="963"/>
+        <location filename="../src/main/main_window.cpp" line="972"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="400"/>
-        <location filename="../src/main/main_window.cpp" line="1095"/>
+        <location filename="../src/main/main_window.cpp" line="399"/>
+        <location filename="../src/main/main_window.cpp" line="1108"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="377"/>
+        <location filename="../src/main/main_window.cpp" line="376"/>
         <source>Hide this column</source>
         <translation>Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="379"/>
+        <location filename="../src/main/main_window.cpp" line="378"/>
         <source>Restore hidden column</source>
         <translation>Spalte anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1157"/>
+        <location filename="../src/main/main_window.cpp" line="1170"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1201"/>
+        <location filename="../src/main/main_window.cpp" line="1214"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1204"/>
+        <location filename="../src/main/main_window.cpp" line="1217"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1204"/>
+        <location filename="../src/main/main_window.cpp" line="1217"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1257"/>
-        <location filename="../src/main/main_window.cpp" line="1267"/>
-        <location filename="../src/main/main_window.cpp" line="1281"/>
+        <location filename="../src/main/main_window.cpp" line="1270"/>
+        <location filename="../src/main/main_window.cpp" line="1280"/>
+        <location filename="../src/main/main_window.cpp" line="1294"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1268"/>
+        <location filename="../src/main/main_window.cpp" line="1281"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1269"/>
+        <location filename="../src/main/main_window.cpp" line="1282"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1269"/>
+        <location filename="../src/main/main_window.cpp" line="1282"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1282"/>
+        <location filename="../src/main/main_window.cpp" line="1295"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="1284"/>
+        <location filename="../src/main/main_window.cpp" line="1297"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2767,11 +2901,16 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/db/tables_spec/peaks_table.cpp" line="146"/>
+        <source>Peak</source>
+        <translation>Gipfel</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="156"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="190"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="200"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln Gipfel</numerusform>
@@ -2779,12 +2918,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="156"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="166"/>
         <source>Saved new peak.</source>
         <translation>Neuer Gipfel gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="167"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="177"/>
         <source>Saved changes in %Ln peak(s).</source>
         <translation>
             <numerusform>Änderungen in Gipfel gespeichert.</numerusform>
@@ -2792,7 +2931,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="178"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="188"/>
         <source>Deleted %Ln peak(s).</source>
         <translation>
             <numerusform>Gipfel gelöscht.</numerusform>
@@ -2834,11 +2973,16 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/db/tables_spec/photos_table.cpp" line="212"/>
+        <source>Photo</source>
+        <translation>Foto</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="222"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="256"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="266"/>
         <source>%Ln photo(s)</source>
         <translation>
             <numerusform>%Ln Foto</numerusform>
@@ -2846,12 +2990,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="222"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="232"/>
         <source>Saved new photo.</source>
         <translation>Neues Foto gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="233"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="243"/>
         <source>Saved changes in %Ln photo(s).</source>
         <translation>
             <numerusform>Änderungen in Foto gespeichert.</numerusform>
@@ -2859,7 +3003,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="244"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="254"/>
         <source>Deleted %Ln photo(s).</source>
         <translation>
             <numerusform>Foto gelöscht.</numerusform>
@@ -2984,11 +3128,16 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/db/tables_spec/ranges_table.cpp" line="132"/>
+        <source>Mountain range</source>
+        <translation>Gebirge</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="142"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="176"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="186"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln Gebirge</numerusform>
@@ -2996,12 +3145,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="142"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="152"/>
         <source>Saved new mountain range.</source>
         <translation>Neues Gebirge gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="153"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="163"/>
         <source>Saved changes in %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Änderungen in Gebirge gespeichert.</numerusform>
@@ -3009,7 +3158,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="164"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="174"/>
         <source>Deleted %Ln mountain ranges(s).</source>
         <translation>
             <numerusform>Gebirge gelöscht.</numerusform>
@@ -3127,11 +3276,16 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/db/tables_spec/regions_table.cpp" line="135"/>
+        <source>Region</source>
+        <translation>Region</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="145"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="179"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="189"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln Region</numerusform>
@@ -3139,12 +3293,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="145"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="155"/>
         <source>Saved new region.</source>
         <translation>Neue Region gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="156"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="166"/>
         <source>Saved changes in %Ln region(s).</source>
         <translation>
             <numerusform>Änderungen in Region gespeichert.</numerusform>
@@ -3152,7 +3306,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="167"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="177"/>
         <source>Deleted %Ln region(s).</source>
         <translation>
             <numerusform>Region gelöscht.</numerusform>
@@ -3421,6 +3575,22 @@ Trotzdem speichern?</translation>
     </message>
 </context>
 <context>
+    <name>StringFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/string_filter_box.cpp" line="12"/>
+        <source>Contains...</source>
+        <translation>Enthält...</translation>
+    </message>
+</context>
+<context>
+    <name>TimeFilterBox</name>
+    <message>
+        <location filename="../src/filters/filter_widgets/time_filter_box.cpp" line="16"/>
+        <source>Set a maximum time</source>
+        <translation>Maximale Zeit angeben</translation>
+    </message>
+</context>
+<context>
     <name>TripDialog</name>
     <message>
         <location filename="../src/ui/trip_dialog.ui" line="14"/>
@@ -3534,11 +3704,16 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/db/tables_spec/trips_table.cpp" line="136"/>
+        <source>Trip</source>
+        <translation>Urlaub</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="146"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="180"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="190"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln Urlaub</numerusform>
@@ -3546,12 +3721,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="146"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="156"/>
         <source>Saved new trip.</source>
         <translation>Neuer Urlaub gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="157"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="167"/>
         <source>Saved changes in %Ln trip(s).</source>
         <translation>
             <numerusform>Änderungen in Urlaub gespeichert.</numerusform>
@@ -3559,7 +3734,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="168"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="178"/>
         <source>Deleted %Ln trip(s).</source>
         <translation>
             <numerusform>Urlaub gelöscht.</numerusform>
