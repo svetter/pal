@@ -31,6 +31,8 @@ private:
 	
 protected:
 	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
+public:
+	virtual ~Filter();
 	
 public:
 	bool isEnabled() const;

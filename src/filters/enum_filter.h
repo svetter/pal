@@ -11,6 +11,7 @@ class EnumFilter : public Filter
 	
 public:
 	EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	virtual ~EnumFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

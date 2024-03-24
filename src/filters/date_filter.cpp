@@ -10,6 +10,9 @@ DateFilter::DateFilter(const NormalTable& tableToFilter, const Column& columnToF
 	max(QDate::currentDate())
 {}
 
+DateFilter::~DateFilter()
+{}
+
 
 
 bool DateFilter::evaluate(const QVariant& rawRowValue) const

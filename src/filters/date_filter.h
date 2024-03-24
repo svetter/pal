@@ -14,6 +14,7 @@ class DateFilter : public Filter
 	
 public:
 	DateFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	virtual ~DateFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

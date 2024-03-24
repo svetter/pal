@@ -13,6 +13,9 @@ DualEnumFilter::DualEnumFilter(const NormalTable& tableToFilter, const Column& d
 	assert(discerningColumnToFilterBy.enumNameLists == dependentColumnToFilterBy.enumNameLists);
 }
 
+DualEnumFilter::~DualEnumFilter()
+{}
+
 
 
 bool DualEnumFilter::evaluate(const QVariant& rawRowValue) const

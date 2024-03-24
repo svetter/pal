@@ -14,6 +14,7 @@ class DualEnumFilter : public Filter
 	
 public:
 	DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name);
+	virtual ~DualEnumFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

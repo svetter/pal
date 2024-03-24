@@ -47,6 +47,9 @@ Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& co
 	}
 }
 
+Filter::~Filter()
+{}
+
 
 
 bool Filter::isEnabled() const

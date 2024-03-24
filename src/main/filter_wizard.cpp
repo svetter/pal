@@ -1,4 +1,6 @@
 #include "filter_wizard.h"
+
+#include "src/db/database.h"
 #include "src/filters/bool_filter.h"
 #include "src/filters/date_filter.h"
 #include "src/filters/dual_enum_filter.h"
@@ -9,8 +11,6 @@
 #include "src/filters/time_filter.h"
 
 #include <QVBoxLayout>
-
-using std::make_unique;
 
 
 
@@ -384,7 +384,7 @@ FilterWizard::~FilterWizard()
 
 
 
-unique_ptr<Filter> FilterWizard::getFinishedFilter()
+Filter* FilterWizard::getFinishedFilter()
 {
 	const Column* const columnToUse = columnPage.getSelectedColumn();
 	const FilterFoldOp foldOp = foldOpPage.getSelectedFoldOp();
@@ -403,31 +403,31 @@ unique_ptr<Filter> FilterWizard::getFinishedFilter()
 	case Integer: {
 		const bool useIntClasses = field("numberPref.class").toBool();
 		if (useIntClasses) {
-			return make_unique<IntFilter>(tableToFilter, *columnToUse, foldOp, name, 1000, 0, 8848);
+			return new IntFilter(tableToFilter, *columnToUse, foldOp, name, 1000, 0, 8848);
 		} else {
-			return make_unique<IntFilter>(tableToFilter, *columnToUse, foldOp, name);
+			return new IntFilter(tableToFilter, *columnToUse, foldOp, name);
 		}
 	}
 	case ID: {
-		return make_unique<IDFilter>(tableToFilter, *columnToUse, name);
+		return new IDFilter(tableToFilter, *columnToUse, name);
 	}
 	case Enum: {
-		return make_unique<EnumFilter>(tableToFilter, *columnToUse, name);
+		return new EnumFilter(tableToFilter, *columnToUse, name);
 	}
 	case DualEnum: {
-		return make_unique<DualEnumFilter>(tableToFilter, *columnToUse, name);
+		return new DualEnumFilter(tableToFilter, *columnToUse, name);
 	}
 	case Bit: {
-		return make_unique<BoolFilter>(tableToFilter, *columnToUse, name);
+		return new BoolFilter(tableToFilter, *columnToUse, name);
 	}
 	case String: {
-		return make_unique<StringFilter>(tableToFilter, *columnToUse, foldOp, name);
+		return new StringFilter(tableToFilter, *columnToUse, foldOp, name);
 	}
 	case Date: {
-		return make_unique<DateFilter>(tableToFilter, *columnToUse, name);
+		return new DateFilter(tableToFilter, *columnToUse, name);
 	}
 	case Time: {
-		return make_unique<TimeFilter>(tableToFilter, *columnToUse, name);
+		return new TimeFilter(tableToFilter, *columnToUse, name);
 	}
 	default: assert(false);
 	}

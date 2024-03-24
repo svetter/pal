@@ -11,6 +11,7 @@ class StringFilter : public Filter
 	
 public:
 	StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
+	virtual ~StringFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

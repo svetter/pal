@@ -11,6 +11,7 @@ class IDFilter : public Filter
 	
 public:
 	IDFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	virtual ~IDFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

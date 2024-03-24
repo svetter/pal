@@ -20,6 +20,7 @@ private:
 public:
 	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
 	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue);
+	virtual ~IntFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

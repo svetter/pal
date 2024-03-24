@@ -13,6 +13,9 @@ IDFilter::IDFilter(const NormalTable& tableToFilter, const Column& columnToFilte
 	value(ItemID())
 {}
 
+IDFilter::~IDFilter()
+{}
+
 
 
 bool IDFilter::evaluate(const QVariant& rawRowValue) const

@@ -11,6 +11,7 @@ class BoolFilter : public Filter
 	
 public:
 	BoolFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	virtual ~BoolFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

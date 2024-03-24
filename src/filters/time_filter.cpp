@@ -10,6 +10,9 @@ TimeFilter::TimeFilter(const NormalTable& tableToFilter, const Column& columnToF
 	max(QTime(12, 0))
 {}
 
+TimeFilter::~TimeFilter()
+{}
+
 
 
 bool TimeFilter::evaluate(const QVariant& rawRowValue) const

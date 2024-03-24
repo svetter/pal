@@ -25,6 +25,9 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	max(0)
 {}
 
+IntFilter::~IntFilter()
+{}
+
 
 
 bool IntFilter::evaluate(const QVariant& rawRowValue) const

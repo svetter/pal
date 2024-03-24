@@ -9,6 +9,9 @@ BoolFilter::BoolFilter(const NormalTable& tableToFilter, const Column& columnToF
 	value(true)
 {}
 
+BoolFilter::~BoolFilter()
+{}
+
 
 
 bool BoolFilter::evaluate(const QVariant& rawRowValue) const

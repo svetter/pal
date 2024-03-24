@@ -2,15 +2,12 @@
 #define FILTERWIZARD_H
 
 #include "src/filters/filter.h"
-#include "src/db/database.h"
 
 #include <QWizard>
 #include <QLabel>
 #include <QRadioButton>
 #include <QComboBox>
 #include <QLineEdit>
-
-using std::unique_ptr;
 
 
 
@@ -154,7 +151,7 @@ public:
 	FilterWizard(QWidget* parent, const NormalTable& tableToFilter);
 	~FilterWizard();
 	
-	unique_ptr<Filter> getFinishedFilter();
+	Filter* getFinishedFilter();
 };
 
 

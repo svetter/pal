@@ -34,6 +34,7 @@ FilterBox::FilterBox(QWidget* parent, DataType type, const QString& title, Filte
 FilterBox::~FilterBox()
 {
 	removeButton->deleteLater();
+	delete &genericFilter;
 }
 
 

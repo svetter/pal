@@ -9,6 +9,9 @@ EnumFilter::EnumFilter(const NormalTable& tableToFilter, const Column& columnToF
 	value(0)
 {}
 
+EnumFilter::~EnumFilter()
+{}
+
 
 
 bool EnumFilter::evaluate(const QVariant& rawRowValue) const

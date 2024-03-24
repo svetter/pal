@@ -233,7 +233,7 @@ void FilterBar::handle_filterWizardAccepted()
 {
 	assert(filterWizard);
 	
-	unique_ptr<Filter> newFilter = filterWizard->getFinishedFilter();
+	Filter* newFilter = filterWizard->getFinishedFilter();
 	FilterBox* newFilterBox = newFilter->createFilterBox(filtersScrollAreaWidget);
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);

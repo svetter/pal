@@ -14,6 +14,7 @@ class TimeFilter : public Filter
 	
 public:
 	TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	virtual ~TimeFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
 	

@@ -9,6 +9,9 @@ StringFilter::StringFilter(const NormalTable& tableToFilter, const Column& colum
 	value("")
 {}
 
+StringFilter::~StringFilter()
+{}
+
 
 
 bool StringFilter::evaluate(const QVariant& rawRowValue) const
