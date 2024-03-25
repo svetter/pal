@@ -243,6 +243,7 @@ FORMS += \
 	src/ui/ascent_viewer.ui \
 	src/ui/export_dialog.ui \
 	src/ui/filter_bar.ui \
+	src/ui/filter_box.ui \
 	src/ui/main_window.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \
