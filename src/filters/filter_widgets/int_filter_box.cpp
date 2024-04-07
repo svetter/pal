@@ -15,6 +15,7 @@ IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, IntFilter& fil
 	
 	setMaxCheckbox->setObjectName("setMaxCheckbox");
 	setMaxCheckbox->setToolTip(tr("Set a maximum value"));
+	setMaxCheckbox->setChecked(true);
 	
 	maxSpinner->setObjectName("maxSpinner");
 	maxSpinner->setMaximum(9999);

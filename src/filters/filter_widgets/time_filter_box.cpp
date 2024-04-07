@@ -14,6 +14,7 @@ TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& 
 	
 	setMaxTimeCheckbox->setObjectName("setMaxTimeCheckbox");
 	setMaxTimeCheckbox->setToolTip(tr("Set a maximum time"));
+	setMaxTimeCheckbox->setChecked(true);
 	
 	maxTimeWidget->setObjectName("maxTimeWidget");
 	

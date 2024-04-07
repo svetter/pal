@@ -27,6 +27,7 @@ IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int 
 	
 	setMaxCheckbox->setObjectName("setMaxCheckbox");
 	setMaxCheckbox->setToolTip(tr("Set a maximum class"));
+	setMaxCheckbox->setChecked(false);
 	
 	maxCombo->setObjectName("maxCombo");
 	maxCombo->setEnabled(false);

@@ -16,6 +16,7 @@ DateFilterBox::DateFilterBox(QWidget* parent, const QString& title, DateFilter& 
 	
 	setMaxDateCheckbox->setObjectName("setMaxDateCheckbox");
 	setMaxDateCheckbox->setToolTip(tr("Set a maximum date"));
+	setMaxDateCheckbox->setChecked(true);
 	
 	maxDateWidget->setObjectName("maxDateWidget");
 	maxDateWidget->setMinimumSize(QSize(80, 0));
