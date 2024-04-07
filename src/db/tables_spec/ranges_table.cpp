@@ -175,6 +175,16 @@ QString RangesTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a mountain range filter wizard.
+ * 
+ * @return	The translated title for a mountain range filter wizard.
+ */
+QString RangesTable::getNewFilterString() const
+{
+	return tr("New mountain range filter");
+}
+
+/**
  * Returns a translated string which can be used in lists of items and their counts, in the form
  * "n mountain range(s)".
  * 

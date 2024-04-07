@@ -255,6 +255,16 @@ QString PhotosTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a photo filter wizard.
+ * 
+ * @return	The translated title for a photo filter wizard.
+ */
+QString PhotosTable::getNewFilterString() const
+{
+	return tr("New photo filter");
+}
+
+/**
  * Returns a translated string which can be used in lists of items and their counts, in the form
  * "n photo(s)".
  * 

@@ -170,6 +170,16 @@ QString HikersTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a hiker filter wizard.
+ * 
+ * @return	The translated title for a hiker filter wizard.
+ */
+QString HikersTable::getNewFilterString() const
+{
+	return tr("New hiker filter");
+}
+
+/**
  * Returns a translated string which can be used in lists of items and their counts, in the form
  * "n hiker(s)".
  * 

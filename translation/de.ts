@@ -697,8 +697,13 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>None</source>
         <translation>Keine</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="216"/>
+        <source>New ascent filter</source>
+        <translation>Neuer Besteigungs-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="218"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="228"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln Besteigung</numerusform>
@@ -1053,8 +1058,13 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <source>None</source>
         <translation>Keines</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="179"/>
+        <source>New country filter</source>
+        <translation>Neuer Landes-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="191"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln Land</numerusform>
@@ -1908,6 +1918,19 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     </message>
 </context>
 <context>
+    <name>FilterBox</name>
+    <message>
+        <location filename="../src/ui/filter_box.ui" line="65"/>
+        <source>Include</source>
+        <translation>Anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/filter_box.ui" line="75"/>
+        <source>Exclude</source>
+        <translation>Ausschließen</translation>
+    </message>
+</context>
+<context>
     <name>FilterWizardColumnPage</name>
     <message>
         <location filename="../src/main/filter_wizard.cpp" line="99"/>
@@ -2204,8 +2227,13 @@ A filter can be applied to the count of those values.</source>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="179"/>
+        <source>New hiker filter</source>
+        <translation>Neuer Wanderer-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="191"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln Wanderer</numerusform>
@@ -2909,8 +2937,13 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="198"/>
+        <source>New peak filter</source>
+        <translation>Neuer Gipfel-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="200"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="210"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln Gipfel</numerusform>
@@ -2981,8 +3014,13 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keines</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="264"/>
+        <source>New photo filter</source>
+        <translation>Neuer Foto-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="266"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="276"/>
         <source>%Ln photo(s)</source>
         <translation>
             <numerusform>%Ln Foto</numerusform>
@@ -3136,8 +3174,13 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keines</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="184"/>
+        <source>New mountain range filter</source>
+        <translation>Neuer Gebirgs-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="186"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="196"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln Gebirge</numerusform>
@@ -3284,8 +3327,13 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keine</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="187"/>
+        <source>New region filter</source>
+        <translation>Neuer Regions-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="189"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="199"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln Region</numerusform>
@@ -3712,8 +3760,13 @@ Trotzdem speichern?</translation>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
+    <message>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="188"/>
+        <source>New trip filter</source>
+        <translation>Neuer Urlaubs-Filter</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="190"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="200"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln Urlaub</numerusform>

@@ -366,7 +366,7 @@ FilterWizard::FilterWizard(QWidget* parent, const NormalTable& tableToFilter) :
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
-	setWindowTitle("New ascent filter");
+	setWindowTitle(tableToFilter.getNewFilterString());
 	setMinimumSize(500, 300);
 	setSizeGripEnabled(false);
 	

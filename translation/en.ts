@@ -39,7 +39,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="218"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="228"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln ascent</numerusform>
@@ -66,7 +66,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="191"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln country</numerusform>
@@ -131,7 +131,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="191"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln hiker</numerusform>
@@ -177,7 +177,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="200"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="210"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln peak</numerusform>
@@ -204,7 +204,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/photos_table.cpp" line="266"/>
+        <location filename="../src/db/tables_spec/photos_table.cpp" line="276"/>
         <source>%Ln photo(s)</source>
         <translation>
             <numerusform>%Ln photo</numerusform>
@@ -250,7 +250,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="186"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="196"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln mountain range</numerusform>
@@ -296,7 +296,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="189"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="199"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln region</numerusform>
@@ -342,7 +342,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="190"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="200"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln trip</numerusform>

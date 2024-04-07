@@ -92,6 +92,12 @@ public:
 	 */
 	virtual QString getDeleteConfirmMessage(int numDeleted) const = 0;
 	/**
+	 * Returns a translated title for a filter wizard creating a new filter of this table's type.
+	 * 
+	 * @return	The translated title for a filter wizard creating a new filter.
+	 */
+	virtual QString getNewFilterString() const = 0;
+	/**
 	 * Returns a translated string which can be used in lists of items and their counts, in the form
 	 * "n item(s)", e.g. "14 ascents" or "1 peak".
 	 * 

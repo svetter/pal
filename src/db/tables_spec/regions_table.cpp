@@ -178,6 +178,16 @@ QString RegionsTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a region filter wizard.
+ * 
+ * @return	The translated title for a region filter wizard.
+ */
+QString RegionsTable::getNewFilterString() const
+{
+	return tr("New region filter");
+}
+
+/**
  * Returns a translated string which can be used in lists of items and their counts, in the form
  * "n region(s)".
  * 

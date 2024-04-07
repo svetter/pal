@@ -207,6 +207,16 @@ QString AscentsTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for an ascent filter wizard.
+ * 
+ * @return	The translated title for an ascent filter wizard.
+ */
+QString AscentsTable::getNewFilterString() const
+{
+	return tr("New ascent filter");
+}
+
+/**
  * Returns a translated string which can be used in lists of items and their counts, in the form
  * "n ascent(s)".
  * 
