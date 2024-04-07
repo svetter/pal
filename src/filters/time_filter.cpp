@@ -55,7 +55,7 @@ TimeFilter* TimeFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 	
 	const QTime min = decodeTime(restOfEncoding, "min", ok);
 	if (!ok) return nullptr;
-	const QTime max = decodeTime(restOfEncoding, "min", ok, true);
+	const QTime max = decodeTime(restOfEncoding, "max", ok, true);
 	if (!ok) return nullptr;
 	
 	TimeFilter* const filter = new TimeFilter(tableToFilter, columnToFilterBy, name);
