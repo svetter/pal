@@ -5,7 +5,7 @@
 
 
 DualEnumFilter::DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name) :
-	Filter(DualEnum, tableToFilter, discerningColumnToFilterBy, FilterFoldOp(-1), name),
+	Filter(DualEnum, tableToFilter, discerningColumnToFilterBy, FoldOp(-1), name),
 	dependentColumnToFilterBy(discerningColumnToFilterBy.table.getColumnByIndex(discerningColumnToFilterBy.getIndex() + 1)),
 	discerningValue(0),
 	dependentValue(0)

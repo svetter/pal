@@ -25,6 +25,7 @@
 #define FOLD_COMPOSITE_COLUMN_H
 
 #include "composite_column.h"
+#include "fold_op.h"
 #include "src/db/breadcrumbs.h"
 
 
@@ -40,28 +41,20 @@
  */
 class FoldCompositeColumn : public CompositeColumn {
 protected:
+	/** The operation to perform when folding values. */
+	const FoldOp op;
 	/** The breadcrumbs, which are pairs of base table columns which lead to the content column. */
 	const Breadcrumbs breadcrumbs;
 	/** The column that contains the content to be folded. */
 	Column* const contentColumn;
 	
 public:
-	FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs, Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 };
 
 
-
-/**
- * The different fold operations that can be performed in a FoldCompositeColumn.
- */
-enum NumericFoldOp {
-	CountFold,
-	AverageFold,
-	SumFold,
-	MaxFold
-};
 
 /**
  * A FoldCompositeColumn that folds numeric values, using one of the NumericFoldOp operations.
@@ -70,12 +63,10 @@ enum NumericFoldOp {
  * determined.
  */
 class NumericFoldCompositeColumn : public FoldCompositeColumn {
-	/** The operation to perform when folding the numeric values. */
-	const NumericFoldOp op;
 public:
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn);
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs);
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, Column& contentColumn);
+	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn);
+	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs);
+	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 };

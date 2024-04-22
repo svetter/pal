@@ -256,7 +256,7 @@ void FilterBar::handle_filterCreationShortcutUsed()
 	const Column* const columnToUse = createFilterShortcuts.value(action);
 	assert(columnToUse);
 	const NormalTable& tableToFilter = compTable->getBaseTable();
-	const FilterFoldOp foldOp = FilterFoldOp(-1);
+	const FoldOp foldOp = FoldOp(-1);
 	
 	Filter* newFilter = nullptr;
 	switch (columnToUse->type) {

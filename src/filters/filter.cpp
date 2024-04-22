@@ -15,7 +15,7 @@
 
 
 
-Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name) :
+Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name) :
 	type(type),
 	sourceType(columnToFilterBy.type),
 	tableToFilter(tableToFilter),
@@ -31,14 +31,14 @@ Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& co
 	assert(!columnToFilterBy.table.isAssociative);
 	assert(isLocalFilter == crumbs.isEmpty());
 	if (singleValuePerRow) {
-		assert(foldOp == FilterFoldOp(-1));
+		assert(foldOp == FoldOp(-1));
 		assert(type == sourceType);
 	} else {
-		assert(foldOp != FilterFoldOp(-1));
-		if (foldOp == FilterFoldOp_StringList) {
+		assert(foldOp != FoldOp(-1));
+		if (foldOp == StringListFold) {
 			assert(type == String);
 			assert(sourceType == String);
-		} else if (foldOp == FilterFoldOp_Count) {
+		} else if (foldOp == CountFold) {
 			assert(type == Integer);
 		} else {
 			assert(type == Integer);
@@ -138,11 +138,11 @@ QVariant Filter::getRawRowValue(const BufferRowIndex filteredTableBufferRow) con
 	// Fold operation needs to be performed
 	assert(sourceType != DualEnum);
 	
-	if (foldOp == FilterFoldOp_Count) {
+	if (foldOp == CountFold) {
 		return associatedRows.count();
 	}
 	
-	if (foldOp == FilterFoldOp_StringList) {
+	if (foldOp == StringListFold) {
 		assert(sourceType == String);
 		QStringList entries = QStringList();
 		for (const BufferRowIndex& associatedRow : associatedRows) {
@@ -165,27 +165,27 @@ QVariant Filter::getRawRowValue(const BufferRowIndex filteredTableBufferRow) con
 		const int convertedValue = associatedRowValue.toInt();
 		
 		switch (foldOp) {
-		case FilterFoldOp_Sum:
-		case FilterFoldOp_Average:
+		case AverageFold:
+		case SumFold:
 			sum += convertedValue;
 			break;
-		case FilterFoldOp_Min:
-			min = std::min(min, convertedValue);
-			break;
-		case FilterFoldOp_Max:
+		case MaxFold:
 			max = std::max(max, convertedValue);
+			break;
+		case MinFold:
+			min = std::min(min, convertedValue);
 			break;
 		default:
 			assert(false);
 		}
 	}
 	
-	if (foldOp == FilterFoldOp_Sum) {
-		return sum;
+	if (foldOp == AverageFold) {
+		return (double) sum / associatedRows.count();
 	}
 	
-	if (foldOp == FilterFoldOp_Average) {
-		return (double) sum / associatedRows.count();
+	if (foldOp == SumFold) {
+		return sum;
 	}
 	
 	assert(false);
@@ -213,7 +213,7 @@ QString Filter::encodeSingleFilterToString() const
 	parameters += encodeString	("columnToFilterBy_table_name",	columnToFilterBy.table.name);
 	parameters += encodeString	("columnToFilterBy_name",		columnToFilterBy.name);
 	if (type == Integer || type == String) {
-		parameters += encodeString	("foldOp",					FilterFoldOpNames::getName(foldOp));
+		parameters += encodeString	("foldOp",					FoldOpNames::getName(foldOp));
 	}
 	parameters += encodeString	("name",						name);
 	parameters += encodeBool	("enabled",						enabled);
@@ -261,9 +261,9 @@ Filter* Filter::decodeSingleFilterFromString(QString& restOfString, Database& db
 	const Column* columnToFilterBy = decodeColumnIdentity(restOfString, "columnToFilterBy_table_name", "columnToFilterBy_name", ok, db);
 	if (!ok) return nullptr;
 	
-	FilterFoldOp foldOp = FilterFoldOp(-1);
+	FoldOp foldOp = FoldOp(-1);
 	if (type == Integer || type == String) {
-		foldOp = FilterFoldOpNames::getFoldOp(decodeString(restOfString, "foldOp", ok));
+		foldOp = FoldOpNames::getFoldOp(decodeString(restOfString, "foldOp", ok));
 		if (!ok) return nullptr;
 	}
 	

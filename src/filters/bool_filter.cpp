@@ -5,7 +5,7 @@
 
 
 BoolFilter::BoolFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Bit, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
+	Filter(Bit, tableToFilter, columnToFilterBy, FoldOp(-1), name),
 	value(true)
 {}
 

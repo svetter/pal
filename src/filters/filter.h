@@ -3,7 +3,7 @@
 
 #include "src/db/breadcrumbs.h"
 #include "src/db/normal_table.h"
-#include "src/filters/filter_fold_op.h"
+#include "src/comp_tables/fold_op.h"
 
 class FilterBox;
 
@@ -16,7 +16,7 @@ public:
 	const DataType sourceType;
 	const NormalTable& tableToFilter;
 	const Column& columnToFilterBy;
-	const FilterFoldOp foldOp;
+	const FoldOp foldOp;
 protected:
 	const Breadcrumbs crumbs;
 public:
@@ -30,7 +30,7 @@ private:
 	bool inverted;
 	
 protected:
-	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name);
+	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name);
 public:
 	virtual ~Filter();
 	

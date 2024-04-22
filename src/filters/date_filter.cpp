@@ -5,7 +5,7 @@
 
 
 DateFilter::DateFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Date, tableToFilter, columnToFilterBy, FilterFoldOp(-1), name),
+	Filter(Date, tableToFilter, columnToFilterBy, FoldOp(-1), name),
 	min(QDate::currentDate()),
 	max(QDate::currentDate())
 {}

@@ -63,6 +63,7 @@ HEADERS += \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
 	src/comp_tables/fold_composite_column.h \
+	src/comp_tables/fold_op.h \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/enum_names.h \
@@ -113,7 +114,6 @@ HEADERS += \
 	src/filters/dual_enum_filter.h \
 	src/filters/enum_filter.h \
 	src/filters/filter.h \
-	src/filters/filter_fold_op.h \
 	src/filters/filter_widgets/bool_filter_box.h \
 	src/filters/filter_widgets/date_filter_box.h \
 	src/filters/filter_widgets/dual_enum_filter_box.h \

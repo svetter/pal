@@ -25,7 +25,6 @@
 #define COMPOSITE_COLUMN_H
 
 #include "src/db/breadcrumbs.h"
-#include "src/filters/filter.h"
 #include "src/db/column.h"
 #include "src/settings/project_settings.h"
 
@@ -37,8 +36,8 @@ class CompositeTable;
 
 
 /**
- * A column in a table which contains data which can be computed from multiple tables and columns
- * in one or multiple base tables.
+ * A column in a table which contains data which can be computed from multiple tables and columns in
+ * one or multiple base tables.
  */
 class CompositeColumn {
 	/** The composite table this column belongs to. */

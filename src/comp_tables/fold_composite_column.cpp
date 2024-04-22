@@ -37,11 +37,13 @@
  * @param contentType	The type of data the column contents.
  * @param isStatistical	Whether the contents of this column display statistical data which can be excluded from exports.
  * @param suffix		A suffix to append to the content of each cell.
+ * @param op			The operation to perform on the content column values.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
-FoldCompositeColumn::FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
+FoldCompositeColumn::FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs, Column* contentColumn, const QStringList* enumNames) :
 	CompositeColumn(table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
+	op(op),
 	breadcrumbs(breadcrumbs),
 	contentColumn(contentColumn)
 {
@@ -79,9 +81,8 @@ const QSet<const Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn) :
-	FoldCompositeColumn(table, name, uiName, contentType, true, suffix, breadcrumbs, contentColumn),
-	op(op)
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, Column* contentColumn) :
+	FoldCompositeColumn(table, name, uiName, contentType, true, suffix, op, breadcrumbs, contentColumn)
 {
 	assert((op == CountFold) == (contentColumn == nullptr));
 }
@@ -96,7 +97,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * @param op			The operation to perform on the content column values.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const Breadcrumbs breadcrumbs) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs) :
 	NumericFoldCompositeColumn(table, name, uiName, suffix, op, Integer, breadcrumbs, nullptr)
 {}
 
@@ -110,7 +111,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * @param op			The operation to perform on the content column values.
  * @param contentColumn	The column whose values to count, collect, or fold.
  */
-NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, Column& contentColumn) :
+NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, Column& contentColumn) :
 	NumericFoldCompositeColumn(table, name, uiName, suffix, op, contentColumn.type, table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn)
 {}
 
@@ -134,6 +135,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 		case AverageFold:
 		case SumFold:
 		case MaxFold:
+		case MinFold:
 			return QVariant();
 		default: assert(false);
 		}
@@ -148,6 +150,8 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 	// AVERAGE / SUM / MAX
 	
 	int aggregate = 0;
+	if (op == MaxFold)	aggregate = INT_MIN;
+	if (op == MinFold)	aggregate = INT_MAX;
 	
 	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
@@ -160,7 +164,11 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 			break;
 		case MaxFold:
 			assert(content.canConvert<int>());
-			if (content.toInt() > aggregate) aggregate = content.toInt();
+			aggregate = std::max(aggregate, content.toInt());
+			break;
+		case MinFold:
+			assert(content.canConvert<int>());
+			aggregate = std::min(aggregate, content.toInt());
 			break;
 		default:
 			assert(false);
@@ -173,6 +181,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 	case AverageFold:	return std::round((qreal) aggregate / rowIndexSet.size());
 	case SumFold:		return aggregate;
 	case MaxFold:		return aggregate;
+	case MinFold:		return aggregate;
 	default:			assert(false);
 	}
 	return QVariant();
@@ -192,7 +201,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
 ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, Column& contentColumn, const QStringList* enumNames) :
-	FoldCompositeColumn(table, name, uiName, String, false, QString(), table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn, enumNames)
+	FoldCompositeColumn(table, name, uiName, String, false, QString(), StringListFold, table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn, enumNames)
 {}
 
 /**

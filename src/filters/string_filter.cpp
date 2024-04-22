@@ -4,7 +4,7 @@
 
 
 
-StringFilter::StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name) :
+StringFilter::StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name) :
 	Filter(String, tableToFilter, columnToFilterBy, foldOp, name),
 	value("")
 {}
@@ -70,7 +70,7 @@ QStringList StringFilter::encodeTypeSpecific() const
 	};
 }
 
-StringFilter* StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FilterFoldOp foldOp, const QString& name, QString& restOfEncoding)
+StringFilter* StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	

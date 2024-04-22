@@ -26,6 +26,7 @@
 
 #include "src/comp_tables/comp_table_listener.h"
 #include "src/comp_tables/composite_column.h"
+#include "src/filters/filter.h"
 
 #include <QTableView>
 #include <QProgressDialog>

@@ -171,7 +171,7 @@ FilterWizardFoldOpPage::FilterWizardFoldOpPage(QWidget* parent, const NormalTabl
 	columnPage(columnPage),
 	explainLabel(new QLabel(this)),
 	foldOpCombo(new QComboBox(this)),
-	foldOpList(QList<FilterFoldOp>())
+	foldOpList(QList<FoldOp>())
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
@@ -186,9 +186,9 @@ FilterWizardFoldOpPage::FilterWizardFoldOpPage(QWidget* parent, const NormalTabl
 	registerField("foldOp.combo*",	foldOpCombo);
 }
 
-FilterFoldOp FilterWizardFoldOpPage::getSelectedFoldOp() const
+FoldOp FilterWizardFoldOpPage::getSelectedFoldOp() const
 {
-	if (foldOpCombo->currentIndex() < 0) return FilterFoldOp(-1);
+	if (foldOpCombo->currentIndex() < 0) return FoldOp(-1);
 	return foldOpList.at(foldOpCombo->currentIndex());
 }
 
@@ -214,24 +214,24 @@ void FilterWizardFoldOpPage::initializePage()
 	foldOpList.clear();
 	foldOpCombo->clear();
 	
-	foldOpList.append(FilterFoldOp_Count);		foldOpCombo->addItem(tr("Count"));
+	foldOpList.append(CountFold);		foldOpCombo->addItem(tr("Count"));
 	if (columnToUse->type == String) {
-		foldOpList.append(FilterFoldOp_StringList);	foldOpCombo->addItem(tr("List"));
+		foldOpList.append(StringListFold);	foldOpCombo->addItem(tr("List"));
 	}
 	if (columnToUse->type == Integer) {
-		foldOpList.append(FilterFoldOp_Max);		foldOpCombo->addItem(tr("Maximum"));
-		foldOpList.append(FilterFoldOp_Min);		foldOpCombo->addItem(tr("Minimum"));
-		foldOpList.append(FilterFoldOp_Sum);		foldOpCombo->addItem(tr("Sum"));
-		foldOpList.append(FilterFoldOp_Average);	foldOpCombo->addItem(tr("Average"));
+		foldOpList.append(AverageFold);	foldOpCombo->addItem(tr("Average"));
+		foldOpList.append(SumFold);		foldOpCombo->addItem(tr("Sum"));
+		foldOpList.append(MaxFold);		foldOpCombo->addItem(tr("Maximum"));
+		foldOpList.append(MinFold);		foldOpCombo->addItem(tr("Minimum"));
 	}
 }
 
 int FilterWizardFoldOpPage::nextId() const
 {
-	const FilterFoldOp selectedFoldOp = getSelectedFoldOp();
-	assert(selectedFoldOp != FilterFoldOp(-1));
+	const FoldOp selectedFoldOp = getSelectedFoldOp();
+	assert(selectedFoldOp != FoldOp(-1));
 	
-	if (selectedFoldOp == FilterFoldOp_StringList) {
+	if (selectedFoldOp == StringListFold) {
 		return Page_Name;
 	} else {
 		return Page_NumberPrefs;
@@ -314,7 +314,7 @@ QString FilterWizardNamePage::generateFilterName() const
 {
 	const NormalTable* const tableToUse = tablePage.getSelectedTable();
 	const Column* const columnToUse = columnPage.getSelectedColumn();
-	const FilterFoldOp foldOp = foldOpPage.getSelectedFoldOp();
+	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
 	assert(tableToUse);
 	assert(columnToUse);
 	
@@ -344,7 +344,7 @@ QString FilterWizardNamePage::generateFilterName() const
 		name += "/" + secondColumn.uiName;
 	}
 	
-	if (foldOp != FilterFoldOp(-1)) {
+	if (foldOp != FoldOp(-1)) {
 		name += " (" + foldOpPage.getSelectedFoldOpName() + ")";
 	}
 	
@@ -387,15 +387,15 @@ FilterWizard::~FilterWizard()
 Filter* FilterWizard::getFinishedFilter()
 {
 	const Column* const columnToUse = columnPage.getSelectedColumn();
-	const FilterFoldOp foldOp = foldOpPage.getSelectedFoldOp();
+	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
 	const QString name = field("name").toString();
 	assert(columnToUse);
 	assert(!name.isEmpty());
 	
 	DataType type = columnToUse->type;
-	if (foldOp == FilterFoldOp_StringList) {
+	if (foldOp == StringListFold) {
 		type = String;
-	} else if (foldOp != FilterFoldOp(-1)) {
+	} else if (foldOp != FoldOp(-1)) {
 		type = Integer;
 	}
 	
