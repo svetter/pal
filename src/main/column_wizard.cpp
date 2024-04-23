@@ -1,5 +1,6 @@
 #include "column_wizard.h"
 
+#include "src/comp_tables/fold_composite_column.h"
 #include "src/db/database.h"
 
 #include <QVBoxLayout>
@@ -10,7 +11,7 @@ ColumnWizardPage::ColumnWizardPage(QWidget* parent, Database& db, const Composit
 	QWizardPage(parent),
 	db(db),
 	compTable(compTable),
-	baseTable(compTable.getBaseTable())
+	baseTable(compTable.baseTable)
 {}
 
 
@@ -308,7 +309,7 @@ QString ColumnWizardNamePage::generateColumnName() const
 
 
 
-ColumnWizard::ColumnWizard(QWidget* parent, Database& db, const CompositeTable& compTable) :
+ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTable) :
 	QWizard(parent),
 	db(db),
 	compTable(compTable),
@@ -319,7 +320,7 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, const CompositeTable& 
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
-	setWindowTitle(compTable.getBaseTable().getNewCustomColumnString());
+	setWindowTitle(compTable.baseTable.getNewCustomColumnString());
 	setMinimumSize(500, 300);
 	setSizeGripEnabled(false);
 	
@@ -338,12 +339,43 @@ ColumnWizard::~ColumnWizard()
 
 CompositeColumn* ColumnWizard::getFinishedColumn()
 {
-	const Column* const columnToUse = columnPage.getSelectedColumn();
+	const Column* const columnToUsePtr = columnPage.getSelectedColumn();
+	assert(columnToUsePtr);
+	const Column& columnToUse = *columnToUsePtr;
+	assert(!columnToUse.table.isAssociative);
+	const NormalTable& tableToUse = (const NormalTable&) columnToUse.table;
 	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
-	const QString name = field("name").toString();
-	assert(columnToUse);
-	assert(!name.isEmpty());
+	const QString uiName = field("name").toString();
+	assert(!uiName.isEmpty());
 	
-	// TODO
+	// Create internal name
+	ProjectSetting<int>& counterSetting = db.projectSettings.numCustomColumnsCreated;
+	const int newCustomColumnIndex = counterSetting.get() + 1;
+	counterSetting.set(*this, newCustomColumnIndex);
+	const QString name = "CUSTOM_COLUMN_" + QString::number(newCustomColumnIndex) + "_" + columnToUse.table.name + "_" + columnToUse.name;
+	
+	const QString suffix = QString();
+	
+	
+	const bool sameTable = &compTable.baseTable == &tableToUse;
+	if (sameTable) {
+		return new DirectCompositeColumn(compTable, name, uiName, suffix, columnToUse);
+	}
+	
+	const Breadcrumbs& crumbs = db.getBreadcrumbsFor(compTable.baseTable, tableToUse);
+	const bool forwardReference = crumbs.isForwardOnly();
+	if (forwardReference) {
+		return new ReferenceCompositeColumn(compTable, name, uiName, suffix, columnToUse);
+	}
+	
+	if (foldOp == CountFold || foldOp == AverageFold || foldOp == SumFold || foldOp == MaxFold || foldOp == MinFold) {
+		return new NumericFoldCompositeColumn(compTable, name, uiName, suffix, foldOp, columnToUse);
+	}
+	
+	if (foldOp == StringListFold) {
+		return new ListStringFoldCompositeColumn(compTable, name, uiName, columnToUse, columnToUse.enumNames);
+	}
+	
+	assert(false);
 	return nullptr;
 }

@@ -131,7 +131,7 @@ class ColumnWizard : public QWizard
 	Q_OBJECT
 	
 	Database& db;
-	const CompositeTable& compTable;
+	CompositeTable& compTable;
 	
 	ColumnWizardTablePage	tablePage;
 	ColumnWizardColumnPage	columnPage;
@@ -139,7 +139,7 @@ class ColumnWizard : public QWizard
 	ColumnWizardNamePage	namePage;
 	
 public:
-	ColumnWizard(QWidget* parent, Database& db, const CompositeTable& compTable);
+	ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTable);
 	~ColumnWizard();
 	
 	CompositeColumn* getFinishedColumn();

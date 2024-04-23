@@ -90,7 +90,7 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMap
 	
 	
 	// Create filter wizard
-	filterWizard = new FilterWizard(this, compTable->getBaseTable());
+	filterWizard = new FilterWizard(this, compTable->baseTable);
 	connect(addFilterButton, &QToolButton::clicked, this, &FilterBar::handle_newFilterButtonPressed);
 	connect(filterWizard, &FilterWizard::accepted, this, &FilterBar::handle_filterWizardAccepted);
 
@@ -98,7 +98,7 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMap
 	addFilterMenu.setTitle("New filter");
 	
 	createFilterShortcuts.clear();
-	for (const Column* const column : compTable->getBaseTable().getColumnList()) {
+	for (const Column* const column : compTable->baseTable.getColumnList()) {
 		if (column->isPrimaryKey()) continue;
 		
 		// Create name
@@ -255,7 +255,7 @@ void FilterBar::handle_filterCreationShortcutUsed()
 	const QString name = action->text();
 	const Column* const columnToUse = createFilterShortcuts.value(action);
 	assert(columnToUse);
-	const NormalTable& tableToFilter = compTable->getBaseTable();
+	const NormalTable& tableToFilter = compTable->baseTable;
 	const FoldOp foldOp = FoldOp(-1);
 	
 	Filter* newFilter = nullptr;

@@ -236,6 +236,7 @@ void Table::initBuffer(QWidget& parent)
 	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent);
 	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
 	buffer.reset();
+	buffer.setInitialNumberOfColumns(columns.size());
 	for (QList<QVariant>* newRow : newContents) {
 		buffer.appendRow(newRow);
 	}

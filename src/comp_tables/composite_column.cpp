@@ -181,7 +181,7 @@ bool CompositeColumn::isFilterOnlyColumn() const
 QList<QVariant> CompositeColumn::computeWholeColumn() const
 {
 	QList<QVariant> cells = QList<QVariant>();
-	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(table.getBaseTable().getNumberOfRows()); rowIndex++) {
+	for (BufferRowIndex rowIndex = BufferRowIndex(0); rowIndex.isValid(table.baseTable.getNumberOfRows()); rowIndex++) {
 		cells.append(computeValueAt(rowIndex));
 	}
 	return cells;
@@ -265,12 +265,25 @@ const ProjectSettings& CompositeColumn::getProjectSettings() const
  * Creates a DirectCompositeColumn.
  * 
  * @param table			The CompositeTable that this column belongs to.
+ * @param name			The internal name for this column.
+ * @param uiName		The name of this column as it should be displayed in the UI.
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
  */
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suffix, Column& contentColumn) :
-	CompositeColumn(table, contentColumn.name, contentColumn.uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
+	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	contentColumn(contentColumn)
+{}
+
+/**
+ * Creates a DirectCompositeColumn.
+ * 
+ * @param table			The CompositeTable that this column belongs to.
+ * @param suffix		A suffix to append to the content of each cell.
+ * @param contentColumn	The column from which to take the actual cell content.
+ */
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn) :
+	DirectCompositeColumn(table, contentColumn.name, contentColumn.uiName, suffix, contentColumn)
 {}
 
 
@@ -312,7 +325,7 @@ const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
  */
-ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Column& contentColumn) :
+ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
 	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
 	contentColumn(contentColumn)
@@ -509,7 +522,7 @@ IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, 
 {
 	assert(!sortingPasses.isEmpty());
 	for (const auto& [column, order] : sortingPasses) {
-		assert(&column.table == &table.getBaseTable());
+		assert(&column.table == &table.baseTable);
 		assert(order == Qt::AscendingOrder || order == Qt::DescendingOrder);
 	}
 }

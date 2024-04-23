@@ -121,6 +121,13 @@ public:
 	ProjectSetting<int>			defaultHiker;
 	
 	
+	// === INTERNAL STATE ===
+	
+	// Custom column counter
+	/** Counter for how many custom columns have ever been created in the project. Not specific for any table, doesn't count down when custom columns are removed again. */
+	ProjectSetting<int>			numCustomColumnsCreated;
+	
+	
 	// === IMPLICIT SETTINGS ===
 	
 	// View state
@@ -241,6 +248,12 @@ public:
 		defaultHiker					(ProjectSetting<int>		(table,	"defaultHiker")),
 		
 		
+		// === INTERNAL STATE ===
+		
+		// Custom column counter
+		numCustomColumnsCreated			(ProjectSetting<int>		(table,	"internal/numCustomColumnsCreated",					0)),
+		
+		
 		// === IMPLICIT SETTINGS ===
 		
 		// View state
@@ -255,7 +268,7 @@ public:
 		columnWidths_rangesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/rangesTable",		100)),
 		columnWidths_countriesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnWidths/countriesTable",	100)),
 		
-		// Column widths
+		// Column order
 		columnOrder_ascentsTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/ascentsTable",		-1)),
 		columnOrder_peaksTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/peaksTable",		-1)),
 		columnOrder_tripsTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/tripsTable",		-1)),
@@ -264,7 +277,7 @@ public:
 		columnOrder_rangesTable			(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/rangesTable",		-1)),
 		columnOrder_countriesTable		(ProjectMultiSetting<int>	(table,	"implicit/mainWindow/columnOrder/countriesTable",	-1)),
 		
-		// Column widths
+		// Hidden columns
 		hiddenColumns_ascentsTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/ascentsTable",	false)),
 		hiddenColumns_peaksTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/peaksTable",		false)),
 		hiddenColumns_tripsTable		(ProjectMultiSetting<bool>	(table,	"implicit/mainWindow/hiddenColumns/tripsTable",		false)),

@@ -44,6 +44,7 @@ CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView*
 	tableView(tableView),
 	columns(QList<const CompositeColumn*>()),
 	exportColumns(QList<QPair<int, const CompositeColumn*>>()),
+	customColumns(QList<const CompositeColumn*>()),
 	bufferInitialized(false),
 	buffer(TableBuffer()),
 	viewOrder(ViewOrderBuffer()),
@@ -69,6 +70,26 @@ CompositeTable::~CompositeTable()
 
 
 /**
+ * Completely resets all project-specific fields, including buffers and custom columns.
+ * 
+ * Used when closing a project.
+ */
+void CompositeTable::reset()
+{
+	beginResetModel();
+	viewOrder.clear();
+	endResetModel();
+	
+	buffer.reset();
+	bufferInitialized = false;
+	customColumns.clear();
+	dirtyColumns.clear();
+	hiddenColumns.clear();
+}
+
+
+
+/**
  * Adds a normal column to this table during initialization.
  * 
  * @pre No column with the same internal name has been added.
@@ -89,9 +110,35 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
  *
  * @param column	The composite column to add as an export-only column.
  */
-void CompositeTable::addExportOnlyColumn(const CompositeColumn& column)
+void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 {
-	exportColumns.append({columns.size(), &column});
+	exportColumns.append({columns.size(), &newColumn});
+}
+
+/**
+ * Adds a custom column to this table during initialization or later.
+ * 
+ * @pre No column with the same internal name has been added.
+ * 
+ * @param column	The custom composite column to add.
+ */
+void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
+{
+	QList<const CompositeColumn*> allColumns = columns;
+	for (const auto& [_, column] : exportColumns) {
+		allColumns.append(column);
+	}
+	allColumns.append(customColumns);
+	for (const CompositeColumn* const column : allColumns) {
+		assert(column->name != newColumn.name);
+	}
+	
+	beginInsertColumns(QModelIndex(), getNumberOfNormalColumns(), getNumberOfNormalColumns());
+	
+	customColumns.append(&newColumn);
+	buffer.appendColumn();
+	
+	endInsertColumns();
 }
 
 
@@ -99,36 +146,33 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn& column)
 /**
  * Returns the number of normal columns (for display in the UI) in this table.
  * 
- * @return	The number of visible columns in this table.
+ * @return	The number of (potentially) visible columns in this table.
  */
 int CompositeTable::getNumberOfNormalColumns() const
 {
-	return columns.size();
+	return columns.size() + customColumns.size();
 }
 
 /**
- * Returns the number of columns which can be exported from this table, including normal columns
- * and export-only columns.
+ * Returns the number of columns which can be exported from this table, including normal columns,
+ * custom columns and export-only columns.
  * 
  * @return	The number of columns which can be exported from this table.
  */
 int CompositeTable::getNumberOfColumnsForCompleteExport() const
 {
-	return getNumberOfNormalColumns() + exportColumns.size();
+	return getNumberOfNormalColumns() + customColumns.size() + exportColumns.size();
 }
 
 /**
- * Returns a list of all normal (not export-only or filter-only) composite columns in the table.
+ * Returns a list of all normal (not export-only) composite columns in the table, including custom
+ * columns.
  * 
- * @return	A list of all normal columns in the table.
+ * @return	A list of all user-facing columns in the table.
  */
 QList<const CompositeColumn*> CompositeTable::getNormalColumnList() const
 {
-	QList<const CompositeColumn*> list = QList<const CompositeColumn*>();
-	for (int columnIndex = 0; columnIndex < getNumberOfNormalColumns(); columnIndex++) {
-		list.append(columns.at(columnIndex));
-	}
-	return list;
+	return columns + customColumns;
 }
 
 /**
@@ -142,10 +186,10 @@ QList<const CompositeColumn*> CompositeTable::getNormalColumnList() const
 QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() const
 {
 	QList<const CompositeColumn*> list = QList<const CompositeColumn*>();
-	int numNormalColumns = getNumberOfNormalColumns();
+	const int numDefaultColumns = columns.size();
 	int exportOnlyColumnIndex = 0;
 	int normalColumnIndex = 0;
-	while (normalColumnIndex < numNormalColumns || exportOnlyColumnIndex < exportColumns.size()) {
+	while (normalColumnIndex < numDefaultColumns || exportOnlyColumnIndex < exportColumns.size()) {
 		if (exportOnlyColumnIndex < exportColumns.size()) {
 			// At least one export only column left
 			// These are inserted before normal columns for the same index, so have to be handled first
@@ -157,8 +201,8 @@ QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() cons
 			}
 		}
 		
-		if (normalColumnIndex < numNormalColumns) {
-			// At least one normal column left
+		if (normalColumnIndex < numDefaultColumns) {
+			// At least one default column left
 			list.append(columns.at(normalColumnIndex));
 			normalColumnIndex++;
 			continue;
@@ -166,6 +210,8 @@ QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() cons
 		
 		assert(false);
 	}
+	// Append custom (user-defined) columns at the end
+	list.append(customColumns);
 	
 	return list;
 }
@@ -178,7 +224,12 @@ QList<const CompositeColumn*> CompositeTable::getCompleteExportColumnList() cons
  */
 const CompositeColumn& CompositeTable::getColumnAt(int columnIndex) const
 {
-	const CompositeColumn* column = columns.at(columnIndex);
+	const CompositeColumn* column;
+	if (columnIndex < columns.size()) {
+		column = columns.at(columnIndex);
+	} else {
+		column = customColumns.at(columnIndex - columns.size());
+	}
 	assert(column);
 	return *column;
 }
@@ -207,7 +258,7 @@ const CompositeColumn& CompositeTable::getExportOnlyColumnAt(int columnIndex) co
  */
 const CompositeColumn* CompositeTable::getColumnByNameOrNull(const QString& columnName) const
 {
-	for (const CompositeColumn* const column : columns) {
+	for (const CompositeColumn* const column : columns + customColumns) {
 		if (column->name == columnName) return column;
 	}
 	return nullptr;
@@ -223,7 +274,13 @@ const CompositeColumn* CompositeTable::getColumnByNameOrNull(const QString& colu
  */
 int CompositeTable::getIndexOf(const CompositeColumn& column) const
 {
-	return columns.indexOf(&column);
+	if (columns.contains(&column)) {
+		return columns.indexOf(&column);
+	}
+	if (customColumns.contains(&column)) {
+		return customColumns.indexOf(&column);
+	}
+	return -1;
 }
 
 /**
@@ -250,20 +307,10 @@ int CompositeTable::getExportIndexOf(const CompositeColumn& column) const
 QSet<QString> CompositeTable::getNormalColumnNameSet() const
 {
 	QSet<QString> columnNameSet;
-	for (int columnIndex = 0; columnIndex < getNumberOfNormalColumns(); columnIndex++) {
-		columnNameSet.insert(columns.at(columnIndex)->name);
+	for (const CompositeColumn* const column : columns + customColumns) {
+		columnNameSet.insert(column->name);
 	}
 	return columnNameSet;
-}
-
-/**
- * Returns the database table this composite table is based on.
- * 
- * @return	The database table this composite table is based on.
- */
-const NormalTable& CompositeTable::getBaseTable() const
-{
-	return baseTable;
 }
 
 
@@ -276,7 +323,7 @@ const NormalTable& CompositeTable::getBaseTable() const
 int CompositeTable::getNumberOfCellsToInit() const
 {
 	assert(!bufferInitialized);
-	return baseTable.getNumberOfRows() * columns.size();
+	return baseTable.getNumberOfRows() * getNumberOfNormalColumns();
 }
 
 /**
@@ -294,16 +341,19 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	assert(buffer.isEmpty() && viewOrder.isEmpty());
 	assert(dirtyColumns.isEmpty());
 	
-	for (const CompositeColumn* column : columns) {
+	QList<const CompositeColumn*> allColumns = columns + customColumns;
+	for (const CompositeColumn* column : allColumns) {
 		dirtyColumns.insert(column);
 	}
 	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
+	
+	buffer.setInitialNumberOfColumns(allColumns.size());
 	
 	// Initialize cells and compute their contents for most columns
 	int numberOfRows = baseTable.getNumberOfRows();
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(numberOfRows); bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
-		for (const CompositeColumn* const column : columns) {
+		for (const CompositeColumn* const column : allColumns) {
 			bool noUpdateColumn = !columnsToUpdate.contains(column);
 			bool computeWholeColumn = column->cellsAreInterdependent;
 			
@@ -319,7 +369,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	}
 	
 	// For columns which have to be computed as a whole, do that now
-	for (const CompositeColumn* const column : columns) {
+	for (const CompositeColumn* const column : allColumns) {
 		bool noUpdateColumn = !columnsToUpdate.contains(column);
 		bool computeWholeColumn = column->cellsAreInterdependent;
 		if (noUpdateColumn || !computeWholeColumn) continue;
@@ -494,23 +544,6 @@ void CompositeTable::updateBothBuffers(std::function<void()> runAfterEachCellUpd
 }
 
 /**
- * Completely resets the buffer and the order buffer.
- * 
- * Used when closing a project.
- */
-void CompositeTable::resetBuffer()
-{
-	beginResetModel();
-	viewOrder.clear();
-	endResetModel();
-	
-	buffer.reset();
-	bufferInitialized = false;
-	dirtyColumns.clear();
-	hiddenColumns.clear();
-}
-
-/**
  * Returns the index at which the item shown at the given view row is stored in the buffer.
  * 
  * @param viewRowIndex	The index of the view row to return the buffer index for.
@@ -550,7 +583,7 @@ ViewRowIndex CompositeTable::findViewRowIndexForBufferRow(BufferRowIndex bufferR
 QVariant CompositeTable::getRawValue(BufferRowIndex bufferRowIndex, const CompositeColumn& column)
 {
 	assert(bufferInitialized);
-	assert(columns.contains(&column));
+	assert(columns.contains(&column) || customColumns.contains(&column));
 	assert(bufferRowIndex.isValid(buffer.numRows()));
 	
 	QVariant result;
@@ -746,7 +779,7 @@ void CompositeTable::announceChanges(const QSet<const Column*>& affectedColumns,
 	}
 	
 	bool anyDataChanged = rowChanges;
-	for (const CompositeColumn* const column : columns) {
+	for (const CompositeColumn* const column : columns + customColumns) {
 		const bool affected = rowChanges || column->getAllUnderlyingColumns().intersects(affectedColumns);
 		if (!affected) continue;
 		
@@ -810,8 +843,8 @@ QVariant CompositeTable::headerData(int section, Qt::Orientation orientation, in
 	
 	if (role != Qt::DisplayRole) return QVariant();
 	
-	assert(section >= 0 && section < columns.size());
-	return columns.at(section)->uiName;
+	assert(section >= 0 && section < getNumberOfNormalColumns());
+	return getColumnAt(section).uiName;
 }
 
 /**
@@ -837,8 +870,8 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 	assert(bufferRowIndex.isValid(buffer.numRows()));
 	
 	const int columnIndex = index.column();
-	assert(columnIndex >= 0 && columnIndex < columns.size());
-	const CompositeColumn& column = *columns.at(columnIndex);
+	assert(columnIndex >= 0 && columnIndex < getNumberOfNormalColumns());
+	const CompositeColumn& column = getColumnAt(columnIndex);
 	assert(!hiddenColumns.contains(&column));
 	
 	if (role == Qt::TextAlignmentRole) {
@@ -872,8 +905,8 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
  */
 void CompositeTable::sort(int columnIndex, Qt::SortOrder order)
 {
-	assert(columnIndex >= 0 && columnIndex < columns.size());
-	const CompositeColumn& column = *columns.at(columnIndex);
+	assert(columnIndex >= 0 && columnIndex < getNumberOfNormalColumns());
+	const CompositeColumn& column = getColumnAt(columnIndex);
 	
 	if (bufferInitialized) updateBufferColumns({ &column });	// Sort column might need to be updated if hidden
 	
@@ -939,7 +972,7 @@ void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReve
 	
 	// Notify model users (views)
 	QModelIndex topLeftIndex		= index(0, 0);
-	QModelIndex bottomRightIndex	= index(viewOrder.numRows() - 1, columns.size() - 1);
+	QModelIndex bottomRightIndex	= index(viewOrder.numRows() - 1, getNumberOfNormalColumns() - 1);
 	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
 	//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
 }
@@ -956,9 +989,9 @@ void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReve
 QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int columnIndex) const
 {
 	assert(bufferRowIndex.isValid(baseTable.getNumberOfRows()));
-	assert(columnIndex >= 0 && columnIndex < columns.size());
+	assert(columnIndex >= 0 && columnIndex < getNumberOfNormalColumns());
 	
-	const CompositeColumn& column = *columns.at(columnIndex);
+	const CompositeColumn& column = getColumnAt(columnIndex);
 	QVariant result = column.computeValueAt(bufferRowIndex);
 	
 	if (Q_UNLIKELY(!result.isValid())) return QVariant();
@@ -976,7 +1009,7 @@ QVariant CompositeTable::computeCellContent(BufferRowIndex bufferRowIndex, int c
  */
 QList<QVariant> CompositeTable::computeWholeColumnContent(int columnIndex) const
 {
-	const CompositeColumn& column = *columns.at(columnIndex);
+	const CompositeColumn& column = getColumnAt(columnIndex);
 	QList<QVariant> cells = column.computeWholeColumn();
 	assert(cells.size() == buffer.numRows());
 	return cells;

@@ -76,15 +76,19 @@ class CompositeTable : public QAbstractTableModel {
 	
 	/** The project database. */
 	Database& db;
+public:
 	/** The database table this table is based on. */
 	const NormalTable& baseTable;
+private:
 	/** The UI table view this table is displayed in. */
 	QTableView* const tableView;
 	
 	/** The composite columns of this table in their default order. */
 	QList<const CompositeColumn*> columns;
-	/** The composite columns of this table which are only used for exporting, not for display in the UI. Paired with the index of the normal column they come in front of. */
+	/** The composite columns of this table which are only used for exporting, not for display in the UI. Paired with the index of the default column they come in front of. */
 	QList<QPair<int, const CompositeColumn*>> exportColumns;
+	/** The custom composite columns of this table created by the user in order of creation. */
+	QList<const CompositeColumn*> customColumns;
 	
 	/** Whether the buffer has been initialized for an open project. */
 	bool bufferInitialized;
@@ -125,10 +129,14 @@ protected:
 public:
 	~CompositeTable();
 	
+	void reset();
+	
 protected:
 	void addColumn(const CompositeColumn& newColumn);
-	void addExportOnlyColumn(const CompositeColumn& column);
+	void addExportOnlyColumn(const CompositeColumn& newColumn);
 public:
+	void addCustomColumn(const CompositeColumn& newColumn);
+	
 	int getNumberOfNormalColumns() const;
 	int getNumberOfColumnsForCompleteExport() const;
 	QList<const CompositeColumn*> getNormalColumnList() const;
@@ -139,7 +147,6 @@ public:
 	int getIndexOf(const CompositeColumn& column) const;
 	int getExportIndexOf(const CompositeColumn& column) const;
 	QSet<QString> getNormalColumnNameSet() const;
-	const NormalTable& getBaseTable() const;
 	
 	int getNumberOfCellsToInit() const;
 	void initBuffer(QProgressDialog* progressDialog, bool deferCompute = false, QTableView* tableToAutoResizeAfterCompute = nullptr);
@@ -148,7 +155,6 @@ public:
 	int getNumberOfCellsToUpdate() const;
 	void updateBufferColumns(QSet<const CompositeColumn*> columnsToUpdate, std::function<void()> runAfterEachCellUpdate = []() {});
 	void updateBothBuffers(std::function<void()> runAfterEachCellUpdate = []() {});
-	void resetBuffer();
 	BufferRowIndex getBufferRowIndexForViewRow(ViewRowIndex viewRowIndex) const;
 	ViewRowIndex findViewRowIndexForBufferRow(BufferRowIndex bufferRowIndex) const;
 	

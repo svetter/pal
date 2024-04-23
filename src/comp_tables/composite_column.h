@@ -122,10 +122,11 @@ protected:
  */
 class DirectCompositeColumn : public CompositeColumn {
 	/** The column in the base table from which to take the content. */
-	Column& contentColumn;
+	const Column& contentColumn;
 	
 public:
-	DirectCompositeColumn(CompositeTable& table, QString suffix, Column& contentColumn);
+	DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn);
+	DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -142,10 +143,10 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	/** The breadcrumb trail (chain of foreign key columns) to follow to the target table containing the content. */
 	Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
-	Column& contentColumn;
+	const Column& contentColumn;
 	
 public:
-	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, Column& contentColumn);
+	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	

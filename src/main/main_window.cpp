@@ -1201,11 +1201,11 @@ void MainWindow::handle_addCustomColumn()
 
 void MainWindow::handle_columnWizardAccepted()
 {
-	ColumnWizard& wizard = getActiveMapper().columnWizard;
+	const ItemTypeMapper& mapper = getActiveMapper();
+	ColumnWizard& wizard = mapper.columnWizard;
 	
-	CompositeColumn* const newColumn = wizard.getFinishedColumn();
-	// TODO
-	qDebug() << "handle_columnWizardAccepted";
+	const CompositeColumn& newColumn = *wizard.getFinishedColumn();
+	mapper.compTable.addCustomColumn(newColumn);
 }
 
 /**
@@ -1397,7 +1397,7 @@ void MainWindow::handle_closeDatabase()
 	projectOpen = false;
 
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		mapper->compTable.resetBuffer();
+		mapper->compTable.reset();
 		mapper->statsEngine.resetStatsPanel();
 	}
 	generalStatsEngine.resetStatsTab();

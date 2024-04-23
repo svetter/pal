@@ -55,6 +55,6 @@ void TableChangeListenerCompositeTable::dataChanged(const QSet<const Column*>& a
 {
 	if (affectedColumns.isEmpty() && rowsAddedOrRemovedPerTable.isEmpty()) return;
 	
-	const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved = rowsAddedOrRemovedPerTable.value(&owner.getBaseTable());
+	const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved = rowsAddedOrRemovedPerTable.value(&owner.baseTable);
 	owner.announceChanges(affectedColumns, rowsAddedOrRemoved);
 }

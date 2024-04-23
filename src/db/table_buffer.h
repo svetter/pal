@@ -36,6 +36,8 @@
  */
 class TableBuffer {
 protected:
+	/** The number of columns currently represented in each row of the buffer. */
+	int numColumns;
 	/** The buffer. */
 	QList<QList<QVariant>*> buffer;
 	
@@ -44,6 +46,7 @@ public:
 	~TableBuffer();
 	
 	void reset();
+	void setInitialNumberOfColumns(int initialNumColumns);
 	
 	int numRows() const;
 	bool isEmpty() const;
@@ -55,6 +58,9 @@ public:
 	void insertRow(BufferRowIndex rowIndex, QList<QVariant>* newRow);
 	void removeRow(BufferRowIndex rowIndex);
 	void replaceCell(BufferRowIndex rowIndex, int columnIndex, const QVariant& newValue);
+	
+	void appendColumn();
+	void removeColumn(int columnIndex);
 	
 	QList<QList<QVariant>*>::const_iterator begin() const;
 	QList<QList<QVariant>*>::const_iterator end() const;

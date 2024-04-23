@@ -28,7 +28,9 @@
 /**
  * Creates an empty TableBuffer.
  */
-TableBuffer::TableBuffer() : buffer(QList<QList<QVariant>*>())
+TableBuffer::TableBuffer() :
+	numColumns(0),
+	buffer(QList<QList<QVariant>*>())
 {}
 
 /**
@@ -45,9 +47,26 @@ TableBuffer::~TableBuffer()
  */
 void TableBuffer::reset()
 {
+	numColumns = 0;
 	qDeleteAll(buffer);
 	buffer.clear();
 }
+
+/**
+ * Sets the initial number of columns for the buffer.
+ * 
+ * This method should only be called once, before any rows are added to the buffer.
+ * 
+ * @param initialNumColumns	The initial number of columns for the buffer.
+ */
+void TableBuffer::setInitialNumberOfColumns(int initialNumColumns)
+{
+	assert(numColumns < 1);
+	assert(buffer.isEmpty());
+	
+	numColumns = initialNumColumns;
+}
+
 
 
 /**
@@ -80,6 +99,7 @@ bool TableBuffer::isEmpty() const
 const QList<QVariant>* TableBuffer::getRow(BufferRowIndex rowIndex) const
 {
 	assert(rowIndex.isValid(numRows()));
+	
 	return buffer.at(rowIndex.get());
 }
 
@@ -92,8 +112,9 @@ const QList<QVariant>* TableBuffer::getRow(BufferRowIndex rowIndex) const
  */
 QVariant TableBuffer::getCell(BufferRowIndex rowIndex, int columnIndex) const
 {
+	assert(columnIndex >= 0 && columnIndex < numColumns);
+	
 	const QList<QVariant>* row = getRow(rowIndex);
-	assert(columnIndex >= 0 && columnIndex < row->size());
 	return row->at(columnIndex);
 }
 
@@ -105,6 +126,8 @@ QVariant TableBuffer::getCell(BufferRowIndex rowIndex, int columnIndex) const
  */
 void TableBuffer::appendRow(QList<QVariant>* newRow)
 {
+	assert(newRow->size() == numColumns);
+	
 	buffer.append(newRow);
 }
 
@@ -116,6 +139,9 @@ void TableBuffer::appendRow(QList<QVariant>* newRow)
  */
 void TableBuffer::insertRow(BufferRowIndex rowIndex, QList<QVariant>* newRow)
 {
+	assert(rowIndex.isValid(buffer.size() + 1));
+	assert(newRow->size() == numColumns);
+	
 	buffer.insert(rowIndex.get(), newRow);
 }
 
@@ -127,6 +153,7 @@ void TableBuffer::insertRow(BufferRowIndex rowIndex, QList<QVariant>* newRow)
 void TableBuffer::removeRow(BufferRowIndex rowIndex)
 {
 	assert(rowIndex.isValid(buffer.size()));
+	
 	const QList<QVariant>* rowToRemove = buffer.at(rowIndex.get());
 	buffer.remove(rowIndex.get());
 	delete rowToRemove;
@@ -142,10 +169,41 @@ void TableBuffer::removeRow(BufferRowIndex rowIndex)
 void TableBuffer::replaceCell(BufferRowIndex rowIndex, int columnIndex, const QVariant& newValue)
 {
 	assert(rowIndex.isValid(buffer.size()));
+	assert(columnIndex >= 0 && columnIndex < numColumns);
+	
 	QList<QVariant>* row = buffer.at(rowIndex.get());
-	assert(columnIndex >= 0 && columnIndex < row->size());
 	row->replace(columnIndex, newValue);
 }
+
+
+/**
+ * Appends space for a new column to the buffer.
+ */
+void TableBuffer::appendColumn()
+{
+	for (QList<QVariant>* const row : buffer) {
+		row->append(QVariant());
+	}
+	
+	numColumns++;
+}
+
+/**
+ * Removes the column at the given index from the buffer.
+ * 
+ * @param columnIndex	The index of the column to remove.
+ */
+void TableBuffer::removeColumn(int columnIndex)
+{
+	assert(columnIndex >= 0 && columnIndex < numColumns);
+	
+	for (QList<QVariant>* const row : buffer) {
+		row->remove(columnIndex);
+	}
+	
+	numColumns--;
+}
+
 
 
 /**
