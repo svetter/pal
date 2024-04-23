@@ -51,6 +51,9 @@ class MainWindow : public QMainWindow, private Ui_MainWindow
 	bool projectOpen;
 	/** The project database. */
 	Database db;
+	/** The ItemTypesHandler singleton. */
+	const ItemTypesHandler* typesHandler;
+	
 	/** The list of menu items for opening the most recently opened database files. */
 	QList<QAction*> openRecentActions;
 	
@@ -58,8 +61,12 @@ class MainWindow : public QMainWindow, private Ui_MainWindow
 	QMenu columnContextMenu;
 	/** The column context menu entry for hiding the selected column. */
 	QAction* columnContextMenuHideColumnAction;
+	/** The column context menu entry for removing the selected column. */
+	QAction* columnContextMenuRemoveColumnAction;
 	/** The column context submenu for unhiding any previously hidden column. */
 	QMenu* columnContextMenuRestoreColumnMenu;
+	/** The column context menu entry for creating a new custom column. */
+	QAction* columnContextMenuAddCustomColumnAction;
 	
 	/** The context menu for the cell are of all UI tables. */
 	QMenu tableContextMenu;
@@ -79,9 +86,6 @@ class MainWindow : public QMainWindow, private Ui_MainWindow
 	QLabel* statusBarTableSizeLabel;
 	/** The status bar label for the current filter settings. */
 	QLabel* statusBarFiltersLabel;
-	
-	/** The ItemTypesHandler singleton. */
-	const ItemTypesHandler* typesHandler;
 	
 	/** The stats engine instance for computing general statistics. */
 	GeneralStatsEngine generalStatsEngine;
@@ -142,6 +146,9 @@ private slots:
 	// Column context menu action handlers
 	void handle_hideColumn();
 	void handle_unhideColumn();
+	void handle_addCustomColumn();
+	void handle_columnWizardAccepted();
+	void handle_removeColumn();
 	
 	// File menu action handlers
 	void handle_newDatabase();

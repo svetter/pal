@@ -129,6 +129,7 @@ HEADERS += \
 	src/filters/string_filter.h \
 	src/filters/time_filter.h \
 	src/main/about_window.h \
+	src/main/column_wizard.h \
 	src/main/filter_bar.h \
 	src/main/filter_wizard.h \
 	src/main/helpers.h \
@@ -219,6 +220,7 @@ SOURCES += \
 	src/filters/string_filter.cpp \
 	src/filters/time_filter.cpp \
 	src/main/about_window.cpp \
+	src/main/column_wizard.cpp \
 	src/main/filter_bar.cpp \
 	src/main/filter_wizard.cpp \
 	src/main/helpers.cpp \

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
+    <width>1400</width>
     <height>800</height>
    </rect>
   </property>
@@ -587,7 +587,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="peaksStatsScrollAreaLayout">
@@ -720,7 +720,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="tripsStatsScrollAreaLayout">
@@ -850,7 +850,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="hikersStatsScrollAreaLayout">
@@ -980,7 +980,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="regionsStatsScrollAreaLayout">
@@ -1110,7 +1110,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="rangesStatsScrollAreaLayout">
@@ -1240,7 +1240,7 @@
               <x>0</x>
               <y>0</y>
               <width>248</width>
-              <height>643</height>
+              <height>623</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="countriesStatsScrollAreaLayout">
@@ -1301,7 +1301,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1500</width>
+     <width>1400</width>
      <height>21</height>
     </rect>
    </property>
@@ -1330,16 +1330,18 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="showFiltersAction"/>
+    <addaction name="separator"/>
     <addaction name="showItemStatsPanelAction"/>
     <addaction name="showAllStatsPanelsAction"/>
     <addaction name="hideAllStatsPanelsAction"/>
     <addaction name="pinStatsRangesAction"/>
     <addaction name="separator"/>
-    <addaction name="showFiltersAction"/>
-    <addaction name="separator"/>
     <addaction name="autoResizeColumnsAction"/>
     <addaction name="resetColumnOrderAction"/>
     <addaction name="restoreHiddenColumnsAction"/>
+    <addaction name="separator"/>
+    <addaction name="addCustomColumnAction"/>
     <addaction name="separator"/>
     <addaction name="clearTableSelectionAction"/>
    </widget>
@@ -1582,6 +1584,11 @@
    </property>
    <property name="shortcut">
     <string notr="true">Esc</string>
+   </property>
+  </action>
+  <action name="addCustomColumnAction">
+   <property name="text">
+    <string>Add custom column...</string>
    </property>
   </action>
  </widget>

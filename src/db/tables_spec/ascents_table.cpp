@@ -207,6 +207,16 @@ QString AscentsTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a ascent custom column wizard.
+ * 
+ * @return	The translated title for a ascent custom column wizard.
+ */
+QString AscentsTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for ascents");
+}
+
+/**
  * Returns a translated title for an ascent filter wizard.
  * 
  * @return	The translated title for an ascent filter wizard.

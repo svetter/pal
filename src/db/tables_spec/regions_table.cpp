@@ -178,6 +178,16 @@ QString RegionsTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a region custom column wizard.
+ * 
+ * @return	The translated title for a region custom column wizard.
+ */
+QString RegionsTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for regions");
+}
+
+/**
  * Returns a translated title for a region filter wizard.
  * 
  * @return	The translated title for a region filter wizard.

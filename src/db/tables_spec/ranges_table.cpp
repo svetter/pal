@@ -160,7 +160,7 @@ QString RangesTable::getCreationConfirmMessage() const
  */
 QString RangesTable::getEditConfirmMessage(int numEdited) const
 {
-	return tr("Saved changes in %Ln mountain ranges(s).", "", numEdited);
+	return tr("Saved changes in %Ln mountain range(s).", "", numEdited);
 }
 
 /**
@@ -171,7 +171,17 @@ QString RangesTable::getEditConfirmMessage(int numEdited) const
  */
 QString RangesTable::getDeleteConfirmMessage(int numDeleted) const
 {
-	return tr("Deleted %Ln mountain ranges(s).", "", numDeleted);
+	return tr("Deleted %Ln mountain range(s).", "", numDeleted);
+}
+
+/**
+ * Returns a translated title for a mountain range custom column wizard.
+ * 
+ * @return	The translated title for a mountain range custom column wizard.
+ */
+QString RangesTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for mountain ranges");
 }
 
 /**

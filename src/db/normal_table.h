@@ -92,6 +92,13 @@ public:
 	 */
 	virtual QString getDeleteConfirmMessage(int numDeleted) const = 0;
 	/**
+	 * Returns a translated title for a wizard for creating a new custom column for the composite
+	 * version of this table.
+	 * 
+	 * @return	The translated title for a wizard for creating a new custom column.
+	 */
+	virtual QString getNewCustomColumnString() const = 0;
+	/**
 	 * Returns a translated title for a filter wizard creating a new filter of this table's type.
 	 * 
 	 * @return	The translated title for a filter wizard creating a new filter.

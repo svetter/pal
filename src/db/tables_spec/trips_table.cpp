@@ -179,6 +179,16 @@ QString TripsTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a trip custom column wizard.
+ * 
+ * @return	The translated title for a trip custom column wizard.
+ */
+QString TripsTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for trips");
+}
+
+/**
  * Returns a translated title for a trip filter wizard.
  * 
  * @return	The translated title for a trip filter wizard.

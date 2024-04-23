@@ -45,13 +45,13 @@ MainWindow::MainWindow() :
 	Ui_MainWindow(),
 	projectOpen(false),
 	db(Database()),
-	openRecentActions(QList<QAction*>()),
-	columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr), columnContextMenuRestoreColumnMenu(nullptr),
-	tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr), tableContextMenuDuplicateAction(nullptr),
+	typesHandler(nullptr),
+	openRecentActions(QList<QAction*>()), columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr),
+	columnContextMenuRestoreColumnMenu(nullptr), tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr),
+	tableContextMenuDuplicateAction(nullptr),
 	shortcuts(QList<QShortcut*>()),
 	statusBarTableSizeLabel(new QLabel(statusbar)),
 	statusBarFiltersLabel(new QLabel(statusbar)),
-	typesHandler(nullptr),
 	generalStatsEngine(GeneralStatsEngine(db, &statisticsTabLayout))
 {
 	setupUi(this);
@@ -118,15 +118,19 @@ void MainWindow::createTypesHandler()
 {
 	typesHandler = new ItemTypesHandler(db,
 		{
-			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		ascentsTableView,	ascentFilterBar,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton}	},
-			{ItemTypePeak,		TypeMapperPointers{peaksTab,		peaksTableView,		peakFilterBar,		peaksStatsScrollArea,		newPeakAction,		newPeakButton}		},
-			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		tripsTableView,		tripFilterBar,		tripsStatsScrollArea,		newTripAction,		newTripButton}		},
-			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		hikersTableView,	hikerFilterBar,		hikersStatsScrollArea,		newHikerAction,		newHikerButton}		},
-			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		regionsTableView,	regionFilterBar,	regionsStatsScrollArea,		newRegionAction,	newRegionButton}	},
-			{ItemTypeRange,		TypeMapperPointers{rangesTab,		rangesTableView,	rangeFilterBar,		rangesStatsScrollArea,		newRangeAction,		newRangeButton}		},
-			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	countriesTableView,	countryFilterBar,	countriesStatsScrollArea,	newCountryAction,	newCountryButton}	}
+			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		ascentsTableView,	ascentFilterBar,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton		} },
+			{ItemTypePeak,		TypeMapperPointers{peaksTab,		peaksTableView,		peakFilterBar,		peaksStatsScrollArea,		newPeakAction,		newPeakButton		} },
+			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		tripsTableView,		tripFilterBar,		tripsStatsScrollArea,		newTripAction,		newTripButton		} },
+			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		hikersTableView,	hikerFilterBar,		hikersStatsScrollArea,		newHikerAction,		newHikerButton		} },
+			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		regionsTableView,	regionFilterBar,	regionsStatsScrollArea,		newRegionAction,	newRegionButton		} },
+			{ItemTypeRange,		TypeMapperPointers{rangesTab,		rangesTableView,	rangeFilterBar,		rangesStatsScrollArea,		newRangeAction,		newRangeButton		} },
+			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	countriesTableView,	countryFilterBar,	countriesStatsScrollArea,	newCountryAction,	newCountryButton	} }
 		}
 	);
+	
+	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		connect(&mapper->columnWizard, &ColumnWizard::accepted, this, &MainWindow::handle_columnWizardAccepted);
+	}
 }
 
 /**
@@ -134,6 +138,7 @@ void MainWindow::createTypesHandler()
  */
 void MainWindow::setupMenuIcons()
 {
+	// File menu
 	newDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
 	openDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
 	openRecentMenu				->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
@@ -141,19 +146,25 @@ void MainWindow::setupMenuIcons()
 	closeDatabaseAction			->setIcon(style()->standardIcon(QStyle::SP_TabCloseButton));
 	projectSettingsAction		->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
 	settingsAction				->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+	
 	// View menu
+	// showFiltersAction is checkable
 	// showItemStatsPanelAction is checkable
 	showAllStatsPanelsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	hideAllStatsPanelsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	// pinStatsRangesAction is checkable
-	// showFiltersAction is checkable
 	autoResizeColumnsAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	resetColumnOrderAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	restoreHiddenColumnsAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	addCustomColumnAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	clearTableSelectionAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	
 	// New menu: using own icons
+	
 	// Tools menu
 	relocatePhotosAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	exportDataAction			->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	
 	// Help menu: already has icons
 }
 
@@ -172,6 +183,7 @@ void MainWindow::connectUI()
 	connect(closeDatabaseAction,			&QAction::triggered,			this,	&MainWindow::handle_closeDatabase);
 	connect(projectSettingsAction,			&QAction::triggered,			this,	&MainWindow::handle_openProjectSettings);
 	connect(settingsAction,					&QAction::triggered,			this,	&MainWindow::handle_openSettings);
+	
 	// Menu "View"
 	connect(showFiltersAction,				&QAction::toggled,				this,	&MainWindow::handle_showFiltersChanged);
 	connect(showItemStatsPanelAction,		&QAction::toggled,				this,	&MainWindow::handle_showStatsPanelChanged);
@@ -181,7 +193,9 @@ void MainWindow::connectUI()
 	connect(autoResizeColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_autoResizeColumns);
 	connect(resetColumnOrderAction,			&QAction::triggered,			this,	&MainWindow::handle_resetColumnOrder);
 	connect(restoreHiddenColumnsAction,		&QAction::triggered,			this,	&MainWindow::handle_restoreHiddenColumns);
+	connect(addCustomColumnAction,			&QAction::triggered,			this,	&MainWindow::handle_addCustomColumn);
 	connect(clearTableSelectionAction,		&QAction::triggered,			this,	&MainWindow::handle_clearTableSelection);
+	
 	// Menu "New"
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		auto newFunction = [this, mapper] () {
@@ -191,12 +205,15 @@ void MainWindow::connectUI()
 		connect(&mapper->newItemAction,		&QAction::triggered,			this,	newFunction);
 		connect(&mapper->newItemButton,		&QPushButton::clicked,			this,	newFunction);
 	}
+	
 	// Menu "Tools"
 	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
 	connect(exportDataAction,				&QAction::triggered,			this,	&MainWindow::handle_exportData);
+	
 	// Menu "Help"
 	connect(aboutAction,					&QAction::triggered,			this,	&MainWindow::handle_about);
 	connect(aboutQtAction,					&QAction::triggered,			this,	&QApplication::aboutQt);
+	
 	
 	// === TABS AND TABLES ===
 	
@@ -374,10 +391,21 @@ void MainWindow::initColumnContextMenu()
 {
 	// Context menu
 	columnContextMenuHideColumnAction = columnContextMenu.addAction(tr("Hide this column"));
+	columnContextMenuRemoveColumnAction = columnContextMenu.addAction(tr("Remove this column"));
+	columnContextMenuRemoveColumnAction->setEnabled(false);
 	columnContextMenu.addSeparator();
 	columnContextMenuRestoreColumnMenu = columnContextMenu.addMenu(tr("Restore hidden column"));
+	columnContextMenu.addSeparator();
+	columnContextMenuAddCustomColumnAction = columnContextMenu.addAction(tr("Add custom column..."));
 	
-	connect(columnContextMenuHideColumnAction, &QAction::triggered, this, &MainWindow::handle_hideColumn);
+	// Set icons
+	columnContextMenuHideColumnAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	columnContextMenuRemoveColumnAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	columnContextMenuAddCustomColumnAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
+	
+	connect(columnContextMenuHideColumnAction,		&QAction::triggered, this, &MainWindow::handle_hideColumn);
+	connect(columnContextMenuRemoveColumnAction,	&QAction::triggered, this, &MainWindow::handle_removeColumn);
+	connect(columnContextMenuAddCustomColumnAction,	&QAction::triggered, this, &MainWindow::handle_addCustomColumn);
 }
 
 /**
@@ -1125,13 +1153,12 @@ void MainWindow::handle_hideColumn()
 	QAction* action = qobject_cast<QAction*>(sender());
 	if (!action) return;
 	
-	int logicalIndex = action->data().toInt();
+	const int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
 	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, true);
 	mapper.compTable.markColumnHidden(logicalIndex);
-	
 }
 
 /**
@@ -1144,13 +1171,59 @@ void MainWindow::handle_unhideColumn()
 	QAction* action = qobject_cast<QAction*>(sender());
 	if (!action) return;
 	
-	int logicalIndex = action->data().toInt();
+	const int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
 	
 	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, false);
 	mapper.compTable.markColumnUnhidden(logicalIndex);
 	mapper.compTable.updateBothBuffers();
+}
+
+/**
+ * Event handler for the 'add custom column' action in the column context menu.
+ * 
+ * Extracts the column index from calling sender().
+ */
+void MainWindow::handle_addCustomColumn()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	if (!action) return;
+	
+	const int logicalIndex = action->data().toInt();
+	// TODO Find visual index of clicked column and insert new column behind it
+	
+	ColumnWizard& wizard = getActiveMapper().columnWizard;
+	
+	wizard.restart();
+	wizard.show();
+}
+
+void MainWindow::handle_columnWizardAccepted()
+{
+	ColumnWizard& wizard = getActiveMapper().columnWizard;
+	
+	CompositeColumn* const newColumn = wizard.getFinishedColumn();
+	// TODO
+	qDebug() << "handle_columnWizardAccepted";
+}
+
+/**
+ * Event handler for the 'remove column' action in the column context menu.
+ * 
+ * Extracts the column index from calling sender().
+ */
+void MainWindow::handle_removeColumn()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	if (!action) return;
+	
+	const int logicalIndex = action->data().toInt();
+	
+	const ItemTypeMapper& mapper = getActiveMapper();
+	
+	// TODO
+	qDebug() << "handle_removeColumn";
 }
 
 

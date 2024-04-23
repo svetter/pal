@@ -170,6 +170,16 @@ QString HikersTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a hiker custom column wizard.
+ * 
+ * @return	The translated title for a hiker custom column wizard.
+ */
+QString HikersTable::getNewCustomColumnString() const
+{
+	return tr("New custom column hikers");
+}
+
+/**
  * Returns a translated title for a hiker filter wizard.
  * 
  * @return	The translated title for a hiker filter wizard.

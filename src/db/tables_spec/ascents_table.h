@@ -77,6 +77,7 @@ public:
 	virtual QString getCreationConfirmMessage() const;
 	virtual QString getEditConfirmMessage(int numEdited) const;
 	virtual QString getDeleteConfirmMessage(int numDeleted) const;
+	virtual QString getNewCustomColumnString() const;
 	virtual QString getNewFilterString() const;
 	virtual QString getItemCountString(int numItems) const;
 };

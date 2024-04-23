@@ -255,6 +255,16 @@ QString PhotosTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a photo custom column wizard.
+ * 
+ * @return	The translated title for a photo custom column wizard.
+ */
+QString PhotosTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for photos");
+}
+
+/**
  * Returns a translated title for a photo filter wizard.
  * 
  * @return	The translated title for a photo filter wizard.

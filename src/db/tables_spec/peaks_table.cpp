@@ -189,6 +189,16 @@ QString PeaksTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a peak custom column wizard.
+ * 
+ * @return	The translated title for a peak custom column wizard.
+ */
+QString PeaksTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for peaks");
+}
+
+/**
  * Returns a translated title for a peak filter wizard.
  * 
  * @return	The translated title for a peak filter wizard.

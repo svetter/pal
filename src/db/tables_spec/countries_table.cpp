@@ -170,6 +170,16 @@ QString CountriesTable::getDeleteConfirmMessage(int numDeleted) const
 }
 
 /**
+ * Returns a translated title for a country custom column wizard.
+ * 
+ * @return	The translated title for a country custom column wizard.
+ */
+QString CountriesTable::getNewCustomColumnString() const
+{
+	return tr("New custom column for countries");
+}
+
+/**
  * Returns a translated title for a country filter wizard.
  * 
  * @return	The translated title for a country filter wizard.

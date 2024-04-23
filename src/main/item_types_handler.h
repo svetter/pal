@@ -40,6 +40,7 @@
 #include "src/dialogs/range_dialog.h"
 #include "src/dialogs/region_dialog.h"
 #include "src/dialogs/trip_dialog.h"
+#include "src/main/column_wizard.h"
 #include "src/main/filter_bar.h"
 #include "src/stats/stats_engine.h"
 #include "src/settings/settings.h"
@@ -109,6 +110,9 @@ public:
 	QAction&			newItemAction;
 	/** The button in the main window for creating a new item of this type. */
 	QPushButton&		newItemButton;
+	
+	/** The wizard for creating new custom columns. */
+	ColumnWizard&		columnWizard;
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>&		dialogGeometrySetting;
@@ -207,6 +211,7 @@ public:
 		statsScrollArea							(*pointerSupply.statsScrollArea),
 		newItemAction							(*pointerSupply.newItemAction),
 		newItemButton							(*pointerSupply.newItemButton),
+		columnWizard							(* new ColumnWizard(pointerSupply.tableView, db, *compTable)),
 		dialogGeometrySetting					(dialogGeometrySetting),
 		showStatsPanelSetting					(showStatsPanelSetting),
 		statsPanelSplitterSizesSetting			(statsPanelSplitterSizesSetting),
@@ -232,6 +237,7 @@ public:
 	{
 		delete &compTable;
 		delete &statsEngine;
+		delete &columnWizard;
 	}
 	
 	
