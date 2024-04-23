@@ -138,6 +138,11 @@ void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
 	customColumns.append(&newColumn);
 	buffer.appendColumn();
 	
+	if (bufferInitialized) {
+		dirtyColumns.insert(&newColumn);
+		updateBufferColumns({ &newColumn });
+	}
+	
 	endInsertColumns();
 }
 
@@ -278,7 +283,7 @@ int CompositeTable::getIndexOf(const CompositeColumn& column) const
 		return columns.indexOf(&column);
 	}
 	if (customColumns.contains(&column)) {
-		return customColumns.indexOf(&column);
+		return columns.size() + customColumns.indexOf(&column);
 	}
 	return -1;
 }
