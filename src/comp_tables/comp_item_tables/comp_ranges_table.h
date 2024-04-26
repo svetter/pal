@@ -42,15 +42,15 @@ public:
 	/** The continent the mountain range is on. */
 	const DirectCompositeColumn			continentColumn;
 	/** The number of regions assigned to this mountain range. */
-	const NumericFoldCompositeColumn	numRegionsColumn;
+	const CountFoldCompositeColumn		numRegionsColumn;
 	/** The number of peaks assigned to this mountain range. */
-	const NumericFoldCompositeColumn	numPeaksColumn;
+	const CountFoldCompositeColumn		numPeaksColumn;
 	/** The average height of the peaks assigned to this mountain range. */
 	const NumericFoldCompositeColumn	avgPeakHeightColumn;
 	/** The maximum height of the peaks assigned to this mountain range. */
 	const NumericFoldCompositeColumn	maxPeakHeightColumn;
 	/** The number of ascents logged for this mountain range. */
-	const NumericFoldCompositeColumn	numAscentsColumn;
+	const CountFoldCompositeColumn		numAscentsColumn;
 	
 public:
 	/**
@@ -63,14 +63,14 @@ public:
 	 */
 	inline CompositeRangesTable(Database& db, QTableView* tableView) :
 		CompositeTable(db, db.rangesTable, tableView),
-		//														name				uiName					suffix		fold op			content column / breadcrumbs
+		//														name				uiName					suffix		fold op			content column / target table
 		nameColumn			(DirectCompositeColumn		(*this,												noSuffix,					db.rangesTable.nameColumn)),
 		continentColumn		(DirectCompositeColumn		(*this,												noSuffix,					db.rangesTable.continentColumn)),
-		numRegionsColumn	(NumericFoldCompositeColumn	(*this,	"numRegions",		tr("Num. regions"),		noSuffix,	CountFold,		crumbsTo(db.regionsTable))),
-		numPeaksColumn		(NumericFoldCompositeColumn	(*this,	"numPeaks",			tr("Num. peaks"),		noSuffix,	CountFold,		crumbsTo(db.peaksTable))),
+		numRegionsColumn	(CountFoldCompositeColumn	(*this,	"numRegions",		tr("Num. regions"),		noSuffix,					db.regionsTable)),
+		numPeaksColumn		(CountFoldCompositeColumn	(*this,	"numPeaks",			tr("Num. peaks"),		noSuffix,					db.peaksTable)),
 		avgPeakHeightColumn	(NumericFoldCompositeColumn	(*this,	"avgPeakHeight",	tr("Avg. peak height"),	mSuffix,	AverageFold,	db.peaksTable.heightColumn)),
 		maxPeakHeightColumn	(NumericFoldCompositeColumn	(*this,	"maxPeakHeight",	tr("Max. peak height"),	mSuffix,	MaxFold,		db.peaksTable.heightColumn)),
-		numAscentsColumn	(NumericFoldCompositeColumn	(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db.ascentsTable)))
+		numAscentsColumn	(CountFoldCompositeColumn	(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,					db.ascentsTable))
 	{
 		addColumn(nameColumn);
 		addColumn(continentColumn);

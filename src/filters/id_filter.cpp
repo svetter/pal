@@ -9,7 +9,7 @@
 
 
 IDFilter::IDFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(ID, tableToFilter, columnToFilterBy, FoldOp(-1), name),
+	Filter(ID, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
 	value(ItemID())
 {}
 

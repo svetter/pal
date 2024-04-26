@@ -78,12 +78,12 @@ class FilterWizardFoldOpPage : public QWizardPage
 	QLabel* explainLabel;
 	QComboBox* foldOpCombo;
 	
-	QList<FoldOp> foldOpList;
+	QList<NumericFoldOp> foldOpList;
 	
 public:
 	FilterWizardFoldOpPage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardColumnPage& columnPage);
 	
-	FoldOp getSelectedFoldOp() const;
+	NumericFoldOp getSelectedFoldOp() const;
 	QString getSelectedFoldOpName() const;
 	
 protected:

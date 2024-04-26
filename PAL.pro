@@ -64,7 +64,7 @@ HEADERS += \
 	src/comp_tables/composite_column.h \
 	src/comp_tables/composite_table.h \
 	src/comp_tables/fold_composite_column.h \
-	src/comp_tables/fold_op.h \
+	src/comp_tables/numeric_fold_op.h \
 	src/data/ascent.h \
 	src/data/country.h \
 	src/data/enum_names.h \

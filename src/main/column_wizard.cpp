@@ -3,8 +3,6 @@
 #include "src/comp_tables/fold_composite_column.h"
 #include "src/db/database.h"
 
-#include <QVBoxLayout>
-
 
 
 ColumnWizardPage::ColumnWizardPage(QWidget* parent, Database& db, const CompositeTable& compTable) :
@@ -18,141 +16,147 @@ ColumnWizardPage::ColumnWizardPage(QWidget* parent, Database& db, const Composit
 
 
 
-ColumnWizardTablePage::ColumnWizardTablePage(QWidget* parent, Database& db, const CompositeTable& compTable) :
+ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Database& db, const CompositeTable& compTable) :
 	ColumnWizardPage(parent, db, compTable),
-	sameTableRadiobutton(new QRadioButton(this)),
-	otherTableRadiobutton(new QRadioButton(this)),
-	otherTableCombo(new QComboBox(this)),
-	otherTableList(QList<const NormalTable*>())
-{
-	QVBoxLayout* const layout = new QVBoxLayout();
-	setLayout(layout);
-	setTitle(tr("Choose table"));
-	setSubTitle(tr("Choose the table which contains the values to display (directly or processed) in the new column."));
-	
-	sameTableRadiobutton->setText(tr("Use values from the same table (%1)").arg(compTable.uiName));
-	layout->addWidget(sameTableRadiobutton);
-	layout->addWidget(new QLabel(tr("or"), this));
-	otherTableRadiobutton->setText(tr("Use values from a different table:"));
-	layout->addWidget(otherTableRadiobutton);
-	otherTableCombo->setEnabled(false);
-	otherTableCombo->setPlaceholderText(tr("Choose table"));
-	for (const NormalTable* const table: db.getNormalItemTableList()) {
-		if (table == &baseTable) continue;
-		
-		const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *table);
-		const bool useSingular = crumbs.isForwardOnly();
-		QString comboEntry = QString();
-		if (useSingular) {
-			comboEntry = table->getItemNameSingular();
-		} else {
-			comboEntry = table->uiName;
-		}
-		
-		otherTableList.append(table);
-		otherTableCombo->addItem(comboEntry);
-	}
-	layout->addWidget(otherTableCombo);
-	
-	registerField("table.same*",		sameTableRadiobutton);
-	registerField("table.other*",		otherTableRadiobutton);
-	registerField("table.otherCombo*",	otherTableCombo);
-	
-	
-	connect(otherTableRadiobutton,	&QRadioButton::toggled,	otherTableCombo,	&QComboBox::setEnabled);
-}
-
-const NormalTable* ColumnWizardTablePage::getSelectedTable() const
-{
-	if (sameTableRadiobutton->isChecked()) {
-		return &baseTable;
-	} else if (otherTableRadiobutton->isChecked()) {
-		if (otherTableCombo->currentIndex() < 0) return nullptr;
-		return otherTableList.at(otherTableCombo->currentIndex());
-	} else {
-		return nullptr;
-	}
-}
-
-bool ColumnWizardTablePage::isComplete() const
-{
-	if (sameTableRadiobutton->isChecked()) return true;
-	if (!otherTableRadiobutton->isChecked()) return false;
-	return otherTableCombo->currentIndex() != -1;
-}
-
-int ColumnWizardTablePage::nextId() const
-{
-	return ColumnWizardPage_Column;
-}
-
-
-
-
-
-ColumnWizardColumnPage::ColumnWizardColumnPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage) :
-	ColumnWizardPage(parent, db, compTable),
-	tablePage(tablePage),
-	columnCombo(new QComboBox(this)),
+	tableListWidget(new QListWidget(this)),
+	columnListWidget(new QListWidget(this)),
+	useCountCheckbox(new QCheckBox(this)),
+	tableList(QList<const NormalTable*>()),
 	columnList(QList<const Column*>())
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
-	setTitle(tr("Choose value field"));
-	setSubTitle(tr("Choose the field whose values to use for the new column."));
+	setTitle(tr("Choose data source"));
+	setSubTitle(tr("Choose the table and column whose data you want to be displayed (directly or processed) in the new column."));
 	
-	layout->addWidget(columnCombo);
+	// Populate table list
+	// First entry for the same table
+	tableList.append(&baseTable);
+	tableListWidget->addItem(tr("%1 (same table)").arg(baseTable.getItemNameSingular()));
+	// Add entries for other tables
+	for (const NormalTable* const table: db.getNormalItemTableList()) {
+		if (table == &baseTable) continue;
+		
+		const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *table);
+		QString listEntry = table->uiName;
+		if (crumbs.isForwardOnly()) {
+			listEntry = table->getItemNameSingular();
+		}
+		
+		tableList.append(table);
+		tableListWidget->addItem(listEntry);
+	}
+	updateColumnList();
 	
-	registerField("column.combo*",	columnCombo);
+	// Set list widgets background
+	tableListWidget->setAutoFillBackground(true);
+	tableListWidget->setBackgroundRole(QPalette::Base);
+	columnListWidget->setAutoFillBackground(true);
+	columnListWidget->setBackgroundRole(QPalette::Base);
+
+	QHBoxLayout* const listsLayout = new QHBoxLayout();
+	listsLayout->addWidget(tableListWidget);
+	QVBoxLayout* const columnListLayout = new QVBoxLayout();
+	columnListLayout->addWidget(columnListWidget);
+	useCountCheckbox->setText(tr("Use number of connected entries"));
+	columnListLayout->addWidget(useCountCheckbox);
+	listsLayout->addLayout(columnListLayout);
+	layout->addLayout(listsLayout);
+	
+	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::updateColumnList);
+	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::updateColumnListEnabled);
+	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::completeChanged);
+	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::completeChanged);
+	connect(columnListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::completeChanged);
 }
 
-const Column* ColumnWizardColumnPage::getSelectedColumn() const
-{
-	if (columnCombo->currentIndex() < 0) return nullptr;
-	return columnList.at(columnCombo->currentIndex());
-}
 
-void ColumnWizardColumnPage::initializePage()
+
+void ColumnWizardTableColumnPage::updateColumnList()
 {
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	assert(tableToUse);
+	const NormalTable* const tableToUse = getSelectedTable();
 	
+	columnListWidget->clear();
 	columnList.clear();
-	columnCombo->clear();
+	if (!tableToUse) return;
+	
+	const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *tableToUse);
+	const bool multiResultPossible = !crumbs.isForwardOnly();
+	
 	const QList<const Column*> allColumns = tableToUse->getColumnList();
 	for (int i = 0; i < allColumns.size(); ++i) {
 		const Column* column = allColumns.at(i);
-		if (column->primaryKey) {
+		if (column->primaryKey || column->type == DualEnum) {
 			continue;
 		}
-		else if (column->foreignColumn) {
+		if (column->foreignColumn) {
+			QString listEntry = ((const NormalTable&) column->getReferencedForeignColumn().table).getItemNameSingular();
 			columnList.append(column);
-			columnCombo->addItem(column->getReferencedForeignColumn().table.uiName);
-		}
-		else if (column->type == DualEnum) {
-			const Column& firstDualEnumColumn = *column;
-			assert(i + 1 < allColumns.size());
-			columnList.append(column);
-			column = allColumns.at(++i);
-			assert(column->type == DualEnum);
-			columnCombo->addItem(firstDualEnumColumn.uiName + "/" + column->uiName);
+			columnListWidget->addItem(listEntry);
 		}
 		else {
 			columnList.append(column);
-			columnCombo->addItem(column->uiName);
+			columnListWidget->addItem(column->uiName);
 		}
+	}
+	
+	// Update useCountCheckbox enabled state
+	useCountCheckbox->setEnabled(multiResultPossible);
+	if (!multiResultPossible) {
+		useCountCheckbox->setChecked(false);
 	}
 }
 
-int ColumnWizardColumnPage::nextId() const
+void ColumnWizardTableColumnPage::updateColumnListEnabled()
 {
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	const Column* const columnToUse = getSelectedColumn();
-	assert(columnToUse);
+	if (useCountCheckbox->isVisible()) {
+		columnListWidget->setEnabled(!useCountCheckbox->isChecked());
+	} else {
+		columnListWidget->setEnabled(true);
+	}
+}
+
+
+
+const NormalTable* ColumnWizardTableColumnPage::getSelectedTable() const
+{
+	if (tableListWidget->currentRow() < 0) return nullptr;
+	return tableList.at(tableListWidget->currentRow());
+}
+
+const Column* ColumnWizardTableColumnPage::getSelectedColumn() const
+{
+	if (columnListWidget->currentRow() < 0) return nullptr;
+	return columnList.at(columnListWidget->currentRow());
+}
+
+bool ColumnWizardTableColumnPage::getUseCountSelected() const
+{
+	return useCountCheckbox->isChecked();
+}
+
+bool ColumnWizardTableColumnPage::selectionCanLeadToMultiResult() const
+{
+	const NormalTable* const tableToUse = getSelectedTable();
+	if (!tableToUse) return false;
 	
 	const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *tableToUse);
-	const bool forwardReference = crumbs.isForwardOnly();
-	if (!forwardReference) {
+	if (!crumbs.isForwardOnly()) {
+		return !useCountCheckbox->isChecked();
+	}
+	return false;
+}
+
+
+
+bool ColumnWizardTableColumnPage::isComplete() const
+{
+	return getSelectedTable() && (getSelectedColumn() || getUseCountSelected());
+}
+
+int ColumnWizardTableColumnPage::nextId() const
+{
+	if (selectionCanLeadToMultiResult()) {
 		return ColumnWizardPage_FoldOp;
 	}
 	return ColumnWizardPage_Settings;
@@ -162,64 +166,97 @@ int ColumnWizardColumnPage::nextId() const
 
 
 
-ColumnWizardFoldOpPage::ColumnWizardFoldOpPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardColumnPage& columnPage) :
+ColumnWizardFoldOpPage::ColumnWizardFoldOpPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTableColumnPage& tableColumnPage) :
 	ColumnWizardPage(parent, db, compTable),
-	columnPage(columnPage),
-	explainLabel(new QLabel(this)),
-	foldOpCombo(new QComboBox(this)),
-	foldOpList(QList<FoldOp>())
+	tableColumnPage(tableColumnPage),
+	numericLabel(new QLabel(this)),
+	averageRadio(new QRadioButton(this)),
+	sumRadio(new QRadioButton(this)),
+	maxRadio(new QRadioButton(this)),
+	minRadio(new QRadioButton(this)),
+	listLabel(new QLabel(this)),
+	listStringRadio(new QRadioButton(this))
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
-	setTitle(tr("Choose processing method"));
-	setSubTitle(tr("Choose a way to collapse multiple values into one in order to display them."));
+	setTitle(tr("Choose fold operation"));
+	setSubTitle(tr("Choose a method for reducing multiple values into one for displaying them."));
 	
-	explainLabel->setWordWrap(true);
-	layout->addWidget(explainLabel);
+	numericLabel->setText(tr("Numeric values can be processed in the following ways:"));
+	numericLabel->setWordWrap(true);
+	layout->addWidget(numericLabel);
 	
-	layout->addWidget(foldOpCombo);
+	averageRadio->setText(tr("Average"));
+	sumRadio->setText(tr("Sum"));
+	maxRadio->setText(tr("Maximum"));
+	minRadio->setText(tr("Minimum"));
+	layout->addWidget(averageRadio);
+	layout->addWidget(sumRadio);
+	layout->addWidget(maxRadio);
+	layout->addWidget(minRadio);
 	
-	registerField("foldOp.combo*",	foldOpCombo);
+	layout->addSpacing(10);
+	
+	listLabel->setText(tr("Values can be collected in a comma-separated list:"));
+	listLabel->setWordWrap(true);
+	layout->addWidget(listLabel);
+	
+	listStringRadio->setText(tr("List"));
+	layout->addWidget(listStringRadio);
+	
+	connect(averageRadio,		&QRadioButton::toggled,	this, &ColumnWizardFoldOpPage::completeChanged);
+	connect(sumRadio,			&QRadioButton::toggled,	this, &ColumnWizardFoldOpPage::completeChanged);
+	connect(maxRadio,			&QRadioButton::toggled,	this, &ColumnWizardFoldOpPage::completeChanged);
+	connect(minRadio,			&QRadioButton::toggled,	this, &ColumnWizardFoldOpPage::completeChanged);
+	connect(listStringRadio,	&QRadioButton::toggled,	this, &ColumnWizardFoldOpPage::completeChanged);
 }
 
-FoldOp ColumnWizardFoldOpPage::getSelectedFoldOp() const
+
+
+bool ColumnWizardFoldOpPage::numericFoldSelected() const
 {
-	if (foldOpCombo->currentIndex() < 0) return FoldOp(-1);
-	return foldOpList.at(foldOpCombo->currentIndex());
+	return averageRadio->isChecked() || sumRadio->isChecked() || maxRadio->isChecked() || minRadio->isChecked();
 }
 
-QString ColumnWizardFoldOpPage::getSelectedFoldOpName() const
+bool ColumnWizardFoldOpPage::listStringFoldSelected() const
 {
-	if (foldOpCombo->currentIndex() < 0) return QString();
-	return foldOpCombo->currentText();
+	return listStringRadio->isChecked();
 }
+
+NumericFoldOp ColumnWizardFoldOpPage::getSelectedNumericFoldOp() const
+{
+	if (averageRadio->isChecked())	return AverageFold;
+	if (sumRadio->isChecked())		return SumFold;
+	if (maxRadio->isChecked())		return MaxFold;
+	if (minRadio->isChecked())		return MinFold;
+	return NumericFoldOp(-1);
+}
+
+
 
 void ColumnWizardFoldOpPage::initializePage()
 {
-	const Column* const columnToUse = columnPage.getSelectedColumn();
+	const Column* const columnToUse = tableColumnPage.getSelectedColumn();
 	assert(columnToUse);
 	
-	if (columnToUse->type == String) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the current table.\nThe new column can display a list of those values or their count."));
-	} else if (columnToUse->type == Integer) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the current table.\nThe new column can display the count of those values, or their average, sum, maximum, or minimum."));
-	} else {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the current table.\nThe new column can display the count of those values."));
+	const bool numericPossible = columnToUse->type == Integer;
+	numericLabel->setVisible(numericPossible);
+	averageRadio->setVisible(numericPossible);
+	sumRadio->setVisible(numericPossible);
+	maxRadio->setVisible(numericPossible);
+	minRadio->setVisible(numericPossible);
+	if (!numericPossible) {
+		averageRadio->setChecked(false);
+		sumRadio->setChecked(false);
+		maxRadio->setChecked(false);
+		minRadio->setChecked(false);
+		listStringRadio->setChecked(true);
 	}
-	
-	foldOpList.clear();
-	foldOpCombo->clear();
-	
-	foldOpList.append(CountFold);			foldOpCombo->addItem(tr("Count"));
-	if (columnToUse->type == Integer) {
-		foldOpList.append(AverageFold);		foldOpCombo->addItem(tr("Average"));
-		foldOpList.append(SumFold);			foldOpCombo->addItem(tr("Sum"));
-		foldOpList.append(MaxFold);			foldOpCombo->addItem(tr("Maximum"));
-		foldOpList.append(MinFold);			foldOpCombo->addItem(tr("Minimum"));
-	}
-	if (columnToUse->type == String) {
-		foldOpList.append(StringListFold);	foldOpCombo->addItem(tr("List"));
-	}
+}
+
+bool ColumnWizardFoldOpPage::isComplete() const
+{
+	return numericFoldSelected() || listStringFoldSelected();
 }
 
 int ColumnWizardFoldOpPage::nextId() const
@@ -231,10 +268,9 @@ int ColumnWizardFoldOpPage::nextId() const
 
 
 
-ColumnWizardSettingsPage::ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage) :
+ColumnWizardSettingsPage::ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTableColumnPage& tableColumnPage, const ColumnWizardFoldOpPage& foldOpPage) :
 	ColumnWizardPage(parent, db, compTable),
-	tablePage(tablePage),
-	columnPage(columnPage),
+	tableColumnPage(tableColumnPage),
 	foldOpPage(foldOpPage),
 	nameEdit(new QLineEdit(this)),
 	suffixHLine(new QFrame(this)),
@@ -246,18 +282,23 @@ ColumnWizardSettingsPage::ColumnWizardSettingsPage(QWidget* parent, Database& db
 	setTitle(tr("Customization"));
 	setSubTitle(tr("Choose a name for the new column and customize further settings."));
 	
-	layout->addWidget(new QLabel(tr("Name the new column"), this));
+	QLabel* const nameLabel = new QLabel(tr("Name the new column:"), this);
+	nameLabel->setWordWrap(true);
+	layout->addWidget(nameLabel);
 	nameEdit->setPlaceholderText(tr("Required"));
 	layout->addWidget(nameEdit);
 	
+	suffixHLine->setFrameShape(QFrame::HLine);
+	suffixHLine->setFrameShadow(QFrame::Sunken);
+	layout->addSpacing(10);
 	layout->addWidget(suffixHLine);
-	suffixLabel->setText(tr("Set a suffix to be appended to every cell of the column"));
+	layout->addSpacing(10);
+	
+	QLabel* const suffixLabel = new QLabel(tr("Set a suffix to be appended to every cell of the column:"), this);
+	suffixLabel->setWordWrap(true);
 	layout->addWidget(suffixLabel);
 	suffixEdit->setPlaceholderText(tr("Optional"));
 	layout->addWidget(suffixEdit);
-	
-	registerField("name*", nameEdit);
-	registerField("suffix*", suffixEdit);
 }
 
 QString ColumnWizardSettingsPage::getName() const
@@ -272,20 +313,15 @@ QString ColumnWizardSettingsPage::getSuffix() const
 
 void ColumnWizardSettingsPage::initializePage()
 {
-	const Column* const columnToUse = columnPage.getSelectedColumn();
-	assert(columnToUse);
-	assert(!columnToUse->table.isAssociative);
-	const NormalTable& tableToUse = (const NormalTable&) columnToUse->table;
-	
-	bool setSuffix = false;
-	setSuffix |= &compTable.baseTable == &tableToUse;
-	setSuffix |= db.getBreadcrumbsFor(compTable.baseTable, tableToUse).isForwardOnly();
-	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
-	setSuffix |= foldOp == CountFold || foldOp == AverageFold || foldOp == SumFold || foldOp == MaxFold || foldOp == MinFold;
-	
+	const Column* const columnToUse = tableColumnPage.getSelectedColumn();
+	const bool useCount = tableColumnPage.getUseCountSelected();
+	const bool numericFold = foldOpPage.numericFoldSelected();
+	assert(columnToUse || useCount);
+	if (columnToUse) assert(!columnToUse->table.isAssociative);
 	
 	nameEdit->setText(generateColumnName());
 	
+	const bool setSuffix = useCount || numericFold || columnToUse->type == Integer;
 	suffixHLine->setVisible(setSuffix);
 	suffixLabel->setVisible(setSuffix);
 	suffixEdit->setVisible(setSuffix);
@@ -299,43 +335,60 @@ bool ColumnWizardSettingsPage::isComplete() const
 
 QString ColumnWizardSettingsPage::generateColumnName() const
 {
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	const Column* const columnToUse = columnPage.getSelectedColumn();
-	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
+	const NormalTable* const tableToUse = tableColumnPage.getSelectedTable();
+	const bool useCount = tableColumnPage.getUseCountSelected();
+	const Column* const columnToUse = tableColumnPage.getSelectedColumn();
+	const bool multiResult = tableColumnPage.selectionCanLeadToMultiResult();
+	const bool numericFold = multiResult && foldOpPage.numericFoldSelected();
+	const bool listStringFold = multiResult && foldOpPage.listStringFoldSelected();
+	const NumericFoldOp foldOp = foldOpPage.getSelectedNumericFoldOp();
 	assert(tableToUse);
-	assert(columnToUse);
+	assert(columnToUse || useCount);
 	
-	QString name = "";
+	QString tableString = "";
 	if (tableToUse != &baseTable) {
-		const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *tableToUse);
-		const bool useSingular = crumbs.isForwardOnly();
-		if (useSingular) {
-			name += tableToUse->getItemNameSingular();
+		if (multiResult || useCount) {
+			tableString = tableToUse->uiName;
 		} else {
-			name += tableToUse->uiName;
+			tableString = tableToUse->getItemNameSingular();
 		}
-		name += ": ";
+		if (!useCount) tableString += ": ";
 	}
 	
+	if (useCount) {
+		return tr("Num. %1").arg(tableString);
+	}
+	
+	QString columnString = "";
 	if (columnToUse->foreignColumn) {
 		const Table& foreignTable = columnToUse->getReferencedForeignColumn().table;
 		assert(!foreignTable.isAssociative);
 		const NormalTable& targetTable = (const NormalTable&) foreignTable;
-		name = targetTable.getItemNameSingular();
+		columnString = targetTable.getItemNameSingular();
 	} else {
-		name += columnToUse->uiName;
+		columnString = columnToUse->uiName;
 	}
 	if (columnToUse->type == DualEnum) {
 		const Column& secondColumn = columnToUse->table.getColumnByIndex(columnToUse->getIndex() + 1);
 		assert(secondColumn.enumNameLists == columnToUse->enumNameLists);
-		name += "/" + secondColumn.uiName;
+		columnString += "/" + secondColumn.uiName;
 	}
 	
-	if (foldOp != FoldOp(-1)) {
-		name += " (" + foldOpPage.getSelectedFoldOpName() + ")";
+	QString valueString = columnString;
+	if (numericFold) {
+		switch (foldOp) {
+		case AverageFold:	valueString = tr("Average %1")	.arg(columnString);	break;
+		case SumFold:		valueString = tr("Sum of %1")	.arg(columnString);	break;
+		case MaxFold:		valueString = tr("Max %1")		.arg(columnString);	break;
+		case MinFold:		valueString = tr("Min %1")		.arg(columnString);	break;
+		default: assert(false);
+		}
+	}
+	else if (listStringFold) {
+		valueString = tr("%1 (List)").arg(columnString);
 	}
 	
-	return name;
+	return tableString + valueString;
 }
 
 
@@ -346,10 +399,9 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	QWizard(parent),
 	db(db),
 	compTable(compTable),
-	tablePage	(ColumnWizardTablePage		(parent, db, compTable)),
-	columnPage	(ColumnWizardColumnPage		(parent, db, compTable, tablePage)),
-	foldOpPage	(ColumnWizardFoldOpPage		(parent, db, compTable, columnPage)),
-	settingsPage(ColumnWizardSettingsPage	(parent, db, compTable, tablePage, columnPage, foldOpPage))
+	tableColumnPage	(ColumnWizardTableColumnPage(parent, db, compTable)),
+	foldOpPage		(ColumnWizardFoldOpPage		(parent, db, compTable, tableColumnPage)),
+	settingsPage	(ColumnWizardSettingsPage	(parent, db, compTable, tableColumnPage, foldOpPage))
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
@@ -357,12 +409,11 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	setMinimumSize(500, 300);
 	setSizeGripEnabled(false);
 	
-	setPage(ColumnWizardPage_Table,		&tablePage);
-	setPage(ColumnWizardPage_Column,	&columnPage);
-	setPage(ColumnWizardPage_FoldOp,	&foldOpPage);
-	setPage(ColumnWizardPage_Settings,	&settingsPage);
+	setPage(ColumnWizardPage_TableColumn,	&tableColumnPage);
+	setPage(ColumnWizardPage_FoldOp,		&foldOpPage);
+	setPage(ColumnWizardPage_Settings,		&settingsPage);
 	
-	setStartId(ColumnWizardPage_Table);
+	setStartId(ColumnWizardPage_TableColumn);
 }
 
 ColumnWizard::~ColumnWizard()
@@ -372,41 +423,55 @@ ColumnWizard::~ColumnWizard()
 
 CompositeColumn* ColumnWizard::getFinishedColumn()
 {
-	const Column* const columnToUsePtr = columnPage.getSelectedColumn();
-	assert(columnToUsePtr);
-	const Column& columnToUse = *columnToUsePtr;
-	assert(!columnToUse.table.isAssociative);
-	const NormalTable& tableToUse = (const NormalTable&) columnToUse.table;
-	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
-	const QString uiName = field("name").toString();
+	const NormalTable* tableToUse = tableColumnPage.getSelectedTable();
+	assert(tableToUse);
+	const bool sameTable = &compTable.baseTable == tableToUse;
+	const bool useCount = tableColumnPage.getUseCountSelected();
+	assert(!sameTable || !useCount);
+	const Column* const columnToUse = tableColumnPage.getSelectedColumn();
+	assert(columnToUse || useCount);
+	if (columnToUse) assert(!columnToUse->table.isAssociative);
+	const bool multiResult = tableColumnPage.selectionCanLeadToMultiResult();
+	assert(!multiResult || !useCount);
+	const bool numericFold = multiResult && foldOpPage.numericFoldSelected();
+	const bool listStringFold = multiResult && foldOpPage.listStringFoldSelected();
+	const NumericFoldOp foldOp = foldOpPage.getSelectedNumericFoldOp();
+	const QString uiName = settingsPage.getName();
 	assert(!uiName.isEmpty());
 	
 	// Create internal name
 	ProjectSetting<int>& counterSetting = db.projectSettings.numCustomColumnsCreated;
 	const int newCustomColumnIndex = counterSetting.get() + 1;
 	counterSetting.set(*this, newCustomColumnIndex);
-	const QString name = "CUSTOM_COLUMN_" + QString::number(newCustomColumnIndex) + "_" + columnToUse.table.name + "_" + columnToUse.name;
+	QString name = "CUSTOM_COLUMN_" + QString::number(newCustomColumnIndex) + "_";
+	if (useCount) {
+		name += "count_" + tableToUse->name;
+	} else {
+		name += columnToUse->table.name + "_" + columnToUse->name;
+	}
 	
 	const QString suffix = settingsPage.getSuffix();
 	
 	
-	const bool sameTable = &compTable.baseTable == &tableToUse;
 	if (sameTable) {
-		return new DirectCompositeColumn(compTable, name, uiName, suffix, columnToUse);
+		return new DirectCompositeColumn(compTable, name, uiName, suffix, *columnToUse);
 	}
 	
-	const Breadcrumbs& crumbs = db.getBreadcrumbsFor(compTable.baseTable, tableToUse);
-	const bool forwardReference = crumbs.isForwardOnly();
-	if (forwardReference) {
-		return new ReferenceCompositeColumn(compTable, name, uiName, suffix, columnToUse);
+	if (useCount) {
+		return new CountFoldCompositeColumn(compTable, name, uiName, suffix, *tableToUse);
 	}
 	
-	if (foldOp == CountFold || foldOp == AverageFold || foldOp == SumFold || foldOp == MaxFold || foldOp == MinFold) {
-		return new NumericFoldCompositeColumn(compTable, name, uiName, suffix, foldOp, columnToUse);
+	if (!multiResult) {
+		return new ReferenceCompositeColumn(compTable, name, uiName, suffix, *columnToUse);
 	}
 	
-	if (foldOp == StringListFold) {
-		return new ListStringFoldCompositeColumn(compTable, name, uiName, columnToUse, columnToUse.enumNames);
+	if (numericFold) {
+		assert(foldOp != NumericFoldOp(-1));
+		return new NumericFoldCompositeColumn(compTable, name, uiName, suffix, foldOp, (const ValueColumn&) *columnToUse);
+	}
+	
+	if (listStringFold) {
+		return new ListStringFoldCompositeColumn(compTable, name, uiName, (const ValueColumn&) *columnToUse, columnToUse->enumNames);
 	}
 	
 	assert(false);

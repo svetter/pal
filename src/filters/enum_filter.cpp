@@ -5,7 +5,7 @@
 
 
 EnumFilter::EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Enum, tableToFilter, columnToFilterBy, FoldOp(-1), name),
+	Filter(Enum, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
 	value(0)
 {}
 

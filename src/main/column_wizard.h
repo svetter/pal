@@ -5,9 +5,12 @@
 
 #include <QWizard>
 #include <QLabel>
-#include <QRadioButton>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QCheckBox>
+#include <QListWidget>
+#include <QRadioButton>
+#include <QHBoxLayout>
 
 
 
@@ -26,53 +29,39 @@ protected:
 
 
 enum ColumnWizardPageID {
-	ColumnWizardPage_Table,
-	ColumnWizardPage_Column,
+	ColumnWizardPage_TableColumn,
 	ColumnWizardPage_FoldOp,
 	ColumnWizardPage_Settings
 };
 
 
 
-class ColumnWizardTablePage : public ColumnWizardPage
+class ColumnWizardTableColumnPage : public ColumnWizardPage
 {
 	Q_OBJECT
 	
-	QRadioButton* sameTableRadiobutton;
-	QRadioButton* otherTableRadiobutton;
-	QComboBox* otherTableCombo;
+	QListWidget* const tableListWidget;
+	QListWidget* const columnListWidget;
+	QCheckBox* const useCountCheckbox;
 	
-	QList<const NormalTable*> otherTableList;
-	
-public:
-	ColumnWizardTablePage(QWidget* parent, Database& db, const CompositeTable& compTable);
-	
-	const NormalTable* getSelectedTable() const;
-	
-protected:
-	bool isComplete() const override;
-	int nextId() const override;
-};
-
-
-
-class ColumnWizardColumnPage : public ColumnWizardPage
-{
-	Q_OBJECT
-	
-	const ColumnWizardTablePage& tablePage;
-	
-	QComboBox* columnCombo;
-	
+	QList<const NormalTable*> tableList;
 	QList<const Column*> columnList;
 	
 public:
-	ColumnWizardColumnPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage);
+	ColumnWizardTableColumnPage(QWidget* parent, Database& db, const CompositeTable& compTable);
 	
+private:
+	void updateColumnList();
+	void updateColumnListEnabled();
+	
+public:
+	const NormalTable* getSelectedTable() const;
 	const Column* getSelectedColumn() const;
+	bool getUseCountSelected() const;
+	bool selectionCanLeadToMultiResult() const;
 	
 protected:
-	void initializePage() override;
+	bool isComplete() const override;
 	int nextId() const override;
 };
 
@@ -82,21 +71,26 @@ class ColumnWizardFoldOpPage : public ColumnWizardPage
 {
 	Q_OBJECT
 	
-	const ColumnWizardColumnPage& columnPage;
+	const ColumnWizardTableColumnPage& tableColumnPage;
 	
-	QLabel* explainLabel;
-	QComboBox* foldOpCombo;
-	
-	QList<FoldOp> foldOpList;
+	QLabel* const numericLabel;
+	QRadioButton* const averageRadio;
+	QRadioButton* const sumRadio;
+	QRadioButton* const maxRadio;
+	QRadioButton* const minRadio;
+	QLabel* const listLabel;
+	QRadioButton* const listStringRadio;
 	
 public:
-	ColumnWizardFoldOpPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardColumnPage& columnPage);
+	ColumnWizardFoldOpPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTableColumnPage& tableColumnPage);
 	
-	FoldOp getSelectedFoldOp() const;
-	QString getSelectedFoldOpName() const;
+	bool numericFoldSelected() const;
+	bool listStringFoldSelected() const;
+	NumericFoldOp getSelectedNumericFoldOp() const;
 	
 protected:
 	void initializePage() override;
+	bool isComplete() const override;
 	int nextId() const override;
 };
 
@@ -106,17 +100,16 @@ class ColumnWizardSettingsPage : public ColumnWizardPage
 {
 	Q_OBJECT
 	
-	const ColumnWizardTablePage& tablePage;
-	const ColumnWizardColumnPage& columnPage;
-	const ColumnWizardFoldOpPage& foldOpPage;
+	const ColumnWizardTableColumnPage&	tableColumnPage;
+	const ColumnWizardFoldOpPage&		foldOpPage;
 	
-	QLineEdit* nameEdit;
-	QFrame* suffixHLine;
-	QLabel* suffixLabel;
-	QLineEdit* suffixEdit;
+	QLineEdit* const nameEdit;
+	QFrame* const suffixHLine;
+	QLabel* const suffixLabel;
+	QLineEdit* const suffixEdit;
 	
 public:
-	ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage);
+	ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTableColumnPage& tableColumnPage, const ColumnWizardFoldOpPage& foldOpPage);
 	
 	QString getName() const;
 	QString getSuffix() const;
@@ -137,8 +130,7 @@ class ColumnWizard : public QWizard
 	Database& db;
 	CompositeTable& compTable;
 	
-	ColumnWizardTablePage		tablePage;
-	ColumnWizardColumnPage		columnPage;
+	ColumnWizardTableColumnPage	tableColumnPage;
 	ColumnWizardFoldOpPage		foldOpPage;
 	ColumnWizardSettingsPage	settingsPage;
 	

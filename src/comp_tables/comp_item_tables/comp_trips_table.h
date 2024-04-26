@@ -48,7 +48,7 @@ public:
 	/** The length of the trip. */
 	const DifferenceCompositeColumn		lengthColumn;
 	/** The number of ascents logged for this trip. */
-	const NumericFoldCompositeColumn	numAscentsColumn;
+	const CountFoldCompositeColumn		numAscentsColumn;
 	/** The average elevation gain of all ascents logged for this trip. */
 	const NumericFoldCompositeColumn	avgElevationGainColumn;
 	/** The maximum elevation gain of all ascents logged for this trip. */
@@ -69,13 +69,13 @@ public:
 	 */
 	inline CompositeTripsTable(Database& db, QTableView* tableView) :
 		CompositeTable(db, db.tripsTable, tableView),
-		//																name				uiName					suffix			fold op			content column / breadcrumbs / sorting passes
+		//																name				uiName					suffix			fold op			content column / target table / sorting passes
 		indexColumn				(IndexCompositeColumn			(*this,	"index",			tr("Index"),			noSuffix,						{ {db.tripsTable.startDateColumn,		Qt::AscendingOrder},			{db.tripsTable.endDateColumn,	Qt::AscendingOrder} })),
 		nameColumn				(DirectCompositeColumn			(*this,												noSuffix,						db.tripsTable.nameColumn)),
 		startDateColumn			(DirectCompositeColumn			(*this,												noSuffix,						db.tripsTable.startDateColumn)),
 		endDateColumn			(DirectCompositeColumn			(*this,												noSuffix,						db.tripsTable.endDateColumn)),
 		lengthColumn			(DifferenceCompositeColumn		(*this,	"length",			tr("Length"),			tr(" days"),					db.tripsTable.endDateColumn,			db.tripsTable.startDateColumn)),
-		numAscentsColumn		(NumericFoldCompositeColumn		(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,		CountFold,		crumbsTo(db.ascentsTable))),
+		numAscentsColumn		(CountFoldCompositeColumn		(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,						db.ascentsTable)),
 		avgElevationGainColumn	(NumericFoldCompositeColumn		(*this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,		AverageFold,	db.ascentsTable.elevationGainColumn)),
 		maxElevationGainColumn	(NumericFoldCompositeColumn		(*this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,		MaxFold,		db.ascentsTable.elevationGainColumn)),
 		sumElevationGainColumn	(NumericFoldCompositeColumn		(*this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,		SumFold,		db.ascentsTable.elevationGainColumn)),

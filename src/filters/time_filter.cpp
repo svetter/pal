@@ -5,7 +5,7 @@
 
 
 TimeFilter::TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Time, tableToFilter, columnToFilterBy, FoldOp(-1), name),
+	Filter(Time, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
 	min(QTime(12, 0)),
 	max(QTime(12, 0))
 {}

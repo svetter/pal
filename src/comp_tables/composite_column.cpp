@@ -337,6 +337,7 @@ CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEn
 	switch (type) {
 	case Direct:			return         DirectCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
 	case Reference:			return      ReferenceCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case CountFold:			return      CountFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
 	case NumericFold:		return    NumericFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
 	case ListStringFold:	return ListStringFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
 	default: assert(false);

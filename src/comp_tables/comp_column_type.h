@@ -12,6 +12,7 @@ enum CompColType {
 	DependentEnum,
 	Index,
 	Ordinal,
+	CountFold,
 	NumericFold,
 	ListStringFold,
 	HikerListFold
@@ -27,7 +28,7 @@ struct CompColTypeNames
 {
 	/** A list of the names of the composite column types, in the order of the CompColType enum. */
 	inline static const QStringList compColTypeNames = {
-		"Direct", "Reference", "Difference", "DependentEnum", "Index", "Ordinal", "NumericFold", "ListStringFold", "HikerListFold"
+		"Direct", "Reference", "Difference", "DependentEnum", "Index", "Ordinal", "CountFold", "NumericFold", "ListStringFold", "HikerListFold"
 	};
 	
 	/**

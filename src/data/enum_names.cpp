@@ -86,10 +86,12 @@ const QStringList EnumNames::hikeKindNames = {
  * https://www.sac-cas.ch/en/ausbildung-und-sicherheit/tourenplanung/grading-systems/
  */
 const QList<QPair<QString, QStringList>> EnumNames::difficultyNames = {
-	qMakePair<QString, QStringList>(QT_TR_NOOP("No difficulty"),
+	qMakePair<QString, QStringList>(
+		QT_TR_NOOP("No difficulty"),
 		{
 			QT_TR_NOOP("No grade")
-		}),
+		}
+	),
 	qMakePair<QString, QStringList>(
 		QT_TR_NOOP("SAC hiking scale"),
 		// https://www.sac-cas.ch/fileadmin/Ausbildung_und_Wissen/Sicher_unterwegs/Sicher_unterwegs_Wandern/2020_Berg_Alpinwanderskala_EN.pdf

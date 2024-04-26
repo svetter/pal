@@ -25,7 +25,7 @@
 #define FOLD_COMPOSITE_COLUMN_H
 
 #include "composite_column.h"
-#include "fold_op.h"
+#include "numeric_fold_op.h"
 #include "src/db/breadcrumbs.h"
 
 
@@ -41,14 +41,12 @@
  */
 class FoldCompositeColumn : public CompositeColumn {
 protected:
-	/** The operation to perform when folding values. */
-	const FoldOp op;
 	/** The breadcrumbs, which are pairs of base table columns which lead to the content column. */
 	const Breadcrumbs breadcrumbs;
 	/** The column that contains the content to be folded. */
-	const Column* const contentColumn;
+	const ValueColumn* const contentColumn;
 	
-	FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs, const Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, const ValueColumn* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
@@ -60,16 +58,36 @@ protected:
 
 
 /**
+ * A FoldCompositeColumn that counts the number of associated entries.
+ */
+class CountFoldCompositeColumn : public FoldCompositeColumn {
+	const NormalTable& countTable;
+	
+public:
+	CountFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const NormalTable& countTable);
+	
+	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+public:
+	static CountFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
+};
+
+
+
+/**
  * A FoldCompositeColumn that folds numeric values, using one of the NumericFoldOp operations.
  * 
  * Entries can be counted, returned as a list of IDs, averaged, summed, or the maximum can be
  * determined.
  */
 class NumericFoldCompositeColumn : public FoldCompositeColumn {
+	/** The operation to perform when folding values. */
+	const NumericFoldOp op;
+	
 public:
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, DataType contentType, const Breadcrumbs breadcrumbs, const Column* contentColumn);
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs);
-	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, const Column& contentColumn);
+	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, NumericFoldOp op, const ValueColumn& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
@@ -86,7 +104,7 @@ public:
  */
 class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
-	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Column& contentColumn, const QStringList* enumNames = nullptr, bool isHikerList = false);
+	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const ValueColumn& contentColumn, const QStringList* enumNames = nullptr, bool isHikerList = false);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;

@@ -10,7 +10,7 @@ class StringFilter : public Filter
 	QString value;
 	
 public:
-	StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name);
+	StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name);
 	virtual ~StringFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -19,7 +19,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static StringFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name, QString& restOfEncoding);
+	static StringFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class StringFilterBox;

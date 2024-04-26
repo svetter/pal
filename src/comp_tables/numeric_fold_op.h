@@ -1,33 +1,31 @@
-#ifndef FOLD_OP_H
-#define FOLD_OP_H
+#ifndef NUMERIC_FOLD_OP_H
+#define NUMERIC_FOLD_OP_H
 
 #include <QStringList>
 
 
 
 /**
- * The different fold operations that can be performed in a FoldCompositeColumn.
+ * The different fold operations that can be performed in a NumericFoldCompositeColumn.
  */
-enum FoldOp {
-	CountFold,
+enum NumericFoldOp {
 	AverageFold,
 	SumFold,
 	MaxFold,
-	MinFold,
-	StringListFold
+	MinFold
 };
 
 
 
 /**
  * A struct containing the names of the fold operations and providing methods to convert between
- * names and the FoldOp enum.
+ * names and the NumericFoldOpNames enum.
  */
-struct FoldOpNames
+struct NumericFoldOpNames
 {
 	/** A list of the names of the fold operations, in the order of the DataType enum. */
 	inline static const QStringList foldOpNames = {
-		"Count", "Average", "Sum", "Max", "Min", "StringList"
+		"Average", "Sum", "Max", "Min"
 	};
 	
 	/**
@@ -36,7 +34,7 @@ struct FoldOpNames
 	 * 
 	 * @param type	The fold operation.
 	 */
-	inline static QString getName(const FoldOp foldOp)
+	inline static QString getName(const NumericFoldOp foldOp)
 	{
 		if (foldOp < 0 || foldOp >= foldOpNames.size()) return QString();
 		return foldOpNames.at(foldOp);
@@ -47,13 +45,13 @@ struct FoldOpNames
 	 * 
 	 * @param name	The name of the fold operation.
 	 */
-	inline static FoldOp getFoldOp(const QString& name)
+	inline static NumericFoldOp getFoldOp(const QString& name)
 	{
-		if (!foldOpNames.contains(name)) return FoldOp(-1);
-		return FoldOp(foldOpNames.indexOf(name));
+		if (!foldOpNames.contains(name)) return NumericFoldOp(-1);
+		return NumericFoldOp(foldOpNames.indexOf(name));
 	}
 };
 
 
 
-#endif // FOLD_OP_H
+#endif // NUMERIC_FOLD_OP_H

@@ -5,7 +5,7 @@
 
 
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name) :
+IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name) :
 	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
 	useClasses(false),
 	classIncrement(-1),
@@ -15,7 +15,7 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	max(1)
 {}
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
+IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
 	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
 	useClasses(true),
 	classIncrement(classIncrement),
@@ -69,7 +69,7 @@ QStringList IntFilter::encodeTypeSpecific() const
 	};
 }
 
-IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name, QString& restOfEncoding)
+IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, QString& restOfEncoding)
 {
 	bool ok = false;
 	

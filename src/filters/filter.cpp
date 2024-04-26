@@ -14,7 +14,7 @@
 
 
 
-Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, FoldOp foldOp, const QString& name) :
+Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name) :
 	type(type),
 	sourceType(columnToFilterBy.type),
 	tableToFilter(tableToFilter),
@@ -30,19 +30,12 @@ Filter::Filter(DataType type, const NormalTable& tableToFilter, const Column& co
 	assert(!columnToFilterBy.table.isAssociative);
 	assert(isLocalFilter == crumbs.isEmpty());
 	if (singleValuePerRow) {
-		assert(foldOp == FoldOp(-1));
+		assert(foldOp == NumericFoldOp(-1));
 		assert(type == sourceType);
 	} else {
-		assert(foldOp != FoldOp(-1));
-		if (foldOp == StringListFold) {
-			assert(type == String);
-			assert(sourceType == String);
-		} else if (foldOp == CountFold) {
-			assert(type == Integer);
-		} else {
-			assert(type == Integer);
-			assert(sourceType == Integer);
-		}
+		assert(foldOp != NumericFoldOp(-1));
+		assert(type == Integer);
+		assert(sourceType == Integer);
 	}
 }
 
@@ -137,21 +130,6 @@ QVariant Filter::getRawRowValue(const BufferRowIndex filteredTableBufferRow) con
 	// Fold operation needs to be performed
 	assert(sourceType != DualEnum);
 	
-	if (foldOp == CountFold) {
-		return associatedRows.count();
-	}
-	
-	if (foldOp == StringListFold) {
-		assert(sourceType == String);
-		QStringList entries = QStringList();
-		for (const BufferRowIndex& associatedRow : associatedRows) {
-			const QVariant& associatedRowValue = columnToFilterBy.getValueAt(associatedRow);
-			assert(associatedRowValue.canConvert<QString>());
-			entries.append(associatedRowValue.toString());
-		}
-		return entries.join(", ");
-	}
-	
 	// Aggregators for different fold operations
 	int sum = 0;
 	int min = INT_MAX;
@@ -212,7 +190,7 @@ QString Filter::encodeSingleFilterToString() const
 	parameters += encodeString	("columnToFilterBy_table_name",	columnToFilterBy.table.name);
 	parameters += encodeString	("columnToFilterBy_name",		columnToFilterBy.name);
 	if (type == Integer || type == String) {
-		parameters += encodeString	("foldOp",					FoldOpNames::getName(foldOp));
+		parameters += encodeString	("foldOp",					NumericFoldOpNames::getName(foldOp));
 	}
 	parameters += encodeString	("name",						name);
 	parameters += encodeBool	("enabled",						enabled);
@@ -260,9 +238,9 @@ Filter* Filter::decodeSingleFilterFromString(QString& restOfString, Database& db
 	const Column* columnToFilterBy = decodeColumnIdentity(restOfString, "columnToFilterBy_table_name", "columnToFilterBy_name", db, ok);
 	if (!ok) return nullptr;
 	
-	FoldOp foldOp = FoldOp(-1);
+	NumericFoldOp foldOp = NumericFoldOp(-1);
 	if (type == Integer || type == String) {
-		foldOp = FoldOpNames::getFoldOp(decodeString(restOfString, "foldOp", ok));
+		foldOp = NumericFoldOpNames::getFoldOp(decodeString(restOfString, "foldOp", ok));
 		if (!ok) return nullptr;
 	}
 	

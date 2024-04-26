@@ -40,9 +40,9 @@ public:
 	/** The name of the hiker. */
 	const DirectCompositeColumn			nameColumn;
 	/** The number of ascents logged in which this hiker participated. */
-	const NumericFoldCompositeColumn	numAscentsColumn;
+	const CountFoldCompositeColumn		numAscentsColumn;
 	/** The number of trips logged in which this hiker participated. */
-	const NumericFoldCompositeColumn	numTripsColumn;
+	const CountFoldCompositeColumn		numTripsColumn;
 	/** The average elevation gain of all ascents logged in which this hiker participated. */
 	const NumericFoldCompositeColumn	avgElevationGainColumn;
 	/** The maximum elevation gain of all ascents logged in which this hiker participated. */
@@ -61,10 +61,10 @@ public:
 	 */
 	inline CompositeHikersTable(Database& db, QTableView* tableView) :
 		CompositeTable(db, db.hikersTable, tableView),
-		//															name				uiName					suffix		fold op			content column / breadcrumbs
+		//															name				uiName					suffix		fold op			content column / target table
 		nameColumn				(DirectCompositeColumn		(*this,												noSuffix,					db.hikersTable.nameColumn)),
-		numAscentsColumn		(NumericFoldCompositeColumn	(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,		crumbsTo(db.ascentsTable))),
-		numTripsColumn			(NumericFoldCompositeColumn	(*this,	"numTrips",			tr("Num. trips"),		noSuffix,	CountFold,		crumbsTo(db.tripsTable))),
+		numAscentsColumn		(CountFoldCompositeColumn	(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,					db.ascentsTable)),
+		numTripsColumn			(CountFoldCompositeColumn	(*this,	"numTrips",			tr("Num. trips"),		noSuffix,					db.tripsTable)),
 		avgElevationGainColumn	(NumericFoldCompositeColumn	(*this,	"avgElevationGain",	tr("Avg. elev. gain"),	mSuffix,	AverageFold,	db.ascentsTable.elevationGainColumn)),
 		maxElevationGainColumn	(NumericFoldCompositeColumn	(*this,	"maxElevationGain",	tr("Max. elev. gain"),	mSuffix,	MaxFold,		db.ascentsTable.elevationGainColumn)),
 		sumElevationGainColumn	(NumericFoldCompositeColumn	(*this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,		db.ascentsTable.elevationGainColumn))

@@ -50,7 +50,7 @@ public:
 	/** The continent the peak is assigned to. */
 	const ReferenceCompositeColumn		continentColumn;
 	/** The number of ascents logged for this peak. */
-	const NumericFoldCompositeColumn	numAscentsColumn;
+	const CountFoldCompositeColumn		numAscentsColumn;
 	/** The names of all hikers who have ascents logged for this peak. */
 	const HikerListFoldCompositeColumn	listHikersColumn;
 	/** The sum of the elevation gains of all ascents logged for this peak. */
@@ -69,14 +69,14 @@ public:
 	 */
 	inline CompositePeaksTable(Database& db, QTableView* tableView) :
 		CompositeTable(db, db.peaksTable, tableView),
-		//																name				uiName					suffix		fold op		content column / breadcrumbs
+		//																name				uiName					suffix		fold op		content column / target table
 		nameColumn				(DirectCompositeColumn			(*this,												noSuffix,				db.peaksTable.nameColumn)),
 		heightColumn			(DirectCompositeColumn			(*this,												mSuffix,				db.peaksTable.heightColumn)),
 		countryColumn			(ReferenceCompositeColumn		(*this,	"country",			tr("Country"),			noSuffix,				db.countriesTable.nameColumn)),
 		regionColumn			(ReferenceCompositeColumn		(*this,	"region",			tr("Region"),			noSuffix,				db.regionsTable.nameColumn)),
 		rangeColumn				(ReferenceCompositeColumn		(*this,	"range",			tr("Mountain range"),	noSuffix,				db.rangesTable.nameColumn)),
 		continentColumn			(ReferenceCompositeColumn		(*this,	"continent",		tr("Continent"),		noSuffix,				db.rangesTable.continentColumn)),
-		numAscentsColumn		(NumericFoldCompositeColumn		(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,	CountFold,	crumbsTo(db.ascentsTable))),
+		numAscentsColumn		(CountFoldCompositeColumn		(*this,	"numAscents",		tr("Num. ascents"),		noSuffix,				db.ascentsTable)),
 		listHikersColumn		(HikerListFoldCompositeColumn	(*this,	"listHikers",		tr("Scaled by"),								db.hikersTable.nameColumn)),
 		sumElevationGainColumn	(NumericFoldCompositeColumn		(*this,	"sumElevationGain",	tr("Sum elev. gain"),	mSuffix,	SumFold,	db.ascentsTable.elevationGainColumn)),
 		volcanoColumn			(DirectCompositeColumn			(*this,												noSuffix,				db.peaksTable.volcanoColumn))
