@@ -155,7 +155,7 @@ int ColumnWizardColumnPage::nextId() const
 	if (!forwardReference) {
 		return ColumnWizardPage_FoldOp;
 	}
-	return ColumnWizardPage_Name;
+	return ColumnWizardPage_Settings;
 }
 
 
@@ -224,47 +224,80 @@ void ColumnWizardFoldOpPage::initializePage()
 
 int ColumnWizardFoldOpPage::nextId() const
 {
-	return ColumnWizardPage_Name;
+	return ColumnWizardPage_Settings;
 }
 
 
 
 
 
-ColumnWizardNamePage::ColumnWizardNamePage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage) :
+ColumnWizardSettingsPage::ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage) :
 	ColumnWizardPage(parent, db, compTable),
 	tablePage(tablePage),
 	columnPage(columnPage),
 	foldOpPage(foldOpPage),
-	name(new QLineEdit(this))
+	nameEdit(new QLineEdit(this)),
+	suffixHLine(new QFrame(this)),
+	suffixLabel(new QLabel(this)),
+	suffixEdit(new QLineEdit(this))
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
-	setTitle(tr("Set column name"));
-	setSubTitle(tr("Choose a name for the new column, or leave the automatic name in place."));
+	setTitle(tr("Customization"));
+	setSubTitle(tr("Choose a name for the new column and customize further settings."));
 	
-	name->setPlaceholderText(tr("Name the new column"));
-	layout->addWidget(name);
+	layout->addWidget(new QLabel(tr("Name the new column"), this));
+	nameEdit->setPlaceholderText(tr("Required"));
+	layout->addWidget(nameEdit);
 	
-	registerField("name*",	name);
+	layout->addWidget(suffixHLine);
+	suffixLabel->setText(tr("Set a suffix to be appended to every cell of the column"));
+	layout->addWidget(suffixLabel);
+	suffixEdit->setPlaceholderText(tr("Optional"));
+	layout->addWidget(suffixEdit);
+	
+	registerField("name*", nameEdit);
+	registerField("suffix*", suffixEdit);
 }
 
-QString ColumnWizardNamePage::getName() const
+QString ColumnWizardSettingsPage::getName() const
 {
-	return name->text();
+	return nameEdit->text();
 }
 
-void ColumnWizardNamePage::initializePage()
+QString ColumnWizardSettingsPage::getSuffix() const
 {
-	name->setText(generateColumnName());
+	return suffixEdit->text();
 }
 
-bool ColumnWizardNamePage::isComplete() const
+void ColumnWizardSettingsPage::initializePage()
 {
-	return !name->text().isEmpty();
+	const Column* const columnToUse = columnPage.getSelectedColumn();
+	assert(columnToUse);
+	assert(!columnToUse->table.isAssociative);
+	const NormalTable& tableToUse = (const NormalTable&) columnToUse->table;
+	
+	bool setSuffix = false;
+	setSuffix |= &compTable.baseTable == &tableToUse;
+	setSuffix |= db.getBreadcrumbsFor(compTable.baseTable, tableToUse).isForwardOnly();
+	const FoldOp foldOp = foldOpPage.getSelectedFoldOp();
+	setSuffix |= foldOp == CountFold || foldOp == AverageFold || foldOp == SumFold || foldOp == MaxFold || foldOp == MinFold;
+	
+	
+	nameEdit->setText(generateColumnName());
+	
+	suffixHLine->setVisible(setSuffix);
+	suffixLabel->setVisible(setSuffix);
+	suffixEdit->setVisible(setSuffix);
+	suffixEdit->clear();
 }
 
-QString ColumnWizardNamePage::generateColumnName() const
+bool ColumnWizardSettingsPage::isComplete() const
+{
+	return !nameEdit->text().isEmpty();
+}
+
+QString ColumnWizardSettingsPage::generateColumnName() const
 {
 	const NormalTable* const tableToUse = tablePage.getSelectedTable();
 	const Column* const columnToUse = columnPage.getSelectedColumn();
@@ -313,10 +346,10 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	QWizard(parent),
 	db(db),
 	compTable(compTable),
-	tablePage	(ColumnWizardTablePage	(parent, db, compTable)),
-	columnPage	(ColumnWizardColumnPage	(parent, db, compTable, tablePage)),
-	foldOpPage	(ColumnWizardFoldOpPage	(parent, db, compTable, columnPage)),
-	namePage	(ColumnWizardNamePage	(parent, db, compTable, tablePage, columnPage, foldOpPage))
+	tablePage	(ColumnWizardTablePage		(parent, db, compTable)),
+	columnPage	(ColumnWizardColumnPage		(parent, db, compTable, tablePage)),
+	foldOpPage	(ColumnWizardFoldOpPage		(parent, db, compTable, columnPage)),
+	settingsPage(ColumnWizardSettingsPage	(parent, db, compTable, tablePage, columnPage, foldOpPage))
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
@@ -327,7 +360,7 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	setPage(ColumnWizardPage_Table,		&tablePage);
 	setPage(ColumnWizardPage_Column,	&columnPage);
 	setPage(ColumnWizardPage_FoldOp,	&foldOpPage);
-	setPage(ColumnWizardPage_Name,		&namePage);
+	setPage(ColumnWizardPage_Settings,	&settingsPage);
 	
 	setStartId(ColumnWizardPage_Table);
 }
@@ -354,7 +387,7 @@ CompositeColumn* ColumnWizard::getFinishedColumn()
 	counterSetting.set(*this, newCustomColumnIndex);
 	const QString name = "CUSTOM_COLUMN_" + QString::number(newCustomColumnIndex) + "_" + columnToUse.table.name + "_" + columnToUse.name;
 	
-	const QString suffix = QString();
+	const QString suffix = settingsPage.getSuffix();
 	
 	
 	const bool sameTable = &compTable.baseTable == &tableToUse;

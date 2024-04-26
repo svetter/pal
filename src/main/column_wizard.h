@@ -29,7 +29,7 @@ enum ColumnWizardPageID {
 	ColumnWizardPage_Table,
 	ColumnWizardPage_Column,
 	ColumnWizardPage_FoldOp,
-	ColumnWizardPage_Name
+	ColumnWizardPage_Settings
 };
 
 
@@ -102,7 +102,7 @@ protected:
 
 
 
-class ColumnWizardNamePage : public ColumnWizardPage
+class ColumnWizardSettingsPage : public ColumnWizardPage
 {
 	Q_OBJECT
 	
@@ -110,12 +110,16 @@ class ColumnWizardNamePage : public ColumnWizardPage
 	const ColumnWizardColumnPage& columnPage;
 	const ColumnWizardFoldOpPage& foldOpPage;
 	
-	QLineEdit* name;
+	QLineEdit* nameEdit;
+	QFrame* suffixHLine;
+	QLabel* suffixLabel;
+	QLineEdit* suffixEdit;
 	
 public:
-	ColumnWizardNamePage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage);
+	ColumnWizardSettingsPage(QWidget* parent, Database& db, const CompositeTable& compTable, const ColumnWizardTablePage& tablePage, const ColumnWizardColumnPage& columnPage, const ColumnWizardFoldOpPage& foldOpPage);
 	
 	QString getName() const;
+	QString getSuffix() const;
 	
 protected:
 	void initializePage() override;
@@ -133,10 +137,10 @@ class ColumnWizard : public QWizard
 	Database& db;
 	CompositeTable& compTable;
 	
-	ColumnWizardTablePage	tablePage;
-	ColumnWizardColumnPage	columnPage;
-	ColumnWizardFoldOpPage	foldOpPage;
-	ColumnWizardNamePage	namePage;
+	ColumnWizardTablePage		tablePage;
+	ColumnWizardColumnPage		columnPage;
+	ColumnWizardFoldOpPage		foldOpPage;
+	ColumnWizardSettingsPage	settingsPage;
 	
 public:
 	int visualIndexToUse;
