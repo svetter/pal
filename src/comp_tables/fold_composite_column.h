@@ -48,10 +48,13 @@ protected:
 	/** The column that contains the content to be folded. */
 	const Column* const contentColumn;
 	
-	FoldCompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs, const Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
+	FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, FoldOp op, const Breadcrumbs breadcrumbs, const Column* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const = 0;
 };
 
 
@@ -69,6 +72,11 @@ public:
 	NumericFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, FoldOp op, const Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+public:
+	static NumericFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
 
 
@@ -78,10 +86,15 @@ public:
  */
 class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
-	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Column& contentColumn, const QStringList* enumNames = nullptr);
+	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const Column& contentColumn, const QStringList* enumNames = nullptr, bool isHikerList = false);
 	
 	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+public:
+	static ListStringFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
 
 

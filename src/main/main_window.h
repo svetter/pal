@@ -148,7 +148,7 @@ private slots:
 	void handle_unhideColumn();
 	void handle_addCustomColumn();
 	void handle_columnWizardAccepted();
-	void handle_removeColumn();
+	void handle_removeCustomColumn();
 	
 	// File menu action handlers
 	void handle_newDatabase();
@@ -180,8 +180,8 @@ private:
 	void closeEvent(QCloseEvent* event) override;
 	void saveProjectImplicitSettings();
 	void saveGlobalImplicitSettings();
-	void saveImplicitColumnSettings(const ItemTypeMapper* const mapper);
-	void saveSorting(const ItemTypeMapper* const mapper);
+	void saveImplicitColumnSettings(const ItemTypeMapper& mapper);
+	void saveSorting(const ItemTypeMapper& mapper);
 	// Layout changes
 	virtual void resizeEvent(QResizeEvent* event) override;
 	

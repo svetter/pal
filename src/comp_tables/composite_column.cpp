@@ -23,8 +23,10 @@
 
 #include "composite_column.h"
 
-#include "src/comp_tables/composite_table.h"
+#include "composite_table.h"
+#include "fold_composite_column.h"
 #include "src/data/enum_names.h"
+#include "src/main/item_types_handler.h"
 
 
 
@@ -41,7 +43,8 @@
  * @param enumNames					An optional list of enum names with which to replace the raw cell content.
  * @param enumNameLists				An optional list of enum name lists with which to replace the raw cell content.
  */
-CompositeColumn::CompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+CompositeColumn::CompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames, const QList<QPair<QString, QStringList>>* enumNameLists) :
+	type(type),
 	table(table),
 	name(name),
 	uiName(uiName),
@@ -259,6 +262,90 @@ const ProjectSettings& CompositeColumn::getProjectSettings() const
 
 
 
+QString CompositeColumn::encodeToString(QList<const CompositeColumn*> columns)
+{
+	QStringList entries = QStringList();
+	for (const CompositeColumn* const column : columns) {
+		entries.append(column->encodeSingleColumnToString());
+	}
+	const QString encodedColumns = entries.join(",");
+	return encodedColumns;
+}
+
+QString CompositeColumn::encodeSingleColumnToString() const
+{
+	const QString header = CompColTypeNames::getName(type) + "CompositeColumn(";
+	
+	QStringList parameters = QStringList();
+	parameters += encodeString("parentBaseTable_name", table.baseTable.name);
+	parameters += encodeString("name", name);
+	parameters += encodeString("uiName", uiName);
+	parameters += encodeTypeSpecific();
+	
+	return header + parameters.join(",") + ")";
+}
+
+QList<CompositeColumn*> CompositeColumn::decodeFromString(const QString& encoded, Database& db, const ItemTypesHandler& typesHandler)
+{
+	QString restOfString = encoded;
+	QList<CompositeColumn*> columns = QList<CompositeColumn*>();
+	
+	while (!restOfString.isEmpty()) {
+		CompositeColumn* const parsedColumn = decodeSingleColumnFromString(restOfString, db, typesHandler);
+		if (!parsedColumn) {
+			qDebug() << "WARNING: Aborted parsing columns from string:" << encoded;
+			break;
+		}
+		
+		columns.append(parsedColumn);
+		
+		if (restOfString.isEmpty()) break;
+		if (!restOfString.startsWith(",")) {
+			qDebug() << "WARNING: Aborted parsing columns from string:" << encoded;
+			break;
+		}
+		restOfString.remove(0, 1);
+	}
+	
+	return columns;
+}
+
+CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEncoding, Database& db, const ItemTypesHandler& typesHandler)
+{
+	bool ok = false;
+	
+	const CompColType type = decodeHeader<CompColType>(restOfEncoding, "CompositeColumn", &CompColTypeNames::getType, ok);
+	if (!ok) return nullptr;
+	
+	const NormalTable* const parentBaseTable = decodeTableIdentity(restOfEncoding, "parentBaseTable_name", db, ok);
+	if (!ok) return nullptr;
+	CompositeTable* parentTable;
+	for (const ItemTypeMapper* const mapper : typesHandler.getAllMappers()) {
+		if (&mapper->baseTable == parentBaseTable) {
+			parentTable = &mapper->compTable;
+			break;
+		}
+	}
+	assert(parentTable);
+	
+	const QString name = decodeString(restOfEncoding, "name", ok);
+	if (!ok) return nullptr;
+	
+	const QString uiName = decodeString(restOfEncoding, "uiName", ok);
+	if (!ok) return nullptr;
+	
+	switch (type) {
+	case Direct:			return         DirectCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case Reference:			return      ReferenceCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case NumericFold:		return    NumericFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case ListStringFold:	return ListStringFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	default: assert(false);
+	}
+	return nullptr;
+}
+
+
+
 
 
 /**
@@ -271,7 +358,7 @@ const ProjectSettings& CompositeColumn::getProjectSettings() const
  * @param contentColumn	The column from which to take the actual cell content.
  */
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
-	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
+	CompositeColumn(Direct, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	contentColumn(contentColumn)
 {}
 
@@ -314,6 +401,30 @@ const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 
 
 
+QStringList DirectCompositeColumn::encodeTypeSpecific() const
+{
+	QStringList parameters = QStringList();
+	parameters += encodeString("contentColumn_table_name", contentColumn.table.name);
+	parameters += encodeString("contentColumn_name", contentColumn.name);
+	parameters += encodeString("suffix", suffix);
+	return parameters;
+}
+
+DirectCompositeColumn* DirectCompositeColumn::decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db)
+{
+	bool ok = false;
+	
+	const Column* const contentColumn = decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok);
+	if (!ok) return nullptr;
+	
+	const QString suffix = decodeString(restOfEncoding, "suffix", ok, true);
+	if (!ok) return nullptr;
+	
+	return new DirectCompositeColumn(parentTable, name, uiName, suffix, *contentColumn);
+}
+
+
+
 
 
 /**
@@ -326,7 +437,7 @@ const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
  * @param contentColumn	The column from which to take the actual cell content.
  */
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
-	CompositeColumn(table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
+	CompositeColumn(Reference, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
 	contentColumn(contentColumn)
 {
@@ -370,6 +481,30 @@ const QSet<const Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 
 
 
+QStringList ReferenceCompositeColumn::encodeTypeSpecific() const
+{
+	QStringList parameters = QStringList();
+	parameters += encodeString("contentColumn_table_name", contentColumn.table.name);
+	parameters += encodeString("contentColumn_name", contentColumn.name);
+	parameters += encodeString("suffix", suffix);
+	return parameters;
+}
+
+ReferenceCompositeColumn* ReferenceCompositeColumn::decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db)
+{
+	bool ok = false;
+	
+	const Column* const contentColumn = decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok);
+	if (!ok) return nullptr;
+	
+	const QString suffix = decodeString(restOfEncoding, "suffix", ok, true);
+	if (!ok) return nullptr;
+	
+	return new ReferenceCompositeColumn(parentTable, name, uiName, suffix, *contentColumn);
+}
+
+
+
 
 
 /**
@@ -383,7 +518,7 @@ const QSet<const Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() co
  * @param subtrahendColumn	The column from which to take the subtrahends.
  */
 DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, ValueColumn& minuendColumn, ValueColumn& subtrahendColumn) :
-	CompositeColumn(table, name, uiName, Integer, false, true, suffix),
+	CompositeColumn(Difference, table, name, uiName, Integer, false, true, suffix),
 	minuendColumn(minuendColumn),
 	subtrahendColumn(subtrahendColumn)
 {
@@ -445,6 +580,15 @@ const QSet<const Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() c
 
 
 
+QStringList DifferenceCompositeColumn::encodeTypeSpecific() const
+{
+	// Not supported
+	assert(false);
+	return {};
+}
+
+
+
 
 
 /**
@@ -457,7 +601,7 @@ const QSet<const Column*> DifferenceCompositeColumn::getAllUnderlyingColumns() c
  * @param displayedEnumColumn	The column from which to take the displayed enum.
  */
 DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable& table, QString name, QString uiName, ValueColumn& discerningEnumColumn, ValueColumn& displayedEnumColumn) :
-	CompositeColumn(table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn.enumNameLists),
+	CompositeColumn(DependentEnum, table, name, uiName, DualEnum, false, false, QString(), nullptr, discerningEnumColumn.enumNameLists),
 	discerningEnumColumn(discerningEnumColumn),
 	displayedEnumColumn(displayedEnumColumn)
 {
@@ -505,6 +649,15 @@ const QSet<const Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns(
 
 
 
+QStringList DependentEnumCompositeColumn::encodeTypeSpecific() const
+{
+	// Not supported
+	assert(false);
+	return {};
+}
+
+
+
 
 
 /**
@@ -516,8 +669,8 @@ const QSet<const Column*> DependentEnumCompositeColumn::getAllUnderlyingColumns(
  * @param suffix		A suffix to append to the content of each cell.
  * @param sortingPasses	The list of sorting passes in order of priority, each containing column and order.
  */
-IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
-	CompositeColumn(table, name, uiName, Integer, true, true, suffix),
+IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses, bool isOrdinal) :
+	CompositeColumn(isOrdinal ? Ordinal : Index, table, name, uiName, Integer, true, true, suffix),
 	sortingPasses(sortingPasses)
 {
 	assert(!sortingPasses.isEmpty());
@@ -609,6 +762,15 @@ const QSet<const Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
 
 
 
+QStringList IndexCompositeColumn::encodeTypeSpecific() const
+{
+	// Not supported
+	assert(false);
+	return {};
+}
+
+
+
 
 
 /**
@@ -621,7 +783,7 @@ const QSet<const Column*> IndexCompositeColumn::getAllUnderlyingColumns() const
  * @param sortingPasses	The list of columns to sort by and their sort order, in order of priority. The first column automatically doubles as the separating (grouping) column.
  */
 OrdinalCompositeColumn::OrdinalCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses) :
-	IndexCompositeColumn(table, name, uiName, suffix, sortingPasses),
+	IndexCompositeColumn(table, name, uiName, suffix, sortingPasses, true),
 	separatingColumn(sortingPasses.first().column)
 {
 	assert(sortingPasses.first().column.isForeignKey());
@@ -676,4 +838,13 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	}
 	
 	return ordinals;
+}
+
+
+
+QStringList OrdinalCompositeColumn::encodeTypeSpecific() const
+{
+	// Not supported
+	assert(false);
+	return {};
 }

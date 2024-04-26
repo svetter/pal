@@ -139,6 +139,8 @@ class ColumnWizard : public QWizard
 	ColumnWizardNamePage	namePage;
 	
 public:
+	int visualIndexToUse;
+	
 	ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTable);
 	~ColumnWizard();
 	

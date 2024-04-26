@@ -404,7 +404,7 @@ void MainWindow::initColumnContextMenu()
 	columnContextMenuAddCustomColumnAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	
 	connect(columnContextMenuHideColumnAction,		&QAction::triggered, this, &MainWindow::handle_hideColumn);
-	connect(columnContextMenuRemoveColumnAction,	&QAction::triggered, this, &MainWindow::handle_removeColumn);
+	connect(columnContextMenuRemoveColumnAction,	&QAction::triggered, this, &MainWindow::handle_removeCustomColumn);
 	connect(columnContextMenuAddCustomColumnAction,	&QAction::triggered, this, &MainWindow::handle_addCustomColumn);
 }
 
@@ -521,6 +521,10 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		generalStatsEngine.setCurrentlyVisible(!activeMapper);
 		
 		for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+			// Custom columns
+			const QString encodedCustomColumns = mapper->customColumnsSetting.get();
+			const QList<CompositeColumn*> customColumns = CompositeColumn::decodeFromString(encodedCustomColumns, db, *typesHandler);
+			mapper->compTable.setCustomColumns(customColumns);
 			// Filter bar
 			mapper->filterBar.setVisible(mapper->showFilterBarSetting.get(this));
 			// Column widths
@@ -1089,8 +1093,6 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 	int logicalIndexClicked = header->logicalIndexAt(pos);
 	if (logicalIndexClicked < 0) return;
 	
-	columnContextMenuHideColumnAction->setData(logicalIndexClicked);
-	
 	// Repopulate 'restore column' submenu
 	int visibleColumns = 0;
 	columnContextMenuRestoreColumnMenu->clear();
@@ -1107,9 +1109,16 @@ void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
 	}
 	columnContextMenuRestoreColumnMenu->setEnabled(!columnContextMenuRestoreColumnMenu->isEmpty());
 	
+	// Configure 'hide column' and 'remove column' actions
+	columnContextMenuHideColumnAction->setData(logicalIndexClicked);
+	columnContextMenuRemoveColumnAction->setData(logicalIndexClicked);
 	columnContextMenuHideColumnAction->setEnabled(visibleColumns > 1);
+	columnContextMenuRemoveColumnAction->setEnabled(mapper.compTable.hasCustomColumnAt(logicalIndexClicked));
 	
-	// Show contet menu
+	// Configure 'add custom column' action
+	columnContextMenuAddCustomColumnAction->setData(logicalIndexClicked);
+	
+	// Show context menu
 	columnContextMenu.popup(header->viewport()->mapToGlobal(pos));
 }
 
@@ -1190,11 +1199,14 @@ void MainWindow::handle_addCustomColumn()
 	QAction* action = qobject_cast<QAction*>(sender());
 	if (!action) return;
 	
+	ItemTypeMapper& mapper = getActiveMapper();
+	
 	const int logicalIndex = action->data().toInt();
-	// TODO Find visual index of clicked column and insert new column behind it
+	const int visualIndex = mapper.tableView.horizontalHeader()->visualIndex(logicalIndex) + 1;
 	
 	ColumnWizard& wizard = getActiveMapper().columnWizard;
 	
+	wizard.visualIndexToUse = visualIndex;
 	wizard.restart();
 	wizard.show();
 }
@@ -1206,6 +1218,11 @@ void MainWindow::handle_columnWizardAccepted()
 	
 	const CompositeColumn& newColumn = *wizard.getFinishedColumn();
 	mapper.compTable.addCustomColumn(newColumn);
+	
+	// Set visual index to right of the clicked column
+	const int logicalIndex = mapper.compTable.getIndexOf(newColumn);
+	const int currentVisualIndex = mapper.tableView.horizontalHeader()->visualIndex(logicalIndex);
+	mapper.tableView.horizontalHeader()->moveSection(currentVisualIndex, wizard.visualIndexToUse);
 }
 
 /**
@@ -1213,7 +1230,7 @@ void MainWindow::handle_columnWizardAccepted()
  * 
  * Extracts the column index from calling sender().
  */
-void MainWindow::handle_removeColumn()
+void MainWindow::handle_removeCustomColumn()
 {
 	QAction* action = qobject_cast<QAction*>(sender());
 	if (!action) return;
@@ -1221,9 +1238,7 @@ void MainWindow::handle_removeColumn()
 	const int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	// TODO
-	qDebug() << "handle_removeColumn";
+	mapper.compTable.removeCustomColumnAt(logicalIndex);
 }
 
 
@@ -1659,8 +1674,12 @@ void MainWindow::saveProjectImplicitSettings()
 	db.projectSettings.mainWindow_currentTabIndex.set(*this, mainAreaTabs->currentIndex());
 	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		saveImplicitColumnSettings(mapper);
-		saveSorting(mapper);
+		// Custom columns
+		const QString encodedColumns = mapper->compTable.getEncodedCustomColumns();
+		mapper->customColumnsSetting.set(*this, encodedColumns);
+		// Implicit column settings
+		saveImplicitColumnSettings(*mapper);
+		saveSorting(*mapper);
 		mapper->filterBar.saveFilters();
 		mapper->showFilterBarSetting.set(*this, mapper->filterBarCurrentlySetVisible());
 	}
@@ -1691,16 +1710,17 @@ void MainWindow::saveGlobalImplicitSettings()
  * 
  * @param mapper	The ItemTypeMapper containing the table whose column widths should be saved.
  */
-void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
+void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper& mapper)
 {
-	if (!mapper->tabHasBeenOpened(false)) return;	// Only save if table was actually shown
-	QHeaderView* header = mapper->tableView.horizontalHeader();
+	if (!mapper.tabHasBeenOpened(false)) return;	// Only save if table was actually shown
+	
+	QHeaderView* header = mapper.tableView.horizontalHeader();
 	
 	QMap<QString, int>	widthsMap;
 	QMap<QString, int>	orderMap;
 	QMap<QString, bool>	hiddenMap;
-	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper->compTable.columnCount(); logicalColumnIndex++) {
-		const QString& columnName = mapper->compTable.getColumnAt(logicalColumnIndex).name;
+	for (int logicalColumnIndex = 0; logicalColumnIndex < mapper.compTable.columnCount(); logicalColumnIndex++) {
+		const QString& columnName = mapper.compTable.getColumnAt(logicalColumnIndex).name;
 		
 		// Hidden status
 		const bool hidden = header->isSectionHidden(logicalColumnIndex);
@@ -1708,9 +1728,9 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 		
 		// Column width (not available if column is hidden)
 		if (!hidden) {
-			int currentColumnWidth = mapper->tableView.columnWidth(logicalColumnIndex);
+			int currentColumnWidth = mapper.tableView.columnWidth(logicalColumnIndex);
 			if (currentColumnWidth <= 0) {
-				qDebug() << "Saving column widths: Couldn't read column width for column" << columnName << "in table" << mapper->compTable.name << "- skipping column";
+				qDebug() << "Saving column widths: Couldn't read column width for column" << columnName << "in table" << mapper.compTable.name << "- skipping column";
 			} else {
 				widthsMap[columnName] = currentColumnWidth;
 			}
@@ -1719,14 +1739,14 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
 		// Column order
 		int visualIndex = header->visualIndex(logicalColumnIndex);
 		if (visualIndex < 0) {
-			qDebug() << "Saving column order: Couldn't read column order for column" << columnName << "in table" << mapper->compTable.name << "- skipping column";
+			qDebug() << "Saving column order: Couldn't read column order for column" << columnName << "in table" << mapper.compTable.name << "- skipping column";
 		} else {
 			orderMap[columnName] = visualIndex;
 		}
 	}
-	mapper->columnWidthsSetting	.set(*this, widthsMap);
-	mapper->columnOrderSetting	.set(*this, orderMap);
-	mapper->hiddenColumnsSetting.set(*this, hiddenMap);
+	mapper.columnWidthsSetting	.set(*this, widthsMap);
+	mapper.columnOrderSetting	.set(*this, orderMap);
+	mapper.hiddenColumnsSetting.set(*this, hiddenMap);
 }
 
 /**
@@ -1734,12 +1754,12 @@ void MainWindow::saveImplicitColumnSettings(const ItemTypeMapper* const mapper)
  * 
  * @param mapper	The ItemTypeMapper containing the table whose sorting should be saved.
  */
-void MainWindow::saveSorting(const ItemTypeMapper* const mapper)
+void MainWindow::saveSorting(const ItemTypeMapper& mapper)
 {
-	const auto& [column, order] = mapper->compTable.getCurrentSorting();
+	const auto& [column, order] = mapper.compTable.getCurrentSorting();
 	QString orderString = order == Qt::DescendingOrder ? "Descending" : "Ascending";
 	QString settingValue = column->name + ", " + orderString;
-	mapper->sortingSetting.set(*this, settingValue);
+	mapper.sortingSetting.set(*this, settingValue);
 }
 
 

@@ -198,6 +198,22 @@ public:
 	/** Remembered sorting of the countries table. */
 	ProjectSetting<QString>		sorting_countriesTable;
 	
+	// Custom columns
+	/** Remember custom columns for the ascents table. */
+	ProjectSetting<QString>		customColumns_ascentsTable;
+	/** Remember custom columns for the peaks table. */
+	ProjectSetting<QString>		customColumns_peaksTable;
+	/** Remember custom columns for the trips table. */
+	ProjectSetting<QString>		customColumns_tripsTable;
+	/** Remember custom columns for the hikers table. */
+	ProjectSetting<QString>		customColumns_hikersTable;
+	/** Remember custom columns for the regions table. */
+	ProjectSetting<QString>		customColumns_regionsTable;
+	/** Remember custom columns for the ranges table. */
+	ProjectSetting<QString>		customColumns_rangesTable;
+	/** Remember custom columns for the countries table. */
+	ProjectSetting<QString>		customColumns_countriesTable;
+	
 	// Filter bar visibility
 	/** Remember the filter bar on the ascents tab as being visible. */
 	ProjectSetting<bool>		showFilterBar_ascentsTable;
@@ -294,6 +310,15 @@ public:
 		sorting_regionsTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/regionsTable")),
 		sorting_rangesTable				(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/rangesTable")),
 		sorting_countriesTable			(ProjectSetting<QString>	(table,	"implicit/mainWindow/sorting/countriesTable")),
+		
+		// Custom columns
+		customColumns_ascentsTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/ascentsTable")),
+		customColumns_peaksTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/peaksTable")),
+		customColumns_tripsTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/tripsTable")),
+		customColumns_hikersTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/hikersTable")),
+		customColumns_regionsTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/regionsTable")),
+		customColumns_rangesTable		(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/rangesTable")),
+		customColumns_countriesTable	(ProjectSetting<QString>	(table,	"implicit/mainWindow/customColumns/countriesTable")),
 		
 		// Filter bar visibility
 		showFilterBar_ascentsTable		(ProjectSetting<bool>		(table,	"implicit/mainWindow/showFilters/ascentsTable",		true)),

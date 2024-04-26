@@ -1,6 +1,7 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+#include "src/settings/string_encoder.h"
 #include "src/db/breadcrumbs.h"
 #include "src/db/normal_table.h"
 #include "src/comp_tables/fold_op.h"
@@ -9,7 +10,7 @@ class FilterBox;
 
 
 
-class Filter
+class Filter : public StringEncoder
 {
 public:
 	const DataType type;
@@ -60,25 +61,6 @@ private:
 	static Filter* decodeSingleFilterFromString(QString& restOfString, Database& db);
 protected:
 	virtual QStringList encodeTypeSpecific() const = 0;
-	
-	// Encoding helpers
-	static QString encodeInt	(const QString& paramName, int value);
-	static QString encodeID		(const QString& paramName, const ItemID& value);
-	static QString encodeBool	(const QString& paramName, bool value);
-	static QString encodeString	(const QString& paramName, const QString& value);
-	static QString encodeDate	(const QString& paramName, const QDate& value);
-	static QString encodeTime	(const QString& paramName, const QTime& value);
-	
-	// Decoding helpers
-	static DataType				decodeHeader		(QString& restOfString, bool& ok);
-	static const NormalTable*	decodeTableIdentity	(QString& restOfString, const QString& tableNameParamName, bool& ok, Database& db);
-	static const Column*		decodeColumnIdentity(QString& restOfString, const QString& tableNameParamName, const QString& columnNameParamName, bool& ok, Database& db);
-	static int					decodeInt			(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
-	static ItemID				decodeID			(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
-	static bool					decodeBool			(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
-	static QString				decodeString		(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
-	static QDate				decodeDate			(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
-	static QTime				decodeTime			(QString& restOfString, const QString& paramName, bool& ok, bool lastParam = false);
 };
 
 

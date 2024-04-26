@@ -24,6 +24,8 @@
 #ifndef COMPOSITE_COLUMN_H
 #define COMPOSITE_COLUMN_H
 
+#include "src/settings/string_encoder.h"
+#include "comp_column_type.h"
 #include "src/db/breadcrumbs.h"
 #include "src/db/column.h"
 #include "src/settings/project_settings.h"
@@ -32,6 +34,7 @@
 #include <QVariant>
 
 class CompositeTable;
+class ItemTypesHandler;
 
 
 
@@ -39,11 +42,13 @@ class CompositeTable;
  * A column in a table which contains data which can be computed from multiple tables and columns in
  * one or multiple base tables.
  */
-class CompositeColumn {
+class CompositeColumn : public StringEncoder {
+public:
+	const CompColType type;
+	
 	/** The composite table this column belongs to. */
 	CompositeTable& table;
 	
-public:
 	/** The internal name of this column. */
 	const QString name;
 	/** The name of this column for UI purposes. */
@@ -54,7 +59,7 @@ public:
 	const DataType contentType;
 	/** Whether the cells of this column are interdependent (as opposed to each cell being computed separately). */
 	const bool cellsAreInterdependent;
-	/** Whether this column is a statistical column, which only holds information derived from other columnds. */
+	/** Whether this column is a statistical column, which only holds information derived from other columns. */
 	const bool isStatistical;
 	
 	/** A list of enum names to replace the raw cell content with. */
@@ -67,7 +72,7 @@ protected:
 	const QString suffix;
 	
 protected:
-	CompositeColumn(CompositeTable& table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
+	CompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool cellsAreInterdependent, bool isStatistical, QString suffix, const QStringList* enumNames = nullptr, const QList<QPair<QString, QStringList>>* enumNameLists = nullptr);
 public:
 	virtual ~CompositeColumn();
 	
@@ -113,6 +118,20 @@ public:
 	
 protected:
 	const ProjectSettings& getProjectSettings() const;
+	
+	
+	
+	// Encoding & Decoding
+public:
+	static QString encodeToString(QList<const CompositeColumn*> columns);
+private:
+	QString encodeSingleColumnToString() const;
+public:
+	static QList<CompositeColumn*> decodeFromString(const QString& encoded, Database& db, const ItemTypesHandler& typesHandler);
+private:
+	static CompositeColumn* decodeSingleColumnFromString(QString& restOfString, Database& db, const ItemTypesHandler& typesHandler);
+protected:
+	virtual QStringList encodeTypeSpecific() const = 0;
 };
 
 
@@ -131,6 +150,11 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+public:
+	static DirectCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
 
 
@@ -151,6 +175,11 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
+public:
+	static ReferenceCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
 
 
@@ -171,6 +200,9 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
 };
 
 
@@ -191,6 +223,9 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
 };
 
 
@@ -213,13 +248,16 @@ class IndexCompositeColumn : public CompositeColumn {
 	const QList<BaseSortingPass> sortingPasses;
 	
 public:
-	IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses);
+	IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses, bool isOrdinal = false);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
 	QList<BufferRowIndex> getRowIndexOrderList() const;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
 };
 
 /**
@@ -235,6 +273,9 @@ public:
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	QList<QVariant> computeWholeColumn() const override;
+	
+protected:
+	virtual QStringList encodeTypeSpecific() const;
 };
 
 

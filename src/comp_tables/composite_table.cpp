@@ -45,6 +45,7 @@ CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView*
 	columns(QList<const CompositeColumn*>()),
 	exportColumns(QList<QPair<int, const CompositeColumn*>>()),
 	customColumns(QList<const CompositeColumn*>()),
+	columnNames(QStringList()),
 	bufferInitialized(false),
 	buffer(TableBuffer()),
 	viewOrder(ViewOrderBuffer()),
@@ -98,11 +99,13 @@ void CompositeTable::reset()
  */
 void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
-	for (const CompositeColumn* const column : columns) {
-		assert(column->name != newColumn.name);
+	assert(&newColumn.table == this);
+	for (const QString& name : columnNames) {
+		assert(name != newColumn.name);
 	}
 	
 	columns.append(&newColumn);
+	columnNames.append(newColumn.name);
 }
 
 /**
@@ -112,7 +115,13 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
  */
 void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 {
+	assert(&newColumn.table == this);
+	for (const QString& name : columnNames) {
+		assert(name != newColumn.name);
+	}
+	
 	exportColumns.append({columns.size(), &newColumn});
+	columnNames.append(newColumn.name);
 }
 
 /**
@@ -124,26 +133,50 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
  */
 void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
 {
-	QList<const CompositeColumn*> allColumns = columns;
-	for (const auto& [_, column] : exportColumns) {
-		allColumns.append(column);
-	}
-	allColumns.append(customColumns);
-	for (const CompositeColumn* const column : allColumns) {
-		assert(column->name != newColumn.name);
+	assert(&newColumn.table == this);
+	for (const QString& name : columnNames) {
+		assert(name != newColumn.name);
 	}
 	
 	beginInsertColumns(QModelIndex(), getNumberOfNormalColumns(), getNumberOfNormalColumns());
 	
 	customColumns.append(&newColumn);
-	buffer.appendColumn();
+	columnNames.append(newColumn.name);
 	
 	if (bufferInitialized) {
+		buffer.appendColumn();
 		dirtyColumns.insert(&newColumn);
 		updateBufferColumns({ &newColumn });
 	}
 	
 	endInsertColumns();
+}
+
+void CompositeTable::setCustomColumns(const QList<CompositeColumn*> newCustomColumns)
+{
+	assert(!bufferInitialized);
+	assert(customColumns.isEmpty());
+	if (newCustomColumns.isEmpty()) return;
+	
+	for (CompositeColumn* column : newCustomColumns) {
+		addCustomColumn(*column);
+	}
+}
+
+void CompositeTable::removeCustomColumnAt(int logicalIndex)
+{
+	const CompositeColumn& column = getColumnAt(logicalIndex);
+	assert(customColumns.contains(&column));
+	
+	beginRemoveColumns(QModelIndex(), logicalIndex, logicalIndex);
+	
+	customColumns.removeAll(&column);
+	columnNames.removeAll(column.name);
+	buffer.removeColumn(logicalIndex);
+	
+	endRemoveColumns();
+	
+	delete &column;
 }
 
 
@@ -267,6 +300,18 @@ const CompositeColumn* CompositeTable::getColumnByNameOrNull(const QString& colu
 		if (column->name == columnName) return column;
 	}
 	return nullptr;
+}
+
+bool CompositeTable::hasCustomColumnAt(int logicalIndex) const
+{
+	assert(logicalIndex <= getNumberOfNormalColumns());
+	
+	return logicalIndex >= columns.size();
+}
+
+QString CompositeTable::getEncodedCustomColumns() const
+{
+	return CompositeColumn::encodeToString(customColumns);
 }
 
 /**

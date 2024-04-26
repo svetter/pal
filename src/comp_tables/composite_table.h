@@ -89,6 +89,8 @@ private:
 	QList<QPair<int, const CompositeColumn*>> exportColumns;
 	/** The custom composite columns of this table created by the user in order of creation. */
 	QList<const CompositeColumn*> customColumns;
+	/** The names of all columns. */
+	QStringList columnNames;
 	
 	/** Whether the buffer has been initialized for an open project. */
 	bool bufferInitialized;
@@ -136,6 +138,8 @@ protected:
 	void addExportOnlyColumn(const CompositeColumn& newColumn);
 public:
 	void addCustomColumn(const CompositeColumn& newColumn);
+	void setCustomColumns(const QList<CompositeColumn*> newCustomColumns);
+	void removeCustomColumnAt(int logicalIndex);
 	
 	int getNumberOfNormalColumns() const;
 	int getNumberOfColumnsForCompleteExport() const;
@@ -144,6 +148,8 @@ public:
 	const CompositeColumn& getColumnAt(int columnIndex) const;
 	const CompositeColumn& getExportOnlyColumnAt(int columnIndex) const;
 	const CompositeColumn* getColumnByNameOrNull(const QString& columnName) const;
+	bool hasCustomColumnAt(int logicalIndex) const;
+	QString getEncodedCustomColumns() const;
 	int getIndexOf(const CompositeColumn& column) const;
 	int getExportIndexOf(const CompositeColumn& column) const;
 	QSet<QString> getNormalColumnNameSet() const;

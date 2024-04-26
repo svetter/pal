@@ -52,6 +52,7 @@ test_conf {
 
 
 HEADERS += \
+	src/comp_tables/comp_column_type.h \
 	src/comp_tables/comp_item_tables/comp_ascents_table.h \
 	src/comp_tables/comp_item_tables/comp_countries_table.h \
 	src/comp_tables/comp_item_tables/comp_hikers_table.h \
@@ -139,6 +140,7 @@ HEADERS += \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
 	src/settings/settings_window.h \
+	src/settings/string_encoder.h \
 	src/stats/chart.h \
 	src/stats/stats_engine.h \
 	src/stats/stats_listeners.h \
@@ -229,6 +231,7 @@ SOURCES += \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
 	src/settings/settings_window.cpp \
+	src/settings/string_encoder.cpp \
 	src/stats/chart.cpp \
 	src/stats/stats_engine.cpp \
 	src/stats/stats_listeners.cpp \
