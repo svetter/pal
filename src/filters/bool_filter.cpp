@@ -48,7 +48,7 @@ BoolFilter* BoolFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 {
 	bool ok = false;
 	
-	const bool value = decodeBool(restOfEncoding, "value", ok, true);
+	const bool value = decodeBool(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
 	BoolFilter* const filter = new BoolFilter(tableToFilter, columnToFilterBy, name);

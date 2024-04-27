@@ -97,7 +97,7 @@ CountFoldCompositeColumn* CountFoldCompositeColumn::decodeTypeSpecific(Composite
 	const NormalTable* const countTable = decodeTableIdentity(restOfEncoding, "countTable", db, ok);
 	if (!ok) return nullptr;
 	
-	const QString suffix = decodeString(restOfEncoding, "suffix", ok, true);
+	const QString suffix = decodeString(restOfEncoding, "suffix", ok);
 	if (!ok) return nullptr;
 	
 	return new CountFoldCompositeColumn(parentTable, name, uiName, suffix, *countTable);
@@ -200,7 +200,7 @@ NumericFoldCompositeColumn* NumericFoldCompositeColumn::decodeTypeSpecific(Compo
 	const QString suffix = decodeString(restOfEncoding, "suffix", ok);
 	if (!ok) return nullptr;
 	
-	const QString opName = decodeString(restOfEncoding, "foldOp", ok, true);
+	const QString opName = decodeString(restOfEncoding, "foldOp", ok);
 	if (!ok) return nullptr;
 	NumericFoldOp op = NumericFoldOpNames::getFoldOp(opName);
 	if (op == NumericFoldOp(-1)) return nullptr;
@@ -291,7 +291,7 @@ ListStringFoldCompositeColumn* ListStringFoldCompositeColumn::decodeTypeSpecific
 {
 	bool ok = false;
 	
-	const ValueColumn* const contentColumn = (const ValueColumn*) decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok, true);
+	const ValueColumn* const contentColumn = (const ValueColumn*) decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok);
 	if (!ok) return nullptr;
 	
 	const QStringList* enumNames = contentColumn->enumNames;

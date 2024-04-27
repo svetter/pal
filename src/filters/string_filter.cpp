@@ -74,7 +74,7 @@ StringFilter* StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter,
 {
 	bool ok = false;
 	
-	const QString value = decodeString(restOfEncoding, "value", ok, true);
+	const QString value = decodeString(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
 	StringFilter* const filter = new StringFilter(tableToFilter, columnToFilterBy, foldOp, name);

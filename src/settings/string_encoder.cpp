@@ -68,12 +68,12 @@ const NormalTable* StringEncoder::decodeTableIdentity(QString& restOfEncoding, c
 	return nullptr;
 }
 
-const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok, bool lastParam)
+const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok)
 {
 	const NormalTable* table = decodeTableIdentity(restOfEncoding, tableNameParamName, db, ok);
 	if (!ok) return nullptr;
 	
-	const QString columnName = decodeString(restOfEncoding, columnNameParamName, ok, lastParam);
+	const QString columnName = decodeString(restOfEncoding, columnNameParamName, ok);
 	if (!ok) return nullptr;
 	
 	for (const Column* const column : table->getColumnList()) {
@@ -84,7 +84,7 @@ const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const
 	return nullptr;
 }
 
-int StringEncoder::decodeInt(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+int StringEncoder::decodeInt(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
 	auto fail = [&]() { ok = false; return -1; };
 	
@@ -92,7 +92,7 @@ int StringEncoder::decodeInt(QString& restOfEncoding, const QString& paramName, 
 	if (!restOfEncoding.startsWith(expectedStart)) return fail();
 	restOfEncoding.remove(0, expectedStart.size());
 	
-	const QString endDelimiter = lastParam ? ")" : ",";
+	const QString endDelimiter = ",";
 	const int valueLength = restOfEncoding.indexOf(endDelimiter);
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfEncoding.first(valueLength);
@@ -104,15 +104,15 @@ int StringEncoder::decodeInt(QString& restOfEncoding, const QString& paramName, 
 	return result;
 }
 
-ItemID StringEncoder::decodeID(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+ItemID StringEncoder::decodeID(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
-	const int parsedInt = decodeInt(restOfEncoding, paramName, ok, lastParam);
+	const int parsedInt = decodeInt(restOfEncoding, paramName, ok);
 	
 	if (!ok) return ItemID(-1);
 	return ItemID(parsedInt);
 }
 
-bool StringEncoder::decodeBool(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+bool StringEncoder::decodeBool(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
 	auto fail = [&]() { ok = false; return false; };
 	
@@ -120,7 +120,7 @@ bool StringEncoder::decodeBool(QString& restOfEncoding, const QString& paramName
 	if (!restOfEncoding.startsWith(expectedStart)) return fail();
 	restOfEncoding.remove(0, expectedStart.size());
 	
-	const QString endDelimiter = lastParam ? ")" : ",";
+	const QString endDelimiter = ",";
 	const int valueLength = restOfEncoding.indexOf(endDelimiter);
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfEncoding.first(valueLength);
@@ -132,7 +132,7 @@ bool StringEncoder::decodeBool(QString& restOfEncoding, const QString& paramName
 	return result;
 }
 
-QString StringEncoder::decodeString(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+QString StringEncoder::decodeString(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
 	auto fail = [&]() { ok = false; return QString(); };
 	
@@ -140,7 +140,7 @@ QString StringEncoder::decodeString(QString& restOfEncoding, const QString& para
 	if (!restOfEncoding.startsWith(expectedStart)) return fail();
 	restOfEncoding.remove(0, expectedStart.size());
 	
-	const QString endDelimiter = QString("\"") + (lastParam ? ")" : ",");
+	const QString endDelimiter = "\",";
 	const int valueLength = restOfEncoding.indexOf(endDelimiter);
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfEncoding.first(valueLength);
@@ -151,7 +151,7 @@ QString StringEncoder::decodeString(QString& restOfEncoding, const QString& para
 	return name;
 }
 
-QDate StringEncoder::decodeDate(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+QDate StringEncoder::decodeDate(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
 	auto fail = [&]() { ok = false; return QDate(); };
 	
@@ -159,7 +159,7 @@ QDate StringEncoder::decodeDate(QString& restOfEncoding, const QString& paramNam
 	if (!restOfEncoding.startsWith(expectedStart)) return fail();
 	restOfEncoding.remove(0, expectedStart.size());
 	
-	const QString endDelimiter = lastParam ? ")" : ",";
+	const QString endDelimiter = ",";
 	const int valueLength = restOfEncoding.indexOf(endDelimiter);
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfEncoding.first(valueLength);
@@ -171,7 +171,7 @@ QDate StringEncoder::decodeDate(QString& restOfEncoding, const QString& paramNam
 	return result;
 }
 
-QTime StringEncoder::decodeTime(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam)
+QTime StringEncoder::decodeTime(QString& restOfEncoding, const QString& paramName, bool& ok)
 {
 	auto fail = [&]() { ok = false; return QTime(); };
 	
@@ -179,7 +179,7 @@ QTime StringEncoder::decodeTime(QString& restOfEncoding, const QString& paramNam
 	if (!restOfEncoding.startsWith(expectedStart)) return fail();
 	restOfEncoding.remove(0, expectedStart.size());
 	
-	const QString endDelimiter = lastParam ? ")" : ",";
+	const QString endDelimiter = ",";
 	const int valueLength = restOfEncoding.indexOf(endDelimiter);
 	if (valueLength < 0) return fail();
 	const QString valueString = restOfEncoding.first(valueLength);

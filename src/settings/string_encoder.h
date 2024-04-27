@@ -25,13 +25,13 @@ public:
 	template<typename T>
 	static T					decodeHeader		(QString& restOfEncoding, const QString& encodedTypeSuffix, std::function<T(const QString&)> decodeType, bool& ok);
 	static const NormalTable*	decodeTableIdentity	(QString& restOfEncoding, const QString& tableNameParamName, Database& db, bool& ok);
-	static const Column*		decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok, bool lastParam = false);
-	static int					decodeInt			(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
-	static ItemID				decodeID			(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
-	static bool					decodeBool			(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
-	static QString				decodeString		(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
-	static QDate				decodeDate			(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
-	static QTime				decodeTime			(QString& restOfEncoding, const QString& paramName, bool& ok, bool lastParam = false);
+	static const Column*		decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok);
+	static int					decodeInt			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static ItemID				decodeID			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static bool					decodeBool			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QString				decodeString		(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QDate				decodeDate			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QTime				decodeTime			(QString& restOfEncoding, const QString& paramName, bool& ok);
 };
 
 

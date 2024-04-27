@@ -86,7 +86,7 @@ IDFilter* IDFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const C
 {
 	bool ok = false;
 	
-	const ItemID value = decodeID(restOfEncoding, "value", ok, true);
+	const ItemID value = decodeID(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
 	IDFilter* const filter = new IDFilter(tableToFilter, columnToFilterBy, name);

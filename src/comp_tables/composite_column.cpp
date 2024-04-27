@@ -282,7 +282,7 @@ QString CompositeColumn::encodeSingleColumnToString() const
 	parameters += encodeString("uiName", uiName);
 	parameters += encodeTypeSpecific();
 	
-	return header + parameters.join(",") + ")";
+	return header + parameters.join(",") + ",)";
 }
 
 QList<CompositeColumn*> CompositeColumn::decodeFromString(const QString& encoded, Database& db, const ItemTypesHandler& typesHandler)
@@ -334,15 +334,26 @@ CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEn
 	const QString uiName = decodeString(restOfEncoding, "uiName", ok);
 	if (!ok) return nullptr;
 	
+	CompositeColumn* decodedColumn = nullptr;
+	
 	switch (type) {
-	case Direct:			return         DirectCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
-	case Reference:			return      ReferenceCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
-	case CountFold:			return      CountFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
-	case NumericFold:		return    NumericFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
-	case ListStringFold:	return ListStringFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case Direct:			decodedColumn =         DirectCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case Reference:			decodedColumn =      ReferenceCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case CountFold:			decodedColumn =      CountFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case NumericFold:		decodedColumn =    NumericFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
+	case ListStringFold:	decodedColumn = ListStringFoldCompositeColumn::decodeTypeSpecific(*parentTable, name, uiName, restOfEncoding, db);	break;
 	default: assert(false);
 	}
-	return nullptr;
+	if (!decodedColumn) return nullptr;
+	
+	const QString endDelimiter = ")";
+	if (!restOfEncoding.startsWith(endDelimiter)) {
+		delete decodedColumn;
+		return nullptr;
+	}
+	restOfEncoding.remove(0, endDelimiter.size());
+	
+	return decodedColumn;
 }
 
 
@@ -418,7 +429,7 @@ DirectCompositeColumn* DirectCompositeColumn::decodeTypeSpecific(CompositeTable&
 	const Column* const contentColumn = decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok);
 	if (!ok) return nullptr;
 	
-	const QString suffix = decodeString(restOfEncoding, "suffix", ok, true);
+	const QString suffix = decodeString(restOfEncoding, "suffix", ok);
 	if (!ok) return nullptr;
 	
 	return new DirectCompositeColumn(parentTable, name, uiName, suffix, *contentColumn);
@@ -498,7 +509,7 @@ ReferenceCompositeColumn* ReferenceCompositeColumn::decodeTypeSpecific(Composite
 	const Column* const contentColumn = decodeColumnIdentity(restOfEncoding, "contentColumn_table_name", "contentColumn_name", db, ok);
 	if (!ok) return nullptr;
 	
-	const QString suffix = decodeString(restOfEncoding, "suffix", ok, true);
+	const QString suffix = decodeString(restOfEncoding, "suffix", ok);
 	if (!ok) return nullptr;
 	
 	return new ReferenceCompositeColumn(parentTable, name, uiName, suffix, *contentColumn);

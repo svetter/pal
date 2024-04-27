@@ -88,7 +88,7 @@ IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const
 	const int min = decodeInt(restOfEncoding, "min", ok);
 	if (!ok)
 		return nullptr;
-	const int max = decodeInt(restOfEncoding, "max", ok, true);
+	const int max = decodeInt(restOfEncoding, "max", ok);
 	if (!ok)
 		return nullptr;
 	

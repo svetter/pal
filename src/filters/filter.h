@@ -58,7 +58,7 @@ private:
 public:
 	static QList<Filter*> decodeFromString(const QString& encoded, Database& db);
 private:
-	static Filter* decodeSingleFilterFromString(QString& restOfString, Database& db);
+	static Filter* decodeSingleFilterFromString(QString& restOfEncoding, Database& db);
 protected:
 	virtual QStringList encodeTypeSpecific() const = 0;
 };

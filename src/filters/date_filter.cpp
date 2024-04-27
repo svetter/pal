@@ -55,7 +55,7 @@ DateFilter* DateFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 	
 	const QDate min = decodeDate(restOfEncoding, "min", ok);
 	if (!ok) return nullptr;
-	const QDate max = decodeDate(restOfEncoding, "max", ok, true);
+	const QDate max = decodeDate(restOfEncoding, "max", ok);
 	if (!ok) return nullptr;
 	
 	DateFilter* const filter = new DateFilter(tableToFilter, columnToFilterBy, name);

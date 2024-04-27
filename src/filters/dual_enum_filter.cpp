@@ -107,7 +107,7 @@ DualEnumFilter* DualEnumFilter::decodeTypeSpecific(const NormalTable& tableToFil
 	
 	const int discerningValue = decodeInt(restOfEncoding, "discerningValue", ok);
 	if (!ok) return nullptr;
-	const int dependentValue = decodeInt(restOfEncoding, "dependentValue", ok, true);
+	const int dependentValue = decodeInt(restOfEncoding, "dependentValue", ok);
 	if (!ok) return nullptr;
 	
 	DualEnumFilter* const filter = new DualEnumFilter(tableToFilter, columnToFilterBy, name);

@@ -49,7 +49,7 @@ EnumFilter* EnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 {
 	bool ok = false;
 	
-	const int value = decodeInt(restOfEncoding, "value", ok, true);
+	const int value = decodeInt(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
 	EnumFilter* const filter = new EnumFilter(tableToFilter, columnToFilterBy, name);

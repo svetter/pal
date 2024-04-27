@@ -202,11 +202,11 @@ QString Filter::encodeSingleFilterToString() const
 
 QList<Filter*> Filter::decodeFromString(const QString& encoded, Database& db)
 {
-	QString restOfString = encoded;
+	QString restOfEncoding = encoded;
 	QList<Filter*> filters = QList<Filter*>();
 	
-	while (!restOfString.isEmpty()) {
-		Filter* const parsedFilter = decodeSingleFilterFromString(restOfString, db);
+	while (!restOfEncoding.isEmpty()) {
+		Filter* const parsedFilter = decodeSingleFilterFromString(restOfEncoding, db);
 		if (!parsedFilter) {
 			qDebug() << "WARNING: Aborted parsing filters from string:" << encoded;
 			break;
@@ -214,63 +214,69 @@ QList<Filter*> Filter::decodeFromString(const QString& encoded, Database& db)
 		
 		filters.append(parsedFilter);
 		
-		if (restOfString.isEmpty()) break;
-		if (!restOfString.startsWith(",")) {
+		if (restOfEncoding.isEmpty()) break;
+		if (!restOfEncoding.startsWith(",")) {
 			qDebug() << "WARNING: Aborted parsing filters from string:" << encoded;
 			break;
 		}
-		restOfString.remove(0, 1);
+		restOfEncoding.remove(0, 1);
 	}
 	
 	return filters;
 }
 
-Filter* Filter::decodeSingleFilterFromString(QString& restOfString, Database& db)
+Filter* Filter::decodeSingleFilterFromString(QString& restOfEncoding, Database& db)
 {
 	bool ok = false;
 	
-	const DataType type = decodeHeader<DataType>(restOfString, "Filter", DataTypeNames::getType, ok);
+	const DataType type = decodeHeader<DataType>(restOfEncoding, "Filter", DataTypeNames::getType, ok);
 	if (!ok) return nullptr;
 	
-	const NormalTable* tableToFilter = decodeTableIdentity(restOfString, "tableToFilter_name", db, ok);
+	const NormalTable* tableToFilter = decodeTableIdentity(restOfEncoding, "tableToFilter_name", db, ok);
 	if (!ok) return nullptr;
 	
-	const Column* columnToFilterBy = decodeColumnIdentity(restOfString, "columnToFilterBy_table_name", "columnToFilterBy_name", db, ok);
+	const Column* columnToFilterBy = decodeColumnIdentity(restOfEncoding, "columnToFilterBy_table_name", "columnToFilterBy_name", db, ok);
 	if (!ok) return nullptr;
 	
 	NumericFoldOp foldOp = NumericFoldOp(-1);
 	if (type == Integer || type == String) {
-		foldOp = NumericFoldOpNames::getFoldOp(decodeString(restOfString, "foldOp", ok));
+		foldOp = NumericFoldOpNames::getFoldOp(decodeString(restOfEncoding, "foldOp", ok));
 		if (!ok) return nullptr;
 	}
 	
-	const QString name = decodeString(restOfString, "name", ok);
+	const QString name = decodeString(restOfEncoding, "name", ok);
 	if (!ok) return nullptr;
 	
-	const bool enabled = decodeBool(restOfString, "enabled", ok);
+	const bool enabled = decodeBool(restOfEncoding, "enabled", ok);
 	if (!ok) return nullptr;
 	
-	const bool inverted = decodeBool(restOfString, "inverted", ok);
+	const bool inverted = decodeBool(restOfEncoding, "inverted", ok);
 	if (!ok) return nullptr;
 	
-	Filter* filter = nullptr;
+	Filter* decodedFilter = nullptr;
 	
 	switch (type) {
-	case Integer:	filter =      IntFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy, foldOp,	name, restOfString);	break;
-	case ID:		filter =       IDFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
-	case Enum:		filter =     EnumFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
-	case DualEnum:	filter = DualEnumFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
-	case Bit:		filter =     BoolFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
-	case String:	filter =   StringFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy, foldOp,	name, restOfString);	break;
-	case Date:		filter =     DateFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
-	case Time:		filter =     TimeFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfString);	break;
+	case Integer:	decodedFilter =      IntFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy, foldOp,	name, restOfEncoding);	break;
+	case ID:		decodedFilter =       IDFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
+	case Enum:		decodedFilter =     EnumFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
+	case DualEnum:	decodedFilter = DualEnumFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
+	case Bit:		decodedFilter =     BoolFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
+	case String:	decodedFilter =   StringFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy, foldOp,	name, restOfEncoding);	break;
+	case Date:		decodedFilter =     DateFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
+	case Time:		decodedFilter =     TimeFilter::decodeTypeSpecific(*tableToFilter, *columnToFilterBy,			name, restOfEncoding);	break;
 	default: assert(false);
 	}
+	if (!decodedFilter) return nullptr;
 	
-	if (!filter) return nullptr;
+	const QString endDelimiter = ")";
+	if (!restOfEncoding.startsWith(endDelimiter)) {
+		delete decodedFilter;
+		return nullptr;
+	}
+	restOfEncoding.remove(0, endDelimiter.size());
 	
-	filter->enabled = enabled;
-	filter->inverted = inverted;
+	decodedFilter->enabled = enabled;
+	decodedFilter->inverted = inverted;
 	
-	return filter;
+	return decodedFilter;
 }
