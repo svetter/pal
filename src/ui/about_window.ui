@@ -96,7 +96,7 @@
         </font>
        </property>
        <property name="text">
-        <string notr="true">PeakAscentLogger $APP_VERSION$</string>
+        <string notr="true">PeakAscentLogger v%1</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -106,7 +106,7 @@
      <item>
       <widget class="QLabel" name="copyrightLabel">
        <property name="text">
-        <string notr="true">Copyright $APP_COPYRIGHT$</string>
+        <string notr="true">Copyright %1</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -116,7 +116,7 @@
      <item>
       <widget class="QLabel" name="codeLabel">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Complete source code available on GitHub:&lt;br/&gt;&lt;a href=&quot;$CODE_LINK$&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;$CODE_LINK$&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Complete source code available on GitHub:&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;%1&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -150,7 +150,7 @@
    <item row="1" column="1">
     <widget class="QLabel" name="qtInfoLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Built with &lt;a href=&quot;https://www.qt.io/product/framework&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;Qt Development Framework $QT_VERSION$&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Built with &lt;a href=&quot;https://www.qt.io/product/framework&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;Qt Development Framework %1&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
