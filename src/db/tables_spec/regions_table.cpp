@@ -126,6 +126,29 @@ const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<c
 
 
 /**
+ * Returns a string representation of the region at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the region to represent.
+ * @return			A UI-appropriate string representation of the region.
+ */
+QString RegionsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	return nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of regions.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> RegionsTable::getIdentityRepresentationColumns() const
+{
+	return { &nameColumn };
+}
+
+
+
+/**
  * Returns the translation of "Region" (singular).
  *
  * @return	The translation of "Region" (singular).

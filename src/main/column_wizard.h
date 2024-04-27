@@ -78,6 +78,7 @@ class ColumnWizardFoldOpPage : public ColumnWizardPage
 	QRadioButton* const sumRadio;
 	QRadioButton* const maxRadio;
 	QRadioButton* const minRadio;
+	QSpacerItem* spacer;
 	QLabel* const listLabel;
 	QRadioButton* const listStringRadio;
 	

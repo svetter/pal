@@ -127,6 +127,36 @@ const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<con
 
 
 /**
+ * Returns a string representation of the trip at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the trip to represent.
+ * @return			A UI-appropriate string representation of the trip.
+ */
+QString TripsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	QString yearString = "";
+	const QVariant startDateRaw = startDateColumn.getValueAt(bufferRow);
+	if (startDateRaw.isValid() && startDateRaw.canConvert<QDate>()) {
+		const QDate startDate = startDateRaw.toDate();
+		yearString = QString::number(startDate.year()) + ": ";
+	}
+	
+	return yearString + nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of trips.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> TripsTable::getIdentityRepresentationColumns() const
+{
+	return { &startDateColumn, &nameColumn };
+}
+
+
+
+/**
  * Returns the translation of "Trip" (singular).
  *
  * @return	The translation of "Trip" (singular).

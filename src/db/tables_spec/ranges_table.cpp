@@ -86,7 +86,7 @@ void RangesTable::updateRow(QWidget& parent, ValidItemID rangeID, const Range& r
  * @param parent		The parent widget.
  * @param rowIndices	The indices of the ranges to update in the table buffer.
  * @param columns		The columns to update. Can not contain the primary key column.
- * @param ascent		The new data for the ranges. The rangeID will be ignored.
+ * @param range			The new data for the ranges. The rangeID will be ignored.
  */
 void RangesTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndices, const QList<const Column*> columns, const Range& range)
 {
@@ -118,6 +118,29 @@ const QList<ColumnDataPair> RangesTable::mapDataToColumnDataPairs(const QList<co
 		columnDataPairs.append({column, data});
 	}
 	return columnDataPairs;
+}
+
+
+
+/**
+ * Returns a string representation of the range at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the range to represent.
+ * @return			A UI-appropriate string representation of the range.
+ */
+QString RangesTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	return nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of ranges.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> RangesTable::getIdentityRepresentationColumns() const
+{
+	return { &nameColumn };
 }
 
 

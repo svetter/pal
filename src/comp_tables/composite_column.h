@@ -152,7 +152,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 public:
 	static DirectCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
@@ -168,6 +168,8 @@ class ReferenceCompositeColumn : public CompositeColumn {
 	Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
 	const Column& contentColumn;
+	/** The target base table from which to take the content. */
+	const NormalTable& contentTable;
 	
 public:
 	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
@@ -177,7 +179,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 public:
 	static ReferenceCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
@@ -202,7 +204,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 };
 
 
@@ -225,7 +227,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 };
 
 
@@ -257,7 +259,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 };
 
 /**
@@ -275,7 +277,7 @@ public:
 	QList<QVariant> computeWholeColumn() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 };
 
 

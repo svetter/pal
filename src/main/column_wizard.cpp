@@ -46,6 +46,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 		tableList.append(table);
 		tableListWidget->addItem(listEntry);
 	}
+	tableListWidget->setCurrentRow(0);
 	updateColumnList();
 	
 	// Set list widgets background
@@ -59,6 +60,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	QVBoxLayout* const columnListLayout = new QVBoxLayout();
 	columnListLayout->addWidget(columnListWidget);
 	useCountCheckbox->setText(tr("Use number of connected entries"));
+	useCountCheckbox->setToolTip(tr("Show the number of items in this table which are connected to each row in the table containing the new column."));
 	columnListLayout->addWidget(useCountCheckbox);
 	listsLayout->addLayout(columnListLayout);
 	layout->addLayout(listsLayout);
@@ -75,6 +77,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 void ColumnWizardTableColumnPage::updateColumnList()
 {
 	const NormalTable* const tableToUse = getSelectedTable();
+	const bool sameTable = tableToUse == &baseTable;
 	
 	columnListWidget->clear();
 	columnList.clear();
@@ -84,20 +87,25 @@ void ColumnWizardTableColumnPage::updateColumnList()
 	const bool multiResultPossible = !crumbs.isForwardOnly();
 	
 	const QList<const Column*> allColumns = tableToUse->getColumnList();
-	for (int i = 0; i < allColumns.size(); ++i) {
+	for (int i = 0; i < allColumns.size(); i++) {
 		const Column* column = allColumns.at(i);
-		if (column->primaryKey || column->type == DualEnum) {
+		if (column->foreignColumn || column->type == DualEnum) {
+			continue;
+		} else if (column->primaryKey && sameTable) {
 			continue;
 		}
-		if (column->foreignColumn) {
-			QString listEntry = ((const NormalTable&) column->getReferencedForeignColumn().table).getItemNameSingular();
-			columnList.append(column);
-			columnListWidget->addItem(listEntry);
+		
+		QString entryName = column->uiName;
+		if (column->primaryKey) {
+			assert(columnList.isEmpty());
+			if (multiResultPossible) {
+				entryName = tr("Identities");
+			} else {
+				entryName = tr("Identity");
+			}
 		}
-		else {
-			columnList.append(column);
-			columnListWidget->addItem(column->uiName);
-		}
+		columnList.append(column);
+		columnListWidget->addItem(entryName);
 	}
 	
 	// Update useCountCheckbox enabled state
@@ -174,6 +182,7 @@ ColumnWizardFoldOpPage::ColumnWizardFoldOpPage(QWidget* parent, Database& db, co
 	sumRadio(new QRadioButton(this)),
 	maxRadio(new QRadioButton(this)),
 	minRadio(new QRadioButton(this)),
+	spacer(new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed)),
 	listLabel(new QLabel(this)),
 	listStringRadio(new QRadioButton(this))
 {
@@ -195,7 +204,7 @@ ColumnWizardFoldOpPage::ColumnWizardFoldOpPage(QWidget* parent, Database& db, co
 	layout->addWidget(maxRadio);
 	layout->addWidget(minRadio);
 	
-	layout->addSpacing(10);
+	layout->addSpacerItem(spacer);
 	
 	listLabel->setText(tr("Values can be collected in a comma-separated list:"));
 	listLabel->setWordWrap(true);
@@ -250,7 +259,10 @@ void ColumnWizardFoldOpPage::initializePage()
 		sumRadio->setChecked(false);
 		maxRadio->setChecked(false);
 		minRadio->setChecked(false);
+		spacer->changeSize(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed);
 		listStringRadio->setChecked(true);
+	} else {
+		spacer->changeSize(0, 15, QSizePolicy::Fixed, QSizePolicy::Fixed);
 	}
 }
 
@@ -352,11 +364,11 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		} else {
 			tableString = tableToUse->getItemNameSingular();
 		}
-		if (!useCount) tableString += ": ";
+		if (!useCount && !columnToUse->primaryKey) tableString += ": ";
 	}
 	
 	if (useCount) {
-		return tr("Num. %1").arg(tableString);
+		return tr("# %1").arg(tableString);
 	}
 	
 	QString columnString = "";
@@ -373,11 +385,15 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		assert(secondColumn.enumNameLists == columnToUse->enumNameLists);
 		columnString += "/" + secondColumn.uiName;
 	}
+	if (columnToUse->primaryKey) {
+		columnString = tableString;
+		tableString = "";
+	}
 	
 	QString valueString = columnString;
 	if (numericFold) {
 		switch (foldOp) {
-		case AverageFold:	valueString = tr("Average %1")	.arg(columnString);	break;
+		case AverageFold:	valueString = tr("Avg. %1")		.arg(columnString);	break;
 		case SumFold:		valueString = tr("Sum of %1")	.arg(columnString);	break;
 		case MaxFold:		valueString = tr("Max %1")		.arg(columnString);	break;
 		case MinFold:		valueString = tr("Min %1")		.arg(columnString);	break;

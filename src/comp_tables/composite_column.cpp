@@ -48,7 +48,7 @@ CompositeColumn::CompositeColumn(CompColType type, CompositeTable& table, QStrin
 	table(table),
 	name(name),
 	uiName(uiName),
-	alignment((contentType == Integer || contentType == ID) ? Qt::AlignRight : contentType == Bit ? Qt::AlignCenter : Qt::AlignLeft),
+	alignment((contentType == Integer) ? Qt::AlignRight : contentType == Bit ? Qt::AlignCenter : Qt::AlignLeft),
 	contentType(contentType),
 	cellsAreInterdependent(cellsAreInterdependent),
 	isStatistical(isStatistical),
@@ -395,6 +395,10 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suff
  */
 QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
+	if (Q_UNLIKELY(contentColumn.primaryKey)) {
+		return table.baseTable.getIdentityRepresentationAt(rowIndex);
+	}
+	
 	return contentColumn.getValueAt(rowIndex);
 }
 
@@ -408,7 +412,11 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  */
 const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
-	return { &contentColumn };
+	QSet<const Column*> result = { &contentColumn };
+	if (contentColumn.primaryKey) {
+		result.unite(table.baseTable.getIdentityRepresentationColumns());
+	}
+	return result;
 }
 
 
@@ -451,7 +459,8 @@ DirectCompositeColumn* DirectCompositeColumn::decodeTypeSpecific(CompositeTable&
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
 	CompositeColumn(Reference, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
-	contentColumn(contentColumn)
+	contentColumn(contentColumn),
+	contentTable((assert(!contentColumn.table.isAssociative), ((const NormalTable&) contentColumn.table)))
 {
 	assert(&contentColumn.table == &breadcrumbs.getTargetTable());
 }
@@ -470,10 +479,10 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 	
 	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return QVariant();
 	
-	// Look up content column at last row index
-	QVariant content = contentColumn.getValueAt(targetRowIndex);
-	
-	return content;
+	if (Q_UNLIKELY(contentColumn.primaryKey)) {
+		return contentTable.getIdentityRepresentationAt(targetRowIndex);
+	}
+	return contentColumn.getValueAt(targetRowIndex);
 }
 
 
@@ -488,6 +497,9 @@ const QSet<const Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 {
 	QSet<const Column*> result = { &contentColumn };
 	result.unite(breadcrumbs.getColumnSet());
+	if (contentColumn.primaryKey) {
+		result.unite(contentTable.getIdentityRepresentationColumns());
+	}
 	return result;
 }
 

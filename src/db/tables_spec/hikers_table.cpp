@@ -118,6 +118,29 @@ const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<co
 
 
 /**
+ * Returns a string representation of the hiker at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the hiker to represent.
+ * @return			A UI-appropriate string representation of the hiker.
+ */
+QString HikersTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	return nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of hikers.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> HikersTable::getIdentityRepresentationColumns() const
+{
+	return { &nameColumn };
+}
+
+
+
+/**
  * Returns the translation of "Hiker" (singular).
  *
  * @return	The translation of "Hiker" (singular).

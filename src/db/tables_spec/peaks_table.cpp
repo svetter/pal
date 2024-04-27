@@ -137,6 +137,29 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 
 
 /**
+ * Returns a string representation of the peak at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the peak to represent.
+ * @return			A UI-appropriate string representation of the peak.
+ */
+QString PeaksTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	return nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of peaks.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> PeaksTable::getIdentityRepresentationColumns() const
+{
+	return { &nameColumn };
+}
+
+
+
+/**
  * Returns the translation of "Peak" (singular).
  *
  * @return	The translation of "Peak" (singular).

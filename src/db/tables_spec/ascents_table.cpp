@@ -24,6 +24,7 @@
 #include "ascents_table.h"
 
 #include "src/data/enum_names.h"
+#include "src/db/tables_spec/peaks_table.h"
 
 #include <QString>
 #include <QTranslator>
@@ -150,6 +151,46 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 		columnDataPairs.append({column, data});
 	}
 	return columnDataPairs;
+}
+
+
+
+/**
+ * Returns a string representation of the ascent at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the ascent to represent.
+ * @return			A UI-appropriate string representation of the ascent.
+ */
+QString AscentsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	const QVariant dateRaw = dateColumn.getValueAt(bufferRow);
+	QString dateString = QString();
+	if (dateRaw.isValid() && dateRaw.canConvert<QDate>()) {
+		const QDate date = dateRaw.toDate();
+		dateString = date.toString(Qt::ISODate);;
+	}
+	
+	const ItemID peakID = peakIDColumn.getValueAt(bufferRow);
+	QString peakString = QString();
+	if (peakID.isValid()) {
+		const PeaksTable& peaksTable = (PeaksTable&) peakIDColumn.foreignColumn->table;
+		peakString = peaksTable.nameColumn.getValueFor(FORCE_VALID(peakID)).toString();
+	}
+	
+	const QString separator = (!dateString.isEmpty() && !peakString.isEmpty()) ? ": " : "";
+	return dateString + separator + peakString;
+}
+
+/**
+ * Returns a set of all columns used for identity representation of ascents.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> AscentsTable::getIdentityRepresentationColumns() const
+{
+	const PeaksTable& peaksTable = (PeaksTable&) peakIDColumn.foreignColumn->table;
+	
+	return { &dateColumn, &peakIDColumn, &peaksTable.primaryKeyColumn, &peaksTable.nameColumn };
 }
 
 

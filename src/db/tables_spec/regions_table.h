@@ -52,14 +52,17 @@ private:
 	const QList<ColumnDataPair> mapDataToColumnDataPairs(const QList<const Column*>& columns, const Region& region) const;
 	
 public:
-	virtual QString getItemNameSingular() const;
-	virtual QString getNoneString() const;
-	virtual QString getCreationConfirmMessage() const;
-	virtual QString getEditConfirmMessage(int numEdited) const;
-	virtual QString getDeleteConfirmMessage(int numDeleted) const;
-	virtual QString getNewCustomColumnString() const;
-	virtual QString getNewFilterString() const;
-	virtual QString getItemCountString(int numItems) const;
+	virtual QString getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const override;
+	virtual QSet<const Column*> getIdentityRepresentationColumns() const override;
+	
+	virtual QString getItemNameSingular() const override;
+	virtual QString getNoneString() const override;
+	virtual QString getCreationConfirmMessage() const override;
+	virtual QString getEditConfirmMessage(int numEdited) const override;
+	virtual QString getDeleteConfirmMessage(int numDeleted) const override;
+	virtual QString getNewCustomColumnString() const override;
+	virtual QString getNewFilterString() const override;
+	virtual QString getItemCountString(int numItems) const override;
 };
 
 

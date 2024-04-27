@@ -43,7 +43,8 @@
 FoldCompositeColumn::FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, const ValueColumn* contentColumn, const QStringList* enumNames) :
 	CompositeColumn(type, table, name, uiName, contentType, false, isStatistical, suffix, enumNames),
 	breadcrumbs(breadcrumbs),
-	contentColumn(contentColumn)
+	contentColumn(contentColumn),
+	contentTable(contentColumn ? (assert(!contentColumn->table.isAssociative), &((const NormalTable&) contentColumn->table)) : nullptr)
 {
 	assert(!contentColumn || &contentColumn->table == &breadcrumbs.getTargetTable());
 }
@@ -59,7 +60,12 @@ FoldCompositeColumn::FoldCompositeColumn(CompColType type, CompositeTable& table
 const QSet<const Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
 {
 	QSet<const Column*> result = breadcrumbs.getColumnSet();
-	if (contentColumn) result.insert(contentColumn);
+	if (contentColumn) {
+		result.insert(contentColumn);
+		if (contentColumn->primaryKey) {
+			result.unite(contentTable->getIdentityRepresentationColumns());
+		}
+	}
 	return result;
 }
 
@@ -138,7 +144,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 {
 	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
-	if (rowIndexSet.isEmpty()) return QVariant();
+	if (Q_UNLIKELY(rowIndexSet.isEmpty())) return QVariant();
 	
 	int aggregate = 0;
 	if (op == MaxFold)	aggregate = INT_MIN;
@@ -235,12 +241,18 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buff
 	
 	// Fetch and format to string
 	for (const BufferRowIndex& rowIndex : rowIndexSet) {
-		QVariant content = contentColumn->getValueAt(rowIndex);
-		if (enumNames) {
-			content = replaceEnumIfApplicable(content);
-		} else {
-			assert(content.canConvert<QString>());
+		QVariant content;
+		if (Q_UNLIKELY(contentColumn->primaryKey)) {
+			content = contentTable->getIdentityRepresentationAt(rowIndex);
 		}
+		else if (Q_UNLIKELY(enumNames)) {
+			content = replaceEnumIfApplicable(content);
+		}
+		else {
+			content = contentColumn->getValueAt(rowIndex);
+		}
+		
+		if (Q_UNLIKELY(!content.isValid() || content.toString().isEmpty())) continue;
 		stringList.append(content.toString());
 	}
 	
@@ -268,13 +280,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	
-	// Combine list into comma separated string
-	QString listString = "";
-	for (QString& string : stringList) {
-		if (!listString.isEmpty()) listString.append(", ");
-		listString.append(string);
-	}
-	return listString;
+	return stringList.join(", ");
 }
 
 
@@ -370,11 +376,5 @@ QVariant HikerListFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
 	
 	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	
-	// Combine list into comma separated string
-	QString listString = "";
-	for (QString& string : stringList) {
-		if (!listString.isEmpty()) listString.append(", ");
-		listString.append(string);
-	}
-	return listString;
+	return stringList.join(", ");
 }

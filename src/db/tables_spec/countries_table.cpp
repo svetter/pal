@@ -118,6 +118,29 @@ const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList
 
 
 /**
+ * Returns a string representation of the country at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the country to represent.
+ * @return			A UI-appropriate string representation of the country.
+ */
+QString CountriesTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	return nameColumn.getValueAt(bufferRow).toString();
+}
+
+/**
+ * Returns a set of all columns used for identity representation of countries.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> CountriesTable::getIdentityRepresentationColumns() const
+{
+	return { &nameColumn };
+}
+
+
+
+/**
  * Returns the translation of "Country" (singular).
  *
  * @return	The translation of "Country" (singular).

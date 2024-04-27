@@ -22,6 +22,7 @@
  */
 
 #include "photos_table.h"
+#include "src/db/tables_spec/ascents_table.h"
 
 #include <QString>
 #include <QMap>
@@ -198,6 +199,41 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 		columnDataPairs.append({column, data});
 	}
 	return columnDataPairs;
+}
+
+
+
+/**
+ * Returns a string representation of the photo at the given buffer row index.
+ *
+ * @param bufferRow	The buffer row index of the photo to represent.
+ * @return			A UI-appropriate string representation of the photo.
+ */
+QString PhotosTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const
+{
+	const ValidItemID ascentID = VALID_ITEM_ID(ascentIDColumn.getValueAt(bufferRow));
+	const AscentsTable& ascentsTable = (AscentsTable&) ascentIDColumn.foreignColumn->table;
+	const BufferRowIndex ascentIndex = ascentsTable.getBufferIndexForPrimaryKey(ascentID);
+	QString ascentString = ascentsTable.getIdentityRepresentationAt(ascentIndex);
+	if (ascentString.isEmpty()) {
+		ascentString = tr("Empty ascent");
+	}
+	
+	const QString indexString = QString::number(sortIndexColumn.getValueAt(bufferRow).toInt());
+	
+	return ascentString + " – " + tr("Photo #") + indexString;
+}
+
+/**
+ * Returns a set of all columns used for identity representation of photos.
+ *
+ * @return	A set of all columns used for identity representation.
+ */
+QSet<const Column*> PhotosTable::getIdentityRepresentationColumns() const
+{
+	const AscentsTable& ascentsTable = (AscentsTable&) ascentIDColumn.foreignColumn->table;
+	
+	return ascentsTable.getIdentityRepresentationColumns().unite({ &ascentIDColumn, &sortIndexColumn });
 }
 
 

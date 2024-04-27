@@ -55,6 +55,21 @@ public:
 	void updateRows(QWidget& parent, const QSet<BufferRowIndex>& bufferIndices, const QList<ColumnDataPair>& columnDataPairs);
 	// removeRow(...) doesn't exist to avoid row removal without reference search. Outside interface is Database::removeRow(...)
 	
+	// Identity representation for UI
+	/**
+	 * Returns a string representation of the item at the given buffer row index.
+	 * 
+	 * @param bufferRow	The buffer row index of the item to represent.
+	 * @return			A UI-appropriate string representation of the item.
+	 */
+	virtual QString getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const = 0;
+	/**
+	 * Returns a set of all columns used for identity representation of items in this table.
+	 * 
+	 * @return	A set of all columns used for identity representation.
+	 */
+	virtual QSet<const Column*> getIdentityRepresentationColumns() const = 0;
+	
 	// Translation strings
 	/**
 	 * Returns the translation of the item name in singular form.

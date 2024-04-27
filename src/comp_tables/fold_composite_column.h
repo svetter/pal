@@ -45,6 +45,8 @@ protected:
 	const Breadcrumbs breadcrumbs;
 	/** The column that contains the content to be folded. */
 	const ValueColumn* const contentColumn;
+	/** The normal table that contains the content to be folded. */
+	const NormalTable* const contentTable;
 	
 	FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, const ValueColumn* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
@@ -52,7 +54,7 @@ public:
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const = 0;
+	virtual QStringList encodeTypeSpecific() const override = 0;
 };
 
 
@@ -69,7 +71,7 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 public:
 	static CountFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
@@ -92,7 +94,7 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 public:
 	static NumericFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
@@ -110,7 +112,7 @@ public:
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 protected:
-	virtual QStringList encodeTypeSpecific() const;
+	virtual QStringList encodeTypeSpecific() const override;
 public:
 	static ListStringFoldCompositeColumn* decodeTypeSpecific(CompositeTable& parentTable, const QString& name, const QString& uiName, QString& restOfEncoding, Database& db);
 };
