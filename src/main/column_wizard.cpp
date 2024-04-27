@@ -3,6 +3,8 @@
 #include "src/comp_tables/fold_composite_column.h"
 #include "src/db/database.h"
 
+#include <QMessageBox>
+
 
 
 ColumnWizardPage::ColumnWizardPage(QWidget* parent, Database& db, const CompositeTable& compTable) :
@@ -21,6 +23,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	tableListWidget(new QListWidget(this)),
 	columnListWidget(new QListWidget(this)),
 	useCountCheckbox(new QCheckBox(this)),
+	hintLabel(new QLabel(this)),
 	tableList(QList<const NormalTable*>()),
 	columnList(QList<const Column*>())
 {
@@ -65,11 +68,22 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	listsLayout->addLayout(columnListLayout);
 	layout->addLayout(listsLayout);
 	
+	hintLabel->setText(tr(
+		"**Hint**: In most cases, it makes more sense to use the \"Indentity\" field than the Name field. "
+		"Click the Help button or try both if you are unsure."
+	));
+	hintLabel->setTextFormat(Qt::MarkdownText);
+	hintLabel->setWordWrap(true);
+	hintLabel->setVisible(false);
+	layout->addWidget(hintLabel);
+	
 	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::updateColumnList);
+	connect(columnListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::updateHint);
 	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::updateColumnListEnabled);
-	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::completeChanged);
+	
 	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::completeChanged);
 	connect(columnListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::completeChanged);
+	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::completeChanged);
 }
 
 
@@ -103,6 +117,10 @@ void ColumnWizardTableColumnPage::updateColumnList()
 			} else {
 				entryName = tr("Identity");
 			}
+			const QSet<const Column*> irColumns = tableToUse->getIdentityRepresentationColumns();
+			if (irColumns.size() == 1) {
+				entryName += " (" + (*irColumns.constBegin())->uiName + ")";
+			}
 		}
 		columnList.append(column);
 		columnListWidget->addItem(entryName);
@@ -122,6 +140,14 @@ void ColumnWizardTableColumnPage::updateColumnListEnabled()
 	} else {
 		columnListWidget->setEnabled(true);
 	}
+}
+
+void ColumnWizardTableColumnPage::updateHint()
+{
+	const Column* const column = getSelectedColumn();
+	if (!column) return;
+	
+	hintLabel->setVisible(column->name == "name");
 }
 
 
@@ -420,6 +446,8 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	settingsPage	(ColumnWizardSettingsPage	(parent, db, compTable, tableColumnPage, foldOpPage))
 {
 	setModal(true);
+	setOption(HaveHelpButton, true);
+	setOption(HelpButtonOnRight, false);
 	setWizardStyle(QWizard::ModernStyle);
 	setWindowTitle(compTable.baseTable.getNewCustomColumnString());
 	setMinimumSize(500, 300);
@@ -430,6 +458,8 @@ ColumnWizard::ColumnWizard(QWidget* parent, Database& db, CompositeTable& compTa
 	setPage(ColumnWizardPage_Settings,		&settingsPage);
 	
 	setStartId(ColumnWizardPage_TableColumn);
+	
+	connect(this, &ColumnWizard::helpRequested, this, &ColumnWizard::handle_helpRequested);
 }
 
 ColumnWizard::~ColumnWizard()
@@ -492,4 +522,27 @@ CompositeColumn* ColumnWizard::getFinishedColumn()
 	
 	assert(false);
 	return nullptr;
+}
+
+
+
+void ColumnWizard::handle_helpRequested()
+{
+	QString title = tr("Help with creating a custom column");
+	QString text = tr(
+		"This wizard will create a new column for the %1 table.\n"
+		"Note that this custom column will not hold any new data, but show data already in the database, or process it to show statistical data.\n\n"
+		"On the first page, you can choose any table from the project database, and then a column from that table. "
+		"The new column will then show the entry from the selected column which is connected to each %2 in the table.\n"
+		"Depending on the selected table, it is possible that multiple entries are connected to a single %2. "
+		"In that case, the new column can either list all connected values, or, if the selected column contains numbers, the average, sum, maximum or minimum of those numbers can be calculated.\n"
+		"Alternatively, where multiple values are possible, you can choose to display the count of those values, using the checkbox on the first page.\n\n"
+		"For each table (except %1), the first option on the right is \"Identity\". "
+		"If chosen, this will often show the same result as when choosing the Name field (if present). "
+		"The difference is only apparent when applying a filter to the custom column: "
+		"A filter for an identity column will show a list of items from which one can be selected to include or exclude. "
+		"By contrast, a filter working on a Name column can only search for some given text in a list of the item names."
+	).arg(compTable.baseTable.uiName, compTable.baseTable.getItemNameSingular());
+	
+	QMessageBox::information(this, title, text, QMessageBox::Ok, QMessageBox::Ok);
 }

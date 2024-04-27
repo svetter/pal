@@ -43,6 +43,7 @@ class ColumnWizardTableColumnPage : public ColumnWizardPage
 	QListWidget* const tableListWidget;
 	QListWidget* const columnListWidget;
 	QCheckBox* const useCountCheckbox;
+	QLabel* const hintLabel;
 	
 	QList<const NormalTable*> tableList;
 	QList<const Column*> columnList;
@@ -53,6 +54,7 @@ public:
 private:
 	void updateColumnList();
 	void updateColumnListEnabled();
+	void updateHint();
 	
 public:
 	const NormalTable* getSelectedTable() const;
@@ -142,6 +144,8 @@ public:
 	~ColumnWizard();
 	
 	CompositeColumn* getFinishedColumn();
+	
+	void handle_helpRequested();
 };
 
 
