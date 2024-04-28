@@ -1,10 +1,8 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+#include "src/comp_tables/composite_table.h"
 #include "src/settings/string_encoder.h"
-#include "src/db/breadcrumbs.h"
-#include "src/db/normal_table.h"
-#include "src/comp_tables/numeric_fold_op.h"
 
 class FilterBox;
 
@@ -14,24 +12,17 @@ class Filter : public StringEncoder
 {
 public:
 	const DataType type;
-	const DataType sourceType;
-	const NormalTable& tableToFilter;
-	const Column& columnToFilterBy;
-	const NumericFoldOp foldOp;
-protected:
-	const Breadcrumbs crumbs;
+	const CompositeTable& tableToFilter;
+	const CompositeColumn& columnToFilterBy;
 public:
-	const bool isLocalFilter;
-	const bool singleValuePerRow;
-	
-	const QString name;
+	const QString uiName;
 	
 private:
 	bool enabled;
 	bool inverted;
 	
 protected:
-	Filter(DataType type, const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name);
+	Filter(DataType type, const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 public:
 	virtual ~Filter();
 	
@@ -42,8 +33,6 @@ public:
 	void setInverted(bool inverted);
 	
 	void applyToOrderBuffer(ViewOrderBuffer& viewOrderBuffer) const;
-private:
-	QVariant getRawRowValue(const BufferRowIndex filteredTableBufferRow) const;
 protected:
 	virtual bool evaluate(const QVariant& rawRowValue) const = 0;
 	
@@ -56,9 +45,9 @@ public:
 private:
 	QString encodeSingleFilterToString() const;
 public:
-	static QList<Filter*> decodeFromString(const QString& encoded, Database& db);
+	static QList<Filter*> decodeFromString(const QString& encoded, const ItemTypesHandler& typesHandler);
 private:
-	static Filter* decodeSingleFilterFromString(QString& restOfEncoding, Database& db);
+	static Filter* decodeSingleFilterFromString(QString& restOfEncoding, const ItemTypesHandler& typesHandler);
 protected:
 	virtual QStringList encodeTypeSpecific() const = 0;
 };

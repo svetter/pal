@@ -4,8 +4,8 @@
 
 
 
-TimeFilter::TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Time, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
+TimeFilter::TimeFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(Time, tableToFilter, columnToFilterBy, uiName),
 	min(QTime(12, 0)),
 	max(QTime(12, 0))
 {}
@@ -36,7 +36,7 @@ bool TimeFilter::evaluate(const QVariant& rawRowValue) const
 
 FilterBox* TimeFilter::createFilterBox(QWidget* parent)
 {
-	return new TimeFilterBox(parent, name, *this);
+	return new TimeFilterBox(parent, uiName, *this);
 }
 
 
@@ -49,7 +49,7 @@ QStringList TimeFilter::encodeTypeSpecific() const
 	};
 }
 
-TimeFilter* TimeFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+TimeFilter* TimeFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -58,7 +58,7 @@ TimeFilter* TimeFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 	const QTime max = decodeTime(restOfEncoding, "max", ok);
 	if (!ok) return nullptr;
 	
-	TimeFilter* const filter = new TimeFilter(tableToFilter, columnToFilterBy, name);
+	TimeFilter* const filter = new TimeFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->min = min;
 	filter->max = max;
 	

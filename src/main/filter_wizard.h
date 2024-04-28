@@ -1,46 +1,21 @@
 #ifndef FILTERWIZARD_H
 #define FILTERWIZARD_H
 
+#include "src/comp_tables/composite_table.h"
 #include "src/filters/filter.h"
 
 #include <QWizard>
-#include <QLabel>
-#include <QRadioButton>
-#include <QComboBox>
+#include <QListWidget>
 #include <QLineEdit>
+#include <QGroupBox>
+#include <QRadioButton>
+#include <QSpinBox>
 
 
 
 enum FilterWizardPage {
-	Page_Table,
 	Page_Column,
-	Page_FoldOp,
-	Page_NumberPrefs,
-	Page_Name
-};
-
-
-
-class FilterWizardTablePage : public QWizardPage
-{
-	Q_OBJECT
-	
-	const NormalTable& tableToFilter;
-	
-	QRadioButton* sameTableRadiobutton;
-	QRadioButton* otherTableRadiobutton;
-	QComboBox* otherTableCombo;
-	
-	QList<const NormalTable*> otherTableList;
-	
-public:
-	FilterWizardTablePage(QWidget* parent, const NormalTable& tableToFilter);
-	
-	const NormalTable* getSelectedTable() const;
-	
-protected:
-	bool isComplete() const override;
-	int nextId() const override;
+	Page_Settings
 };
 
 
@@ -49,88 +24,62 @@ class FilterWizardColumnPage : public QWizardPage
 {
 	Q_OBJECT
 	
-	const NormalTable& tableToFilter;
-	const FilterWizardTablePage& tablePage;
+	const CompositeTable& tableToFilter;
 	
-	QComboBox* columnCombo;
+	QListWidget* const columnListWidget;
 	
-	QList<const Column*> columnList;
+	QList<const CompositeColumn*> columnList;
 	
 public:
-	FilterWizardColumnPage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardTablePage& tablePage);
+	FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter);
 	
-	const Column* getSelectedColumn() const;
+	const CompositeColumn* getSelectedColumn() const;
 	
 protected:
 	void initializePage() override;
-	int nextId() const override;
-};
-
-
-
-class FilterWizardFoldOpPage : public QWizardPage
-{
-	Q_OBJECT
-	
-	const NormalTable& tableToFilter;
-	const FilterWizardColumnPage& columnPage;
-	
-	QLabel* explainLabel;
-	QComboBox* foldOpCombo;
-	
-	QList<NumericFoldOp> foldOpList;
-	
-public:
-	FilterWizardFoldOpPage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardColumnPage& columnPage);
-	
-	NumericFoldOp getSelectedFoldOp() const;
-	QString getSelectedFoldOpName() const;
-	
-protected:
-	void initializePage() override;
-	int nextId() const override;
-};
-
-
-
-class FilterWizardNumberPrefPage : public QWizardPage
-{
-	Q_OBJECT
-	
-	QRadioButton* exactValueRadiobutton;
-	QRadioButton* classesRadiobutton;
-	
-public:
-	FilterWizardNumberPrefPage(QWidget* parent);
-	
-protected:
 	bool isComplete() const override;
 	int nextId() const override;
 };
 
 
 
-class FilterWizardNamePage : public QWizardPage
+class FilterWizardSettingsPage : public QWizardPage
 {
 	Q_OBJECT
 	
-	const NormalTable& tableToFilter;
-	const FilterWizardTablePage& tablePage;
+	const CompositeTable& tableToFilter;
 	const FilterWizardColumnPage& columnPage;
-	const FilterWizardFoldOpPage& foldOpPage;
 	
-	QLineEdit* name;
+	QLineEdit* const nameEdit;
+	QFrame* const intSettingsHLine;
+	QRadioButton* const exactValueRadiobutton;
+	QRadioButton* const classesRadiobutton;
+	
+	QGroupBox* const intClassesGroupBox;
+	QLabel* const intClassIncrementLabel;
+	QSpinBox* const intClassIncrementSpinner;
+	QLabel* const intClassMinLabel;
+	QSpinBox* const intClassMinSpinner;
+	QLabel* const intClassMaxLabel;
+	QSpinBox* const intClassMaxSpinner;
+	QListWidget* const intClassPreview;
 	
 public:
-	FilterWizardNamePage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardTablePage& tablePage, const FilterWizardColumnPage& columnPage, const FilterWizardFoldOpPage& foldOpPage);
+	FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage);
 	
 	QString getName() const;
+	QList<int> getIntSettings() const;
+	
+private:
+	void handle_intFilterModeSelectionChanged();
+	void handle_intClassIncrementChanged();
+	void handle_intClassMinChanged();
+	void handle_intClassMaxChanged();
+	void updateIntClassPreview();
 	
 protected:
 	void initializePage() override;
 	bool isComplete() const override;
-	
-	QString generateFilterName() const;
 };
 
 
@@ -139,16 +88,13 @@ class FilterWizard : public QWizard
 {
 	Q_OBJECT
 	
-	const NormalTable& tableToFilter;
+	const CompositeTable& tableToFilter;
 	
-	FilterWizardTablePage tablePage;
 	FilterWizardColumnPage columnPage;
-	FilterWizardFoldOpPage foldOpPage;
-	FilterWizardNumberPrefPage numberPrefPage;
-	FilterWizardNamePage namePage;
+	FilterWizardSettingsPage settingsPage;
 	
 public:
-	FilterWizard(QWidget* parent, const NormalTable& tableToFilter);
+	FilterWizard(QWidget* parent, const CompositeTable& tableToFilter);
 	~FilterWizard();
 	
 	Filter* getFinishedFilter();

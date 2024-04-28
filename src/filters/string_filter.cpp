@@ -4,8 +4,8 @@
 
 
 
-StringFilter::StringFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name) :
-	Filter(String, tableToFilter, columnToFilterBy, foldOp, name),
+StringFilter::StringFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(String, tableToFilter, columnToFilterBy, uiName),
 	value("")
 {}
 
@@ -58,7 +58,7 @@ bool StringFilter::evaluate(const QVariant& rawRowValue) const
 
 FilterBox* StringFilter::createFilterBox(QWidget* parent)
 {
-	return new StringFilterBox(parent, name, *this);
+	return new StringFilterBox(parent, uiName, *this);
 }
 
 
@@ -70,14 +70,14 @@ QStringList StringFilter::encodeTypeSpecific() const
 	};
 }
 
-StringFilter* StringFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, QString& restOfEncoding)
+StringFilter* StringFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const QString value = decodeString(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
-	StringFilter* const filter = new StringFilter(tableToFilter, columnToFilterBy, foldOp, name);
+	StringFilter* const filter = new StringFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->value = value;
 	
 	return filter;

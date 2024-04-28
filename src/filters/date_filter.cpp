@@ -4,8 +4,8 @@
 
 
 
-DateFilter::DateFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Date, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
+DateFilter::DateFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(Date, tableToFilter, columnToFilterBy, uiName),
 	min(QDate::currentDate()),
 	max(QDate::currentDate())
 {}
@@ -36,7 +36,7 @@ bool DateFilter::evaluate(const QVariant& rawRowValue) const
 
 FilterBox* DateFilter::createFilterBox(QWidget* parent)
 {
-	return new DateFilterBox(parent, name, *this);
+	return new DateFilterBox(parent, uiName, *this);
 }
 
 
@@ -49,7 +49,7 @@ QStringList DateFilter::encodeTypeSpecific() const
 	};
 }
 
-DateFilter* DateFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+DateFilter* DateFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -58,7 +58,7 @@ DateFilter* DateFilter::decodeTypeSpecific(const NormalTable& tableToFilter, con
 	const QDate max = decodeDate(restOfEncoding, "max", ok);
 	if (!ok) return nullptr;
 	
-	DateFilter* const filter = new DateFilter(tableToFilter, columnToFilterBy, name);
+	DateFilter* const filter = new DateFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->min = min;
 	filter->max = max;
 	

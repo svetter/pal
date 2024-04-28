@@ -10,7 +10,7 @@ class EnumFilter : public Filter
 	int value;
 	
 public:
-	EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	EnumFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 	virtual ~EnumFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -19,7 +19,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static EnumFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	static EnumFilter* decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class EnumFilterBox;

@@ -5,8 +5,8 @@
 
 
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name) :
-	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
+IntFilter::IntFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(Integer, tableToFilter, columnToFilterBy, uiName),
 	useClasses(false),
 	classIncrement(-1),
 	classesMinValue(-1),
@@ -15,8 +15,8 @@ IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFil
 	max(1)
 {}
 
-IntFilter::IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue) :
-	Filter(Integer, tableToFilter, columnToFilterBy, foldOp, name),
+IntFilter::IntFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, int classIncrement, int classesMinValue, int classesMaxValue) :
+	Filter(Integer, tableToFilter, columnToFilterBy, uiName),
 	useClasses(true),
 	classIncrement(classIncrement),
 	classesMinValue(classesMinValue),
@@ -49,9 +49,9 @@ bool IntFilter::evaluate(const QVariant& rawRowValue) const
 FilterBox* IntFilter::createFilterBox(QWidget* parent)
 {
 	if (useClasses) {
-		return new IntClassFilterBox(parent, name, classIncrement, classesMinValue, classesMaxValue, *this);
+		return new IntClassFilterBox(parent, uiName, classIncrement, classesMinValue, classesMaxValue, *this);
 	} else {
-		return new IntFilterBox(parent, name, *this);
+		return new IntFilterBox(parent, uiName, *this);
 	}
 }
 
@@ -69,7 +69,7 @@ QStringList IntFilter::encodeTypeSpecific() const
 	};
 }
 
-IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, QString& restOfEncoding)
+IntFilter* IntFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -94,9 +94,9 @@ IntFilter* IntFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const
 	
 	IntFilter* filter = nullptr;
 	if (useClasses) {
-		filter = new IntFilter(tableToFilter, columnToFilterBy, foldOp, name, classIncrement, classesMinValue, classesMaxValue);
+		filter = new IntFilter(tableToFilter, columnToFilterBy, uiName, classIncrement, classesMinValue, classesMaxValue);
 	} else {
-		filter = new IntFilter(tableToFilter, columnToFilterBy, foldOp, name);
+		filter = new IntFilter(tableToFilter, columnToFilterBy, uiName);
 	}
 	filter->min = min;
 	filter->max = max;

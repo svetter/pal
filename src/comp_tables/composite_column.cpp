@@ -372,7 +372,11 @@ CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEn
 DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
 	CompositeColumn(Direct, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	contentColumn(contentColumn)
-{}
+{
+	assert(contentColumn.type != ID);
+	assert(!contentColumn.primaryKey);
+	assert(!contentColumn.foreignColumn);
+}
 
 /**
  * Creates a DirectCompositeColumn.

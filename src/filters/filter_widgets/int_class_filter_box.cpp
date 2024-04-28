@@ -13,13 +13,11 @@ IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int 
 	setMaxCheckbox(new QCheckBox(this)),
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
-	int value = (classMinValue / classIncrement + 1) * classIncrement;
-	QStringList minComboEntries = { "<" + QString::number(value) };
-	QStringList maxComboEntries = { QString::number(value - 1) };
-	while (value <= classMaxValue) {
+	QStringList minComboEntries = QStringList();
+	QStringList maxComboEntries = QStringList();
+	for (int value = classMinValue; value < classMaxValue; value += classIncrement) {
 		minComboEntries.append(QString::number(value));
-		value += classIncrement;
-		maxComboEntries.append(QString::number(value - 1));
+		maxComboEntries.append(QString::number(value + classIncrement - 1));
 	}
 	
 	minCombo->setObjectName("minCombo");

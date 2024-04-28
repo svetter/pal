@@ -2,6 +2,7 @@
 #define COLUMN_WIZARD_H
 
 #include "src/comp_tables/composite_table.h"
+#include "src/comp_tables/numeric_fold_op.h"
 
 #include <QWizard>
 #include <QLabel>

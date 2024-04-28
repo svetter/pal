@@ -599,7 +599,7 @@ void MainWindow::initCompositeBuffers()
 		// Load filters
 		QList<Filter*> filters = QList<Filter*>();
 		if (Settings::rememberFilters.get()) {
-			filters = mapper->filterBar.parseFiltersFromProjectSettings();
+			filters = mapper->filterBar.parseFiltersFromProjectSettings(*typesHandler);
 			mapper->filterBar.insertFiltersIntoUI(filters);
 			if (!mapper->filterBarCurrentlySetVisible()) {
 				// Hidden filters are not allowed to be applied

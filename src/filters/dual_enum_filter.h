@@ -7,13 +7,11 @@
 
 class DualEnumFilter : public Filter
 {
-	const Column& dependentColumnToFilterBy;
-	
 	int discerningValue;
 	int dependentValue;
 	
 public:
-	DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name);
+	DualEnumFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 	virtual ~DualEnumFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -22,7 +20,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static DualEnumFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	static DualEnumFilter* decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class DualEnumFilterBox;

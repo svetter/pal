@@ -47,7 +47,8 @@ FilterBar::FilterBar(QWidget* parent) :
 	db(nullptr),
 	compTable(nullptr),
 	filterBoxes(QList<FilterBox*>()),
-	addFilterMenu(QMenu(this)),
+	quickFilterMenu(QMenu(this)),
+	quickFilterActions(QHash<QAction*, const CompositeColumn*>()),
 	filterWizard(nullptr)
 {
 	setupUi(this);
@@ -56,8 +57,13 @@ FilterBar::FilterBar(QWidget* parent) :
 	clearFiltersButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
 	filtersScrollArea->setBackgroundRole(QPalette::Base);
 	
+	quickFilterMenu.setTitle("New filter");
+	addFilterButton->setMenu(&quickFilterMenu);
+	
+	
 	connect(applyFiltersButton,	&QPushButton::clicked,	this,	&FilterBar::handle_applyFilters);
 	connect(clearFiltersButton,	&QPushButton::clicked,	this,	&FilterBar::handle_clearFilters);
+	connect(&quickFilterMenu,	&QMenu::aboutToShow,	this,	&FilterBar::updateQuickFilterMenu);
 }
 
 FilterBar::~FilterBar()
@@ -90,48 +96,9 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMap
 	
 	
 	// Create filter wizard
-	filterWizard = new FilterWizard(this, compTable->baseTable);
+	filterWizard = new FilterWizard(this, *compTable);
 	connect(addFilterButton, &QToolButton::clicked, this, &FilterBar::handle_newFilterButtonPressed);
 	connect(filterWizard, &FilterWizard::accepted, this, &FilterBar::handle_filterWizardAccepted);
-
-	// Create filter shortcuts
-	addFilterMenu.setTitle("New filter");
-	
-	createFilterShortcuts.clear();
-	for (const Column* const column : compTable->baseTable.getColumnList()) {
-		if (column->isPrimaryKey()) continue;
-		
-		// Create name
-		QString name = QString();
-		if (column->foreignColumn) {
-			const Table& foreignTable = column->getReferencedForeignColumn().table;
-			assert(!foreignTable.isAssociative);
-			const NormalTable& targetTable = (const NormalTable&) foreignTable;
-			name = targetTable.getItemNameSingular();
-		} else {
-			name = column->uiName;
-		}
-		
-		if (column->type == DualEnum) {
-			const bool isLastColumn = column->getIndex() == column->table.getNumberOfColumns() - 1;
-			if (isLastColumn) continue;
-			const Column& nextColumn = column->table.getColumnByIndex(column->getIndex() + 1);
-			const bool belongsToNextColumn = nextColumn.enumNameLists == column->enumNameLists;
-			if (belongsToNextColumn) {
-				name += "/" + nextColumn.uiName;
-			} else {
-				continue;
-			}
-		}
-		
-		// Create action
-		QAction* action = addFilterMenu.addAction(name);
-		
-		createFilterShortcuts.insert(action, column);
-		
-		connect(action, &QAction::triggered, this, &FilterBar::handle_filterCreationShortcutUsed);
-	}
-	addFilterButton->setMenu(&addFilterMenu);
 	
 	resetUI();
 }
@@ -183,6 +150,34 @@ void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 
 
 // UPDATE UI
+
+void FilterBar::updateQuickFilterMenu()
+{
+	quickFilterActions.clear();
+	quickFilterMenu.clear();
+	
+	QList<const CompositeColumn*> columns = compTable->getNormalColumnList();
+	QList<QAction*> hiddenColumnActions = QList<QAction*>();
+	for (int visualIndex = 0; visualIndex < columns.size(); visualIndex++) {
+		const int logicalIndex = mapper->tableView.horizontalHeader()->logicalIndex(visualIndex);
+		const CompositeColumn& column = compTable->getColumnAt(logicalIndex);
+		const bool hidden = compTable->isColumnHidden(column);
+		
+		QAction* action = new QAction(column.uiName);
+		if (hidden) {
+			hiddenColumnActions.append(action);
+		} else {
+			quickFilterMenu.addAction(action);
+		}
+		quickFilterActions.insert(action, &column);
+		connect(action, &QAction::triggered, this, &FilterBar::handle_filterCreationShortcutUsed);
+	}
+	
+	if (!hiddenColumnActions.isEmpty()) {
+		quickFilterMenu.addSection(tr("Hidden columns"));
+		quickFilterMenu.addActions(hiddenColumnActions);
+	}
+}
 
 void FilterBar::updateIDCombos()
 {
@@ -252,22 +247,20 @@ void FilterBar::handle_filterCreationShortcutUsed()
 {
 	QAction* action = (QAction*) sender();
 	assert(action);
-	const QString name = action->text();
-	const Column* const columnToUse = createFilterShortcuts.value(action);
+	const QString uiName = action->text();
+	const CompositeColumn* const columnToUse = quickFilterActions.value(action);
 	assert(columnToUse);
-	const NormalTable& tableToFilter = compTable->baseTable;
-	const NumericFoldOp foldOp = NumericFoldOp(-1);
 	
 	Filter* newFilter = nullptr;
-	switch (columnToUse->type) {
-	case Integer:	newFilter = new IntFilter		(tableToFilter, *columnToUse, foldOp,	name);	break;
-	case ID:		newFilter = new IDFilter		(tableToFilter, *columnToUse,			name);	break;
-	case Enum:		newFilter = new EnumFilter		(tableToFilter, *columnToUse,			name);	break;
-	case DualEnum:	newFilter = new DualEnumFilter	(tableToFilter, *columnToUse,			name);	break;
-	case Bit:		newFilter = new BoolFilter		(tableToFilter, *columnToUse,			name);	break;
-	case String:	newFilter = new StringFilter	(tableToFilter, *columnToUse, foldOp,	name);	break;
-	case Date:		newFilter = new DateFilter		(tableToFilter, *columnToUse,			name);	break;
-	case Time:		newFilter = new TimeFilter		(tableToFilter, *columnToUse,			name);	break;
+	switch (columnToUse->contentType) {
+	case Integer:	newFilter = new IntFilter		(*compTable, *columnToUse, uiName);	break;
+	case ID:		newFilter = new IDFilter		(*compTable, *columnToUse, uiName);	break;
+	case Enum:		newFilter = new EnumFilter		(*compTable, *columnToUse, uiName);	break;
+	case DualEnum:	newFilter = new DualEnumFilter	(*compTable, *columnToUse, uiName);	break;
+	case Bit:		newFilter = new BoolFilter		(*compTable, *columnToUse, uiName);	break;
+	case String:	newFilter = new StringFilter	(*compTable, *columnToUse, uiName);	break;
+	case Date:		newFilter = new DateFilter		(*compTable, *columnToUse, uiName);	break;
+	case Time:		newFilter = new TimeFilter		(*compTable, *columnToUse, uiName);	break;
 	default: assert(false);
 	}
 	
@@ -400,9 +393,9 @@ void FilterBar::saveFilters()
  * 
  * @return	A list of filters representing the ones saved in the project settings.
  */
-QList<Filter*> FilterBar::parseFiltersFromProjectSettings()
+QList<Filter*> FilterBar::parseFiltersFromProjectSettings(const ItemTypesHandler& typesHandler)
 {
 	const QString encodedFilters = mapper->filtersSetting.get(this);
-	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, mapper->baseTable.db);
+	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, typesHandler);
 	return filters;
 }

@@ -69,7 +69,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	layout->addLayout(listsLayout);
 	
 	hintLabel->setText(tr(
-		"**Hint**: In most cases, it makes more sense to use the \"Indentity\" field than the Name field. "
+		"**Hint**: If you want to use this column for a filter, it probably makes more sense to select the \"Identity\" option. "
 		"Click the Help button or try both if you are unsure."
 	));
 	hintLabel->setTextFormat(Qt::MarkdownText);

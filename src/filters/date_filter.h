@@ -13,7 +13,7 @@ class DateFilter : public Filter
 	QDate max;
 	
 public:
-	DateFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	DateFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 	virtual ~DateFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -22,7 +22,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static DateFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	static DateFilter* decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class DateFilterBox;

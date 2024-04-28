@@ -4,14 +4,11 @@
 
 
 
-DualEnumFilter::DualEnumFilter(const NormalTable& tableToFilter, const Column& discerningColumnToFilterBy, const QString& name) :
-	Filter(DualEnum, tableToFilter, discerningColumnToFilterBy, NumericFoldOp(-1), name),
-	dependentColumnToFilterBy(discerningColumnToFilterBy.table.getColumnByIndex(discerningColumnToFilterBy.getIndex() + 1)),
+DualEnumFilter::DualEnumFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(DualEnum, tableToFilter, columnToFilterBy, uiName),
 	discerningValue(0),
 	dependentValue(0)
-{
-	assert(discerningColumnToFilterBy.enumNameLists == dependentColumnToFilterBy.enumNameLists);
-}
+{}
 
 DualEnumFilter::~DualEnumFilter()
 {}
@@ -88,7 +85,7 @@ bool DualEnumFilter::evaluate(const QVariant& rawRowValue) const
 FilterBox* DualEnumFilter::createFilterBox(QWidget* parent)
 {
 	const QList<QPair<QString, QStringList>>& entries = *columnToFilterBy.enumNameLists;
-	return new DualEnumFilterBox(parent, name, entries, *this);
+	return new DualEnumFilterBox(parent, uiName, entries, *this);
 }
 
 
@@ -101,7 +98,7 @@ QStringList DualEnumFilter::encodeTypeSpecific() const
 	};
 }
 
-DualEnumFilter* DualEnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+DualEnumFilter* DualEnumFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
@@ -110,7 +107,7 @@ DualEnumFilter* DualEnumFilter::decodeTypeSpecific(const NormalTable& tableToFil
 	const int dependentValue = decodeInt(restOfEncoding, "dependentValue", ok);
 	if (!ok) return nullptr;
 	
-	DualEnumFilter* const filter = new DualEnumFilter(tableToFilter, columnToFilterBy, name);
+	DualEnumFilter* const filter = new DualEnumFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->discerningValue = discerningValue;
 	filter->dependentValue = dependentValue;
 	

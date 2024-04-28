@@ -1,6 +1,4 @@
 #include "filter_wizard.h"
-
-#include "src/db/database.h"
 #include "src/filters/bool_filter.h"
 #include "src/filters/date_filter.h"
 #include "src/filters/dual_enum_filter.h"
@@ -11,364 +9,265 @@
 #include "src/filters/time_filter.h"
 
 #include <QVBoxLayout>
+#include <QLabel>
 
 
 
-FilterWizardTablePage::FilterWizardTablePage(QWidget* parent, const NormalTable& tableToFilter) :
+FilterWizardColumnPage::FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter) :
 	QWizardPage(parent),
 	tableToFilter(tableToFilter),
-	sameTableRadiobutton(new QRadioButton(this)),
-	otherTableRadiobutton(new QRadioButton(this)),
-	otherTableCombo(new QComboBox(this)),
-	otherTableList(QList<const NormalTable*>())
-{
-	QVBoxLayout* const layout = new QVBoxLayout();
-	setLayout(layout);
-	setTitle(tr("Choose table"));
-	setSubTitle(tr("Choose the table which contains the values the new filter will work on."));
-	
-	sameTableRadiobutton->setText(tr("Use a value from the same table (%1)").arg(tableToFilter.uiName));
-	layout->addWidget(sameTableRadiobutton);
-	layout->addWidget(new QLabel(tr("or"), this));
-	otherTableRadiobutton->setText(tr("Use a value from a different table:"));
-	layout->addWidget(otherTableRadiobutton);
-	otherTableCombo->setEnabled(false);
-	otherTableCombo->setPlaceholderText(tr("Choose table"));
-	for (const NormalTable* const table: tableToFilter.db.getNormalItemTableList()) {
-		if (table == &tableToFilter) continue;
-		
-		const Breadcrumbs& crumbs = tableToFilter.db.getBreadcrumbsFor(tableToFilter, *table);
-		const bool useSingular = crumbs.isForwardOnly();
-		QString comboEntry = QString();
-		if (useSingular) {
-			comboEntry = table->getItemNameSingular();
-		} else {
-			comboEntry = table->uiName;
-		}
-		
-		otherTableList.append(table);
-		otherTableCombo->addItem(comboEntry);
-	}
-	layout->addWidget(otherTableCombo);
-	
-	registerField("table.same*",		sameTableRadiobutton);
-	registerField("table.other*",		otherTableRadiobutton);
-	registerField("table.otherCombo*",	otherTableCombo);
-	
-	
-	connect(otherTableRadiobutton,	&QRadioButton::toggled,	otherTableCombo,	&QComboBox::setEnabled);
-}
-
-const NormalTable* FilterWizardTablePage::getSelectedTable() const
-{
-	if (sameTableRadiobutton->isChecked()) {
-		return &tableToFilter;
-	} else if (otherTableRadiobutton->isChecked()) {
-		if (otherTableCombo->currentIndex() < 0) return nullptr;
-		return otherTableList.at(otherTableCombo->currentIndex());
-	} else {
-		return nullptr;
-	}
-}
-
-bool FilterWizardTablePage::isComplete() const
-{
-	if (sameTableRadiobutton->isChecked()) return true;
-	if (!otherTableRadiobutton->isChecked()) return false;
-	return otherTableCombo->currentIndex() != -1;
-}
-
-int FilterWizardTablePage::nextId() const
-{
-	return Page_Column;
-}
-
-
-
-
-
-FilterWizardColumnPage::FilterWizardColumnPage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardTablePage& tablePage) :
-	QWizardPage(parent),
-	tableToFilter(tableToFilter),
-	tablePage(tablePage),
-	columnCombo(new QComboBox(this)),
-	columnList(QList<const Column*>())
+	columnListWidget(new QListWidget(this)),
+	columnList(QList<const CompositeColumn*>())
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
 	setTitle(tr("Choose column"));
-	setSubTitle(tr("Choose the column which contains the values the new filter will work on."));
+	setSubTitle(tr("Choose the column to use for the new filter."));
 	
-	layout->addWidget(columnCombo);
+	columnListWidget->setAutoFillBackground(true);
+	columnListWidget->setBackgroundRole(QPalette::Base);
+	layout->addWidget(columnListWidget);
 	
-	registerField("column.combo*",	columnCombo);
+	connect(columnListWidget, &QListWidget::itemSelectionChanged, this, &FilterWizardColumnPage::completeChanged);
 }
 
-const Column* FilterWizardColumnPage::getSelectedColumn() const
+const CompositeColumn* FilterWizardColumnPage::getSelectedColumn() const
 {
-	if (columnCombo->currentIndex() < 0) return nullptr;
-	return columnList.at(columnCombo->currentIndex());
+	if (columnListWidget->currentRow() < 0) return nullptr;
+	return columnList.at(columnListWidget->currentRow());
 }
 
 void FilterWizardColumnPage::initializePage()
 {
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	assert(tableToUse);
-	
 	columnList.clear();
-	columnCombo->clear();
-	const QList<const Column*> allColumns = tableToUse->getColumnList();
-	for (int i = 0; i < allColumns.size(); ++i) {
-		const Column* column = allColumns.at(i);
-		if (column->primaryKey) {
-			continue;
+	columnListWidget->clear();
+	for (const CompositeColumn* const column : tableToFilter.getNormalColumnList()) {
+		QString entry = column->uiName;
+		if (tableToFilter.isColumnHidden(*column)) {
+			entry = tr("%1 (hidden)").arg(entry);
 		}
-		else if (column->foreignColumn) {
-			columnList.append(column);
-			columnCombo->addItem(column->getReferencedForeignColumn().table.uiName);
-		}
-		else if (column->type == DualEnum) {
-			const Column& firstDualEnumColumn = *column;
-			assert(i + 1 < allColumns.size());
-			columnList.append(column);
-			column = allColumns.at(++i);
-			assert(column->type == DualEnum);
-			columnCombo->addItem(firstDualEnumColumn.uiName + "/" + column->uiName);
-		}
-		else {
-			columnList.append(column);
-			columnCombo->addItem(column->uiName);
-		}
+		
+		columnList.append(column);
+		columnListWidget->addItem(entry);
 	}
+	columnListWidget->setCurrentRow(-1);
+}
+
+bool FilterWizardColumnPage::isComplete() const
+{
+	return columnListWidget->currentRow() >= 0;
 }
 
 int FilterWizardColumnPage::nextId() const
 {
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	const Column* const columnToUse = getSelectedColumn();
-	assert(columnToUse);
-	
-	const Breadcrumbs& crumbs = tableToFilter.db.getBreadcrumbsFor(tableToFilter, *tableToUse);
-	const bool forwardReference = crumbs.isForwardOnly();
-	if (!forwardReference) {
-		return Page_FoldOp;
-	}
-	else if (columnToUse->type == Integer) {
-		return Page_NumberPrefs;
-	}
-	else {
-		return Page_Name;
-	}
+	return Page_Settings;
 }
 
 
 
 
 
-FilterWizardFoldOpPage::FilterWizardFoldOpPage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardColumnPage& columnPage) :
+FilterWizardSettingsPage::FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage) :
 	QWizardPage(parent),
 	tableToFilter(tableToFilter),
 	columnPage(columnPage),
-	explainLabel(new QLabel(this)),
-	foldOpCombo(new QComboBox(this)),
-	foldOpList(QList<NumericFoldOp>())
-{
-	QVBoxLayout* const layout = new QVBoxLayout();
-	setLayout(layout);
-	setTitle(tr("Choose fold operation"));
-	setSubTitle(tr("Choose a way to combine multiple values into one for filtering."));
-	
-	explainLabel->setWordWrap(true);
-	layout->addWidget(explainLabel);
-	
-	layout->addWidget(foldOpCombo);
-	
-	registerField("foldOp.combo*",	foldOpCombo);
-}
-
-NumericFoldOp FilterWizardFoldOpPage::getSelectedFoldOp() const
-{
-	if (foldOpCombo->currentIndex() < 0) return NumericFoldOp(-1);
-	return foldOpList.at(foldOpCombo->currentIndex());
-}
-
-QString FilterWizardFoldOpPage::getSelectedFoldOpName() const
-{
-	if (foldOpCombo->currentIndex() < 0) return QString();
-	return foldOpCombo->currentText();
-}
-
-void FilterWizardFoldOpPage::initializePage()
-{
-	const Column* const columnToUse = columnPage.getSelectedColumn();
-	assert(columnToUse);
-	
-	if (columnToUse->type == String) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to a list of those values or to their count."));
-	} else if (columnToUse->type == Integer) {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to the count of those values, or to their maximum, minimum, sum, or average."));
-	} else {
-		explainLabel->setText(tr("The column you chose can contain multiple values for each row in the filtered table.\nA filter can be applied to the count of those values."));
-	}
-	
-	foldOpList.clear();
-	foldOpCombo->clear();
-	
-	if (columnToUse->type == Integer) {
-		foldOpList.append(AverageFold);	foldOpCombo->addItem(tr("Average"));
-		foldOpList.append(SumFold);		foldOpCombo->addItem(tr("Sum"));
-		foldOpList.append(MaxFold);		foldOpCombo->addItem(tr("Maximum"));
-		foldOpList.append(MinFold);		foldOpCombo->addItem(tr("Minimum"));
-	}
-}
-
-int FilterWizardFoldOpPage::nextId() const
-{
-	const NumericFoldOp selectedFoldOp = getSelectedFoldOp();
-	assert(selectedFoldOp != NumericFoldOp(-1));
-	
-	return Page_NumberPrefs;
-}
-
-
-
-
-
-FilterWizardNumberPrefPage::FilterWizardNumberPrefPage(QWidget* parent) :
-	QWizardPage(parent),
+	nameEdit(new QLineEdit(this)),
+	intSettingsHLine(new QFrame(this)),
 	exactValueRadiobutton(new QRadioButton(this)),
-	classesRadiobutton(new QRadioButton(this))
+	classesRadiobutton(new QRadioButton(this)),
+	intClassesGroupBox(new QGroupBox(this)),
+	intClassIncrementLabel(new QLabel(this)),
+	intClassIncrementSpinner(new QSpinBox(this)),
+	intClassMinLabel(new QLabel(this)),
+	intClassMinSpinner(new QSpinBox(this)),
+	intClassMaxLabel(new QLabel(this)),
+	intClassMaxSpinner(new QSpinBox(this)),
+	intClassPreview(new QListWidget(this))
 {
 	QVBoxLayout* const layout = new QVBoxLayout();
 	setLayout(layout);
-	setTitle(tr("Set number filter preferences"));
-	setSubTitle(tr("Choose how to filter numbers."));
+	setTitle(tr("Customize"));
+	setSubTitle(tr("Choose a name for the new filter, and choose additional settings."));
+	
+	nameEdit->setPlaceholderText(tr("Name the new filter"));
+	layout->addWidget(nameEdit);
+	
+	intSettingsHLine->setFrameShape(QFrame::HLine);
+	intSettingsHLine->setFrameShadow(QFrame::Sunken);
+	layout->addSpacing(10);
+	layout->addWidget(intSettingsHLine);
+	layout->addSpacing(10);
 	
 	exactValueRadiobutton->setText(tr("Filter by exact value"));
 	layout->addWidget(exactValueRadiobutton);
 	
-	classesRadiobutton->setText(tr("Filter by 1000s classes (1000-1999, 2000-2999, etc.)"));
+	classesRadiobutton->setText(tr("Filter by classes:"));
 	layout->addWidget(classesRadiobutton);
 	
-	registerField("numberPref.exact*",	exactValueRadiobutton);
-	registerField("numberPref.class*",	classesRadiobutton);
-}
-
-bool FilterWizardNumberPrefPage::isComplete() const
-{
-	return exactValueRadiobutton->isChecked() || classesRadiobutton->isChecked();
-}
-
-int FilterWizardNumberPrefPage::nextId() const
-{
-	return Page_Name;
-}
-
-
-
-
-
-FilterWizardNamePage::FilterWizardNamePage(QWidget* parent, const NormalTable& tableToFilter, const FilterWizardTablePage& tablePage, const FilterWizardColumnPage& columnPage, const FilterWizardFoldOpPage& foldOpPage) :
-	QWizardPage(parent),
-	tableToFilter(tableToFilter),
-	tablePage(tablePage),
-	columnPage(columnPage),
-	foldOpPage(foldOpPage),
-	name(new QLineEdit(this))
-{
-	QVBoxLayout* const layout = new QVBoxLayout();
-	setLayout(layout);
-	setTitle(tr("Set filter name"));
-	setSubTitle(tr("Choose a name for the new filter, or leave the automatic name in place."));
+	QGridLayout* intClassesSpinnersLayout = new QGridLayout();
+	QHBoxLayout* intClassesLayout = new QHBoxLayout();
+	intClassesGroupBox->setLayout(intClassesLayout);
 	
-	name->setPlaceholderText(tr("Name the new filter"));
-	layout->addWidget(name);
+	// Increment label
+	intClassIncrementLabel->setText(tr("Difference between steps:"));
+	intClassesSpinnersLayout->addWidget(intClassIncrementLabel, 0, 0);
+	// Increment widget
+	intClassIncrementSpinner->setMinimum(1);
+	intClassIncrementSpinner->setMaximum(1000000);
+	intClassIncrementSpinner->setValue(1000);
+	handle_intClassIncrementChanged();
+	intClassesSpinnersLayout->addWidget(intClassIncrementSpinner, 0, 1);
+	// Min label
+	intClassMinLabel->setText(tr("Minimum of lowest class:"));
+	intClassesSpinnersLayout->addWidget(intClassMinLabel, 1, 0);
+	// Min widget
+	intClassMinSpinner->setMinimum(0);
+	intClassMinSpinner->setValue(0);
+	handle_intClassMinChanged();
+	intClassesSpinnersLayout->addWidget(intClassMinSpinner, 1, 1);
+	// Max label
+	intClassMaxLabel->setText(tr("Ceiling of highest class:"));
+	intClassesSpinnersLayout->addWidget(intClassMaxLabel, 2, 0);
+	// Max widget
+	intClassMaxSpinner->setMaximum(9999999);
+	intClassMaxSpinner->setValue(9000);
+	handle_intClassMaxChanged();
+	intClassesSpinnersLayout->addWidget(intClassMaxSpinner, 2, 1);
 	
-	registerField("name*",	name);
-}
-
-QString FilterWizardNamePage::getName() const
-{
-	return name->text();
-}
-
-void FilterWizardNamePage::initializePage()
-{
-	name->setText(generateFilterName());
-}
-
-bool FilterWizardNamePage::isComplete() const
-{
-	return !name->text().isEmpty();
-}
-
-QString FilterWizardNamePage::generateFilterName() const
-{
-	const NormalTable* const tableToUse = tablePage.getSelectedTable();
-	const Column* const columnToUse = columnPage.getSelectedColumn();
-	const NumericFoldOp foldOp = foldOpPage.getSelectedFoldOp();
-	assert(tableToUse);
-	assert(columnToUse);
+	intClassesLayout->addLayout(intClassesSpinnersLayout);
+	// Preview
+	QVBoxLayout* intClassPreviewLayout = new QVBoxLayout();
+	intClassPreviewLayout->addWidget(new QLabel(tr("Preview of the classes:")));
+	intClassPreview->setAutoFillBackground(true);
+	intClassPreview->setBackgroundRole(QPalette::Base);
+	intClassPreviewLayout->addWidget(intClassPreview);
+	intClassesLayout->addLayout(intClassPreviewLayout);
 	
-	QString name = "";
-	if (tableToUse != &tableToFilter) {
-		const Breadcrumbs& crumbs = tableToFilter.db.getBreadcrumbsFor(tableToFilter, *tableToUse);
-		const bool useSingular = crumbs.isForwardOnly();
-		if (useSingular) {
-			name += tableToUse->getItemNameSingular();
-		} else {
-			name += tableToUse->uiName;
-		}
-		name += ": ";
+	layout->addWidget(intClassesGroupBox);
+	handle_intFilterModeSelectionChanged();
+	
+	
+	connect(exactValueRadiobutton,		&QRadioButton::clicked,		this,	&FilterWizardSettingsPage::handle_intFilterModeSelectionChanged);
+	connect(classesRadiobutton,			&QRadioButton::clicked,		this,	&FilterWizardSettingsPage::handle_intFilterModeSelectionChanged);
+	connect(intClassIncrementSpinner,	&QSpinBox::valueChanged,	this,	&FilterWizardSettingsPage::handle_intClassIncrementChanged);
+	connect(intClassMinSpinner,			&QSpinBox::valueChanged,	this,	&FilterWizardSettingsPage::handle_intClassMinChanged);
+	connect(intClassMaxSpinner,			&QSpinBox::valueChanged,	this,	&FilterWizardSettingsPage::handle_intClassMaxChanged);
+	
+	connect(nameEdit,					&QLineEdit::textChanged,	this,	&FilterWizardSettingsPage::completeChanged);
+	connect(exactValueRadiobutton,		&QRadioButton::clicked,		this,	&FilterWizardSettingsPage::completeChanged);
+	connect(classesRadiobutton,			&QRadioButton::clicked,		this,	&FilterWizardSettingsPage::completeChanged);
+}
+
+
+
+QString FilterWizardSettingsPage::getName() const
+{
+	return nameEdit->text();
+}
+
+QList<int> FilterWizardSettingsPage::getIntSettings() const
+{
+	if (columnPage.getSelectedColumn()->contentType != Integer) return {};
+	if (!classesRadiobutton->isChecked()) return {};
+	
+	return {
+		intClassIncrementSpinner->value(),
+		intClassMinSpinner->value(),
+		intClassMaxSpinner->value()
+	};
+}
+
+
+
+void FilterWizardSettingsPage::handle_intFilterModeSelectionChanged()
+{
+	const bool useClasses = classesRadiobutton->isChecked();
+	intClassIncrementSpinner->setEnabled(useClasses);
+	intClassMinSpinner		->setEnabled(useClasses);
+	intClassMaxSpinner		->setEnabled(useClasses);
+	intClassPreview			->setEnabled(useClasses);
+}
+
+void FilterWizardSettingsPage::handle_intClassIncrementChanged()
+{
+	intClassMinSpinner->setSingleStep(intClassIncrementSpinner->value());
+	intClassMaxSpinner->setSingleStep(intClassIncrementSpinner->value());
+	updateIntClassPreview();
+}
+
+void FilterWizardSettingsPage::handle_intClassMinChanged()
+{
+	intClassMaxSpinner->setMinimum(intClassMinSpinner->value());
+	updateIntClassPreview();
+}
+
+void FilterWizardSettingsPage::handle_intClassMaxChanged()
+{
+	intClassMinSpinner->setMaximum(intClassMaxSpinner->value());
+	updateIntClassPreview();
+}
+
+void FilterWizardSettingsPage::updateIntClassPreview()
+{
+	const int classIncrement	= intClassIncrementSpinner->value();
+	const int classMinValue		= intClassMinSpinner->value();
+	const int classMaxValue		= intClassMaxSpinner->value();
+	
+	intClassPreview->clear();
+	for (int value = classMinValue; value < classMaxValue; value += classIncrement) {
+		QString entry = QString::number(value) + " - " + QString::number(value + classIncrement - 1);
+		intClassPreview->addItem(entry);
 	}
+}
+
+
+
+void FilterWizardSettingsPage::initializePage()
+{
+	nameEdit->setText(columnPage.getSelectedColumn()->uiName);
 	
-	if (columnToUse->foreignColumn) {
-		const Table& foreignTable = columnToUse->getReferencedForeignColumn().table;
-		assert(!foreignTable.isAssociative);
-		const NormalTable& targetTable = (const NormalTable&) foreignTable;
-		name = targetTable.getItemNameSingular();
-	} else {
-		name += columnToUse->uiName;
+	const bool showIntSettings = columnPage.getSelectedColumn()->contentType == Integer;
+	intSettingsHLine		->setVisible(showIntSettings);
+	exactValueRadiobutton	->setVisible(showIntSettings);
+	classesRadiobutton		->setVisible(showIntSettings);
+	intClassesGroupBox		->setVisible(showIntSettings);
+	if (!showIntSettings) {
+		// Qt bug currently prevents these commands from working
+		exactValueRadiobutton	->setChecked(false);
+		classesRadiobutton		->setChecked(false);
 	}
-	if (columnToUse->type == DualEnum) {
-		const Column& secondColumn = columnToUse->table.getColumnByIndex(columnToUse->getIndex() + 1);
-		assert(secondColumn.enumNameLists == columnToUse->enumNameLists);
-		name += "/" + secondColumn.uiName;
+}
+
+bool FilterWizardSettingsPage::isComplete() const
+{
+	bool complete = true;
+	complete &= !nameEdit->text().isEmpty();
+	if (columnPage.getSelectedColumn()->contentType == Integer) {
+		complete &= exactValueRadiobutton->isChecked() || classesRadiobutton->isChecked();
 	}
-	
-	if (foldOp != NumericFoldOp(-1)) {
-		name += " (" + foldOpPage.getSelectedFoldOpName() + ")";
-	}
-	
-	return name;
+	return complete;
 }
 
 
 
 
 
-FilterWizard::FilterWizard(QWidget* parent, const NormalTable& tableToFilter) :
+FilterWizard::FilterWizard(QWidget* parent, const CompositeTable& tableToFilter) :
 	QWizard(parent),
 	tableToFilter(tableToFilter),
-	tablePage(FilterWizardTablePage(parent, tableToFilter)),
-	columnPage(FilterWizardColumnPage(parent, tableToFilter, tablePage)),
-	foldOpPage(FilterWizardFoldOpPage(parent, tableToFilter, columnPage)),
-	numberPrefPage(FilterWizardNumberPrefPage(parent)),
-	namePage(FilterWizardNamePage(parent, tableToFilter, tablePage, columnPage, foldOpPage))
+	columnPage(FilterWizardColumnPage(parent, tableToFilter)),
+	settingsPage(FilterWizardSettingsPage(parent, tableToFilter, columnPage))
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
-	setWindowTitle(tableToFilter.getNewFilterString());
+	setWindowTitle(tableToFilter.baseTable.getNewFilterString());
 	setMinimumSize(500, 300);
 	setSizeGripEnabled(false);
 	
-	setPage(Page_Table,			&tablePage);
-	setPage(Page_Column,		&columnPage);
-	setPage(Page_FoldOp,		&foldOpPage);
-	setPage(Page_NumberPrefs,	&numberPrefPage);
-	setPage(Page_Name,			&namePage);
+	setPage(Page_Column,	&columnPage);
+	setPage(Page_Settings,	&settingsPage);
 	
-	setStartId(Page_Table);
+	setStartId(Page_Column);
 }
 
 FilterWizard::~FilterWizard()
@@ -378,47 +277,32 @@ FilterWizard::~FilterWizard()
 
 Filter* FilterWizard::getFinishedFilter()
 {
-	const Column* const columnToUse = columnPage.getSelectedColumn();
-	const NumericFoldOp foldOp = foldOpPage.getSelectedFoldOp();
-	const QString name = field("name").toString();
+	const CompositeColumn* const columnToUse = columnPage.getSelectedColumn();
+	const QString name = settingsPage.getName();
 	assert(columnToUse);
 	assert(!name.isEmpty());
 	
-	DataType type = columnToUse->type;
-	if (foldOp != NumericFoldOp(-1)) {
-		type = Integer;
-	}
+	DataType type = columnToUse->contentType;
 	
 	switch (type) {
 	case Integer: {
-		const bool useIntClasses = field("numberPref.class").toBool();
-		if (useIntClasses) {
-			return new IntFilter(tableToFilter, *columnToUse, foldOp, name, 1000, 0, 8848);
+		QList<int> intSettings = settingsPage.getIntSettings();
+		if (intSettings.size() == 3) {
+			const int classIncrement	= intSettings.at(0);
+			const int classMinValue		= intSettings.at(1);
+			const int classMaxValue		= intSettings.at(2);
+			return new IntFilter(tableToFilter, *columnToUse, name, classIncrement, classMinValue, classMaxValue);
 		} else {
-			return new IntFilter(tableToFilter, *columnToUse, foldOp, name);
+			return new IntFilter(tableToFilter, *columnToUse, name);
 		}
 	}
-	case ID: {
-		return new IDFilter(tableToFilter, *columnToUse, name);
-	}
-	case Enum: {
-		return new EnumFilter(tableToFilter, *columnToUse, name);
-	}
-	case DualEnum: {
-		return new DualEnumFilter(tableToFilter, *columnToUse, name);
-	}
-	case Bit: {
-		return new BoolFilter(tableToFilter, *columnToUse, name);
-	}
-	case String: {
-		return new StringFilter(tableToFilter, *columnToUse, foldOp, name);
-	}
-	case Date: {
-		return new DateFilter(tableToFilter, *columnToUse, name);
-	}
-	case Time: {
-		return new TimeFilter(tableToFilter, *columnToUse, name);
-	}
+	case ID:		return new IDFilter			(tableToFilter, *columnToUse, name);
+	case Enum:		return new EnumFilter		(tableToFilter, *columnToUse, name);
+	case DualEnum:	return new DualEnumFilter	(tableToFilter, *columnToUse, name);
+	case Bit:		return new BoolFilter		(tableToFilter, *columnToUse, name);
+	case String:	return new StringFilter		(tableToFilter, *columnToUse, name);
+	case Date:		return new DateFilter		(tableToFilter, *columnToUse, name);
+	case Time:		return new TimeFilter		(tableToFilter, *columnToUse, name);
 	default: assert(false);
 	}
 	return nullptr;

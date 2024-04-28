@@ -6,10 +6,12 @@
 
 #include <QComboBox>
 
+using std::placeholders::_1, std::placeholders::_2;
 
 
-IDFilter::IDFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(ID, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
+
+IDFilter::IDFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(ID, tableToFilter, columnToFilterBy, uiName),
 	value(ItemID())
 {}
 
@@ -56,21 +58,29 @@ bool IDFilter::evaluate(const QVariant& rawRowValue) const
 
 FilterBox* IDFilter::createFilterBox(QWidget* parent)
 {
-	Database& db = tableToFilter.db;
-	assert(columnToFilterBy.isForeignKey());
-	NormalTable* idTable = (NormalTable*) &columnToFilterBy.getReferencedForeignColumn().table;
+	assert(columnToFilterBy.contentType == ID);
+	const Column* contentColumn = nullptr;
+	switch (columnToFilterBy.type) {
+	case Direct:	contentColumn = &((DirectCompositeColumn&)		columnToFilterBy).contentColumn;	break;
+	case Reference:	contentColumn = &((ReferenceCompositeColumn&)	columnToFilterBy).contentColumn;	break;
+	default: assert(false);
+	}
+	assert(contentColumn);
+	assert(contentColumn->primaryKey);
+	NormalTable* idTable = (NormalTable*) &contentColumn->foreignColumn->table;
+	Database& db = idTable->db;
 	
 	std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo;
-	     if (idTable == &db.ascentsTable)	populateItemCombo = std::bind(populateAscentCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
-	else if (idTable == &db.peaksTable)		populateItemCombo = std::bind(populatePeakCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2,	ItemID());
-	else if (idTable == &db.tripsTable)		populateItemCombo = std::bind(populateTripCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
-	else if (idTable == &db.hikersTable)	populateItemCombo = std::bind(populateHikerCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
-	else if (idTable == &db.regionsTable)	populateItemCombo = std::bind(populateRegionCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2,	false);
-	else if (idTable == &db.rangesTable)	populateItemCombo = std::bind(populateRangeCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
-	else if (idTable == &db.countriesTable)	populateItemCombo = std::bind(populateCountryCombo,	std::ref(db), std::placeholders::_1, std::placeholders::_2);
+	     if (idTable == &db.ascentsTable)	populateItemCombo = std::bind(populateAscentCombo,	std::ref(db), _1, _2);
+	else if (idTable == &db.peaksTable)		populateItemCombo = std::bind(populatePeakCombo,	std::ref(db), _1, _2,	ItemID());
+	else if (idTable == &db.tripsTable)		populateItemCombo = std::bind(populateTripCombo,	std::ref(db), _1, _2);
+	else if (idTable == &db.hikersTable)	populateItemCombo = std::bind(populateHikerCombo,	std::ref(db), _1, _2);
+	else if (idTable == &db.regionsTable)	populateItemCombo = std::bind(populateRegionCombo,	std::ref(db), _1, _2,	false);
+	else if (idTable == &db.rangesTable)	populateItemCombo = std::bind(populateRangeCombo,	std::ref(db), _1, _2);
+	else if (idTable == &db.countriesTable)	populateItemCombo = std::bind(populateCountryCombo,	std::ref(db), _1, _2);
 	else assert(false);
 	
-	return new IDFilterBox(parent, name, populateItemCombo, *this);
+	return new IDFilterBox(parent, uiName, populateItemCombo, *this);
 }
 
 
@@ -82,14 +92,14 @@ QStringList IDFilter::encodeTypeSpecific() const
 	};
 }
 
-IDFilter* IDFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+IDFilter* IDFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const ItemID value = decodeID(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
-	IDFilter* const filter = new IDFilter(tableToFilter, columnToFilterBy, name);
+	IDFilter* const filter = new IDFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->value = value;
 	
 	return filter;

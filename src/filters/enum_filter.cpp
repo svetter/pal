@@ -4,8 +4,8 @@
 
 
 
-EnumFilter::EnumFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Enum, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
+EnumFilter::EnumFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(Enum, tableToFilter, columnToFilterBy, uiName),
 	value(0)
 {}
 
@@ -33,7 +33,7 @@ bool EnumFilter::evaluate(const QVariant& rawRowValue) const
 FilterBox* EnumFilter::createFilterBox(QWidget* parent)
 {
 	const QStringList& entries = *columnToFilterBy.enumNames;
-	return new EnumFilterBox(parent, name, entries, *this);
+	return new EnumFilterBox(parent, uiName, entries, *this);
 }
 
 
@@ -45,14 +45,14 @@ QStringList EnumFilter::encodeTypeSpecific() const
 	};
 }
 
-EnumFilter* EnumFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+EnumFilter* EnumFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const int value = decodeInt(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
-	EnumFilter* const filter = new EnumFilter(tableToFilter, columnToFilterBy, name);
+	EnumFilter* const filter = new EnumFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->value = value;
 	
 	return filter;

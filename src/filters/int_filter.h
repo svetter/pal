@@ -18,8 +18,8 @@ private:
 	int max;
 	
 public:
-	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name);
-	IntFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, int classIncrement, int classesMinValue, int classesMaxValue);
+	IntFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
+	IntFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, int classIncrement, int classesMinValue, int classesMaxValue);
 	virtual ~IntFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -28,7 +28,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static IntFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, NumericFoldOp foldOp, const QString& name, QString& restOfEncoding);
+	static IntFilter* decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class IntFilterBox;

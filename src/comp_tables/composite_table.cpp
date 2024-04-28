@@ -23,6 +23,7 @@
 
 #include "composite_table.h"
 #include "src/db/database.h"
+#include "src/filters/filter.h"
 
 #include <QScrollBar>
 
@@ -774,6 +775,21 @@ void CompositeTable::markColumnUnhidden(int columnIndex)
 void CompositeTable::markAllColumnsUnhidden()
 {
 	hiddenColumns.clear();
+}
+
+/**
+ * Indicates whether the given column is currently hidden in the UI.
+ * 
+ * pre The given column is among the table's default or custom columns.
+ * 
+ * @param column	The column whose hidden status will be returned.
+ * @return			True if the given column is currently hidden, false otherwise.
+ */
+bool CompositeTable::isColumnHidden(const CompositeColumn& column) const
+{
+	assert(columns.contains(&column) || customColumns.contains(&column));
+	
+	return hiddenColumns.contains(&column);
 }
 
 

@@ -13,7 +13,7 @@ class TimeFilter : public Filter
 	QTime max;
 	
 public:
-	TimeFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name);
+	TimeFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 	virtual ~TimeFilter();
 	
 	virtual bool evaluate(const QVariant& rawRowValue) const override;
@@ -22,7 +22,7 @@ public:
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
-	static TimeFilter* decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding);
+	static TimeFilter* decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding);
 	
 	friend class Filter;
 	friend class TimeFilterBox;

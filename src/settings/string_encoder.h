@@ -2,11 +2,13 @@
 #define STRING_ENCODER_H
 
 #include "src/data/item_id.h"
-#include "src/db/db_data_type.h"
 #include "src/db/normal_table.h"
-#include "src/comp_tables/comp_column_type.h"
 
 #include <QString>
+
+class CompositeColumn;
+class CompositeTable;
+class ItemTypesHandler;
 
 
 
@@ -23,15 +25,17 @@ public:
 	
 	// Decoding helpers
 	template<typename T>
-	static T					decodeHeader		(QString& restOfEncoding, const QString& encodedTypeSuffix, std::function<T(const QString&)> decodeType, bool& ok);
-	static const NormalTable*	decodeTableIdentity	(QString& restOfEncoding, const QString& tableNameParamName, Database& db, bool& ok);
-	static const Column*		decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok);
-	static int					decodeInt			(QString& restOfEncoding, const QString& paramName, bool& ok);
-	static ItemID				decodeID			(QString& restOfEncoding, const QString& paramName, bool& ok);
-	static bool					decodeBool			(QString& restOfEncoding, const QString& paramName, bool& ok);
-	static QString				decodeString		(QString& restOfEncoding, const QString& paramName, bool& ok);
-	static QDate				decodeDate			(QString& restOfEncoding, const QString& paramName, bool& ok);
-	static QTime				decodeTime			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static T						decodeHeader			(QString& restOfEncoding, const QString& encodedTypeSuffix, std::function<T(const QString&)> decodeType, bool& ok);
+	static const NormalTable*		decodeTableIdentity		(QString& restOfEncoding, const QString& tableNameParamName, const Database& db, bool& ok);
+	static const Column*			decodeColumnIdentity	(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, const Database& db, bool& ok);
+	static const CompositeTable*	decodeCompTableIdentity	(QString& restOfEncoding, const QString& tableNameParamName, const ItemTypesHandler& typesHandler, bool& ok);
+	static const CompositeColumn*	decodeCompColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, const ItemTypesHandler& typesHandler, bool& ok);
+	static int						decodeInt				(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static ItemID					decodeID				(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static bool						decodeBool				(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QString					decodeString			(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QDate					decodeDate				(QString& restOfEncoding, const QString& paramName, bool& ok);
+	static QTime					decodeTime				(QString& restOfEncoding, const QString& paramName, bool& ok);
 };
 
 

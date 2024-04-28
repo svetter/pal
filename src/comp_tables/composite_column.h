@@ -140,10 +140,10 @@ protected:
  * A composite column which refers directly to a single column in a base table.
  */
 class DirectCompositeColumn : public CompositeColumn {
+public:
 	/** The column in the base table from which to take the content. */
 	const Column& contentColumn;
 	
-public:
 	DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn);
 	DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
 	
@@ -164,14 +164,14 @@ public:
  * content from a column in that table.
  */
 class ReferenceCompositeColumn : public CompositeColumn {
+public:
 	/** The breadcrumb trail (chain of foreign key columns) to follow to the target table containing the content. */
-	Breadcrumbs breadcrumbs;
+	const Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
 	const Column& contentColumn;
 	/** The target base table from which to take the content. */
 	const NormalTable& contentTable;
 	
-public:
 	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;

@@ -4,8 +4,8 @@
 
 
 
-BoolFilter::BoolFilter(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name) :
-	Filter(Bit, tableToFilter, columnToFilterBy, NumericFoldOp(-1), name),
+BoolFilter::BoolFilter(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
+	Filter(Bit, tableToFilter, columnToFilterBy, uiName),
 	value(true)
 {}
 
@@ -32,7 +32,7 @@ bool BoolFilter::evaluate(const QVariant& rawRowValue) const
 
 FilterBox* BoolFilter::createFilterBox(QWidget* parent)
 {
-	return new BoolFilterBox(parent, name, *this);
+	return new BoolFilterBox(parent, uiName, *this);
 }
 
 
@@ -44,14 +44,14 @@ QStringList BoolFilter::encodeTypeSpecific() const
 	};
 }
 
-BoolFilter* BoolFilter::decodeTypeSpecific(const NormalTable& tableToFilter, const Column& columnToFilterBy, const QString& name, QString& restOfEncoding)
+BoolFilter* BoolFilter::decodeTypeSpecific(const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName, QString& restOfEncoding)
 {
 	bool ok = false;
 	
 	const bool value = decodeBool(restOfEncoding, "value", ok);
 	if (!ok) return nullptr;
 	
-	BoolFilter* const filter = new BoolFilter(tableToFilter, columnToFilterBy, name);
+	BoolFilter* const filter = new BoolFilter(tableToFilter, columnToFilterBy, uiName);
 	filter->value = value;
 	
 	return filter;

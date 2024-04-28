@@ -2,6 +2,7 @@
 
 #include "src/db/database.h"
 #include "src/main/helpers.h"
+#include "src/main/item_types_handler.h"
 
 
 
@@ -55,7 +56,7 @@ T StringEncoder::decodeHeader(QString& restOfEncoding, const QString& encodedTyp
 template CompColType	StringEncoder::decodeHeader<CompColType>(QString&, const QString&, std::function<CompColType(const QString&)>, bool&);
 template DataType		StringEncoder::decodeHeader<DataType>	(QString&, const QString&, std::function<DataType	(const QString&)>, bool&);
 
-const NormalTable* StringEncoder::decodeTableIdentity(QString& restOfEncoding, const QString& tableNameParamName, Database& db, bool& ok)
+const NormalTable* StringEncoder::decodeTableIdentity(QString& restOfEncoding, const QString& tableNameParamName, const Database& db, bool& ok)
 {
 	const QString tableName = decodeString(restOfEncoding, tableNameParamName, ok);
 	if (!ok) return nullptr;
@@ -65,10 +66,11 @@ const NormalTable* StringEncoder::decodeTableIdentity(QString& restOfEncoding, c
 			return table;
 		}
 	}
+	ok = false;
 	return nullptr;
 }
 
-const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, Database& db, bool& ok)
+const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, const Database& db, bool& ok)
 {
 	const NormalTable* table = decodeTableIdentity(restOfEncoding, tableNameParamName, db, ok);
 	if (!ok) return nullptr;
@@ -81,7 +83,35 @@ const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const
 			return column;
 		}
 	}
+	ok = false;
 	return nullptr;
+}
+
+const CompositeTable* StringEncoder::decodeCompTableIdentity(QString& restOfEncoding, const QString& tableNameParamName, const ItemTypesHandler& typesHandler, bool& ok)
+{
+	const QString tableName = decodeString(restOfEncoding, tableNameParamName, ok);
+	if (!ok) return nullptr;
+	
+	for (const ItemTypeMapper* mapper : typesHandler.getAllMappers()) {
+		if (mapper->compTable.name == tableName) {
+			return &mapper->compTable;
+		}
+	}
+	ok = false;
+	return nullptr;
+}
+
+const CompositeColumn* StringEncoder::decodeCompColumnIdentity(QString& restOfEncoding, const QString& tableNameParamName, const QString& columnNameParamName, const ItemTypesHandler& typesHandler, bool& ok)
+{
+	const CompositeTable* table = decodeCompTableIdentity(restOfEncoding, tableNameParamName, typesHandler, ok);
+	if (!ok) return nullptr;
+	
+	const QString columnName = decodeString(restOfEncoding, columnNameParamName, ok);
+	if (!ok) return nullptr;
+	
+	const CompositeColumn* column = table->getColumnByNameOrNull(columnName);
+	ok = column;
+	return column;
 }
 
 int StringEncoder::decodeInt(QString& restOfEncoding, const QString& paramName, bool& ok)

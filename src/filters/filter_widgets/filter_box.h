@@ -8,8 +8,6 @@
 #include <QToolButton>
 #include <QButtonGroup>
 
-using std::unique_ptr, std::make_unique;
-
 
 
 class FilterBox : public QGroupBox, public Ui_FilterBox

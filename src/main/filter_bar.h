@@ -57,8 +57,8 @@ class FilterBar : public QWidget, public Ui_FilterBar
 	
 	QList<FilterBox*> filterBoxes;
 	
-	QMenu addFilterMenu;
-	QHash<QAction*, const Column*> createFilterShortcuts;
+	QMenu quickFilterMenu;
+	QHash<QAction*, const CompositeColumn*> quickFilterActions;
 	FilterWizard* filterWizard;
 	
 public:
@@ -72,8 +72,10 @@ public:
 	void resetUI();
 	void insertFiltersIntoUI(const QList<Filter*>& filters);
 	
-public:
 	// Update UI
+private:
+	void updateQuickFilterMenu();
+public:
 	void updateIDCombos();
 	
 private slots:
@@ -98,7 +100,7 @@ public:
 	// Saving filters
 	void saveFilters();
 	// Retrieving filters from project settings
-	QList<Filter*> parseFiltersFromProjectSettings();
+	QList<Filter*> parseFiltersFromProjectSettings(const ItemTypesHandler &typesHandler);
 };
 
 

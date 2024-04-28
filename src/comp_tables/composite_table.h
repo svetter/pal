@@ -26,10 +26,11 @@
 
 #include "src/comp_tables/comp_table_listener.h"
 #include "src/comp_tables/composite_column.h"
-#include "src/filters/filter.h"
 
 #include <QTableView>
 #include <QProgressDialog>
+
+class Filter;
 
 
 
@@ -74,9 +75,9 @@ struct SortingPass {
 class CompositeTable : public QAbstractTableModel {
 	Q_OBJECT
 	
+public:
 	/** The project database. */
 	Database& db;
-public:
 	/** The database table this table is based on. */
 	const NormalTable& baseTable;
 private:
@@ -170,6 +171,7 @@ public:
 	virtual SortingPass getDefaultSorting() const = 0;
 	SortingPass getCurrentSorting() const;
 	
+	// Filters
 	void setInitialFilters(const QList<const Filter*>& filters);
 	void applyFilters(const QList<const Filter*>& filters);
 	void clearFilters();
@@ -181,6 +183,7 @@ public:
 	void markColumnHidden(int columnIndex);
 	void markColumnUnhidden(int columnIndex);
 	void markAllColumnsUnhidden();
+	bool isColumnHidden(const CompositeColumn& column) const;
 	// Change annunciation
 	void setUpdateImmediately(bool updateImmediately, QProgressDialog* progress = nullptr);
 	void announceChanges(const QSet<const Column*>& affectedColumns, const QList<QPair<BufferRowIndex, bool>>& rowsAddedOrRemoved);
