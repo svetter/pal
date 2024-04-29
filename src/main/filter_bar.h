@@ -78,6 +78,10 @@ private:
 public:
 	void updateIDCombos();
 	
+	// Remove filters
+	void removeFilter(FilterBox* filterBox);
+	void compColumnAboutToBeRemoved(const CompositeColumn& column);
+	
 private slots:
 	// UI change handlers
 	void handle_filtersChanged();

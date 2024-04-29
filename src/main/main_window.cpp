@@ -1238,6 +1238,7 @@ void MainWindow::handle_removeCustomColumn()
 	const int logicalIndex = action->data().toInt();
 	
 	const ItemTypeMapper& mapper = getActiveMapper();
+	mapper.filterBar.compColumnAboutToBeRemoved(mapper.compTable.getColumnAt(logicalIndex));
 	mapper.compTable.removeCustomColumnAt(logicalIndex);
 }
 

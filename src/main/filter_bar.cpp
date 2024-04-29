@@ -191,6 +191,31 @@ void FilterBar::updateIDCombos()
 
 
 
+void FilterBar::removeFilter(FilterBox* filterBox)
+{
+	filtersScrollAreaLayout->removeWidget(filterBox);
+	filterBoxes.removeAll(filterBox);
+	delete filterBox;
+	
+	QApplication::processEvents();
+	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	
+	handle_filtersChanged();
+}
+
+void FilterBar::compColumnAboutToBeRemoved(const CompositeColumn& column)
+{
+	for (int i = filterBoxes.size() - 1; i >= 0; i--) {
+		const FilterBox& filterBox = *filterBoxes.at(i);
+		const Filter& filter = filterBox.getFilter();
+		if (&filter.columnToFilterBy == &column) {
+			removeFilter(filterBoxes.at(i));
+		}
+	}
+}
+
+
+
 // UI CHANGE HANDLERS
 
 /**
@@ -281,14 +306,7 @@ void FilterBar::handle_filterCreationShortcutUsed()
 void FilterBar::handle_removeFilter()
 {
 	FilterBox* const filterBox = (FilterBox*) sender();
-	filtersScrollAreaLayout->removeWidget(filterBox);
-	filterBoxes.removeAll(filterBox);
-	delete filterBox;
-	
-	QApplication::processEvents();
-	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
-	
-	handle_filtersChanged();
+	removeFilter(filterBox);
 }
 
 
