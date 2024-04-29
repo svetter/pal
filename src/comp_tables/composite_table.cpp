@@ -588,7 +588,11 @@ void CompositeTable::updateBothBuffers(std::function<void()> runAfterEachCellUpd
 	updateBufferColumns(columnsToUpdate, runAfterEachCellUpdate);
 	
 	// Rebuild order buffer if necessary
-	const bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
+	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
+	for (const Filter* const filter : currentFilters) {
+		if (orderBufferDirty) break;
+		orderBufferDirty |= columnsToUpdate.contains(&filter->columnToFilterBy);
+	}
 	if (orderBufferDirty) {
 		rebuildOrderBuffer(false);
 	}
