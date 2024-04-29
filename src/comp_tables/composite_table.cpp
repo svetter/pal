@@ -499,6 +499,9 @@ QSet<const CompositeColumn*> CompositeTable::getColumnsToUpdate() const
 	if (currentSorting.column) {
 		canStayDirty.remove(currentSorting.column);
 	}
+	for (const Filter* const filter : currentFilters) {
+		canStayDirty.remove(&filter->columnToFilterBy);
+	}
 	
 	columnsToUpdate.subtract(canStayDirty);
 	
