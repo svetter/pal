@@ -11,14 +11,14 @@ IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, IntFilter& fil
 	spacer(new QSpacerItem(5, 0, QSizePolicy::Expanding, QSizePolicy::Minimum))
 {
 	minSpinner->setObjectName("minSpinner");
-	minSpinner->setMaximum(9999);
+	minSpinner->setMaximum(9999999);
 	
 	setMaxCheckbox->setObjectName("setMaxCheckbox");
 	setMaxCheckbox->setToolTip(tr("Set a maximum value"));
 	setMaxCheckbox->setChecked(true);
 	
 	maxSpinner->setObjectName("maxSpinner");
-	maxSpinner->setMaximum(9999);
+	maxSpinner->setMaximum(9999999);
 	
 	filterLayout->addWidget(minSpinner);
 	filterLayout->addItem(spacer);
