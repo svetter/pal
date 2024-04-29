@@ -90,7 +90,7 @@ public:
 	// Execute filter actions
 	void handle_newFilterButtonPressed();
 	void handle_filterWizardAccepted();
-	void handle_filterCreationShortcutUsed();
+	void handle_quickFilterActionUsed();
 	void handle_removeFilter();
 	void handle_applyFilters();
 	void handle_clearFilters();

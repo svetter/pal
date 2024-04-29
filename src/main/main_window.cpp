@@ -1408,10 +1408,10 @@ void MainWindow::handle_closeDatabase()
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->filterBar.resetUI();
 	}
-
+	
 	db.reset();
 	projectOpen = false;
-
+	
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		mapper->compTable.reset();
 		mapper->statsEngine.resetStatsPanel();

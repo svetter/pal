@@ -170,7 +170,7 @@ void FilterBar::updateQuickFilterMenu()
 			quickFilterMenu.addAction(action);
 		}
 		quickFilterActions.insert(action, &column);
-		connect(action, &QAction::triggered, this, &FilterBar::handle_filterCreationShortcutUsed);
+		connect(action, &QAction::triggered, this, &FilterBar::handle_quickFilterActionUsed);
 	}
 	
 	if (!hiddenColumnActions.isEmpty()) {
@@ -268,9 +268,9 @@ void FilterBar::handle_filterWizardAccepted()
 	handle_filtersChanged();
 }
 
-void FilterBar::handle_filterCreationShortcutUsed()
+void FilterBar::handle_quickFilterActionUsed()
 {
-	QAction* action = (QAction*) sender();
+	QAction* const action = (QAction*) sender();
 	assert(action);
 	const QString uiName = action->text();
 	const CompositeColumn* const columnToUse = quickFilterActions.value(action);

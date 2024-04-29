@@ -17,6 +17,7 @@ StringFilter::~StringFilter()
 bool StringFilter::evaluate(const QVariant& rawRowValue) const
 {
 	assert(!value.isNull());
+	if (value.isEmpty()) return true;
 	
 	/*                                ╔═════════════════════════════════════════════════╗
 	 *                                ║           Value from filtered table             ║
@@ -48,8 +49,15 @@ bool StringFilter::evaluate(const QVariant& rawRowValue) const
 			return isInverted();
 		}
 		else {
-			const bool contains = convertedValue.contains(value, Qt::CaseInsensitive);
-			return contains != isInverted();
+			const QStringList split = value.split(" ");
+			bool containsAny = false;
+			for (const QString& string : split) {
+				if (convertedValue.contains(string, Qt::CaseInsensitive)) {
+					containsAny = true;
+					break;
+				}
+			}
+			return containsAny != isInverted();
 		}
 	}
 }

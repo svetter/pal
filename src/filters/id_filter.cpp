@@ -67,7 +67,7 @@ FilterBox* IDFilter::createFilterBox(QWidget* parent)
 	}
 	assert(contentColumn);
 	assert(contentColumn->primaryKey);
-	NormalTable* idTable = (NormalTable*) &contentColumn->foreignColumn->table;
+	NormalTable* idTable = (NormalTable*) &contentColumn->table;
 	Database& db = idTable->db;
 	
 	std::function<void (QComboBox&, QList<ValidItemID>&)> populateItemCombo;

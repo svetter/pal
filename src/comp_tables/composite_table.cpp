@@ -27,8 +27,6 @@
 
 #include <QScrollBar>
 
-using std::unique_ptr, std::make_unique;
-
 
 
 /**
