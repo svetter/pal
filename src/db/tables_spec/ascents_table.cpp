@@ -165,9 +165,8 @@ QString AscentsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRo
 {
 	const QVariant dateRaw = dateColumn.getValueAt(bufferRow);
 	QString dateString = QString();
-	if (dateRaw.isValid() && dateRaw.canConvert<QDate>()) {
-		const QDate date = dateRaw.toDate();
-		dateString = date.toString(Qt::ISODate);;
+	if (dateRaw.isValid() && dateRaw.canConvert<QDate>() && dateRaw.toDate().isValid()) {
+		dateString = dateRaw.toDate().toString(Qt::ISODate);
 	}
 	
 	const ItemID peakID = peakIDColumn.getValueAt(bufferRow);

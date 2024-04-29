@@ -136,9 +136,8 @@ QString TripsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow)
 {
 	QString yearString = "";
 	const QVariant startDateRaw = startDateColumn.getValueAt(bufferRow);
-	if (startDateRaw.isValid() && startDateRaw.canConvert<QDate>()) {
-		const QDate startDate = startDateRaw.toDate();
-		yearString = QString::number(startDate.year()) + ": ";
+	if (startDateRaw.isValid() && startDateRaw.canConvert<QDate>() && startDateRaw.toDate().isValid()) {
+		yearString = QString::number(startDateRaw.toDate().year()) + ": ";
 	}
 	
 	return yearString + nameColumn.getValueAt(bufferRow).toString();

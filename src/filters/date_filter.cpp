@@ -24,7 +24,7 @@ bool DateFilter::evaluate(const QVariant& rawRowValue) const
 		return isInverted();
 	}
 	else {
-		assert(rawRowValue.canConvert<QDate>());
+		assert(rawRowValue.canConvert<QDate>() && rawRowValue.toDate().isValid());
 		const QDate convertedValue = rawRowValue.toDate();
 		const bool match = convertedValue >= min && convertedValue <= max;
 		

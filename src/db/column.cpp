@@ -280,8 +280,8 @@ PrimaryForeignKeyColumn::PrimaryForeignKeyColumn(const Table& table, QString nam
 bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 {
 	// return result of operation 'value1 < value2'
-	bool value1Valid = value1.isValid();
-	bool value2Valid = value2.isValid();
+	const bool value1Valid = value1.isValid();
+	const bool value2Valid = value2.isValid();
 	
 	if (!value1Valid && !value2Valid)	return false;
 	if (!value1Valid &&  value2Valid)	return true;
@@ -296,16 +296,16 @@ bool compareCells(DataType type, const QVariant& value1, const QVariant& value2)
 		return value1.toInt() < value2.toInt();
 	case DualEnum: {
 		assert(value1.canConvert<QList<QVariant>>() && value2.canConvert<QList<QVariant>>());
-		QList<QVariant> intList1 = value1.toList();
-		QList<QVariant> intList2 = value2.toList();
+		const QList<QVariant> intList1 = value1.toList();
+		const QList<QVariant> intList2 = value2.toList();
 		assert(intList1.size() == 2 && intList2.size() == 2);
 		assert(intList1.at(0).canConvert<int>() && intList2.at(0).canConvert<int>());
-		int descerning1 = intList1.at(0).toInt();
-		int descerning2 = intList2.at(0).toInt();
+		const int descerning1 = intList1.at(0).toInt();
+		const int descerning2 = intList2.at(0).toInt();
 		if (descerning1 != descerning2) return descerning1 < descerning2;
 		assert(intList1.at(1).canConvert<int>() && intList2.at(1).canConvert<int>());
-		int displayed1 = intList1.at(1).toInt();
-		int displayed2 = intList2.at(1).toInt();
+		const int displayed1 = intList1.at(1).toInt();
+		const int displayed2 = intList2.at(1).toInt();
 		return displayed1 < displayed2;
 	}
 	case Bit:

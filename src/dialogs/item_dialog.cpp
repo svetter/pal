@@ -406,7 +406,7 @@ void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn
 void populateAscentCombo(Database& db, QComboBox& ascentCombo, QList<ValidItemID>& selectableAscentIDs)
 {
 	auto prefixValueToString = [](const QVariant& prefixValue) {
-		if (!prefixValue.canConvert<QDate>()) return QString();
+		if (!prefixValue.canConvert<QDate>() || !prefixValue.toDate().isValid()) return QString();
 		return prefixValue.toDate().toString("dd.MM.yyyy");
 	};
 	
@@ -442,7 +442,7 @@ void populatePeakCombo(Database& db, QComboBox& peakCombo, QList<ValidItemID>& s
 void populateTripCombo(Database& db, QComboBox& tripCombo, QList<ValidItemID>& selectableTripIDs)
 {
 	auto prefixValueToString = [](const QVariant& prefixValue) {
-		if (!prefixValue.canConvert<QDate>()) return QString();
+		if (!prefixValue.canConvert<QDate>() || !prefixValue.toDate().isValid()) return QString();
 		return QString::number(prefixValue.toDate().year());
 	};
 	

@@ -91,12 +91,12 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	}
 	
 	else if (contentType == Date) {
-		assert(rawCellContent.canConvert<QDate>());
+		assert(rawCellContent.canConvert<QDate>() && rawCellContent.toDate().isValid());
 		result = rawCellContent.toDate().toString("dd.MM.yyyy");
 	}
 	
 	else if (contentType == Time) {
-		assert(rawCellContent.canConvert<QTime>());
+		assert(rawCellContent.canConvert<QTime>() && rawCellContent.toTime().isValid());
 		result = rawCellContent.toTime().toString("HH:mm");
 	}
 	
@@ -581,7 +581,7 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
 		return minuend - subtrahend;
 	}
 	case Date: {
-		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
+		assert(minuendContent.canConvert<QDate>() && minuendContent.toDate().isValid() && subtrahendContent.canConvert<QDate>() && subtrahendContent.toDate().isValid());
 		QDate minuend = minuendContent.toDate();
 		QDate subtrahend = subtrahendContent.toDate();
 		

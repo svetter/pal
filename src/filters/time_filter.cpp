@@ -24,7 +24,7 @@ bool TimeFilter::evaluate(const QVariant& rawRowValue) const
 		return isInverted();
 	}
 	else {
-		assert(rawRowValue.canConvert<QTime>());
+		assert(rawRowValue.canConvert<QTime>() && rawRowValue.toTime().isValid());
 		const QTime convertedValue = rawRowValue.toTime();
 		const bool match = convertedValue >= min && convertedValue <= max;
 		
