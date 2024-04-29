@@ -90,8 +90,10 @@ private:
 	QList<QPair<int, const CompositeColumn*>> exportColumns;
 	/** The custom composite columns of this table created by the user in order of creation. */
 	QList<const CompositeColumn*> customColumns;
-	/** The names of all columns. */
-	QStringList columnNames;
+	/** The names of all static (default and export) columns. */
+	QStringList staticColumnNames;
+	/** The names of the current custom columns. */
+	QStringList customColumnNames;
 	
 	/** Whether the buffer has been initialized for an open project. */
 	bool bufferInitialized;

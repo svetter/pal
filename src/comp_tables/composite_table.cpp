@@ -46,7 +46,8 @@ CompositeTable::CompositeTable(Database& db, NormalTable& baseTable, QTableView*
 	columns(QList<const CompositeColumn*>()),
 	exportColumns(QList<QPair<int, const CompositeColumn*>>()),
 	customColumns(QList<const CompositeColumn*>()),
-	columnNames(QStringList()),
+	staticColumnNames(QStringList()),
+	customColumnNames(QStringList()),
 	bufferInitialized(false),
 	buffer(TableBuffer()),
 	viewOrder(ViewOrderBuffer()),
@@ -85,6 +86,7 @@ void CompositeTable::reset()
 	buffer.reset();
 	bufferInitialized = false;
 	customColumns.clear();
+	customColumnNames.clear();
 	dirtyColumns.clear();
 	hiddenColumns.clear();
 }
@@ -101,12 +103,12 @@ void CompositeTable::reset()
 void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : columnNames) {
+	for (const QString& name : staticColumnNames) {
 		assert(name != newColumn.name);
 	}
 	
 	columns.append(&newColumn);
-	columnNames.append(newColumn.name);
+	staticColumnNames.append(newColumn.name);
 }
 
 /**
@@ -117,12 +119,12 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
 void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : columnNames) {
+	for (const QString& name : staticColumnNames) {
 		assert(name != newColumn.name);
 	}
 	
 	exportColumns.append({columns.size(), &newColumn});
-	columnNames.append(newColumn.name);
+	staticColumnNames.append(newColumn.name);
 }
 
 /**
@@ -135,14 +137,14 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : columnNames) {
+	for (const QString& name : staticColumnNames + customColumnNames) {
 		assert(name != newColumn.name);
 	}
 	
 	beginInsertColumns(QModelIndex(), getNumberOfNormalColumns(), getNumberOfNormalColumns());
 	
 	customColumns.append(&newColumn);
-	columnNames.append(newColumn.name);
+	customColumnNames.append(newColumn.name);
 	
 	if (bufferInitialized) {
 		buffer.appendColumn();
@@ -172,7 +174,7 @@ void CompositeTable::removeCustomColumnAt(int logicalIndex)
 	beginRemoveColumns(QModelIndex(), logicalIndex, logicalIndex);
 	
 	customColumns.removeAll(&column);
-	columnNames.removeAll(column.name);
+	customColumnNames.removeAll(column.name);
 	buffer.removeColumn(logicalIndex);
 	
 	endRemoveColumns();
