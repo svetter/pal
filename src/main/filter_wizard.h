@@ -25,13 +25,14 @@ class FilterWizardColumnPage : public QWizardPage
 	Q_OBJECT
 	
 	const CompositeTable& tableToFilter;
+	const QTableView& tableView;
 	
 	QListWidget* const columnListWidget;
 	
 	QList<const CompositeColumn*> columnList;
 	
 public:
-	FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter);
+	FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter, const QTableView& tableView);
 	
 	const CompositeColumn* getSelectedColumn() const;
 	
@@ -94,7 +95,7 @@ class FilterWizard : public QWizard
 	FilterWizardSettingsPage settingsPage;
 	
 public:
-	FilterWizard(QWidget* parent, const CompositeTable& tableToFilter);
+	FilterWizard(QWidget* parent, const CompositeTable& tableToFilter, const QTableView& tableView);
 	~FilterWizard();
 	
 	Filter* getFinishedFilter();

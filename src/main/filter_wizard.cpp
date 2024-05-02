@@ -10,12 +10,14 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QHeaderView>
 
 
 
-FilterWizardColumnPage::FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter) :
+FilterWizardColumnPage::FilterWizardColumnPage(QWidget* parent, const CompositeTable& tableToFilter, const QTableView& tableView) :
 	QWizardPage(parent),
 	tableToFilter(tableToFilter),
+	tableView(tableView),
 	columnListWidget(new QListWidget(this)),
 	columnList(QList<const CompositeColumn*>())
 {
@@ -41,14 +43,20 @@ void FilterWizardColumnPage::initializePage()
 {
 	columnList.clear();
 	columnListWidget->clear();
-	for (const CompositeColumn* const column : tableToFilter.getNormalColumnList()) {
-		QString entry = column->uiName;
-		if (tableToFilter.isColumnHidden(*column)) {
-			entry = tr("%1 (hidden)").arg(entry);
+	
+	for (int visualIndex = 0; visualIndex < tableToFilter.getNumberOfNormalColumns(); visualIndex++) {
+		const int logicalIndex = tableView.horizontalHeader()->logicalIndex(visualIndex);
+		const CompositeColumn& column = tableToFilter.getColumnAt(logicalIndex);
+		const bool hidden = tableToFilter.isColumnHidden(column);
+		
+		QListWidgetItem* item = new QListWidgetItem(column.uiName, columnListWidget);
+		if (hidden) {
+			item->setForeground(QColorConstants::DarkGray);
+			item->setToolTip(tr("This column is currently hidden"));
 		}
 		
-		columnList.append(column);
-		columnListWidget->addItem(entry);
+		columnList.append(&column);
+		columnListWidget->addItem(item);
 	}
 	columnListWidget->setCurrentRow(-1);
 }
@@ -252,10 +260,10 @@ bool FilterWizardSettingsPage::isComplete() const
 
 
 
-FilterWizard::FilterWizard(QWidget* parent, const CompositeTable& tableToFilter) :
+FilterWizard::FilterWizard(QWidget* parent, const CompositeTable& tableToFilter, const QTableView& tableView) :
 	QWizard(parent),
 	tableToFilter(tableToFilter),
-	columnPage(FilterWizardColumnPage(parent, tableToFilter)),
+	columnPage(FilterWizardColumnPage(parent, tableToFilter, tableView)),
 	settingsPage(FilterWizardSettingsPage(parent, tableToFilter, columnPage))
 {
 	setModal(true);

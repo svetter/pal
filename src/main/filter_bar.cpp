@@ -96,7 +96,7 @@ void FilterBar::supplyPointers(MainWindow* mainWindow, Database* db, ItemTypeMap
 	
 	
 	// Create filter wizard
-	filterWizard = new FilterWizard(this, *compTable);
+	filterWizard = new FilterWizard(this, *compTable, mapper->tableView);
 	connect(addFilterButton, &QToolButton::clicked, this, &FilterBar::handle_newFilterButtonPressed);
 	connect(filterWizard, &FilterWizard::accepted, this, &FilterBar::handle_filterWizardAccepted);
 	
@@ -156,9 +156,8 @@ void FilterBar::updateQuickFilterMenu()
 	quickFilterActions.clear();
 	quickFilterMenu.clear();
 	
-	QList<const CompositeColumn*> columns = compTable->getNormalColumnList();
 	QList<QAction*> hiddenColumnActions = QList<QAction*>();
-	for (int visualIndex = 0; visualIndex < columns.size(); visualIndex++) {
+	for (int visualIndex = 0; visualIndex < compTable->getNumberOfNormalColumns(); visualIndex++) {
 		const int logicalIndex = mapper->tableView.horizontalHeader()->logicalIndex(visualIndex);
 		const CompositeColumn& column = compTable->getColumnAt(logicalIndex);
 		const bool hidden = compTable->isColumnHidden(column);
