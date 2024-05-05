@@ -103,27 +103,14 @@ void ColumnWizardTableColumnPage::updateColumnList()
 	const QList<const Column*> allColumns = tableToUse->getColumnList();
 	for (int i = 0; i < allColumns.size(); i++) {
 		const Column* column = allColumns.at(i);
-		if (column->foreignColumn || column->type == DualEnum) {
+		if (column->primaryKey || column->foreignColumn || column->type == DualEnum) {
 			continue;
 		} else if (column->primaryKey && sameTable) {
 			continue;
 		}
 		
-		QString entryName = column->uiName;
-		if (column->primaryKey) {
-			assert(columnList.isEmpty());
-			if (multiResultPossible) {
-				entryName = tr("Identities");
-			} else {
-				entryName = tr("Identity");
-			}
-			const QSet<const Column*> irColumns = tableToUse->getIdentityRepresentationColumns();
-			if (irColumns.size() == 1) {
-				entryName += " (" + (*irColumns.constBegin())->uiName + ")";
-			}
-		}
 		columnList.append(column);
-		columnListWidget->addItem(entryName);
+		columnListWidget->addItem(column->uiName);
 	}
 	
 	// Update useCountCheckbox enabled state

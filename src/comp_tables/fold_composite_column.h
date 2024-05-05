@@ -40,7 +40,7 @@
  * single value.
  */
 class FoldCompositeColumn : public CompositeColumn {
-protected:
+public:
 	/** The breadcrumbs, which are pairs of base table columns which lead to the content column. */
 	const Breadcrumbs breadcrumbs;
 	/** The column that contains the content to be folded. */
@@ -48,9 +48,12 @@ protected:
 	/** The normal table that contains the content to be folded. */
 	const NormalTable* const contentTable;
 	
+protected:
 	FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, const ValueColumn* contentColumn = nullptr, const QStringList* enumNames = nullptr);
 	
 public:
+	virtual QSet<ValidItemID> computeIDsAt(BufferRowIndex rowIndex) const override;
+	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;
 	
 protected:
@@ -108,8 +111,8 @@ class ListStringFoldCompositeColumn : public FoldCompositeColumn {
 public:
 	ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const ValueColumn& contentColumn, const QStringList* enumNames = nullptr, bool isHikerList = false);
 	
-	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
+	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const;
 	
 protected:
 	virtual QStringList encodeTypeSpecific() const override;
@@ -130,8 +133,8 @@ class HikerListFoldCompositeColumn : public ListStringFoldCompositeColumn {
 public:
 	HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const ValueColumn& contentColumn);
 	
-	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
+	virtual QStringList formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const override;
 };
 
 

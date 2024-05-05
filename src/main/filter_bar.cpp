@@ -275,8 +275,12 @@ void FilterBar::handle_quickFilterActionUsed()
 	const CompositeColumn* const columnToUse = quickFilterActions.value(action);
 	assert(columnToUse);
 	
+	bool proxyIDMode;
+	FilterWizard::columnEligibleForProxyIDMode(*columnToUse, &proxyIDMode);
+	const DataType type = proxyIDMode ? ID : columnToUse->contentType;
+	
 	Filter* newFilter = nullptr;
-	switch (columnToUse->contentType) {
+	switch (type) {
 	case Integer:	newFilter = new IntFilter		(*compTable, *columnToUse, uiName);	break;
 	case ID:		newFilter = new IDFilter		(*compTable, *columnToUse, uiName);	break;
 	case Enum:		newFilter = new EnumFilter		(*compTable, *columnToUse, uiName);	break;

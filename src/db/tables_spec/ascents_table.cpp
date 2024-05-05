@@ -181,11 +181,11 @@ QString AscentsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRo
 }
 
 /**
- * Returns a set of all columns used for identity representation of ascents.
+ * Returns a list of all columns used for identity representation of ascents.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> AscentsTable::getIdentityRepresentationColumns() const
+QList<const Column*> AscentsTable::getIdentityRepresentationColumns() const
 {
 	const PeaksTable& peaksTable = (PeaksTable&) peakIDColumn.foreignColumn->table;
 	

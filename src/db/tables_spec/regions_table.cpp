@@ -137,11 +137,11 @@ QString RegionsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRo
 }
 
 /**
- * Returns a set of all columns used for identity representation of regions.
+ * Returns a list of all columns used for identity representation of regions.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> RegionsTable::getIdentityRepresentationColumns() const
+QList<const Column*> RegionsTable::getIdentityRepresentationColumns() const
 {
 	return { &nameColumn };
 }

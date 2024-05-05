@@ -144,11 +144,11 @@ QString TripsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow)
 }
 
 /**
- * Returns a set of all columns used for identity representation of trips.
+ * Returns a list of all columns used for identity representation of trips.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> TripsTable::getIdentityRepresentationColumns() const
+QList<const Column*> TripsTable::getIdentityRepresentationColumns() const
 {
 	return { &startDateColumn, &nameColumn };
 }

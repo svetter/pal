@@ -64,11 +64,11 @@ public:
 	 */
 	virtual QString getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const = 0;
 	/**
-	 * Returns a set of all columns used for identity representation of items in this table.
+	 * Returns a list of all columns used for identity representation of items in this table.
 	 * 
-	 * @return	A set of all columns used for identity representation.
+	 * @return	A list of all columns used for identity representation.
 	 */
-	virtual QSet<const Column*> getIdentityRepresentationColumns() const = 0;
+	virtual QList<const Column*> getIdentityRepresentationColumns() const = 0;
 	
 	// Translation strings
 	/**

@@ -396,48 +396,51 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	for (const CompositeColumn* column : allColumns) {
 		dirtyColumns.insert(column);
 	}
-	QSet<const CompositeColumn*> columnsToUpdate = getColumnsToUpdate();
+	QSet<const CompositeColumn*> columnsToUpdate = QSet<const CompositeColumn*>();
+	if (!deferCompute) columnsToUpdate = getColumnsToUpdate();
 	
 	buffer.setInitialNumberOfColumns(allColumns.size());
 	
 	// Initialize cells and compute their contents for most columns
-	int numberOfRows = baseTable.getNumberOfRows();
+	const int numberOfRows = baseTable.getNumberOfRows();
 	for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(numberOfRows); bufferRowIndex++) {
 		QList<QVariant>* newRow = new QList<QVariant>();
 		for (const CompositeColumn* const column : allColumns) {
-			bool noUpdateColumn = !columnsToUpdate.contains(column);
-			bool computeWholeColumn = column->cellsAreInterdependent;
+			const bool noUpdateColumn = !columnsToUpdate.contains(column);
+			const bool computeWholeColumn = column->cellsAreInterdependent;
 			
 			QVariant newCell = QVariant();
-			if (!deferCompute && !noUpdateColumn && !computeWholeColumn) {
+			if (Q_LIKELY(!noUpdateColumn && !computeWholeColumn)) {
 				newCell = computeCellContent(bufferRowIndex, column->getIndex());
 			}
 			newRow->append(newCell);
 			
-			if (Q_LIKELY(progressDialog && !computeWholeColumn)) progressDialog->setValue(progressDialog->value() + 1);
+			if (Q_LIKELY(progressDialog && (!computeWholeColumn || noUpdateColumn))) {
+				progressDialog->setValue(progressDialog->value() + 1);
+			}
 		}
 		buffer.appendRow(newRow);
 	}
 	
 	// For columns which have to be computed as a whole, do that now
 	for (const CompositeColumn* const column : allColumns) {
-		bool noUpdateColumn = !columnsToUpdate.contains(column);
-		bool computeWholeColumn = column->cellsAreInterdependent;
+		const bool noUpdateColumn = !columnsToUpdate.contains(column);
+		const bool computeWholeColumn = column->cellsAreInterdependent;
 		if (noUpdateColumn || !computeWholeColumn) continue;
 		
 		QList<QVariant> cells = computeWholeColumnContent(column->getIndex());
 		for (BufferRowIndex bufferRowIndex = BufferRowIndex(0); bufferRowIndex.isValid(baseTable.getNumberOfRows()); bufferRowIndex++) {
 			buffer.replaceCell(bufferRowIndex, column->getIndex(), cells.at(bufferRowIndex.get()));
-			if (Q_LIKELY(progressDialog)) progressDialog->setValue(progressDialog->value() + 1);
+			if (Q_LIKELY(progressDialog)) {
+				progressDialog->setValue(progressDialog->value() + 1);
+			}
 		}
 	}
 	
 	bufferInitialized = true;
 	rebuildOrderBuffer();
 	
-	if (!deferCompute) {
-		dirtyColumns.subtract(columnsToUpdate);
-	}
+	dirtyColumns.subtract(columnsToUpdate);
 	
 	if (deferCompute) {
 		tableToAutoResizeAfterCompute = autoResizeAfterCompute;

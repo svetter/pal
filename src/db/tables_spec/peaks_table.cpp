@@ -148,11 +148,11 @@ QString PeaksTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow)
 }
 
 /**
- * Returns a set of all columns used for identity representation of peaks.
+ * Returns a list of all columns used for identity representation of peaks.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> PeaksTable::getIdentityRepresentationColumns() const
+QList<const Column*> PeaksTable::getIdentityRepresentationColumns() const
 {
 	return { &nameColumn };
 }

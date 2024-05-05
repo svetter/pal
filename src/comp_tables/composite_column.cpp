@@ -176,6 +176,23 @@ bool CompositeColumn::isFilterOnlyColumn() const
 
 
 /**
+ * Returns a set of valid IDs for all rows in the target (content) table which are associated with
+ * the given row of this composite column.
+ * 
+ * This default implementation assumes that the target table is the same as the start table of this
+ * composite column and thus returns the primary key of the base table at the given row.
+ * 
+ * @param rowIndex	The row index for which to compute the associated target table IDs.
+ * @return			A set of target table IDs associated with the given row.
+ */
+QSet<ValidItemID> CompositeColumn::computeIDsAt(BufferRowIndex rowIndex) const
+{
+	return { VALID_ITEM_ID(table.baseTable.primaryKeyColumn.getValueAt(rowIndex)) };
+}
+
+
+
+/**
  * Computes the value of all cells in the column together.
  *
  * This is used for columns with interdependent cells, such as the IndexCompositeColumn.
@@ -400,10 +417,6 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suff
  */
 QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	if (Q_UNLIKELY(contentColumn.primaryKey)) {
-		return table.baseTable.getIdentityRepresentationAt(rowIndex);
-	}
-	
 	return contentColumn.getValueAt(rowIndex);
 }
 
@@ -417,11 +430,7 @@ QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
  */
 const QSet<const Column*> DirectCompositeColumn::getAllUnderlyingColumns() const
 {
-	QSet<const Column*> result = { &contentColumn };
-	if (contentColumn.primaryKey) {
-		result.unite(table.baseTable.getIdentityRepresentationColumns());
-	}
-	return result;
+	return { &contentColumn };
 }
 
 
@@ -464,13 +473,31 @@ DirectCompositeColumn* DirectCompositeColumn::decodeTypeSpecific(CompositeTable&
 ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
 	CompositeColumn(Reference, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
 	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
-	contentColumn(contentColumn),
-	contentTable((assert(!contentColumn.table.isAssociative), ((const NormalTable&) contentColumn.table)))
+	contentColumn(contentColumn)
 {
+	assert(!contentColumn.primaryKey);
+	assert(&table.baseTable == &breadcrumbs.getStartTable());
+	assert(&table.baseTable != &contentColumn.table);
 	assert(&contentColumn.table == &breadcrumbs.getTargetTable());
 }
 
 
+
+/**
+ * Returns a set containing the valid ID for the row in the target (content) table which is
+ * associated with the given row of this composite column.
+ * 
+ * @param rowIndex	The row index for which to compute the associated target table ID.
+ * @return			A set containing the target table ID associated with the given row.
+ */
+QSet<ValidItemID> ReferenceCompositeColumn::computeIDsAt(BufferRowIndex rowIndex) const
+{
+	BufferRowIndex targetRowIndex = breadcrumbs.evaluateAsForwardChain(rowIndex);
+	
+	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return {};
+	
+	return { VALID_ITEM_ID(table.baseTable.primaryKeyColumn.getValueAt(targetRowIndex)) };
+}
 
 /**
  * Computes the value of the cell at the given row index.
@@ -484,9 +511,6 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 	
 	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return QVariant();
 	
-	if (Q_UNLIKELY(contentColumn.primaryKey)) {
-		return contentTable.getIdentityRepresentationAt(targetRowIndex);
-	}
 	return contentColumn.getValueAt(targetRowIndex);
 }
 
@@ -502,9 +526,6 @@ const QSet<const Column*> ReferenceCompositeColumn::getAllUnderlyingColumns() co
 {
 	QSet<const Column*> result = { &contentColumn };
 	result.unite(breadcrumbs.getColumnSet());
-	if (contentColumn.primaryKey) {
-		result.unite(contentTable.getIdentityRepresentationColumns());
-	}
 	return result;
 }
 
@@ -551,6 +572,7 @@ DifferenceCompositeColumn::DifferenceCompositeColumn(CompositeTable& table, QStr
 	minuendColumn(minuendColumn),
 	subtrahendColumn(subtrahendColumn)
 {
+	assert(&table.baseTable == &minuendColumn.table);
 	assert(&minuendColumn.table == &subtrahendColumn.table);
 	assert(!minuendColumn.isKey() && !subtrahendColumn.isKey());
 	assert(minuendColumn.type == subtrahendColumn.type);
@@ -636,6 +658,7 @@ DependentEnumCompositeColumn::DependentEnumCompositeColumn(CompositeTable& table
 	discerningEnumColumn(discerningEnumColumn),
 	displayedEnumColumn(displayedEnumColumn)
 {
+	assert(&table.baseTable == &discerningEnumColumn.table);
 	assert(&discerningEnumColumn.table == &displayedEnumColumn.table);
 	assert(!discerningEnumColumn.isKey() && !displayedEnumColumn.isKey());
 	assert(discerningEnumColumn.type == DualEnum && displayedEnumColumn.type == DualEnum);

@@ -134,11 +134,11 @@ QString RangesTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 }
 
 /**
- * Returns a set of all columns used for identity representation of ranges.
+ * Returns a list of all columns used for identity representation of ranges.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> RangesTable::getIdentityRepresentationColumns() const
+QList<const Column*> RangesTable::getIdentityRepresentationColumns() const
 {
 	return { &nameColumn };
 }

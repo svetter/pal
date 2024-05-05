@@ -1,5 +1,6 @@
 #include "id_filter.h"
 
+#include "src/comp_tables/fold_composite_column.h"
 #include "src/db/database.h"
 #include "src/dialogs/item_dialog.h"
 #include "src/filters/filter_widgets/id_filter_box.h"
@@ -40,32 +41,51 @@ bool IDFilter::evaluate(const QVariant& rawRowValue) const
 	if (rawRowValue.isNull()) {
 		return value.isValid() == isInverted();
 	}
-	else {
-		assert(rawRowValue.canConvert<int>());
+	
+	if (rawRowValue.canConvert<int>()) {
 		const ItemID convertedValue = ItemID(rawRowValue.toInt());
-		
-		if (convertedValue.isInvalid()) {
-			return value.isValid() == isInverted();
+		bool match;
+		if (convertedValue.isValid()) {
+			match = convertedValue == value;
+		} else {
+			match = value.isInvalid();
 		}
-		else {
-			const bool match = convertedValue == value;
-			return match != isInverted();
-		}
+		return match != isInverted();
 	}
+	
+	if (rawRowValue.canConvert<QVariantList>()) {
+		const QVariantList list = rawRowValue.toList();
+		bool match;
+		if (value.isValid()) {
+			match = list.contains(value.asQVariant());
+		} else {
+			match = list.isEmpty();
+		}
+		return match != isInverted();
+	}
+	
+	assert(false);
+	return false;
 }
 
 
 
 FilterBox* IDFilter::createFilterBox(QWidget* parent)
 {
-	assert(columnToFilterBy.contentType == ID);
+	const bool columnProxy = columnToFilterBy.contentType != ID;
 	const Column* contentColumn = nullptr;
 	switch (columnToFilterBy.type) {
-	case Direct:	contentColumn = &((DirectCompositeColumn&)		columnToFilterBy).contentColumn;	break;
-	case Reference:	contentColumn = &((ReferenceCompositeColumn&)	columnToFilterBy).contentColumn;	break;
+	case Direct:			contentColumn = &((DirectCompositeColumn&)			columnToFilterBy).contentColumn;	break;
+	case Reference:			contentColumn = &((ReferenceCompositeColumn&)		columnToFilterBy).contentColumn;	break;
+	case ListStringFold:
+	case HikerListFold:		contentColumn = ((ListStringFoldCompositeColumn&)	columnToFilterBy).contentColumn;	break;
 	default: assert(false);
 	}
 	assert(contentColumn);
+	if (columnProxy) {
+		assert(!contentColumn->table.isAssociative);
+		contentColumn = &((NormalTable&) contentColumn->table).primaryKeyColumn;
+	}
 	assert(contentColumn->primaryKey);
 	NormalTable* idTable = (NormalTable*) &contentColumn->table;
 	Database& db = idTable->db;

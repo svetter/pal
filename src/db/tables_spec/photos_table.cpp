@@ -225,15 +225,17 @@ QString PhotosTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 }
 
 /**
- * Returns a set of all columns used for identity representation of photos.
+ * Returns a list of all columns used for identity representation of photos.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> PhotosTable::getIdentityRepresentationColumns() const
+QList<const Column*> PhotosTable::getIdentityRepresentationColumns() const
 {
 	const AscentsTable& ascentsTable = (AscentsTable&) ascentIDColumn.foreignColumn->table;
 	
-	return ascentsTable.getIdentityRepresentationColumns().unite({ &ascentIDColumn, &sortIndexColumn });
+	QList<const Column*> columns = ascentsTable.getIdentityRepresentationColumns();
+	columns.append({ &ascentIDColumn, &sortIndexColumn });
+	return columns;
 }
 
 

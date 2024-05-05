@@ -129,11 +129,11 @@ QString HikersTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 }
 
 /**
- * Returns a set of all columns used for identity representation of hikers.
+ * Returns a list of all columns used for identity representation of hikers.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> HikersTable::getIdentityRepresentationColumns() const
+QList<const Column*> HikersTable::getIdentityRepresentationColumns() const
 {
 	return { &nameColumn };
 }

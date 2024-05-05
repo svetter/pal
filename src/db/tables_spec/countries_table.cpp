@@ -129,11 +129,11 @@ QString CountriesTable::getIdentityRepresentationAt(const BufferRowIndex& buffer
 }
 
 /**
- * Returns a set of all columns used for identity representation of countries.
+ * Returns a list of all columns used for identity representation of countries.
  *
- * @return	A set of all columns used for identity representation.
+ * @return	A list of all columns used for identity representation.
  */
-QSet<const Column*> CountriesTable::getIdentityRepresentationColumns() const
+QList<const Column*> CountriesTable::getIdentityRepresentationColumns() const
 {
 	return { &nameColumn };
 }

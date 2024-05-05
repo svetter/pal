@@ -82,6 +82,7 @@ public:
 	bool isExportOnlyColumn() const;
 	bool isFilterOnlyColumn() const;
 	
+	virtual QSet<ValidItemID> computeIDsAt(BufferRowIndex rowIndex) const;
 	/**
 	 * Computes the value of the cell at the given row index.
 	 *
@@ -169,11 +170,10 @@ public:
 	const Breadcrumbs breadcrumbs;
 	/** The column in the target base table from which to take the content. */
 	const Column& contentColumn;
-	/** The target base table from which to take the content. */
-	const NormalTable& contentTable;
 	
 	ReferenceCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
 	
+	virtual QSet<ValidItemID> computeIDsAt(BufferRowIndex rowIndex) const override;
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	
 	virtual const QSet<const Column*> getAllUnderlyingColumns() const override;

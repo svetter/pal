@@ -5,16 +5,20 @@
 #include "src/filters/filter.h"
 
 #include <QWizard>
+#include <QBoxLayout>
 #include <QListWidget>
 #include <QLineEdit>
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QSpinBox>
 
+class FilterBox;
+
 
 
 enum FilterWizardPage {
 	Page_Column,
+	Page_Mode,
 	Page_Settings
 };
 
@@ -44,12 +48,44 @@ protected:
 
 
 
+class FilterWizardModePage : public QWizardPage
+{
+	Q_OBJECT
+	
+	const CompositeTable& tableToFilter;
+	const FilterWizardColumnPage& columnPage;
+	
+	QRadioButton* const filterIdentityRadio;
+	QRadioButton* const filterStringRadio;
+	
+	QGroupBox* const previewBox;
+	QHBoxLayout* const previewLayout;
+	FilterBox* idFilterBox;
+	FilterBox* stringFilterBox;
+	
+public:
+	FilterWizardModePage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage);
+	
+	bool isProxyIDModeSelected() const;
+	
+private:
+	void handle_radiosChanged();
+	
+protected:
+	void initializePage() override;
+	bool isComplete() const override;
+	int nextId() const override;
+};
+
+
+
 class FilterWizardSettingsPage : public QWizardPage
 {
 	Q_OBJECT
 	
 	const CompositeTable& tableToFilter;
 	const FilterWizardColumnPage& columnPage;
+	const FilterWizardModePage& modePage;
 	
 	QLineEdit* const nameEdit;
 	QFrame* const intSettingsHLine;
@@ -66,7 +102,7 @@ class FilterWizardSettingsPage : public QWizardPage
 	QListWidget* const intClassPreview;
 	
 public:
-	FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage);
+	FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage, const FilterWizardModePage& modePage);
 	
 	QString getName() const;
 	QList<int> getIntSettings() const;
@@ -92,6 +128,7 @@ class FilterWizard : public QWizard
 	const CompositeTable& tableToFilter;
 	
 	FilterWizardColumnPage columnPage;
+	FilterWizardModePage modePage;
 	FilterWizardSettingsPage settingsPage;
 	
 public:
@@ -99,6 +136,8 @@ public:
 	~FilterWizard();
 	
 	Filter* getFinishedFilter();
+	
+	static bool columnEligibleForProxyIDMode(const CompositeColumn& column, bool* autoProxy = nullptr);
 };
 
 

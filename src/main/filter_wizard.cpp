@@ -1,4 +1,7 @@
 #include "filter_wizard.h"
+
+#include "src/comp_tables/fold_composite_column.h"
+#include "src/filters/filter_widgets/filter_box.h"
 #include "src/filters/bool_filter.h"
 #include "src/filters/date_filter.h"
 #include "src/filters/dual_enum_filter.h"
@@ -33,11 +36,16 @@ FilterWizardColumnPage::FilterWizardColumnPage(QWidget* parent, const CompositeT
 	connect(columnListWidget, &QListWidget::itemSelectionChanged, this, &FilterWizardColumnPage::completeChanged);
 }
 
+
+
 const CompositeColumn* FilterWizardColumnPage::getSelectedColumn() const
 {
 	if (columnListWidget->currentRow() < 0) return nullptr;
+	if (columnList.isEmpty()) return nullptr;
 	return columnList.at(columnListWidget->currentRow());
 }
+
+
 
 void FilterWizardColumnPage::initializePage()
 {
@@ -68,6 +76,105 @@ bool FilterWizardColumnPage::isComplete() const
 
 int FilterWizardColumnPage::nextId() const
 {
+	const CompositeColumn* const column = getSelectedColumn();
+	if (!column) return Page_Column;
+	return FilterWizard::columnEligibleForProxyIDMode(*column) ? Page_Mode : Page_Settings;
+}
+
+
+
+
+
+FilterWizardModePage::FilterWizardModePage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage) :
+	QWizardPage(parent),
+	tableToFilter(tableToFilter),
+	columnPage(columnPage),
+	filterIdentityRadio(new QRadioButton(this)),
+	filterStringRadio(new QRadioButton(this)),
+	previewBox(new QGroupBox(this)),
+	previewLayout(new QHBoxLayout()),
+	idFilterBox(nullptr),
+	stringFilterBox(nullptr)
+{
+	QVBoxLayout* const layout = new QVBoxLayout();
+	setLayout(layout);
+	setTitle(tr("Choose filter mode"));
+	setSubTitle(tr("The selected column can either be filtered for a single item selected from a complete list, or the list of items can be searched as a string."));
+	
+	layout->addWidget(filterIdentityRadio);
+	layout->addWidget(filterStringRadio);
+	
+	layout->addSpacing(20);
+	
+	previewBox->setTitle(tr("Preview"));
+	previewBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	previewLayout->setContentsMargins(5, 5, 10, 5);
+	previewLayout->setSpacing(15);
+	previewBox->setLayout(previewLayout);
+	layout->addWidget(previewBox);
+	
+	connect(filterIdentityRadio,	&QRadioButton::clicked, this, &FilterWizardModePage::handle_radiosChanged);
+	connect(filterStringRadio,		&QRadioButton::clicked, this, &FilterWizardModePage::handle_radiosChanged);
+}
+
+
+
+bool FilterWizardModePage::isProxyIDModeSelected() const
+{
+	const CompositeColumn* const column = columnPage.getSelectedColumn();
+	assert(column);
+	return FilterWizard::columnEligibleForProxyIDMode(*column) && filterIdentityRadio->isChecked();
+}
+
+
+
+void FilterWizardModePage::handle_radiosChanged()
+{
+	const bool identity	= filterIdentityRadio	->isChecked();
+	const bool string	= filterStringRadio		->isChecked();
+	idFilterBox		->setEnabled(!string);
+	stringFilterBox	->setEnabled(!identity);
+	
+	Q_EMIT completeChanged();
+}
+
+
+
+void FilterWizardModePage::initializePage()
+{
+	const CompositeColumn* const compColumn = columnPage.getSelectedColumn();
+	const Column* contentColumn = nullptr;
+	if (compColumn->type == Reference) {
+		contentColumn = &((ReferenceCompositeColumn*) compColumn)->contentColumn;
+	} else if (compColumn->type == ListStringFold || compColumn->type == HikerListFold) {
+		contentColumn = ((ListStringFoldCompositeColumn*) compColumn)->contentColumn;
+	}
+	assert(contentColumn);
+	
+	filterIdentityRadio->setText(tr("Filter by selectable single items from %1 table").arg(contentColumn->table.uiName));
+	filterStringRadio->setText(tr("Filter by searching through textual list representing all items"));
+	
+	if (idFilterBox)		previewLayout->removeWidget(idFilterBox);
+	if (stringFilterBox)	previewLayout->removeWidget(stringFilterBox);
+	delete idFilterBox;
+	delete stringFilterBox;
+	IDFilter* const		idFilter		= new IDFilter		(tableToFilter, *compColumn, tr("Identity Filter"));
+	StringFilter* const	stringFilter	= new StringFilter	(tableToFilter, *compColumn, tr("String Filter"));
+	idFilterBox		= idFilter		->createFilterBox(this);
+	stringFilterBox	= stringFilter	->createFilterBox(this);
+	previewLayout->addWidget(idFilterBox);
+	previewLayout->addWidget(stringFilterBox);
+	
+	handle_radiosChanged();
+}
+
+bool FilterWizardModePage::isComplete() const
+{
+	return filterIdentityRadio->isChecked() || filterStringRadio->isChecked();
+}
+
+int FilterWizardModePage::nextId() const
+{
 	return Page_Settings;
 }
 
@@ -75,10 +182,11 @@ int FilterWizardColumnPage::nextId() const
 
 
 
-FilterWizardSettingsPage::FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage) :
+FilterWizardSettingsPage::FilterWizardSettingsPage(QWidget* parent, const CompositeTable& tableToFilter, const FilterWizardColumnPage& columnPage, const FilterWizardModePage& modePage) :
 	QWizardPage(parent),
 	tableToFilter(tableToFilter),
 	columnPage(columnPage),
+	modePage(modePage),
 	nameEdit(new QLineEdit(this)),
 	intSettingsHLine(new QFrame(this)),
 	exactValueRadiobutton(new QRadioButton(this)),
@@ -189,11 +297,11 @@ QList<int> FilterWizardSettingsPage::getIntSettings() const
 
 void FilterWizardSettingsPage::handle_intFilterModeSelectionChanged()
 {
-	const bool useClasses = classesRadiobutton->isChecked();
-	intClassIncrementSpinner->setEnabled(useClasses);
-	intClassMinSpinner		->setEnabled(useClasses);
-	intClassMaxSpinner		->setEnabled(useClasses);
-	intClassPreview			->setEnabled(useClasses);
+	const bool useExact		= exactValueRadiobutton->isChecked();
+	intClassIncrementSpinner->setEnabled(!useExact);
+	intClassMinSpinner		->setEnabled(!useExact);
+	intClassMaxSpinner		->setEnabled(!useExact);
+	intClassPreview			->setEnabled(!useExact);
 }
 
 void FilterWizardSettingsPage::handle_intClassIncrementChanged()
@@ -264,7 +372,8 @@ FilterWizard::FilterWizard(QWidget* parent, const CompositeTable& tableToFilter,
 	QWizard(parent),
 	tableToFilter(tableToFilter),
 	columnPage(FilterWizardColumnPage(parent, tableToFilter, tableView)),
-	settingsPage(FilterWizardSettingsPage(parent, tableToFilter, columnPage))
+	modePage(FilterWizardModePage(parent, tableToFilter, columnPage)),
+	settingsPage(FilterWizardSettingsPage(parent, tableToFilter, columnPage, modePage))
 {
 	setModal(true);
 	setWizardStyle(QWizard::ModernStyle);
@@ -273,6 +382,7 @@ FilterWizard::FilterWizard(QWidget* parent, const CompositeTable& tableToFilter,
 	setSizeGripEnabled(false);
 	
 	setPage(Page_Column,	&columnPage);
+	setPage(Page_Mode,		&modePage);
 	setPage(Page_Settings,	&settingsPage);
 	
 	setStartId(Page_Column);
@@ -286,12 +396,12 @@ FilterWizard::~FilterWizard()
 Filter* FilterWizard::getFinishedFilter()
 {
 	const CompositeColumn* const columnToUse = columnPage.getSelectedColumn();
+	const bool proxyIDMode = modePage.isProxyIDModeSelected();
 	const QString name = settingsPage.getName();
 	assert(columnToUse);
 	assert(!name.isEmpty());
 	
-	DataType type = columnToUse->contentType;
-	
+	const DataType type = proxyIDMode ? ID : columnToUse->contentType;
 	switch (type) {
 	case Integer: {
 		QList<int> intSettings = settingsPage.getIntSettings();
@@ -314,4 +424,34 @@ Filter* FilterWizard::getFinishedFilter()
 	default: assert(false);
 	}
 	return nullptr;
+}
+
+
+
+bool FilterWizard::columnEligibleForProxyIDMode(const CompositeColumn& column, bool* autoProxy)
+{
+	const Column* contentColumn = nullptr;
+	switch (column.type) {
+	case Reference:
+		contentColumn = &((ReferenceCompositeColumn&) column).contentColumn;
+		break;
+	case ListStringFold:
+	case HikerListFold:
+		contentColumn = ((ListStringFoldCompositeColumn&) column).contentColumn;
+		assert(contentColumn);
+		break;
+	default: break;
+	}
+	
+	bool showModePage = false;
+	if (autoProxy) *autoProxy = false;
+	if (contentColumn) {
+		assert(!contentColumn->table.isAssociative);
+		const NormalTable& contentTable = (NormalTable&) contentColumn->table;
+		const QList<const Column*> idRepColumns = contentTable.getIdentityRepresentationColumns();
+		showModePage = idRepColumns.contains(contentColumn);
+		if (autoProxy) *autoProxy = idRepColumns.size() == 1 && idRepColumns.at(0) == contentColumn;
+	}
+	
+	return showModePage;
 }

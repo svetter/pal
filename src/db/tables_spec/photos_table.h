@@ -65,7 +65,7 @@ private:
 	
 public:
 	virtual QString getIdentityRepresentationAt(const BufferRowIndex& bufferRow) const override;
-	virtual QSet<const Column*> getIdentityRepresentationColumns() const override;
+	virtual QList<const Column*> getIdentityRepresentationColumns() const override;
 	
 	virtual QString getItemNameSingular() const override;
 	virtual QString getNoneString() const override;
