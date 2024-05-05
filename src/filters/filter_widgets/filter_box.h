@@ -39,8 +39,10 @@ public:
 	virtual const Filter& getFilter() const = 0;
 	
 protected:
-	virtual void resizeEvent(QResizeEvent* event);
-	virtual void moveEvent(QMoveEvent* event);
+	virtual void showEvent(QShowEvent* event) override;
+	virtual void resizeEvent(QResizeEvent* event) override;
+	virtual void moveEvent(QMoveEvent* event) override;
+	virtual void changeEvent(QEvent* event) override;
 	
 private:
 	void positionRemoveButton();

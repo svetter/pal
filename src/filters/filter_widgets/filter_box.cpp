@@ -48,6 +48,12 @@ void FilterBox::updateFilter()
 
 
 
+void FilterBox::showEvent(QShowEvent* event)
+{
+	QGroupBox::showEvent(event);
+	positionRemoveButton();
+}
+
 void FilterBox::resizeEvent(QResizeEvent* event)
 {
 	QGroupBox::resizeEvent(event);
@@ -60,12 +66,20 @@ void FilterBox::moveEvent(QMoveEvent* event)
 	positionRemoveButton();
 }
 
+void FilterBox::changeEvent(QEvent* event)
+{
+	QGroupBox::changeEvent(event);
+	if (event->type() == QEvent::EnabledChange) {
+		removeButton->setEnabled(isEnabled());
+	}
+}
+
 
 
 void FilterBox::positionRemoveButton()
 {
-	const int removeButtonX = frameGeometry().right()   - removeButton->width()  / 2;
-	const int removeButtonY = frameGeometry().top() + 9 - removeButton->height() / 2;
-	removeButton->move(removeButtonX, removeButtonY);
+	const int x = parentWidget()->pos().x() + geometry().right()   - removeButton->width()  / 2;
+	const int y = parentWidget()->pos().y() + geometry().top() + 9 - removeButton->height() / 2;
+	removeButton->move(x, y);
 	removeButton->setVisible(true);
 }
