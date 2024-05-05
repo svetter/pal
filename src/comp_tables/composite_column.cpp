@@ -91,7 +91,8 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	}
 	
 	else if (contentType == Date) {
-		assert(rawCellContent.canConvert<QDate>() && rawCellContent.toDate().isValid());
+		assert(rawCellContent.canConvert<QDate>());
+		if (!rawCellContent.toDate().isValid()) return QString();
 		result = rawCellContent.toDate().toString("dd.MM.yyyy");
 	}
 	
@@ -575,15 +576,17 @@ QVariant DifferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) cons
 	switch (minuendColumn.type) {
 	case Integer: {
 		assert(minuendContent.canConvert<int>() && subtrahendContent.canConvert<int>());
-		int minuend = minuendContent.toInt();
-		int subtrahend = subtrahendContent.toInt();
+		const int minuend = minuendContent.toInt();
+		const int subtrahend = subtrahendContent.toInt();
 		
 		return minuend - subtrahend;
 	}
 	case Date: {
-		assert(minuendContent.canConvert<QDate>() && minuendContent.toDate().isValid() && subtrahendContent.canConvert<QDate>() && subtrahendContent.toDate().isValid());
-		QDate minuend = minuendContent.toDate();
-		QDate subtrahend = subtrahendContent.toDate();
+		assert(minuendContent.canConvert<QDate>() && subtrahendContent.canConvert<QDate>());
+		const QDate minuend = minuendContent.toDate();
+		const QDate subtrahend = subtrahendContent.toDate();
+		if (!minuend.isValid() || !subtrahend.isValid())
+			return QVariant();
 		
 		return subtrahend.daysTo(minuend) + 1;
 	}
