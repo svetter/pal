@@ -53,10 +53,10 @@ public:
 	const QString name;
 	/** The name of this column for UI purposes. */
 	const QString uiName;
-	/** The alignment (left/center/right) of the content of this column. */
-	const Qt::AlignmentFlag alignment;
 	/** The data type of the content of this column. */
 	const DataType contentType;
+	/** The alignment (left/center/right) of the content of this column. */
+	const Qt::AlignmentFlag alignment;
 	/** Whether the cells of this column are interdependent (as opposed to each cell being computed separately). */
 	const bool cellsAreInterdependent;
 	/** Whether this column is a statistical column, which only holds information derived from other columns. */

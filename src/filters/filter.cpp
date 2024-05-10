@@ -51,14 +51,12 @@ void Filter::setInverted(bool inverted)
 
 void Filter::applyToOrderBuffer(ViewOrderBuffer& viewOrderBuffer) const
 {
-	const bool proxyIDMode = type == ID && columnToFilterBy.contentType != ID;
-	
 	for (ViewRowIndex viewRow = ViewRowIndex(viewOrderBuffer.numRows() - 1); viewRow.isValid(); viewRow--) {
 		const BufferRowIndex bufferRow = viewOrderBuffer.getBufferRowIndexForViewRow(viewRow);
 		
 		// Get raw value
 		QVariant rawRowValue;
-		if (proxyIDMode) {
+		if (type == ID) {
 			const QSet<ValidItemID> ids = columnToFilterBy.computeIDsAt(bufferRow);
 			QVariantList idsAsVariants = QVariantList();
 			for (const ValidItemID& id : ids) {

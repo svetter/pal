@@ -430,6 +430,8 @@ Filter* FilterWizard::getFinishedFilter()
 
 bool FilterWizard::columnEligibleForProxyIDMode(const CompositeColumn& column, bool* autoProxy)
 {
+	if (autoProxy) *autoProxy = false;
+	
 	const Column* contentColumn = nullptr;
 	switch (column.type) {
 	case Reference:
@@ -442,16 +444,22 @@ bool FilterWizard::columnEligibleForProxyIDMode(const CompositeColumn& column, b
 		break;
 	default: break;
 	}
-	
-	bool showModePage = false;
-	if (autoProxy) *autoProxy = false;
-	if (contentColumn) {
-		assert(!contentColumn->table.isAssociative);
-		const NormalTable& contentTable = (NormalTable&) contentColumn->table;
-		const QList<const Column*> idRepColumns = contentTable.getIdentityRepresentationColumns();
-		showModePage = idRepColumns.contains(contentColumn);
-		if (autoProxy) *autoProxy = idRepColumns.size() == 1 && idRepColumns.at(0) == contentColumn;
+	if (!contentColumn) {
+		return false;
 	}
 	
-	return showModePage;
+	if (contentColumn->primaryKey) {
+		if (autoProxy) *autoProxy = true;
+		return true;
+	}
+	
+	assert(!contentColumn->table.isAssociative);
+	const NormalTable& contentTable = (NormalTable&) contentColumn->table;
+	const QList<const Column*> idRepColumns = contentTable.getIdentityRepresentationColumns();
+	if (idRepColumns.contains(contentColumn)) {
+		if (autoProxy) *autoProxy = idRepColumns.size() == 1 && idRepColumns.at(0) == contentColumn;
+		return true;
+	}
+	
+	return false;
 }

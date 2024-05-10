@@ -48,8 +48,8 @@ CompositeColumn::CompositeColumn(CompColType type, CompositeTable& table, QStrin
 	table(table),
 	name(name),
 	uiName(uiName),
-	alignment((contentType == Integer) ? Qt::AlignRight : contentType == Bit ? Qt::AlignCenter : Qt::AlignLeft),
 	contentType(contentType),
+	alignment((contentType == Integer) ? Qt::AlignRight : contentType == Bit ? Qt::AlignCenter : Qt::AlignLeft),
 	cellsAreInterdependent(cellsAreInterdependent),
 	isStatistical(isStatistical),
 	enumNames(enumNames),
@@ -84,7 +84,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	
 	if (contentType == Integer) {
 		assert(rawCellContent.canConvert<int>());
-		int number = rawCellContent.toInt();
+		const int number = rawCellContent.toInt();
 		if (abs(number) > 9999) {
 			result = QLocale().toString(number);
 		}
@@ -112,7 +112,7 @@ QString CompositeColumn::toFormattedTableContent(QVariant rawCellContent) const
 	else if (contentType == DualEnum) {
 		assert(enumNameLists);
 		assert(rawCellContent.canConvert<QList<QVariant>>());
-		QList<QVariant> intList = rawCellContent.toList();
+		const QList<QVariant> intList = rawCellContent.toList();
 		assert(intList.size() == 2);
 		assert(intList.at(0).canConvert<int>() && intList.at(1).canConvert<int>());
 		const int discerningEnumIndex	= intList.at(0).toInt();
@@ -475,9 +475,9 @@ ReferenceCompositeColumn::ReferenceCompositeColumn(CompositeTable& table, QStrin
 	breadcrumbs((assert(!contentColumn.table.isAssociative), table.crumbsTo((NormalTable&) contentColumn.table))),
 	contentColumn(contentColumn)
 {
-	assert(!contentColumn.primaryKey);
 	assert(&table.baseTable == &breadcrumbs.getStartTable());
 	assert(&table.baseTable != &contentColumn.table);
+	assert(!contentColumn.table.isAssociative);
 	assert(&contentColumn.table == &breadcrumbs.getTargetTable());
 }
 
@@ -496,7 +496,7 @@ QSet<ValidItemID> ReferenceCompositeColumn::computeIDsAt(BufferRowIndex rowIndex
 	
 	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return {};
 	
-	return { VALID_ITEM_ID(table.baseTable.primaryKeyColumn.getValueAt(targetRowIndex)) };
+	return { VALID_ITEM_ID(contentColumn.getValueAt(targetRowIndex)) };
 }
 
 /**
@@ -510,6 +510,10 @@ QVariant ReferenceCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 	BufferRowIndex targetRowIndex = breadcrumbs.evaluateAsForwardChain(rowIndex);
 	
 	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return QVariant();
+	
+	if (contentColumn.primaryKey) {
+		return ((const NormalTable&) contentColumn.table).getIdentityRepresentationAt(targetRowIndex);
+	}
 	
 	return contentColumn.getValueAt(targetRowIndex);
 }

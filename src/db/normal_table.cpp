@@ -94,11 +94,24 @@ ValidItemID NormalTable::getPrimaryKeyAt(BufferRowIndex bufferRowIndex) const
  */
 QList<QPair<ValidItemID, QVariant>> NormalTable::pairIDWith(const Column& column) const
 {
-	int primaryKeyColumnIndex = primaryKeyColumn.getIndex();
-	int columnIndex = column.getIndex();
+	const int primaryKeyColumnIndex = primaryKeyColumn.getIndex();
+	const int columnIndex = column.getIndex();
 	QList<QPair<ValidItemID, QVariant>> pairs = QList<QPair<ValidItemID, QVariant>>();
 	for (const QList<QVariant>* const bufferRow : buffer) {
-		pairs.append({VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex)), bufferRow->at(columnIndex)});
+		const ValidItemID id = VALID_ITEM_ID(bufferRow->at(primaryKeyColumnIndex));
+		QVariant value = QVariant();
+		if (Q_UNLIKELY(column.foreignColumn)) {
+			assert(!column.foreignColumn->table.isAssociative);
+			const NormalTable& foreignTable = (const NormalTable&) column.foreignColumn->table;
+			const ItemID foreignID = ItemID(bufferRow->at(columnIndex));
+			if (foreignID.isValid()) {
+				const BufferRowIndex foreignRowIndex = foreignTable.getBufferIndexForPrimaryKey(FORCE_VALID(foreignID));
+				value = foreignTable.getIdentityRepresentationAt(foreignRowIndex);
+			}
+		} else {
+			value = bufferRow->at(columnIndex);
+		}
+		pairs.append({id, value});
 	}
 	return pairs;
 }

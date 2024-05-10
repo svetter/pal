@@ -300,7 +300,7 @@ bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QLi
  * the given parameters, and writes the IDs of the entries to the referenced list.
  *
  * @param combo						The combo box to populate.
- * @param displayAndSortColumn		The column of the table to use for displaying and sorting the entries.
+ * @param displayAndSortColumn		The column to use for displaying and sorting the entries.
  * @param idList					The list in which to store the IDs of the entries.
  * @param overrideFirstLine			If not empty, this string will be used as the first line of the combo box instead of the table's none string.
  * @param distinctionKeyColumn		If not null, this column will be used to point to a cell in distinctionContentColumn.
@@ -310,12 +310,13 @@ bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QLi
  * @param prefixColumn				If not null, this column will be used to add a prefix to the display names of the entries. Must be in the same table as displayAndSortColumn.
  * @param prefixValueToString		A function to convert the value of prefixColumn to a string. Must be provided iff prefixColumn is not null.
  */
-void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID, const ValueColumn* prefixColumn, std::function<QString (const QVariant&)> prefixValueToString)
+void populateItemCombo(QComboBox& combo, const Column& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine, const ForeignKeyColumn* distinctionKeyColumn, const ValueColumn* distinctionContentColumn, const ForeignKeyColumn* filterColumn, ItemID filterID, const ValueColumn* prefixColumn, std::function<QString (const QVariant&)> prefixValueToString)
 {
 	assert(!(!filterColumn && filterID.isValid()));
 	assert((bool) prefixColumn == (bool) prefixValueToString);
-	
 	const NormalTable& table = (NormalTable&) displayAndSortColumn.table;
+	assert(!!prefixColumn == !!prefixValueToString);
+	if (prefixColumn) assert(&prefixColumn->table == &table);
 	
 	combo.clear();
 	idList.clear();
@@ -332,7 +333,7 @@ void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn
 		assert(&filterColumn->table == &table && filterColumn->type == ID);
 		for (int i = selectableItems.size() - 1; i >= 0; i--) {
 			const ValidItemID& itemID = selectableItems.at(i).first;
-			ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);
+			const ItemID itemFilterColumnID = filterColumn->getValueFor(itemID);
 			if (itemFilterColumnID != filterID) {
 				selectableItems.remove(i);
 			}
@@ -344,9 +345,14 @@ void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn
 		for (int i = 0; i < selectableItems.size(); i++) {
 			const ValidItemID& itemID = selectableItems.at(i).first;
 			const QString prefix = prefixValueToString(prefixColumn->getValueFor(itemID));
-			if (!prefix.isEmpty()) {
-				selectableItems[i].second = prefix + ": " + selectableItems.at(i).second.toString();
+			if (prefix.isEmpty()) continue;
+			
+			const QString displayName = selectableItems.at(i).second.toString();
+			QString newName = prefix;
+			if (!displayName.isEmpty()) {
+				newName += ": " + displayName;
 			}
+			selectableItems[i].second = newName;
 		}
 	}
 	
@@ -407,10 +413,10 @@ void populateAscentCombo(Database& db, QComboBox& ascentCombo, QList<ValidItemID
 {
 	auto prefixValueToString = [](const QVariant& prefixValue) {
 		if (!prefixValue.canConvert<QDate>() || !prefixValue.toDate().isValid()) return QString();
-		return prefixValue.toDate().toString("dd.MM.yyyy");
+		return prefixValue.toDate().toString(Qt::ISODate);
 	};
 	
-	populateItemCombo(ascentCombo, db.ascentsTable.descriptionColumn, selectableAscentIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.ascentsTable.dateColumn, prefixValueToString);
+	populateItemCombo(ascentCombo, db.ascentsTable.peakIDColumn, selectableAscentIDs, QString(), nullptr, nullptr, nullptr, ItemID(), &db.ascentsTable.dateColumn, prefixValueToString);
 }
 
 /**

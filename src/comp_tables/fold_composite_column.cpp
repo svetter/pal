@@ -24,6 +24,7 @@
 #include "fold_composite_column.h"
 
 #include "src/comp_tables/composite_table.h"
+#include "src/db/database.h"
 #include "src/db/tables_spec/hikers_table.h"
 
 
@@ -47,7 +48,9 @@ FoldCompositeColumn::FoldCompositeColumn(CompColType type, CompositeTable& table
 	contentTable(contentColumn ? (assert(!contentColumn->table.isAssociative), &((const NormalTable&) contentColumn->table)) : nullptr)
 {
 	if (contentColumn) {
-		assert(!contentColumn->primaryKey);
+		if (contentColumn->primaryKey) {
+			assert(type == CountFold || type == ListStringFold);
+		}
 		assert(&contentColumn->table == &breadcrumbs.getTargetTable());
 	}
 }
@@ -266,8 +269,7 @@ QVariant ListStringFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) 
 {
 	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
-	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
-	
+	const QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	return stringList.join(", ");
 }
 
@@ -282,10 +284,11 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buff
 	// Fetch and format to string
 	for (const BufferRowIndex& rowIndex : rowIndexSet) {
 		QVariant content;
-		if (Q_UNLIKELY(enumNames)) {
+		if (Q_UNLIKELY(contentColumn->primaryKey)) {
+			content = contentTable->getIdentityRepresentationAt(rowIndex);
+		} else if (Q_UNLIKELY(enumNames)) {
 			content = replaceEnumIfApplicable(content);
-		}
-		else {
+		} else {
 			content = contentColumn->getValueAt(rowIndex);
 		}
 		
@@ -338,7 +341,9 @@ ListStringFoldCompositeColumn* ListStringFoldCompositeColumn::decodeTypeSpecific
  */
 HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const ValueColumn& contentColumn) :
 	ListStringFoldCompositeColumn(table, name, uiName, contentColumn, nullptr, true)
-{}
+{
+	assert(&contentColumn == &table.db.hikersTable.nameColumn);
+}
 
 
 
@@ -355,8 +360,7 @@ QVariant HikerListFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
 {
 	QSet<BufferRowIndex> rowIndexSet = breadcrumbs.evaluate(rowIndex);
 	
-	QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
-	
+	const QList<QString> stringList = formatAndSortIntoStringList(rowIndexSet);
 	return stringList.join(", ");
 }
 
@@ -367,7 +371,7 @@ QVariant HikerListFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) c
  */
 QStringList HikerListFoldCompositeColumn::formatAndSortIntoStringList(QSet<BufferRowIndex>& rowIndexSet) const
 {
-	QStringList stringList;
+	QStringList stringList = QStringList();
 	
 	QString defaultHikerString = QString();
 	const ProjectSetting<int>& defaultHiker = getProjectSettings().defaultHiker;

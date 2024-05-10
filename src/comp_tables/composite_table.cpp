@@ -954,10 +954,10 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
 		return column.alignment;
 	}
 	
-	int relevantRole = column.contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
+	const int relevantRole = column.contentType == Bit ? Qt::CheckStateRole : Qt::DisplayRole;
 	if (role != relevantRole) return QVariant();
 	
-	QVariant result = buffer.getCell(bufferRowIndex, columnIndex);
+	const QVariant result = buffer.getCell(bufferRowIndex, columnIndex);
 	
 	if (result.isNull()) return QVariant();
 	

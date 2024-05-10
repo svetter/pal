@@ -23,7 +23,6 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	tableListWidget(new QListWidget(this)),
 	columnListWidget(new QListWidget(this)),
 	useCountCheckbox(new QCheckBox(this)),
-	hintLabel(new QLabel(this)),
 	tableList(QList<const NormalTable*>()),
 	columnList(QList<const Column*>())
 {
@@ -36,6 +35,8 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	// First entry for the same table
 	tableList.append(&baseTable);
 	tableListWidget->addItem(tr("%1 (same table)").arg(baseTable.getItemNameSingular()));
+	QListWidgetItem& firstItem = *tableListWidget->item(0);
+	firstItem.setFont(QFont(firstItem.font().family(), firstItem.font().pointSize(), QFont::Bold));
 	// Add entries for other tables
 	for (const NormalTable* const table: db.getNormalItemTableList()) {
 		if (table == &baseTable) continue;
@@ -68,17 +69,7 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	listsLayout->addLayout(columnListLayout);
 	layout->addLayout(listsLayout);
 	
-	hintLabel->setText(tr(
-		"**Hint**: If you want to use this column for a filter, it probably makes more sense to select the \"Identity\" option. "
-		"Click the Help button or try both if you are unsure."
-	));
-	hintLabel->setTextFormat(Qt::MarkdownText);
-	hintLabel->setWordWrap(true);
-	hintLabel->setVisible(false);
-	layout->addWidget(hintLabel);
-	
 	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::updateColumnList);
-	connect(columnListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::updateHint);
 	connect(useCountCheckbox,	&QCheckBox::toggled,				this, &ColumnWizardTableColumnPage::updateColumnListEnabled);
 	
 	connect(tableListWidget,	&QListWidget::currentRowChanged,	this, &ColumnWizardTableColumnPage::completeChanged);
@@ -97,20 +88,36 @@ void ColumnWizardTableColumnPage::updateColumnList()
 	columnList.clear();
 	if (!tableToUse) return;
 	
+	const QList<const Column*> identityRepColumns = tableToUse->getIdentityRepresentationColumns();
 	const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *tableToUse);
 	const bool multiResultPossible = !crumbs.isForwardOnly();
 	
 	const QList<const Column*> allColumns = tableToUse->getColumnList();
 	for (int i = 0; i < allColumns.size(); i++) {
 		const Column* column = allColumns.at(i);
-		if (column->primaryKey || column->foreignColumn || column->type == DualEnum) {
+		if (column->foreignColumn || column->type == DualEnum) {
 			continue;
-		} else if (column->primaryKey && sameTable) {
+		} else if (column->primaryKey && (sameTable || identityRepColumns.size() < 2)) {
 			continue;
 		}
 		
+		QString uiName = column->uiName;
+		if (column->primaryKey) {
+			QStringList repColumnUiNames = QStringList();
+			for (const Column* repColumn : identityRepColumns) {
+				if (repColumn->isKey()) continue;
+				repColumnUiNames.append(repColumn->uiName);
+			}
+			uiName = tr("Identity (%1)").arg(repColumnUiNames.join(", "));
+		}
+		
 		columnList.append(column);
-		columnListWidget->addItem(column->uiName);
+		columnListWidget->addItem(uiName);
+		
+		if (column->primaryKey || (!sameTable && identityRepColumns.size() == 1 && identityRepColumns.contains(column))) {
+			QListWidgetItem& item = *columnListWidget->item(columnListWidget->count() - 1);
+			item.setFont(QFont(item.font().family(), item.font().pointSize(), QFont::Bold));
+		}
 	}
 	
 	// Update useCountCheckbox enabled state
@@ -127,14 +134,6 @@ void ColumnWizardTableColumnPage::updateColumnListEnabled()
 	} else {
 		columnListWidget->setEnabled(true);
 	}
-}
-
-void ColumnWizardTableColumnPage::updateHint()
-{
-	const Column* const column = getSelectedColumn();
-	if (!column) return;
-	
-	hintLabel->setVisible(column->name == "name");
 }
 
 

@@ -121,7 +121,7 @@ bool displayDeleteWarning(QWidget& parent, const QString& windowTitle, const QLi
 
 
 
-void populateItemCombo(QComboBox& combo, const ValueColumn& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID(), const ValueColumn* prefixColumn = nullptr, std::function<QString (const QVariant&)> prefixValueToString = nullptr);
+void populateItemCombo(QComboBox& combo, const Column& displayAndSortColumn, QList<ValidItemID>& idList, const QString& overrideFirstLine = QString(), const ForeignKeyColumn* distinctionKeyColumn = nullptr, const ValueColumn* distinctionContentColumn = nullptr, const ForeignKeyColumn* filterColumn = nullptr, ItemID filterID = ItemID(), const ValueColumn* prefixColumn = nullptr, std::function<QString (const QVariant&)> prefixValueToString = nullptr);
 
 void populateAscentCombo	(Database& db, QComboBox& ascentCombo,	QList<ValidItemID>& selectableAscentIDs);
 void populatePeakCombo		(Database& db, QComboBox& peakCombo,	QList<ValidItemID>& selectablePeakIDs,		ItemID regionFilterID = ItemID());

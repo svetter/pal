@@ -40,7 +40,6 @@ bool StringFilter::evaluate(const QVariant& rawRowValue) const
 	else {
 		assert(rawRowValue.canConvert<QString>());
 		const QString convertedValue = rawRowValue.toString();
-		assert(!convertedValue.isNull());
 		
 		if (convertedValue.isEmpty()) {
 			return value.isEmpty() != isInverted();
