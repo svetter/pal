@@ -221,7 +221,7 @@ QString PhotosTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 	
 	const QString indexString = QString::number(sortIndexColumn.getValueAt(bufferRow).toInt());
 	
-	return ascentString + " – " + tr("Photo #") + indexString;
+	return ascentString + " – " + tr("Photo #%1").arg(indexString);
 }
 
 /**

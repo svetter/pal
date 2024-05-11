@@ -151,15 +151,15 @@ void FilterWizardModePage::initializePage()
 	}
 	assert(contentColumn);
 	
-	filterIdentityRadio->setText(tr("Filter by selectable single items from %1 table").arg(contentColumn->table.uiName));
-	filterStringRadio->setText(tr("Filter by searching through textual list representing all items"));
+	filterIdentityRadio->setText(tr("Identity filter: Filter by selectable single items from %1 table").arg(contentColumn->table.uiName));
+	filterStringRadio->setText(tr("String filter: Filter by searching through textual list representing all items"));
 	
 	if (idFilterBox)		previewLayout->removeWidget(idFilterBox);
 	if (stringFilterBox)	previewLayout->removeWidget(stringFilterBox);
 	delete idFilterBox;
 	delete stringFilterBox;
-	IDFilter* const		idFilter		= new IDFilter		(tableToFilter, *compColumn, tr("Identity Filter"));
-	StringFilter* const	stringFilter	= new StringFilter	(tableToFilter, *compColumn, tr("String Filter"));
+	IDFilter* const		idFilter		= new IDFilter		(tableToFilter, *compColumn, tr("Identity filter"));
+	StringFilter* const	stringFilter	= new StringFilter	(tableToFilter, *compColumn, tr("String filter"));
 	idFilterBox		= idFilter		->createFilterBox(this);
 	stringFilterBox	= stringFilter	->createFilterBox(this);
 	previewLayout->addWidget(idFilterBox);

@@ -114,7 +114,9 @@ void ColumnWizardTableColumnPage::updateColumnList()
 		columnList.append(column);
 		columnListWidget->addItem(uiName);
 		
-		if (column->primaryKey || (!sameTable && identityRepColumns.size() == 1 && identityRepColumns.contains(column))) {
+		// Mark identity column in bold
+		const bool isIdentityColumn = identityRepColumns.size() == 1 && identityRepColumns.contains(column);
+		if (column->primaryKey || (!sameTable && isIdentityColumn)) {
 			QListWidgetItem& item = *columnListWidget->item(columnListWidget->count() - 1);
 			item.setFont(QFont(item.font().family(), item.font().pointSize(), QFont::Bold));
 		}
@@ -376,7 +378,6 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		} else {
 			tableString = tableToUse->getItemNameSingular();
 		}
-		if (!useCount && !columnToUse->primaryKey) tableString += ": ";
 	}
 	
 	if (useCount) {
@@ -397,7 +398,12 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		assert(secondColumn.enumNameLists == columnToUse->enumNameLists);
 		columnString += "/" + secondColumn.uiName;
 	}
-	if (columnToUse->primaryKey) {
+	
+	const bool sameTable = tableToUse == &baseTable;
+	const QList<const Column*> identityRepColumns = tableToUse->getIdentityRepresentationColumns();
+	const bool isIdentityColumn = identityRepColumns.size() == 1 && identityRepColumns.contains(columnToUse);
+	if (columnToUse->primaryKey || (!sameTable && isIdentityColumn)) {
+		// Identity column - only use table name
 		columnString = tableString;
 		tableString = "";
 	}
@@ -413,10 +419,11 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		}
 	}
 	else if (listStringFold) {
-		valueString = tr("%1 (List)").arg(columnString);
+		valueString = tr("All %1").arg(columnString);
 	}
 	
-	return tableString + valueString;
+	const QString separator = tableString.isEmpty() || valueString.isEmpty() ? "" : ": ";
+	return tableString + separator + valueString;
 }
 
 
@@ -517,17 +524,16 @@ void ColumnWizard::handle_helpRequested()
 	QString title = tr("Help with creating a custom column");
 	QString text = tr(
 		"This wizard will create a new column for the %1 table.\n"
-		"Note that this custom column will not hold any new data, but show data already in the database, or process it to show statistical data.\n\n"
+		"Note that this custom column will not hold any new data, but show data already in the database, either directly or processed to show statistical data.\n\n"
 		"On the first page, you can choose any table from the project database, and then a column from that table. "
-		"The new column will then show the entry from the selected column which is connected to each %2 in the table.\n"
+		"The new column will then show the entry from the selected column which is connected to each %2.\n"
 		"Depending on the selected table, it is possible that multiple entries are connected to a single %2. "
 		"In that case, the new column can either list all connected values, or, if the selected column contains numbers, the average, sum, maximum or minimum of those numbers can be calculated.\n"
 		"Alternatively, where multiple values are possible, you can choose to display the count of those values, using the checkbox on the first page.\n\n"
-		"For each table (except %1), the first option on the right is \"Identity\". "
-		"If chosen, this will often show the same result as when choosing the Name field (if present). "
-		"The difference is only apparent when applying a filter to the custom column: "
-		"A filter for an identity column will show a list of items from which one can be selected to include or exclude. "
-		"By contrast, a filter working on a Name column can only search for some given text in a list of the item names."
+		"For some tables, there is an additional column listed as \"Identity\". "
+		"If chosen, this will create a representation of each item's identity by combining values from two or more other fields.\n\n"
+		"Each table has an entry which is shown in bold. "
+		"These can be used for identity filters, which let you select an item and include or exclude all rows where that item makes an appearance."
 	).arg(compTable.baseTable.uiName, compTable.baseTable.getItemNameSingular());
 	
 	QMessageBox::information(this, title, text, QMessageBox::Ok, QMessageBox::Ok);
