@@ -68,7 +68,7 @@ void IDFilterBox::setComboEntries()
 void IDFilterBox::updateFilterTypeSpecific()
 {
 	const int comboIndex = combo->currentIndex();
-	if (comboIndex == 0) {
+	if (comboIndex < 1) {
 		filter.value = ItemID();
 	}
 	else {

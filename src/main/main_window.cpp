@@ -959,7 +959,7 @@ void MainWindow::scrollToTopAfterSorting()
 void MainWindow::updateFilters(const ItemTypeMapper* onlyForMapper)
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		if (!mapper || mapper == onlyForMapper) {
+		if (!onlyForMapper || mapper == onlyForMapper) {
 			mapper->filterBar.updateIDCombos();
 		}
 	}
