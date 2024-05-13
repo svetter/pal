@@ -1002,7 +1002,7 @@ void TopNChart::setup()
 void TopNChart::reset()
 {
 	barSet->remove(0, barSet->count());
-	xAxis->setCategories({""});	// Workaround for Qt bug: Category names not actually cleared properly by clear()
+	xAxis->setCategories({""});	// Workaround for QTBUG-122408: Category names not actually cleared properly by clear()
 	xAxis->clear();
 	hasData = false;
 	for (const bool p : {false, true}) {
