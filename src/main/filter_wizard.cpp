@@ -348,9 +348,13 @@ void FilterWizardSettingsPage::initializePage()
 	classesRadiobutton		->setVisible(showIntSettings);
 	intClassesGroupBox		->setVisible(showIntSettings);
 	if (!showIntSettings) {
-		// Qt bug currently prevents these commands from working
+		// Workaround for QTBUG-125286
+		exactValueRadiobutton	->setAutoExclusive(false);
 		exactValueRadiobutton	->setChecked(false);
+		exactValueRadiobutton	->setAutoExclusive(true);
+		classesRadiobutton		->setAutoExclusive(false);
 		classesRadiobutton		->setChecked(false);
+		classesRadiobutton		->setAutoExclusive(true);
 	}
 }
 
