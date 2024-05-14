@@ -27,6 +27,8 @@
 #include "src/db/database.h"
 #include "src/db/tables_spec/hikers_table.h"
 
+#include <QCoreApplication>
+
 
 
 /**
@@ -288,8 +290,12 @@ QStringList ListStringFoldCompositeColumn::formatAndSortIntoStringList(QSet<Buff
 			content = contentTable->getIdentityRepresentationAt(rowIndex);
 		} else if (Q_UNLIKELY(enumNames)) {
 			content = replaceEnumIfApplicable(content);
-		} else {
-			content = contentColumn->getValueAt(rowIndex);
+		}
+		else switch (contentColumn->type) {
+		case Bit:	content = contentColumn->getValueAt(rowIndex).toBool() ? QCoreApplication::translate("FoldCompositeColumn", "Yes") : QCoreApplication::translate("FoldCompositeColumn", "No");	break;
+		case Date:	content = contentColumn->getValueAt(rowIndex).toDate().toString(Qt::ISODate);	break;
+		case Time:	content = contentColumn->getValueAt(rowIndex).toDate().toString(Qt::ISODate);	break;
+		default:	content = contentColumn->getValueAt(rowIndex);
 		}
 		
 		if (Q_UNLIKELY(!content.isValid() || content.toString().isEmpty())) continue;
