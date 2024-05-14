@@ -45,7 +45,7 @@ HikersTable::HikersTable(Database& db) :
 
 /**
  * Adds a new hiker to the table.
- *
+ * 
  * @param parent	The parent widget.
  * @param hiker	The hiker to add.
  * @return			The index of the new hiker in the table buffer.
@@ -62,11 +62,10 @@ BufferRowIndex HikersTable::addRow(QWidget& parent, Hiker& hiker)
 
 /**
  * Updates the contents of an existing hiker in the table.
- *
- * @pre The given hiker's ItemID will be used to identify the hiker to update and thus must be valid.
- *
+ * 
  * @param parent	The parent widget.
- * @param hiker		The hiker to update.
+ * @param hikerID	The ID of the hiker to update.
+ * @param hiker		The hiker data to write to the row with the given ID.
  */
 void HikersTable::updateRow(QWidget& parent, ValidItemID hikerID, const Hiker& hiker)
 {
@@ -95,7 +94,7 @@ void HikersTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowInd
 
 /**
  * Translates the data of a hiker to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param hiker		The hiker from which to get the data.
  * @return			A list of column-data pairs representing the hiker's data.
@@ -119,7 +118,7 @@ const QList<ColumnDataPair> HikersTable::mapDataToColumnDataPairs(const QList<co
 
 /**
  * Returns a string representation of the hiker at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the hiker to represent.
  * @return			A UI-appropriate string representation of the hiker.
  */
@@ -130,7 +129,7 @@ QString HikersTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 
 /**
  * Returns a list of all columns used for identity representation of hikers.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> HikersTable::getIdentityRepresentationColumns() const
@@ -142,7 +141,7 @@ QList<const Column*> HikersTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Hiker" (singular).
- *
+ * 
  * @return	The translation of "Hiker" (singular).
  */
 QString HikersTable::getItemNameSingular() const
@@ -152,7 +151,7 @@ QString HikersTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no hiker is selected.
- *
+ * 
  * @return	The translated string representing absence of a hiker.
  */
 QString HikersTable::getNoneString() const
@@ -172,7 +171,7 @@ QString HikersTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of hikers have been edited.
- *
+ * 
  * @param numEdited	The number of hikers that have been edited.
  * @return			The translated message confirming the editing of the hikers.
  */
@@ -183,7 +182,7 @@ QString HikersTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of hikers have been deleted.
- *
+ * 
  * @param numDeleted	The number of hikers that have been deleted.
  * @return				The translated message confirming the deletion of the hikers.
  */

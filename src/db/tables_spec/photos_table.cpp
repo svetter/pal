@@ -79,7 +79,7 @@ QList<Photo> PhotosTable::getPhotosForAscent(ValidItemID ascentID) const
 
 /**
  * Adds one or more rows to the table, using a given ascentID and a list of photos.
- *
+ * 
  * @param parent	The parent widget.
  * @param ascentID	The ascentID to use for all rows.
  * @param photos	The photos to add.
@@ -96,7 +96,7 @@ void PhotosTable::addRows(QWidget& parent, ValidItemID ascentID, const QList<Pho
 
 /**
  * Adds one or more rows to the table, using the data from an ascent object.
- *
+ * 
  * @param parent	The parent widget.
  * @param ascent	The ascent object from which to get the ascentID and photos.
  */
@@ -110,7 +110,7 @@ void PhotosTable::addRows(QWidget& parent, const Ascent& ascent)
  * 
  * First removes all existing rows where the ascentID matches, then adds rows for all photos in the
  * given list.
- *
+ * 
  * @param parent	The parent widget.
  * @param ascentID	The ascentID for which to update the table contents.
  * @param photos	The photos to add.
@@ -125,7 +125,7 @@ void PhotosTable::updateRows(QWidget& parent, ValidItemID ascentID, const QList<
 
 /**
  * Updates the table contents for a given ascent.
- *
+ * 
  * @param parent	The parent widget.
  * @param ascent	The ascent to use for updating the table contents.
  */
@@ -139,7 +139,7 @@ void PhotosTable::updateRows(QWidget& parent, const Ascent& ascent)
  * 
  * First removes all existing rows where the ascentID matches, then adds rows for all photos in the
  * given list, for each ascentID.
- *
+ * 
  * @param parent		The parent widget.
  * @param ascentIDs	The ascentIDs for which to update the table contents.
  * @param photos		The photos to add.
@@ -175,7 +175,7 @@ void PhotosTable::updateFilepathAt(QWidget& parent, BufferRowIndex bufferRowInde
 
 /**
  * Translates the data of a photo to a list of column-data pairs.
- *
+ * 
  * @param columns		The column list specifying the order of the data.
  * @param ascentID		The ascentID of the photo.
  * @param sortIndex		The sortIndex of the photo.
@@ -205,7 +205,7 @@ const QList<ColumnDataPair> PhotosTable::mapDataToColumnDataPairs(const QList<co
 
 /**
  * Returns a string representation of the photo at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the photo to represent.
  * @return			A UI-appropriate string representation of the photo.
  */
@@ -226,7 +226,7 @@ QString PhotosTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow
 
 /**
  * Returns a list of all columns used for identity representation of photos.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> PhotosTable::getIdentityRepresentationColumns() const
@@ -242,7 +242,7 @@ QList<const Column*> PhotosTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Photo" (singular).
- *
+ * 
  * @return	The translation of "Photo" (singular).
  */
 QString PhotosTable::getItemNameSingular() const
@@ -252,7 +252,7 @@ QString PhotosTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no photo is selected.
- *
+ * 
  * @return	The translated string representing absence of a photo.
  */
 QString PhotosTable::getNoneString() const
@@ -272,7 +272,7 @@ QString PhotosTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of photos have been edited.
- *
+ * 
  * @param numEdited	The number of photos that have been edited.
  * @return			The translated message confirming the editing of the photos.
  */
@@ -283,7 +283,7 @@ QString PhotosTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of photos have been deleted.
- *
+ * 
  * @param numDeleted	The number of photos that have been deleted.
  * @return				The translated message confirming the deletion of the photos.
  */

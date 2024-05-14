@@ -96,7 +96,7 @@ void CompositeTable::reset()
  * 
  * @pre No column with the same internal name has been added.
  * 
- * @param column	The composite column to add.
+ * @param newColumn	The composite column to add.
  */
 void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
@@ -112,7 +112,7 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
 /**
  * Adds an export-only column to this table during initialization.
  *
- * @param column	The composite column to add as an export-only column.
+ * @param newColumn	The composite column to add as an export-only column.
  */
 void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 {
@@ -130,7 +130,7 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
  * 
  * @pre No column with the same internal name has been added.
  * 
- * @param column	The custom composite column to add.
+ * @param newColumn	The custom composite column to add.
  */
 void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
 {

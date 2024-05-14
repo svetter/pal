@@ -234,7 +234,6 @@ void TripDialog::aboutToClose()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new trip in the database's trip table buffer.
  */
 void openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -267,7 +266,6 @@ void openNewTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databas
  * @param db				The project database.
  * @param bufferRowIndex	The index of the trip to edit in the database's trip table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -305,7 +303,6 @@ void openEditTripDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param bufferRowIndices		The buffer row indices of the trips to edit.
  * @param initBufferRowIndex	The index of the trip whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditTripsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

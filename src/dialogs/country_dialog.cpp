@@ -165,7 +165,6 @@ void CountryDialog::aboutToClose()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new country in the database's country table buffer.
  */
 void openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -198,7 +197,6 @@ void openNewCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
  * @param db				The project database.
  * @param bufferRowIndex	The index of the country to edit in the database's country table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -236,7 +234,6 @@ void openEditCountryDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Dat
  * @param bufferRowIndices		The buffer row indices of the countries to edit.
  * @param initBufferRowIndex	The index of the country whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditCountriesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

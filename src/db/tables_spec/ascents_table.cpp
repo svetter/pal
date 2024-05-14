@@ -157,7 +157,7 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 
 /**
  * Returns a string representation of the ascent at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the ascent to represent.
  * @return			A UI-appropriate string representation of the ascent.
  */
@@ -182,7 +182,7 @@ QString AscentsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRo
 
 /**
  * Returns a list of all columns used for identity representation of ascents.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> AscentsTable::getIdentityRepresentationColumns() const
@@ -206,7 +206,7 @@ QString AscentsTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no ascent is selected.
- *
+ * 
  * @return	The translated string representing absence of an ascent.
  */
 QString AscentsTable::getNoneString() const
@@ -226,7 +226,7 @@ QString AscentsTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of ascents have been edited.
- *
+ * 
  * @param numEdited	The number of ascents that have been edited.
  * @return			The translated message confirming the editing of the ascents.
  */
@@ -237,7 +237,7 @@ QString AscentsTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of ascents have been deleted.
- *
+ * 
  * @param numDeleted	The number of ascents that have been deleted.
  * @return				The translated message confirming the deletion of the ascents.
  */

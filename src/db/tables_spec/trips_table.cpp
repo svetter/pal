@@ -68,11 +68,10 @@ BufferRowIndex TripsTable::addRow(QWidget& parent, Trip& trip)
 
 /**
  * Updates the contents of an existing trip in the table.
- *
- * @pre The given trip's ItemID will be used to identify the trip to update and thus must be valid.
- *
+ * 
  * @param parent	The parent widget.
- * @param trip		The trip to update.
+ * @param tripID	The ID of the region to update.
+ * @param trip		The region data to write to the row with the given ID.
  */
 void TripsTable::updateRow(QWidget& parent, ValidItemID tripID, const Trip& trip)
 {
@@ -101,7 +100,7 @@ void TripsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndi
 
 /**
  * Translates the data of a trip to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param trip		The trip from which to get the data.
  * @return			A list of column-data pairs representing the trip's data.
@@ -128,7 +127,7 @@ const QList<ColumnDataPair> TripsTable::mapDataToColumnDataPairs(const QList<con
 
 /**
  * Returns a string representation of the trip at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the trip to represent.
  * @return			A UI-appropriate string representation of the trip.
  */
@@ -145,7 +144,7 @@ QString TripsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow)
 
 /**
  * Returns a list of all columns used for identity representation of trips.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> TripsTable::getIdentityRepresentationColumns() const
@@ -157,7 +156,7 @@ QList<const Column*> TripsTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Trip" (singular).
- *
+ * 
  * @return	The translation of "Trip" (singular).
  */
 QString TripsTable::getItemNameSingular() const
@@ -167,7 +166,7 @@ QString TripsTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no trip is selected.
- *
+ * 
  * @return	The translated string representing absence of a trip.
  */
 QString TripsTable::getNoneString() const
@@ -187,7 +186,7 @@ QString TripsTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of trips have been edited.
- *
+ * 
  * @param numEdited	The number of trips that have been edited.
  * @return			The translated message confirming the editing of the trips.
  */
@@ -198,7 +197,7 @@ QString TripsTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of trips have been deleted.
- *
+ * 
  * @param numDeleted	The number of items that have been deleted.
  * @return				The translated message confirming the deletion of the trips.
  */

@@ -600,7 +600,6 @@ void AscentDialog::savePhotoDescriptionToList(const QItemSelection& selected, co
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new ascent in the database's ascent table buffer.
  */
 void openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -635,7 +634,6 @@ void openNewAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
  * @param db				The project database.
  * @param bufferRowIndex	The index of the ascent to duplicate in the database's ascent table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					The index of the new ascent in the database's ascent table buffer.
  */
 void openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -673,7 +671,6 @@ void openDuplicateAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow,
  * @param db				The project database.
  * @param bufferRowIndex	The index of the ascent to edit in the database's ascent table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -722,7 +719,6 @@ void openEditAscentDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
  * @param bufferRowIndices		The buffer row indices of the ascents to edit.
  * @param initBufferRowIndex	The index of the ascent whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditAscentsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

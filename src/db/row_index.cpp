@@ -237,7 +237,7 @@ void RowIndex::operator--(int)
  * This implementation is required for using RowIndex in QSets and implicitly comparing instances
  * of QList<ItemID>.
  *
- * @param key	The index to hash.
+ * @param index	The index to hash.
  * @param seed	The seed to use for hashing.
  * @return		The hash value.
  */

@@ -255,7 +255,6 @@ void PeakDialog::aboutToClose()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new peak in the database's peak table buffer.
  */
 void openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -288,7 +287,6 @@ void openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databas
  * @param db				The project database.
  * @param bufferRowIndex	The index of the peak to duplicate in the database's peak table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					The index of the new peak in the database's peak table buffer.
  */
 void openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -324,7 +322,6 @@ void openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, D
  * @param db				The project database.
  * @param bufferRowIndex	The index of the peak to edit in the database's peak table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -362,7 +359,6 @@ void openEditPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param bufferRowIndices		The buffer row indices of the peaks to edit.
  * @param initBufferRowIndex	The index of the peak whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditPeaksDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

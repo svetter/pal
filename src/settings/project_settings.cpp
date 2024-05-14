@@ -79,7 +79,7 @@ QVariant GenericProjectSetting::getDefaultAsQVariant() const
 /**
  * Sets the given value for the setting in the project settings storage.
  * 
- * @param parent	The parent window. Cannot be nullptr.
+ * @param parent	The parent window.
  * @param value		The new value for the setting.
  */
 void GenericProjectSetting::set(QWidget& parent, QVariant value) const
@@ -89,8 +89,8 @@ void GenericProjectSetting::set(QWidget& parent, QVariant value) const
 
 /**
  * Clears the setting in the project settings storage.
- *
- * @param parent	The parent window. Cannot be nullptr.
+ * 
+ * @param parent	The parent window.
  */
 void GenericProjectSetting::clear(QWidget& parent) const
 {
@@ -99,8 +99,8 @@ void GenericProjectSetting::clear(QWidget& parent) const
 
 /**
  * Removes the setting from the project settings storage completely.
- *
- * @param parent	The parent window. Cannot be nullptr.
+ * 
+ * @param parent	The parent window.
  */
 void GenericProjectSetting::remove(QWidget& parent) const
 {
@@ -114,7 +114,7 @@ void GenericProjectSetting::remove(QWidget& parent) const
 /**
  * Creates a new GenericProjectSetting.
  * 
- * @param settingsTable	The project settings table.
+ * @param table			The project settings table.
  * @param key			The key of the setting.
  * @param defaultValue	The default value for the setting.
  */
@@ -170,6 +170,7 @@ template class ProjectSetting<QDate>;
 /**
  * Creates a new ProjectMultiSetting with the given base key and default value.
  * 
+ * @param table			The project settings table.
  * @param baseKey		The common part of the keys under which the settings will be stored.
  * @param defaultValue	The default value for all the settings.
  */
@@ -266,8 +267,9 @@ T ProjectMultiSetting<T>::getDefault() const
 
 /**
  * Sets the value of the setting.
- * 
- * @param values	The new values for the settings.
+ *
+ * @param parent			The parent window.
+ * @param subKeyValueMap	The new values for the settings as a map of keys and values.
  */
 template<typename T>
 void ProjectMultiSetting<T>::set(QWidget& parent, const QMap<QString, T>& subKeyValueMap)

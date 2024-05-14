@@ -45,7 +45,7 @@ CountriesTable::CountriesTable(Database& db) :
 
 /**
  * Adds a new country to the table.
- *
+ * 
  * @param parent	The parent widget.
  * @param country	The country to add.
  * @return			The index of the new country in the table buffer.
@@ -62,11 +62,10 @@ BufferRowIndex CountriesTable::addRow(QWidget& parent, Country& country)
 
 /**
  * Updates the contents of an existing country in the table.
- *
- * @pre The given country's ItemID will be used to identify the country to update and thus must be valid.
- *
+ * 
  * @param parent	The parent widget.
- * @param country	The country to update.
+ * @param countryID	The ID of the country to update.
+ * @param country	The country data to write to the row with the given ID.
  */
 void CountriesTable::updateRow(QWidget& parent, ValidItemID countryID, const Country& country)
 {
@@ -95,7 +94,7 @@ void CountriesTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& row
 
 /**
  * Translates the data of a country to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param country	The country from which to get the data.
  * @return			A list of column-data pairs representing the country's data.
@@ -119,7 +118,7 @@ const QList<ColumnDataPair> CountriesTable::mapDataToColumnDataPairs(const QList
 
 /**
  * Returns a string representation of the country at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the country to represent.
  * @return			A UI-appropriate string representation of the country.
  */
@@ -130,7 +129,7 @@ QString CountriesTable::getIdentityRepresentationAt(const BufferRowIndex& buffer
 
 /**
  * Returns a list of all columns used for identity representation of countries.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> CountriesTable::getIdentityRepresentationColumns() const
@@ -142,7 +141,7 @@ QList<const Column*> CountriesTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Country" (singular).
- *
+ * 
  * @return	The translation of "Country" (singular).
  */
 QString CountriesTable::getItemNameSingular() const
@@ -152,7 +151,7 @@ QString CountriesTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no country is selected.
- *
+ * 
  * @return	The translated string representing absence of a country.
  */
 QString CountriesTable::getNoneString() const
@@ -172,7 +171,7 @@ QString CountriesTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of countries have been edited.
- *
+ * 
  * @param numEdited	The number of countries that have been edited.
  * @return			The translated message confirming the editing of the countries.
  */
@@ -183,7 +182,7 @@ QString CountriesTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of countries have been deleted.
- *
+ * 
  * @param numDeleted	The number of countries that have been deleted.
  * @return				The translated message confirming the deletion of the countries.
  */

@@ -684,7 +684,7 @@ void TimeScatterChart::reset()
  * 
  * Performs a view update after generating and storing the new data series.
  * 
- * @param newSeries			A list of data series to display in the chart.
+ * @param seriesData		A list of data series to display in the chart.
  * @param newMinDate		The minimum x-value (date) among all given data series.
  * @param newMaxDate		The maximum x-value (date) among all given data series.
  * @param newMaxY			The maximum y value among all given data series.

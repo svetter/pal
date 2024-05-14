@@ -33,6 +33,7 @@
 /**
  * Creates a CompositeColumn.
  * 
+ * @param type						The type of the composite column.
  * @param table						The CompositeTable that this column belongs to.
  * @param name						The internal name for this column.
  * @param uiName					The name of this column as it should be displayed in the UI.
@@ -726,6 +727,7 @@ QStringList DependentEnumCompositeColumn::encodeTypeSpecific() const
  * @param uiName		The name of this column as it should be displayed in the UI.
  * @param suffix		A suffix to append to the content of each cell.
  * @param sortingPasses	The list of sorting passes in order of priority, each containing column and order.
+ * @param isOrdinal		Whether or not this column is an OrdinalCompositeColumn.
  */
 IndexCompositeColumn::IndexCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const QList<BaseSortingPass> sortingPasses, bool isOrdinal) :
 	CompositeColumn(isOrdinal ? Ordinal : Index, table, name, uiName, Integer, true, true, suffix),

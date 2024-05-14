@@ -27,9 +27,9 @@
 
 /**
  * Creates a new trip object with the given properties.
- *
+ * 
  * @param tripID		The ID of the trip item, if it already has one. Invalid ItemID otherwise.
- * @param title			The name of the trip, if specified. Empty QString otherwise.
+ * @param name			The name of the trip, if specified. Empty QString otherwise.
  * @param startDate		The start date of the trip, if specified. Invalid QDate otherwise.
  * @param endDate		The end date of the trip, if specified. Invalid QDate otherwise.
  * @param description	The description of the trip, if specified. Empty QString otherwise.

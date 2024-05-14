@@ -16,7 +16,7 @@
  */
 
 /**
- * @file stats_linsteners.h
+ * @file stats_listeners.h
  * 
  * This file declares the TableChangeListenerGeneralStatsEngine and
  * TableChangeListenerItemStatsEngine classes.

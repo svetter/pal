@@ -130,8 +130,8 @@ int Column::getIndex() const
 /**
  * Returns the value stored in this column at the given row index.
  * 
- * @param rowIndex	The row index of the value to return.
- * @return			The value stored in this column at the given row index.
+ * @param bufferRowIndex	The row index of the value to return.
+ * @return					The value stored in this column at the given row index.
  */
 QVariant Column::getValueAt(BufferRowIndex bufferRowIndex) const
 {

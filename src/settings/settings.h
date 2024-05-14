@@ -240,7 +240,7 @@ public:
 	/**
 	 * Sets the value of the setting.
 	 * 
-	 * @param values	The new values for the settings.
+	 * @param subKeyValueMap	The new values for the settings as a map of keys and values.
 	 */
 	inline void set(const QMap<QString, T>& subKeyValueMap)
 	{

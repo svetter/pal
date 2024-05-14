@@ -309,8 +309,7 @@ void ViewOrderBuffer::append(BufferRowIndex rowIndex)
 /**
  * Inserts the given buffer row index into the order buffer at the given view row index.
  * 
- * @param viewRowIndex	The view row index at which to insert the given buffer row index.
- * @param rowIndex		The buffer row index to insert.
+ * @param viewRowIndex	The view row index at which to remove the buffer row index.
  */
 void ViewOrderBuffer::removeViewRow(ViewRowIndex viewRowIndex)
 {

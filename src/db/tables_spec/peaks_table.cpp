@@ -58,7 +58,7 @@ PeaksTable::PeaksTable(Database& db, PrimaryKeyColumn& foreignRegionIDColumn) :
 
 /**
  * Adds a new peak to the table.
- *
+ * 
  * @param parent	The parent widget.
  * @param peak		The peak to add.
  * @return			The index of the new peak in the table buffer.
@@ -75,11 +75,10 @@ BufferRowIndex PeaksTable::addRow(QWidget& parent, Peak& peak)
 
 /**
  * Updates the contents of an existing peak in the table.
- *
- * @pre The given peak's ItemID will be used to identify the peak to update and thus must be valid.
- *
+ * 
  * @param parent	The parent widget.
- * @param peak		The peak to update.
+ * @param peakID	The ID of the peak to update.
+ * @param peak		The peak data to write to the row with the given ID.
  */
 void PeaksTable::updateRow(QWidget& parent, ValidItemID peakID, const Peak& peak)
 {
@@ -108,7 +107,7 @@ void PeaksTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIndi
 
 /**
  * Translates the data of a peak to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param peak		The peak from which to get the data.
  * @return			A list of column-data pairs representing the peak's data.
@@ -138,7 +137,7 @@ const QList<ColumnDataPair> PeaksTable::mapDataToColumnDataPairs(const QList<con
 
 /**
  * Returns a string representation of the peak at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the peak to represent.
  * @return			A UI-appropriate string representation of the peak.
  */
@@ -149,7 +148,7 @@ QString PeaksTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRow)
 
 /**
  * Returns a list of all columns used for identity representation of peaks.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> PeaksTable::getIdentityRepresentationColumns() const
@@ -161,7 +160,7 @@ QList<const Column*> PeaksTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Peak" (singular).
- *
+ * 
  * @return	The translation of "Peak" (singular).
  */
 QString PeaksTable::getItemNameSingular() const
@@ -171,7 +170,7 @@ QString PeaksTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no peak is selected.
- *
+ * 
  * @return	The translated string representing absence of a peak.
  */
 QString PeaksTable::getNoneString() const
@@ -191,7 +190,7 @@ QString PeaksTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of peaks have been edited.
- *
+ * 
  * @param numEdited	The number of peaks that have been edited.
  * @return			The translated message confirming the editing of the peaks.
  */
@@ -202,7 +201,7 @@ QString PeaksTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of peaks have been deleted.
- *
+ * 
  * @param numDeleted	The number of peaks that have been deleted.
  * @return				The translated message confirming the deletion of the peaks.
  */

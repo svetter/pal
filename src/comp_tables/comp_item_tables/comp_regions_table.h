@@ -16,7 +16,7 @@
  */
 
 /**
- * @file comp_regionss_table.h
+ * @file comp_regions_table.h
  * 
  * This file defines the CompositeRegionsTable class.
  */

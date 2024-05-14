@@ -634,8 +634,6 @@ void ItemStatsEngine::setRangesPinned(bool rangesPinned)
 
 /**
  * Regenerates all charts from scratch or from (partial) caches if the dirty flag is set.
- * 
- * @param selectedBufferRows	The buffer rows of all items currently selected in the UI table.
  */
 void ItemStatsEngine::updateCharts()
 {

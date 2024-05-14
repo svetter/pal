@@ -241,7 +241,6 @@ void RegionDialog::aboutToClose()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new region in the database's region table buffer.
  */
 void openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -274,7 +273,6 @@ void openNewRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
  * @param db				The project database.
  * @param bufferRowIndex	The index of the region to edit in the database's region table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -312,7 +310,6 @@ void openEditRegionDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Data
  * @param bufferRowIndices		The buffer row indices of the regions to edit.
  * @param initBufferRowIndex	The index of the region whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditRegionsDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

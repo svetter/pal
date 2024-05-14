@@ -16,7 +16,7 @@
  */
 
 /**
- * @file ItemID.h
+ * @file item_id.h
  * 
  * This file declares the ItemID class and its subclass ValidItemID, and defines
  * the ItemIDPrivilegedFunctionAccessor class and corresponding macros.

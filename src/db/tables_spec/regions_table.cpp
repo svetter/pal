@@ -51,7 +51,7 @@ RegionsTable::RegionsTable(Database& db, PrimaryKeyColumn& foreignRangeIDColumn,
 
 /**
  * Adds a new region to the table.
- *
+ * 
  * @param parent	The parent widget.
  * @param region	The region to add.
  * @return			The index of the new region in the table buffer.
@@ -68,11 +68,10 @@ BufferRowIndex RegionsTable::addRow(QWidget& parent, Region& region)
 
 /**
  * Updates the contents of an existing region in the table.
- *
- * @pre The given region's ItemID will be used to identify the region to update and thus must be valid.
- *
+ * 
  * @param parent	The parent widget.
- * @param region	The region to update.
+ * @param regionID	The ID of the region to update.
+ * @param region	The region data to write to the row with the given ID.
  */
 void RegionsTable::updateRow(QWidget& parent, ValidItemID regionID, const Region& region)
 {
@@ -101,7 +100,7 @@ void RegionsTable::updateRows(QWidget& parent, const QSet<BufferRowIndex>& rowIn
 
 /**
  * Translates the data of a region to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param region	The region from which to get the data.
  * @return			A list of column-data pairs representing the region's data.
@@ -127,7 +126,7 @@ const QList<ColumnDataPair> RegionsTable::mapDataToColumnDataPairs(const QList<c
 
 /**
  * Returns a string representation of the region at the given buffer row index.
- *
+ * 
  * @param bufferRow	The buffer row index of the region to represent.
  * @return			A UI-appropriate string representation of the region.
  */
@@ -138,7 +137,7 @@ QString RegionsTable::getIdentityRepresentationAt(const BufferRowIndex& bufferRo
 
 /**
  * Returns a list of all columns used for identity representation of regions.
- *
+ * 
  * @return	A list of all columns used for identity representation.
  */
 QList<const Column*> RegionsTable::getIdentityRepresentationColumns() const
@@ -150,7 +149,7 @@ QList<const Column*> RegionsTable::getIdentityRepresentationColumns() const
 
 /**
  * Returns the translation of "Region" (singular).
- *
+ * 
  * @return	The translation of "Region" (singular).
  */
 QString RegionsTable::getItemNameSingular() const
@@ -160,7 +159,7 @@ QString RegionsTable::getItemNameSingular() const
 
 /**
  * Returns the translated string to be displayed to indicate that no region is selected.
- *
+ * 
  * @return	The translated string representing absence of a region.
  */
 QString RegionsTable::getNoneString() const
@@ -180,7 +179,7 @@ QString RegionsTable::getCreationConfirmMessage() const
 
 /**
  * Returns a translated message confirming that a number of regions have been edited.
- *
+ * 
  * @param numEdited	The number of regions that have been edited.
  * @return			The translated message confirming the editing of the regions.
  */
@@ -191,7 +190,7 @@ QString RegionsTable::getEditConfirmMessage(int numEdited) const
 
 /**
  * Returns a translated message confirming that a number of regions have been deleted.
- *
+ * 
  * @param numDeleted	The number of regions that have been deleted.
  * @return				The translated message confirming the deletion of the regions.
  */

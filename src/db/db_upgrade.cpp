@@ -270,6 +270,7 @@ bool DatabaseUpgrader::showOutdatedAppWarningAndBackup(const QString& dbVersion)
  * fails.
  * 
  * @param confirmationQuestion	Translated string to insert into the message, asking the user whether to continue if the backup failed.
+ * @param currentDbVersion		A string with the database's current (old) version.
  * @return						True if the backup was created successfully or the user wants to continue anyway, false otherwise.
  */
 bool DatabaseUpgrader::createFileBackupCopy(const QString& confirmationQuestion, const QString& currentDbVersion)

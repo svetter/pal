@@ -191,7 +191,7 @@ QSet<ValidItemID> AssociativeTable::getMatchingEntries(const PrimaryForeignKeyCo
  * Adds a row to the table from a list of columns and a corresponding list of data.
  * 
  * Delegates to Table::addRow().
- *
+ * 
  * @param parent			The parent window.
  * @param columnDataPairs	Pairs of columns and corresponding data to add.
  */
@@ -204,7 +204,7 @@ void AssociativeTable::addRow(QWidget& parent, const QList<ColumnDataPair>& colu
  * Removes a row from the table, specified by primary keys.
  * 
  * Delegates to Table::removeRow(...).
- *
+ * 
  * @param parent			The parent window.
  * @param primaryKeyColumns	The primary key columns.
  * @param primaryKeys		The primary keys of the row to remove, in the same order as the columns.
@@ -218,10 +218,10 @@ void AssociativeTable::removeRow(QWidget& parent, const QList<const Column*>& pr
  * Removes all rows from the table where the given column has the given value.
  * 
  * Delegates to Table::removeMatchingRows(...).
- *
- * @param parent	The parent window.
- * @param column	The column to check.
- * @param key		The value to check for.
+ * 
+ * @param parent		The parent window.
+ * @param column		The column to check.
+ * @param primaryKey	The primary key to check for.
  */
 void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column, ValidItemID primaryKey)
 {
@@ -232,7 +232,7 @@ void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column,
  * Removes all rows from the table where the given column has one of the given values.
  * 
  * Delegates to Table::removeMatchingRows(...).
- *
+ * 
  * @param parent		The parent window.
  * @param column		The column to check.
  * @param primaryKeys	The values to check for.
@@ -249,7 +249,7 @@ void AssociativeTable::removeMatchingRows(QWidget& parent, const Column& column,
 /**
  * For the QAbstractItemModel implementation, fetches the data for the given span of roles and
  * indices (in the form of a QModelRoleDataSpan).
- *
+ * 
  * The data is not returned, but written back to the given QModelRoleDataSpan.
  */
 void AssociativeTable::multiData(const QModelIndex& index, QModelRoleDataSpan roleDataSpan) const

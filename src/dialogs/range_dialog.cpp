@@ -183,7 +183,6 @@ void RangeDialog::aboutToClose()
  * @param mainWindow	The application's main window.
  * @param db			The project database.
  * @param callWhenDone	The function to call after the dialog has closed.
- * @return				The index of the new range in the database's range table buffer.
  */
 void openNewRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, std::function<void (BufferRowIndex)> callWhenDone)
 {
@@ -216,7 +215,6 @@ void openNewRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databa
  * @param db				The project database.
  * @param bufferRowIndex	The index of the range to edit in the database's range table buffer.
  * @param callWhenDone		The function to call after the dialog has closed.
- * @return					True if any changes were made, false otherwise.
  */
 void openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, BufferRowIndex bufferRowIndex, std::function<void (bool)> callWhenDone)
 {
@@ -254,7 +252,6 @@ void openEditRangeDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Datab
  * @param bufferRowIndices		The buffer row indices of the ranges to edit.
  * @param initBufferRowIndex	The index of the range whose data to initialize the dialog with.
  * @param callWhenDone			The function to call after the dialog has closed.
- * @return						True if any changes were made, false otherwise.
  */
 void openMultiEditRangesDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices, BufferRowIndex initBufferRowIndex, std::function<void (bool)> callWhenDone)
 {

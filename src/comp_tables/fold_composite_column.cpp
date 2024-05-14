@@ -33,7 +33,8 @@
 
 /**
  * Constructs a new FoldCompositeColumn.
- * 
+ *
+ * @param type			The type of the composite column.
  * @param table			The CompositeTable that this column belongs to.
  * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
@@ -41,6 +42,7 @@
  * @param isStatistical	Whether the contents of this column display statistical data which can be excluded from exports.
  * @param suffix		A suffix to append to the content of each cell.
  * @param breadcrumbs	A list of column pairs that lead from the base table's primary key column to the content column.
+ * @param contentColumn	The single column which contains the values to fold, or null if not present.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
  */
 FoldCompositeColumn::FoldCompositeColumn(CompColType type, CompositeTable& table, QString name, QString uiName, DataType contentType, bool isStatistical, QString suffix, const Breadcrumbs breadcrumbs, const ValueColumn* contentColumn, const QStringList* enumNames) :
@@ -82,7 +84,7 @@ QSet<ValidItemID> FoldCompositeColumn::computeIDsAt(BufferRowIndex rowIndex) con
 /**
  * Returns a set of all columns in the base tables which are used to compute the content of
  * this column.
- *
+ * 
  * @return	A set of all base table columns which are used to compute contents of this column.
  */
 const QSet<const Column*> FoldCompositeColumn::getAllUnderlyingColumns() const
@@ -140,7 +142,7 @@ CountFoldCompositeColumn* CountFoldCompositeColumn::decodeTypeSpecific(Composite
 
 /**
  * Constructs a new NumericFoldCompositeColumn.
- *
+ * 
  * @param table			The CompositeTable that this column belongs to.
  * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
@@ -161,7 +163,7 @@ NumericFoldCompositeColumn::NumericFoldCompositeColumn(CompositeTable& table, QS
  * Computes the value of the cell at the given row index.
  * 
  * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail().
- *
+ * 
  * @param rowIndex	The row index.
  * @return			The computed value of the cell.
  */
@@ -245,12 +247,13 @@ NumericFoldCompositeColumn* NumericFoldCompositeColumn::decodeTypeSpecific(Compo
 
 /**
  * Constructs a new ListStringFoldCompositeColumn.
- *
+ * 
  * @param table			The CompositeTable that this column belongs to.
  * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
  * @param contentColumn	The column whose values to list.
  * @param enumNames		An optional list of enum names with which to replace the raw cell content.
+ * @param isHikerList	Whether this is a HikerListFoldCompositeColumn.
  */
 ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& table, QString name, QString uiName, const ValueColumn& contentColumn, const QStringList* enumNames, bool isHikerList) :
 	FoldCompositeColumn(isHikerList ? HikerListFold : ListStringFold, table, name, uiName, String, false, QString(), table.crumbsTo((assert(!contentColumn.table.isAssociative), (NormalTable&) contentColumn.table)), &contentColumn, enumNames)
@@ -263,7 +266,7 @@ ListStringFoldCompositeColumn::ListStringFoldCompositeColumn(CompositeTable& tab
  * 
  * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail() and string
  * formatting and sorting to formatAndSortIntoStringList().
- *
+ * 
  * @param rowIndex	The row index.
  * @return			The computed value of the cell.
  */
@@ -339,7 +342,7 @@ ListStringFoldCompositeColumn* ListStringFoldCompositeColumn::decodeTypeSpecific
 
 /**
  * Constructs a new HikerListCompositeColumn.
- *
+ * 
  * @param table			The CompositeTable that this column belongs to.
  * @param name			The internal name for this column.
  * @param uiName		The name of this column as it should be displayed in the UI.
@@ -358,7 +361,7 @@ HikerListFoldCompositeColumn::HikerListFoldCompositeColumn(CompositeTable& table
  * 
  * Delegates breadcrumb evaluation to FoldCompositeColumn::evaluateBreadcrumbTrail() and string
  * formatting and sorting to formatAndSortIntoStringList().
- *
+ * 
  * @param rowIndex	The row index.
  * @return			The computed value of the cell.
  */

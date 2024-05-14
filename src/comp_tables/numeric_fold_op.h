@@ -32,7 +32,7 @@ struct NumericFoldOpNames
 	 * Returns the name of the given fold operation or an empty string if the type is
 	 * invalid.
 	 * 
-	 * @param type	The fold operation.
+	 * @param foldOp	The fold operation.
 	 */
 	inline static QString getName(const NumericFoldOp foldOp)
 	{

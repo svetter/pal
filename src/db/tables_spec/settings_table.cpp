@@ -139,7 +139,7 @@ void SettingsTable::clearSetting(QWidget& parent, const GenericProjectSetting& s
 
 /**
  * Removes the setting from the project settings table entirely.
- *
+ * 
  * @param parent	The parent window. Cannot be nullptr.
  * @param setting	The setting to remove.
  */
@@ -159,7 +159,7 @@ void SettingsTable::removeSetting(QWidget& parent, const GenericProjectSetting& 
  * table.
  * 
  * @param parent	The parent window. Cannot be nullptr.
- * @param setting	The setting to remove.
+ * @param baseKey	The common key of all settings to remove.
  */
 void SettingsTable::removeAllMatchingSettings(QWidget& parent, const QString& baseKey)
 {

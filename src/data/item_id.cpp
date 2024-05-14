@@ -16,7 +16,7 @@
  */
 
 /**
- * @file ItemID.cpp
+ * @file item_id.cpp
  * 
  * This file defines the ItemID class and its subclass ValidItemID.
  */
@@ -55,7 +55,7 @@ ItemID::ItemID() : valid(false), id(LOWEST_LEGAL_ID - 1)
 /**
  * Creates an ItemID from another ItemID.
  *
- * @param id	A reference to the ItemID to copy.
+ * @param other	A reference to the ItemID to copy.
  */
 ItemID::ItemID(const ItemID& other) : valid(other.valid), id(other.id)
 {}
@@ -168,7 +168,7 @@ ValidItemID::ValidItemID(QVariant id) : ItemID(id)
 /**
  * Creates an ValidItemID from another ValidItemID.
  *
- * @param id	A reference to the ValidItemID to copy.
+ * @param other	A reference to the ValidItemID to copy.
  */
 ValidItemID::ValidItemID(const ValidItemID& other) : ValidItemID(other.asQVariant())
 {}

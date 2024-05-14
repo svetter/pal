@@ -60,7 +60,7 @@ Table::~Table()
 /**
  * Adds a column to the table during initialization.
  * 
- * @param column	The column to add. The table takes ownership of the column.
+ * @param newColumn	The column to add. The table takes ownership of the column.
  */
 void Table::addColumn(const Column& newColumn)
 {

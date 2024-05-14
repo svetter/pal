@@ -180,6 +180,7 @@ bool Database::openExisting(QWidget& parent, const QString& filepath)
  * Copies the current database file to a new filepath and opens a connection to the new file.
  * 
  * @param parent	The parent window.
+ * @param filepath	The filepath for the new copy of the database file to create and open.
  * @return			True if the save was successful and the new file is now opened, false otherwise.
  */
 bool Database::saveAs(QWidget& parent, const QString& filepath)

@@ -103,7 +103,7 @@ void ParticipatedTable::updateRows(QWidget& parent, const QSet<ValidItemID>& asc
 
 /**
  * Translates the data of a single participation to a list of column-data pairs.
- *
+ * 
  * @param columns	The column list specifying the order of the data.
  * @param ascentID	The ascentID of the participation.
  * @param hikerID	The hikerID of the participation.
