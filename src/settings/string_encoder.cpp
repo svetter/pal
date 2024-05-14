@@ -13,7 +13,7 @@ QString StringEncoder::encodeInt(const QString& paramName, int value)
 
 QString StringEncoder::encodeID(const QString& paramName, const ItemID& value)
 {
-	return paramName + "=" + value.asQVariant().toString();
+	return paramName + "=" + (value.isInvalid() ? "-1" : value.asQVariant().toString());
 }
 
 QString StringEncoder::encodeBool(const QString& paramName, bool value)
