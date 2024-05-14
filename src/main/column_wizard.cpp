@@ -419,7 +419,11 @@ QString ColumnWizardSettingsPage::generateColumnName() const
 		}
 	}
 	else if (listStringFold) {
-		valueString = tr("All %1").arg(columnString);
+		if (columnToUse->primaryKey || isIdentityColumn) {
+			valueString = tr("All %1").arg(columnString);
+		} else {
+			valueString = tr("%1 (List)").arg(columnString);
+		}
 	}
 	
 	const QString separator = tableString.isEmpty() || valueString.isEmpty() ? "" : ": ";
