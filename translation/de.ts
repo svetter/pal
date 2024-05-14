@@ -201,7 +201,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="805"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="801"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Besteigung löschen</numerusform>
@@ -209,32 +209,32 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="828"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="824"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="848"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="844"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="864"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="865"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="861"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="890"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="886"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="891"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="887"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -753,12 +753,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>ColumnWizard</name>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="524"/>
+        <location filename="../src/main/column_wizard.cpp" line="528"/>
         <source>Help with creating a custom column</source>
         <translation>Hilfe beim Erstellen einer benutzerdefinierten Spalte</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="525"/>
+        <location filename="../src/main/column_wizard.cpp" line="529"/>
         <source>This wizard will create a new column for the %1 table.
 Note that this custom column will not hold any new data, but show data already in the database, either directly or processed to show statistical data.
 
@@ -887,9 +887,14 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         <translation>Min. %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="422"/>
+        <location filename="../src/main/column_wizard.cpp" line="423"/>
         <source>All %1</source>
         <translation>Alle %1</translation>
+    </message>
+    <message>
+        <location filename="../src/main/column_wizard.cpp" line="425"/>
+        <source>%1 (List)</source>
+        <translation>%1 (Liste)</translation>
     </message>
 </context>
 <context>
@@ -1229,27 +1234,27 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="150"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="149"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="160"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="159"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="202"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="201"/>
         <source>New custom column for countries</source>
         <translation>Neue benutzerdefinierte Spalte für Länder</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="212"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="211"/>
         <source>New country filter</source>
         <translation>Neuer Landes-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="224"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="223"/>
         <source>%Ln country/countries</source>
         <translation>
             <numerusform>%Ln Land</numerusform>
@@ -1257,12 +1262,12 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="170"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="169"/>
         <source>Saved new country.</source>
         <translation>Neues Land gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="180"/>
         <source>Saved changes in %Ln country/countries.</source>
         <translation>
             <numerusform>Änderungen in Land gespeichert.</numerusform>
@@ -1270,7 +1275,7 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/countries_table.cpp" line="192"/>
+        <location filename="../src/db/tables_spec/countries_table.cpp" line="191"/>
         <source>Deleted %Ln country/countries.</source>
         <translation>
             <numerusform>Land gelöscht.</numerusform>
@@ -1325,7 +1330,7 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/country_dialog.cpp" line="294"/>
+        <location filename="../src/dialogs/country_dialog.cpp" line="291"/>
         <source>Delete %Ln country/countries</source>
         <translation>
             <numerusform>Land löschen</numerusform>
@@ -1648,7 +1653,7 @@ Eine Datei mit einer älteren Version von PAL zu öffnen, kann zu Fehlern, Abst�
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="293"/>
+        <location filename="../src/db/db_upgrade.cpp" line="294"/>
         <source>An error occurred while trying to create a backup of the project file.
 %1
 
@@ -1659,17 +1664,17 @@ Note: You can still create a backup manually before proceeding.</source>
 Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="291"/>
+        <location filename="../src/db/db_upgrade.cpp" line="292"/>
         <source>Error creating backup</source>
         <translation>Fehler beim Erstellen des Backups</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="315"/>
+        <location filename="../src/db/db_upgrade.cpp" line="316"/>
         <source>Database upgrade successful</source>
         <translation>Aktualisierung der Datenbank erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="316"/>
+        <location filename="../src/db/db_upgrade.cpp" line="317"/>
         <source>The database was successfully upgraded from version %1 to version %2.</source>
         <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
     </message>
@@ -2225,6 +2230,19 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     </message>
 </context>
 <context>
+    <name>FoldCompositeColumn</name>
+    <message>
+        <location filename="../src/comp_tables/fold_composite_column.cpp" line="298"/>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/fold_composite_column.cpp" line="298"/>
+        <source>No</source>
+        <translation>Nein</translation>
+    </message>
+</context>
+<context>
     <name>General</name>
     <message>
         <location filename="../src/main/helpers.cpp" line="144"/>
@@ -2342,7 +2360,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/hiker_dialog.cpp" line="294"/>
+        <location filename="../src/dialogs/hiker_dialog.cpp" line="291"/>
         <source>Delete %Ln hiker(s)</source>
         <translation>
             <numerusform>Wanderer löschen</numerusform>
@@ -2368,27 +2386,27 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="150"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="149"/>
         <source>Hiker</source>
         <translation>Wanderer</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="160"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="159"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="202"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="201"/>
         <source>New custom column hikers</source>
         <translation>Neue benutzerdefinierte Spalte für Wanderer</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="212"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="211"/>
         <source>New hiker filter</source>
         <translation>Neuer Wanderer-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="224"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="223"/>
         <source>%Ln hiker(s)</source>
         <translation>
             <numerusform>%Ln Wanderer</numerusform>
@@ -2396,12 +2414,12 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="170"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="169"/>
         <source>Saved new hiker.</source>
         <translation>Neuer Wanderer gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="181"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="180"/>
         <source>Saved changes in %Ln hiker(s).</source>
         <translation>
             <numerusform>Änderungen in Wanderer gespeichert.</numerusform>
@@ -2409,7 +2427,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/hikers_table.cpp" line="192"/>
+        <location filename="../src/db/tables_spec/hikers_table.cpp" line="191"/>
         <source>Deleted %Ln hiker(s).</source>
         <translation>
             <numerusform>Wanderer gelöscht.</numerusform>
@@ -2537,12 +2555,12 @@ Trotzdem speichern?</translation>
         <translation>Top %1: Höchste Summe Höhenmeter [km]</translation>
     </message>
     <message>
-        <location filename="../src/stats/stats_engine.cpp" line="694"/>
+        <location filename="../src/stats/stats_engine.cpp" line="692"/>
         <source>Elevation gains</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/stats/stats_engine.cpp" line="695"/>
+        <location filename="../src/stats/stats_engine.cpp" line="693"/>
         <source>Peak heights</source>
         <translation>Gipfelhöhen</translation>
     </message>
@@ -3038,7 +3056,7 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="420"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="416"/>
         <source>Delete %Ln peak(s)</source>
         <translation>
             <numerusform>Gipfel löschen</numerusform>
@@ -3094,27 +3112,27 @@ Trotzdem speichern?</translation>
         <translation>Wikipedia-Link</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="169"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="168"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="179"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="178"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="221"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="220"/>
         <source>New custom column for peaks</source>
         <translation>Neue benutzerdefinierte Spalte für Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="231"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="230"/>
         <source>New peak filter</source>
         <translation>Neuer Gipfel-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="243"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="242"/>
         <source>%Ln peak(s)</source>
         <translation>
             <numerusform>%Ln Gipfel</numerusform>
@@ -3122,12 +3140,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="189"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="188"/>
         <source>Saved new peak.</source>
         <translation>Neuer Gipfel gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="200"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="199"/>
         <source>Saved changes in %Ln peak(s).</source>
         <translation>
             <numerusform>Änderungen in Gipfel gespeichert.</numerusform>
@@ -3135,7 +3153,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/peaks_table.cpp" line="211"/>
+        <location filename="../src/db/tables_spec/peaks_table.cpp" line="210"/>
         <source>Deleted %Ln peak(s).</source>
         <translation>
             <numerusform>Gipfel gelöscht.</numerusform>
@@ -3320,7 +3338,7 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/range_dialog.cpp" line="312"/>
+        <location filename="../src/dialogs/range_dialog.cpp" line="309"/>
         <source>Delete %Ln mountain range(s)</source>
         <translation>
             <numerusform>Gebirge löschen</numerusform>
@@ -3351,17 +3369,17 @@ Trotzdem speichern?</translation>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="155"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="154"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="165"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="164"/>
         <source>None</source>
         <translation>Keines</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="186"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="185"/>
         <source>Saved changes in %Ln mountain range(s).</source>
         <translation>
             <numerusform>Änderungen in Gebirge gespeichert.</numerusform>
@@ -3369,7 +3387,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="197"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="196"/>
         <source>Deleted %Ln mountain range(s).</source>
         <translation>
             <numerusform>Gebirge gelöscht.</numerusform>
@@ -3377,17 +3395,17 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="207"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="206"/>
         <source>New custom column for mountain ranges</source>
         <translation>Neue benutzerdefinierte Spalte für Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="217"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="216"/>
         <source>New mountain range filter</source>
         <translation>Neuer Gebirgs-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="229"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="228"/>
         <source>%Ln mountain range(s)</source>
         <translation>
             <numerusform>%Ln Gebirge</numerusform>
@@ -3395,7 +3413,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ranges_table.cpp" line="175"/>
+        <location filename="../src/db/tables_spec/ranges_table.cpp" line="174"/>
         <source>Saved new mountain range.</source>
         <translation>Neues Gebirge gespeichert.</translation>
     </message>
@@ -3473,7 +3491,7 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/region_dialog.cpp" line="370"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="367"/>
         <source>Delete %Ln region(s)</source>
         <translation>
             <numerusform>Region löschen</numerusform>
@@ -3509,27 +3527,27 @@ Trotzdem speichern?</translation>
         <translation>Land-ID</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="158"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="157"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="168"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="167"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="210"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="209"/>
         <source>New custom column for regions</source>
         <translation>Neue benutzerdefinierte Spalte für Regionen</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="220"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="219"/>
         <source>New region filter</source>
         <translation>Neuer Regions-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="232"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="231"/>
         <source>%Ln region(s)</source>
         <translation>
             <numerusform>%Ln Region</numerusform>
@@ -3537,12 +3555,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="178"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="177"/>
         <source>Saved new region.</source>
         <translation>Neue Region gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="189"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="188"/>
         <source>Saved changes in %Ln region(s).</source>
         <translation>
             <numerusform>Änderungen in Region gespeichert.</numerusform>
@@ -3550,7 +3568,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/regions_table.cpp" line="200"/>
+        <location filename="../src/db/tables_spec/regions_table.cpp" line="199"/>
         <source>Deleted %Ln region(s).</source>
         <translation>
             <numerusform>Region gelöscht.</numerusform>
@@ -3906,7 +3924,7 @@ Trotzdem speichern?</translation>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/trip_dialog.cpp" line="363"/>
+        <location filename="../src/dialogs/trip_dialog.cpp" line="360"/>
         <source>Delete %Ln trip(s)</source>
         <translation>
             <numerusform>Urlaub löschen</numerusform>
@@ -3947,27 +3965,27 @@ Trotzdem speichern?</translation>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="165"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="164"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="175"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="174"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="217"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="216"/>
         <source>New custom column for trips</source>
         <translation>Neue benutzerdefinierte Spalte für Urlaube</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="227"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="226"/>
         <source>New trip filter</source>
         <translation>Neuer Urlaubs-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="239"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="238"/>
         <source>%Ln trip(s)</source>
         <translation>
             <numerusform>%Ln Urlaub</numerusform>
@@ -3975,12 +3993,12 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="185"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="184"/>
         <source>Saved new trip.</source>
         <translation>Neuer Urlaub gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="196"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="195"/>
         <source>Saved changes in %Ln trip(s).</source>
         <translation>
             <numerusform>Änderungen in Urlaub gespeichert.</numerusform>
@@ -3988,7 +4006,7 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/trips_table.cpp" line="207"/>
+        <location filename="../src/db/tables_spec/trips_table.cpp" line="206"/>
         <source>Deleted %Ln trip(s).</source>
         <translation>
             <numerusform>Urlaub gelöscht.</numerusform>
