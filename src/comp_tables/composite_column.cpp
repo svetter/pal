@@ -338,7 +338,7 @@ CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEn
 	
 	const NormalTable* const parentBaseTable = decodeTableIdentity(restOfEncoding, "parentBaseTable_name", db, ok);
 	if (!ok) return nullptr;
-	CompositeTable* parentTable;
+	CompositeTable* parentTable = nullptr;
 	for (const ItemTypeMapper* const mapper : typesHandler.getAllMappers()) {
 		if (&mapper->baseTable == parentBaseTable) {
 			parentTable = &mapper->compTable;
