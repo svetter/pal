@@ -286,163 +286,168 @@ private:
  */
 class Settings {
 public:
+	/** The style which was applied to the application at launch. */
 	inline static QString systemDefaultStyle;
 	
 	
 	// === APP VERSION ===
 	
 	/** The version of the application with which the settings file was last written. */
-	inline static const Setting<QString>	appVersion								= Setting<QString>	("appVersion",									getAppVersion());
+	inline static const Setting<QString>		appVersion									= Setting<QString>		("appVersion",									getAppVersion());
 	
 	
 	// === EXPLICIT ===
 	
 	// Language
 	/** The language in which text in the application is displayed. */
-	inline static const Setting<QString>	language								= Setting<QString>	("language",									getDefaultLanguageCode());
+	inline static const Setting<QString>		language									= Setting<QString>		("language",									getDefaultLanguageCode());
 	
 	// Application UI style
 	/** The style in which the application is displayed. */
-	inline static const Setting<QString>	uiStyle									= Setting<QString>	("uiStyle",										"");
+	inline static const Setting<QString>		uiStyle										= Setting<QString>		("uiStyle",										"");
 	
 	// General/global
 	/** Ask user for confirmation before deleting an item. */
-	inline static const Setting<bool>	confirmDelete								= Setting<bool>		("confirmDelete",								true);
+	inline static const Setting<bool>			confirmDelete								= Setting<bool>			("confirmDelete",								true);
 	/** Ask user for confirmation before discarding changes in an edit dialog. */
-	inline static const Setting<bool>	confirmCancel								= Setting<bool>		("confirmCancel",								true);
+	inline static const Setting<bool>			confirmCancel								= Setting<bool>			("confirmCancel",								true);
 	/** Warn user if an item with the same name already exists. */
-	inline static const Setting<bool>	warnAboutDuplicateNames						= Setting<bool>		("warnAboutDuplicateNames",						true);
+	inline static const Setting<bool>			warnAboutDuplicateNames						= Setting<bool>			("warnAboutDuplicateNames",						true);
 	
 	/** Only prepare the composite table corresponding to the open tab on startup, and defer preparing the other tables until they are opened. */
-	inline static const Setting<bool>	onlyPrepareActiveTableOnStartup				= Setting<bool>		("onlyPrepareActiveTableOnStartup",				true);
+	inline static const Setting<bool>			onlyPrepareActiveTableOnStartup				= Setting<bool>			("onlyPrepareActiveTableOnStartup",				true);
 	
 	/** Open the project settings dialog when creating a new database. */
-	inline static const Setting<bool>	openProjectSettingsOnNewDatabase			= Setting<bool>		("openProjectSettingsOnNewDatabase",			true);
+	inline static const Setting<bool>			openProjectSettingsOnNewDatabase			= Setting<bool>			("openProjectSettingsOnNewDatabase",			true);
 	
 	// Remember UI
 	/** Remember the window positions of the main window and all dialogs. */
-	inline static const Setting<bool>	rememberWindowPositions						= Setting<bool>		("rememberWindowPositions",						true);
+	inline static const Setting<bool>			rememberWindowPositions						= Setting<bool>			("rememberWindowPositions",						true);
 	/** If window positions are remembered, store dialog positions relative to the main window. */
-	inline static const Setting<bool>	rememberWindowPositionsRelative				= Setting<bool>		("rememberWindowPositionsRelative",				true);
+	inline static const Setting<bool>			rememberWindowPositionsRelative				= Setting<bool>			("rememberWindowPositionsRelative",				true);
 	/** Remember which tab is open in the main window. */
-	inline static const Setting<bool>	rememberTab									= Setting<bool>		("rememberTab",									true);
+	inline static const Setting<bool>			rememberTab									= Setting<bool>			("rememberTab",									true);
 	/** Remember the column widths of all tables in the main window. */
-	inline static const Setting<bool>	rememberColumnWidths						= Setting<bool>		("rememberColumnWidths",						true);
+	inline static const Setting<bool>			rememberColumnWidths						= Setting<bool>			("rememberColumnWidths",						true);
 	/** Remember the column order of all tables in the main window. */
-	inline static const Setting<bool>	rememberColumnOrder							= Setting<bool>		("rememberColumnOrder",							true);
+	inline static const Setting<bool>			rememberColumnOrder							= Setting<bool>			("rememberColumnOrder",							true);
 	/** Remember which columns are hidden in all tables in the main window. */
-	inline static const Setting<bool>	rememberHiddenColumns						= Setting<bool>		("rememberHiddenColumns",						true);
+	inline static const Setting<bool>			rememberHiddenColumns						= Setting<bool>			("rememberHiddenColumns",						true);
 	/** Remember the sorting of all tables in the main window. */
-	inline static const Setting<bool>	rememberSorting								= Setting<bool>		("rememberSorting",								true);
+	inline static const Setting<bool>			rememberSorting								= Setting<bool>			("rememberSorting",								true);
 	/** Remember the active filters of all tables in the main window. */
-	inline static const Setting<bool>	rememberFilters								= Setting<bool>		("rememberFilters",								true);
+	inline static const Setting<bool>			rememberFilters								= Setting<bool>			("rememberFilters",								true);
 	
 	// Ascent dialog
 	/** Enable the date field for new ascents by default. */
-	inline static const Setting<bool>	ascentDialog_dateEnabledInitially			= Setting<bool>		("ascentDialog/dateEnabledInitially",			true);
+	inline static const Setting<bool>			ascentDialog_dateEnabledInitially			= Setting<bool>			("ascentDialog/dateEnabledInitially",			true);
 	/** Number of days in the past to set the date for a new ascent to by default. */
-	inline static const Setting<int>	ascentDialog_initialDateDaysInPast			= Setting<int>		("ascentDialog/initialDateDaysInPast",			0);
+	inline static const Setting<int>			ascentDialog_initialDateDaysInPast			= Setting<int>			("ascentDialog/initialDateDaysInPast",			0);
 	/** Enable the time field for new ascents by default. */
-	inline static const Setting<bool>	ascentDialog_timeEnabledInitially			= Setting<bool>		("ascentDialog/timeEnabledInitially",			false);
+	inline static const Setting<bool>			ascentDialog_timeEnabledInitially			= Setting<bool>			("ascentDialog/timeEnabledInitially",			false);
 	/** Time to set the time for a new ascent to by default. */
-	inline static const Setting<QTime>	ascentDialog_initialTime					= Setting<QTime>	("ascentDialog/initialTime",					QTime(12, 00));
+	inline static const Setting<QTime>			ascentDialog_initialTime					= Setting<QTime>		("ascentDialog/initialTime",					QTime(12, 00));
 	/** Enable the elevation gain field for new ascents by default. */
-	inline static const Setting<bool>	ascentDialog_elevationGainEnabledInitially	= Setting<bool>		("ascentDialog/elevationGainEnabledInitially",	true);
+	inline static const Setting<bool>			ascentDialog_elevationGainEnabledInitially	= Setting<bool>			("ascentDialog/elevationGainEnabledInitially",	true);
 	/** Elevation gain to set the elevation gain for a new ascent to by default. */
-	inline static const Setting<int>	ascentDialog_initialElevationGain			= Setting<int>		("ascentDialog/initialElevationGain",			500);
+	inline static const Setting<int>			ascentDialog_initialElevationGain			= Setting<int>			("ascentDialog/initialElevationGain",			500);
 	// Peak dialog
 	/** Enable the height field for new peaks by default. */
-	inline static const Setting<bool>	peakDialog_heightEnabledInitially			= Setting<bool>		("peakDialog/heightEnabledInitially",			true);
+	inline static const Setting<bool>			peakDialog_heightEnabledInitially			= Setting<bool>			("peakDialog/heightEnabledInitially",			true);
 	/** Height to set the height for a new peak to by default. */
-	inline static const Setting<int>	peakDialog_initialHeight					= Setting<int>		("peakDialog/initialHeight",					2000);
+	inline static const Setting<int>			peakDialog_initialHeight					= Setting<int>			("peakDialog/initialHeight",					2000);
 	// Trip dialog
 	/** Enable the start and end date fields for new trips by default. */
-	inline static const Setting<bool>	tripDialog_datesEnabledInitially			= Setting<bool>		("tripDialog/datesEnabledInitially",			true);
+	inline static const Setting<bool>			tripDialog_datesEnabledInitially			= Setting<bool>			("tripDialog/datesEnabledInitially",			true);
+	
+	// Google API key
+	/** The Google API key to use for finding links for peaks. */
+	inline static const Setting<QString>		googleApiKey								= Setting<QString>		("googleApiKey",								"");
 	
 	// Ascent viewer
 	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
-	inline static const Setting<bool>	ascentViewer_ascentTitleUnderPeakName		= Setting<bool>		("ascentViewer/ascentTitleUnderPeakName",		false);
+	inline static const Setting<bool>			ascentViewer_ascentTitleUnderPeakName		= Setting<bool>			("ascentViewer/ascentTitleUnderPeakName",		false);
 	
 	
 	// === IMPLICIT ===
 	
 	// Recently opened databases
 	/** The path to the last database that was opened. */
-	inline static const	Setting<QString>		lastOpenDatabaseFile					= Setting<QString>		("openRecent/lastOpenDatabaseFile");
+	inline static const	Setting<QString>		lastOpenDatabaseFile						= Setting<QString>		("openRecent/lastOpenDatabaseFile");
 	/** Paths to the most recently opened databases, in order of most recently opened first. */
-	inline static const	Setting<QStringList>	recentDatabaseFiles						= Setting<QStringList>	("openRecent/recentDatabaseFiles");
+	inline static const	Setting<QStringList>	recentDatabaseFiles							= Setting<QStringList>	("openRecent/recentDatabaseFiles");
 	
 	// Window geometry
 	/** Remember the main window as maximized. */
-	inline static const	Setting<bool>			mainWindow_maximized					= Setting<bool>			("implicit/mainWindow/maximized",		false);
+	inline static const	Setting<bool>			mainWindow_maximized						= Setting<bool>			("implicit/mainWindow/maximized",				false);
 	/** Remembered position and size of the main window. */
-	inline static const	Setting<QRect>			mainWindow_geometry						= Setting<QRect>		("implicit/mainWindow/geometry");
+	inline static const	Setting<QRect>			mainWindow_geometry							= Setting<QRect>		("implicit/mainWindow/geometry");
 	/** Remembered position and size of the ascent viewer window. */
-	inline static const	Setting<QRect>			ascentViewer_geometry					= Setting<QRect>		("implicit/ascentViewer/geometry");
+	inline static const	Setting<QRect>			ascentViewer_geometry						= Setting<QRect>		("implicit/ascentViewer/geometry");
 	/** Remembered position and size of the settings window. */
-	inline static const	Setting<QRect>			settingsWindow_geometry					= Setting<QRect>		("implicit/settingsWindow/geometry");
+	inline static const	Setting<QRect>			settingsWindow_geometry						= Setting<QRect>		("implicit/settingsWindow/geometry");
 	/** Remembered position and size of the project settings window. */
-	inline static const	Setting<QRect>			projectSettingsWindow_geometry			= Setting<QRect>		("implicit/projectSettingsWindow/geometry");
+	inline static const	Setting<QRect>			projectSettingsWindow_geometry				= Setting<QRect>		("implicit/projectSettingsWindow/geometry");
 	/** Remembered position and size of the ascent dialog. */
-	inline static const	Setting<QRect>			ascentDialog_geometry					= Setting<QRect>		("implicit/ascentDialog/geometry");
+	inline static const	Setting<QRect>			ascentDialog_geometry						= Setting<QRect>		("implicit/ascentDialog/geometry");
 	/** Remembered position and size of the peak dialog. */
-	inline static const	Setting<QRect>			peakDialog_geometry						= Setting<QRect>		("implicit/peakDialog/geometry");
+	inline static const	Setting<QRect>			peakDialog_geometry							= Setting<QRect>		("implicit/peakDialog/geometry");
 	/** Remembered position and size of the trip dialog. */
-	inline static const	Setting<QRect>			tripDialog_geometry						= Setting<QRect>		("implicit/tripDialog/geometry");
+	inline static const	Setting<QRect>			tripDialog_geometry							= Setting<QRect>		("implicit/tripDialog/geometry");
 	/** Remembered position and size of the hiker dialog. */
-	inline static const	Setting<QRect>			hikerDialog_geometry					= Setting<QRect>		("implicit/hikerDialog/geometry");
+	inline static const	Setting<QRect>			hikerDialog_geometry						= Setting<QRect>		("implicit/hikerDialog/geometry");
 	/** Remembered position and size of the region dialog. */
-	inline static const	Setting<QRect>			regionDialog_geometry					= Setting<QRect>		("implicit/regionDialog/geometry");
+	inline static const	Setting<QRect>			regionDialog_geometry						= Setting<QRect>		("implicit/regionDialog/geometry");
 	/** Remembered position and size of the range dialog. */
-	inline static const	Setting<QRect>			rangeDialog_geometry					= Setting<QRect>		("implicit/rangeDialog/geometry");
+	inline static const	Setting<QRect>			rangeDialog_geometry						= Setting<QRect>		("implicit/rangeDialog/geometry");
 	/** Remembered position and size of the country dialog. */
-	inline static const	Setting<QRect>			countryDialog_geometry					= Setting<QRect>		("implicit/countryDialog/geometry");
+	inline static const	Setting<QRect>			countryDialog_geometry						= Setting<QRect>		("implicit/countryDialog/geometry");
 	
 	// Item stats panel
 	/** Remembered state of the view setting to pin the axis ranges in the item-related statistics panels. */
-	inline static const Setting<bool>			itemStats_pinRanges						= Setting<bool>			("implicit/mainWindow/itemStats/pinRanges",	false);
+	inline static const Setting<bool>			itemStats_pinRanges							= Setting<bool>			("implicit/mainWindow/itemStats/pinRanges",		false);
 	/** Remembered visibility state for the statistics panel in the ascents tab of the main window. */
-	inline static const	Setting<bool>			ascentsStats_show						= Setting<bool>			("implicit/mainWindow/ascents/showStats",	true);
+	inline static const	Setting<bool>			ascentsStats_show							= Setting<bool>			("implicit/mainWindow/ascents/showStats",		true);
 	/** Remembered visibility state for the statistics panel in the peaks tab of the main window. */
-	inline static const	Setting<bool>			peaksStats_show							= Setting<bool>			("implicit/mainWindow/peaks/showStats",		true);
+	inline static const	Setting<bool>			peaksStats_show								= Setting<bool>			("implicit/mainWindow/peaks/showStats",			true);
 	/** Remembered visibility state for the statistics panel in the trips tab of the main window. */
-	inline static const	Setting<bool>			tripsStats_show							= Setting<bool>			("implicit/mainWindow/trips/showStats",		true);
+	inline static const	Setting<bool>			tripsStats_show								= Setting<bool>			("implicit/mainWindow/trips/showStats",			true);
 	/** Remembered visibility state for the statistics panel in the hikers tab of the main window. */
-	inline static const	Setting<bool>			hikersStats_show						= Setting<bool>			("implicit/mainWindow/hikers/showStats",	true);
+	inline static const	Setting<bool>			hikersStats_show							= Setting<bool>			("implicit/mainWindow/hikers/showStats",		true);
 	/** Remembered visibility state for the statistics panel in the regions tab of the main window. */
-	inline static const	Setting<bool>			regionsStats_show						= Setting<bool>			("implicit/mainWindow/regions/showStats",	true);
+	inline static const	Setting<bool>			regionsStats_show							= Setting<bool>			("implicit/mainWindow/regions/showStats",		true);
 	/** Remembered visibility state for the statistics panel in the ranges tab of the main window. */
-	inline static const	Setting<bool>			rangesStats_show						= Setting<bool>			("implicit/mainWindow/ranges/showStats",	true);
+	inline static const	Setting<bool>			rangesStats_show							= Setting<bool>			("implicit/mainWindow/ranges/showStats",		true);
 	/** Remembered visibility state for the statistics panel in the countries tab of the main window. */
-	inline static const	Setting<bool>			countriesStats_show						= Setting<bool>			("implicit/mainWindow/countries/showStats",	true);
+	inline static const	Setting<bool>			countriesStats_show							= Setting<bool>			("implicit/mainWindow/countries/showStats",		true);
 	
 	// Stats panel splitter sizes
 	/** Remembered sizes for the splitter between table and statistics frame in the ascents tab of the main window. */
-	inline static const	Setting<QStringList>	ascentsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ascents/splitterSizes");
+	inline static const	Setting<QStringList>	ascentsStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/ascents/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the peaks tab of the main window. */
-	inline static const	Setting<QStringList>	peaksStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/peaks/splitterSizes");
+	inline static const	Setting<QStringList>	peaksStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/peaks/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the trips tab of the main window. */
-	inline static const	Setting<QStringList>	tripsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/trips/splitterSizes");
+	inline static const	Setting<QStringList>	tripsStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/trips/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the hikers tab of the main window. */
-	inline static const	Setting<QStringList>	hikersStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/hikers/splitterSizes");
+	inline static const	Setting<QStringList>	hikersStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/hikers/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the regions tab of the main window. */
-	inline static const	Setting<QStringList>	regionsStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/regions/splitterSizes");
+	inline static const	Setting<QStringList>	regionsStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/regions/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the ranges tab of the main window. */
-	inline static const	Setting<QStringList>	rangesStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/ranges/splitterSizes");
+	inline static const	Setting<QStringList>	rangesStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/ranges/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the countries tab of the main window. */
-	inline static const	Setting<QStringList>	countriesStats_splitterSizes			= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
+	inline static const	Setting<QStringList>	countriesStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
 	
 	// Ascent viewer
 	/** Remembered value of the spin box determining the interval (in seconds) for a slideshow in the ascent viewer. */
-	inline static const Setting<int>			ascentViewer_slideshowInterval			= Setting<int>			("implicit/ascentViewer/slideshowInterval", 6);
+	inline static const Setting<int>			ascentViewer_slideshowInterval				= Setting<int>			("implicit/ascentViewer/slideshowInterval",		6);
 	/** Remembered value of the checkbox determining whether the slideshow should be started automatically in the ascent viewer. */
-	inline static const Setting<bool>			ascentViewer_slideshowAutostart			= Setting<bool>			("implicit/ascentViewer/slideshowAutostart", false);
+	inline static const Setting<bool>			ascentViewer_slideshowAutostart				= Setting<bool>			("implicit/ascentViewer/slideshowAutostart",	false);
 	
 	// Ascent viewer splitter sizes
 	/** Remembered sizes for the left splitter in the ascent viewer. */
-	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
+	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes				= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */
-	inline static const	Setting<QStringList>	ascentViewer_rightSplitterSizes			= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
+	inline static const	Setting<QStringList>	ascentViewer_rightSplitterSizes				= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
 	
 	
 	
