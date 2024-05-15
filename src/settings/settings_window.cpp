@@ -122,6 +122,8 @@ void SettingsWindow::loadSettings()
 	
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.get());
 	
+	googleApiKeyEdit							->setText		(googleApiKey								.get());
+	
 	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.get());
 	
 	updateEnabled();
@@ -162,6 +164,8 @@ void SettingsWindow::loadDefaults()
 	peakHeightSpinner							->setValue		(peakDialog_initialHeight					.getDefault());
 	
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.getDefault());
+	
+	googleApiKeyEdit							->setText		(googleApiKey								.getDefault());
 	
 	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.getDefault());
 	
@@ -211,6 +215,8 @@ void SettingsWindow::saveSettings()
 	peakDialog_initialHeight					.set(peakHeightSpinner							->value());
 	
 	tripDialog_datesEnabledInitially			.set(tripDatesCheckbox							->isChecked());
+	
+	googleApiKey								.set(googleApiKeyEdit							->text());
 	
 	ascentViewer_ascentTitleUnderPeakName		.set(ascentTitleUnderPeakNameCheckbox			->isChecked());
 	

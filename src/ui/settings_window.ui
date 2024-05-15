@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>868</height>
+    <width>770</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,75 +45,723 @@
     <number>10</number>
    </property>
    <item>
-    <layout class="QFormLayout" name="mainSettingsLayout">
-     <property name="horizontalSpacing">
-      <number>10</number>
+    <layout class="QHBoxLayout" name="columnsLayout">
+     <property name="spacing">
+      <number>20</number>
      </property>
-     <property name="verticalSpacing">
-      <number>10</number>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetFixedSize</enum>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="languageLabel">
-       <property name="text">
-        <string>Language</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="languageLayout">
+     <item>
+      <layout class="QVBoxLayout" name="column1Layout">
        <property name="spacing">
-        <number>0</number>
+        <number>15</number>
        </property>
        <item>
-        <widget class="QComboBox" name="languageCombo">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="languageLayout" stretch="0,1,1">
+         <property name="spacing">
+          <number>10</number>
          </property>
+         <item>
+          <widget class="QLabel" name="languageLabel">
+           <property name="text">
+            <string>Language</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="languageCombo">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="languageSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="column1TopSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="generalSettingsBox">
+         <property name="title">
+          <string>General settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="generalSettingsBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="confirmDeleteCheckbox">
+            <property name="text">
+             <string>Ask for confirmation before deleting entries</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="confirmCancelCheckbox">
+            <property name="text">
+             <string>Ask for confirmation before discarding unsaved changes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="warnAboutDuplicateNamesCheckbox">
+            <property name="text">
+             <string>Warn when saving an item with a duplicate name</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="onlyPrepareActiveTableCheckbox">
+            <property name="text">
+             <string>Only prepare active table on startup</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="openProjectSettingsOnNewDatabaseCheckbox">
+            <property name="text">
+             <string>Open project settings window when creating a new database</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
-        <spacer name="languageSpacer">
+        <widget class="QGroupBox" name="rememberBox">
+         <property name="title">
+          <string>Remember after restart</string>
+         </property>
+         <layout class="QVBoxLayout" name="rememberBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="rememberWindowsBox">
+            <property name="title">
+             <string>Windows</string>
+            </property>
+            <layout class="QGridLayout" name="rememberWindowsBoxLayout">
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="rememberWindowGeometryCheckbox">
+               <property name="text">
+                <string>Positions and sizes</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="rememberWindowPositionsRelativeCheckbox">
+               <property name="text">
+                <string>Positions relative to main window</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="rememberTablesBox">
+            <property name="title">
+             <string>Tables</string>
+            </property>
+            <layout class="QGridLayout" name="rememberTablesBoxLayout">
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <property name="horizontalSpacing">
+              <number>10</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>5</number>
+             </property>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="rememberFiltersCheckbox">
+               <property name="text">
+                <string>Active filters</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="rememberTableCheckbox">
+               <property name="text">
+                <string>Open table</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="rememberSortingCheckbox">
+               <property name="text">
+                <string>Sorting</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="rememberColumnWidthsCheckbox">
+               <property name="text">
+                <string>Column widths</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="rememberColumnOrderCheckbox">
+               <property name="text">
+                <string>Column order</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="rememberHiddenColumnsCheckbox">
+               <property name="text">
+                <string>Hidden columns</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="column1BottomSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
          </property>
         </spacer>
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="styleLabel">
-       <property name="text">
-        <string>Visual style</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <layout class="QHBoxLayout" name="styleLayout">
+     <item>
+      <layout class="QVBoxLayout" name="column2Layout">
        <property name="spacing">
-        <number>0</number>
+        <number>15</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetFixedSize</enum>
        </property>
        <item>
-        <widget class="QComboBox" name="styleCombo">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="styleLayout" stretch="0,1,1">
+         <property name="spacing">
+          <number>10</number>
          </property>
-        </widget>
+         <item>
+          <widget class="QLabel" name="styleLabel">
+           <property name="text">
+            <string>Visual style</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="styleCombo">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="styleSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
-        <spacer name="styleSpacer">
+        <spacer name="column2TopSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="defaultValuesBox">
+         <property name="title">
+          <string>Default values for new items</string>
+         </property>
+         <layout class="QVBoxLayout" name="defaultValuesBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="ascentSettingsBox">
+            <property name="title">
+             <string>Ascent</string>
+            </property>
+            <layout class="QFormLayout" name="ascentSettingsBoxLayout">
+             <property name="horizontalSpacing">
+              <number>10</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>5</number>
+             </property>
+             <property name="leftMargin">
+              <number>10</number>
+             </property>
+             <property name="topMargin">
+              <number>5</number>
+             </property>
+             <property name="rightMargin">
+              <number>10</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="ascentTimeCheckbox">
+               <property name="text">
+                <string>Local time</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="ascentElevationGainCheckbox">
+               <property name="text">
+                <string>Elevation gain</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <layout class="QHBoxLayout" name="ascentDateLayout">
+               <property name="spacing">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QSpinBox" name="ascentDateDaysInPastSpinner">
+                 <property name="minimumSize">
+                  <size>
+                   <width>65</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>99999</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="ascentDateDaysInPastLabel">
+                 <property name="text">
+                  <string>days in the past</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="ascentDateSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="ascentDateCheckbox">
+               <property name="text">
+                <string>Date</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="ascentTimeLayout">
+               <property name="spacing">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QTimeEdit" name="ascentTimeWidget">
+                 <property name="minimumSize">
+                  <size>
+                   <width>65</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="ascentTimeSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="1">
+              <layout class="QHBoxLayout" name="ascentElevationGainLayout">
+               <property name="spacing">
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QSpinBox" name="ascentElevationGainSpinner">
+                 <property name="minimumSize">
+                  <size>
+                   <width>65</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="suffix">
+                  <string notr="true"> m</string>
+                 </property>
+                 <property name="maximum">
+                  <number>9000</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="ascentElevationGainSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="peakTripSettingsBoxesLayout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="peakSettingsBox">
+              <property name="title">
+               <string>Peak</string>
+              </property>
+              <layout class="QFormLayout" name="peakSettingsBoxLayout">
+               <property name="horizontalSpacing">
+                <number>10</number>
+               </property>
+               <property name="verticalSpacing">
+                <number>5</number>
+               </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="peakHeightCheckbox">
+                 <property name="text">
+                  <string>Height</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="peakHeightLayout">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QSpinBox" name="peakHeightSpinner">
+                   <property name="minimumSize">
+                    <size>
+                     <width>65</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="suffix">
+                    <string notr="true"> m</string>
+                   </property>
+                   <property name="minimum">
+                    <number>10</number>
+                   </property>
+                   <property name="maximum">
+                    <number>9000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="peakHeightSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="tripSettingsBox">
+              <property name="title">
+               <string>Trip</string>
+              </property>
+              <layout class="QFormLayout" name="tripSettingsBoxLayout">
+               <property name="horizontalSpacing">
+                <number>10</number>
+               </property>
+               <property name="verticalSpacing">
+                <number>5</number>
+               </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="tripDatesCheckbox">
+                 <property name="text">
+                  <string>Specify dates</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <spacer name="tripDatesSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="googleApiKeyBox">
+         <property name="title">
+          <string>Google Search API key</string>
+         </property>
+         <layout class="QVBoxLayout" name="googleApiKeyBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="googleApiKeyLabel">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set a Google Search API key to enable automatic detection of peak links.&lt;br/&gt;&lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;You can find out how to create an API key here.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="googleApiKeyEdit">
+            <property name="placeholderText">
+             <string>Paste API key here</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="ascentViewerBox">
+         <property name="title">
+          <string>Ascent Viewer</string>
+         </property>
+         <layout class="QVBoxLayout" name="ascentViewerBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="ascentTitleUnderPeakNameCheckbox">
+            <property name="text">
+             <string>Show ascent title below peak name, not in ascent box</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="column2BottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -121,502 +769,6 @@
       </layout>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="generalSettingsBox">
-     <property name="title">
-      <string>General settings</string>
-     </property>
-     <layout class="QVBoxLayout" name="generalSettingsBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="confirmDeleteCheckbox">
-        <property name="text">
-         <string>Ask for confirmation before deleting entries</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="confirmCancelCheckbox">
-        <property name="text">
-         <string>Ask for confirmation before discarding unsaved changes</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="warnAboutDuplicateNamesCheckbox">
-        <property name="text">
-         <string>Warn when saving an item with a duplicate name</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="onlyPrepareActiveTableCheckbox">
-        <property name="text">
-         <string>Only prepare active table on startup</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="openProjectSettingsOnNewDatabaseCheckbox">
-        <property name="text">
-         <string>Open project settings window when creating a new database</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="rememberBox">
-     <property name="title">
-      <string>Remember after restart</string>
-     </property>
-     <layout class="QVBoxLayout" name="rememberBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <item>
-       <widget class="QGroupBox" name="rememberWindowsBox">
-        <property name="title">
-         <string>Windows</string>
-        </property>
-        <layout class="QGridLayout" name="rememberWindowsBoxLayout">
-         <property name="leftMargin">
-          <number>10</number>
-         </property>
-         <property name="topMargin">
-          <number>5</number>
-         </property>
-         <property name="rightMargin">
-          <number>10</number>
-         </property>
-         <property name="bottomMargin">
-          <number>5</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="rememberWindowGeometryCheckbox">
-           <property name="text">
-            <string>Positions and sizes</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="rememberWindowPositionsRelativeCheckbox">
-           <property name="text">
-            <string>Positions relative to main window</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="rememberTablesBox">
-        <property name="title">
-         <string>Tables</string>
-        </property>
-        <layout class="QGridLayout" name="rememberTablesBoxLayout">
-         <property name="leftMargin">
-          <number>10</number>
-         </property>
-         <property name="topMargin">
-          <number>5</number>
-         </property>
-         <property name="rightMargin">
-          <number>10</number>
-         </property>
-         <property name="bottomMargin">
-          <number>5</number>
-         </property>
-         <property name="horizontalSpacing">
-          <number>10</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>5</number>
-         </property>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="rememberFiltersCheckbox">
-           <property name="text">
-            <string>Active filters</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="rememberTableCheckbox">
-           <property name="text">
-            <string>Open table</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="rememberSortingCheckbox">
-           <property name="text">
-            <string>Sorting</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="rememberColumnWidthsCheckbox">
-           <property name="text">
-            <string>Column widths</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="rememberColumnOrderCheckbox">
-           <property name="text">
-            <string>Column order</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="rememberHiddenColumnsCheckbox">
-           <property name="text">
-            <string>Hidden columns</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="defaultValuesBox">
-     <property name="title">
-      <string>Default values for new items</string>
-     </property>
-     <layout class="QVBoxLayout" name="defaultValuesBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <item>
-       <widget class="QGroupBox" name="ascentSettingsBox">
-        <property name="title">
-         <string>Ascent</string>
-        </property>
-        <layout class="QFormLayout" name="ascentSettingsBoxLayout">
-         <property name="horizontalSpacing">
-          <number>10</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>5</number>
-         </property>
-         <property name="leftMargin">
-          <number>10</number>
-         </property>
-         <property name="topMargin">
-          <number>5</number>
-         </property>
-         <property name="rightMargin">
-          <number>10</number>
-         </property>
-         <property name="bottomMargin">
-          <number>5</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="ascentTimeCheckbox">
-           <property name="text">
-            <string>Local time</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="ascentElevationGainCheckbox">
-           <property name="text">
-            <string>Elevation gain</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="ascentDateLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QSpinBox" name="ascentDateDaysInPastSpinner">
-             <property name="minimumSize">
-              <size>
-               <width>65</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximum">
-              <number>99999</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="ascentDateDaysInPastLabel">
-             <property name="text">
-              <string>days in the past</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="ascentDateSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="ascentDateCheckbox">
-           <property name="text">
-            <string>Date</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <layout class="QHBoxLayout" name="ascentTimeLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QTimeEdit" name="ascentTimeWidget">
-             <property name="minimumSize">
-              <size>
-               <width>65</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="ascentTimeSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="1">
-          <layout class="QHBoxLayout" name="ascentElevationGainLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QSpinBox" name="ascentElevationGainSpinner">
-             <property name="minimumSize">
-              <size>
-               <width>65</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="suffix">
-              <string notr="true"> m</string>
-             </property>
-             <property name="maximum">
-              <number>9000</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="ascentElevationGainSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="peakTripSettingsBoxesLayout">
-        <property name="spacing">
-         <number>10</number>
-        </property>
-        <item>
-         <widget class="QGroupBox" name="peakSettingsBox">
-          <property name="title">
-           <string>Peak</string>
-          </property>
-          <layout class="QFormLayout" name="peakSettingsBoxLayout">
-           <property name="horizontalSpacing">
-            <number>10</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>5</number>
-           </property>
-           <property name="leftMargin">
-            <number>10</number>
-           </property>
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="peakHeightCheckbox">
-             <property name="text">
-              <string>Height</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <layout class="QHBoxLayout" name="peakHeightLayout">
-             <property name="spacing">
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="QSpinBox" name="peakHeightSpinner">
-               <property name="minimumSize">
-                <size>
-                 <width>65</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="suffix">
-                <string notr="true"> m</string>
-               </property>
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>9000</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="peakHeightSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="tripSettingsBox">
-          <property name="title">
-           <string>Trip</string>
-          </property>
-          <layout class="QFormLayout" name="tripSettingsBoxLayout">
-           <property name="horizontalSpacing">
-            <number>10</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>5</number>
-           </property>
-           <property name="leftMargin">
-            <number>10</number>
-           </property>
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="tripDatesCheckbox">
-             <property name="text">
-              <string>Specify dates</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <spacer name="tripDatesSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="ascentViewerBox">
-     <property name="title">
-      <string>Ascent Viewer</string>
-     </property>
-     <layout class="QVBoxLayout" name="ascentViewerBoxLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="ascentTitleUnderPeakNameCheckbox">
-        <property name="text">
-         <string>Show ascent title below peak name, not in ascent box</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
    </item>
    <item>
     <spacer name="bottomSpacer">
