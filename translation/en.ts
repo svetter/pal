@@ -142,7 +142,7 @@
 <context>
     <name>PeakDialog</name>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="71"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="79"/>
         <source>Edit %Ln peak(s)</source>
         <translation>
             <numerusform>Edit peak</numerusform>
@@ -150,7 +150,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="416"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="690"/>
         <source>Delete %Ln peak(s)</source>
         <translation>
             <numerusform>Delete peak</numerusform>
