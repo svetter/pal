@@ -295,6 +295,9 @@
          <property name="text">
           <string>Open</string>
          </property>
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -313,6 +316,9 @@
          </property>
          <property name="text">
           <string>Find</string>
+         </property>
+         <property name="enabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -376,6 +382,9 @@
          <property name="text">
           <string>Open</string>
          </property>
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -394,6 +403,9 @@
          </property>
          <property name="text">
           <string>Find</string>
+         </property>
+         <property name="enabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -457,6 +469,9 @@
          <property name="text">
           <string>Open</string>
          </property>
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -475,6 +490,9 @@
          </property>
          <property name="text">
           <string>Find</string>
+         </property>
+         <property name="enabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>

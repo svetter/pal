@@ -90,8 +90,12 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	}
 	
 	
+	connect(nameLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_nameChanged);
 	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
+	connect(mapsLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_mapsLinkChanged);
+	connect(earthLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_earthLinkChanged);
+	connect(wikiLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_wikiLinkChanged);
 	connect(mapsOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openMapsLink);
 	connect(earthOpenButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_openEarthLink);
 	connect(wikiOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openWikiLink);
@@ -210,6 +214,19 @@ bool PeakDialog::changesMade()
 
 
 /**
+ * Event handler for changes in the given name.
+ * 
+ * Enables or disables the link find buttons depending on whether the name is empty.
+ */
+void PeakDialog::handle_nameChanged()
+{
+	const bool nameNotEmpty = !nameLineEdit->text().isEmpty();
+	mapsFindButton	->setEnabled(nameNotEmpty);
+	earthFindButton	->setEnabled(nameNotEmpty);
+	wikiFindButton	->setEnabled(nameNotEmpty);
+}
+
+/**
  * Event handler for changes in the height specified checkbox.
  * 
  * Enables or disables the height spinner depending on the checkbox's state.
@@ -236,6 +253,36 @@ void PeakDialog::handle_newRegion()
 	};
 	
 	openNewRegionDialogAndStore(*this, mainWindow, db, callWhenDone);
+}
+
+/**
+ * Event handler for changes in the Google Maps link.
+ * 
+ * Enables or disables the open Google Maps link button depending on whether the link is empty.
+ */
+void PeakDialog::handle_mapsLinkChanged()
+{
+	mapsOpenButton->setEnabled(!mapsLineEdit->text().isEmpty());
+}
+
+/**
+ * Event handler for changes in the Google Earth link.
+ * 
+ * Enables or disables the open Google Earth link button depending on whether the link is empty.
+ */
+void PeakDialog::handle_earthLinkChanged()
+{
+	earthOpenButton->setEnabled(!earthLineEdit->text().isEmpty());
+}
+
+/**
+ * Event handler for changes in the Wikipedia link.
+ * 
+ * Enables or disables the open Wikipedia link button depending on whether the link is empty.
+ */
+void PeakDialog::handle_wikiLinkChanged()
+{
+	wikiOpenButton->setEnabled(!wikiLineEdit->text().isEmpty());
 }
 
 /**

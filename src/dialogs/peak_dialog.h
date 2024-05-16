@@ -60,8 +60,12 @@ private:
 	void insertInitData();
 	
 private slots:
+	void handle_nameChanged();
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
+	void handle_mapsLinkChanged();
+	void handle_earthLinkChanged();
+	void handle_wikiLinkChanged();
 	void handle_openMapsLink();
 	void handle_openEarthLink();
 	void handle_openWikiLink();
