@@ -110,69 +110,8 @@ void PeakLinkFinderThread::run()
 				wikiLink = "https://" + website + "/wiki/" + sanitizedPeakName;
 			}
 			else {
-				QString searchString = peakName;
-				if (peak->regionID.isValid()) {
-					const ItemID rangeID = db.regionsTable.rangeIDColumn.getValueFor(FORCE_VALID(peak->regionID));
-					if (rangeID.isValid()) {
-						const QString rangeName = db.rangesTable.nameColumn.getValueFor(FORCE_VALID(rangeID)).toString();
-						searchString += " " + rangeName;
-					}
-				}
-				const QString sanitizedSearchString = PeakDialog::urlSanitize(searchString, "+");
-				
-				QUrl url("https://customsearch.googleapis.com/customsearch/v1");
-				QUrlQuery query;
-				query.addQueryItem("key", apiKey);
-				query.addQueryItem("cx", "776b1f5ab722c4f75");
-				query.addQueryItem("q", sanitizedSearchString);
-				query.addQueryItem("num", "1");
-				query.addQueryItem("safe", "active");
-				query.addQueryItem("siteSearch", website);
-				query.addQueryItem("siteSearchFilter", "i");
-				url.setQuery(query);
-				
-				QNetworkAccessManager* const networkManager = new QNetworkAccessManager();
-				
-				bool waiting = true;
-				QNetworkReply* reply = nullptr;
-				connect(networkManager, &QNetworkAccessManager::finished, [&waiting, &reply](QNetworkReply* incomingReply) {
-					reply = incomingReply;
-					waiting = false;
-				});
-				
-				// Send network request and wait for response
-				networkManager->get(QNetworkRequest(url));
-				while (waiting) {
-					QCoreApplication::processEvents();
-				}
-				assert(reply);
-				
-				const QString request = reply->request().url().toString();
-				const QString response = reply->readAll();
-				const QString errorString = reply->errorString();
-				reply->manager()->deleteLater();
-				reply->deleteLater();
-				
-				// Parse JSON response
-				const QJsonDocument json = QJsonDocument::fromJson(response.toUtf8());
-				
-				if (reply->error() != QNetworkReply::NoError) {
-					// Parse and display error message
-					const QString errorMessage = json["error"]["message"].toString();
-					qDebug() << "Google query error:" << errorString << errorMessage;
-					QMessageBox::critical(parent, tr("Google search error"), errorMessage);
-					abort();
-					continue;
-				}
-				
-				// Check that there is at least one result
-				if (json["items"].toArray().isEmpty()) {
-					qDebug() << "No results for query" << request;
-					continue;
-				}
-				
-				// Get URL of first result
-				wikiLink = json["items"].toArray()[0].toObject()["link"].toString();
+				wikiLink = searchForLink(*peak, website);
+				if (abortWasCalled) break;
 			}
 		}
 		
@@ -183,11 +122,58 @@ void PeakLinkFinderThread::run()
 	}
 }
 
-
-
 /**
  * Gracefully aborts the thread.
  */
 void PeakLinkFinderThread::abort() {
 	abortWasCalled = true;
+}
+
+
+
+/**
+ * Searches for a link to the given peak on the given website.
+ * 
+ * Triggers an abort if an error occurs during the search.
+ * 
+ * @param peak		The peak to search for.
+ * @param website	The website to search on.
+ * @return			The found link, or an empty string if no link was found.
+ */
+QString PeakLinkFinderThread::searchForLink(const Peak& peak, const QString website)
+{
+	const QUrl url = PeakDialog::createLinkSearchUrl(db, website, peak.name, peak.regionID);
+	
+	QNetworkAccessManager* const networkManager = new QNetworkAccessManager();
+	
+	bool waiting = true;
+	QNetworkReply* reply = nullptr;
+	auto runWhenFinished = [&waiting, &reply](QNetworkReply* incomingReply) {
+		reply = incomingReply;
+		waiting = false;
+	};
+	connect(networkManager, &QNetworkAccessManager::finished, runWhenFinished);
+	
+	// Send network request and wait for response
+	networkManager->get(QNetworkRequest(url));
+	while (waiting) {
+		QCoreApplication::processEvents();
+	}
+	assert(reply);
+	
+	const QPair<bool, QString> resultPair = PeakDialog::parseLinkSearchResponse(reply);
+	const bool success = resultPair.first;
+	const QString resultString = resultPair.second;
+	
+	if (!success) {
+		QMessageBox::critical(parent, tr("Google search error"), resultString);
+		abort();
+		return QString();
+	}
+	
+	if (resultString.isEmpty()) {
+		return QString();
+	}
+	
+	return resultString;
 }

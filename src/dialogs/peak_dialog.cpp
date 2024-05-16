@@ -364,32 +364,14 @@ void PeakDialog::handle_findWikiLink() {
 	}
 	
 	// Use Google Search API to find Wikipedia link
-	QString searchString = peakName;
-	if (regionCombo->currentIndex() > 0) {
-		const ValidItemID regionID = selectableRegionIDs.at(regionCombo->currentIndex() - 1);
-		const ItemID rangeID = db.regionsTable.rangeIDColumn.getValueFor(regionID);
-		if (rangeID.isValid()) {
-			const QString rangeName = db.rangesTable.nameColumn.getValueFor(FORCE_VALID(rangeID)).toString();
-			searchString += " " + rangeName;
-		}
-	}
-	const QString sanitizedSearchString = urlSanitize(searchString, "+");
+	const ValidItemID regionID = selectableRegionIDs.at(regionCombo->currentIndex() - 1);
 	
-	if (sanitizedSearchString.isEmpty()) {
+	const QUrl url = createLinkSearchUrl(db, website, peakName, regionID);
+	if (url.isEmpty()) {
 		return;
 	}
-	wikiFindButton->setEnabled(false);
 	
-	QUrl url("https://customsearch.googleapis.com/customsearch/v1");
-	QUrlQuery query;
-	query.addQueryItem("key", Settings::googleApiKey.get());
-	query.addQueryItem("cx", "776b1f5ab722c4f75");
-	query.addQueryItem("q", sanitizedSearchString);
-	query.addQueryItem("num", "1");
-	query.addQueryItem("safe", "active");
-	query.addQueryItem("siteSearch", website);
-	query.addQueryItem("siteSearchFilter", "i");
-	url.setQuery(query);
+	wikiFindButton->setEnabled(false);
 	
 	QNetworkAccessManager* const networkManager = new QNetworkAccessManager();
 	connect(networkManager, &QNetworkAccessManager::finished, this, &PeakDialog::handle_wikiLinkSearchResponse);
@@ -405,36 +387,22 @@ void PeakDialog::handle_findWikiLink() {
  */
 void PeakDialog::handle_wikiLinkSearchResponse(QNetworkReply* reply)
 {
-	const QString request = reply->request().url().toString();
-	const QString response = reply->readAll();
-	const QString errorString = reply->errorString();
-	reply->manager()->deleteLater();
-	reply->deleteLater();
-	
-	// Parse JSON response
-	const QJsonDocument json = QJsonDocument::fromJson(response.toUtf8());
-	
-	if (reply->error() != QNetworkReply::NoError) {
-		// Parse and display error message
-		const QString errorMessage = json["error"]["message"].toString();
-		qDebug() << "Google query error:" << errorString << errorMessage;
-		QMessageBox::critical(this, tr("Google search error"), errorMessage);
-		wikiFindButton->setEnabled(true);
-		return;
-	}
-	
-	// Check that there is at least one result
-	if (json["items"].toArray().isEmpty()) {
-		qDebug() << "No results for query" << request;
-		wikiFindButton->setEnabled(true);
-		return;
-	}
-	
-	// Get URL of first result
-	const QString foundURL = json["items"].toArray()[0].toObject()["link"].toString();
-	wikiLineEdit->setText(foundURL);
-	
 	wikiFindButton->setEnabled(true);
+	
+	const QPair<bool, QString> resultPair = parseLinkSearchResponse(reply);
+	const bool success = resultPair.first;
+	const QString resultString = resultPair.second;
+	
+	if (!success) {
+		QMessageBox::critical(this, tr("Google search error"), resultString);
+		return;
+	}
+	
+	if (resultString.isEmpty()) {
+		return;
+	}
+	
+	wikiLineEdit->setText(resultString);
 }
 
 
@@ -459,6 +427,77 @@ void PeakDialog::handle_ok()
 void PeakDialog::aboutToClose()
 {
 	saveDialogGeometry(*this, mainWindow, Settings::peakDialog_geometry);
+}
+
+
+
+/**
+ * Creates a URL for a Google Programmable Search Engine search for the given peak on the given
+ * website.
+ * 
+ * @param db		The project database.
+ * @param website	The website to search on, e.g. "en.wikipedia.org".
+ * @param peakName	The name of the peak to search for.
+ * @param regionID	The ID of the region the peak is in.
+ * @return			The URL for the search, or an empty URL if the sanitized search string is empty.
+ */
+QUrl PeakDialog::createLinkSearchUrl(const Database& db, const QString& website, const QString& peakName, ItemID regionID)
+{
+	QString searchString = peakName;
+	if (regionID.isValid()) {
+		const ItemID rangeID = db.regionsTable.rangeIDColumn.getValueFor(FORCE_VALID(regionID));
+		if (rangeID.isValid()) {
+			const QString rangeName = db.rangesTable.nameColumn.getValueFor(FORCE_VALID(rangeID)).toString();
+			searchString += " " + rangeName;
+		}
+	}
+	const QString sanitizedSearchString = urlSanitize(searchString, "+");
+	
+	if (sanitizedSearchString.isEmpty()) {
+		return QUrl();
+	}
+	
+	QUrl url = QUrl("https://customsearch.googleapis.com/customsearch/v1");
+	QUrlQuery query = QUrlQuery();
+	query.addQueryItem("key", Settings::googleApiKey.get());
+	query.addQueryItem("cx", "776b1f5ab722c4f75");
+	query.addQueryItem("q", sanitizedSearchString);
+	query.addQueryItem("num", "1");
+	query.addQueryItem("safe", "active");
+	query.addQueryItem("siteSearch", website);
+	query.addQueryItem("siteSearchFilter", "i");
+	url.setQuery(query);
+	
+	return url;
+}
+
+QPair<bool, QString> PeakDialog::parseLinkSearchResponse(QNetworkReply* reply)
+{
+	const QString request = reply->request().url().toString();
+	const QString response = reply->readAll();
+	const QString errorString = reply->errorString();
+	reply->manager()->deleteLater();
+	reply->deleteLater();
+	
+	// Parse JSON response
+	const QJsonDocument json = QJsonDocument::fromJson(response.toUtf8());
+	
+	if (reply->error() != QNetworkReply::NoError) {
+		// Parse and display error message
+		const QString errorMessage = json["error"]["message"].toString();
+		qDebug() << "Google query error:" << errorString << errorMessage;
+		return {false, errorMessage};
+	}
+	
+	// Check that there is at least one result
+	if (json["items"].toArray().isEmpty()) {
+		qDebug() << "No results for query" << request;
+		return {true, QString()};
+	}
+	
+	// Get URL of first result
+	const QString result = json["items"].toArray()[0].toObject()["link"].toString();
+	return {true, result};
 }
 
 

@@ -65,6 +65,9 @@ public:
 	void run() override;
 	void abort();
 	
+private:
+	QString searchForLink(const Peak& peak, const QString website);
+	
 signals:
 	/**
 	 * Emitted when the thread has started and determined the number of peaks to process.
