@@ -27,6 +27,7 @@
 #include "src/data/item_types.h"
 #include "src/settings/project_settings_window.h"
 #include "src/settings/settings_window.h"
+#include "src/tools/peak_links_dialog.h"
 #include "src/tools/relocate_photos_dialog.h"
 #include "src/tools/export_dialog.h"
 #include "src/viewer/ascent_viewer.h"
@@ -162,6 +163,7 @@ void MainWindow::setupMenuIcons()
 	// New menu: using own icons
 	
 	// Tools menu
+	findPeakLinksAction			->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	relocatePhotosAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	exportDataAction			->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
 	
@@ -207,6 +209,7 @@ void MainWindow::connectUI()
 	}
 	
 	// Menu "Tools"
+	connect(findPeakLinksAction,			&QAction::triggered,			this,	&MainWindow::handle_findPeakLinks);
 	connect(relocatePhotosAction,			&QAction::triggered,			this,	&MainWindow::handle_relocatePhotos);
 	connect(exportDataAction,				&QAction::triggered,			this,	&MainWindow::handle_exportData);
 	
@@ -1605,6 +1608,18 @@ void MainWindow::handle_clearTableSelection()
 
 
 // TOOLS MENU ACTION HANDLERS
+
+/**
+ * Event handler for the "auto-fill peak links" action in the tools menu.
+ * 
+ * Opens the peak link finder dialog.
+ */
+void MainWindow::handle_findPeakLinks()
+{
+	PeakLinksDialog* dialog = new PeakLinksDialog(*this, db);
+	connect(dialog, &PeakLinksDialog::finished, [=]() { delete dialog; });
+	dialog->open();
+}
 
 /**
  * Event handler for the "relocate photos" action in the tools menu.

@@ -79,7 +79,8 @@ private slots:
 private:
 	virtual void aboutToClose() override;
 	
-	QString getUrlEscapedPeakName(QString spaceReplacement = "+");
+public:
+	static QString urlSanitize(const QString& string, QString spaceReplacement = "+");
 };
 
 

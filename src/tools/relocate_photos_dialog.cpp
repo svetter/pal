@@ -57,7 +57,7 @@ RelocatePhotosDialog::RelocatePhotosDialog(QWidget& parent, Database& db) :
 	connect(newPathLineEdit,		&QLineEdit::textChanged,	this,	&RelocatePhotosDialog::updateEnableUI);
 	
 	connect(startButton,			&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_start);
-	connect(abortButton,			&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_abort);
+	connect(stopButton,				&QPushButton::clicked,		this,	&RelocatePhotosDialog::handle_abort);
 }
 
 
@@ -140,7 +140,7 @@ void RelocatePhotosDialog::handle_finished()
 }
 
 /**
- * Event handler for the "abort" button.
+ * Event handler for the "stop" button.
  * 
  * Aborts the relocation process.
  */
@@ -164,7 +164,7 @@ void RelocatePhotosDialog::handle_close()
 	QMessageBox::StandardButton resultButton;
 	
 	QString title = tr("Operation running");
-	QString question = tr("Do you want to abort the running process?");
+	QString question = tr("Do you want to stop the running process?");
 	auto options = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
 	auto selected = QMessageBox::Cancel;
 	resultButton = QMessageBox::question(this, title, question, options, selected);
@@ -221,7 +221,7 @@ void RelocatePhotosDialog::updateEnableUI()
 	newPathLineEdit->setEnabled(!running);
 	bool canStart = !oldPathLineEdit->text().isEmpty() || !newPathLineEdit->text().isEmpty();
 	startButton->setEnabled(!running && canStart);
-	abortButton->setEnabled(running);
+	stopButton->setEnabled(running);
 }
 
 

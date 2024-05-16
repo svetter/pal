@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RelocatePhotosDialog</class>
- <widget class="QDialog" name="RelocatePhotosDialog">
+ <class>PeakLinksDialog</class>
+ <widget class="QDialog" name="PeakLinksDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Relocate photos</string>
+   <string>Auto-fill peak links</string>
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
    <property name="spacing">
@@ -47,7 +47,7 @@
    <item>
     <widget class="QLabel" name="explanationLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you moved some or all of your photos to a new location and PAL can't locate them anymore, you can use this feature to update the file paths stored in the database.&lt;/p&gt;&lt;p&gt;This tool will update the locations for photos you moved from the first to the second path.&lt;/p&gt;&lt;p&gt;Note: This will work for sub-folders too.&lt;/p&gt;&lt;p&gt;For example, if you moved some photos from &lt;span style=&quot; font-style:italic;&quot;&gt;D:/Media/Photos&lt;/span&gt; to &lt;span style=&quot; font-style:italic;&quot;&gt;E:/Archive/Media/Photos&lt;/span&gt;, you can put &lt;span style=&quot; font-style:italic;&quot;&gt;D:&lt;/span&gt; as the old path and &lt;span style=&quot; font-style:italic;&quot;&gt;E:/Archive&lt;/span&gt; as the new one.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>This tool allows you to automatically find links to entries on Google Maps, Google Earth and Wikipedia for all peaks in the current project file.&lt;br&gt;You can choose which kinds of links to auto-fill. You can also choose to overwrite any links which are already present.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -55,58 +55,51 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="oldPathLayout">
-     <property name="spacing">
-      <number>10</number>
+    <widget class="QCheckBox" name="mapsCheckbox">
+     <property name="text">
+      <string>Google Maps</string>
      </property>
-     <item>
-      <widget class="QLineEdit" name="oldPathLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="placeholderText">
-        <string>Old location</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="oldPathBrowseButton">
-       <property name="text">
-        <string>Browse...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="newPathLayout">
-     <property name="spacing">
-      <number>10</number>
+    <widget class="QCheckBox" name="earthCheckbox">
+     <property name="text">
+      <string>Google Earth</string>
      </property>
-     <item>
-      <widget class="QLineEdit" name="newPathLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="placeholderText">
-        <string>New location</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="newPathBrowseButton">
-       <property name="text">
-        <string>Browse...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="wikiCheckbox">
+     <property name="text">
+      <string>Wikipedia</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="replaceExistingLinksCheckbox">
+     <property name="text">
+      <string>Replace existing links</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="apiKeyHintLabel">
+     <property name="text">
+      <string>&lt;b&gt;Note:&lt;/b&gt;&lt;br&gt;It is recommended to set a Google Search API key before starting the process. Doing this will lead to more reliable results for Wikipedia links.&lt;br&gt;An API key can be set in the settings dialog, which also provides instructions on how to obtain one.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="processSpacer">
@@ -132,6 +125,13 @@
      <property name="verticalSpacing">
       <number>5</number>
      </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="startButton">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QProgressBar" name="progressBar">
        <property name="alignment">
@@ -143,20 +143,6 @@
       <widget class="QPushButton" name="stopButton">
        <property name="text">
         <string>Stop</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="startButton">
-       <property name="text">
-        <string>Start</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="feedbackLabel">
-       <property name="text">
-        <string notr="true"/>
        </property>
       </widget>
      </item>

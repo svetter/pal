@@ -321,10 +321,10 @@ void PeakDialog::handle_openWikiLink() {
  * Creates a Google Maps search link based on the peak's name and sets it as the Google Maps link.
  */
 void PeakDialog::handle_findMapsLink() {
-	const QString escapedName = getUrlEscapedPeakName();
-	if (escapedName.isEmpty()) return;
+	const QString sanitizedPeakName = urlSanitize(nameLineEdit->text(), "+");
+	if (sanitizedPeakName.isEmpty()) return;
 	
-	const QString link = "https://www.google.com/maps/search/" + escapedName;
+	const QString link = "https://www.google.com/maps/search/" + sanitizedPeakName;
 	mapsLineEdit->setText(link);
 }
 
@@ -334,10 +334,10 @@ void PeakDialog::handle_findMapsLink() {
  * Creates a Google Earth search link based on the peak's name and sets it as the Google Earth link.
  */
 void PeakDialog::handle_findEarthLink() {
-	const QString escapedName = getUrlEscapedPeakName();
-	if (escapedName.isEmpty()) return;
+	const QString sanitizedPeakName = urlSanitize(nameLineEdit->text(), "+");
+	if (sanitizedPeakName.isEmpty()) return;
 	
-	const QString link = "https://earth.google.com/web/search/" + escapedName;
+	const QString link = "https://earth.google.com/web/search/" + sanitizedPeakName;
 	earthLineEdit->setText(link);
 }
 
@@ -350,28 +350,41 @@ void PeakDialog::handle_findEarthLink() {
  * Wikipedia. The response is handled by handle_wikiLinkSearchResponse().
  */
 void PeakDialog::handle_findWikiLink() {
-	const QString escapedName = getUrlEscapedPeakName("_");
-	if (escapedName.isEmpty()) return;
+	const QString peakName = nameLineEdit->text();
 	
 	const QString website = tr("en") + ".wikipedia.org";
 	
 	if (Settings::googleApiKey.get().isEmpty()) {
-		const QString link = "https://" + website + "/wiki/" + escapedName;
+		const QString sanitizedPeakName = urlSanitize(peakName, "_");
+		if (sanitizedPeakName.isEmpty()) return;
+		
+		const QString link = "https://" + website + "/wiki/" + sanitizedPeakName;
 		wikiLineEdit->setText(link);
 		return;
 	}
 	
-	wikiFindButton->setEnabled(false);
+	// Use Google Search API to find Wikipedia link
+	QString searchString = peakName;
+	if (regionCombo->currentIndex() > 0) {
+		const ValidItemID regionID = selectableRegionIDs.at(regionCombo->currentIndex() - 1);
+		const ItemID rangeID = db.regionsTable.rangeIDColumn.getValueFor(regionID);
+		if (rangeID.isValid()) {
+			const QString rangeName = db.rangesTable.nameColumn.getValueFor(FORCE_VALID(rangeID)).toString();
+			searchString += " " + rangeName;
+		}
+	}
+	const QString sanitizedSearchString = urlSanitize(searchString, "+");
 	
-	const QString currentPeakName = nameLineEdit->text();
-	const QString currentRegionName = regionCombo->currentIndex() == 0 ? "" : regionCombo->currentText();
-	const QString searchString = (currentPeakName + " " + currentRegionName).trimmed();
+	if (sanitizedSearchString.isEmpty()) {
+		return;
+	}
+	wikiFindButton->setEnabled(false);
 	
 	QUrl url("https://customsearch.googleapis.com/customsearch/v1");
 	QUrlQuery query;
 	query.addQueryItem("key", Settings::googleApiKey.get());
 	query.addQueryItem("cx", "776b1f5ab722c4f75");
-	query.addQueryItem("q", searchString);
+	query.addQueryItem("q", sanitizedSearchString);
 	query.addQueryItem("num", "1");
 	query.addQueryItem("safe", "active");
 	query.addQueryItem("siteSearch", website);
@@ -392,32 +405,35 @@ void PeakDialog::handle_findWikiLink() {
  */
 void PeakDialog::handle_wikiLinkSearchResponse(QNetworkReply* reply)
 {
-	// Parse JSON response
+	const QString request = reply->request().url().toString();
 	const QString response = reply->readAll();
+	const QString errorString = reply->errorString();
+	reply->manager()->deleteLater();
 	reply->deleteLater();
+	
+	// Parse JSON response
 	const QJsonDocument json = QJsonDocument::fromJson(response.toUtf8());
 	
 	if (reply->error() != QNetworkReply::NoError) {
 		// Parse and display error message
 		const QString errorMessage = json["error"]["message"].toString();
-		qDebug() << "Google query error:" << reply->errorString() << errorMessage;
+		qDebug() << "Google query error:" << errorString << errorMessage;
 		QMessageBox::critical(this, tr("Google search error"), errorMessage);
-		reply->deleteLater();
 		wikiFindButton->setEnabled(true);
 		return;
 	}
 	
 	// Check that there is at least one result
 	if (json["items"].toArray().isEmpty()) {
-		qDebug() << "No results for query" << reply->request().url();
+		qDebug() << "No results for query" << request;
 		wikiFindButton->setEnabled(true);
 		return;
 	}
+	
 	// Get URL of first result
 	const QString foundURL = json["items"].toArray()[0].toObject()["link"].toString();
 	wikiLineEdit->setText(foundURL);
 	
-	reply->manager()->deleteLater();
 	wikiFindButton->setEnabled(true);
 }
 
@@ -448,15 +464,19 @@ void PeakDialog::aboutToClose()
 
 
 /**
- * Returns the peak's name with spaces replaced by the given string, and slashes and question marks
- * removed.
+ * Sanitizes a string for use in a URL.
  * 
+ * @param string			The string to sanitize.
  * @param spaceReplacement	The string to replace spaces with.
- * @return					The escaped peak name. May be empty.
+ * @return					The sanitized string.
  */
-QString PeakDialog::getUrlEscapedPeakName(QString spaceReplacement)
+QString PeakDialog::urlSanitize(const QString& string, QString spaceReplacement)
 {
-	return nameLineEdit->text().replace(' ', spaceReplacement).remove("/").remove("?");
+	QString result = string;
+	result.remove("/").remove("?").remove("&");
+	result = result.trimmed();
+	result.replace(" ", spaceReplacement);
+	return result;
 }
 
 

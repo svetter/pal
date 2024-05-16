@@ -1361,6 +1361,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="findPeakLinksAction"/>
     <addaction name="relocatePhotosAction"/>
     <addaction name="exportDataAction"/>
    </widget>
@@ -1431,9 +1432,70 @@
     <string>Show filters</string>
    </property>
   </action>
+  <action name="showItemStatsPanelAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show statistics panel in this tab</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">F7</string>
+   </property>
+  </action>
+  <action name="showAllStatsPanelsAction">
+   <property name="text">
+    <string>Show statistics in all tabs</string>
+   </property>
+  </action>
+  <action name="hideAllStatsPanelsAction">
+   <property name="text">
+    <string>Hide statistics in all tabs</string>
+   </property>
+  </action>
+  <action name="pinStatsRangesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Always use maximum axis ranges</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">F8</string>
+   </property>
+  </action>
   <action name="autoResizeColumnsAction">
    <property name="text">
     <string>Auto-resize columns</string>
+   </property>
+  </action>
+  <action name="resetColumnOrderAction">
+   <property name="text">
+    <string>Reset column order</string>
+   </property>
+  </action>
+  <action name="restoreHiddenColumnsAction">
+   <property name="text">
+    <string>Restore hidden columns</string>
+   </property>
+  </action>
+  <action name="addCustomColumnAction">
+   <property name="text">
+    <string>Add custom column...</string>
+   </property>
+  </action>
+  <action name="clearTableSelectionAction">
+   <property name="text">
+    <string>Clear table selection</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Esc</string>
    </property>
   </action>
   <action name="newAscentAction">
@@ -1502,9 +1564,19 @@
     <string>New country...</string>
    </property>
   </action>
+  <action name="findPeakLinksAction">
+   <property name="text">
+    <string>Auto-fill peak links...</string>
+   </property>
+  </action>
   <action name="relocatePhotosAction">
    <property name="text">
     <string>Relocate photos...</string>
+   </property>
+  </action>
+  <action name="exportDataAction">
+   <property name="text">
+    <string>Export data...</string>
    </property>
   </action>
   <action name="aboutAction">
@@ -1523,72 +1595,6 @@
    </property>
    <property name="text">
     <string>About Qt</string>
-   </property>
-  </action>
-  <action name="exportDataAction">
-   <property name="text">
-    <string>Export data...</string>
-   </property>
-  </action>
-  <action name="resetColumnOrderAction">
-   <property name="text">
-    <string>Reset column order</string>
-   </property>
-  </action>
-  <action name="restoreHiddenColumnsAction">
-   <property name="text">
-    <string>Restore hidden columns</string>
-   </property>
-  </action>
-  <action name="showItemStatsPanelAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show statistics panel in this tab</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">F7</string>
-   </property>
-  </action>
-  <action name="hideAllStatsPanelsAction">
-   <property name="text">
-    <string>Hide statistics in all tabs</string>
-   </property>
-  </action>
-  <action name="showAllStatsPanelsAction">
-   <property name="text">
-    <string>Show statistics in all tabs</string>
-   </property>
-  </action>
-  <action name="pinStatsRangesAction">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Always use maximum axis ranges</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">F8</string>
-   </property>
-  </action>
-  <action name="clearTableSelectionAction">
-   <property name="text">
-    <string>Clear table selection</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Esc</string>
-   </property>
-  </action>
-  <action name="addCustomColumnAction">
-   <property name="text">
-    <string>Add custom column...</string>
    </property>
   </action>
  </widget>

@@ -170,6 +170,7 @@ private slots:
 	void handle_restoreHiddenColumns();
 	void handle_clearTableSelection();
 	// Tools menu action handlers
+	void handle_findPeakLinks();
 	void handle_relocatePhotos();
 	void handle_exportData();
 	// Help menu action handlers

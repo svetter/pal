@@ -149,6 +149,8 @@ HEADERS += \
 	src/tools/export_dialog.h \
 	src/tools/export_thread.h \
 	src/tools/export_writer.h \
+	src/tools/peak_links_dialog.h \
+	src/tools/peak_link_finder_thread.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \
@@ -239,6 +241,8 @@ SOURCES += \
 	src/tools/export_dialog.cpp \
 	src/tools/export_thread.cpp \
 	src/tools/export_writer.cpp \
+	src/tools/peak_links_dialog.cpp \
+	src/tools/peak_link_finder_thread.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
 	src/viewer/ascent_viewer.cpp \
@@ -256,6 +260,7 @@ FORMS += \
 	src/ui/country_dialog.ui \
 	src/ui/hiker_dialog.ui \
 	src/ui/peak_dialog.ui \
+	src/ui/peak_links_dialog.ui \
 	src/ui/project_settings_window.ui \
 	src/ui/range_dialog.ui \
 	src/ui/region_dialog.ui \
