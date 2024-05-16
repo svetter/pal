@@ -117,7 +117,6 @@ void RelocatePhotosDialog::handle_start()
 	
 	db.beginChangingData();
 	workerThread->start();
-	db.finishChangingData();
 }
 
 /**
@@ -136,6 +135,8 @@ void RelocatePhotosDialog::handle_finished()
 	
 	running = false;
 	updateEnableUI();
+	
+	db.finishChangingData();
 }
 
 /**
