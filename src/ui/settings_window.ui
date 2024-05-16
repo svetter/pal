@@ -711,7 +711,7 @@
           <item>
            <widget class="QLabel" name="googleApiKeyLabel">
             <property name="text">
-             <string>Set a Google Search API key to enable automatic detection of peak links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</string>
+             <string>Set a Google Search API key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

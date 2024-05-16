@@ -28,6 +28,14 @@
 #include "src/settings/settings.h"
 
 #include <QMessageBox>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include <QUrlQuery>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QJsonObject>
+#include <QDesktopServices>
 
 using std::unique_ptr, std::make_unique;
 
@@ -58,7 +66,7 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 		{heightCheckbox,	{{ heightSpecifyCheckbox, heightSpinner },	{ &db.peaksTable.heightColumn }}},
 		{mapsCheckbox,		{{ mapsLineEdit },							{ &db.peaksTable.mapsLinkColumn }}},
 		{earthCheckbox,		{{ earthLineEdit },							{ &db.peaksTable.earthLinkColumn }}},
-		{wikipediaCheckbox,	{{ wikipediaLineEdit },						{ &db.peaksTable.wikiLinkColumn }}}
+		{wikiCheckbox,		{{ wikiLineEdit },							{ &db.peaksTable.wikiLinkColumn }}}
 	}, {
 		{volcanoCheckbox, { &db.peaksTable.volcanoColumn }}
 	});
@@ -77,9 +85,19 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	
 	populateComboBoxes();
 	
+	if (Settings::googleApiKey.get().isEmpty()) {
+		wikiFindButton->setToolTip(tr("To improve the accuracy of this feature, provide a Google Search API key in the settings."));
+	}
+	
 	
 	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
 	connect(newRegionButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
+	connect(mapsOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openMapsLink);
+	connect(earthOpenButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_openEarthLink);
+	connect(wikiOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openWikiLink);
+	connect(mapsFindButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_findMapsLink);
+	connect(earthFindButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_findEarthLink);
+	connect(wikiFindButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_findWikiLink);
 	
 	connect(okButton,				&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
 	connect(cancelButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
@@ -150,13 +168,13 @@ void PeakDialog::insertInitData()
 	// Links
 	mapsLineEdit->setText(init->mapsLink);
 	earthLineEdit->setText(init->earthLink);
-	wikipediaLineEdit->setText(init->wikiLink);
+	wikiLineEdit->setText(init->wikiLink);
 }
 
 
 /**
  * Extracts the data from the UI elements and returns it as a peak object.
- *
+ * 
  * @return	The peak data as a peak object. The caller takes ownership of the object.
  */
 unique_ptr<Peak> PeakDialog::extractData()
@@ -167,7 +185,7 @@ unique_ptr<Peak> PeakDialog::extractData()
 	ItemID	regionID	= parseItemCombo	(*regionCombo, selectableRegionIDs);
 	QString	mapsLink	= parseLineEdit		(*mapsLineEdit);
 	QString	earthLink	= parseLineEdit		(*earthLineEdit);
-	QString	wikiLink	= parseLineEdit		(*wikipediaLineEdit);
+	QString	wikiLink	= parseLineEdit		(*wikiLineEdit);
 	
 	if (!heightSpecifyCheckbox->isChecked()) height = -1;
 	
@@ -177,7 +195,7 @@ unique_ptr<Peak> PeakDialog::extractData()
 
 /**
  * Checks whether changes have been made to the peak, compared to the initial peak object, if set.
- *
+ * 
  * @return	True if the current UI contents are different from their initial state, false otherwise.
  */
 bool PeakDialog::changesMade()
@@ -193,7 +211,7 @@ bool PeakDialog::changesMade()
 
 /**
  * Event handler for changes in the height specified checkbox.
- *
+ * 
  * Enables or disables the height spinner depending on the checkbox's state.
  */
 void PeakDialog::handle_heightSpecifiedChanged()
@@ -204,7 +222,7 @@ void PeakDialog::handle_heightSpecifiedChanged()
 
 /**
  * Event handler for the new region button.
- *
+ * 
  * Opens a new region dialog, adds the new region to the region combo box and selects it.
  */
 void PeakDialog::handle_newRegion()
@@ -218,6 +236,142 @@ void PeakDialog::handle_newRegion()
 	};
 	
 	openNewRegionDialogAndStore(*this, mainWindow, db, callWhenDone);
+}
+
+/**
+ * Event handler for the open Google Maps link button.
+ * 
+ * Opens the Google Maps link in the default web browser.
+ */
+void PeakDialog::handle_openMapsLink() {
+	if (mapsLineEdit->text().isEmpty()) return;
+	QDesktopServices::openUrl(QUrl(mapsLineEdit->text()));
+}
+
+/**
+ * Event handler for the open Google Earth link button.
+ * 
+ * Opens the Google Earth link in the default web browser.
+ */
+void PeakDialog::handle_openEarthLink() {
+	if (earthLineEdit->text().isEmpty()) return;
+	QDesktopServices::openUrl(QUrl(earthLineEdit->text()));
+}
+
+/**
+ * Event handler for the open Wikipedia link button.
+ * 
+ * Opens the Wikipedia link in the default web browser.
+ */
+void PeakDialog::handle_openWikiLink() {
+	if (wikiLineEdit->text().isEmpty()) return;
+	QDesktopServices::openUrl(QUrl(wikiLineEdit->text()));
+}
+
+/**
+ * Event handler for the find Google Maps link button.
+ * 
+ * Creates a Google Maps search link based on the peak's name and sets it as the Google Maps link.
+ */
+void PeakDialog::handle_findMapsLink() {
+	const QString escapedName = getUrlEscapedPeakName();
+	if (escapedName.isEmpty()) return;
+	
+	const QString link = "https://www.google.com/maps/search/" + escapedName;
+	mapsLineEdit->setText(link);
+}
+
+/**
+ * Event handler for the find Google Earth link button.
+ * 
+ * Creates a Google Earth search link based on the peak's name and sets it as the Google Earth link.
+ */
+void PeakDialog::handle_findEarthLink() {
+	const QString escapedName = getUrlEscapedPeakName();
+	if (escapedName.isEmpty()) return;
+	
+	const QString link = "https://earth.google.com/web/search/" + escapedName;
+	earthLineEdit->setText(link);
+}
+
+/**
+ * Event handler for the find Wikipedia link button.
+ * 
+ * If no Google Search API key is set, creates a Wikipedia link based on the peak's name and sets it
+ * as the Wikipedia link.
+ * If a Google Search API key is set, starts a Google search for the peak's name and region on
+ * Wikipedia. The response is handled by handle_wikiLinkSearchResponse().
+ */
+void PeakDialog::handle_findWikiLink() {
+	const QString escapedName = getUrlEscapedPeakName("_");
+	if (escapedName.isEmpty()) return;
+	
+	const QString website = tr("en") + ".wikipedia.org";
+	
+	if (Settings::googleApiKey.get().isEmpty()) {
+		const QString link = "https://" + website + "/wiki/" + escapedName;
+		wikiLineEdit->setText(link);
+		return;
+	}
+	
+	wikiFindButton->setEnabled(false);
+	
+	const QString currentPeakName = nameLineEdit->text();
+	const QString currentRegionName = regionCombo->currentIndex() == 0 ? "" : regionCombo->currentText();
+	const QString searchString = (currentPeakName + " " + currentRegionName).trimmed();
+	
+	QUrl url("https://customsearch.googleapis.com/customsearch/v1");
+	QUrlQuery query;
+	query.addQueryItem("key", Settings::googleApiKey.get());
+	query.addQueryItem("cx", "776b1f5ab722c4f75");
+	query.addQueryItem("q", searchString);
+	query.addQueryItem("num", "1");
+	query.addQueryItem("safe", "active");
+	query.addQueryItem("siteSearch", website);
+	query.addQueryItem("siteSearchFilter", "i");
+	url.setQuery(query);
+	
+	QNetworkAccessManager* const networkManager = new QNetworkAccessManager();
+	connect(networkManager, &QNetworkAccessManager::finished, this, &PeakDialog::handle_wikiLinkSearchResponse);
+	networkManager->get(QNetworkRequest(url));
+}
+
+/**
+ * Event handler for the response to the Wikipedia link search.
+ * 
+ * Parses the JSON response and sets the first search result's URL as the Wikipedia link.
+ * 
+ * @param reply	The network reply containing the search results.
+ */
+void PeakDialog::handle_wikiLinkSearchResponse(QNetworkReply* reply)
+{
+	// Parse JSON response
+	const QString response = reply->readAll();
+	reply->deleteLater();
+	const QJsonDocument json = QJsonDocument::fromJson(response.toUtf8());
+	
+	if (reply->error() != QNetworkReply::NoError) {
+		// Parse and display error message
+		const QString errorMessage = json["error"]["message"].toString();
+		qDebug() << "Google query error:" << reply->errorString() << errorMessage;
+		QMessageBox::critical(this, tr("Google search error"), errorMessage);
+		reply->deleteLater();
+		wikiFindButton->setEnabled(true);
+		return;
+	}
+	
+	// Check that there is at least one result
+	if (json["items"].toArray().isEmpty()) {
+		qDebug() << "No results for query" << reply->request().url();
+		wikiFindButton->setEnabled(true);
+		return;
+	}
+	// Get URL of first result
+	const QString foundURL = json["items"].toArray()[0].toObject()["link"].toString();
+	wikiLineEdit->setText(foundURL);
+	
+	reply->manager()->deleteLater();
+	wikiFindButton->setEnabled(true);
 }
 
 
@@ -246,11 +400,25 @@ void PeakDialog::aboutToClose()
 
 
 
+/**
+ * Returns the peak's name with spaces replaced by the given string, and slashes and question marks
+ * removed.
+ * 
+ * @param spaceReplacement	The string to replace spaces with.
+ * @return					The escaped peak name. May be empty.
+ */
+QString PeakDialog::getUrlEscapedPeakName(QString spaceReplacement)
+{
+	return nameLineEdit->text().replace(' ', spaceReplacement).remove("/").remove("?");
+}
+
+
+
 
 
 /**
  * Opens a new peak dialog and saves the new peak to the database.
- *
+ * 
  * @param parent		The parent window.
  * @param mainWindow	The application's main window.
  * @param db			The project database.
@@ -281,7 +449,7 @@ void openNewPeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, Databas
 
 /**
  * Opens a duplicate peak dialog and saves the new peak to the database.
- *
+ * 
  * @param parent			The parent window.
  * @param mainWindow		The application's main window.
  * @param db				The project database.
@@ -316,7 +484,7 @@ void openDuplicatePeakDialogAndStore(QWidget& parent, QMainWindow& mainWindow, D
 
 /**
  * Opens an edit peak dialog and saves the changes to the database.
- *
+ * 
  * @param parent			The parent window.
  * @param mainWindow		The application's main window.
  * @param db				The project database.
@@ -393,7 +561,7 @@ void openMultiEditPeaksDialogAndStore(QWidget& parent, QMainWindow& mainWindow, 
 
 /**
  * Opens a delete peak dialog and deletes the peak from the database.
- *
+ * 
  * @param parent			The parent window.
  * @param mainWindow		The application's main window.
  * @param db				The project database.

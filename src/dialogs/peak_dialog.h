@@ -28,6 +28,8 @@
 #include "src/data/peak.h"
 #include "ui_peak_dialog.h"
 
+#include <QNetworkReply>
+
 using std::unique_ptr;
 
 
@@ -60,11 +62,20 @@ private:
 private slots:
 	void handle_heightSpecifiedChanged();
 	void handle_newRegion();
+	void handle_openMapsLink();
+	void handle_openEarthLink();
+	void handle_openWikiLink();
+	void handle_findMapsLink();
+	void handle_findEarthLink();
+	void handle_findWikiLink();
+	void handle_wikiLinkSearchResponse(QNetworkReply* reply);
 	
 	void handle_ok() override;
 	
 private:
 	virtual void aboutToClose() override;
+	
+	QString getUrlEscapedPeakName(QString spaceReplacement = "+");
 };
 
 
