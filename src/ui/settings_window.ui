@@ -53,7 +53,7 @@
       <enum>QLayout::SetFixedSize</enum>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="column1Layout">
+      <layout class="QVBoxLayout" name="column1Layout" stretch="0,0,0,0,1">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -98,6 +98,12 @@
         <spacer name="column1TopSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -310,7 +316,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="column2Layout">
+      <layout class="QVBoxLayout" name="column2Layout" stretch="0,0,0,0,0,1">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -358,6 +364,12 @@
         <spacer name="column2TopSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -699,7 +711,7 @@
           <item>
            <widget class="QLabel" name="googleApiKeyLabel">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set a Google Search API key to enable automatic detection of peak links.&lt;br/&gt;&lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;You can find out how to create an API key here.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Set a Google Search API key to enable automatic detection of peak links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
