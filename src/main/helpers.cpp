@@ -30,16 +30,35 @@
 
 
 /**
+ * Returns a string containing the application's copyright information.
+ * 
+ * @return	The application's copyright information.
+ */
+QString getAppCopyrightString()
+{
+	return "2023-2024 Simon Vetter";
+}
+
+/**
+ * Returns a string containing the link to the application's source code repository.
+ * 
+ * @return	The link to the application's source code repository.
+ */
+QString getAppCodeLink()
+{
+	return "https://github.com/svetter/pal";
+}
+
+
+
+/**
  * Returns a string containing the application's version number.
  * 
  * @return	The application's version number in string form.
  */
 QString getAppVersion()
 {
-	return QString("%1.%2.%3")
-		.arg(APP_VERSION_MAJOR)
-		.arg(APP_VERSION_MINOR)
-		.arg(APP_VERSION_PATCH);
+	return APP_VERSION;
 }
 
 /**

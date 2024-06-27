@@ -44,7 +44,7 @@ AboutWindow::AboutWindow(QWidget& parent) :
 	QString qtVersion	= QString("%1.%2.%3").arg(QT_VERSION_MAJOR).arg(QT_VERSION_MINOR).arg(QT_VERSION_PATCH);
 	
 	appNameLabel	->setText(appNameLabel	->text().arg(appVersion));
-	copyrightLabel	->setText(copyrightLabel->text().arg(QStringLiteral(APP_COPYRIGHT).toHtmlEscaped()));
-	codeLabel		->setText(codeLabel		->text().arg(QStringLiteral(CODE_LINK).toHtmlEscaped()));
+	copyrightLabel	->setText(copyrightLabel->text().arg(getAppCopyrightString()));
+	codeLabel		->setText(codeLabel		->text().arg(getAppCodeLink()));
 	qtInfoLabel		->setText(qtInfoLabel	->text().arg(qtVersion));
 }

@@ -28,6 +28,13 @@
 
 
 
+// Application information
+
+QString getAppCopyrightString();
+QString getAppCodeLink();
+
+
+
 // Application version
 
 QString getAppVersion();
