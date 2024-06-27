@@ -1905,7 +1905,7 @@ void MainWindow::setWindowTitleFilename(QString filepath)
 	QString windowTitle = "PeakAscentLogger";
 	if (!filepath.isEmpty()) {
 		QString filename = QFileInfo(filepath).fileName();
-		windowTitle += "   –   " + filename;
+		windowTitle = filename + "  –  " + windowTitle;
 	}
 	setWindowTitle(windowTitle);
 }
