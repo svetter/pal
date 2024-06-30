@@ -1162,6 +1162,9 @@
                <height>200</height>
               </size>
              </property>
+             <property name="undoRedoEnabled">
+              <bool>true</bool>
+             </property>
              <property name="acceptRichText">
               <bool>false</bool>
              </property>

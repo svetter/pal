@@ -321,9 +321,9 @@ void AscentViewer::updateInfoArea()
 {
 	resetInfoLabels();
 	
-	BufferRowIndex ascentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
+	const BufferRowIndex ascentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	
-	ItemID tripID = db.ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
+	const ItemID tripID = db.ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
 	if (tripID.isValid()) {
 		BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
 		tripNameLabel			->setText	(compAscents.tripColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
@@ -337,7 +337,7 @@ void AscentViewer::updateInfoArea()
 		tripDatesLabel			->setText	(dateRange);
 	}
 	
-	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
+	const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
 	if (peakID.isValid()) {
 		BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
 		peakNameLabel			->setText	(compAscents.peakColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
@@ -347,9 +347,9 @@ void AscentViewer::updateInfoArea()
 		peakRangeLabel			->setText	(compAscents.rangeColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakCountryLabel		->setText	(compAscents.countryColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakContinentLabel		->setText	(compAscents.continentColumn	.getFormattedValueAt(ascentBufferRowIndex).toString());
-		QString mapsLink					= db.peaksTable.mapsLinkColumn	.getValueAt(peakBufferRowIndex).toString();
-		QString earthLink					= db.peaksTable.earthLinkColumn	.getValueAt(peakBufferRowIndex).toString();
-		QString wikiLink					= db.peaksTable.wikiLinkColumn	.getValueAt(peakBufferRowIndex).toString();
+		const QString mapsLink				= db.peaksTable.mapsLinkColumn	.getValueAt(peakBufferRowIndex).toString();
+		const QString earthLink				= db.peaksTable.earthLinkColumn	.getValueAt(peakBufferRowIndex).toString();
+		const QString wikiLink				= db.peaksTable.wikiLinkColumn	.getValueAt(peakBufferRowIndex).toString();
 		if (!mapsLink.isEmpty() || !earthLink.isEmpty() || !wikiLink.isEmpty()) peakLinksBox->setVisible(true);
 		if (!mapsLink.isEmpty()) {
 			peakMapsLinkLabel		->setText("[" + tr("Google Maps") + "](" + mapsLink + ")");
@@ -365,7 +365,7 @@ void AscentViewer::updateInfoArea()
 		}
 	}
 	
-	QString ascentTitle						= compAscents.titleColumn		.getFormattedValueAt(ascentBufferRowIndex).toString();
+	const QString ascentTitle				= compAscents.titleColumn		.getFormattedValueAt(ascentBufferRowIndex).toString();
 	if (!ascentTitle.isEmpty()) {
 		ascentTitleLabel		->setText	(compAscents.titleColumn		.getFormattedValueAt(ascentBufferRowIndex).toString());
 		ascentTitleLabel		->setVisible(true);
@@ -380,13 +380,18 @@ void AscentViewer::updateInfoArea()
 	ascentDifficultyLabel		->setText	(compAscents.difficultyColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
 	ascentPeakOrdinalLabel		->setText	(compAscents.peakOrdinalColumn	.getFormattedValueAt	(ascentBufferRowIndex).toString());
 	
-	QString hikersList = compAscents.hikersColumn.getFormattedValueAt(ascentBufferRowIndex).toString();
+	const QString hikersList = compAscents.hikersColumn.getFormattedValueAt(ascentBufferRowIndex).toString();
 	if (!hikersList.isEmpty()) {
 		ascentParticipantsLabel	->setText	(hikersList);
 		ascentParticipantsBox->setVisible(true);
 	}
 	
-	descriptionTextBrowser->setText(db.ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString());
+	const QString ascentDescription = db.ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString();
+	if (descriptionEditable) {
+		descriptionTextBrowser->setPlainText(ascentDescription);
+	} else {
+		descriptionTextBrowser->setMarkdown(ascentDescription);
+	}
 }
 
 /**
@@ -849,8 +854,8 @@ void AscentViewer::saveDescription()
 {
 	if (currentAscentID.isInvalid() || !descriptionEditable) return;
 	
-	QString newDescription = descriptionTextBrowser->toPlainText();
-	bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
+	const QString newDescription = descriptionTextBrowser->toPlainText();
+	const bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
 	if (descriptionChanged) {
 		db.beginChangingData();
 		db.ascentsTable.updateCell(*this, FORCE_VALID(currentAscentID), db.ascentsTable.descriptionColumn, newDescription);
@@ -1141,6 +1146,12 @@ void AscentViewer::handle_descriptionEditableChanged()
 	
 	descriptionEditable = editDescriptionButton->isChecked();
 	
+	if (descriptionEditable) {
+		const QString description = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)).toString();
+		descriptionTextBrowser->setPlainText(description);
+	} else {
+		descriptionTextBrowser->setMarkdown(descriptionTextBrowser->toPlainText());
+	}
 	descriptionTextBrowser->setReadOnly(!descriptionEditable);
 }
 
