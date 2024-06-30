@@ -63,6 +63,7 @@ Other features:
 - Adding custom columns which can directly display or process data from the project database
 - Filtering any table by any column, including custom ones, using customizable filters
 - Editing items in bulk
+- Autodetection of links for peaks, individually or in bulk
 - Changing paths of referenced photos in bulk
 - Data export in multiple modes and formats
 - PAL supports dark mode with Qt's "Fusion" theme
@@ -80,7 +81,7 @@ Building PAL
 [![Build](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
 [![Test](https://github.com/svetter/pal/actions/workflows/test.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/test.yml)
 
-PAL is built on [Qt 6.7.0](https://wiki.qt.io/Qt_6.7_Release).
+PAL is currently built on [Qt 6.7.2](https://wiki.qt.io/Qt_6.7_Release).
 
 If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
 

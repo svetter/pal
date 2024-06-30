@@ -2245,27 +2245,27 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
 <context>
     <name>General</name>
     <message>
-        <location filename="../src/main/helpers.cpp" line="144"/>
+        <location filename="../src/main/helpers.cpp" line="163"/>
         <source>Default</source>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="145"/>
+        <location filename="../src/main/helpers.cpp" line="164"/>
         <source>Qt Fusion</source>
         <translation>Qt Fusion</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="146"/>
+        <location filename="../src/main/helpers.cpp" line="165"/>
         <source>Modern Windows</source>
         <translation>Windows modern</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="147"/>
+        <location filename="../src/main/helpers.cpp" line="166"/>
         <source>Classic Windows</source>
         <translation>Windows klassisch</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="148"/>
+        <location filename="../src/main/helpers.cpp" line="167"/>
         <source>MacOS</source>
         <translation>MacOS</translation>
     </message>
