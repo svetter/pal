@@ -79,11 +79,12 @@ private slots:
 private:
 	virtual void aboutToClose() override;
 	
+	QString createSanitizedSearchString(const QString& spaceReplacement);
 public:
 	static QUrl createLinkSearchUrl(const Database& db, const QString& website, const QString& peakName, ItemID regionID);
 	static QPair<bool, QString> parseLinkSearchResponse(QNetworkReply* reply);
 	
-	static QString urlSanitize(const QString& string, QString spaceReplacement = "+");
+	static QString urlSanitize(const QString& string, QString spaceReplacement);
 };
 
 

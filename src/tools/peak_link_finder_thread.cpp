@@ -82,23 +82,26 @@ void PeakLinkFinderThread::run()
 		if (abortWasCalled) break;
 		
 		unique_ptr<Peak> peak = db.getPeakAt(index);
-		const QString peakName = peak->name;
-		
-		if (PeakDialog::urlSanitize(peakName, "").isEmpty()) {
+		QString searchString = peak->name;
+		if (peak->regionID.isValid()) {
+			const QString regionName = db.regionsTable.nameColumn.getValueFor(FORCE_VALID(peak->regionID)).toString();
+			searchString += " " + regionName;
+		}
+		if (PeakDialog::urlSanitize(searchString, "").isEmpty()) {
 			emit callback_reportProgress(index.get() + 1);
 			continue;
 		}
 		
 		QString mapsLink = QString();
 		if (maps && (peak->mapsLink.isEmpty() || replaceExisting)) {
-			const QString sanitizedPeakName = PeakDialog::urlSanitize(peakName, "+");
-			mapsLink = "https://www.google.com/maps/search/" + sanitizedPeakName;
+			const QString sanitizedSearchString = PeakDialog::urlSanitize(searchString, "+");
+			mapsLink = "https://www.google.com/maps/search/" + sanitizedSearchString;
 		}
 		
 		QString earthLink = QString();
 		if (earth && (peak->earthLink.isEmpty() || replaceExisting)) {
-			const QString sanitizedPeakName = PeakDialog::urlSanitize(peakName, "+");
-			earthLink = "https://earth.google.com/web/search/" + sanitizedPeakName;
+			const QString sanitizedSearchString = PeakDialog::urlSanitize(searchString, "+");
+			earthLink = "https://earth.google.com/web/search/" + sanitizedSearchString;
 		}
 		
 		QString wikiLink = QString();
@@ -106,8 +109,8 @@ void PeakLinkFinderThread::run()
 			const QString website = tr("en") + ".wikipedia.org";
 			
 			if (apiKey.isEmpty()) {
-				const QString sanitizedPeakName = PeakDialog::urlSanitize(peakName, "_");
-				wikiLink = "https://" + website + "/wiki/" + sanitizedPeakName;
+				const QString sanitizedSearchString = PeakDialog::urlSanitize(searchString, "_");
+				wikiLink = "https://" + website + "/wiki/" + sanitizedSearchString;
 			}
 			else {
 				wikiLink = searchForLink(*peak, website);

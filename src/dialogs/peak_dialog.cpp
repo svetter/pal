@@ -321,10 +321,10 @@ void PeakDialog::handle_openWikiLink() {
  * Creates a Google Maps search link based on the peak's name and sets it as the Google Maps link.
  */
 void PeakDialog::handle_findMapsLink() {
-	const QString sanitizedPeakName = urlSanitize(nameLineEdit->text(), "+");
-	if (sanitizedPeakName.isEmpty()) return;
+	const QString sanitizedSearchString = createSanitizedSearchString("+");
+	if (sanitizedSearchString.isEmpty()) return;
 	
-	const QString link = "https://www.google.com/maps/search/" + sanitizedPeakName;
+	const QString link = "https://www.google.com/maps/search/" + sanitizedSearchString;
 	mapsLineEdit->setText(link);
 }
 
@@ -334,10 +334,10 @@ void PeakDialog::handle_findMapsLink() {
  * Creates a Google Earth search link based on the peak's name and sets it as the Google Earth link.
  */
 void PeakDialog::handle_findEarthLink() {
-	const QString sanitizedPeakName = urlSanitize(nameLineEdit->text(), "+");
-	if (sanitizedPeakName.isEmpty()) return;
+	const QString sanitizedSearchString = createSanitizedSearchString("+");
+	if (sanitizedSearchString.isEmpty()) return;
 	
-	const QString link = "https://earth.google.com/web/search/" + sanitizedPeakName;
+	const QString link = "https://earth.google.com/web/search/" + sanitizedSearchString;
 	earthLineEdit->setText(link);
 }
 
@@ -355,10 +355,10 @@ void PeakDialog::handle_findWikiLink() {
 	const QString website = tr("en") + ".wikipedia.org";
 	
 	if (Settings::googleApiKey.get().isEmpty()) {
-		const QString sanitizedPeakName = urlSanitize(peakName, "_");
-		if (sanitizedPeakName.isEmpty()) return;
+		const QString sanitizedSearchString = createSanitizedSearchString("_");
+		if (sanitizedSearchString.isEmpty()) return;
 		
-		const QString link = "https://" + website + "/wiki/" + sanitizedPeakName;
+		const QString link = "https://" + website + "/wiki/" + sanitizedSearchString;
 		wikiLineEdit->setText(link);
 		return;
 	}
@@ -432,6 +432,26 @@ void PeakDialog::aboutToClose()
 
 
 /**
+ * Creates a search string from currently set peak name and, if present, region name and sanitizes
+ * it using the given replacement for spaces.
+ * 
+ * @param spaceReplacement	The string to replace spaces with.
+ * @return					The sanitized search string, containing peak and region names.
+ */
+QString PeakDialog::createSanitizedSearchString(const QString& spaceReplacement)
+{
+	QString searchString = nameLineEdit->text();
+	
+	if (regionCombo->currentIndex() > 0) {
+		const ValidItemID regionID = selectableRegionIDs.at(regionCombo->currentIndex() - 1);
+		const QString regionName = db.regionsTable.nameColumn.getValueFor(regionID).toString();
+		searchString += " " + regionName;
+	}
+	
+	return urlSanitize(searchString, spaceReplacement);
+}
+
+/**
  * Creates a URL for a Google Programmable Search Engine search for the given peak on the given
  * website.
  * 
@@ -445,11 +465,8 @@ QUrl PeakDialog::createLinkSearchUrl(const Database& db, const QString& website,
 {
 	QString searchString = peakName;
 	if (regionID.isValid()) {
-		const ItemID rangeID = db.regionsTable.rangeIDColumn.getValueFor(FORCE_VALID(regionID));
-		if (rangeID.isValid()) {
-			const QString rangeName = db.rangesTable.nameColumn.getValueFor(FORCE_VALID(rangeID)).toString();
-			searchString += " " + rangeName;
-		}
+		const QString regionName = db.regionsTable.nameColumn.getValueFor(FORCE_VALID(regionID)).toString();
+		searchString += " " + regionName;
 	}
 	const QString sanitizedSearchString = urlSanitize(searchString, "+");
 	
