@@ -115,7 +115,8 @@ QPair<QStringList, QStringList> getSupportedLanguages()
 	
 	QDirIterator it = QDirIterator(":/i18n/", QDirIterator::Subdirectories);
 	while (it.hasNext()) {
-		QString code = it.next().split(".").at(0).split("/").at(2);
+		const QString code = it.next().split(".").at(0).split("/").at(2);
+		if (code == "en") continue;
 		codes.append(code);
 		names.append(QLocale(code).nativeLanguageName());
 	}
