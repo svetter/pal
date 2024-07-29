@@ -42,6 +42,7 @@
 #include "src/dialogs/trip_dialog.h"
 #include "src/main/column_wizard.h"
 #include "src/main/filter_bar.h"
+#include "src/main/main_window_tab_content.h"
 #include "src/stats/stats_engine.h"
 #include "src/settings/settings.h"
 
@@ -56,17 +57,11 @@
  */
 struct TypeMapperPointers {
 	/** The item type's tab in the main window. */
-	QWidget*		tab;
-	/** The item type's table view in the main window. */
-	QTableView*		tableView;
-	/** The item type's filter bar above the table in the main window. */
-	FilterBar*		filterBar;
-	/** The item type's stats scroll area in the main window. */
-	QScrollArea*	statsScrollArea;
+	MainWindowTabContent*	tab;
 	/** The item type's action in the main window's menu bar for creating a new item. */
-	QAction*		newItemAction;
+	QAction*				newItemAction;
 	/** The item type's button in the main window for creating a new item. */
-	QPushButton*	newItemButton;
+	QPushButton*			newItemButton;
 };
 
 
@@ -84,35 +79,35 @@ struct TypeMapperPointers {
 class ItemTypeMapper {
 public:
 	/** The type of item (like ascent, peak...) that this mapper contains pointers for. */
-	const PALItemType	type;
+	const PALItemType		type;
 	
 	/** The name of the item type (like "ascent", "peak"...). */
-	const QString		name;
+	const QString			name;
 	
 	/** The SQL buffer (base) table containing data of this item type. */
-	NormalTable&		baseTable;
+	NormalTable&			baseTable;
 	/** The UI buffer (composite) table containing data of this item type. */
-	CompositeTable&		compTable;
+	CompositeTable&			compTable;
 	
 	/** The item-specific statistics engine for this item type. */
-	ItemStatsEngine&	statsEngine;
+	ItemStatsEngine&		statsEngine;
 	
 	/** The tab in the main window corresponding to this item type. */
-	QWidget&			tab;
+	MainWindowTabContent&	tab;
 	/** The table view in the main window showing the composite table of this item type. */
-	QTableView&			tableView;
+	QTableView&				tableView;
 	/** The widget for table filters above the table in the item's tab. */
-	FilterBar&			filterBar;
+	FilterBar&				filterBar;
 	/** The scroll area for displaying item-related statistics next to the table in the item's tab. */
-	QScrollArea&		statsScrollArea;
+	QScrollArea&			statsScrollArea;
 	
 	/** The action in the main window menu for creating a new item of this type. */
-	QAction&			newItemAction;
+	QAction&				newItemAction;
 	/** The button in the main window for creating a new item of this type. */
-	QPushButton&		newItemButton;
+	QPushButton&			newItemButton;
 	
 	/** The wizard for creating new custom columns. */
-	ColumnWizard&		columnWizard;
+	ColumnWizard&			columnWizard;
 	
 	/** The setting storing the geometry of the dialog for creating and editing items of this type. */
 	const Setting<QRect>&		dialogGeometrySetting;
@@ -208,14 +203,14 @@ public:
 		name									(name),
 		baseTable								(baseTable),
 		compTable								(*compTable),
-		statsEngine								(* new ItemStatsEngine(db, type, baseTable, pointerSupply.statsScrollArea->findChild<QVBoxLayout*>())),
+		statsEngine								(* new ItemStatsEngine(db, type, baseTable, pointerSupply.tab->getStatsScrollArea()->findChild<QVBoxLayout*>())),
 		tab										(*pointerSupply.tab),
-		tableView								(*pointerSupply.tableView),
-		filterBar								(*pointerSupply.filterBar),
-		statsScrollArea							(*pointerSupply.statsScrollArea),
+		tableView								(*pointerSupply.tab->getTableView()),
+		filterBar								(*pointerSupply.tab->getFilterBar()),
+		statsScrollArea							(*pointerSupply.tab->getStatsScrollArea()),
 		newItemAction							(*pointerSupply.newItemAction),
 		newItemButton							(*pointerSupply.newItemButton),
-		columnWizard							(* new ColumnWizard(pointerSupply.tableView, db, *compTable)),
+		columnWizard							(* new ColumnWizard(pointerSupply.tab->getTableView(), db, *compTable)),
 		dialogGeometrySetting					(dialogGeometrySetting),
 		showStatsPanelSetting					(showStatsPanelSetting),
 		statsPanelSplitterSizesSetting			(statsPanelSplitterSizesSetting),
@@ -248,12 +243,12 @@ public:
 	
 	inline bool itemStatsPanelCurrentlySetVisible() const
 	{
-		return statsScrollArea.isVisibleTo(&tab);
+		return statsScrollArea.isVisibleTo((QWidget*) &tab);
 	}
 	
 	inline bool filterBarCurrentlySetVisible() const
 	{
-		return filterBar.isVisibleTo(&tab);
+		return filterBar.isVisibleTo((QWidget*) &tab);
 	}
 	
 	/**
@@ -331,14 +326,14 @@ public:
 	 * @param uiPointerMap	A map of pointer supply structs for each item type.
 	 */
 	inline ItemTypesHandler(Database& db, QMap<PALItemType, TypeMapperPointers>&& uiPointerMap) :
-		//										type				name		baseTable			compTable					(db, tableView									  )		pointerSupply							customColumnsSetting								columnWidthsSetting								columnOrderSetting								hiddenColumnsSetting								sortingSetting								showFilterBarSetting								filtersSetting								dialogGeometrySetting				showStatsPanelSetting			statsPanelSplitterSizesSetting			openNewItemDialogAndStoreMethod	openDuplicateItemDialogAndStoreMethod	openEditItemDialogAndStoreMethod	openMultiEditItemsDialogAndStoreMethod,	openDeleteItemsDialogAndExecuteMethod
-		ascentMapper	(ItemTypeMapper	(db,	ItemTypeAscent,		"ascent",	db.ascentsTable,	new CompositeAscentsTable	(db, uiPointerMap.value(ItemTypeAscent)	.tableView),	uiPointerMap.value(ItemTypeAscent),		db.projectSettings.customColumns_ascentsTable,		db.projectSettings.columnWidths_ascentsTable,	db.projectSettings.columnOrder_ascentsTable,	db.projectSettings.hiddenColumns_ascentsTable,		db.projectSettings.sorting_ascentsTable,	db.projectSettings.showFilterBar_ascentsTable,		db.projectSettings.filters_ascentsTable,	Settings::ascentDialog_geometry,	Settings::ascentsStats_show,	Settings::ascentsStats_splitterSizes,	&openNewAscentDialogAndStore,	&openDuplicateAscentDialogAndStore,		&openEditAscentDialogAndStore,		&openMultiEditAscentsDialogAndStore,	&openDeleteAscentsDialogAndExecute)),
-		peakMapper		(ItemTypeMapper	(db,	ItemTypePeak,		"peak",		db.peaksTable,		new CompositePeaksTable		(db, uiPointerMap.value(ItemTypePeak)	.tableView),	uiPointerMap.value(ItemTypePeak),		db.projectSettings.customColumns_peaksTable,		db.projectSettings.columnWidths_peaksTable,		db.projectSettings.columnOrder_peaksTable,		db.projectSettings.hiddenColumns_peaksTable,		db.projectSettings.sorting_peaksTable,		db.projectSettings.showFilterBar_peaksTable,		db.projectSettings.filters_peaksTable,		Settings::peakDialog_geometry,		Settings::peaksStats_show,		Settings::peaksStats_splitterSizes,		&openNewPeakDialogAndStore,		&openDuplicatePeakDialogAndStore,		&openEditPeakDialogAndStore,		&openMultiEditPeaksDialogAndStore,		&openDeletePeaksDialogAndExecute)),
-		tripMapper		(ItemTypeMapper	(db,	ItemTypeTrip,		"trip",		db.tripsTable,		new CompositeTripsTable		(db, uiPointerMap.value(ItemTypeTrip)	.tableView),	uiPointerMap.value(ItemTypeTrip),		db.projectSettings.customColumns_tripsTable,		db.projectSettings.columnWidths_tripsTable,		db.projectSettings.columnOrder_tripsTable,		db.projectSettings.hiddenColumns_tripsTable,		db.projectSettings.sorting_tripsTable,		db.projectSettings.showFilterBar_tripsTable,		db.projectSettings.filters_tripsTable,		Settings::tripDialog_geometry,		Settings::tripsStats_show,		Settings::tripsStats_splitterSizes,		&openNewTripDialogAndStore,		nullptr /* no duplication */,			&openEditTripDialogAndStore,		&openMultiEditTripsDialogAndStore,		&openDeleteTripsDialogAndExecute)),
-		hikerMapper		(ItemTypeMapper	(db,	ItemTypeHiker,		"hiker",	db.hikersTable,		new CompositeHikersTable	(db, uiPointerMap.value(ItemTypeHiker)	.tableView),	uiPointerMap.value(ItemTypeHiker),		db.projectSettings.customColumns_hikersTable,		db.projectSettings.columnWidths_hikersTable,	db.projectSettings.columnOrder_hikersTable,		db.projectSettings.hiddenColumns_hikersTable,		db.projectSettings.sorting_hikersTable,		db.projectSettings.showFilterBar_hikersTable,		db.projectSettings.filters_hikersTable,		Settings::hikerDialog_geometry,		Settings::hikersStats_show,		Settings::hikersStats_splitterSizes,	&openNewHikerDialogAndStore,	nullptr /* no duplication */,			&openEditHikerDialogAndStore,		&openMultiEditHikersDialogAndStore,		&openDeleteHikersDialogAndExecute)),
-		regionMapper	(ItemTypeMapper	(db,	ItemTypeRegion,		"region",	db.regionsTable,	new CompositeRegionsTable	(db, uiPointerMap.value(ItemTypeRegion)	.tableView),	uiPointerMap.value(ItemTypeRegion),		db.projectSettings.customColumns_regionsTable,		db.projectSettings.columnWidths_regionsTable,	db.projectSettings.columnOrder_regionsTable,	db.projectSettings.hiddenColumns_regionsTable,		db.projectSettings.sorting_regionsTable,	db.projectSettings.showFilterBar_regionsTable,		db.projectSettings.filters_regionsTable,	Settings::regionDialog_geometry,	Settings::regionsStats_show,	Settings::regionsStats_splitterSizes,	&openNewRegionDialogAndStore,	nullptr /* no duplication */,			&openEditRegionDialogAndStore,		&openMultiEditRegionsDialogAndStore,	&openDeleteRegionsDialogAndExecute)),
-		rangeMapper		(ItemTypeMapper	(db,	ItemTypeRange,		"range",	db.rangesTable,		new CompositeRangesTable	(db, uiPointerMap.value(ItemTypeRange)	.tableView),	uiPointerMap.value(ItemTypeRange),		db.projectSettings.customColumns_rangesTable,		db.projectSettings.columnWidths_rangesTable,	db.projectSettings.columnOrder_rangesTable,		db.projectSettings.hiddenColumns_rangesTable,		db.projectSettings.sorting_rangesTable,		db.projectSettings.showFilterBar_rangesTable,		db.projectSettings.filters_rangesTable,		Settings::rangeDialog_geometry,		Settings::rangesStats_show,		Settings::rangesStats_splitterSizes,	&openNewRangeDialogAndStore,	nullptr /* no duplication */,			&openEditRangeDialogAndStore,		&openMultiEditRangesDialogAndStore,		&openDeleteRangesDialogAndExecute)),
-		countryMapper	(ItemTypeMapper	(db,	ItemTypeCountry,	"country",	db.countriesTable,	new CompositeCountriesTable	(db, uiPointerMap.value(ItemTypeCountry).tableView),	uiPointerMap.value(ItemTypeCountry),	db.projectSettings.customColumns_countriesTable,	db.projectSettings.columnWidths_countriesTable,	db.projectSettings.columnOrder_countriesTable,	db.projectSettings.hiddenColumns_countriesTable,	db.projectSettings.sorting_countriesTable,	db.projectSettings.showFilterBar_countriesTable,	db.projectSettings.filters_countriesTable,	Settings::countryDialog_geometry,	Settings::countriesStats_show,	Settings::countriesStats_splitterSizes,	&openNewCountryDialogAndStore,	nullptr /* no duplication */,			&openEditCountryDialogAndStore,		&openMultiEditCountriesDialogAndStore,	&openDeleteCountriesDialogAndExecute)),
+		//										type				name		baseTable			compTable					(db, tableView												)	pointerSupply							customColumnsSetting								columnWidthsSetting								columnOrderSetting								hiddenColumnsSetting								sortingSetting								showFilterBarSetting								filtersSetting								dialogGeometrySetting				showStatsPanelSetting			statsPanelSplitterSizesSetting			openNewItemDialogAndStoreMethod	openDuplicateItemDialogAndStoreMethod	openEditItemDialogAndStoreMethod	openMultiEditItemsDialogAndStoreMethod,	openDeleteItemsDialogAndExecuteMethod
+		ascentMapper	(ItemTypeMapper	(db,	ItemTypeAscent,		"ascent",	db.ascentsTable,	new CompositeAscentsTable	(db, uiPointerMap.value(ItemTypeAscent)	.tab->getTableView()),	uiPointerMap.value(ItemTypeAscent),		db.projectSettings.customColumns_ascentsTable,		db.projectSettings.columnWidths_ascentsTable,	db.projectSettings.columnOrder_ascentsTable,	db.projectSettings.hiddenColumns_ascentsTable,		db.projectSettings.sorting_ascentsTable,	db.projectSettings.showFilterBar_ascentsTable,		db.projectSettings.filters_ascentsTable,	Settings::ascentDialog_geometry,	Settings::ascentsStats_show,	Settings::ascentsStats_splitterSizes,	&openNewAscentDialogAndStore,	&openDuplicateAscentDialogAndStore,		&openEditAscentDialogAndStore,		&openMultiEditAscentsDialogAndStore,	&openDeleteAscentsDialogAndExecute)),
+		peakMapper		(ItemTypeMapper	(db,	ItemTypePeak,		"peak",		db.peaksTable,		new CompositePeaksTable		(db, uiPointerMap.value(ItemTypePeak)	.tab->getTableView()),	uiPointerMap.value(ItemTypePeak),		db.projectSettings.customColumns_peaksTable,		db.projectSettings.columnWidths_peaksTable,		db.projectSettings.columnOrder_peaksTable,		db.projectSettings.hiddenColumns_peaksTable,		db.projectSettings.sorting_peaksTable,		db.projectSettings.showFilterBar_peaksTable,		db.projectSettings.filters_peaksTable,		Settings::peakDialog_geometry,		Settings::peaksStats_show,		Settings::peaksStats_splitterSizes,		&openNewPeakDialogAndStore,		&openDuplicatePeakDialogAndStore,		&openEditPeakDialogAndStore,		&openMultiEditPeaksDialogAndStore,		&openDeletePeaksDialogAndExecute)),
+		tripMapper		(ItemTypeMapper	(db,	ItemTypeTrip,		"trip",		db.tripsTable,		new CompositeTripsTable		(db, uiPointerMap.value(ItemTypeTrip)	.tab->getTableView()),	uiPointerMap.value(ItemTypeTrip),		db.projectSettings.customColumns_tripsTable,		db.projectSettings.columnWidths_tripsTable,		db.projectSettings.columnOrder_tripsTable,		db.projectSettings.hiddenColumns_tripsTable,		db.projectSettings.sorting_tripsTable,		db.projectSettings.showFilterBar_tripsTable,		db.projectSettings.filters_tripsTable,		Settings::tripDialog_geometry,		Settings::tripsStats_show,		Settings::tripsStats_splitterSizes,		&openNewTripDialogAndStore,		nullptr /* no duplication */,			&openEditTripDialogAndStore,		&openMultiEditTripsDialogAndStore,		&openDeleteTripsDialogAndExecute)),
+		hikerMapper		(ItemTypeMapper	(db,	ItemTypeHiker,		"hiker",	db.hikersTable,		new CompositeHikersTable	(db, uiPointerMap.value(ItemTypeHiker)	.tab->getTableView()),	uiPointerMap.value(ItemTypeHiker),		db.projectSettings.customColumns_hikersTable,		db.projectSettings.columnWidths_hikersTable,	db.projectSettings.columnOrder_hikersTable,		db.projectSettings.hiddenColumns_hikersTable,		db.projectSettings.sorting_hikersTable,		db.projectSettings.showFilterBar_hikersTable,		db.projectSettings.filters_hikersTable,		Settings::hikerDialog_geometry,		Settings::hikersStats_show,		Settings::hikersStats_splitterSizes,	&openNewHikerDialogAndStore,	nullptr /* no duplication */,			&openEditHikerDialogAndStore,		&openMultiEditHikersDialogAndStore,		&openDeleteHikersDialogAndExecute)),
+		regionMapper	(ItemTypeMapper	(db,	ItemTypeRegion,		"region",	db.regionsTable,	new CompositeRegionsTable	(db, uiPointerMap.value(ItemTypeRegion)	.tab->getTableView()),	uiPointerMap.value(ItemTypeRegion),		db.projectSettings.customColumns_regionsTable,		db.projectSettings.columnWidths_regionsTable,	db.projectSettings.columnOrder_regionsTable,	db.projectSettings.hiddenColumns_regionsTable,		db.projectSettings.sorting_regionsTable,	db.projectSettings.showFilterBar_regionsTable,		db.projectSettings.filters_regionsTable,	Settings::regionDialog_geometry,	Settings::regionsStats_show,	Settings::regionsStats_splitterSizes,	&openNewRegionDialogAndStore,	nullptr /* no duplication */,			&openEditRegionDialogAndStore,		&openMultiEditRegionsDialogAndStore,	&openDeleteRegionsDialogAndExecute)),
+		rangeMapper		(ItemTypeMapper	(db,	ItemTypeRange,		"range",	db.rangesTable,		new CompositeRangesTable	(db, uiPointerMap.value(ItemTypeRange)	.tab->getTableView()),	uiPointerMap.value(ItemTypeRange),		db.projectSettings.customColumns_rangesTable,		db.projectSettings.columnWidths_rangesTable,	db.projectSettings.columnOrder_rangesTable,		db.projectSettings.hiddenColumns_rangesTable,		db.projectSettings.sorting_rangesTable,		db.projectSettings.showFilterBar_rangesTable,		db.projectSettings.filters_rangesTable,		Settings::rangeDialog_geometry,		Settings::rangesStats_show,		Settings::rangesStats_splitterSizes,	&openNewRangeDialogAndStore,	nullptr /* no duplication */,			&openEditRangeDialogAndStore,		&openMultiEditRangesDialogAndStore,		&openDeleteRangesDialogAndExecute)),
+		countryMapper	(ItemTypeMapper	(db,	ItemTypeCountry,	"country",	db.countriesTable,	new CompositeCountriesTable	(db, uiPointerMap.value(ItemTypeCountry).tab->getTableView()),	uiPointerMap.value(ItemTypeCountry),	db.projectSettings.customColumns_countriesTable,	db.projectSettings.columnWidths_countriesTable,	db.projectSettings.columnOrder_countriesTable,	db.projectSettings.hiddenColumns_countriesTable,	db.projectSettings.sorting_countriesTable,	db.projectSettings.showFilterBar_countriesTable,	db.projectSettings.filters_countriesTable,	Settings::countryDialog_geometry,	Settings::countriesStats_show,	Settings::countriesStats_splitterSizes,	&openNewCountryDialogAndStore,	nullptr /* no duplication */,			&openEditCountryDialogAndStore,		&openMultiEditCountriesDialogAndStore,	&openDeleteCountriesDialogAndExecute)),
 		mappers({
 			{ItemTypeAscent,	(&ascentMapper)},
 			{ItemTypePeak,		(&peakMapper)},

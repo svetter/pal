@@ -132,6 +132,7 @@ HEADERS += \
 	src/main/helpers.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
+	src/main/main_window_tab_content.h \
 	src/settings/project_settings.h \
 	src/settings/project_settings_window.h \
 	src/settings/settings.h \
@@ -225,6 +226,7 @@ SOURCES += \
 	src/main/filter_wizard.cpp \
 	src/main/helpers.cpp \
 	src/main/main_window.cpp \
+	src/main/main_window_tab_content.cpp \
 	src/settings/project_settings.cpp \
 	src/settings/project_settings_window.cpp \
 	src/settings/settings.cpp \
@@ -250,6 +252,7 @@ FORMS += \
 	src/ui/filter_bar.ui \
 	src/ui/filter_box.ui \
 	src/ui/main_window.ui \
+	src/ui/main_window_tab.ui \
 	src/ui/add_hiker_dialog.ui \
 	src/ui/ascent_dialog.ui \
 	src/ui/country_dialog.ui \

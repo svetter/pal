@@ -57,31 +57,6 @@ class MainWindow : public QMainWindow, private Ui_MainWindow
 	/** The list of menu items for opening the most recently opened database files. */
 	QList<QAction*> openRecentActions;
 	
-	/** The context menu for the column header area of all UI tables. */
-	QMenu columnContextMenu;
-	/** The column context menu entry for hiding the selected column. */
-	QAction* columnContextMenuHideColumnAction;
-	/** The column context menu entry for removing the selected column. */
-	QAction* columnContextMenuRemoveColumnAction;
-	/** The column context submenu for unhiding any previously hidden column. */
-	QMenu* columnContextMenuRestoreColumnMenu;
-	/** The column context menu entry for creating a new custom column. */
-	QAction* columnContextMenuAddCustomColumnAction;
-	
-	/** The context menu for the cell are of all UI tables. */
-	QMenu tableContextMenu;
-	/** The context menu entry for opening the selected item. */
-	QAction* tableContextMenuOpenAction;
-	/** The context menu entry for editing the selected item. */
-	QAction* tableContextMenuEditAction;
-	/** The context menu entry for duplicating the selected item. */
-	QAction* tableContextMenuDuplicateAction;
-	/** The context menu entry for deleting the selected items. */
-	QAction* tableContextMenuDeleteAction;
-	
-	/** List of keyboard shortcuts. */
-	QList<QShortcut*> shortcuts;
-	
 	/** The status bar label for the current table size. */
 	QLabel* statusBarTableSizeLabel;
 	/** The status bar label for the current filter settings. */
@@ -100,13 +75,6 @@ private:
 	void setupMenuIcons();
 	void connectUI();
 	void setupTableTabs();
-	void restoreColumnWidths(const ItemTypeMapper* const mapper);
-	void restoreColumnOrder(const ItemTypeMapper* const mapper);
-	void restoreColumnHiddenStatus(const ItemTypeMapper* const mapper);
-	void setSorting(const ItemTypeMapper* const mapper);
-	void initColumnContextMenu();
-	void initTableContextMenuAndShortcuts();
-	void updateTableContextMenuIcons();
 	
 	// Project setup (on load)
 	void attemptToOpenFile(const QString& filepath);
@@ -120,35 +88,25 @@ private:
 public:
 	void currentFiltersChanged();
 	
-private:
 	// Execute user commands
 	void viewSelectedItem();
 	void newItem(const ItemTypeMapper& mapper);
 	void duplicateAndEditSelectedItem();
 	void editSelectedItems();
 	void deleteSelectedItems();
+private:
 	// Helpers
 	void setFilteredAscentsCounterVisible(bool visible);
 	void updateTopBarButtonVisibilities();
 	void performUpdatesAfterUserAction(const ItemTypeMapper& mapper, bool numberOfEntriesChanged, BufferRowIndex bufferRowToSelectIndex = BufferRowIndex());
 	void scrollToTopAfterSorting();
-	void updateFilters(const ItemTypeMapper* onlyForMapper = nullptr);
+	void updateFilterCombos(const ItemTypeMapper* onlyForMapper = nullptr);
 public:
 	void updateSelectionAfterUserAction(const ItemTypeMapper& mapper, ViewRowIndex viewRowIndex);
 	
 private slots:
 	// UI event handlers
 	void handle_tabChanged();
-	void handle_tableSelectionChanged();
-	void handle_rightClickOnColumnHeader(QPoint pos);
-	void handle_rightClickInTable(QPoint pos);
-	
-	// Column context menu action handlers
-	void handle_hideColumn();
-	void handle_unhideColumn();
-	void handle_addCustomColumn();
-	void handle_columnWizardAccepted();
-	void handle_removeCustomColumn();
 	
 	// File menu action handlers
 	void handle_newDatabase();
@@ -168,6 +126,7 @@ private slots:
 	void handle_autoResizeColumns();
 	void handle_resetColumnOrder();
 	void handle_restoreHiddenColumns();
+	void handle_addCustomColumn();
 	void handle_clearTableSelection();
 	// Tools menu action handlers
 	void handle_findPeakLinks();
@@ -175,6 +134,13 @@ private slots:
 	void handle_exportData();
 	// Help menu action handlers
 	void handle_about();
+	
+public:
+	// State getters
+	bool isProjectOpen();
+	bool getCurrentTabIndex();
+	bool getShowItemStatsPanelState();
+	bool getPinStatRangesState();
 	
 private:
 	// Closing behaviour
@@ -189,7 +155,6 @@ private:
 	// General helpers
 	ItemTypeMapper* getActiveMapperOrNull() const;
 	ItemTypeMapper& getActiveMapper() const;
-	QPair<QSet<BufferRowIndex>, BufferRowIndex> getSelectedRows(const ItemTypeMapper& mapper) const;
 	void addToRecentFilesList(const QString& filepath);
 	void setWindowTitleFilename(QString filepath = QString());
 	void setStatusLine(QString content);

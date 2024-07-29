@@ -47,10 +47,7 @@ MainWindow::MainWindow() :
 	projectOpen(false),
 	db(Database()),
 	typesHandler(nullptr),
-	openRecentActions(QList<QAction*>()), columnContextMenu(QMenu(this)), columnContextMenuHideColumnAction(nullptr),
-	columnContextMenuRestoreColumnMenu(nullptr), tableContextMenu(QMenu(this)), tableContextMenuOpenAction(nullptr),
-	tableContextMenuDuplicateAction(nullptr),
-	shortcuts(QList<QShortcut*>()),
+	openRecentActions(QList<QAction*>()),
 	statusBarTableSizeLabel(new QLabel(statusbar)),
 	statusBarFiltersLabel(new QLabel(statusbar)),
 	generalStatsEngine(GeneralStatsEngine(db, &statisticsTabLayout))
@@ -83,8 +80,6 @@ MainWindow::MainWindow() :
 	connectUI();
 	setupTableTabs();
 	generalStatsEngine.setupStatsTab();
-	initColumnContextMenu();
-	initTableContextMenuAndShortcuts();
 	updateItemCountDisplays(true);
 	updateRecentFilesMenu();
 	
@@ -93,9 +88,6 @@ MainWindow::MainWindow() :
 	if (!lastOpen.isEmpty() && QFile(lastOpen).exists()) {
 		attemptToOpenFile(lastOpen);
 	}
-	
-	
-	updateTableContextMenuIcons();
 }
 
 /**
@@ -103,8 +95,6 @@ MainWindow::MainWindow() :
  */
 MainWindow::~MainWindow()
 {
-	delete columnContextMenuRestoreColumnMenu;
-	qDeleteAll(shortcuts);
 	delete typesHandler;
 }
 
@@ -119,19 +109,15 @@ void MainWindow::createTypesHandler()
 {
 	typesHandler = new ItemTypesHandler(db,
 		{
-			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		ascentsTableView,	ascentFilterBar,	ascentsStatsScrollArea,		newAscentAction,	newAscentButton		} },
-			{ItemTypePeak,		TypeMapperPointers{peaksTab,		peaksTableView,		peakFilterBar,		peaksStatsScrollArea,		newPeakAction,		newPeakButton		} },
-			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		tripsTableView,		tripFilterBar,		tripsStatsScrollArea,		newTripAction,		newTripButton		} },
-			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		hikersTableView,	hikerFilterBar,		hikersStatsScrollArea,		newHikerAction,		newHikerButton		} },
-			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		regionsTableView,	regionFilterBar,	regionsStatsScrollArea,		newRegionAction,	newRegionButton		} },
-			{ItemTypeRange,		TypeMapperPointers{rangesTab,		rangesTableView,	rangeFilterBar,		rangesStatsScrollArea,		newRangeAction,		newRangeButton		} },
-			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	countriesTableView,	countryFilterBar,	countriesStatsScrollArea,	newCountryAction,	newCountryButton	} }
+			{ItemTypeAscent,	TypeMapperPointers{ascentsTab,		newAscentAction,	newAscentButton		} },
+			{ItemTypePeak,		TypeMapperPointers{peaksTab,		newPeakAction,		newPeakButton		} },
+			{ItemTypeTrip,		TypeMapperPointers{tripsTab,		newTripAction,		newTripButton		} },
+			{ItemTypeHiker,		TypeMapperPointers{hikersTab,		newHikerAction,		newHikerButton		} },
+			{ItemTypeRegion,	TypeMapperPointers{regionsTab,		newRegionAction,	newRegionButton		} },
+			{ItemTypeRange,		TypeMapperPointers{rangesTab,		newRangeAction,		newRangeButton		} },
+			{ItemTypeCountry,	TypeMapperPointers{countriesTab,	newCountryAction,	newCountryButton	} }
 		}
 	);
-	
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		connect(&mapper->columnWizard, &ColumnWizard::accepted, this, &MainWindow::handle_columnWizardAccepted);
-	}
 }
 
 /**
@@ -234,254 +220,16 @@ void MainWindow::connectUI()
 }
 
 /**
- * Connects each table view to the underlying CompositeTable and to the table context menu, as well
- * as set up the item statistics panels.
+ * Supplies basic information to each tab content widget and has them set up.
  */
 void MainWindow::setupTableTabs()
 {
-	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
-		// Set model
-		mapper->tableView.setModel(&mapper->compTable);
-		mapper->compTable.setUpdateImmediately(mapper->type == mainAreaTabs->currentIndex());
+	for (ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
+		const bool isViewable	= mapper->type == ItemTypeAscent;
+		const bool isDuplicable	= mapper->type == ItemTypeAscent || mapper->type == ItemTypePeak;
 		
-		// Enable column header reordering
-		mapper->tableView.horizontalHeader()->setSectionsMovable(true);
-		
-		// Enable context menus
-		mapper->tableView.horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-		connect(mapper->tableView.horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindow::handle_rightClickOnColumnHeader);
-		connect(&mapper->tableView, &QTableView::customContextMenuRequested, this, &MainWindow::handle_rightClickInTable);
-		
-		// Connect selection change listener
-		connect(mapper->tableView.selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::handle_tableSelectionChanged);
-		
-		// Stats visibility
-		const bool statsEnabled = mapper->showStatsPanelSetting.get();
-		mapper->statsScrollArea.setVisible(statsEnabled);
-		// Restore splitter sizes
-		QSplitter* const splitter = mapper->tab.findChild<QSplitter*>();
-		splitter->setStretchFactor(0, 3);
-		splitter->setStretchFactor(1, 1);
-		restoreSplitterSizes(*splitter, mapper->statsPanelSplitterSizesSetting);
-		
-		// Setup stats panels
-		mapper->statsEngine.setupStatsPanel();
-		mapper->statsEngine.setCurrentlyVisible(false);
-		mapper->statsEngine.setRangesPinned(pinStatsRangesAction->isChecked());
+		mapper->tab.init(this, mapper, isViewable, isDuplicable);
 	}
-}
-
-/**
- * Restores the column widths for the table view specified by the given ItemTypeMapper.
- * 
- * @param mapper	The ItemTypeMapper for the table view whose column widths should be restored.
- */
-void MainWindow::restoreColumnWidths(const ItemTypeMapper* const mapper)
-{
-	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
-	if (mapper->columnWidthsSetting.nonePresent(columnNameSet)) return;	// Only restore if any widths are in the settings
-	
-	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
-	const QMap<QString, int> columnWidthMap = mapper->columnWidthsSetting.get(normalColumnNames);
-	
-	// Restore column widths
-	for (int columnIndex = 0; columnIndex < mapper->compTable.getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable.getColumnAt(columnIndex).name;
-		int columnWidth = columnWidthMap[columnName];
-		if (columnWidth < 1) {
-			columnWidth = mapper->tableView.horizontalHeader()->sizeHintForColumn(columnIndex);
-		}
-		mapper->tableView.setColumnWidth(columnIndex, columnWidth);
-	}
-}
-
-/**
- * Restores the column order for the table view specified by the given ItemTypeMapper.
- * 
- * @param mapper	The ItemTypeMapper for the table view whose column order should be restored.
- */
-void MainWindow::restoreColumnOrder(const ItemTypeMapper* const mapper)
-{
-	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
-	if (mapper->columnOrderSetting.nonePresent(columnNameSet)) return;	// Only restore if any columns are in the settings
-	
-	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
-	const QMap<QString, int> columnOrderMap = mapper->columnOrderSetting.get(normalColumnNames);
-	// Sort by visual index
-	QList<QPair<const CompositeColumn*, int>> columnOrderList = QList<QPair<const CompositeColumn*, int>>();
-	for (const QPair<QString, int>& columnOrderPair : columnOrderMap.asKeyValueRange()) {
-		if (columnOrderPair.second < 0) continue;	// Visual index invalid, ignore column
-		const CompositeColumn* column = mapper->compTable.getColumnByNameOrNull(columnOrderPair.first);
-		if (!column) continue;
-		columnOrderList.append({column, columnOrderPair.second});
-	}
-	auto comparator = [](const QPair<const CompositeColumn*, int>& pair1, const QPair<const CompositeColumn*, int>& pair2) {
-		return pair1.second < pair2.second;
-	};
-	std::sort(columnOrderList.begin(), columnOrderList.end(), comparator);
-	
-	// Restore column order
-	QHeaderView* header = mapper->tableView.horizontalHeader();
-	for (int visualIndex = 0; visualIndex < columnOrderList.size(); visualIndex++) {
-		const CompositeColumn& column = *columnOrderList.at(visualIndex).first;
-		int logicalIndex = column.getIndex();
-		int currentVisualIndex = header->visualIndex(logicalIndex);
-		header->moveSection(currentVisualIndex, visualIndex);
-	}
-}
-
-/**
- * Restores the column hidden states for the table view specified by the given ItemTypeMapper.
- * 
- * @param mapper	The ItemTypeMapper for the table view whose column hidden statuses should be restored.
- */
-void MainWindow::restoreColumnHiddenStatus(const ItemTypeMapper* const mapper)
-{
-	QSet<QString> columnNameSet = mapper->compTable.getNormalColumnNameSet();
-	if (mapper->hiddenColumnsSetting.nonePresent(columnNameSet)) return;	// Only restore if any column are in the settings
-	
-	const QSet<QString> normalColumnNames = mapper->compTable.getNormalColumnNameSet();
-	const QMap<QString, bool> columnHiddenMap = mapper->hiddenColumnsSetting.get(normalColumnNames);
-	
-	// Restore column hidden status
-	for (int columnIndex = 0; columnIndex < mapper->compTable.getNumberOfNormalColumns(); columnIndex++) {
-		const QString& columnName = mapper->compTable.getColumnAt(columnIndex).name;
-		bool storedColumnHiddenStatus = columnHiddenMap[columnName];
-		if (!storedColumnHiddenStatus) continue;
-		mapper->tableView.horizontalHeader()->setSectionHidden(columnIndex, true);
-		mapper->compTable.markColumnHidden(columnIndex);
-	}
-}
-
-/**
- * Sets the sorting for the table view specified by the given ItemTypeMapper to either the
- * remembered sorting or, if that is not present or disabled, to the default sorting.
- * 
- * @param mapper	The ItemTypeMapper for the table view whose sorting should be set.
- */
-void MainWindow::setSorting(const ItemTypeMapper* const mapper)
-{
-	SortingPass sorting = mapper->compTable.getDefaultSorting();
-	bool sortingSettingValid = true;
-	
-	while (Settings::rememberSorting.get() && mapper->sortingSetting.present()) {
-		sortingSettingValid = false;
-		
-		QStringList saved = mapper->sortingSetting.get().split(",");
-		if (saved.size() != 2) break;
-		
-		const CompositeColumn* column = mapper->compTable.getColumnByNameOrNull(saved.at(0).trimmed());
-		if (!column) break;
-		
-		bool ascending = saved.at(1).trimmed().compare("Descending", Qt::CaseInsensitive) != 0;
-		Qt::SortOrder order = ascending ? Qt::AscendingOrder : Qt::DescendingOrder;
-		
-		sorting.column = column;
-		sorting.order = order;
-		sortingSettingValid = true;
-		break;
-	}
-	mapper->tableView.sortByColumn(sorting.column->getIndex(), sorting.order);
-	
-	if (!sortingSettingValid) mapper->sortingSetting.clear(*this);
-}
-
-
-/**
- * Initializes the column context menu.
- */
-void MainWindow::initColumnContextMenu()
-{
-	// Context menu
-	columnContextMenuHideColumnAction = columnContextMenu.addAction(tr("Hide this column"));
-	columnContextMenuRemoveColumnAction = columnContextMenu.addAction(tr("Remove this column"));
-	columnContextMenuRemoveColumnAction->setEnabled(false);
-	columnContextMenu.addSeparator();
-	columnContextMenuRestoreColumnMenu = columnContextMenu.addMenu(tr("Restore hidden column"));
-	columnContextMenu.addSeparator();
-	columnContextMenuAddCustomColumnAction = columnContextMenu.addAction(tr("Add custom column..."));
-	
-	// Set icons
-	columnContextMenuHideColumnAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	columnContextMenuRemoveColumnAction		->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	columnContextMenuAddCustomColumnAction	->setIcon(style()->standardIcon(QStyle::SP_CommandLink));
-	
-	connect(columnContextMenuHideColumnAction,		&QAction::triggered, this, &MainWindow::handle_hideColumn);
-	connect(columnContextMenuRemoveColumnAction,	&QAction::triggered, this, &MainWindow::handle_removeCustomColumn);
-	connect(columnContextMenuAddCustomColumnAction,	&QAction::triggered, this, &MainWindow::handle_addCustomColumn);
-}
-
-/**
- * Initializes the table context menu and the keyboard shortcuts for the table views.
- */
-void MainWindow::initTableContextMenuAndShortcuts()
-{
-	QKeySequence openKeySequence		= QKeySequence(Qt::Key_Return);
-	QKeySequence editKeySequence		= QKeySequence(Qt::CTRL | Qt::Key_Return);
-	QKeySequence duplicateKeySequence	= QKeySequence::Copy;
-	QKeySequence deleteKeySequence		= QKeySequence::Delete;
-	
-	// Context menu
-	QAction* openAction			= tableContextMenu.addAction(tr("View..."),						openKeySequence);
-	tableContextMenu.addSeparator();
-	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						editKeySequence);
-	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
-	tableContextMenu.addSeparator();
-	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete"),						deleteKeySequence);
-	// Store actions for open and duplicate (for disbling them where they're not needed)
-	tableContextMenuOpenAction		= openAction;
-	tableContextMenuEditAction		= editAction;
-	tableContextMenuDuplicateAction	= duplicateAction;
-	tableContextMenuDeleteAction	= deleteAction;
-	
-	// Set icons
-	openAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
-	deleteAction->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
-	
-	connect(openAction,			&QAction::triggered, this, &MainWindow::viewSelectedItem);
-	connect(editAction,			&QAction::triggered, this, &MainWindow::editSelectedItems);
-	connect(duplicateAction,	&QAction::triggered, this, &MainWindow::duplicateAndEditSelectedItem);
-	connect(deleteAction,		&QAction::triggered, this, &MainWindow::deleteSelectedItems);
-	
-	// Keyboard shortcuts
-	QList<QTableView*> tableViews = mainAreaTabs->findChildren<QTableView*>();
-	for (QTableView* const tableView : tableViews) {
-		QShortcut* openShortcut			= new QShortcut(openKeySequence,		tableView);
-		QShortcut* editShortcut			= new QShortcut(editKeySequence,		tableView);
-		QShortcut* duplicateShortcut	= new QShortcut(duplicateKeySequence,	tableView);
-		QShortcut* deleteShortcut		= new QShortcut(deleteKeySequence,		tableView);
-		
-		shortcuts.append(openShortcut);
-		shortcuts.append(editShortcut);
-		shortcuts.append(duplicateShortcut);
-		shortcuts.append(deleteShortcut);
-		
-		auto handle_enter = [this]() {
-			const ItemTypeMapper* activeMapper = getActiveMapperOrNull();
-			if (!activeMapper) return;
-			if (activeMapper->type == ItemTypeAscent) return viewSelectedItem();
-			return editSelectedItems();
-		};
-		connect(openShortcut,		&QShortcut::activated, this, handle_enter);
-		connect(editShortcut,		&QShortcut::activated, this, &MainWindow::editSelectedItems);
-		connect(duplicateShortcut,	&QShortcut::activated, this, &MainWindow::duplicateAndEditSelectedItem);
-		connect(deleteShortcut,		&QShortcut::activated, this, &MainWindow::deleteSelectedItems);
-	}
-}
-
-/**
- * Sets the icons for the table context menu actions to the icon of the currently selected table.
- * 
- * This method has to be called whenever the currently selected table changes because the context
- * menu actions are shared between all tables.
- */
-void MainWindow::updateTableContextMenuIcons()
-{
-	const ItemTypeMapper* const activeMapperOrNull = getActiveMapperOrNull();
-	if (!activeMapperOrNull) return;
-	QIcon icon = QIcon(":/icons/" + activeMapperOrNull->name + ".svg");
-	tableContextMenuEditAction->setIcon(icon);
-	tableContextMenuDuplicateAction->setIcon(icon);
 }
 
 
@@ -504,7 +252,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 	
 	if (dbOpened) {
 		setWindowTitleFilename(filepath);
-		updateFilters();
+		updateFilterCombos();
 		
 		// Restore project-specific implicit settings:
 		// Open tab
@@ -532,18 +280,18 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 			mapper->filterBar.setVisible(mapper->showFilterBarSetting.get(this));
 			// Column widths
 			if (Settings::rememberColumnWidths.get()) {
-				restoreColumnWidths(mapper);
+				mapper->tab.restoreColumnWidths();
 			}
 			// Column order
 			if (Settings::rememberColumnOrder.get()) {
-				restoreColumnOrder(mapper);
+				mapper->tab.restoreColumnOrder();
 			}
 			// Hidden columns
 			if (Settings::rememberHiddenColumns.get()) {
-				restoreColumnHiddenStatus(mapper);
+				mapper->tab.restoreColumnHiddenStatus();
 			}
 			// Sortings
-			setSorting(mapper);
+			mapper->tab.setSorting();
 		}
 		
 		// Build buffers and update size info
@@ -551,7 +299,7 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		projectOpen = true;
 		
 		updateItemCountDisplays();
-		handle_tableSelectionChanged();
+		getActiveMapper().tab.refreshStats();
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
@@ -762,7 +510,7 @@ void MainWindow::currentFiltersChanged()
 {
 	updateItemCountDisplays();
 	handle_clearTableSelection();	// Have to clear table selection for chart range pinning to work correctly
-	handle_tableSelectionChanged();
+	getActiveMapper().tab.refreshStats();
 }
 
 
@@ -775,7 +523,7 @@ void MainWindow::currentFiltersChanged()
 void MainWindow::viewSelectedItem()
 {
 	const ItemTypeMapper& activeMapper = getActiveMapper();
-	const BufferRowIndex primaryBufferRow = getSelectedRows(activeMapper).second;
+	const BufferRowIndex primaryBufferRow = activeMapper.tab.getSelectedRows().second;
 	if (primaryBufferRow.isInvalid()) return;
 	
 	switch (activeMapper.type) {
@@ -816,7 +564,7 @@ void MainWindow::newItem(const ItemTypeMapper& mapper)
 void MainWindow::duplicateAndEditSelectedItem()
 {
 	const ItemTypeMapper& activeMapper = getActiveMapper();
-	const BufferRowIndex primaryBufferRow = getSelectedRows(activeMapper).second;
+	const BufferRowIndex primaryBufferRow = activeMapper.tab.getSelectedRows().second;
 	if (primaryBufferRow.isInvalid()) return;
 	
 	activeMapper.openDuplicateItemDialogAndStoreMethod(*this, *this, db, primaryBufferRow, [this, &activeMapper](BufferRowIndex newBufferRowIndex) {
@@ -835,7 +583,7 @@ void MainWindow::duplicateAndEditSelectedItem()
 void MainWindow::editSelectedItems()
 {
 	const ItemTypeMapper& activeMapper = getActiveMapper();
-	const QPair<QSet<BufferRowIndex>, BufferRowIndex> selectedAndMarkedBufferRows = getSelectedRows(activeMapper);
+	const QPair<QSet<BufferRowIndex>, BufferRowIndex> selectedAndMarkedBufferRows = activeMapper.tab.getSelectedRows();
 	const QSet<BufferRowIndex>& selectedBufferRows = selectedAndMarkedBufferRows.first;
 	const BufferRowIndex markedBufferRow = selectedAndMarkedBufferRows.second;
 	if (selectedBufferRows.isEmpty()) return;
@@ -862,7 +610,7 @@ void MainWindow::editSelectedItems()
 void MainWindow::deleteSelectedItems()
 {
 	const ItemTypeMapper& activeMapper = getActiveMapper();
-	const QSet<BufferRowIndex> selectedBufferRows = getSelectedRows(activeMapper).first;
+	const QSet<BufferRowIndex> selectedBufferRows = activeMapper.tab.getSelectedRows().first;
 	if (selectedBufferRows.isEmpty()) return;
 	
 	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
@@ -930,12 +678,12 @@ void MainWindow::performUpdatesAfterUserAction(const ItemTypeMapper& mapper, boo
 		updateSelectionAfterUserAction(mapper, viewRowToSelectIndex);
 	} else {
 		if (numberOfEntriesChanged) handle_clearTableSelection();
-		handle_tableSelectionChanged();
+		mapper.tab.refreshStats();
 	}
 	// Update table size info
 	if (numberOfEntriesChanged) updateItemCountDisplays();
 	// Update filters
-	updateFilters();
+	updateFilterCombos();
 }
 
 /**
@@ -959,7 +707,7 @@ void MainWindow::scrollToTopAfterSorting()
  * 
  * @param onlyForMapper	The ItemTypeMapper for the table that was changed. Set to nullptr to update all filter bars.
  */
-void MainWindow::updateFilters(const ItemTypeMapper* onlyForMapper)
+void MainWindow::updateFilterCombos(const ItemTypeMapper* onlyForMapper)
 {
 	for (const ItemTypeMapper* const mapper : typesHandler->getAllMappers()) {
 		if (!onlyForMapper || mapper == onlyForMapper) {
@@ -1033,216 +781,7 @@ void MainWindow::handle_tabChanged()
 	}
 	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	
-	updateTableContextMenuIcons();
-	handle_tableSelectionChanged();
-	
 	setUIEnabled(true);
-}
-
-/**
- * Event handler for changes in which rows of the active table view are selected.
- * 
- * Collects selected rows and updates the item statistics panel.
- */
-void MainWindow::handle_tableSelectionChanged()
-{
-	bool statsPanelShown = showItemStatsPanelAction->isChecked();
-	if (!projectOpen || !statsPanelShown) return;
-	
-	const ItemTypeMapper* const activeMapper = getActiveMapperOrNull();
-	if (!activeMapper) return;
-	
-	const QItemSelection selection = activeMapper->tableView.selectionModel()->selection();
-	QSet<BufferRowIndex> selectedBufferRows = QSet<BufferRowIndex>();
-	if (selection.isEmpty()) {
-		// Instead of showing an empty chart, show chart for all rows (except filtered out)
-		int numRowsShown = activeMapper->compTable.rowCount();
-		for (ViewRowIndex viewIndex = ViewRowIndex(0); viewIndex.isValid(numRowsShown); viewIndex++) {
-			BufferRowIndex bufferIndex = activeMapper->compTable.getBufferRowIndexForViewRow(viewIndex);
-			selectedBufferRows.insert(bufferIndex);
-		}
-	}
-	else {
-		// One or more rows selected, find their buffer indices
-		QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
-		for (const QItemSelectionRange& range : selection) {
-			for (const QModelIndex& index : range.indexes()) {
-				selectedViewRows.insert(ViewRowIndex(index.row()));
-			}
-		}
-		for (const ViewRowIndex& viewIndex : selectedViewRows) {
-			BufferRowIndex bufferIndex = activeMapper->compTable.getBufferRowIndexForViewRow(viewIndex);
-			selectedBufferRows.insert(bufferIndex);
-		}
-	}
-	
-	const bool allSelected = activeMapper->compTable.rowCount() == selectedBufferRows.size();
-	activeMapper->statsEngine.setStartBufferRows(selectedBufferRows, allSelected);
-}
-
-/**
- * Event handler for right clicks on the column header area of the active table view.
- * 
- * Prepares and opens the column context menu at the given position.
- * 
- * @param pos	The position of the right click in the viewport of the horizontal table view header.
- */
-void MainWindow::handle_rightClickOnColumnHeader(QPoint pos)
-{
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	// Get index of clicked column
-	QHeaderView* header = mapper.tableView.horizontalHeader();
-	int logicalIndexClicked = header->logicalIndexAt(pos);
-	if (logicalIndexClicked < 0) return;
-	
-	// Repopulate 'restore column' submenu
-	int visibleColumns = 0;
-	columnContextMenuRestoreColumnMenu->clear();
-	for (int logicalIndex = 0; logicalIndex < header->count(); logicalIndex++) {
-		if (!header->isSectionHidden(logicalIndex)) {
-			visibleColumns++;
-			continue;
-		}
-		
-		const QString& columnName = mapper.compTable.getColumnAt(logicalIndex).uiName;
-		QAction* restoreColumnAction = columnContextMenuRestoreColumnMenu->addAction(columnName);
-		restoreColumnAction->setData(logicalIndex);
-		connect(restoreColumnAction, &QAction::triggered, this, &MainWindow::handle_unhideColumn);
-	}
-	columnContextMenuRestoreColumnMenu->setEnabled(!columnContextMenuRestoreColumnMenu->isEmpty());
-	
-	// Configure 'hide column' and 'remove column' actions
-	columnContextMenuHideColumnAction->setData(logicalIndexClicked);
-	columnContextMenuRemoveColumnAction->setData(logicalIndexClicked);
-	columnContextMenuHideColumnAction->setEnabled(visibleColumns > 1);
-	columnContextMenuRemoveColumnAction->setEnabled(mapper.compTable.hasCustomColumnAt(logicalIndexClicked));
-	
-	// Configure 'add custom column' action
-	columnContextMenuAddCustomColumnAction->setData(logicalIndexClicked);
-	
-	// Show context menu
-	columnContextMenu.popup(header->viewport()->mapToGlobal(pos));
-}
-
-/**
- * Event handler for right clicks in the cell area of the active table view.
- * 
- * Prepares and opens the table context menu at the given position.
- * 
- * @param pos	The position of the right click in the viewport of the table view.
- */
-void MainWindow::handle_rightClickInTable(QPoint pos)
-{
-	QTableView& currentTableView = getActiveMapper().tableView;
-	QModelIndex index = currentTableView.indexAt(pos);
-	if (!index.isValid()) return;
-	
-	const bool singleRowSelected = currentTableView.selectionModel()->selectedRows().size() == 1;
-	const bool viewableItemTable = &currentTableView == ascentsTableView;
-	const bool duplicatableItemTable = &currentTableView == ascentsTableView || &currentTableView == peaksTableView;
-	
-	tableContextMenuOpenAction		->setVisible(singleRowSelected && viewableItemTable);
-	tableContextMenuDuplicateAction	->setVisible(singleRowSelected && duplicatableItemTable);
-	
-	QString deleteString = tr("Delete") + (Settings::confirmDelete.get() ? "..." : "");
-	tableContextMenuDeleteAction->setText(deleteString);
-	
-	tableContextMenu.popup(currentTableView.viewport()->mapToGlobal(pos));
-}
-
-
-
-// COLUMN CONTEXT MENU ACTION HANDLERS
-
-/**
- * Event handler for the 'hide column' action in the column context menu.
- * 
- * Extracts the column index from calling sender().
- */
-void MainWindow::handle_hideColumn()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	if (!action) return;
-	
-	const int logicalIndex = action->data().toInt();
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, true);
-	mapper.compTable.markColumnHidden(logicalIndex);
-}
-
-/**
- * Event handler for any of the 'unhide column' actions in the column context menu.
- * 
- * Extracts the column index from calling sender().
- */
-void MainWindow::handle_unhideColumn()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	if (!action) return;
-	
-	const int logicalIndex = action->data().toInt();
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	
-	mapper.tableView.horizontalHeader()->setSectionHidden(logicalIndex, false);
-	mapper.compTable.markColumnUnhidden(logicalIndex);
-	mapper.compTable.updateBothBuffers();
-}
-
-/**
- * Event handler for the 'add custom column' action in the column context menu.
- * 
- * Extracts the column index from calling sender().
- */
-void MainWindow::handle_addCustomColumn()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	if (!action) return;
-	
-	ItemTypeMapper& mapper = getActiveMapper();
-	
-	const int logicalIndex = action->data().toInt();
-	const int visualIndex = mapper.tableView.horizontalHeader()->visualIndex(logicalIndex) + 1;
-	
-	ColumnWizard& wizard = getActiveMapper().columnWizard;
-	
-	wizard.visualIndexToUse = visualIndex;
-	wizard.restart();
-	wizard.show();
-}
-
-void MainWindow::handle_columnWizardAccepted()
-{
-	const ItemTypeMapper& mapper = getActiveMapper();
-	ColumnWizard& wizard = mapper.columnWizard;
-	
-	const CompositeColumn& newColumn = *wizard.getFinishedColumn();
-	mapper.compTable.addCustomColumn(newColumn);
-	
-	// Set visual index to right of the clicked column
-	const int logicalIndex = mapper.compTable.getIndexOf(newColumn);
-	const int currentVisualIndex = mapper.tableView.horizontalHeader()->visualIndex(logicalIndex);
-	mapper.tableView.horizontalHeader()->moveSection(currentVisualIndex, wizard.visualIndexToUse);
-}
-
-/**
- * Event handler for the 'remove column' action in the column context menu.
- * 
- * Extracts the column index from calling sender().
- */
-void MainWindow::handle_removeCustomColumn()
-{
-	QAction* action = qobject_cast<QAction*>(sender());
-	if (!action) return;
-	
-	const int logicalIndex = action->data().toInt();
-	
-	const ItemTypeMapper& mapper = getActiveMapper();
-	mapper.filterBar.compColumnAboutToBeRemoved(mapper.compTable.getColumnAt(logicalIndex));
-	mapper.compTable.removeCustomColumnAt(logicalIndex);
 }
 
 
@@ -1276,14 +815,15 @@ void MainWindow::handle_newDatabase()
 	initCompositeBuffers();
 	projectOpen = true;
 	
-	updateFilters();
+	ItemTypeMapper& activeMapper = getActiveMapper();
+	
+	updateFilterCombos();
 	updateItemCountDisplays();
-	handle_tableSelectionChanged();
+	activeMapper.tab.refreshStats();
 	setUIEnabled(true);
 	
 	addToRecentFilesList(filepath);
 	
-	ItemTypeMapper& activeMapper = getActiveMapper();
 	activeMapper.openingTab();
 	activeMapper.statsEngine.setCurrentlyVisible(true);
 	
@@ -1594,6 +1134,30 @@ void MainWindow::handle_restoreHiddenColumns()
 }
 
 /**
+ * Event handler for the 'add custom column' action in the column context menu.
+ *
+ * Extracts the column index from calling sender().
+ */
+void MainWindow::handle_addCustomColumn()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	if (!action) return;
+
+	ItemTypeMapper& mapper = getActiveMapper();
+	
+	mapper.tab.openColumnWizard();
+
+	const int logicalIndex = action->data().toInt();
+	const int visualIndex = mapper.tableView.horizontalHeader()->visualIndex(logicalIndex) + 1;
+
+	ColumnWizard& wizard = getActiveMapper().columnWizard;
+
+	wizard.visualIndexToUse = visualIndex;
+	wizard.restart();
+	wizard.show();
+}
+
+/**
  * Event handler for the "clear table selection" action in the view menu.
  * 
  * Clears the selection of the currently active table.
@@ -1659,6 +1223,30 @@ void MainWindow::handle_about()
 	AboutWindow* dialog = new AboutWindow(*this);
 	connect(dialog, &AboutWindow::finished, [=]() { delete dialog; });
 	dialog->open();
+}
+
+
+
+// STATE GETTERS
+
+bool MainWindow::isProjectOpen()
+{
+	return projectOpen;
+}
+
+bool MainWindow::getCurrentTabIndex()
+{
+	return mainAreaTabs->currentIndex();
+}
+
+bool MainWindow::getShowItemStatsPanelState()
+{
+	return showItemStatsPanelAction->isChecked();
+}
+
+bool MainWindow::getPinStatRangesState()
+{
+	return pinStatsRangesAction->isChecked();
 }
 
 
@@ -1826,51 +1414,6 @@ ItemTypeMapper* MainWindow::getActiveMapperOrNull() const
 ItemTypeMapper& MainWindow::getActiveMapper() const
 {
 	return typesHandler->getActiveMapper();
-}
-
-/**
- * Returns the indices of selected rows and marked row in the table specified by the given
- * ItemTypeMapper.
- * 
- * Marked rows which are not selected are ignored and replaced with the buffer row which corresponds
- * with the lowest view row index of the selected rows.
- * 
- * @return	The selected rows in the currently active table.
- */
-QPair<QSet<BufferRowIndex>, BufferRowIndex> MainWindow::getSelectedRows(const ItemTypeMapper& mapper) const
-{
-	const QModelIndex markedModelIndex = mapper.tableView.currentIndex();
-	const QModelIndexList selectedModelIndices = mapper.tableView.selectionModel()->selectedRows();
-	
-	if (selectedModelIndices.isEmpty()) {
-		if (!markedModelIndex.isValid()) return {{}, BufferRowIndex()};
-		
-		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
-		const BufferRowIndex marked = mapper.compTable.getBufferRowIndexForViewRow(markedViewRow);
-		return {{ marked }, marked};
-	}
-	
-	QSet<BufferRowIndex> selected = QSet<BufferRowIndex>();
-	for (const QModelIndex& modelIndex : selectedModelIndices) {
-		const ViewRowIndex viewRowIndex = ViewRowIndex(modelIndex.row());
-		const BufferRowIndex bufferRowIndex = mapper.compTable.getBufferRowIndexForViewRow(viewRowIndex);
-		assert(bufferRowIndex.isValid(mapper.baseTable.getNumberOfRows()));
-		selected.insert(bufferRowIndex);
-	}
-	
-	if (markedModelIndex.isValid()) {
-		const ViewRowIndex markedViewRow = ViewRowIndex(markedModelIndex.row());
-		const BufferRowIndex marked = mapper.compTable.getBufferRowIndexForViewRow(markedViewRow);
-		
-		if (selected.contains(marked)) {
-			return {selected, marked};
-		}
-	}
-	auto bufferRowCompare = [&mapper](const BufferRowIndex& index1, const BufferRowIndex& index2) {
-		return mapper.compTable.findViewRowIndexForBufferRow(index1) < mapper.compTable.findViewRowIndexForBufferRow(index2);
-	};
-	const BufferRowIndex minBufferRow = *std::min_element(selected.constBegin(), selected.constEnd(), bufferRowCompare);
-	return {selected, minBufferRow};
 }
 
 /**
