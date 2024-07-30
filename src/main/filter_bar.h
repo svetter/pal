@@ -75,6 +75,7 @@ public:
 	// Update UI
 private:
 	void updateQuickFilterMenu();
+	void updateScrollAreaHeight();
 public:
 	void updateIDCombos();
 	
@@ -105,6 +106,9 @@ public:
 	void saveFilters();
 	// Retrieving filters from project settings
 	QList<Filter*> parseFiltersFromProjectSettings(const ItemTypesHandler &typesHandler);
+	
+protected:
+	virtual void showEvent(QShowEvent* event) override;
 };
 
 

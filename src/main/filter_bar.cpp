@@ -136,8 +136,7 @@ void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 		connect(newFilterBox, &FilterBox::removeRequested,	this, &FilterBar::handle_removeFilter);
 	}
 	
-	QApplication::processEvents();
-	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	updateScrollAreaHeight();
 	
 	bool anyFilterEnabled = false;
 	for (const FilterBox* const filterBox : filterBoxes) {
@@ -178,6 +177,15 @@ void FilterBar::updateQuickFilterMenu()
 	}
 }
 
+void FilterBar::updateScrollAreaHeight()
+{
+	QApplication::processEvents();
+	const int contentsHeight	= filtersScrollAreaWidget->height();
+	const int currentHeight		= filtersScrollArea->height();
+	const int viewportHeight	= filtersScrollArea->maximumViewportSize().height();
+	filtersScrollArea->setMinimumHeight(contentsHeight + currentHeight - viewportHeight);
+}
+
 void FilterBar::updateIDCombos()
 {
 	for (const FilterBox* const filterBox : filterBoxes) {
@@ -196,8 +204,7 @@ void FilterBar::removeFilter(FilterBox* filterBox)
 	filterBoxes.removeAll(filterBox);
 	delete filterBox;
 	
-	QApplication::processEvents();
-	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	updateScrollAreaHeight();
 	
 	handle_filtersChanged();
 }
@@ -257,8 +264,7 @@ void FilterBar::handle_filterWizardAccepted()
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
-	QApplication::processEvents();
-	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	updateScrollAreaHeight();
 	filtersScrollArea->ensureWidgetVisible(newFilterBox);
 	
 	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
@@ -296,8 +302,7 @@ void FilterBar::handle_quickFilterActionUsed()
 	filterBoxes.append(newFilterBox);
 	filtersScrollAreaLayout->addWidget(newFilterBox);
 	
-	QApplication::processEvents();
-	filtersScrollArea->setMinimumHeight(filtersScrollAreaWidget->height() + filtersScrollArea->height() - filtersScrollArea->maximumViewportSize().height());
+	updateScrollAreaHeight();
 	filtersScrollArea->ensureWidgetVisible(newFilterBox);
 	
 	connect(newFilterBox, &FilterBox::filterChanged,	this, &FilterBar::handle_filtersChanged);
@@ -419,4 +424,12 @@ QList<Filter*> FilterBar::parseFiltersFromProjectSettings(const ItemTypesHandler
 	const QString encodedFilters = mapper->filtersSetting.get(this);
 	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, typesHandler);
 	return filters;
+}
+
+
+
+void FilterBar::showEvent(QShowEvent* event)
+{
+	QWidget::showEvent(event);
+	updateScrollAreaHeight();
 }
