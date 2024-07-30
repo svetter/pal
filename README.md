@@ -43,7 +43,7 @@ For each peak ascent, the following data can be logged:
 - Difficulty ([SAC hiking/SAC mountaineering/SAC ski/SAC snowshoe/UIAA](https://www.bergfreunde.eu/alpine-grades-calculator/))
 - Trip the hike was part of
 - Participants
-- Description/notes
+- Description/notes (with support for Markdown and HTML)
 - Photos with descriptions
 
 Each peak itself has the following associated fields:

@@ -15,7 +15,7 @@
 
 
 
-VERSION = 1.6.0
+VERSION = 1.7.0
 
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
@@ -38,7 +38,7 @@ test_conf {
 	TARGET = PAL_test
 	QT += testlib
 	CONFIG += qt warn_on depend_includepath testcase
-
+	
 	SOURCES += \
 		src/test/startup_test.cpp
 } else {
