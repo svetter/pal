@@ -150,7 +150,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="690"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="707"/>
         <source>Delete %Ln peak(s)</source>
         <translation>
             <numerusform>Delete peak</numerusform>
