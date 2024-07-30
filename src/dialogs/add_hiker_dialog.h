@@ -57,6 +57,8 @@ public:
 private:
 	bool hikerSelected();
 	
+	void handle_selectedHikerChanged();
+	void handle_editHiker();
 	void handle_newHiker();
 	
 	void handle_ok();

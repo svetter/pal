@@ -103,11 +103,15 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	
 	
 	connect(regionFilterCombo,					&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_regionFilterChanged);
+	connect(peakCombo,							&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_selectedPeakChanged);
+	connect(editPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_editPeak);
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
 	connect(dateSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
 	connect(timeSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
 	connect(elevationGainSpecifyCheckbox,		&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
 	connect(difficultySystemCombo,				&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_difficultySystemChanged);
+	connect(tripCombo,							&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_selectedTripChanged);
+	connect(editTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_editTrip);
 	connect(newTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_addHiker);
 	connect(removeHikersButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_removeHikers);
@@ -311,6 +315,34 @@ void AscentDialog::handle_regionFilterChanged()
 	populatePeakCombo(db, *peakCombo, selectablePeakIDs, regionID);
 }
 
+void AscentDialog::handle_selectedPeakChanged()
+{
+	editPeakButton->setEnabled(peakCombo->currentIndex() > 0);
+}
+
+void AscentDialog::handle_editPeak()
+{
+	const ItemID peakID = parseItemCombo(*peakCombo, selectablePeakIDs);
+	if (peakID.isInvalid()) return;
+	const BufferRowIndex peakBufferRow = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID peakID		= parseItemCombo(*peakCombo, selectablePeakIDs);
+		const ItemID regionID	= parseItemCombo(*regionFilterCombo, selectableRegionIDs);
+		populatePeakCombo(db, *peakCombo, selectablePeakIDs, regionID);
+		for (int comboIndex = 1; comboIndex < peakCombo->count(); comboIndex++) {
+			if (selectablePeakIDs.at(comboIndex - 1) == peakID) {
+				peakCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditPeakDialogAndStore(*this, mainWindow, db, peakBufferRow, callWhenDone);
+}
+
 /**
  * Event handler for the new peak button.
  * 
@@ -384,6 +416,33 @@ void AscentDialog::handle_difficultySystemChanged()
 	} else {
 		difficultyGradeCombo->setPlaceholderText(tr("None"));
 	}
+}
+
+void AscentDialog::handle_selectedTripChanged()
+{
+	editTripButton->setEnabled(tripCombo->currentIndex() > 0);
+}
+
+void AscentDialog::handle_editTrip()
+{
+	const ItemID tripID = parseItemCombo(*tripCombo, selectableTripIDs);
+	if (tripID.isInvalid()) return;
+	const BufferRowIndex tripBufferRow = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID tripID = parseItemCombo(*tripCombo, selectableTripIDs);
+		populateTripCombo(db, *tripCombo, selectableTripIDs);
+		for (int comboIndex = 1; comboIndex < tripCombo->count(); comboIndex++) {
+			if (selectableTripIDs.at(comboIndex - 1) == tripID) {
+				tripCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditTripDialogAndStore(*this, mainWindow, db, tripBufferRow, callWhenDone);
 }
 
 /**

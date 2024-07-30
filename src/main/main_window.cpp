@@ -613,7 +613,7 @@ void MainWindow::editSelectedItemReferenced()
 	if (selectedBufferRows.size() != 1) return;
 	const BufferRowIndex selectedBufferRow = BufferRowIndex(selectedBufferRows.constBegin()->get());
 	
-	const QAction* action = (QAction*) sender();
+	const QAction* const action = (QAction*) sender();
 	assert(action);
 	const PALItemType otherType = PALItemType(action->data().toInt());
 	const ItemTypeMapper& otherMapper = typesHandler->get(otherType);

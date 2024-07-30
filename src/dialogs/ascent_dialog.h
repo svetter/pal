@@ -71,11 +71,15 @@ private:
 	
 private slots:
 	void handle_regionFilterChanged();
+	void handle_selectedPeakChanged();
+	void handle_editPeak();
 	void handle_newPeak();
 	void handle_dateSpecifiedChanged();
 	void handle_timeSpecifiedChanged();
 	void handle_elevationGainSpecifiedChanged();
 	void handle_difficultySystemChanged();
+	void handle_selectedTripChanged();
+	void handle_editTrip();
 	void handle_newTrip();
 	void handle_addHiker();
 	void handle_removeHikers();

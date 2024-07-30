@@ -24,6 +24,7 @@
 #include "add_hiker_dialog.h"
 
 #include "src/dialogs/hiker_dialog.h"
+#include "src/dialogs/parse_helper.h"
 
 #include <QMessageBox>
 
@@ -50,10 +51,12 @@ AddHikerDialog::AddHikerDialog(QWidget& parent, QMainWindow& mainWindow, Databas
 	populateComboBoxes();
 	
 	
-	connect(newHikerButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_newHiker);
+	connect(hikerCombo,			&QComboBox::currentIndexChanged,	this,	&AddHikerDialog::handle_selectedHikerChanged);
+	connect(editHikerButton,	&QPushButton::clicked,				this,	&AddHikerDialog::handle_editHiker);
+	connect(newHikerButton,		&QPushButton::clicked,				this,	&AddHikerDialog::handle_newHiker);
 	
-	connect(okButton,		&QPushButton::clicked,	this,	&AddHikerDialog::handle_ok);
-	connect(cancelButton,	&QPushButton::clicked,	this,	&AddHikerDialog::handle_cancel);
+	connect(okButton,			&QPushButton::clicked,				this,	&AddHikerDialog::handle_ok);
+	connect(cancelButton,		&QPushButton::clicked,				this,	&AddHikerDialog::handle_cancel);
 }
 
 
@@ -91,6 +94,33 @@ bool AddHikerDialog::hikerSelected()
 }
 
 
+
+void AddHikerDialog::handle_selectedHikerChanged()
+{
+	editHikerButton->setEnabled(hikerCombo->currentIndex() > 0);
+}
+
+void AddHikerDialog::handle_editHiker()
+{
+	const ItemID hikerID = parseItemCombo(*hikerCombo, selectableHikerIDs);
+	if (hikerID.isInvalid()) return;
+	const BufferRowIndex hikerBufferRow = db.hikersTable.getBufferIndexForPrimaryKey(FORCE_VALID(hikerID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID hikerID = parseItemCombo(*hikerCombo, selectableHikerIDs);
+		populateHikerCombo(db, *hikerCombo, selectableHikerIDs);
+		for (int comboIndex = 1; comboIndex < hikerCombo->count(); comboIndex++) {
+			if (selectableHikerIDs.at(comboIndex - 1) == hikerID) {
+				hikerCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditHikerDialogAndStore(*this, mainWindow, db, hikerBufferRow, callWhenDone);
+}
 
 /**
  * Event handler for the new hiker button.

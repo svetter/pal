@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
+    <width>500</width>
     <height>173</height>
    </rect>
   </property>
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>New region</string>
@@ -49,8 +55,7 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="nameCheckbox">
-        </widget>
+        <widget class="QCheckBox" name="nameCheckbox"/>
        </item>
        <item>
         <widget class="QLabel" name="nameLabel">
@@ -86,8 +91,7 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="rangeCheckbox">
-        </widget>
+        <widget class="QCheckBox" name="rangeCheckbox"/>
        </item>
        <item>
         <widget class="QLabel" name="rangeLabel">
@@ -123,6 +127,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="editRangeButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/range.svg</normaloff>:/icons/range.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="newRangeButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -131,7 +149,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>New mountain range...</string>
+          <string>New...</string>
          </property>
          <property name="icon">
           <iconset>
@@ -147,8 +165,7 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="countryCheckbox">
-        </widget>
+        <widget class="QCheckBox" name="countryCheckbox"/>
        </item>
        <item>
         <widget class="QLabel" name="countryLabel">
@@ -184,9 +201,23 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="editCountryButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/country.svg</normaloff>:/icons/country.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="newCountryButton">
          <property name="text">
-          <string>New country...</string>
+          <string>New...</string>
          </property>
          <property name="icon">
           <iconset>
@@ -201,7 +232,7 @@
    <item>
     <widget class="Line" name="bottomLine">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
    </item>

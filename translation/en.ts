@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="801"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Delete ascent</numerusform>
@@ -150,7 +150,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="707"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="736"/>
         <source>Delete %Ln peak(s)</source>
         <translation>
             <numerusform>Delete peak</numerusform>
@@ -269,7 +269,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/region_dialog.cpp" line="367"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="425"/>
         <source>Delete %Ln region(s)</source>
         <translation>
             <numerusform>Delete region</numerusform>

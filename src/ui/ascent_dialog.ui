@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
+    <width>500</width>
     <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>450</width>
+    <width>500</width>
     <height>0</height>
    </size>
   </property>
@@ -137,9 +137,23 @@
         </widget>
        </item>
        <item row="1" column="1">
+        <widget class="QPushButton" name="editPeakButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/peak.svg</normaloff>:/icons/peak.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
         <widget class="QPushButton" name="newPeakButton">
          <property name="text">
-          <string>New peak...</string>
+          <string>New...</string>
          </property>
          <property name="icon">
           <iconset>
@@ -233,10 +247,10 @@
        <item>
         <spacer name="dateSpacer1">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::Policy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -282,7 +296,7 @@
        <item>
         <spacer name="dateSpacer2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -354,10 +368,10 @@
        <item>
         <spacer name="timeSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Policy::Expanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -432,7 +446,7 @@
        <item>
         <spacer name="elevationGainSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -488,10 +502,10 @@
        <item>
         <spacer name="hikeKindSpacer1">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+          <enum>QSizePolicy::Policy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -511,7 +525,7 @@
        <item>
         <spacer name="hikeKindSpacer2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -560,7 +574,7 @@
           </size>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
+          <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
          </property>
          <property name="placeholderText">
           <string>Select system</string>
@@ -585,7 +599,7 @@
           </size>
          </property>
          <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
+          <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
          </property>
          <property name="placeholderText">
           <string>None</string>
@@ -636,6 +650,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="editTripButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/trip.svg</normaloff>:/icons/trip.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="newTripButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -644,7 +672,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>New trip...</string>
+          <string>New...</string>
          </property>
          <property name="icon">
           <iconset>
@@ -703,10 +731,10 @@
           </size>
          </property>
          <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
+          <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
          </property>
          <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
          </property>
         </widget>
        </item>
@@ -743,7 +771,7 @@
        <item>
         <spacer name="hikersSpacer">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -812,16 +840,16 @@
             <bool>true</bool>
            </property>
            <property name="dragDropMode">
-            <enum>QAbstractItemView::InternalMove</enum>
+            <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
            </property>
            <property name="defaultDropAction">
-            <enum>Qt::MoveAction</enum>
+            <enum>Qt::DropAction::MoveAction</enum>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
+            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -908,7 +936,7 @@
    <item>
     <widget class="Line" name="bottomLine">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
    </item>

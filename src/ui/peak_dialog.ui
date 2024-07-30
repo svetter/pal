@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>276</height>
+    <width>475</width>
+    <height>282</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,12 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>475</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>New peak</string>
@@ -121,6 +127,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="editRegionButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Edit...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/icons/region.svg</normaloff>:/icons/region.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="newRegionButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -129,7 +149,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>New region...</string>
+          <string>New...</string>
          </property>
          <property name="icon">
           <iconset>
@@ -202,10 +222,10 @@
        <item>
         <spacer name="heightVolcanoSpacer1">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Policy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -225,7 +245,7 @@
        <item>
         <spacer name="heightVolcanoSpacer2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -263,14 +283,14 @@
         <widget class="QLineEdit" name="mapsLineEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="minimumSize">
           <size>
-          <width>150</width>
-          <height>0</height>
+           <width>150</width>
+           <height>0</height>
           </size>
          </property>
          <property name="placeholderText">
@@ -280,6 +300,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="mapsOpenButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -295,13 +318,13 @@
          <property name="text">
           <string>Open</string>
          </property>
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="mapsFindButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -316,9 +339,6 @@
          </property>
          <property name="text">
           <string>Find</string>
-         </property>
-         <property name="enabled">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -367,6 +387,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="earthOpenButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -382,13 +405,13 @@
          <property name="text">
           <string>Open</string>
          </property>
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="earthFindButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -403,9 +426,6 @@
          </property>
          <property name="text">
           <string>Find</string>
-         </property>
-         <property name="enabled">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -454,6 +474,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="wikiOpenButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -469,13 +492,13 @@
          <property name="text">
           <string>Open</string>
          </property>
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="wikiFindButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -491,9 +514,6 @@
          <property name="text">
           <string>Find</string>
          </property>
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
       </layout>
@@ -503,7 +523,7 @@
    <item>
     <widget class="Line" name="bottomLine">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
    </item>

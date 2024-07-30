@@ -60,7 +60,11 @@ private:
 	void insertInitData();
 	
 private slots:
+	void handle_selectedRangeChanged();
+	void handle_editRange();
 	void handle_newRange();
+	void handle_selectedCountryChanged();
+	void handle_editCountry();
 	void handle_newCountry();
 	
 	void handle_ok() override;

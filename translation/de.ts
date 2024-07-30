@@ -27,37 +27,42 @@
 <context>
     <name>AddHikerDialog</name>
     <message>
-        <location filename="../src/ui/add_hiker_dialog.ui" line="20"/>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="26"/>
         <source>Add hiker to ascent</source>
         <translation>Wanderer zu Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/add_hiker_dialog.ui" line="58"/>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="64"/>
         <source>Select</source>
         <translation>Auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/add_hiker_dialog.ui" line="71"/>
-        <source>New hiker...</source>
-        <translation>Neuer Wanderer...</translation>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="74"/>
+        <source>Edit...</source>
+        <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/ui/add_hiker_dialog.ui" line="104"/>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="91"/>
+        <source>New...</source>
+        <translation>Neu...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="128"/>
         <source>Add hiker</source>
         <translation>Wanderer hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/add_hiker_dialog.ui" line="123"/>
+        <location filename="../src/ui/add_hiker_dialog.ui" line="147"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="124"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="154"/>
         <source>Can&apos;t add hiker</source>
         <translation>Wanderer kann nicht hinzugefügt werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="125"/>
+        <location filename="../src/dialogs/add_hiker_dialog.cpp" line="155"/>
         <source>You have to select a hiker.</source>
         <translation>Es muss ein Wanderer ausgewählt werden.</translation>
     </message>
@@ -96,99 +101,101 @@
         <translation>Gipfel nach Region filtern</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="142"/>
-        <source>New peak...</source>
-        <translation>Neuer Gipfel...</translation>
+        <location filename="../src/ui/ascent_dialog.ui" line="156"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="675"/>
+        <source>New...</source>
+        <translation>Neu...</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="163"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="145"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="658"/>
+        <source>Edit...</source>
+        <translation>Bearbeiten...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_dialog.ui" line="177"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="276"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="290"/>
         <source>peak on that day</source>
         <translation>Gipfel des Tages</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="308"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="322"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="383"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="397"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="458"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="472"/>
         <source>Kind of hike</source>
         <translation>Art der Wanderung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="507"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="521"/>
         <source>Traverse</source>
         <translation>Überschreitung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="537"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="551"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="566"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="580"/>
         <source>Select system</source>
         <translation>System auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="591"/>
-        <location filename="../src/ui/ascent_dialog.ui" line="634"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="385"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="605"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="648"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="417"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="608"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="622"/>
         <source>During trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="647"/>
-        <source>New trip...</source>
-        <translation>Neuer Urlaub...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="668"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="696"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="769"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="797"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="866"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="894"/>
         <source>Photo description</source>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="892"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="920"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="935"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="963"/>
         <source>Add ascent</source>
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="957"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="985"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="380"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="412"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
@@ -201,7 +208,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="801"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Besteigung löschen</numerusform>
@@ -209,32 +216,32 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="824"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="883"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="844"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="903"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="919"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="861"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="920"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="886"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="945"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="887"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="946"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -2860,64 +2867,64 @@ Trotzdem speichern?</translation>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="778"/>
+        <location filename="../src/main/main_window.cpp" line="782"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="779"/>
+        <location filename="../src/main/main_window.cpp" line="783"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="825"/>
+        <location filename="../src/main/main_window.cpp" line="829"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="870"/>
+        <location filename="../src/main/main_window.cpp" line="874"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="873"/>
+        <location filename="../src/main/main_window.cpp" line="877"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="873"/>
+        <location filename="../src/main/main_window.cpp" line="877"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="926"/>
-        <location filename="../src/main/main_window.cpp" line="936"/>
-        <location filename="../src/main/main_window.cpp" line="950"/>
+        <location filename="../src/main/main_window.cpp" line="930"/>
+        <location filename="../src/main/main_window.cpp" line="940"/>
+        <location filename="../src/main/main_window.cpp" line="954"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="937"/>
+        <location filename="../src/main/main_window.cpp" line="941"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="938"/>
+        <location filename="../src/main/main_window.cpp" line="942"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="938"/>
+        <location filename="../src/main/main_window.cpp" line="942"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="951"/>
+        <location filename="../src/main/main_window.cpp" line="955"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="953"/>
+        <location filename="../src/main/main_window.cpp" line="957"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2977,89 +2984,94 @@ Trotzdem speichern?</translation>
 <context>
     <name>PeakDialog</name>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="20"/>
+        <location filename="../src/ui/peak_dialog.ui" line="26"/>
         <location filename="../src/dialogs/peak_dialog.cpp" line="77"/>
         <source>New peak</source>
         <translation>Neuer Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="57"/>
+        <location filename="../src/ui/peak_dialog.ui" line="63"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="78"/>
+        <location filename="../src/ui/peak_dialog.ui" line="84"/>
         <source>Required</source>
         <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="93"/>
+        <location filename="../src/ui/peak_dialog.ui" line="99"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="119"/>
+        <location filename="../src/ui/peak_dialog.ui" line="125"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="132"/>
-        <source>New region...</source>
-        <translation>Neue Region...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/peak_dialog.ui" line="153"/>
+        <location filename="../src/ui/peak_dialog.ui" line="173"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="221"/>
+        <location filename="../src/ui/peak_dialog.ui" line="241"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="277"/>
-        <location filename="../src/ui/peak_dialog.ui" line="364"/>
-        <location filename="../src/ui/peak_dialog.ui" line="451"/>
+        <location filename="../src/ui/peak_dialog.ui" line="297"/>
+        <location filename="../src/ui/peak_dialog.ui" line="384"/>
+        <location filename="../src/ui/peak_dialog.ui" line="471"/>
         <source>Link (optional)</source>
         <translation>Link (optional)</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="296"/>
-        <location filename="../src/ui/peak_dialog.ui" line="383"/>
-        <location filename="../src/ui/peak_dialog.ui" line="470"/>
+        <location filename="../src/ui/peak_dialog.ui" line="319"/>
+        <location filename="../src/ui/peak_dialog.ui" line="406"/>
+        <location filename="../src/ui/peak_dialog.ui" line="493"/>
         <source>Open</source>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="318"/>
-        <location filename="../src/ui/peak_dialog.ui" line="405"/>
-        <location filename="../src/ui/peak_dialog.ui" line="492"/>
+        <location filename="../src/ui/peak_dialog.ui" line="341"/>
+        <location filename="../src/ui/peak_dialog.ui" line="428"/>
+        <location filename="../src/ui/peak_dialog.ui" line="515"/>
         <source>Find</source>
         <translation>Finden</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="338"/>
+        <location filename="../src/ui/peak_dialog.ui" line="358"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="425"/>
+        <location filename="../src/ui/peak_dialog.ui" line="445"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="251"/>
+        <location filename="../src/ui/peak_dialog.ui" line="271"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="530"/>
+        <location filename="../src/ui/peak_dialog.ui" line="135"/>
+        <source>Edit...</source>
+        <translation>Bearbeiten...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/peak_dialog.ui" line="152"/>
+        <source>New...</source>
+        <translation>Neu...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/peak_dialog.ui" line="550"/>
         <source>Add peak</source>
         <translation>Gipfel hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/peak_dialog.ui" line="552"/>
+        <location filename="../src/ui/peak_dialog.ui" line="572"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -3077,27 +3089,27 @@ Trotzdem speichern?</translation>
         <translation>Um die Erfolgsrate dieser Funktion zu verbessern, kann in den Einstellungen ein Google Search API-Schlüssel angegeben werden.</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="355"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="384"/>
         <source>en</source>
         <translation>de</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="397"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="426"/>
         <source>Google search error</source>
         <translation>Fehler bei Google-Suche</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="418"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="447"/>
         <source>Can&apos;t save peak</source>
         <translation>Gipfel kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/peak_dialog.cpp" line="419"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="448"/>
         <source>The peak needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/peak_dialog.cpp" line="707"/>
+        <location filename="../src/dialogs/peak_dialog.cpp" line="736"/>
         <source>Delete %Ln peak(s)</source>
         <translation>
             <numerusform>Gipfel löschen</numerusform>
@@ -3548,54 +3560,56 @@ Trotzdem speichern?</translation>
 <context>
     <name>RegionDialog</name>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="20"/>
+        <location filename="../src/ui/region_dialog.ui" line="26"/>
         <location filename="../src/dialogs/region_dialog.cpp" line="66"/>
         <source>New region</source>
         <translation>Neue Region</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="58"/>
+        <location filename="../src/ui/region_dialog.ui" line="63"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="79"/>
+        <location filename="../src/ui/region_dialog.ui" line="84"/>
         <source>Required</source>
         <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="95"/>
+        <location filename="../src/ui/region_dialog.ui" line="99"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="121"/>
-        <location filename="../src/ui/region_dialog.ui" line="182"/>
+        <location filename="../src/ui/region_dialog.ui" line="125"/>
+        <location filename="../src/ui/region_dialog.ui" line="199"/>
         <source>Select</source>
         <translation>Auswählen</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="134"/>
-        <source>New mountain range...</source>
-        <translation>Neues Gebirge...</translation>
+        <location filename="../src/ui/region_dialog.ui" line="135"/>
+        <location filename="../src/ui/region_dialog.ui" line="209"/>
+        <source>Edit...</source>
+        <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="156"/>
+        <location filename="../src/ui/region_dialog.ui" line="152"/>
+        <location filename="../src/ui/region_dialog.ui" line="220"/>
+        <source>New...</source>
+        <translation>Neu...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/region_dialog.ui" line="173"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="189"/>
-        <source>New country...</source>
-        <translation>Neues Land...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/region_dialog.ui" line="228"/>
+        <location filename="../src/ui/region_dialog.ui" line="259"/>
         <source>Add region</source>
         <translation>Region hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/region_dialog.ui" line="250"/>
+        <location filename="../src/ui/region_dialog.ui" line="281"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -3608,17 +3622,17 @@ Trotzdem speichern?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="219"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="277"/>
         <source>Can&apos;t save region</source>
         <translation>Region kann nicht gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/region_dialog.cpp" line="220"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="278"/>
         <source>The region needs a name.</source>
         <translation>Es muss ein Name angegeben werden.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/region_dialog.cpp" line="367"/>
+        <location filename="../src/dialogs/region_dialog.cpp" line="425"/>
         <source>Delete %Ln region(s)</source>
         <translation>
             <numerusform>Region löschen</numerusform>

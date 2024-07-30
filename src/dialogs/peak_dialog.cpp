@@ -90,21 +90,23 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	}
 	
 	
-	connect(nameLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_nameChanged);
-	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,	this,	&PeakDialog::handle_heightSpecifiedChanged);
-	connect(newRegionButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_newRegion);
-	connect(mapsLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_mapsLinkChanged);
-	connect(earthLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_earthLinkChanged);
-	connect(wikiLineEdit,			&QLineEdit::textChanged,	this,	&PeakDialog::handle_wikiLinkChanged);
-	connect(mapsOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openMapsLink);
-	connect(earthOpenButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_openEarthLink);
-	connect(wikiOpenButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_openWikiLink);
-	connect(mapsFindButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_findMapsLink);
-	connect(earthFindButton,		&QPushButton::clicked,		this,	&PeakDialog::handle_findEarthLink);
-	connect(wikiFindButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_findWikiLink);
+	connect(nameLineEdit,			&QLineEdit::textChanged,			this,	&PeakDialog::handle_nameChanged);
+	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,			this,	&PeakDialog::handle_heightSpecifiedChanged);
+	connect(regionCombo,			&QComboBox::currentIndexChanged,	this,	&PeakDialog::handle_selectedRegionChanged);
+	connect(editRegionButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_editRegion);
+	connect(newRegionButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_newRegion);
+	connect(mapsLineEdit,			&QLineEdit::textChanged,			this,	&PeakDialog::handle_mapsLinkChanged);
+	connect(earthLineEdit,			&QLineEdit::textChanged,			this,	&PeakDialog::handle_earthLinkChanged);
+	connect(wikiLineEdit,			&QLineEdit::textChanged,			this,	&PeakDialog::handle_wikiLinkChanged);
+	connect(mapsOpenButton,			&QPushButton::clicked,				this,	&PeakDialog::handle_openMapsLink);
+	connect(earthOpenButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_openEarthLink);
+	connect(wikiOpenButton,			&QPushButton::clicked,				this,	&PeakDialog::handle_openWikiLink);
+	connect(mapsFindButton,			&QPushButton::clicked,				this,	&PeakDialog::handle_findMapsLink);
+	connect(earthFindButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_findEarthLink);
+	connect(wikiFindButton,			&QPushButton::clicked,				this,	&PeakDialog::handle_findWikiLink);
 	
-	connect(okButton,				&QPushButton::clicked,		this,	&PeakDialog::handle_ok);
-	connect(cancelButton,			&QPushButton::clicked,		this,	&PeakDialog::handle_cancel);
+	connect(okButton,				&QPushButton::clicked,				this,	&PeakDialog::handle_ok);
+	connect(cancelButton,			&QPushButton::clicked,				this,	&PeakDialog::handle_cancel);
 	
 	
 	// Set initial height
@@ -235,6 +237,33 @@ void PeakDialog::handle_heightSpecifiedChanged()
 {
 	bool enabled = heightSpecifyCheckbox->isChecked();
 	heightSpinner->setEnabled(enabled);
+}
+
+void PeakDialog::handle_selectedRegionChanged()
+{
+	editRegionButton->setEnabled(regionCombo->currentIndex() > 0);
+}
+
+void PeakDialog::handle_editRegion()
+{
+	const ItemID regionID = parseItemCombo(*regionCombo, selectableRegionIDs);
+	if (regionID.isInvalid()) return;
+	const BufferRowIndex regionBufferRow = db.regionsTable.getBufferIndexForPrimaryKey(FORCE_VALID(regionID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID regionID = parseItemCombo(*regionCombo, selectableRegionIDs);
+		populateRegionCombo(db, *regionCombo, selectableRegionIDs);
+		for (int comboIndex = 1; comboIndex < regionCombo->count(); comboIndex++) {
+			if (selectableRegionIDs.at(comboIndex - 1) == regionID) {
+				regionCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditRegionDialogAndStore(*this, mainWindow, db, regionBufferRow, callWhenDone);
 }
 
 /**

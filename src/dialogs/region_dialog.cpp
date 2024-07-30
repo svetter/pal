@@ -75,11 +75,15 @@ RegionDialog::RegionDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	populateComboBoxes();
 	
 	
-	connect(newRangeButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_newRange);
-	connect(newCountryButton,	&QPushButton::clicked,	this,	&RegionDialog::handle_newCountry);
+	connect(rangeCombo,			&QComboBox::currentIndexChanged,	this,	&RegionDialog::handle_selectedRangeChanged);
+	connect(editRangeButton,	&QPushButton::clicked,				this,	&RegionDialog::handle_editRange);
+	connect(newRangeButton,		&QPushButton::clicked,				this,	&RegionDialog::handle_newRange);
+	connect(countryCombo,		&QComboBox::currentIndexChanged,	this,	&RegionDialog::handle_selectedCountryChanged);
+	connect(editCountryButton,	&QPushButton::clicked,				this,	&RegionDialog::handle_editCountry);
+	connect(newCountryButton,	&QPushButton::clicked,				this,	&RegionDialog::handle_newCountry);
 	
-	connect(okButton,			&QPushButton::clicked,	this,	&RegionDialog::handle_ok);
-	connect(cancelButton,		&QPushButton::clicked,	this,	&RegionDialog::handle_cancel);
+	connect(okButton,			&QPushButton::clicked,				this,	&RegionDialog::handle_ok);
+	connect(cancelButton,		&QPushButton::clicked,				this,	&RegionDialog::handle_cancel);
 	
 	
 	switch (purpose) {
@@ -170,6 +174,33 @@ bool RegionDialog::changesMade()
 
 
 
+void RegionDialog::handle_selectedRangeChanged()
+{
+	editRangeButton->setEnabled(rangeCombo->currentIndex() > 0);
+}
+
+void RegionDialog::handle_editRange()
+{
+	const ItemID rangeID = parseItemCombo(*rangeCombo, selectableRangeIDs);
+	if (rangeID.isInvalid()) return;
+	const BufferRowIndex rangeBufferRow = db.rangesTable.getBufferIndexForPrimaryKey(FORCE_VALID(rangeID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID rangeID = parseItemCombo(*rangeCombo, selectableRangeIDs);
+		populateRangeCombo(db, *rangeCombo, selectableRangeIDs);
+		for (int comboIndex = 1; comboIndex < rangeCombo->count(); comboIndex++) {
+			if (selectableRangeIDs.at(comboIndex - 1) == rangeID) {
+				rangeCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditRangeDialogAndStore(*this, mainWindow, db, rangeBufferRow, callWhenDone);
+}
+
 /**
  * Event handler for the new range button.
  *
@@ -186,6 +217,33 @@ void RegionDialog::handle_newRange()
 	};
 	
 	openNewRangeDialogAndStore(*this, mainWindow, db, callWhenDone);
+}
+
+void RegionDialog::handle_selectedCountryChanged()
+{
+	editCountryButton->setEnabled(countryCombo->currentIndex() > 0);
+}
+
+void RegionDialog::handle_editCountry()
+{
+	const ItemID countryID = parseItemCombo(*countryCombo, selectableCountryIDs);
+	if (countryID.isInvalid()) return;
+	const BufferRowIndex countryBufferRow = db.countriesTable.getBufferIndexForPrimaryKey(FORCE_VALID(countryID));
+	
+	auto callWhenDone = [this](const bool changesMade) {
+		if (!changesMade) return;
+		
+		const ItemID countryID = parseItemCombo(*countryCombo, selectableCountryIDs);
+		populateCountryCombo(db, *countryCombo, selectableCountryIDs);
+		for (int comboIndex = 1; comboIndex < countryCombo->count(); comboIndex++) {
+			if (selectableCountryIDs.at(comboIndex - 1) == countryID) {
+				countryCombo->setCurrentIndex(comboIndex);
+				break;
+			}
+		}
+	};
+	
+	openEditCountryDialogAndStore(*this, mainWindow, db, countryBufferRow, callWhenDone);
 }
 
 /**

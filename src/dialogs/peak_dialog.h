@@ -62,6 +62,8 @@ private:
 private slots:
 	void handle_nameChanged();
 	void handle_heightSpecifiedChanged();
+	void handle_selectedRegionChanged();
+	void handle_editRegion();
 	void handle_newRegion();
 	void handle_mapsLinkChanged();
 	void handle_earthLinkChanged();
