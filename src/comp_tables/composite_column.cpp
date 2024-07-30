@@ -497,7 +497,7 @@ QSet<ValidItemID> ReferenceCompositeColumn::computeIDsAt(BufferRowIndex rowIndex
 	
 	if (Q_UNLIKELY(targetRowIndex.isInvalid())) return {};
 	
-	return { VALID_ITEM_ID(table.baseTable.primaryKeyColumn.getValueAt(targetRowIndex)) };
+	return { VALID_ITEM_ID(breadcrumbs.getTargetTable().primaryKeyColumn.getValueAt(targetRowIndex)) };
 }
 
 /**
