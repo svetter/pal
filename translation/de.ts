@@ -145,7 +145,7 @@
         <location filename="../src/ui/ascent_dialog.ui" line="634"/>
         <location filename="../src/dialogs/ascent_dialog.cpp" line="385"/>
         <source>None</source>
-        <translation>Keine</translation>
+        <translation>Keiner</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="608"/>
