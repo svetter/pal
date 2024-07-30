@@ -228,7 +228,7 @@ void MainWindow::setupTableTabs()
 		const bool isViewable	= mapper->type == ItemTypeAscent;
 		const bool isDuplicable	= mapper->type == ItemTypeAscent || mapper->type == ItemTypePeak;
 		
-		mapper->tab.init(this, mapper, isViewable, isDuplicable);
+		mapper->tab.init(this, typesHandler, mapper, db, isViewable, isDuplicable);
 	}
 }
 
@@ -589,8 +589,8 @@ void MainWindow::editSelectedItems()
 	if (selectedBufferRows.isEmpty()) return;
 	
 	const int numSelectedRows = selectedBufferRows.size();
-	auto callWhenDone = [=, &activeMapper](bool changedMade) {
-		if (!changedMade) return;
+	auto callWhenDone = [=, &activeMapper](bool changesMade) {
+		if (!changesMade) return;
 		setStatusLine(activeMapper.baseTable.getEditConfirmMessage(numSelectedRows));
 		performUpdatesAfterUserAction(activeMapper, false);
 	};
@@ -600,6 +600,34 @@ void MainWindow::editSelectedItems()
 	} else {
 		activeMapper.openMultiEditItemsDialogAndStoreMethod(*this, *this, db, selectedBufferRows, markedBufferRow, callWhenDone);
 	}
+}
+
+/**
+ * If a single item is selected in the active table, opens a dialog for editing the item of the type
+ * specified via caller data that the selected item references directly (forward only).
+ */
+void MainWindow::editSelectedItemReferenced()
+{
+	const ItemTypeMapper& activeMapper = getActiveMapper();
+	const QSet<BufferRowIndex>& selectedBufferRows = activeMapper.tab.getSelectedRows().first;
+	if (selectedBufferRows.size() != 1) return;
+	const BufferRowIndex selectedBufferRow = BufferRowIndex(selectedBufferRows.constBegin()->get());
+	
+	const QAction* action = (QAction*) sender();
+	assert(action);
+	const PALItemType otherType = PALItemType(action->data().toInt());
+	const ItemTypeMapper& otherMapper = typesHandler->get(otherType);
+	
+	const Breadcrumbs crumbs = db.getBreadcrumbsFor(activeMapper.baseTable, otherMapper.baseTable);
+	const BufferRowIndex targetBufferRow = crumbs.evaluateAsForwardChain(selectedBufferRow);
+	
+	auto callWhenDone = [=, &activeMapper](bool changesMade) {
+		if (!changesMade) return;
+		setStatusLine(activeMapper.baseTable.getEditConfirmMessage(1));
+		performUpdatesAfterUserAction(activeMapper, false);
+	};
+	
+	otherMapper.openEditItemDialogAndStoreMethod(*this, *this, db, targetBufferRow, callWhenDone);
 }
 
 /**

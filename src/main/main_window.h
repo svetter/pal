@@ -93,6 +93,7 @@ public:
 	void newItem(const ItemTypeMapper& mapper);
 	void duplicateAndEditSelectedItem();
 	void editSelectedItems();
+	void editSelectedItemReferenced();
 	void deleteSelectedItems();
 private:
 	// Helpers

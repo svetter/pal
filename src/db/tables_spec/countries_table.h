@@ -55,6 +55,7 @@ public:
 	
 	virtual QString getItemNameSingular() const override;
 	virtual QString getNoneString() const override;
+	virtual QString getEditItemString() const override;
 	virtual QString getCreationConfirmMessage() const override;
 	virtual QString getEditConfirmMessage(int numEdited) const override;
 	virtual QString getDeleteConfirmMessage(int numDeleted) const override;

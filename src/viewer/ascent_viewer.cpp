@@ -197,9 +197,9 @@ void AscentViewer::connectUI()
  */
 void AscentViewer::setupContextMenus()
 {
-	editAscentAction	= infoContextMenu.addAction(tr("Edit ascent..."),	this,	&AscentViewer::handle_editAscent);
-	editPeakAction		= infoContextMenu.addAction(tr("Edit peak..."),		this,	&AscentViewer::handle_editPeak);
-	editTripAction		= infoContextMenu.addAction(tr("Edit trip..."),		this,	&AscentViewer::handle_editTrip);
+	editAscentAction	= infoContextMenu.addAction(db.ascentsTable.getEditItemString(),	this,	&AscentViewer::handle_editAscent);
+	editPeakAction		= infoContextMenu.addAction(db.peaksTable.getEditItemString(),		this,	&AscentViewer::handle_editPeak);
+	editTripAction		= infoContextMenu.addAction(db.tripsTable.getEditItemString(),		this,	&AscentViewer::handle_editTrip);
 	
 	editAscentAction	->setIcon(QIcon(":/icons/ascent.svg"));
 	editPeakAction		->setIcon(QIcon(":/icons/peak.svg"));

@@ -30,7 +30,9 @@
 MainWindowTabContent::MainWindowTabContent(QWidget* parent) :
 	QWidget(parent),
 	mainWindow(nullptr),
+	typesHandler(nullptr),
 	mapper(nullptr),
+	db(nullptr),
 	compTable(nullptr),
 	isViewable(false),
 	isDuplicable(false),
@@ -40,6 +42,7 @@ MainWindowTabContent::MainWindowTabContent(QWidget* parent) :
 	tableContextMenu(QMenu(this)),
 	tableContextMenuOpenAction(nullptr),
 	tableContextMenuDuplicateAction(nullptr),
+	tableContextMenuEditOtherActions(QList<QPair<const ItemTypeMapper*, QAction*>>()),
 	shortcuts(QList<QShortcut*>())
 {
 	setupUi(this);
@@ -53,12 +56,14 @@ MainWindowTabContent::~MainWindowTabContent()
 
 
 
-void MainWindowTabContent::init(MainWindow* mainWindow, ItemTypeMapper* mapper, bool viewable, bool duplicable)
+void MainWindowTabContent::init(MainWindow* mainWindow, const ItemTypesHandler* typesHandler, ItemTypeMapper* mapper, Database& db, bool viewable, bool duplicable)
 {
 	assert(mainWindow && mapper);
 	
 	this->mainWindow	= mainWindow;
+	this->typesHandler	= typesHandler;
 	this->mapper		= mapper;
+	this->db			= &db;
 	this->compTable		= &mapper->compTable;
 	this->isViewable	= viewable;
 	this->isDuplicable	= duplicable;
@@ -78,11 +83,6 @@ void MainWindowTabContent::init(MainWindow* mainWindow, ItemTypeMapper* mapper, 
 	tableView->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(tableView->horizontalHeader(), &QHeaderView::customContextMenuRequested, this, &MainWindowTabContent::handle_rightClickOnColumnHeader);
 	connect(tableView, &QTableView::customContextMenuRequested, this, &MainWindowTabContent::handle_rightClickInTable);
-	
-	// Set table context menu icons
-	QIcon icon = QIcon(":/icons/" + mapper->name + ".svg");
-	tableContextMenuEditAction->setIcon(icon);
-	if (isDuplicable) tableContextMenuDuplicateAction->setIcon(icon);
 	
 	// Connect selection change listener
 	connect(tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindowTabContent::handle_tableSelectionChanged);
@@ -249,27 +249,53 @@ void MainWindowTabContent::initTableContextMenuAndShortcuts()
 	QKeySequence duplicateKeySequence	= QKeySequence::Copy;
 	QKeySequence deleteKeySequence		= QKeySequence::Delete;
 	
+	const QList<PALItemType> directlyReferencedTypes = getDirectlyReferencedTypes();
+	
 	// Context menu
-	QAction* openAction			= tableContextMenu.addAction(tr("View..."),						openKeySequence);
+	tableContextMenuOpenAction = tableContextMenu.addAction(tr("View..."), openKeySequence);
+	
 	tableContextMenu.addSeparator();
-	QAction* editAction			= tableContextMenu.addAction(tr("Edit..."),						editKeySequence);
-	QAction* duplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."),	duplicateKeySequence);
+	tableContextMenuEditAction = tableContextMenu.addAction(tr("Edit..."), editKeySequence);
+	if (isDuplicable) {
+		tableContextMenuDuplicateAction	= tableContextMenu.addAction(tr("Edit as new duplicate..."), duplicateKeySequence);
+	}
+	
+	if (!directlyReferencedTypes.isEmpty()) {
+		tableContextMenu.addSeparator();
+		// Create actions for editing directly (forward only) referenced item types
+		for (const PALItemType& directlyReferencedType : directlyReferencedTypes) {
+			const ItemTypeMapper& targetMapper = typesHandler->get(directlyReferencedType);
+			QAction* const editOtherAction = tableContextMenu.addAction(targetMapper.baseTable.getEditItemString());
+			editOtherAction->setData(QVariant(directlyReferencedType));
+			tableContextMenuEditOtherActions.append({&targetMapper, editOtherAction});
+		}
+	}
+	
 	tableContextMenu.addSeparator();
-	QAction* deleteAction		= tableContextMenu.addAction(tr("Delete"),						deleteKeySequence);
-	// Store actions for open and duplicate (for disbling them where they're not needed)
-	tableContextMenuOpenAction		= openAction;
-	tableContextMenuEditAction		= editAction;
-	if (isDuplicable) tableContextMenuDuplicateAction = duplicateAction;
-	tableContextMenuDeleteAction	= deleteAction;
+	tableContextMenuDeleteAction = tableContextMenu.addAction(tr("Delete"), deleteKeySequence);
 	
 	// Set icons
-	openAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
-	deleteAction->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
+	const QIcon icon = QIcon(":/icons/" + mapper->name + ".svg");
+	tableContextMenuEditAction->setIcon(icon);
+	if (isDuplicable) tableContextMenuDuplicateAction->setIcon(icon);
+	for (const auto& [otherMapper, editOtherAction] : tableContextMenuEditOtherActions) {
+		const QIcon otherIcon = QIcon(":/icons/" + otherMapper->name + ".svg");
+		editOtherAction->setIcon(otherIcon);
+	}
+	tableContextMenuOpenAction->setIcon(QIcon(":/icons/ascent_viewer.svg"));
+	tableContextMenuDeleteAction->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	
-	connect(openAction,			&QAction::triggered, mainWindow, &MainWindow::viewSelectedItem);
-	connect(editAction,			&QAction::triggered, mainWindow, &MainWindow::editSelectedItems);
-	connect(duplicateAction,	&QAction::triggered, mainWindow, &MainWindow::duplicateAndEditSelectedItem);
-	connect(deleteAction,		&QAction::triggered, mainWindow, &MainWindow::deleteSelectedItems);
+	// Connect actions
+	connect(tableContextMenuOpenAction,				&QAction::triggered, mainWindow, &MainWindow::viewSelectedItem);
+	connect(tableContextMenuEditAction,				&QAction::triggered, mainWindow, &MainWindow::editSelectedItems);
+	if (isDuplicable) {
+		connect(tableContextMenuDuplicateAction,	&QAction::triggered, mainWindow, &MainWindow::duplicateAndEditSelectedItem);
+	}
+	for (const auto& [_, editOtherAction] : tableContextMenuEditOtherActions) {
+		connect(editOtherAction,					&QAction::triggered, mainWindow, &MainWindow::editSelectedItemReferenced);
+	}
+	connect(tableContextMenuDeleteAction,			&QAction::triggered, mainWindow, &MainWindow::deleteSelectedItems);
+	
 	
 	// Keyboard shortcuts
 	QShortcut* openShortcut			= new QShortcut(openKeySequence,		tableView);
@@ -464,9 +490,24 @@ void MainWindowTabContent::handle_rightClickInTable(QPoint pos)
 	QModelIndex index = tableView->indexAt(pos);
 	if (!index.isValid()) return;
 	
-	const bool singleRowSelected = tableView->selectionModel()->selectedRows().size() == 1;
+	const QSet<BufferRowIndex> selectedRows = getSelectedRows().first;
+	const bool singleRowSelected = selectedRows.size() == 1;
+	const BufferRowIndex singleSelectedRow = singleRowSelected ? BufferRowIndex(selectedRows.constBegin()->get()) : BufferRowIndex();
 	tableContextMenuOpenAction->setVisible(singleRowSelected && isViewable);
 	if (isDuplicable) tableContextMenuDuplicateAction->setVisible(singleRowSelected);
+	
+	// Enable or disable referenced item edit actions in table context menu
+	for (const auto& [otherMapper, editOtherAction] : tableContextMenuEditOtherActions) {
+		bool enableAction = singleRowSelected;
+		if (singleRowSelected) {
+			// Check whether reference chain is continuous here
+			const Breadcrumbs crumbs = db->getBreadcrumbsFor(mapper->baseTable, otherMapper->baseTable);
+			const BufferRowIndex targetBufferRow = crumbs.evaluateAsForwardChain(singleSelectedRow);
+			enableAction &= targetBufferRow.isValid();
+		}
+		
+		editOtherAction->setEnabled(enableAction);
+	}
 	
 	QString deleteString = tr("Delete") + (Settings::confirmDelete.get() ? "..." : "");
 	tableContextMenuDeleteAction->setText(deleteString);
@@ -558,4 +599,34 @@ void MainWindowTabContent::handle_removeCustomColumn()
 	
 	filterBar->compColumnAboutToBeRemoved(compTable->getColumnAt(logicalIndex));
 	compTable->removeCustomColumnAt(logicalIndex);
+}
+
+
+
+// HELPERS
+
+QList<PALItemType> MainWindowTabContent::getDirectlyReferencedTypes() const
+{
+	QList<QPair<PALItemType, Breadcrumbs>> forwardOnlyCrumbs = QList<QPair<PALItemType, Breadcrumbs>>();
+	
+	for (const ItemTypeMapper* const otherMapper : typesHandler->getAllMappers()) {
+		if (otherMapper == mapper) continue;
+		
+		const Breadcrumbs crumbs = db->getBreadcrumbsFor(mapper->baseTable, otherMapper->baseTable);
+		if (crumbs.isForwardOnly()) {
+			forwardOnlyCrumbs.append({otherMapper->type, crumbs});
+		}
+	}
+	
+	std::vector<QPair<PALItemType, Breadcrumbs>> vector = std::vector<QPair<PALItemType, Breadcrumbs>>(forwardOnlyCrumbs.begin(), forwardOnlyCrumbs.end());
+	auto comparator = [](const QPair<PALItemType, Breadcrumbs>& p1, const QPair<PALItemType, Breadcrumbs>& p2) {
+		return p1.second.length() < p2.second.length();
+	};
+	std::stable_sort(vector.begin(), vector.end(), comparator);
+	
+	QList<PALItemType> result = QList<PALItemType>();
+	for (const auto& [type, _] : vector) {
+		result.append(type);
+	}
+	return result;
 }

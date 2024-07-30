@@ -175,6 +175,16 @@ QString TripsTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing trip.
+ * 
+ * @return	The translated prompt to edit an existing trip.
+ */
+QString TripsTable::getEditItemString() const
+{
+	return tr("Edit trip...");
+}
+
+/**
  * Returns a translated message confirming that a new trip has been created.
  * 
  * @return	The translated message confirming creation of a new trip.

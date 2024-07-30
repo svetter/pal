@@ -261,6 +261,16 @@ QString PhotosTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing photo.
+ * 
+ * @return	The translated prompt to edit an existing photo.
+ */
+QString PhotosTable::getEditItemString() const
+{
+	return tr("Edit photo...");
+}
+
+/**
  * Returns a translated message confirming that a new photo has been created.
  * 
  * @return	The translated message confirming creation of a new photo.

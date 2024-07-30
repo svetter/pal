@@ -168,6 +168,16 @@ QString RegionsTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing region.
+ * 
+ * @return	The translated prompt to edit an existing region.
+ */
+QString RegionsTable::getEditItemString() const
+{
+	return tr("Edit region...");
+}
+
+/**
  * Returns a translated message confirming that a new region has been created.
  * 
  * @return	The translated message confirming creation of a new region.

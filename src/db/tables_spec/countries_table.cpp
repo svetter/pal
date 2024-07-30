@@ -160,6 +160,16 @@ QString CountriesTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing country.
+ * 
+ * @return	The translated prompt to edit an existing country.
+ */
+QString CountriesTable::getEditItemString() const
+{
+	return tr("Edit country...");
+}
+
+/**
  * Returns a translated message confirming that a new country has been created.
  * 
  * @return	The translated message confirming creation of a new country.

@@ -84,6 +84,14 @@ public:
 	 */
 	virtual QString getNoneString() const = 0;
 	/**
+	 * Returns a translated prompt to edit an existing item of this table's type.
+	 * 
+	 * Should end in ellipses ("...") to indicate that a dialog will be opened.
+	 * 
+	 * @return	The translated prompt to edit an existing item.
+	 */
+	virtual QString getEditItemString() const = 0;
+	/**
 	 * Returns a translated message confirming that a new item of this table's type has been
 	 * created.
 	 * 

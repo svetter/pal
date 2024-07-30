@@ -24,6 +24,7 @@
 #ifndef MAIN_WINDOW_TAB_CONTENT_H
 #define MAIN_WINDOW_TAB_CONTENT_H
 
+#include "src/data/item_types.h"
 #include "ui_main_window_tab.h"
 
 #include <QWidget>
@@ -35,9 +36,11 @@ class MainWindowTabContent : public QWidget, private Ui_MainWindowTabContent
 {
 	Q_OBJECT
 	
-	MainWindow* mainWindow;
-	ItemTypeMapper* mapper;
-	CompositeTable* compTable;
+	MainWindow*				mainWindow;
+	const ItemTypesHandler*	typesHandler;
+	ItemTypeMapper*			mapper;
+	Database*				db;
+	CompositeTable*			compTable;
 	
 	bool isViewable;
 	bool isDuplicable;
@@ -62,6 +65,8 @@ private:
 	QAction* tableContextMenuEditAction;
 	/** The context menu entry for duplicating the selected item. */
 	QAction* tableContextMenuDuplicateAction;
+	/** The context menu entries and their target item types for editing directly referenced items. */
+	QList<QPair<const ItemTypeMapper*, QAction*>> tableContextMenuEditOtherActions;
 	/** The context menu entry for deleting the selected items. */
 	QAction* tableContextMenuDeleteAction;
 	
@@ -73,7 +78,7 @@ public:
 	~MainWindowTabContent();
 	
 	// Initial setup
-	void init(MainWindow* mainWindow, ItemTypeMapper* mapper, bool viewable, bool duplicable);
+	void init(MainWindow* mainWindow, const ItemTypesHandler* typesHandler, ItemTypeMapper* mapper, Database& db, bool viewable, bool duplicable);
 	void restoreColumnWidths();
 	void restoreColumnOrder();
 	void restoreColumnHiddenStatus();
@@ -103,6 +108,10 @@ private slots:
 	void handle_addCustomColumn();
 	void handle_columnWizardAccepted();
 	void handle_removeCustomColumn();
+	
+private:
+	// Helpers
+	QList<PALItemType> getDirectlyReferencedTypes() const;
 };
 
 

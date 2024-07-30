@@ -160,6 +160,16 @@ QString HikersTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing hiker.
+ * 
+ * @return	The translated prompt to edit an existing hiker.
+ */
+QString HikersTable::getEditItemString() const
+{
+	return tr("Edit hiker...");
+}
+
+/**
  * Returns a translated message confirming that a new hiker has been created.
  * 
  * @return	The translated message confirming creation of a new hiker.

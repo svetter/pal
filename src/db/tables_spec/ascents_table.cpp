@@ -215,6 +215,16 @@ QString AscentsTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing ascent.
+ * 
+ * @return	The translated prompt to edit an existing ascent.
+ */
+QString AscentsTable::getEditItemString() const
+{
+	return tr("Edit ascent...");
+}
+
+/**
  * Returns a translated message confirming that a new ascent has been created.
  * 
  * @return	The translated message confirming creation of a new ascent.

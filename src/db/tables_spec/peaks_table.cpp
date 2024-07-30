@@ -179,6 +179,16 @@ QString PeaksTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing peak.
+ * 
+ * @return	The translated prompt to edit an existing peak.
+ */
+QString PeaksTable::getEditItemString() const
+{
+	return tr("Edit peak...");
+}
+
+/**
  * Returns a translated message confirming that a new peak has been created.
  * 
  * @return	The translated message confirming creation of a new peak.

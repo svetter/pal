@@ -165,6 +165,16 @@ QString RangesTable::getNoneString() const
 }
 
 /**
+ * Returns a translated prompt to edit an existing mountain range.
+ * 
+ * @return	The translated prompt to edit an existing mountain range.
+ */
+QString RangesTable::getEditItemString() const
+{
+	return tr("Edit mountain range...");
+}
+
+/**
  * Returns a translated message confirming that a new mountain range has been created.
  * 
  * @return	The translated message confirming creation of a new mountain range.
