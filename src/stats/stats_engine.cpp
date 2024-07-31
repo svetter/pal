@@ -968,7 +968,6 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<Date
 	
 	for (const BufferRowIndex& targetBufferIndex : targetBufferRows) {
 		QDateTime dateTime;
-		QDate date;
 		QList<qreal> yValues = QList<qreal>(allSeries.size(), -1);
 		
 		// Check cache
@@ -995,15 +994,18 @@ void ItemStatsEngine::updateTimeScatterChart(TimeScatterChart& chart, QList<Date
 		}
 		
 		// Append data and update minima/maxima
+		bool dataPointAppended = false;
 		for (int i = 0; i < allSeries.size(); i++) {
 			const int yValue = yValues.at(i);
 			if (Q_UNLIKELY(yValue == -1)) continue;
 			
 			allSeries[i]->data.append({dateTime, yValue});
+			dataPointAppended = true;
 			if (Q_UNLIKELY(yValue > maxY)) maxY = yValue;
 		}
+		if (!dataPointAppended) continue;
 		
-		date = dateTime.date();
+		const QDate date = dateTime.date();
 		if (Q_UNLIKELY(date < minDate || !minDate.isValid())) minDate = date;
 		if (Q_UNLIKELY(date > maxDate || !maxDate.isValid())) maxDate = date;
 	}
