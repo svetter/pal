@@ -699,7 +699,7 @@ void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, Q
 			break;
 		}
 	}
-	if (noData) {
+	if (noData && !usePinnedRanges) {
 		reset();
 		return;
 	}
@@ -877,7 +877,7 @@ void HistogramChart::reset()
 	barSet->remove(0, barSet->count());
 	hasData = false;
 	for (const bool p : {false, true}) {
-		maxY	[p] = 0;
+		maxY[p] = 0;
 	}
 	resetAxis(yAxis, true);
 }
@@ -914,7 +914,13 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal newMaxY, bool 
 		}
 	}
 	if (noData) {
-		reset();
+		if (usePinnedRanges) {
+			barSet->remove(0, barSet->count());
+			hasData = true;
+			updateView();
+		} else {
+			reset();
+		}
 		return;
 	}
 	assert(newMaxY > 0);
@@ -922,7 +928,7 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal newMaxY, bool 
 	for (int p = 0; p < (setPinnedRanges ? 2 : 1); p++) {
 		maxY[p] = newMaxY;
 	}
-
+	
 	hasData = true;
 	updateView();
 	
@@ -938,7 +944,7 @@ void HistogramChart::updateView()
 	if (!hasData) return;
 	
 	const bool p = usePinnedRanges;
-	adjustAxis(yAxis,	0,	maxY[p],	chart->plotArea().width(),	rangeBufferFactorY);
+	adjustAxis(yAxis, 0, maxY[p], chart->plotArea().width(), rangeBufferFactorY);
 }
 
 
@@ -1026,7 +1032,13 @@ void TopNChart::updateData(QStringList labels, QList<qreal> values, bool setPinn
 	assert(labels.size() <= n);
 	
 	if (values.isEmpty()) {
-		reset();
+		if (usePinnedRanges) {
+			barSet->remove(0, barSet->count());
+			hasData = true;
+			updateView();
+		} else {
+			reset();
+		}
 		return;
 	}
 	
@@ -1057,7 +1069,7 @@ void TopNChart::updateView()
 	if (!hasData) return;
 	
 	const bool p = usePinnedRanges;
-	adjustAxis(yAxis,	0,	maxY[p],	chart->plotArea().width(),	rangeBufferFactorY);
+	adjustAxis(yAxis, 0, maxY[p], chart->plotArea().width(), rangeBufferFactorY);
 }
 
 
