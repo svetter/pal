@@ -129,7 +129,12 @@ public:
 	virtual void setup() = 0;
 	
 	/**
-	 * Removes all data from the chart.
+	 * Clears displayed data from the chart.
+	 */
+	virtual void clear() = 0;
+	
+	/**
+	 * Removes all data, resets pinned ranges and shows an empty chart.
 	 */
 	virtual void reset() = 0;
 	
@@ -144,26 +149,26 @@ public:
 	
 protected:
 	// Setup helpers
-	static QChart* createChart(const QString& title);
-	static QValueAxis* createValueXAxis(QChart* chart, const QString& title = QString());
-	static QDateTimeAxis* createDateXAxis(QChart* chart, const QString& title = QString());
-	static QBarCategoryAxis* createBarCategoryXAxis(QChart* chart, const Qt::AlignmentFlag alignment = Qt::AlignBottom, const QStringList& categories = {});
-	static QValueAxis* createValueYAxis(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
-	static SizeResponsiveChartView* createChartView(QChart* chart, int minimumHeight = -1);
+	static QChart*					createChart					(const QString& title);
+	static QValueAxis*				createValueXAxis			(QChart* chart, const QString& title = QString());
+	static QDateTimeAxis*			createDateXAxis				(QChart* chart, const QString& title = QString());
+	static QBarCategoryAxis*		createBarCategoryXAxis		(QChart* chart, const Qt::AlignmentFlag alignment = Qt::AlignBottom, const QStringList& categories = {});
+	static QValueAxis*				createValueYAxis			(QChart* chart, const QString& title = QString(), const Qt::AlignmentFlag alignment = Qt::AlignLeft);
+	static SizeResponsiveChartView*	createChartView				(QChart* chart, int minimumHeight = -1);
 	
-	static QBarSeries* createBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
-	static QHorizontalBarSeries* createHorizontalBarSeries(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
-	static QBarSet* createBarSet(const QString& name, QAbstractBarSeries* series);
+	static QBarSeries*				createBarSeries				(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
+	static QHorizontalBarSeries*	createHorizontalBarSeries	(QChart* chart, QAbstractAxis* xAxis, QAbstractAxis* yAxis, bool showValueLabels = true);
+	static QBarSet*					createBarSet				(const QString& name, QAbstractBarSeries* series);
 	
 	// Update helpers
 public:
-	static QLineSeries* createLineSeries(const QString& name = QString());
-	static QScatterSeries* createScatterSeries(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape markerShape = QScatterSeries::MarkerShape(-1));
+	static QLineSeries*				createLineSeries			(const QString& name = QString());
+	static QScatterSeries*			createScatterSeries			(const QString& name, int markerSize = -1, QScatterSeries::MarkerShape markerShape = QScatterSeries::MarkerShape(-1));
 protected:
-	static void adjustAxis(QValueAxis* axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0, bool isTimeAxis = false);
-	static void adjustAxis(QDateTimeAxis* axis, QDate minValue, QDate maxValue, int chartSize);
-	static void resetAxis(QValueAxis* axis, bool show0Tick);
-	static void resetAxis(QDateTimeAxis* axis);
+	static void adjustAxis	(QValueAxis*	axis, qreal minValue, qreal maxValue, int chartSize, qreal rangeBufferFactor = 0, bool isTimeAxis = false);
+	static void adjustAxis	(QDateTimeAxis*	axis, QDate minValue, QDate maxValue, int chartSize);
+	static void resetAxis	(QValueAxis*	axis, bool show0Tick);
+	static void resetAxis	(QDateTimeAxis*	axis);
 };
 
 
@@ -200,6 +205,7 @@ public:
 	virtual ~YearBarChart();
 	
 	virtual void setup() override;
+	virtual void clear() override;
 	virtual void reset() override;
 	void updateData(const QList<qreal>& newData, int newMinYear, int newMaxYear, qreal newMaxY, bool setPinnedRanges);
 	virtual void updateView() override;
@@ -267,6 +273,7 @@ public:
 	virtual ~TimeScatterChart();
 	
 	virtual void setup() override;
+	virtual void clear() override;
 	virtual void reset() override;
 	void updateData(const QList<DateScatterSeries*>& seriesData, QDate newMinDate, QDate newMaxDate, qreal newMaxY, bool setPinnedRanges);
 	virtual void updateView() override;
@@ -310,6 +317,7 @@ public:
 	virtual ~HistogramChart();
 	
 	virtual void setup() override;
+	virtual void clear() override;
 	virtual void reset() override;
 	int classifyValue(int value) const;
 	void updateData(QList<qreal> histogramData, qreal newMaxY, bool setPinnedRanges);
@@ -349,6 +357,7 @@ public:
 	virtual ~TopNChart();
 	
 	virtual void setup() override;
+	virtual void clear() override;
 	virtual void reset() override;
 	void updateData(QStringList labels, QList<qreal> values, bool setPinnedRanges);
 	virtual void updateView() override;

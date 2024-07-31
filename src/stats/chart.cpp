@@ -509,7 +509,15 @@ void YearBarChart::setup()
 }
 
 /**
- * Removes all data from the chart.
+ * Clears displayed data from the chart.
+ */
+void YearBarChart::clear()
+{
+	barSet->remove(0, barSet->count());
+}
+
+/**
+ * Removes all data, resets pinned ranges and shows an empty chart.
  */
 void YearBarChart::reset()
 {
@@ -537,7 +545,7 @@ void YearBarChart::reset()
 void YearBarChart::updateData(const QList<qreal>& newData, int newMinYear, int newMaxYear, qreal newMaxY, bool setPinnedRanges)
 {
 	if (newData.isEmpty()) {
-		reset();
+		clear();
 		return;
 	}
 	assert(newData.size() == newMaxYear - newMinYear + 1);
@@ -659,7 +667,24 @@ void TimeScatterChart::setup()
 }
 
 /**
- * Removes all data from the chart.
+ * Clears displayed data from the chart.
+ */
+void TimeScatterChart::clear()
+{
+	for (const bool p : {false, true}) {
+		xySeries[p].clear();
+	}
+	if (!usePinnedRanges) {
+		resetAxis(xAxisDate);
+		resetAxis(xAxisValue, false);
+		xAxisDate->setVisible(false);
+		xAxisValue->setVisible(true);
+		resetAxis(yAxis, true);
+	}
+}
+
+/**
+ * Removes all data, resets pinned ranges and shows an empty chart.
  */
 void TimeScatterChart::reset()
 {
@@ -675,6 +700,7 @@ void TimeScatterChart::reset()
 	}
 	resetAxis(xAxisDate);
 	resetAxis(xAxisValue, false);
+	xAxisDate->setVisible(false);
 	xAxisValue->setVisible(true);
 	resetAxis(yAxis, true);
 }
@@ -700,7 +726,7 @@ void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, Q
 		}
 	}
 	if (noData && !usePinnedRanges) {
-		reset();
+		clear();
 		return;
 	}
 	assert(newMinDate <= newMaxDate);
@@ -739,7 +765,7 @@ void TimeScatterChart::updateData(const QList<DateScatterSeries*>& seriesData, Q
 		xySeries[p].clear();
 	}
 	for (const DateScatterSeries* const series : seriesData) {
-		QScatterSeries* newQSeries[2] {
+		QScatterSeries* newQSeries[2] = {
 			createScatterSeries(series->name, series->markerSize, series->markerShape),
 			createScatterSeries(series->name, series->markerSize, series->markerShape)
 		};
@@ -870,7 +896,16 @@ void HistogramChart::setup()
 }
 
 /**
- * Removes all data from the chart.
+ * Clears displayed data from the chart.
+ */
+void HistogramChart::clear()
+{
+	barSet->remove(0, barSet->count());
+	if (!usePinnedRanges) resetAxis(yAxis, true);
+}
+
+/**
+ * Removes all data, resets pinned ranges and shows an empty chart.
  */
 void HistogramChart::reset()
 {
@@ -914,13 +949,7 @@ void HistogramChart::updateData(QList<qreal> histogramData, qreal newMaxY, bool 
 		}
 	}
 	if (noData) {
-		if (usePinnedRanges) {
-			barSet->remove(0, barSet->count());
-			hasData = true;
-			updateView();
-		} else {
-			reset();
-		}
+		clear();
 		return;
 	}
 	assert(newMaxY > 0);
@@ -1003,7 +1032,18 @@ void TopNChart::setup()
 }
 
 /**
- * Removes all data from the chart.
+ * Clears displayed data from the chart.
+ */
+void TopNChart::clear()
+{
+	barSet->remove(0, barSet->count());
+	xAxis->setCategories({ "" });	// Workaround for QTBUG-122408: Category names not actually cleared properly by clear()
+	xAxis->clear();
+	resetAxis(yAxis, true);
+}
+
+/**
+ * Removes all data, resets pinned ranges and shows an empty chart.
  */
 void TopNChart::reset()
 {
@@ -1012,7 +1052,7 @@ void TopNChart::reset()
 	xAxis->clear();
 	hasData = false;
 	for (const bool p : {false, true}) {
-		maxY	[p] = 0;
+		maxY[p] = 0;
 	}
 	resetAxis(yAxis, true);
 }
@@ -1032,13 +1072,7 @@ void TopNChart::updateData(QStringList labels, QList<qreal> values, bool setPinn
 	assert(labels.size() <= n);
 	
 	if (values.isEmpty()) {
-		if (usePinnedRanges) {
-			barSet->remove(0, barSet->count());
-			hasData = true;
-			updateView();
-		} else {
-			reset();
-		}
+		clear();
 		return;
 	}
 	
