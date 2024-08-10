@@ -46,13 +46,17 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	CompositeAscentsTable& compAscents;
 	/** The composite peaks table. */
 	CompositePeaksTable& compPeaks;
-/** The composite trips table. */
+	/** The composite trips table. */
 	CompositeTripsTable& compTrips;
 	
 	/** The current view row index. */
 	ViewRowIndex currentViewRowIndex;
 	/** The ID of the currently displayed ascent, or an invalid ID if no ascent is displayed. */
 	ItemID currentAscentID;
+	/** The ID of the currently displayed ascent's peak, or an invalid ID if no ascent is displayed or the current ascent has no peak. */
+	ItemID currentPeakID;
+	/** The ID of the currently displayed ascent's trip, or an invalid ID if no ascent is displayed or the current ascent has no trip. */
+	ItemID currentTripID;
 
 	/** The view row index of the first ascent in the composite ascents table. */
 	ViewRowIndex    firstAscentViewRowIndex;
@@ -93,8 +97,10 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** The widget for displaying the image. */
 	ScalableImageLabel* imageLabel;
 	
+	/** Indicates whether the trip description is currently set to be editable. */
+	bool tripDescriptionEditable;
 	/** Indicates whether the ascent description is currently set to be editable. */
-	bool descriptionEditable;
+	bool ascentDescriptionEditable;
 	/** Indicates whether the photo description is currently set to be editable. */
 	bool photoDescriptionEditable;
 	
@@ -109,6 +115,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	
 	/** Keyboard shortcut for going to a random ascent. */
 	QShortcut* goToRandomAscentShortcut;
+	
+	/** Saved sizes for the description splitter before being collapsed for an ascent with no trip. */
+	QList<int> descriptionSplitterSizes;
 	
 private:
 	/** Temporary global static variable for error messages printed when loading images. */
@@ -155,8 +164,9 @@ private:
 	void savePhotoDescription();
 	void savePhotosList();
 	
-	// Editing description
-	void saveDescription();
+	// Editing descriptions
+	void saveTripDescription();
+	void saveAscentDescription();
 	
 private slots:
 	// Ascent navigation
@@ -191,7 +201,8 @@ private slots:
 	void handle_rightClickOnPeakInfo(QPoint pos);
 	void handle_rightClickOnTripInfo(QPoint pos);
 	// Edit actions
-	void handle_descriptionEditableChanged();
+	void handle_tripDescriptionEditableChanged();
+	void handle_ascentDescriptionEditableChanged();
 	void handle_photoDescriptionEditableChanged();
 	void handle_editAscent();
 	void handle_editPeak();

@@ -53,13 +53,17 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	compTrips	((CompositeTripsTable&)		typesHandler->get(ItemTypeTrip).compTable),
 	currentViewRowIndex(viewRowIndex),
 	currentAscentID(ItemID()),
+	currentPeakID(ItemID()),
+	currentTripID(ItemID()),
 	photos(QList<Photo>()),
 	slideshowTimer(QTimer(this)),
 	slideshowRunning(false),
-	descriptionEditable(false),
+	tripDescriptionEditable(false),
+	ascentDescriptionEditable(false),
 	photoDescriptionEditable(false),
 	infoContextMenu(QMenu(this)),
-	goToRandomAscentShortcut(nullptr)
+	goToRandomAscentShortcut(nullptr),
+	descriptionSplitterSizes({})
 {
 	setupUi(this);
 	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));
@@ -137,9 +141,11 @@ void AscentViewer::additionalUISetup()
 	movePhotoLeftButton		->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
 	movePhotoRightButton	->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
 	
-	descriptionEditable = editDescriptionButton->isChecked();
-	photoDescriptionEditable = editPhotoDescriptionButton->isChecked();
-	handle_descriptionEditableChanged();
+	tripDescriptionEditable		= editTripDescriptionButton->isChecked();
+	ascentDescriptionEditable	= editAscentDescriptionButton->isChecked();
+	photoDescriptionEditable	= editPhotoDescriptionButton->isChecked();
+	handle_tripDescriptionEditableChanged();
+	handle_ascentDescriptionEditableChanged();
 	handle_photoDescriptionEditableChanged();
 	
 	// Make QGroupBox titles turn gray when disabled (like on other widgets)
@@ -155,41 +161,42 @@ void AscentViewer::additionalUISetup()
 void AscentViewer::connectUI()
 {
 	// Ascent navigation
-	connect(firstAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscent);
-	connect(previousAscentButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscent);
-	connect(nextAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscent);
-	connect(lastAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscent);
-	connect(goToRandomAscentLabel,		&QLabel::linkActivated,		this,	&AscentViewer::handle_randomAscent);
-	connect(firstAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscentOfPeak);
-	connect(previousAscentOfPeakButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscentOfPeak);
-	connect(nextAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscentOfPeak);
-	connect(lastAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscentOfPeak);
+	connect(firstAscentButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscent);
+	connect(previousAscentButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscent);
+	connect(nextAscentButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscent);
+	connect(lastAscentButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscent);
+	connect(goToRandomAscentLabel,			&QLabel::linkActivated,		this,	&AscentViewer::handle_randomAscent);
+	connect(firstAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_firstAscentOfPeak);
+	connect(previousAscentOfPeakButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousAscentOfPeak);
+	connect(nextAscentOfPeakButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextAscentOfPeak);
+	connect(lastAscentOfPeakButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastAscentOfPeak);
 	// Photo navigation
-	connect(firstPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_firstPhoto);
-	connect(previousPhotoButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_previousPhoto);
-	connect(nextPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_nextPhoto);
-	connect(lastPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_lastPhoto);
+	connect(firstPhotoButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_firstPhoto);
+	connect(previousPhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_previousPhoto);
+	connect(nextPhotoButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_nextPhoto);
+	connect(lastPhotoButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_lastPhoto);
 	// Slideshow
-	connect(slideshowStartStopButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_toggleSlideshow);
-	connect(slideshowIntervalSpinner,	&QSpinBox::valueChanged,	this,	&AscentViewer::handle_slideshowIntervalChanged);
+	connect(slideshowStartStopButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_toggleSlideshow);
+	connect(slideshowIntervalSpinner,		&QSpinBox::valueChanged,	this,	&AscentViewer::handle_slideshowIntervalChanged);
 	// Changing photos
-	connect(movePhotoLeftButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoLeft);
-	connect(movePhotoRightButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoRight);
-	connect(addPhotosButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_addPhotos);
-	connect(removePhotoButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_removePhoto);
+	connect(movePhotoLeftButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoLeft);
+	connect(movePhotoRightButton,			&QToolButton::clicked,		this,	&AscentViewer::handle_movePhotoRight);
+	connect(addPhotosButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_addPhotos);
+	connect(removePhotoButton,				&QToolButton::clicked,		this,	&AscentViewer::handle_removePhoto);
 	// Image file error box
-	connect(imageErrorRemoveButton,		&QPushButton::clicked,		this,	&AscentViewer::handle_removePhoto);
-	connect(imageErrorReplaceButton,	&QPushButton::clicked,		this,	&AscentViewer::handle_replacePhoto);
-	connect(imageErrorRelocateButton,	&QPushButton::clicked,		this,	&AscentViewer::handle_relocatePhotos);
+	connect(imageErrorRemoveButton,			&QPushButton::clicked,		this,	&AscentViewer::handle_removePhoto);
+	connect(imageErrorReplaceButton,		&QPushButton::clicked,		this,	&AscentViewer::handle_replacePhoto);
+	connect(imageErrorRelocateButton,		&QPushButton::clicked,		this,	&AscentViewer::handle_relocatePhotos);
 	// Edit buttons
-	connect(editDescriptionButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_descriptionEditableChanged);
-	connect(editPhotoDescriptionButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_photoDescriptionEditableChanged);
+	connect(editTripDescriptionButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_tripDescriptionEditableChanged);
+	connect(editAscentDescriptionButton,	&QToolButton::clicked,		this,	&AscentViewer::handle_ascentDescriptionEditableChanged);
+	connect(editPhotoDescriptionButton,		&QToolButton::clicked,		this,	&AscentViewer::handle_photoDescriptionEditableChanged);
 	// Context menus
-	connect(tripInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
-	connect(peakInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
-	connect(ascentInfoBox,				&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
+	connect(tripInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
+	connect(peakInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
+	connect(ascentInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
 	// Drag and drop
-	connect(imageFrame,				&FileDropFrame::filesDropped,	this,	&AscentViewer::handle_filesDropped);
+	connect(imageFrame,						&FileDropFrame::filesDropped,			this,	&AscentViewer::handle_filesDropped);
 }
 
 /**
@@ -254,12 +261,22 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
 	stopSlideshow();
 	
-	saveDescription();
+	saveTripDescription();
+	saveAscentDescription();
 	savePhotoDescription();
 	
+	// Get new IDs
 	currentViewRowIndex	= viewRowIndex;
 	BufferRowIndex bufferRowIndex = compAscents.getBufferRowIndexForViewRow(viewRowIndex);
 	currentAscentID = db.ascentsTable.getPrimaryKeyAt(bufferRowIndex);
+	if (currentAscentID.isValid()) {
+		currentPeakID = db.ascentsTable.peakIDColumn.getValueAt(bufferRowIndex);
+		currentTripID = db.ascentsTable.tripIDColumn.getValueAt(bufferRowIndex);
+	} else {
+		currentPeakID = ItemID();
+		currentTripID = ItemID();
+	}
+	
 	// Update main window selection
 	mainWindow->updateSelectionAfterUserAction(typesHandler->get(ItemTypeAscent), currentViewRowIndex);
 	
@@ -323,9 +340,8 @@ void AscentViewer::updateInfoArea()
 	
 	const BufferRowIndex ascentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	
-	const ItemID tripID = db.ascentsTable.tripIDColumn.getValueAt(ascentBufferRowIndex);
-	if (tripID.isValid()) {
-		BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(tripID));
+	if (currentTripID.isValid()) {
+		BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(currentTripID));
 		tripNameLabel			->setText	(compAscents.tripColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		QString startDate					= compTrips.startDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
 		QString endDate						= compTrips.endDateColumn		.getFormattedValueAt(tripBufferRowIndex).toString();
@@ -337,9 +353,8 @@ void AscentViewer::updateInfoArea()
 		tripDatesLabel			->setText	(dateRange);
 	}
 	
-	const ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(ascentBufferRowIndex);
-	if (peakID.isValid()) {
-		BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(peakID));
+	if (currentPeakID.isValid()) {
+		BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(currentPeakID));
 		peakNameLabel			->setText	(compAscents.peakColumn			.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakHeightLabel			->setText	(compAscents.peakHeightColumn	.getFormattedValueAt(ascentBufferRowIndex).toString());
 		peakVolcanoCheckbox		->setChecked(compAscents.volcanoColumn		.getRawValueAt(ascentBufferRowIndex).toBool());
@@ -386,11 +401,37 @@ void AscentViewer::updateInfoArea()
 		ascentParticipantsBox->setVisible(true);
 	}
 	
-	const QString ascentDescription = db.ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString();
-	if (descriptionEditable) {
-		descriptionTextBrowser->setPlainText(ascentDescription);
+	if (currentTripID.isValid()) {
+		const QString tripDescription = db.tripsTable.descriptionColumn.getValueFor(FORCE_VALID(currentTripID)).toString();
+		if (tripDescriptionEditable) {
+			tripDescriptionTextBrowser->setPlainText(tripDescription);
+		} else {
+			tripDescriptionTextBrowser->setMarkdown(tripDescription);
+		}
+		// Restore description splitter
+		if (!descriptionSplitterSizes.empty()) {
+			if (descriptionSplitter->sizes().at(0) == 0) {
+				descriptionSplitter->setSizes(descriptionSplitterSizes);
+			}
+			descriptionSplitterSizes.clear();
+		}
 	} else {
-		descriptionTextBrowser->setMarkdown(ascentDescription);
+		tripDescriptionTextBrowser->clear();
+		// Save sizes and collapse description splitter
+		if (descriptionSplitterSizes.empty()) {
+			descriptionSplitterSizes = descriptionSplitter->sizes();
+			descriptionSplitter->setSizes({0, 1});
+		}
+	}
+	tripDescriptionLabel		->setEnabled(currentTripID.isValid());
+	editTripDescriptionButton	->setEnabled(currentTripID.isValid());
+	tripDescriptionTextBrowser	->setEnabled(currentTripID.isValid());
+	
+	const QString ascentDescription = db.ascentsTable.descriptionColumn.getValueAt(ascentBufferRowIndex).toString();
+	if (ascentDescriptionEditable) {
+		ascentDescriptionTextBrowser->setPlainText(ascentDescription);
+	} else {
+		ascentDescriptionTextBrowser->setMarkdown(ascentDescription);
 	}
 }
 
@@ -425,10 +466,8 @@ void AscentViewer::updateAscentNavigationTargets()
 	currentAscentOfPeakIndex	= -1;
 	numAscentsOfPeak			= 0;
 	
-	BufferRowIndex bufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
-	ItemID peakID = db.ascentsTable.peakIDColumn.getValueAt(bufferRowIndex);
-	if (peakID.isValid()) {
-		QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, peakID.asQVariant());
+	if (currentPeakID.isValid()) {
+		QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, currentPeakID.asQVariant());
 		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
 		QList<ViewRowIndex> ascentOfPeakViewRowIndices = QList<ViewRowIndex>();
 		for (const BufferRowIndex& matchingBufferRowIndex : matchingBufferRowIndices) {
@@ -845,16 +884,32 @@ void AscentViewer::savePhotosList()
 
 
 
-// EDITING DESCRIPTION
+// EDITING DESCRIPTIONS
+
+/**
+ * Saves the description for the current trip from the UI to the database.
+ */
+void AscentViewer::saveTripDescription()
+{
+	if (currentTripID.isInvalid() || !tripDescriptionEditable) return;
+	
+	const QString newDescription = tripDescriptionTextBrowser->toPlainText();
+	const bool descriptionChanged = db.tripsTable.descriptionColumn.getValueFor(FORCE_VALID(currentTripID)) != newDescription;
+	if (descriptionChanged && currentTripID.isValid()) {
+		db.beginChangingData();
+		db.tripsTable.updateCell(*this, FORCE_VALID(currentTripID), db.tripsTable.descriptionColumn, newDescription);
+		db.finishChangingData();
+	}
+}
 
 /**
  * Saves the description for the current ascent from the UI to the database.
  */
-void AscentViewer::saveDescription()
+void AscentViewer::saveAscentDescription()
 {
-	if (currentAscentID.isInvalid() || !descriptionEditable) return;
+	if (currentAscentID.isInvalid() || !ascentDescriptionEditable) return;
 	
-	const QString newDescription = descriptionTextBrowser->toPlainText();
+	const QString newDescription = ascentDescriptionTextBrowser->toPlainText();
 	const bool descriptionChanged = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)) != newDescription;
 	if (descriptionChanged) {
 		db.beginChangingData();
@@ -1138,21 +1193,41 @@ void AscentViewer::handle_rightClickOnTripInfo(QPoint pos)
 // EDIT ACTIONS
 
 /**
+ * Event handler for the button controlling trip description editability.
+ */
+void AscentViewer::handle_tripDescriptionEditableChanged()
+{
+	if (tripDescriptionEditable) saveTripDescription();
+	
+	tripDescriptionEditable = editTripDescriptionButton->isChecked();
+	
+	if (currentTripID.isInvalid()) return;
+	if (tripDescriptionEditable) {
+		const QString tripDescription = db.tripsTable.descriptionColumn.getValueFor(FORCE_VALID(currentTripID)).toString();
+		tripDescriptionTextBrowser->setPlainText(tripDescription);
+	} else {
+		tripDescriptionTextBrowser->setMarkdown(tripDescriptionTextBrowser->toPlainText());
+	}
+	tripDescriptionTextBrowser->setReadOnly(!tripDescriptionEditable);
+}
+
+/**
  * Event handler for the button controlling ascent description editability.
  */
-void AscentViewer::handle_descriptionEditableChanged()
+void AscentViewer::handle_ascentDescriptionEditableChanged()
 {
-	if (descriptionEditable) saveDescription();
+	if (ascentDescriptionEditable) saveAscentDescription();
 	
-	descriptionEditable = editDescriptionButton->isChecked();
+	ascentDescriptionEditable = editAscentDescriptionButton->isChecked();
 	
-	if (descriptionEditable) {
-		const QString description = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)).toString();
-		descriptionTextBrowser->setPlainText(description);
+	if (currentAscentID.isInvalid()) return;
+	if (ascentDescriptionEditable) {
+		const QString ascentDescription = db.ascentsTable.descriptionColumn.getValueFor(FORCE_VALID(currentAscentID)).toString();
+		ascentDescriptionTextBrowser->setPlainText(ascentDescription);
 	} else {
-		descriptionTextBrowser->setMarkdown(descriptionTextBrowser->toPlainText());
+		ascentDescriptionTextBrowser->setMarkdown(ascentDescriptionTextBrowser->toPlainText());
 	}
-	descriptionTextBrowser->setReadOnly(!descriptionEditable);
+	ascentDescriptionTextBrowser->setReadOnly(!ascentDescriptionEditable);
 }
 
 /**
@@ -1194,8 +1269,7 @@ void AscentViewer::handle_editAscent()
 void AscentViewer::handle_editPeak()
 {
 	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
-	const ValidItemID peakID = VALID_ITEM_ID(db.ascentsTable.peakIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
-	const BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(peakID);
+	const BufferRowIndex peakBufferRowIndex = db.peaksTable.getBufferIndexForPrimaryKey(FORCE_VALID(currentPeakID));
 	
 	openEditPeakDialogAndStore(*this, *mainWindow, db, peakBufferRowIndex, [=](bool changesMade) {
 		if (changesMade) handleChangesToUnderlyingData(oldAscentBufferRowIndex);
@@ -1208,8 +1282,7 @@ void AscentViewer::handle_editPeak()
 void AscentViewer::handle_editTrip()
 {
 	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
-	const ValidItemID tripID = VALID_ITEM_ID(db.ascentsTable.tripIDColumn.getValueAt(oldAscentBufferRowIndex).toInt());
-	const BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(tripID);
+	const BufferRowIndex tripBufferRowIndex = db.tripsTable.getBufferIndexForPrimaryKey(FORCE_VALID(currentTripID));
 	
 	openEditTripDialogAndStore(*this, *mainWindow, db, tripBufferRowIndex, [=](bool changesMade) {
 		if (changesMade) handleChangesToUnderlyingData(oldAscentBufferRowIndex);
@@ -1258,10 +1331,8 @@ void AscentViewer::imageErrorMessageOccurred(const QString& message)
  */
 void AscentViewer::popupInfoContextMenu(QPoint pos)
 {
-	ItemID peakID = db.ascentsTable.peakIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
-	editPeakAction->setEnabled(peakID.isValid());
-	ItemID tripID = db.ascentsTable.tripIDColumn.getValueFor(FORCE_VALID(currentAscentID)).toInt();
-	editTripAction->setEnabled(tripID.isValid());
+	editPeakAction->setEnabled(currentPeakID.isValid());
+	editTripAction->setEnabled(currentTripID.isValid());
 	
 	infoContextMenu.popup(pos);
 }
@@ -1311,7 +1382,8 @@ void AscentViewer::handleChangesToUnderlyingData(BufferRowIndex currentBufferRow
  */
 void AscentViewer::reject()
 {
-	saveDescription();
+	saveTripDescription();
+	saveAscentDescription();
 	savePhotoDescription();
 	saveImplicitSettings();
 	QDialog::reject();
@@ -1326,6 +1398,10 @@ void AscentViewer::saveImplicitSettings()
 	
 	saveSplitterSizes( *leftSplitter, Settings::ascentViewer_leftSplitterSizes);
 	saveSplitterSizes(*rightSplitter, Settings::ascentViewer_rightSplitterSizes);
+	if (!descriptionSplitterSizes.empty()) {
+		descriptionSplitter->setSizes(descriptionSplitterSizes);
+	}
+	saveSplitterSizes(*descriptionSplitter,	Settings::ascentViewer_descriptionSplitterSizes);
 	
 	Settings::ascentViewer_slideshowInterval.set(slideshowIntervalSpinner->value());
 	Settings::ascentViewer_slideshowAutostart.set(slideshowAutostartCheckbox->isChecked());
@@ -1340,8 +1416,9 @@ void AscentViewer::restoreImplicitSettings()
 		restoreDialogGeometry(*this, *mainWindow, Settings::ascentViewer_geometry);
 	}
 	
-	restoreSplitterSizes( *leftSplitter, Settings::ascentViewer_leftSplitterSizes);
-	restoreSplitterSizes(*rightSplitter, Settings::ascentViewer_rightSplitterSizes);
+	restoreSplitterSizes(       *leftSplitter,	Settings::ascentViewer_leftSplitterSizes);
+	restoreSplitterSizes(      *rightSplitter,	Settings::ascentViewer_rightSplitterSizes);
+	restoreSplitterSizes(*descriptionSplitter,	Settings::ascentViewer_descriptionSplitterSizes);
 	
 	slideshowIntervalSpinner->setValue(Settings::ascentViewer_slideshowInterval.get());
 	slideshowAutostartCheckbox->setChecked(Settings::ascentViewer_slideshowAutostart.get());

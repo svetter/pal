@@ -32,13 +32,13 @@
    <item>
     <widget class="QSplitter" name="leftSplitter">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="lineWidth">
       <number>0</number>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="handleWidth">
       <number>10</number>
@@ -61,7 +61,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>422</width>
+            <width>421</width>
             <height>836</height>
            </rect>
           </property>
@@ -101,7 +101,7 @@
               </font>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
              </property>
              <property name="title">
               <string>Trip</string>
@@ -166,7 +166,7 @@
               </font>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
              </property>
              <property name="title">
               <string>Peak</string>
@@ -205,7 +205,7 @@
               <item>
                <widget class="Line" name="peakInfoLine">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </widget>
               </item>
@@ -267,7 +267,7 @@
                    </font>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                  </widget>
                 </item>
@@ -427,7 +427,7 @@
                     <string>Google Maps</string>
                    </property>
                    <property name="textFormat">
-                    <enum>Qt::MarkdownText</enum>
+                    <enum>Qt::TextFormat::MarkdownText</enum>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -448,7 +448,7 @@
                     <string>Google Earth</string>
                    </property>
                    <property name="textFormat">
-                    <enum>Qt::MarkdownText</enum>
+                    <enum>Qt::TextFormat::MarkdownText</enum>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -469,7 +469,7 @@
                     <string>Wikipedia</string>
                    </property>
                    <property name="textFormat">
-                    <enum>Qt::MarkdownText</enum>
+                    <enum>Qt::TextFormat::MarkdownText</enum>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -499,7 +499,7 @@
               </font>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
              </property>
              <property name="title">
               <string>Ascent</string>
@@ -538,7 +538,7 @@
               <item>
                <widget class="Line" name="ascentInfoLine">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </widget>
               </item>
@@ -708,7 +708,7 @@
                    </font>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="checkable">
                    <bool>false</bool>
@@ -806,7 +806,7 @@
             <string>All ascents</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
            <layout class="QVBoxLayout" name="allAscentsNagivationBoxLayout">
             <property name="spacing">
@@ -836,7 +836,7 @@
                <string notr="true">&lt;n&gt; / &lt;N&gt;</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignHCenter|Qt::AlignTop</set>
+               <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
               </property>
              </widget>
             </item>
@@ -848,7 +848,7 @@
               <item>
                <spacer name="allAscentsNavigationButtonLayoutLeftSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </spacer>
               </item>
@@ -879,7 +879,7 @@
                  <string>Go to previous ascent in current table order</string>
                 </property>
                 <property name="arrowType">
-                 <enum>Qt::LeftArrow</enum>
+                 <enum>Qt::ArrowType::LeftArrow</enum>
                 </property>
                </widget>
               </item>
@@ -900,7 +900,7 @@
                  <string>Go to next ascent in current table order</string>
                 </property>
                 <property name="arrowType">
-                 <enum>Qt::RightArrow</enum>
+                 <enum>Qt::ArrowType::RightArrow</enum>
                 </property>
                </widget>
               </item>
@@ -917,7 +917,7 @@
               <item>
                <spacer name="allAscentsNavigationButtonLayoutRightSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </spacer>
               </item>
@@ -932,10 +932,10 @@
                <string>&lt;a href&gt;Go to random ascent&lt;/a&gt;</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignmentFlag::AlignCenter</set>
               </property>
               <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
+               <set>Qt::TextInteractionFlag::LinksAccessibleByKeyboard|Qt::TextInteractionFlag::LinksAccessibleByMouse</set>
               </property>
              </widget>
             </item>
@@ -948,7 +948,7 @@
             <string>Ascents of same peak</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
            <layout class="QVBoxLayout" name="ascentsOfPeakNagivationBoxLayout">
             <property name="spacing">
@@ -978,7 +978,7 @@
                <string notr="true">&lt;n&gt; / &lt;N&gt;</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignHCenter|Qt::AlignTop</set>
+               <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
               </property>
              </widget>
             </item>
@@ -990,7 +990,7 @@
               <item>
                <spacer name="ascentsOfPeakNavigationButtonLayoutLeftSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </spacer>
               </item>
@@ -1021,7 +1021,7 @@
                  <string>Go to previous ascent of the same peak in table order</string>
                 </property>
                 <property name="arrowType">
-                 <enum>Qt::LeftArrow</enum>
+                 <enum>Qt::ArrowType::LeftArrow</enum>
                 </property>
                </widget>
               </item>
@@ -1042,7 +1042,7 @@
                  <string>Go to next ascent of the same peak in table order</string>
                 </property>
                 <property name="arrowType">
-                 <enum>Qt::RightArrow</enum>
+                 <enum>Qt::ArrowType::RightArrow</enum>
                 </property>
                </widget>
               </item>
@@ -1059,7 +1059,7 @@
               <item>
                <spacer name="ascentsOfPeakNavigationButtonLayoutRightSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                </spacer>
               </item>
@@ -1068,7 +1068,7 @@
             <item>
              <spacer name="ascentsOfPeakSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
              </spacer>
             </item>
@@ -1087,13 +1087,13 @@
        <item>
         <widget class="QSplitter" name="rightSplitter">
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="lineWidth">
           <number>0</number>
          </property>
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="handleWidth">
           <number>10</number>
@@ -1104,76 +1104,179 @@
             <number>10</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="descriptionLabelLayout">
-             <property name="spacing">
+            <widget class="QSplitter" name="descriptionSplitter">
+             <property name="frameShape">
+              <enum>QFrame::Shape::NoFrame</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="handleWidth">
               <number>10</number>
              </property>
-             <item>
-              <widget class="QLabel" name="descriptionLabel">
-               <property name="font">
-                <font>
-                 <pointsize>12</pointsize>
-                </font>
+             <widget class="QWidget" name="topOfSplitterWidget">
+              <layout class="QVBoxLayout" name="tripDescriptionLayout">
+               <property name="spacing">
+                <number>10</number>
                </property>
-               <property name="text">
-                <string>Description</string>
+               <item>
+                <layout class="QHBoxLayout" name="tripDescriptionLabelLayout">
+                 <property name="spacing">
+                  <number>10</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="tripDescriptionLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Trip description</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="tripDescriptionLabelSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="editTripDescriptionButton">
+                   <property name="toolTip">
+                    <string>Edit trip description</string>
+                   </property>
+                   <property name="text">
+                    <string>Edit</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QTextBrowser" name="tripDescriptionTextBrowser">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>200</height>
+                  </size>
+                 </property>
+                 <property name="undoRedoEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="acceptRichText">
+                  <bool>false</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextInteractionFlag::LinksAccessibleByKeyboard|Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextBrowserInteraction|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                 </property>
+                 <property name="openExternalLinks">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="bottomOfSplitterWidget">
+              <layout class="QVBoxLayout" name="ascentDescriptionLayout">
+               <property name="spacing">
+                <number>10</number>
                </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="descriptionLabelSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QToolButton" name="editDescriptionButton">
-               <property name="toolTip">
-                <string>Edit ascent description</string>
-               </property>
-               <property name="text">
-                <string>Edit</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QTextBrowser" name="descriptionTextBrowser">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>200</width>
-               <height>200</height>
-              </size>
-             </property>
-             <property name="undoRedoEnabled">
-              <bool>true</bool>
-             </property>
-             <property name="acceptRichText">
-              <bool>false</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
+               <item>
+                <layout class="QHBoxLayout" name="ascentDescriptionLabelLayout">
+                 <property name="spacing">
+                  <number>10</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="ascentDescriptionLabel">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Ascent description</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="ascentDescriptionLabelSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="editAscentDescriptionButton">
+                   <property name="toolTip">
+                    <string>Edit ascent description</string>
+                   </property>
+                   <property name="text">
+                    <string>Edit</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QTextBrowser" name="ascentDescriptionTextBrowser">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>200</height>
+                  </size>
+                 </property>
+                 <property name="undoRedoEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="acceptRichText">
+                  <bool>false</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextInteractionFlag::LinksAccessibleByKeyboard|Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextBrowserInteraction|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                 </property>
+                 <property name="openExternalLinks">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -1189,7 +1292,7 @@
               <bool>true</bool>
              </property>
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::Shape::StyledPanel</enum>
              </property>
              <layout class="QVBoxLayout" name="imageFrameLayout">
               <property name="spacing">
@@ -1222,10 +1325,10 @@
                  </size>
                 </property>
                 <property name="verticalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                 <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                 </property>
                 <property name="horizontalScrollBarPolicy">
-                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                 <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                 </property>
                 <property name="widgetResizable">
                  <bool>true</bool>
@@ -1235,7 +1338,7 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>666</width>
+                   <width>665</width>
                    <height>379</height>
                   </rect>
                  </property>
@@ -1281,7 +1384,7 @@
                    <string>Image could not be loaded</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignCenter</set>
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="imageErrorGroupBoxLayout">
                    <property name="spacing">
@@ -1417,10 +1520,10 @@
                   <string notr="true">&lt;PhotoDescription&gt;</string>
                  </property>
                  <property name="textFormat">
-                  <enum>Qt::PlainText</enum>
+                  <enum>Qt::TextFormat::PlainText</enum>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1429,7 +1532,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::TextBrowserInteraction</set>
+                  <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
                  </property>
                 </widget>
                </item>
@@ -1456,7 +1559,7 @@
                <item>
                 <spacer name="photoInfoSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </spacer>
                </item>
@@ -1514,7 +1617,7 @@
                   <item>
                    <spacer name="photoMoveControlsBoxLeftSpacer">
                     <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                     <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                    </spacer>
                   </item>
@@ -1541,7 +1644,7 @@
                   <item>
                    <spacer name="photoMoveControlsBoxRightSpacer">
                     <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                     <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                    </spacer>
                   </item>
@@ -1551,7 +1654,7 @@
                <item>
                 <spacer name="photoMoveControlsSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </spacer>
                </item>
@@ -1600,7 +1703,7 @@
                   <string>Go to previous photo</string>
                  </property>
                  <property name="arrowType">
-                  <enum>Qt::LeftArrow</enum>
+                  <enum>Qt::ArrowType::LeftArrow</enum>
                  </property>
                 </widget>
                </item>
@@ -1621,7 +1724,7 @@
                   <string>Go to next photo</string>
                  </property>
                  <property name="arrowType">
-                  <enum>Qt::RightArrow</enum>
+                  <enum>Qt::ArrowType::RightArrow</enum>
                  </property>
                 </widget>
                </item>
@@ -1656,7 +1759,7 @@
                <item>
                 <spacer name="slideshowSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -1672,7 +1775,7 @@
                   <string>Slideshow</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout">
                   <property name="spacing">
@@ -1757,7 +1860,7 @@
                <item>
                 <spacer name="photoAddRemoveControlsSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>

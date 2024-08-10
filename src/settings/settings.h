@@ -446,6 +446,8 @@ public:
 	// Ascent viewer splitter sizes
 	/** Remembered sizes for the left splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_leftSplitterSizes				= Setting<QStringList>	("implicit/ascentViewer/leftSplitterSizes");
+	/** Remembered sizes for the splitter dividing the two description boxes in the ascent viewer. */
+	inline static const	Setting<QStringList>	ascentViewer_descriptionSplitterSizes		= Setting<QStringList>	("implicit/ascentViewer/descriptionSplitterSizes");
 	/** Remembered sizes for the right splitter in the ascent viewer. */
 	inline static const	Setting<QStringList>	ascentViewer_rightSplitterSizes				= Setting<QStringList>	("implicit/ascentViewer/rightSplitterSizes");
 	
