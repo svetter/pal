@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
-    <height>593</height>
+    <width>800</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,7 +30,7 @@
     <number>15</number>
    </property>
    <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
+    <enum>QLayout::SizeConstraint::SetFixedSize</enum>
    </property>
    <property name="leftMargin">
     <number>10</number>
@@ -50,7 +50,7 @@
       <number>20</number>
      </property>
      <property name="sizeConstraint">
-      <enum>QLayout::SetFixedSize</enum>
+      <enum>QLayout::SizeConstraint::SetFixedSize</enum>
      </property>
      <item>
       <layout class="QVBoxLayout" name="column1Layout" stretch="0,0,0,0,1">
@@ -82,7 +82,7 @@
          <item>
           <spacer name="languageSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -96,14 +96,14 @@
        </item>
        <item>
         <spacer name="column1TopSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -156,16 +156,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="onlyPrepareActiveTableCheckbox">
+           <widget class="QCheckBox" name="defaultNumericColumnsToDescendingCheckbox">
             <property name="text">
-             <string>Only prepare active table on startup</string>
+             <string>Sort number, date and time columns in descending order first</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="openProjectSettingsOnNewDatabaseCheckbox">
+           <widget class="QCheckBox" name="onlyPrepareActiveTableCheckbox">
             <property name="text">
-             <string>Open project settings window when creating a new database</string>
+             <string>Only prepare active table on startup</string>
             </property>
            </widget>
           </item>
@@ -303,7 +303,7 @@
        <item>
         <spacer name="column1BottomSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -321,7 +321,7 @@
         <number>15</number>
        </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SetFixedSize</enum>
+        <enum>QLayout::SizeConstraint::SetFixedSize</enum>
        </property>
        <item>
         <layout class="QHBoxLayout" name="styleLayout" stretch="0,1,1">
@@ -348,7 +348,7 @@
          <item>
           <spacer name="styleSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -362,14 +362,14 @@
        </item>
        <item>
         <spacer name="column2TopSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -469,7 +469,7 @@
                <item>
                 <spacer name="ascentDateSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -506,7 +506,7 @@
                <item>
                 <spacer name="ascentTimeSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -542,7 +542,7 @@
                <item>
                 <spacer name="ascentElevationGainSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -620,7 +620,7 @@
                  <item>
                   <spacer name="peakHeightSpacer">
                    <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                    <enum>Qt::Orientation::Horizontal</enum>
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
@@ -669,7 +669,7 @@
                <item row="0" column="1">
                 <spacer name="tripDatesSpacer">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -720,7 +720,7 @@
              <bool>true</bool>
             </property>
             <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
+             <set>Qt::TextInteractionFlag::LinksAccessibleByKeyboard|Qt::TextInteractionFlag::LinksAccessibleByMouse</set>
             </property>
            </widget>
           </item>
@@ -768,7 +768,7 @@
        <item>
         <spacer name="column2BottomSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -785,7 +785,7 @@
    <item>
     <spacer name="bottomSpacer">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -798,10 +798,10 @@
    <item>
     <widget class="QDialogButtonBox" name="bottomButtonBox">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
      </property>
      <property name="centerButtons">
       <bool>false</bool>

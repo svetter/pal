@@ -99,8 +99,8 @@ void SettingsWindow::loadSettings()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
 	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.get());
+	defaultNumericColumnsToDescendingCheckbox	->setChecked	(sortNumericColumnsDescendingByDefault		.get());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.get());
-	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.get());
 	rememberWindowGeometryCheckbox				->setChecked	(rememberWindowPositions					.get());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.get());
 	rememberTableCheckbox						->setChecked	(rememberTab								.get());
@@ -142,8 +142,8 @@ void SettingsWindow::loadDefaults()
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
 	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.getDefault());
+	defaultNumericColumnsToDescendingCheckbox	->setChecked	(sortNumericColumnsDescendingByDefault		.getDefault());
 	onlyPrepareActiveTableCheckbox				->setChecked	(onlyPrepareActiveTableOnStartup			.getDefault());
-	openProjectSettingsOnNewDatabaseCheckbox	->setChecked	(openProjectSettingsOnNewDatabase			.getDefault());
 	rememberWindowGeometryCheckbox				->setChecked	(rememberWindowPositions					.getDefault());
 	rememberWindowPositionsRelativeCheckbox		->setChecked	(rememberWindowPositionsRelative			.getDefault());
 	rememberTableCheckbox						->setChecked	(rememberTab								.getDefault());
@@ -193,8 +193,8 @@ void SettingsWindow::saveSettings()
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
 	confirmCancel								.set(confirmCancelCheckbox						->isChecked());
 	warnAboutDuplicateNames						.set(warnAboutDuplicateNamesCheckbox			->isChecked());
+	sortNumericColumnsDescendingByDefault		.set(defaultNumericColumnsToDescendingCheckbox	->isChecked());
 	onlyPrepareActiveTableOnStartup				.set(onlyPrepareActiveTableCheckbox				->isChecked());
-	openProjectSettingsOnNewDatabase			.set(openProjectSettingsOnNewDatabaseCheckbox	->isChecked());
 	rememberWindowPositions						.set(rememberWindowGeometryCheckbox				->isChecked());
 	rememberWindowPositionsRelative				.set(rememberWindowPositionsRelativeCheckbox	->isChecked());
 	rememberTab									.set(rememberTableCheckbox						->isChecked());

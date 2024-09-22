@@ -2893,49 +2893,49 @@ Trotzdem speichern?</translation>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="874"/>
+        <location filename="../src/main/main_window.cpp" line="872"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="877"/>
+        <location filename="../src/main/main_window.cpp" line="875"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="877"/>
+        <location filename="../src/main/main_window.cpp" line="875"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="930"/>
-        <location filename="../src/main/main_window.cpp" line="940"/>
-        <location filename="../src/main/main_window.cpp" line="954"/>
+        <location filename="../src/main/main_window.cpp" line="928"/>
+        <location filename="../src/main/main_window.cpp" line="938"/>
+        <location filename="../src/main/main_window.cpp" line="952"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="941"/>
+        <location filename="../src/main/main_window.cpp" line="939"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="942"/>
+        <location filename="../src/main/main_window.cpp" line="940"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="942"/>
+        <location filename="../src/main/main_window.cpp" line="940"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="955"/>
+        <location filename="../src/main/main_window.cpp" line="953"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="957"/>
+        <location filename="../src/main/main_window.cpp" line="955"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2943,43 +2943,43 @@ Trotzdem speichern?</translation>
 <context>
     <name>MainWindowTabContent</name>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="224"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="231"/>
         <source>Hide this column</source>
         <translation>Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="225"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="232"/>
         <source>Remove this column</source>
         <translation>Spalte entfernen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="228"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="235"/>
         <source>Restore hidden column</source>
         <translation>Spalte anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="230"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="237"/>
         <source>Add custom column...</source>
         <translation>Benutzerdefinierte Spalte hinzufügen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="255"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="262"/>
         <source>View...</source>
         <translation>Ansehen...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="258"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="265"/>
         <source>Edit...</source>
         <translation>Bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="260"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="267"/>
         <source>Edit as new duplicate...</source>
         <translation>Als neues Duplikat bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window_tab_content.cpp" line="275"/>
-        <location filename="../src/main/main_window_tab_content.cpp" line="512"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="282"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="519"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -3858,14 +3858,9 @@ Trotzdem speichern?</translation>
         <translation>Beim Speichern von Einträgen vor duplizierten Namen warnen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="161"/>
+        <location filename="../src/ui/settings_window.ui" line="168"/>
         <source>Only prepare active table on startup</source>
         <translation>Beim Programmstart nur geöffnete Tabelle vorbereiten</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/settings_window.ui" line="168"/>
-        <source>Open project settings window when creating a new database</source>
-        <translation>Beim Erstellen einer neuen Datenbank Projekteinstellungen öffnen</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="178"/>
@@ -3926,6 +3921,11 @@ Trotzdem speichern?</translation>
         <location filename="../src/ui/settings_window.ui" line="258"/>
         <source>Active filters</source>
         <translation>Aktive Filter</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="161"/>
+        <source>Sort number, date and time columns in descending order first</source>
+        <translation>Spalten mit Zahlenwerten, Daten und Zeiten zuerst absteigend sortieren</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="265"/>

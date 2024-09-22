@@ -37,7 +37,7 @@
  * @param table						The CompositeTable that this column belongs to.
  * @param name						The internal name for this column.
  * @param uiName					The name of this column as it should be displayed in the UI.
- * @param contentType				The type of data the column contents.
+ * @param contentType				The type of data the column contains.
  * @param cellsAreInterdependent	Whether the contents of the cells in this column depend on each other.
  * @param isStatistical				Whether the column is a statistical column.
  * @param suffix					A suffix to append to the content of each cell.

@@ -973,8 +973,7 @@ QVariant CompositeTable::data(const QModelIndex& index, int role) const
  * For the QAbstractItemModel implementation, sorts the table by the given column and order.
  * 
  * This function is called by the view when the user clicks on a column header to sort by that
- * column. It looks up the column which was clicked and delegates the sorting to
- * performSortByColumn().
+ * column. It looks up the column which was clicked and delegates the sorting to performSort().
  * 
  * @param columnIndex	The index of the visible column to sort by.
  * @param order			The order to sort by (ascending or descending).

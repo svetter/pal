@@ -314,11 +314,11 @@ public:
 	/** Warn user if an item with the same name already exists. */
 	inline static const Setting<bool>			warnAboutDuplicateNames						= Setting<bool>			("warnAboutDuplicateNames",						true);
 	
+	/** For any integer, date or time column in any table, default to sorting them in descending order first. */
+	inline static const Setting<bool>			sortNumericColumnsDescendingByDefault		= Setting<bool>			("sortNumericColumnsDescendingByDefault",		false);
+	
 	/** Only prepare the composite table corresponding to the open tab on startup, and defer preparing the other tables until they are opened. */
 	inline static const Setting<bool>			onlyPrepareActiveTableOnStartup				= Setting<bool>			("onlyPrepareActiveTableOnStartup",				true);
-	
-	/** Open the project settings dialog when creating a new database. */
-	inline static const Setting<bool>			openProjectSettingsOnNewDatabase			= Setting<bool>			("openProjectSettingsOnNewDatabase",			true);
 	
 	// Remember UI
 	/** Remember the window positions of the main window and all dialogs. */

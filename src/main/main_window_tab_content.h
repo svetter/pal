@@ -25,6 +25,7 @@
 #define MAIN_WINDOW_TAB_CONTENT_H
 
 #include "src/data/item_types.h"
+#include "src/main/inverted_sort_header_view.h"
 #include "ui_main_window_tab.h"
 
 #include <QWidget>
@@ -46,7 +47,10 @@ class MainWindowTabContent : public QWidget, private Ui_MainWindowTabContent
 	bool isDuplicable;
 	
 private:
-	/** The context menu for the column header area of all UI tables. */
+	/** The custom horizontal header view for the UI table. */
+	InvertedSortHeaderView* headerView;
+	
+	/** The context menu for the column header area of the UI table. */
 	QMenu columnContextMenu;
 	/** The column context menu entry for hiding the selected column. */
 	QAction* columnContextMenuHideColumnAction;
@@ -57,7 +61,7 @@ private:
 	/** The column context menu entry for creating a new custom column. */
 	QAction* columnContextMenuAddCustomColumnAction;
 	
-	/** The context menu for the cell are of all UI tables. */
+	/** The context menu for the cells area of the UI table. */
 	QMenu tableContextMenu;
 	/** The context menu entry for opening the selected item. */
 	QAction* tableContextMenuOpenAction;

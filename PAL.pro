@@ -130,6 +130,7 @@ HEADERS += \
 	src/main/filter_bar.h \
 	src/main/filter_wizard.h \
 	src/main/helpers.h \
+	src/main/inverted_sort_header_view.h \
 	src/main/item_types_handler.h \
 	src/main/main_window.h \
 	src/main/main_window_tab_content.h \
@@ -225,6 +226,7 @@ SOURCES += \
 	src/main/filter_bar.cpp \
 	src/main/filter_wizard.cpp \
 	src/main/helpers.cpp \
+	src/main/inverted_sort_header_view.cpp \
 	src/main/main_window.cpp \
 	src/main/main_window_tab_content.cpp \
 	src/settings/project_settings.cpp \

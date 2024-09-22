@@ -855,11 +855,9 @@ void MainWindow::handle_newDatabase()
 	activeMapper.openingTab();
 	activeMapper.statsEngine.setCurrentlyVisible(true);
 	
-	if (Settings::openProjectSettingsOnNewDatabase.get()) {
-		ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db, true);
-		connect(dialog, &ProjectSettingsWindow::finished, [=]() { delete dialog; });
-		dialog->open();
-	}
+	ProjectSettingsWindow* dialog = new ProjectSettingsWindow(*this, *this, db, true);
+	connect(dialog, &ProjectSettingsWindow::finished, [=]() { delete dialog; });
+	dialog->open();
 }
 
 /**

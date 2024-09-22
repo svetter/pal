@@ -36,6 +36,7 @@ MainWindowTabContent::MainWindowTabContent(QWidget* parent) :
 	compTable(nullptr),
 	isViewable(false),
 	isDuplicable(false),
+	headerView(nullptr),
 	columnContextMenu(QMenu(this)),
 	columnContextMenuHideColumnAction(nullptr),
 	columnContextMenuRestoreColumnMenu(nullptr),
@@ -50,6 +51,7 @@ MainWindowTabContent::MainWindowTabContent(QWidget* parent) :
 
 MainWindowTabContent::~MainWindowTabContent()
 {
+	delete headerView;
 	qDeleteAll(shortcuts);
 	delete columnContextMenuRestoreColumnMenu;
 }
@@ -68,6 +70,11 @@ void MainWindowTabContent::init(MainWindow* mainWindow, const ItemTypesHandler* 
 	this->isViewable	= viewable;
 	this->isDuplicable	= duplicable;
 	
+	
+	// Set horizontal header
+	this->headerView = new InvertedSortHeaderView(tableView, *compTable);
+	headerView->setSectionsClickable(true);
+	tableView->setHorizontalHeader(headerView);
 	
 	// Set model
 	tableView->setModel(compTable);

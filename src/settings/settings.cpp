@@ -88,6 +88,12 @@ void Settings::checkForVersionChange()
 		qSettings.remove("allowEmptyNames");
 	}
 	
+	// 1.7.0 or older
+	if (settingsVersionUpTo("1.7.0")) {
+		// Setting for opening project settings after creating new database was removed => clean up
+		qSettings.remove("openProjectSettingsOnNewDatabase");
+	}
+	
 	// Update settings version
 	const QString currentAppVersion = getAppVersion();
 	const QString currentSettingsVersion = appVersion.get();
