@@ -15,7 +15,7 @@
 
 
 
-VERSION = 1.7.0
+VERSION = 1.8.0
 
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
@@ -27,7 +27,7 @@ QT += svg svgwidgets
 QT += charts
 QT += network
 
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# disables all the APIs deprecated before Qt 6.0.0
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# Disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++17
 CONFIG += lrelease embed_translations
