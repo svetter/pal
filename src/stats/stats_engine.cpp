@@ -63,7 +63,7 @@ void StatsEngine::setCurrentlyVisible(bool visible, bool noUpdate)
 {
 	currentlyVisible = visible;
 	
-	if (currentlyVisible && !noUpdate) {
+	if (visible && !noUpdate) {
 		updateCharts();
 	}
 }

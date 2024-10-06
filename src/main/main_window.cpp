@@ -796,6 +796,8 @@ void MainWindow::handle_tabChanged()
 		// Make sure active table is up to date
 		progress.setMaximum(activeMapper->compTable.getNumberOfCellsToUpdate());
 		activeMapper->compTable.setUpdateImmediately(true, &progress);
+		
+		const bool firstOpen = !activeMapper->tabHasBeenOpened(false);
 		activeMapper->openingTab();
 		
 		// Filter bar visibility
@@ -806,6 +808,7 @@ void MainWindow::handle_tabChanged()
 		const bool statsShown = activeMapper->itemStatsPanelCurrentlySetVisible();
 		showItemStatsPanelAction->setChecked(statsShown);
 		activeMapper->statsEngine.setCurrentlyVisible(statsShown, true);
+		if (firstOpen) activeMapper->tab.refreshStats();
 	}
 	generalStatsEngine.setCurrentlyVisible(!activeMapper);
 	
