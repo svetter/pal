@@ -618,7 +618,7 @@ void Database::removeRows(QWidget& parent, NormalTable& table, QSet<ValidItemID>
 	
 	Database::removeRows_referenceSearch(&parent, false, table, primaryKeys);
 	
-	for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
+	for (const ValidItemID& primaryKey : std::as_const(primaryKeys)) {
 		table.removeRow(parent, {&table.primaryKeyColumn}, {primaryKey});
 	}
 }
@@ -679,7 +679,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 				if (!otherTableColumn->isForeignKey()) continue;
 				if (&otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
 				
-				for (const ValidItemID& primaryKey : qAsConst(primaryKeys)) {
+				for (const ValidItemID& primaryKey : std::as_const(primaryKeys)) {
 					QList<BufferRowIndex> rowIndexList = candidateNormalTable.getMatchingBufferRowIndices(*otherTableColumn, ID_GET(primaryKey));
 					QSet<BufferRowIndex> rowIndexSet = QSet<BufferRowIndex>(rowIndexList.constBegin(), rowIndexList.constEnd());
 					
@@ -748,7 +748,7 @@ void Database::finishChangingData()
 	assert(acceptDataModifications);
 	acceptDataModifications = false;
 	
-	for (const TableChangeListener* const listener : qAsConst(changeListeners)) {
+	for (const TableChangeListener* const listener : std::as_const(changeListeners)) {
 		listener->dataChanged(changedColumns, rowsAddedOrRemovedPerTable);
 	}
 	

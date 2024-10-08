@@ -477,7 +477,7 @@ void CompositeTable::rebuildOrderBuffer(bool skipRepopulate)
 	}
 	
 	// Filter order buffer
-	for (const Filter* const filter : qAsConst(currentFilters)) {
+	for (const Filter* const filter : std::as_const(currentFilters)) {
 		filter->applyToOrderBuffer(viewOrder);
 	}
 	
@@ -542,7 +542,7 @@ void CompositeTable::updateBufferColumns(QSet<const CompositeColumn*> columnsToU
 	
 	if (!runAfterEachCellUpdate) runAfterEachCellUpdate = []() {};
 	
-	for (const CompositeColumn* column : qAsConst(columnsToUpdate)) {
+	for (const CompositeColumn* column : std::as_const(columnsToUpdate)) {
 		int columnIndex = column->getIndex();
 		bool computeWholeColumn = column->cellsAreInterdependent;
 		if (!computeWholeColumn) {

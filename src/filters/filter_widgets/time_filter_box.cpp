@@ -40,9 +40,9 @@ TimeFilterBox::TimeFilterBox(QWidget* parent, const QString& title, TimeFilter& 
 	filterLayout->addWidget(setMaxTimeCheckbox);
 	filterLayout->addWidget(maxTimeWidget);
 	
-	connect(minTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_minTimeChanged);
-	connect(setMaxTimeCheckbox,	&QCheckBox::stateChanged,	this,	&TimeFilterBox::handle_setMaxTimeChanged);
-	connect(maxTimeWidget,		&QTimeEdit::timeChanged,	this,	&TimeFilterBox::handle_maxTimeChanged);
+	connect(minTimeWidget,		&QTimeEdit::timeChanged,		this,	&TimeFilterBox::handle_minTimeChanged);
+	connect(setMaxTimeCheckbox,	&QCheckBox::checkStateChanged,	this,	&TimeFilterBox::handle_setMaxTimeChanged);
+	connect(maxTimeWidget,		&QTimeEdit::timeChanged,		this,	&TimeFilterBox::handle_maxTimeChanged);
 	
 	minTimeWidget->setTime(filter.min);
 	maxTimeWidget->setTime(filter.max);

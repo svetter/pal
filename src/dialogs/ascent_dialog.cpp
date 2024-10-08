@@ -106,9 +106,9 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	connect(peakCombo,							&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_selectedPeakChanged);
 	connect(editPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_editPeak);
 	connect(newPeakButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newPeak);
-	connect(dateSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_dateSpecifiedChanged);
-	connect(timeSpecifyCheckbox,				&QCheckBox::stateChanged,				this,	&AscentDialog::handle_timeSpecifiedChanged);
-	connect(elevationGainSpecifyCheckbox,		&QCheckBox::stateChanged,				this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
+	connect(dateSpecifyCheckbox,				&QCheckBox::checkStateChanged,			this,	&AscentDialog::handle_dateSpecifiedChanged);
+	connect(timeSpecifyCheckbox,				&QCheckBox::checkStateChanged,			this,	&AscentDialog::handle_timeSpecifiedChanged);
+	connect(elevationGainSpecifyCheckbox,		&QCheckBox::checkStateChanged,			this,	&AscentDialog::handle_elevationGainSpecifiedChanged);
 	connect(difficultySystemCombo,				&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_difficultySystemChanged);
 	connect(tripCombo,							&QComboBox::currentIndexChanged,		this,	&AscentDialog::handle_selectedTripChanged);
 	connect(editTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_editTrip);

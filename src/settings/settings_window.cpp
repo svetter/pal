@@ -50,11 +50,11 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	
 	
 	connect(styleCombo,							&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedStyle);
-	connect(rememberWindowGeometryCheckbox,		&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
-	connect(ascentDateCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
-	connect(ascentTimeCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
-	connect(ascentElevationGainCheckbox,		&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
-	connect(peakHeightCheckbox,					&QCheckBox::stateChanged,			this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
+	connect(rememberWindowGeometryCheckbox,		&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
+	connect(ascentDateCheckbox,					&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
+	connect(ascentTimeCheckbox,					&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
+	connect(ascentElevationGainCheckbox,		&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_ascentElevationGainCheckboxChanged);
+	connect(peakHeightCheckbox,					&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_peakHeightCheckboxChanged);
 	
 	connect(bottomButtonBox->button(QDialogButtonBox::Save),			&QPushButton::clicked,	this,	&SettingsWindow::handle_save);
 	connect(bottomButtonBox->button(QDialogButtonBox::Apply),			&QPushButton::clicked,	this,	&SettingsWindow::handle_apply);

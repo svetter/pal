@@ -78,7 +78,7 @@ void ItemDialog::changeUIForPurpose()
 		for (const auto& [checkbox, widgetsAndColumns] : multiEditCheckboxes.asKeyValueRange()) {
 			const QSet<QWidget*>& widgets = widgetsAndColumns.first;
 			checkbox->setToolTip(tr("Set for all selected items"));
-			for (QWidget* widget : qAsConst(widgets)) {
+			for (QWidget* widget : std::as_const(widgets)) {
 				savedWidgetEnabledStates[checkbox][widget] = widget->isEnabled();
 				widget->setEnabled(false);
 			}

@@ -91,7 +91,7 @@ PeakDialog::PeakDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	
 	
 	connect(nameLineEdit,			&QLineEdit::textChanged,			this,	&PeakDialog::handle_nameChanged);
-	connect(heightSpecifyCheckbox,	&QCheckBox::stateChanged,			this,	&PeakDialog::handle_heightSpecifiedChanged);
+	connect(heightSpecifyCheckbox,	&QCheckBox::checkStateChanged,		this,	&PeakDialog::handle_heightSpecifiedChanged);
 	connect(regionCombo,			&QComboBox::currentIndexChanged,	this,	&PeakDialog::handle_selectedRegionChanged);
 	connect(editRegionButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_editRegion);
 	connect(newRegionButton,		&QPushButton::clicked,				this,	&PeakDialog::handle_newRegion);

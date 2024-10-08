@@ -42,9 +42,9 @@ IntFilterBox::IntFilterBox(QWidget* parent, const QString& title, IntFilter& fil
 	filterLayout->addWidget(setMaxCheckbox);
 	filterLayout->addWidget(maxSpinner);
 	
-	connect(minSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_minChanged);
-	connect(setMaxCheckbox,	&QCheckBox::stateChanged,	this,	&IntFilterBox::handle_setMaxChanged);
-	connect(maxSpinner,		&QSpinBox::valueChanged,	this,	&IntFilterBox::handle_maxChanged);
+	connect(minSpinner,		&QSpinBox::valueChanged,		this,	&IntFilterBox::handle_minChanged);
+	connect(setMaxCheckbox,	&QCheckBox::checkStateChanged,	this,	&IntFilterBox::handle_setMaxChanged);
+	connect(maxSpinner,		&QSpinBox::valueChanged,		this,	&IntFilterBox::handle_maxChanged);
 	
 	minSpinner->setValue(filter.min);
 	maxSpinner->setValue(filter.max);

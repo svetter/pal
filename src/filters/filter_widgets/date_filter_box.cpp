@@ -44,9 +44,9 @@ DateFilterBox::DateFilterBox(QWidget* parent, const QString& title, DateFilter& 
 	filterLayout->addWidget(setMaxDateCheckbox);
 	filterLayout->addWidget(maxDateWidget);
 	
-	connect(minDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_minDateChanged);
-	connect(setMaxDateCheckbox,	&QCheckBox::stateChanged,	this,	&DateFilterBox::handle_setMaxDateChanged);
-	connect(maxDateWidget,		&QDateEdit::dateChanged,	this,	&DateFilterBox::handle_maxDateChanged);
+	connect(minDateWidget,		&QDateEdit::dateChanged,		this,	&DateFilterBox::handle_minDateChanged);
+	connect(setMaxDateCheckbox,	&QCheckBox::checkStateChanged,	this,	&DateFilterBox::handle_setMaxDateChanged);
+	connect(maxDateWidget,		&QDateEdit::dateChanged,		this,	&DateFilterBox::handle_maxDateChanged);
 	
 	minDateWidget->setDate(filter.min);
 	maxDateWidget->setDate(filter.max);

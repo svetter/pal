@@ -44,7 +44,7 @@ StatsEngine::StatsEngine(Database& db) :
  */
 StatsEngine::~StatsEngine()
 {
-	for (Chart* chart : qAsConst(charts)) {
+	for (Chart* chart : std::as_const(charts)) {
 		if (chart) delete chart;
 	}
 	charts.clear();
@@ -85,7 +85,7 @@ bool StatsEngine::isCurrentlyVisible()
  */
 bool StatsEngine::anyChartsDirty()
 {
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		if (dirty.contains(chart) && dirty.value(chart) == true) {
 			return true;
 		}
@@ -202,7 +202,7 @@ void GeneralStatsEngine::setupStatsTab()
 	charts.insert(elevGainPerYearChart);
 	charts.insert(heightsScatterChart);
 	// Mark all charts as dirty
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		dirty[chart] = true;
 	}
 }
@@ -213,7 +213,7 @@ void GeneralStatsEngine::setupStatsTab()
 void GeneralStatsEngine::resetStatsTab()
 {
 	setCurrentlyVisible(false);
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		assert(chart);
 		chart->reset();
 		dirty[chart] = true;
@@ -504,7 +504,7 @@ void ItemStatsEngine::setupStatsPanel()
 	charts.insert(topElevGainSumChart);
 	charts.remove(nullptr);
 	// Mark all charts as dirty
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		dirty[chart] = true;
 	}
 }
@@ -538,7 +538,7 @@ void ItemStatsEngine::resetStatsPanel()
 	topElevGainSumCache		.clear();
 	
 	// Mark all charts as dirty
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		dirty[chart] = true;
 	}
 }
@@ -606,7 +606,7 @@ void ItemStatsEngine::setStartBufferRows(const QSet<BufferRowIndex>& newBufferRo
 	currentStartBufferRows = newBufferRows;
 	currentlyAllRowsSelected = allRows;
 	
-	for (Chart* const chart : qAsConst(charts)) {
+	for (Chart* const chart : std::as_const(charts)) {
 		dirty[chart] = true;
 	}
 	if (isCurrentlyVisible()) updateCharts();

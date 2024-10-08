@@ -294,7 +294,7 @@ bool openDeleteHikersDialogAndExecute(QWidget& parent, QMainWindow& mainWindow, 
 	}
 	
 	db.beginChangingData();
-	for (const ItemID& hikerID : qAsConst(hikerIDs)) {
+	for (const ItemID& hikerID : std::as_const(hikerIDs)) {
 		if (db.projectSettings.defaultHiker.get() == ID_GET(hikerID)) {
 			db.projectSettings.defaultHiker.clear(parent);
 			break;

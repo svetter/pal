@@ -68,12 +68,12 @@ TripDialog::TripDialog(QWidget& parent, QMainWindow& mainWindow, Database& db, D
 	restoreDialogGeometry(*this, mainWindow, Settings::tripDialog_geometry);
 	
 	
-	connect(datesUnspecifiedCheckbox,	&QCheckBox::stateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
-	connect(startDateWidget,			&QDateEdit::dateChanged,	this,	&TripDialog::handle_startDateChanged);
-	connect(endDateWidget,				&QDateEdit::dateChanged,	this,	&TripDialog::handle_endDateChanged);
+	connect(datesUnspecifiedCheckbox,	&QCheckBox::checkStateChanged,	this,	&TripDialog::handle_datesSpecifiedChanged);
+	connect(startDateWidget,			&QDateEdit::dateChanged,		this,	&TripDialog::handle_startDateChanged);
+	connect(endDateWidget,				&QDateEdit::dateChanged,		this,	&TripDialog::handle_endDateChanged);
 	
-	connect(okButton,					&QPushButton::clicked,		this,	&TripDialog::handle_ok);
-	connect(cancelButton,				&QPushButton::clicked,		this,	&TripDialog::handle_cancel);
+	connect(okButton,					&QPushButton::clicked,			this,	&TripDialog::handle_ok);
+	connect(cancelButton,				&QPushButton::clicked,			this,	&TripDialog::handle_cancel);
 	
 	
 	// Set initial dates

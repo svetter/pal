@@ -54,7 +54,7 @@ IntClassFilterBox::IntClassFilterBox(QWidget* parent, const QString& title, int 
 	filterLayout->addWidget(maxCombo);
 	
 	connect(minCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_minChanged);
-	connect(setMaxCheckbox,	&QCheckBox::stateChanged,			this,	&IntClassFilterBox::handle_setMaxChanged);
+	connect(setMaxCheckbox,	&QCheckBox::checkStateChanged,		this,	&IntClassFilterBox::handle_setMaxChanged);
 	connect(maxCombo,		&QComboBox::currentIndexChanged,	this,	&IntClassFilterBox::handle_maxChanged);
 	
 	minCombo->setCurrentIndex(filter.min / classIncrement - classMinValue / classIncrement);
