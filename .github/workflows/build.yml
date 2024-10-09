@@ -9,7 +9,7 @@ on:
   pull_request:
 
 env:
-  QT_RELEASE_VER: 6.7.0
+  QT_RELEASE_VER_UBUNTU: 6.8.0
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-          - windows-latest
+#          - windows-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -29,7 +29,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.7.0"
+          version: "6.8.0"
           modules: "qtcharts"
           cache: true
 
