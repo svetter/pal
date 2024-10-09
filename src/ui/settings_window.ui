@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>814</width>
     <height>609</height>
    </rect>
   </property>
@@ -324,7 +324,7 @@
         <enum>QLayout::SizeConstraint::SetFixedSize</enum>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="styleLayout" stretch="0,1,1">
+        <layout class="QHBoxLayout" name="styleLayout" stretch="0,1,0,1">
          <property name="spacing">
           <number>10</number>
          </property>
@@ -346,17 +346,14 @@
           </widget>
          </item>
          <item>
-          <spacer name="styleSpacer">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+          <widget class="QLabel" name="colorSchemeLabel">
+           <property name="text">
+            <string>Color scheme</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="colorSchemeCombo"/>
          </item>
         </layout>
        </item>

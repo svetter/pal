@@ -305,6 +305,8 @@ public:
 	// Application UI style
 	/** The style in which the application is displayed. */
 	inline static const Setting<QString>		uiStyle										= Setting<QString>		("uiStyle",										"");
+	/** The color scheme in which the application is displayed: bright, dark, or use system default. */
+	inline static const Setting<QString>		uiColorScheme								= Setting<QString>		("uiColorScheme",								"system");
 	
 	// General/global
 	/** Ask user for confirmation before deleting an item. */

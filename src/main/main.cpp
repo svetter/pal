@@ -91,9 +91,13 @@ int main(int argc, char *argv[])
 	// Update settings if necessary
 	Settings::checkForVersionChange();
 	
-	QString styleSetting = Settings::uiStyle.get();
+	const QString styleSetting = Settings::uiStyle.get();
 	if (!styleSetting.isEmpty()) {
-		application.setStyle(styleSetting);
+		applyStyle(styleSetting);
+	}
+	const QString colorSchemeSetting = Settings::uiColorScheme.get();
+	if (!colorSchemeSetting.isEmpty()) {
+		applyColorScheme(colorSchemeSetting);
 	}
 	
 	configureTranslation(application);

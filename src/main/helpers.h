@@ -50,6 +50,11 @@ QString getDefaultLanguageCode();
 
 QPair<QStringList, QStringList> getSupportedStyles();
 
+// Application style
+
+void applyStyle(QString styleString);
+void applyColorScheme(QString colorSchemeString);
+
 
 
 // String

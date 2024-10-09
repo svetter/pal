@@ -42,6 +42,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	mainWindow(mainWindow),
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
+	colorSchemes({"system", "light", "dark"}, {"System default", "Light", "Dark"}),
 	liveStyleUpdates(false)
 {
 	setupUi(this);
@@ -50,6 +51,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	
 	
 	connect(styleCombo,							&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedStyle);
+	connect(colorSchemeCombo,					&QComboBox::currentIndexChanged,	this,	&SettingsWindow::applySelectedColorScheme);
 	connect(rememberWindowGeometryCheckbox,		&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_rememberWindowPositionsCheckboxChanged);
 	connect(ascentDateCheckbox,					&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_ascentDateCheckboxChanged);
 	connect(ascentTimeCheckbox,					&QCheckBox::checkStateChanged,		this,	&SettingsWindow::handle_ascentTimeCheckboxChanged);
@@ -64,6 +66,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	
 	languageCombo	->addItems(languages.second);
 	styleCombo		->addItems(styles.second);
+	colorSchemeCombo->addItems(colorSchemes.second);
 	
 	
 	loadSettings();
@@ -91,10 +94,18 @@ void SettingsWindow::loadSettings()
 	int styleIndex = styles.first.indexOf(uiStyle.get());
 	if (styleIndex < 0) {
 		qDebug() << "Couldn't parse style setting, reverting to default";
-		styleIndex = styles.first.indexOf(language.getDefault());
+		styleIndex = styles.first.indexOf(uiStyle.getDefault());
 		if (styleIndex < 0) styleIndex = 0;
 	}
 	styleCombo->setCurrentIndex(styleIndex);
+	
+	int colorSchemeIndex = colorSchemes.first.indexOf(uiColorScheme.get());
+	if (colorSchemeIndex < 0) {
+		qDebug() << "Couldn't parse color scheme setting, reverting to default";
+		colorSchemeIndex = colorSchemes.first.indexOf(uiColorScheme.getDefault());
+		if (colorSchemeIndex < 0) colorSchemeIndex = 0;
+	}
+	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
 	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
@@ -134,10 +145,12 @@ void SettingsWindow::loadSettings()
  */
 void SettingsWindow::loadDefaults()
 {
-	int languageIndex = languages.first.indexOf(language.getDefault());
+	const int languageIndex = languages.first.indexOf(language.getDefault());
 	languageCombo->setCurrentIndex(languageIndex);
-	int styleIndex = styles.first.indexOf(uiStyle.getDefault());
+	const int styleIndex = styles.first.indexOf(uiStyle.getDefault());
 	styleCombo->setCurrentIndex(styleIndex);
+	const int colorSchemeIndex = colorSchemes.first.indexOf(uiColorScheme.getDefault());
+	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
 	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
@@ -177,17 +190,22 @@ void SettingsWindow::loadDefaults()
  */
 void SettingsWindow::saveSettings()
 {
-	QString languageBefore = language.get();
-	bool rememberWindowPositionsRelativeBefore = rememberWindowPositionsRelative.get();
+	const QString languageBefore = language.get();
+	const bool rememberWindowPositionsRelativeBefore = rememberWindowPositionsRelative.get();
 	
-	int selectedLanguageIndex = languageCombo->currentIndex();
+	const int selectedLanguageIndex = languageCombo->currentIndex();
 	if (selectedLanguageIndex >= 0) {
 		language.set(languages.first.at(selectedLanguageIndex));
 	}
 	
-	int selectedStyleIndex = styleCombo->currentIndex();
+	const int selectedStyleIndex = styleCombo->currentIndex();
 	if (selectedStyleIndex >= 0) {
 		uiStyle.set(styles.first.at(selectedStyleIndex));
+	}
+	
+	const int selectedColorSchemeIndex = colorSchemeCombo->currentIndex();
+	if (selectedColorSchemeIndex >= 0) {
+		uiColorScheme.set(colorSchemes.first.at(selectedColorSchemeIndex));
 	}
 	
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
@@ -362,12 +380,12 @@ void SettingsWindow::applySelectedStyle()
 
 	int selectedStyleIndex = styleCombo->currentIndex();
 	if (selectedStyleIndex < 0) return;
-	QString selectedStyle = styles.first.at(selectedStyleIndex);
-	applyStyle(selectedStyle);
+	const QString selectedStyleCode = styles.first.at(selectedStyleIndex);
+	applyStyle(selectedStyleCode);
 }
 
 /**
- * Fetchesthe style saved in the settings and applies it if live style updates are enabled.
+ * Fetches the style saved in the settings and applies it if live style updates are enabled.
  */
 void SettingsWindow::applyStoredStyle()
 {
@@ -377,17 +395,27 @@ void SettingsWindow::applyStoredStyle()
 }
 
 /**
- * Applies the given style to the application.
- * 
- * @param styleString	The style to apply.
+ * Parses the currently selected color scheme from the color scheme combo box and applies it if live
+ * style updates are enabled.
  */
-void SettingsWindow::applyStyle(QString styleString)
+void SettingsWindow::applySelectedColorScheme()
 {
-	if (styleString.isEmpty()) {
-		styleString = Settings::systemDefaultStyle;
-	}
-	QApplication* application = qobject_cast<QApplication*>(QCoreApplication::instance());
-	application->setStyle(styleString);
+	if (!liveStyleUpdates) return;
+	
+	int selectedColorSchemeIndex = colorSchemeCombo->currentIndex();
+	if (selectedColorSchemeIndex < 0) return;
+	QString selectedColorSchemeCode = colorSchemes.first.at(selectedColorSchemeIndex);
+	applyColorScheme(selectedColorSchemeCode);
+}
+
+/**
+ * Fetches the color scheme saved in the settings and applies it if live style updates are enabled.
+ */
+void SettingsWindow::applyStoredColorScheme()
+{
+	if (!liveStyleUpdates) return;
+	
+	applyColorScheme(uiColorScheme.get());
 }
 
 

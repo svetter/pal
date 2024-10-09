@@ -25,6 +25,7 @@
 
 #include <QDirIterator>
 #include <QStyleFactory>
+#include <QStyleHints>
 #include <QApplication>
 
 
@@ -163,6 +164,7 @@ QPair<QStringList, QStringList> getSupportedStyles()
 	for (const QString& code : codes) {
 		     if (code == "")				names.append(QApplication::translate("General", "Default"));
 		else if (code == "Fusion")			names.append(QApplication::translate("General", "Qt Fusion"));
+		else if (code == "windows11")		names.append(QApplication::translate("General", "Windows 11"));
 		else if (code == "windowsvista")	names.append(QApplication::translate("General", "Modern Windows"));
 		else if (code == "Windows")			names.append(QApplication::translate("General", "Classic Windows"));
 		else if (code == "macOS")			names.append(QApplication::translate("General", "MacOS"));
@@ -170,6 +172,35 @@ QPair<QStringList, QStringList> getSupportedStyles()
 	}
 	
 	return {codes, names};
+}
+
+
+
+/**
+ * Applies the given style to the application.
+ * 
+ * @param styleCode	The code of the style to apply.
+ */
+void applyStyle(QString styleCode)
+{
+	QApplication* application = qobject_cast<QApplication*>(QCoreApplication::instance());
+	application->setStyle(styleCode);
+}
+
+/**
+ * Applies the given color scheme to the application.
+ * 
+ * @param colorSchemeCode	The code of the color scheme to apply.
+ */
+void applyColorScheme(QString colorSchemeCode)
+{
+	Qt::ColorScheme colorScheme = Qt::ColorScheme::Unknown;
+	if (colorSchemeCode.compare("light", Qt::CaseInsensitive) == 0) {
+		colorScheme = Qt::ColorScheme::Light;
+	} else if (colorSchemeCode.compare("dark", Qt::CaseInsensitive) == 0) {
+		colorScheme = Qt::ColorScheme::Dark;
+	}
+	QGuiApplication::styleHints()->setColorScheme(colorScheme);
 }
 
 

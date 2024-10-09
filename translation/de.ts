@@ -2258,27 +2258,32 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
 <context>
     <name>General</name>
     <message>
-        <location filename="../src/main/helpers.cpp" line="164"/>
+        <location filename="../src/main/helpers.cpp" line="165"/>
         <source>Default</source>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="165"/>
+        <location filename="../src/main/helpers.cpp" line="166"/>
         <source>Qt Fusion</source>
         <translation>Qt Fusion</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="166"/>
+        <location filename="../src/main/helpers.cpp" line="167"/>
+        <source>Windows 11</source>
+        <translation>Windows 11</translation>
+    </message>
+    <message>
+        <location filename="../src/main/helpers.cpp" line="168"/>
         <source>Modern Windows</source>
         <translation>Windows modern</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="167"/>
+        <location filename="../src/main/helpers.cpp" line="169"/>
         <source>Classic Windows</source>
         <translation>Windows klassisch</translation>
     </message>
     <message>
-        <location filename="../src/main/helpers.cpp" line="168"/>
+        <location filename="../src/main/helpers.cpp" line="170"/>
         <source>MacOS</source>
         <translation>MacOS</translation>
     </message>
@@ -2888,54 +2893,54 @@ Trotzdem speichern?</translation>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="829"/>
+        <location filename="../src/main/main_window.cpp" line="832"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="872"/>
+        <location filename="../src/main/main_window.cpp" line="875"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="875"/>
+        <location filename="../src/main/main_window.cpp" line="878"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="875"/>
+        <location filename="../src/main/main_window.cpp" line="878"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="928"/>
-        <location filename="../src/main/main_window.cpp" line="938"/>
-        <location filename="../src/main/main_window.cpp" line="952"/>
+        <location filename="../src/main/main_window.cpp" line="931"/>
+        <location filename="../src/main/main_window.cpp" line="941"/>
+        <location filename="../src/main/main_window.cpp" line="955"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="939"/>
+        <location filename="../src/main/main_window.cpp" line="942"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="940"/>
+        <location filename="../src/main/main_window.cpp" line="943"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="940"/>
+        <location filename="../src/main/main_window.cpp" line="943"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="953"/>
+        <location filename="../src/main/main_window.cpp" line="956"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="955"/>
+        <location filename="../src/main/main_window.cpp" line="958"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -3893,27 +3898,32 @@ Trotzdem speichern?</translation>
         <translation>Sortierung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="693"/>
+        <location filename="../src/ui/settings_window.ui" line="351"/>
+        <source>Color scheme</source>
+        <translation>Farbschema</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="690"/>
         <source>Google Search API key</source>
         <translation>Google Search API-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="714"/>
+        <location filename="../src/ui/settings_window.ui" line="711"/>
         <source>Set a Google Search API key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</source>
         <translation>Hier Google Search API angeben um die automatische Suche nach Wikipedia-Links zu verbessern.&lt;br/&gt;Eine Anleitung zum Erstellen eines Schlüssels findet sich &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt;. Danach muss &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; die Custom Search API aktiviert werden.</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="730"/>
+        <location filename="../src/ui/settings_window.ui" line="727"/>
         <source>Paste API key here</source>
         <translation>API-Schlüssel hier einfügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="740"/>
+        <location filename="../src/ui/settings_window.ui" line="737"/>
         <source>Ascent Viewer</source>
         <translation>Besteigungs-Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="761"/>
+        <location filename="../src/ui/settings_window.ui" line="758"/>
         <source>Show ascent title below peak name, not in ascent box</source>
         <translation>Besteigungs-Titel unter Gipfelname statt unter Besteigung anzeigen</translation>
     </message>
@@ -3948,62 +3958,62 @@ Trotzdem speichern?</translation>
         <translation>Ausgeblendete Spalten</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="385"/>
+        <location filename="../src/ui/settings_window.ui" line="382"/>
         <source>Default values for new items</source>
         <translation>Standardwerte für neue Einträge</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="406"/>
+        <location filename="../src/ui/settings_window.ui" line="403"/>
         <source>Ascent</source>
         <translation>Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="430"/>
+        <location filename="../src/ui/settings_window.ui" line="427"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="437"/>
+        <location filename="../src/ui/settings_window.ui" line="434"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="465"/>
+        <location filename="../src/ui/settings_window.ui" line="462"/>
         <source>days in the past</source>
         <translation>Tage vor aktuellem Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="487"/>
+        <location filename="../src/ui/settings_window.ui" line="484"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="568"/>
+        <location filename="../src/ui/settings_window.ui" line="565"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="592"/>
+        <location filename="../src/ui/settings_window.ui" line="589"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="641"/>
+        <location filename="../src/ui/settings_window.ui" line="638"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="665"/>
+        <location filename="../src/ui/settings_window.ui" line="662"/>
         <source>Specify dates</source>
         <translation>Start- und Enddatum angeben</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="224"/>
+        <location filename="../src/settings/settings_window.cpp" line="242"/>
         <source>Language setting changed</source>
         <translation>Spracheinstellung geändert</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="225"/>
+        <location filename="../src/settings/settings_window.cpp" line="243"/>
         <source>Changing the language requires a restart.</source>
         <translation>Die Änderung der Sprache erfordert einen Neustart.</translation>
     </message>

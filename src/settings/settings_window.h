@@ -40,10 +40,11 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	QMainWindow& mainWindow;
 	
 	/** Lists of avalable languages, as codes and native names. */
-	QPair<QStringList, QStringList> languages;
-	QPair<QStringList, QStringList> styles;
+	const QPair<QStringList, QStringList> languages;
+	const QPair<QStringList, QStringList> styles;
+	const QPair<QStringList, QStringList> colorSchemes;
 	
-	bool liveStyleUpdates;
+	const bool liveStyleUpdates;
 	
 public:
 	SettingsWindow(QMainWindow& mainWindow);
@@ -70,7 +71,8 @@ private slots:
 private:
 	void applySelectedStyle();
 	void applyStoredStyle();
-	void applyStyle(QString styleString);
+	void applySelectedColorScheme();
+	void applyStoredColorScheme();
 	
 	void reject() override;
 };
