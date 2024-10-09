@@ -43,7 +43,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
 	colorSchemes({"system", "light", "dark"}, {"System default", "Light", "Dark"}),
-	liveStyleUpdates(false)
+	liveStyleUpdates(true)
 {
 	setupUi(this);
 	
