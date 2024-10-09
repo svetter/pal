@@ -4008,6 +4008,21 @@ Trotzdem speichern?</translation>
         <translation>Start- und Enddatum angeben</translation>
     </message>
     <message>
+        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <source>System default</source>
+        <translation>System-Standard</translation>
+    </message>
+    <message>
+        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <source>Light</source>
+        <translation>Hell</translation>
+    </message>
+    <message>
+        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <source>Dark</source>
+        <translation>Dunkel</translation>
+    </message>
+    <message>
         <location filename="../src/settings/settings_window.cpp" line="242"/>
         <source>Language setting changed</source>
         <translation>Spracheinstellung geändert</translation>
