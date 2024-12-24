@@ -299,7 +299,9 @@ void MainWindow::attemptToOpenFile(const QString& filepath)
 		projectOpen = true;
 		
 		updateItemCountDisplays();
-		getActiveMapper().tab.refreshStats();
+		if (activeMapper) {
+			activeMapper->tab.refreshStats();
+		}
 		
 		setUIEnabled(true);
 		addToRecentFilesList(filepath);
