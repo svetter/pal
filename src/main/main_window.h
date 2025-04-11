@@ -139,7 +139,7 @@ private slots:
 public:
 	// State getters
 	bool isProjectOpen();
-	bool getCurrentTabIndex();
+	int getCurrentTabIndex();
 	bool getShowItemStatsPanelState();
 	bool getPinStatRangesState();
 	

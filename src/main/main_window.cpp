@@ -1265,7 +1265,7 @@ bool MainWindow::isProjectOpen()
 	return projectOpen;
 }
 
-bool MainWindow::getCurrentTabIndex()
+int MainWindow::getCurrentTabIndex()
 {
 	return mainAreaTabs->currentIndex();
 }

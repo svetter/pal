@@ -566,7 +566,9 @@ void CompositeTable::updateBufferColumns(QSet<const CompositeColumn*> columnsToU
 		
 		QModelIndex topLeftIndex		= index(0, columnIndex);
 		QModelIndex bottomRightIndex	= index(viewOrder.numRows(), columnIndex);
-		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
+		if (topLeftIndex.isValid() && bottomRightIndex.isValid()) {
+			Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
+		}
 	}
 	assert(!dirtyColumns.intersects(columnsToUpdate));
 }
@@ -1014,6 +1016,9 @@ void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReve
 	assert(currentSorting.column);
 	assert(tableView);
 	
+	if (rowCount() == 0)
+		return;
+	
 	ViewRowIndex previouslySelectedViewRowIndex = ViewRowIndex(tableView->currentIndex().row());
 	BufferRowIndex previouslySelectedBufferRowIndex = getBufferRowIndexForViewRow(previouslySelectedViewRowIndex);
 	
@@ -1048,8 +1053,10 @@ void CompositeTable::performSort(SortingPass previousSort, bool allowPassAndReve
 	// Notify model users (views)
 	QModelIndex topLeftIndex		= index(0, 0);
 	QModelIndex bottomRightIndex	= index(viewOrder.numRows() - 1, getNumberOfNormalColumns() - 1);
-	Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
-	//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
+	if (topLeftIndex.isValid() && bottomRightIndex.isValid()) {
+		Q_EMIT dataChanged(topLeftIndex, bottomRightIndex);
+		//headerDataChanged(Qt::Vertical, 0, bufferOrder.size() - 1);
+	}
 }
 
 
