@@ -360,209 +360,209 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Überschreitung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="726"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="723"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="751"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="748"/>
         <source>Nth ascent of this peak</source>
         <translation>Nte Besteigung des Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="775"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="772"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="806"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="803"/>
         <source>All ascents</source>
         <translation>Alle Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="858"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="855"/>
         <source>Go to first ascent in current table order</source>
         <translation>Zur ersten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="879"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="876"/>
         <source>Go to previous ascent in current table order</source>
         <translation>Zur vorherigen Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="900"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="897"/>
         <source>Go to next ascent in current table order</source>
         <translation>Zur nächsten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="910"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="907"/>
         <source>Go to last ascent in current table order</source>
         <translation>Zur letzten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="929"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="926"/>
         <source>You can also press R</source>
         <translation>Oder &apos;R&apos; drücken</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="932"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="929"/>
         <source>&lt;a href&gt;Go to random ascent&lt;/a&gt;</source>
         <translation>&lt;a href&gt;Zu zufälliger Besteigung&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="948"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="945"/>
         <source>Ascents of same peak</source>
         <translation>Besteigungen dieses Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1000"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="997"/>
         <source>Go to first ascent of the same peak in table order</source>
         <translation>Zur ersten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1021"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1018"/>
         <source>Go to previous ascent of the same peak in table order</source>
         <translation>Zur vorherigen Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1042"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1039"/>
         <source>Go to next ascent of the same peak in table order</source>
         <translation>Zur nächsten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1052"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1049"/>
         <source>Go to last ascent of the same peak in table order</source>
         <translation>Zur letzten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1161"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1241"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1572"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1569"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1235"/>
         <source>Edit ascent description</source>
         <translation>Tourenbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1138"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1135"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1155"/>
         <source>Edit trip description</source>
         <translation>Urlaubsbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1218"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1215"/>
         <source>Ascent description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1384"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1381"/>
         <source>Image could not be loaded</source>
         <translation>Bild kann nicht angezeigt werden</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1440"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1437"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1452"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1449"/>
         <source>Replace</source>
         <translation>Ersetzen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1464"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1461"/>
         <source>Mass relocate</source>
         <translation>Pfade anpassen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1548"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1545"/>
         <source>Photo description</source>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1569"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1566"/>
         <source>Edit photo description</source>
         <translation>Bildbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1596"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1593"/>
         <source>Move current photo</source>
         <translation>Foto verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1627"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1624"/>
         <source>Move current photo towards the front</source>
         <translation>Angezeigtes Foto nach vorne verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1637"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1634"/>
         <source>Move current photo towards the back</source>
         <translation>Angezeigtes Foto nach hinten verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1682"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1679"/>
         <source>Go to first photo</source>
         <translation>Zum ersten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1703"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1700"/>
         <source>Go to previous photo</source>
         <translation>Zum vorherigen Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1724"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1721"/>
         <source>Go to next photo</source>
         <translation>Zum nächsten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1745"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1742"/>
         <source>Go to last photo</source>
         <translation>Zum letzten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1775"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1772"/>
         <source>Slideshow</source>
         <translation>Diashow</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1810"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1807"/>
         <source>Start/stop slideshow</source>
         <translation>Diashow starten/stoppen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1832"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1829"/>
         <source>Time between photos in seconds</source>
         <translation>Zeit zwischen Fotos in Sekunden</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1835"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1832"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1850"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1847"/>
         <source>Start slideshow automatically after changing to another ascent</source>
         <translation>Bei jeder Besteigung Diashow automatisch starten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1853"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1850"/>
         <source>Autostart</source>
         <translation>Autostart</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1887"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1884"/>
         <source>Add one or multiple photos</source>
         <translation>Ein oder mehrere Fotos hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1908"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1905"/>
         <source>Remove photo</source>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
@@ -2828,119 +2828,119 @@ Trotzdem speichern?</translation>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="321"/>
+        <location filename="../src/main/main_window.cpp" line="323"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="325"/>
+        <location filename="../src/main/main_window.cpp" line="327"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="346"/>
+        <location filename="../src/main/main_window.cpp" line="348"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="469"/>
+        <location filename="../src/main/main_window.cpp" line="471"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="474"/>
+        <location filename="../src/main/main_window.cpp" line="476"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="474"/>
+        <location filename="../src/main/main_window.cpp" line="476"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="476"/>
+        <location filename="../src/main/main_window.cpp" line="478"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="476"/>
+        <location filename="../src/main/main_window.cpp" line="478"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="486"/>
+        <location filename="../src/main/main_window.cpp" line="488"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="486"/>
+        <location filename="../src/main/main_window.cpp" line="488"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="489"/>
+        <location filename="../src/main/main_window.cpp" line="491"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="782"/>
+        <location filename="../src/main/main_window.cpp" line="784"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="783"/>
+        <location filename="../src/main/main_window.cpp" line="785"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="832"/>
+        <location filename="../src/main/main_window.cpp" line="834"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="875"/>
+        <location filename="../src/main/main_window.cpp" line="877"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="878"/>
+        <location filename="../src/main/main_window.cpp" line="880"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="878"/>
+        <location filename="../src/main/main_window.cpp" line="880"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="931"/>
-        <location filename="../src/main/main_window.cpp" line="941"/>
-        <location filename="../src/main/main_window.cpp" line="955"/>
+        <location filename="../src/main/main_window.cpp" line="933"/>
+        <location filename="../src/main/main_window.cpp" line="943"/>
+        <location filename="../src/main/main_window.cpp" line="957"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="942"/>
+        <location filename="../src/main/main_window.cpp" line="944"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="943"/>
+        <location filename="../src/main/main_window.cpp" line="945"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="943"/>
+        <location filename="../src/main/main_window.cpp" line="945"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="956"/>
+        <location filename="../src/main/main_window.cpp" line="958"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="958"/>
+        <location filename="../src/main/main_window.cpp" line="960"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>

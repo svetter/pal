@@ -1,4 +1,4 @@
-# Copyright 2023-2024 Simon Vetter
+# Copyright 2023-2025 Simon Vetter
 # 
 # This file is part of PeakAscentLogger.
 # 
@@ -15,7 +15,7 @@
 
 
 
-VERSION = 1.8.1
+VERSION = 1.8.2
 
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
