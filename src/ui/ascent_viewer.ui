@@ -710,9 +710,6 @@
                   <property name="focusPolicy">
                    <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
-                  <property name="checkable">
-                   <bool>false</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="6" column="0">
