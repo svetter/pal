@@ -30,6 +30,12 @@
 
 
 
+const QString Filter::savedFiltersAppliedSeparator	= ".";
+const QString Filter::savedFiltersAppliedYesString	= "APPLIED" + savedFiltersAppliedSeparator;
+const QString Filter::savedFiltersAppliedNoString	= "BYPASSED" + savedFiltersAppliedSeparator;
+
+
+
 Filter::Filter(DataType type, const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName) :
 	type(type),
 	tableToFilter(tableToFilter),
@@ -96,13 +102,14 @@ void Filter::applyToOrderBuffer(ViewOrderBuffer& viewOrderBuffer) const
 
 
 
-QString Filter::encodeToString(QList<const Filter*> filters)
+QString Filter::encodeToString(QList<const Filter*> filters, bool filtersApplied)
 {
 	QStringList entries = QStringList();
 	for (const Filter* const filter : filters) {
 		entries.append(filter->encodeSingleFilterToString());
 	}
-	const QString encodedFilters = entries.join(",");
+	const QString appliedString = filtersApplied ? savedFiltersAppliedYesString : savedFiltersAppliedNoString;
+	const QString encodedFilters = appliedString + entries.join(",");
 	return encodedFilters;
 }
 
@@ -122,10 +129,20 @@ QString Filter::encodeSingleFilterToString() const
 	return header + parameters.join(",") + ",)";
 }
 
-QList<Filter*> Filter::decodeFromString(const QString& encoded, const ItemTypesHandler& typesHandler)
+QList<Filter*> Filter::decodeFromString(const QString& encoded, const ItemTypesHandler& typesHandler, bool* const filtersAppliedResult)
 {
 	QString restOfEncoding = encoded;
 	QList<Filter*> filters = QList<Filter*>();
+	
+	if (encoded.startsWith(savedFiltersAppliedYesString)) {
+		*filtersAppliedResult = true;
+		restOfEncoding.remove(0, savedFiltersAppliedYesString.size());
+	} else if (encoded.startsWith(savedFiltersAppliedNoString)) {
+		*filtersAppliedResult = false;
+		restOfEncoding.remove(0, savedFiltersAppliedNoString.size());
+	} else {
+		*filtersAppliedResult = true;
+	}
 	
 	while (!restOfEncoding.isEmpty()) {
 		Filter* const parsedFilter = decodeSingleFilterFromString(restOfEncoding, typesHandler);

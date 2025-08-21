@@ -38,6 +38,10 @@ private:
 	bool enabled;
 	bool inverted;
 	
+	static const QString savedFiltersAppliedSeparator;
+	static const QString savedFiltersAppliedYesString;
+	static const QString savedFiltersAppliedNoString;
+	
 protected:
 	Filter(DataType type, const CompositeTable& tableToFilter, const CompositeColumn& columnToFilterBy, const QString& uiName);
 public:
@@ -58,11 +62,11 @@ public:
 	
 	
 	// Encoding & Decoding
-	static QString encodeToString(QList<const Filter*> filters);
+	static QString encodeToString(QList<const Filter*> filters, bool filtersApplied);
 private:
 	QString encodeSingleFilterToString() const;
 public:
-	static QList<Filter*> decodeFromString(const QString& encoded, const ItemTypesHandler& typesHandler);
+	static QList<Filter*> decodeFromString(const QString& encoded, const ItemTypesHandler& typesHandler, bool* const filtersAppliedResult);
 private:
 	static Filter* decodeSingleFilterFromString(QString& restOfEncoding, const ItemTypesHandler& typesHandler);
 protected:

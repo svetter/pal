@@ -70,7 +70,7 @@ public:
 public:
 	// Project setup
 	void resetUI();
-	void insertFiltersIntoUI(const QList<Filter*>& filters);
+	void insertFiltersIntoUI(const QList<Filter*>& filters, const bool filtersApplied);
 	
 	// Update UI
 private:
@@ -105,7 +105,7 @@ public:
 	// Saving filters
 	void saveFilters();
 	// Retrieving filters from project settings
-	QList<Filter*> parseFiltersFromProjectSettings(const ItemTypesHandler &typesHandler);
+	QList<Filter*> parseFiltersFromProjectSettings(const ItemTypesHandler &typesHandler, bool* const filtersAppliedResult);
 	
 protected:
 	virtual void showEvent(QShowEvent* event) override;

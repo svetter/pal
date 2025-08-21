@@ -122,7 +122,7 @@ void FilterBar::resetUI()
  * 
  * @param filters	The set of active filters to represent in the UI.
  */
-void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
+void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters, const bool filtersApplied)
 {
 	resetUI();
 	
@@ -139,11 +139,14 @@ void FilterBar::insertFiltersIntoUI(const QList<Filter*>& filters)
 	updateScrollAreaHeight();
 	
 	bool anyFilterEnabled = false;
-	for (const FilterBox* const filterBox : filterBoxes) {
-		anyFilterEnabled |= filterBox->isChecked();
+	for (const FilterBox* const filterBox : std::as_const(filterBoxes)) {
+		if (filterBox->isChecked()) {
+			anyFilterEnabled = true;
+			break;
+		}
 	}
-	applyFiltersButton->setEnabled(false);
-	clearFiltersButton->setEnabled(anyFilterEnabled);
+	applyFiltersButton->setEnabled(!filtersApplied && anyFilterEnabled);
+	clearFiltersButton->setEnabled(filtersApplied && anyFilterEnabled);
 }
 
 
@@ -188,7 +191,7 @@ void FilterBar::updateScrollAreaHeight()
 
 void FilterBar::updateIDCombos()
 {
-	for (const FilterBox* const filterBox : filterBoxes) {
+	for (const FilterBox* const filterBox : std::as_const(filterBoxes)) {
 		if (filterBox->type == ID) {
 			IDFilterBox* idFilterBox = (IDFilterBox*) filterBox;
 			idFilterBox->setComboEntries();
@@ -235,7 +238,7 @@ void FilterBar::compColumnAboutToBeRemoved(const CompositeColumn& column)
 void FilterBar::handle_filtersChanged()
 {
 	bool anyFilterEnabled = false;
-	for (const FilterBox* const filterBox : filterBoxes) {
+	for (const FilterBox* const filterBox : std::as_const(filterBoxes)) {
 		anyFilterEnabled |= filterBox->isChecked();
 	}
 	applyFiltersButton->setEnabled(anyFilterEnabled);
@@ -367,7 +370,7 @@ QList<const Filter*> FilterBar::collectAllFilters()
 {
 	QList<const Filter*> filters = QList<const Filter*>();
 	
-	for (const FilterBox* const filterBox : filterBoxes) {
+	for (const FilterBox* const filterBox : std::as_const(filterBoxes)) {
 		filters.append(&filterBox->getFilter());
 	}
 	
@@ -406,7 +409,8 @@ QList<const Filter*> FilterBar::collectEnabledFilters()
 void FilterBar::saveFilters()
 {
 	const QList<const Filter*> filters = collectAllFilters();
-	const QString encodedFilters = Filter::encodeToString(filters);
+	const bool filtersApplied = compTable->filterIsActive();
+	const QString encodedFilters = Filter::encodeToString(filters, filtersApplied);
 	mapper->filtersSetting.set(*this, encodedFilters);
 }
 
@@ -419,10 +423,10 @@ void FilterBar::saveFilters()
  * 
  * @return	A list of filters representing the ones saved in the project settings.
  */
-QList<Filter*> FilterBar::parseFiltersFromProjectSettings(const ItemTypesHandler& typesHandler)
+QList<Filter*> FilterBar::parseFiltersFromProjectSettings(const ItemTypesHandler& typesHandler, bool* const filtersAppliedResult)
 {
 	const QString encodedFilters = mapper->filtersSetting.get(this);
-	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, typesHandler);
+	QList<Filter*> filters = Filter::decodeFromString(encodedFilters, typesHandler, filtersAppliedResult);
 	return filters;
 }
 

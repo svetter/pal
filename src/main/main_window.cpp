@@ -352,15 +352,16 @@ void MainWindow::initCompositeBuffers()
 		// Load filters
 		QList<Filter*> filters = QList<Filter*>();
 		if (Settings::rememberFilters.get()) {
-			filters = mapper->filterBar.parseFiltersFromProjectSettings(*typesHandler);
-			mapper->filterBar.insertFiltersIntoUI(filters);
-			if (!mapper->filterBarCurrentlySetVisible()) {
+			bool filtersApplied;
+			filters = mapper->filterBar.parseFiltersFromProjectSettings(*typesHandler, &filtersApplied);
+			mapper->filterBar.insertFiltersIntoUI(filters, filtersApplied);
+			if (!filtersApplied || !mapper->filterBarCurrentlySetVisible()) {
 				// Hidden filters are not allowed to be applied
 				filters.clear();
 			}
 		}
 		QList<const Filter*> filtersToApply = QList<const Filter*>();
-		for (const Filter* const filter : filters) {
+		for (const Filter* const filter : std::as_const(filters)) {
 			if (filter->isEnabled()) filtersToApply.append(filter);
 		}
 		mapper->compTable.setInitialFilters(filtersToApply);
