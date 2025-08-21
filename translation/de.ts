@@ -2120,7 +2120,7 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
         <translation>Filterung aufheben</translation>
     </message>
     <message>
-        <location filename="../src/main/filter_bar.cpp" line="175"/>
+        <location filename="../src/main/filter_bar.cpp" line="178"/>
         <source>Hidden columns</source>
         <translation>Ausgeblendete Spalten</translation>
     </message>
@@ -2843,104 +2843,104 @@ Trotzdem speichern?</translation>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="471"/>
+        <location filename="../src/main/main_window.cpp" line="472"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="476"/>
+        <location filename="../src/main/main_window.cpp" line="477"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="476"/>
+        <location filename="../src/main/main_window.cpp" line="477"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="478"/>
+        <location filename="../src/main/main_window.cpp" line="479"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="478"/>
+        <location filename="../src/main/main_window.cpp" line="479"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="488"/>
+        <location filename="../src/main/main_window.cpp" line="489"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="488"/>
+        <location filename="../src/main/main_window.cpp" line="489"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="491"/>
+        <location filename="../src/main/main_window.cpp" line="492"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="784"/>
+        <location filename="../src/main/main_window.cpp" line="785"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="785"/>
+        <location filename="../src/main/main_window.cpp" line="786"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="834"/>
+        <location filename="../src/main/main_window.cpp" line="835"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="877"/>
+        <location filename="../src/main/main_window.cpp" line="878"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="880"/>
+        <location filename="../src/main/main_window.cpp" line="881"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="880"/>
+        <location filename="../src/main/main_window.cpp" line="881"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="933"/>
-        <location filename="../src/main/main_window.cpp" line="943"/>
-        <location filename="../src/main/main_window.cpp" line="957"/>
+        <location filename="../src/main/main_window.cpp" line="934"/>
+        <location filename="../src/main/main_window.cpp" line="944"/>
+        <location filename="../src/main/main_window.cpp" line="958"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="944"/>
+        <location filename="../src/main/main_window.cpp" line="945"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="945"/>
+        <location filename="../src/main/main_window.cpp" line="946"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="945"/>
+        <location filename="../src/main/main_window.cpp" line="946"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="958"/>
+        <location filename="../src/main/main_window.cpp" line="959"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="960"/>
+        <location filename="../src/main/main_window.cpp" line="961"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
