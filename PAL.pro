@@ -32,6 +32,15 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# Disables all the APIs depreca
 CONFIG += c++17
 CONFIG += lrelease embed_translations
 
+# Force assertions to be compiled into release builds on MSVC
+CONFIG(release, debug|release) {
+	win32-msvc* {
+		QMAKE_CXXFLAGS += /FIsrc/main/force_assert.h
+	} else {
+		QMAKE_CXXFLAGS += -include ../src/main/force_assert.h
+	}
+}
+
 
 
 test_conf {
@@ -129,6 +138,7 @@ HEADERS += \
 	src/main/column_wizard.h \
 	src/main/filter_bar.h \
 	src/main/filter_wizard.h \
+	src/main/force_assert.h \
 	src/main/helpers.h \
 	src/main/inverted_sort_header_view.h \
 	src/main/item_types_handler.h \

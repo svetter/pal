@@ -192,8 +192,9 @@ QString DatabaseUpgrader::determineCurrentDbVersion()
 	if (!query.prepare(queryString) || !query.exec()) {
 		displayError(parent, query.lastError(), queryString);
 	}
-	assert(query.next());
-	QString versionString = query.value(0).toString();
+	const bool recordExists = query.next();
+	assert(recordExists);
+	const QString versionString = query.value(0).toString();
 	assert(versionString.split(".").size() == 3);
 	return versionString;
 }
