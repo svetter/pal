@@ -24,6 +24,7 @@
 #ifndef ASCENT_VIEWER_H
 #define ASCENT_VIEWER_H
 
+#include "qtimer.h"
 #include "src/main/main_window.h"
 #include "src/viewer/scalable_image_label.h"
 #include "ui_ascent_viewer.h"

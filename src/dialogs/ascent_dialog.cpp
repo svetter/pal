@@ -486,7 +486,7 @@ void AscentDialog::handle_removeHikers()
 {
 	QItemSelectionModel* selectionModel = hikersListView->selectionModel();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selectedIndices = selectionModel->selectedRows();
+	const QModelIndexList selectedIndices = selectionModel->selectedRows();
 	for (const QModelIndex& selectedIndex : selectedIndices) {
 		hikersModel.removeHikerAt(selectedIndex.row());
 	}
@@ -512,7 +512,7 @@ void AscentDialog::handle_addPhotos()
 		preSelectedDir = QFileInfo(photosModel.getFilepathAt(photoIndexForDir)).path();
 	}
 	
-	QStringList filepaths = openFileDialogForMultiPhotoSelection(*this, preSelectedDir);
+	const QStringList filepaths = openFileDialogForMultiPhotoSelection(*this, preSelectedDir);
 	if (filepaths.isEmpty()) return;
 	
 	QList<Photo> photos = QList<Photo>();
@@ -532,7 +532,7 @@ void AscentDialog::handle_removePhotos()
 {
 	QItemSelectionModel* selectionModel = photosListView->selectionModel();
 	if (!selectionModel->hasSelection()) return;
-	QModelIndexList selectedIndices = selectionModel->selectedRows();
+	const QModelIndexList selectedIndices = selectionModel->selectedRows();
 	for (const QModelIndex& selectedIndex : selectedIndices) {
 		photosModel.removePhotoAt(selectedIndex.row());
 	}

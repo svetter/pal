@@ -55,7 +55,8 @@ ColumnWizardTableColumnPage::ColumnWizardTableColumnPage(QWidget* parent, Databa
 	QListWidgetItem& firstItem = *tableListWidget->item(0);
 	firstItem.setFont(QFont(firstItem.font().family(), firstItem.font().pointSize(), QFont::Bold));
 	// Add entries for other tables
-	for (const NormalTable* const table: db.getNormalItemTableList()) {
+	const QList<NormalTable*> normalTables = db.getNormalItemTableList();
+	for (const NormalTable* const table : normalTables) {
 		if (table == &baseTable) continue;
 		
 		const Breadcrumbs& crumbs = db.getBreadcrumbsFor(baseTable, *table);

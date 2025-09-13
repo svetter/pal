@@ -181,7 +181,7 @@ void TableBuffer::replaceCell(BufferRowIndex rowIndex, int columnIndex, const QV
  */
 void TableBuffer::appendColumn()
 {
-	for (QList<QVariant>* const row : buffer) {
+	for (QList<QVariant>* const row : std::as_const(buffer)) {
 		row->append(QVariant());
 	}
 	
@@ -197,7 +197,7 @@ void TableBuffer::removeColumn(int columnIndex)
 {
 	assert(columnIndex >= 0 && columnIndex < numColumns);
 	
-	for (QList<QVariant>* const row : buffer) {
+	for (QList<QVariant>* const row : std::as_const(buffer)) {
 		row->remove(columnIndex);
 	}
 	

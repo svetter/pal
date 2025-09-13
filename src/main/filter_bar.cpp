@@ -388,7 +388,7 @@ QList<const Filter*> FilterBar::collectEnabledFilters()
 {
 	QList<const Filter*> filters = QList<const Filter*>();
 	
-	for (const FilterBox* const filterBox : filterBoxes) {
+	for (const FilterBox* const filterBox : std::as_const(filterBoxes)) {
 		if (filterBox->isChecked()) {
 			filters.append(&filterBox->getFilter());
 		}

@@ -87,7 +87,7 @@ public slots:
 		urls.removeAll("");	// Remove empty
 		
 		QStringList filepaths = QStringList();
-		for (const QString& url : urls) {
+		for (const QString& url : std::as_const(urls)) {
 			filepaths.append(QFileInfo(QUrl(url).toLocalFile()).absoluteFilePath());
 		}
 		

@@ -170,7 +170,7 @@ void restoreDialogGeometry(QWidget& dialog, QMainWindow& mainWindow, const Setti
  */
 void saveSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting)
 {
-	QList<int> leftSplitterSizes = splitter.sizes();
+	const QList<int> leftSplitterSizes = splitter.sizes();
 	QStringList stringList;
 	for (int size : leftSplitterSizes) {
 		stringList.append(QString::number(size));
@@ -186,7 +186,7 @@ void saveSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitter
  */
 void restoreSplitterSizes(QSplitter& splitter, const Setting<QStringList>& splitterSizesSetting)
 {
-	QStringList splitterSizeStrings = splitterSizesSetting.get();
+	const QStringList splitterSizeStrings = splitterSizesSetting.get();
 	if (splitterSizeStrings.size() != splitter.sizes().size()) {
 		// Can't restore splitter sizes from settings
 		if (!splitterSizeStrings.isEmpty()) {

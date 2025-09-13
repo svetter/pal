@@ -185,7 +185,7 @@ void SettingsTable::removeAllMatchingSettings(QWidget& parent, const QString& ba
  */
 ItemID SettingsTable::findSettingID(const GenericProjectSetting& setting, QWidget* parent)
 {
-	QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting.key);
+	const QList<BufferRowIndex> bufferRowIndices = getMatchingBufferRowIndices(settingKeyColumn, setting.key);
 	
 	if (bufferRowIndices.size() == 0) {
 		return ItemID();

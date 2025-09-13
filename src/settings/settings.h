@@ -256,7 +256,8 @@ public:
 	inline void clear() const
 	{
 		qSettings.beginGroup(baseKey);
-		for (const QString& key : qSettings.childKeys()) {
+		const QStringList childKeys = qSettings.childKeys();
+		for (const QString& key : childKeys) {
 			qSettings.remove(key);
 		}
 		qSettings.endGroup();

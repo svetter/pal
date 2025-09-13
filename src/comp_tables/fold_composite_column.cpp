@@ -177,7 +177,7 @@ QVariant NumericFoldCompositeColumn::computeValueAt(BufferRowIndex rowIndex) con
 	if (op == MaxFold)	aggregate = INT_MIN;
 	if (op == MinFold)	aggregate = INT_MAX;
 	
-	for (const BufferRowIndex& rowIndex : rowIndexSet) {
+	for (const BufferRowIndex& rowIndex : std::as_const(rowIndexSet)) {
 		QVariant content = contentColumn->getValueAt(rowIndex);
 		
 		switch (op) {

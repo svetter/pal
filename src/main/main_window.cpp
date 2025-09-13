@@ -33,6 +33,10 @@
 #include "src/viewer/ascent_viewer.h"
 #include "ui_main_window.h"
 
+#include <QScrollBar>
+#include <QFileDialog>
+#include <QMessageBox>
+
 
 
 /**
@@ -645,7 +649,8 @@ void MainWindow::deleteSelectedItems()
 	if (selectedBufferRows.isEmpty()) return;
 	
 	QSet<ViewRowIndex> selectedViewRowIndices = QSet<ViewRowIndex>();
-	for (const QModelIndex& index : getActiveMapper().tableView.selectionModel()->selectedRows()) {
+	const QModelIndexList selectedModelIndexRows = getActiveMapper().tableView.selectionModel()->selectedRows();
+	for (const QModelIndex& index : selectedModelIndexRows) {
 		selectedViewRowIndices += ViewRowIndex(index.row());
 	}
 	if (selectedViewRowIndices.isEmpty()) return;

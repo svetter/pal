@@ -285,7 +285,7 @@ void MainWindowTabContent::initTableContextMenuAndShortcuts()
 	const QIcon icon = QIcon(":/icons/" + mapper->name + ".svg");
 	tableContextMenuEditAction->setIcon(icon);
 	if (isDuplicable) tableContextMenuDuplicateAction->setIcon(icon);
-	for (const auto& [otherMapper, editOtherAction] : tableContextMenuEditOtherActions) {
+	for (const auto& [otherMapper, editOtherAction] : std::as_const(tableContextMenuEditOtherActions)) {
 		const QIcon otherIcon = QIcon(":/icons/" + otherMapper->name + ".svg");
 		editOtherAction->setIcon(otherIcon);
 	}
@@ -298,7 +298,7 @@ void MainWindowTabContent::initTableContextMenuAndShortcuts()
 	if (isDuplicable) {
 		connect(tableContextMenuDuplicateAction,	&QAction::triggered, mainWindow, &MainWindow::duplicateAndEditSelectedItem);
 	}
-	for (const auto& [_, editOtherAction] : tableContextMenuEditOtherActions) {
+	for (const auto& [_, editOtherAction] : std::as_const(tableContextMenuEditOtherActions)) {
 		connect(editOtherAction,					&QAction::triggered, mainWindow, &MainWindow::editSelectedItemReferenced);
 	}
 	connect(tableContextMenuDeleteAction,			&QAction::triggered, mainWindow, &MainWindow::deleteSelectedItems);
@@ -428,11 +428,12 @@ void MainWindowTabContent::handle_tableSelectionChanged()
 		// One or more rows selected, find their buffer indices
 		QSet<ViewRowIndex> selectedViewRows = QSet<ViewRowIndex>();
 		for (const QItemSelectionRange& range : selection) {
-			for (const QModelIndex& index : range.indexes()) {
+			const QModelIndexList rangeIndices = range.indexes();
+			for (const QModelIndex& index : rangeIndices) {
 				selectedViewRows.insert(ViewRowIndex(index.row()));
 			}
 		}
-		for (const ViewRowIndex& viewIndex : selectedViewRows) {
+		for (const ViewRowIndex& viewIndex : std::as_const(selectedViewRows)) {
 			BufferRowIndex bufferIndex = compTable->getBufferRowIndexForViewRow(viewIndex);
 			selectedBufferRows.insert(bufferIndex);
 		}
@@ -504,7 +505,7 @@ void MainWindowTabContent::handle_rightClickInTable(QPoint pos)
 	if (isDuplicable) tableContextMenuDuplicateAction->setVisible(singleRowSelected);
 	
 	// Enable or disable referenced item edit actions in table context menu
-	for (const auto& [otherMapper, editOtherAction] : tableContextMenuEditOtherActions) {
+	for (const auto& [otherMapper, editOtherAction] : std::as_const(tableContextMenuEditOtherActions)) {
 		bool enableAction = singleRowSelected;
 		if (singleRowSelected) {
 			// Check whether reference chain is continuous here

@@ -78,7 +78,8 @@ const NormalTable* StringEncoder::decodeTableIdentity(QString& restOfEncoding, c
 	const QString tableName = decodeString(restOfEncoding, tableNameParamName, ok);
 	if (!ok) return nullptr;
 	
-	for (const NormalTable* const table : db.getNormalItemTableList()) {
+	const QList<NormalTable*> normalTables = db.getNormalItemTableList();
+	for (const NormalTable* const table : normalTables) {
 		if (table->name == tableName) {
 			return table;
 		}
@@ -95,7 +96,8 @@ const Column* StringEncoder::decodeColumnIdentity(QString& restOfEncoding, const
 	const QString columnName = decodeString(restOfEncoding, columnNameParamName, ok);
 	if (!ok) return nullptr;
 	
-	for (const Column* const column : table->getColumnList()) {
+	const QList<const Column*> columns = table->getColumnList();
+	for (const Column* const column : columns) {
 		if (column->name == columnName) {
 			return column;
 		}

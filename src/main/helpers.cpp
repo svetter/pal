@@ -134,8 +134,8 @@ QPair<QStringList, QStringList> getSupportedLanguages()
 QString getDefaultLanguageCode()
 {
 	QString language = "en";
-	QStringList uiLanguages = QLocale::system().uiLanguages();
-	QStringList supportedLanguages = getSupportedLanguages().first;
+	const QStringList uiLanguages = QLocale::system().uiLanguages();
+	const QStringList supportedLanguages = getSupportedLanguages().first;
 	
 	for (const QString& locale : uiLanguages) {
 		const QString preferredLanguage = QLocale(locale).name();
@@ -161,7 +161,7 @@ QPair<QStringList, QStringList> getSupportedStyles()
 	codes.insert(0, "");
 	QStringList names = QStringList();
 	
-	for (const QString& code : codes) {
+	for (const QString& code : std::as_const(codes)) {
 		     if (code == "")				names.append(QApplication::translate("General", "Default"));
 		else if (code == "Fusion")			names.append(QApplication::translate("General", "Qt Fusion"));
 		else if (code == "windows11")		names.append(QApplication::translate("General", "Windows 11"));

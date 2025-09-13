@@ -93,7 +93,7 @@ void Database::reset()
 {
 	assert(!acceptDataModifications);
 	
-	for (Table* table : tables) {
+	for (Table* const table : std::as_const(tables)) {
 		table->resetBuffer();
 	}
 	
@@ -129,7 +129,7 @@ void Database::createNew(QWidget& parent, const QString& filepath)
 	databaseLoaded = true;
 	
 	qDebug() << "Creating tables in SQL";
-	for (Table* table : tables) {
+	for (Table* const table : std::as_const(tables)) {
 		table->createTableInSql(parent);
 	}
 	
@@ -243,7 +243,7 @@ void Database::populateBuffers(QWidget& parent)
 {
 	assert(databaseLoaded);
 	
-	for (Table* table : tables) {
+	for (Table* const table : std::as_const(tables)) {
 		assert(table->getNumberOfRows() == 0);
 		table->initBuffer(parent);
 	}
@@ -643,7 +643,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 	
 	const PrimaryKeyColumn& primaryKeyColumn = table.primaryKeyColumn;
 	QList<WhatIfDeleteResult> result = QList<WhatIfDeleteResult>();
-	for (Table* candidateTable : tables) {
+	for (Table* candidateTable : std::as_const(tables)) {
 		if (candidateTable == &table) continue;
 		if (candidateTable->getNumberOfRows() == 0) continue;	// No conflicts in empty tables
 		
@@ -675,7 +675,8 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			QSet<BufferRowIndex> affectedRowIndices = QSet<BufferRowIndex>();
 			QList<QPair<const Column*, QList<BufferRowIndex>>> affectedCells = QList<QPair<const Column*, QList<BufferRowIndex>>>();
 			
-			for (const Column* otherTableColumn : candidateNormalTable.getColumnList()) {
+			const QList<const Column*> columns = candidateNormalTable.getColumnList();
+			for (const Column* otherTableColumn : columns) {
 				if (!otherTableColumn->isForeignKey()) continue;
 				if (&otherTableColumn->getReferencedForeignColumn() != &primaryKeyColumn) continue;
 				
@@ -696,7 +697,7 @@ QList<WhatIfDeleteResult> Database::removeRows_referenceSearch(QWidget* parent, 
 			}
 			// EXECUTE
 			else {
-				for (const auto& [affectedColumn, rowIndices] : affectedCells) {
+				for (const auto& [affectedColumn, rowIndices] : std::as_const(affectedCells)) {
 					NormalTable& affectedTable = (NormalTable&) affectedColumn->table;
 					const PrimaryKeyColumn& affectedPrimaryKeyColumn = affectedTable.primaryKeyColumn;
 					
@@ -901,7 +902,7 @@ void Database::computeBreadcrumbMatrix()
 		else {
 			// Normal table
 			const NormalTable& normalTable = (NormalTable&) *table;
-			QList<const ForeignKeyColumn*> foreignKeyColumns = normalTable.getForeignKeyColumnTypedList();
+			const QList<const ForeignKeyColumn*> foreignKeyColumns = normalTable.getForeignKeyColumnTypedList();
 			for (const ForeignKeyColumn* const column : foreignKeyColumns) {
 				ForeignKeyColumn& localColumn = (ForeignKeyColumn&) *column;	// This is casting the const away
 				PrimaryKeyColumn& foreignColumn = column->getReferencedForeignColumn();

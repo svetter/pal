@@ -810,10 +810,11 @@ void TimeScatterChart::updateView()
 	xAxisDate->setVisible(lowRange[p]);
 	xAxisValue->setVisible(!lowRange[p]);
 	
-	for (QAbstractSeries* const series : chart->series()) {
+	const QList<QAbstractSeries*> chartSeriesList = chart->series();
+	for (QAbstractSeries* const series : chartSeriesList) {
 		chart->removeSeries(series);
 	}
-	for (QXYSeries* const series : xySeries[p]) {
+	for (QXYSeries* const series : std::as_const(xySeries[p])) {
 		chart->addSeries(series);
 		if (lowRange[p])	series->attachAxis(xAxisDate);
 		else				series->attachAxis(xAxisValue);

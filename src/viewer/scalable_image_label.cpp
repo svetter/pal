@@ -23,6 +23,10 @@
 
 #include "scalable_image_label.h"
 
+#include <QEvent>
+#include <QScrollBar>
+#include <QWheelEvent>
+
 
 
 /**

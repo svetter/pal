@@ -380,7 +380,7 @@ void populateItemCombo(QComboBox& combo, const Column& displayAndSortColumn, QLi
 			previousName = currentName;
 		}
 		// Append distinction column content to duplicate names
-		for (const int duplicateNameIndex : duplicateNameIndices) {
+		for (const int duplicateNameIndex : std::as_const(duplicateNameIndices)) {
 			const ValidItemID& itemID = selectableItems.at(duplicateNameIndex).first;
 			const ItemID& distinctionKey = distinctionKeyColumn->getValueFor(itemID);
 			if (distinctionKey.isInvalid()) continue;
@@ -393,7 +393,7 @@ void populateItemCombo(QComboBox& combo, const Column& displayAndSortColumn, QLi
 	}
 	
 	// Save IDs and populate combo box
-	for (const auto& [itemID, name] : selectableItems) {
+	for (const auto& [itemID, name] : std::as_const(selectableItems)) {
 		idList.append(itemID);
 		combo.addItem(name.toString());
 	}

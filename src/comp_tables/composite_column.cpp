@@ -878,7 +878,7 @@ QList<QVariant> OrdinalCompositeColumn::computeWholeColumn() const
 	
 	ItemID lastKey = ItemID();
 	int ordinal = 1;
-	for (const BufferRowIndex& rowIndex : order) {
+	for (const BufferRowIndex& rowIndex : std::as_const(order)) {
 		ItemID currentKey = separatingColumn.getValueAt(rowIndex);
 		if (Q_UNLIKELY(!currentKey.isValid())) {
 			// No key, reset ordinal and append empty

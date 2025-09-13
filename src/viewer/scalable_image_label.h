@@ -24,7 +24,8 @@
 #ifndef SCALABLE_IMAGE_LABEL_H
 #define SCALABLE_IMAGE_LABEL_H
 
-#include <QtWidgets>
+#include <QScrollArea>
+#include <QLabel>
 
 
 

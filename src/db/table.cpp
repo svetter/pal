@@ -64,7 +64,7 @@ Table::~Table()
  */
 void Table::addColumn(const Column& newColumn)
 {
-	for (const Column* const column : columns) {
+	for (const Column* const column : std::as_const(columns)) {
 		assert(column->name != newColumn.name);
 	}
 	
@@ -130,11 +130,12 @@ QList<const Column*> Table::getPrimaryKeyColumnList() const
  */
 QList<const PrimaryKeyColumn*> Table::getPrimaryKeyColumnTypedList() const
 {
-	QList<const PrimaryKeyColumn*> primaryKeyColumns = QList<const PrimaryKeyColumn*>();
-	for (const Column* column : getPrimaryKeyColumnList()) {
-		primaryKeyColumns.append((PrimaryKeyColumn*) column);
+	QList<const PrimaryKeyColumn*> primaryKeyColumnsTyped = QList<const PrimaryKeyColumn*>();
+	const QList<const Column*> primaryKeyColumns = getPrimaryKeyColumnList();
+	for (const Column* column : primaryKeyColumns) {
+		primaryKeyColumnsTyped.append((PrimaryKeyColumn*) column);
 	}
-	return primaryKeyColumns;
+	return primaryKeyColumnsTyped;
 }
 
 /**
@@ -158,11 +159,12 @@ QList<const Column*> Table::getForeignKeyColumnList() const
  */
 QList<const ForeignKeyColumn*> Table::getForeignKeyColumnTypedList() const
 {
-	QList<const ForeignKeyColumn*> foreignKeyColumns = QList<const ForeignKeyColumn*>();
-	for (const Column* column : getForeignKeyColumnList()) {
-		foreignKeyColumns.append((const ForeignKeyColumn*) column);
+	QList<const ForeignKeyColumn*> foreignKeyColumnsTyped = QList<const ForeignKeyColumn*>();
+	const QList<const Column*> foreignKeyColumns = getForeignKeyColumnList();
+	for (const Column* column : foreignKeyColumns) {
+		foreignKeyColumnsTyped.append((const ForeignKeyColumn*) column);
 	}
-	return foreignKeyColumns;
+	return foreignKeyColumnsTyped;
 }
 
 /**
@@ -234,10 +236,12 @@ const Column& Table::getColumnByIndex(int index) const
 void Table::initBuffer(QWidget& parent)
 {
 	QList<QList<QVariant>*> newContents = getAllEntriesFromSql(parent);
-	beginInsertRows(getNormalRootModelIndex(), 0, newContents.size() - 1);
+	int last = newContents.size() - 1;
+	if (last < 0) last = 0;
+	beginInsertRows(getNormalRootModelIndex(), 0, last);
 	buffer.reset();
 	buffer.setInitialNumberOfColumns(columns.size());
-	for (QList<QVariant>* newRow : newContents) {
+	for (QList<QVariant>* const newRow : std::as_const(newContents)) {
 		buffer.appendRow(newRow);
 	}
 	endInsertRows();
@@ -248,9 +252,10 @@ void Table::initBuffer(QWidget& parent)
  */
 void Table::resetBuffer()
 {
-	beginRemoveRows(getNormalRootModelIndex(), 0, buffer.numRows() - 1);
+	const int last = buffer.numRows() - 1;
+	if (last >= 0) beginRemoveRows(getNormalRootModelIndex(), 0, last);
 	buffer.reset();
-	endRemoveRows();
+	if (last >= 0) endRemoveRows();
 }
 
 /**
@@ -332,7 +337,8 @@ void Table::printBuffer() const
 {
 	qDebug() << "Printing buffer of" << name;
 	QString header = "";
-	for (const Column* column : getColumnList()) {
+	const QList<const Column*> columns = getColumnList();
+	for (const Column* column : columns) {
 		header.append(column->name + "  ");
 	}
 	qDebug() << header;
@@ -608,10 +614,10 @@ void Table::createTableInSql(QWidget& parent)
 	}
 	
 	QString queryString = QString(
-			"CREATE TABLE " + name + "(" +
-			"\n" + columnFormatsString +
-			(isAssociative ? (",\n\t" + associativeString) : "") +
-			"\n)"
+		"CREATE TABLE " + name + "(" +
+		"\n" + columnFormatsString +
+		(isAssociative ? (",\n\t" + associativeString) : "") +
+		"\n)"
 	);
 	qDebug() << queryString;
 	QSqlQuery query = QSqlQuery();
@@ -642,7 +648,7 @@ QList<QList<QVariant>*> Table::getAllEntriesFromSql(QWidget& parent) const
 		displayError(parent, query.lastError(), queryString);
 	}
 	
-	QList<const Column*> columns = getColumnList();
+	const QList<const Column*> columns = getColumnList();
 	
 	int rowIndex = 0;
 	while (query.next()) {

@@ -101,7 +101,7 @@ void CompositeTable::reset()
 void CompositeTable::addColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : staticColumnNames) {
+	for (const QString& name : std::as_const(staticColumnNames)) {
 		assert(name != newColumn.name);
 	}
 	
@@ -117,7 +117,7 @@ void CompositeTable::addColumn(const CompositeColumn& newColumn)
 void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : staticColumnNames) {
+	for (const QString& name : std::as_const(staticColumnNames)) {
 		assert(name != newColumn.name);
 	}
 	
@@ -135,7 +135,8 @@ void CompositeTable::addExportOnlyColumn(const CompositeColumn& newColumn)
 void CompositeTable::addCustomColumn(const CompositeColumn& newColumn)
 {
 	assert(&newColumn.table == this);
-	for (const QString& name : staticColumnNames + customColumnNames) {
+	const QStringList columnNames = staticColumnNames + customColumnNames;
+	for (const QString& name : columnNames) {
 		assert(name != newColumn.name);
 	}
 	
@@ -297,7 +298,8 @@ const CompositeColumn& CompositeTable::getExportOnlyColumnAt(int columnIndex) co
  */
 const CompositeColumn* CompositeTable::getColumnByNameOrNull(const QString& columnName) const
 {
-	for (const CompositeColumn* const column : columns + customColumns) {
+	const QList<const CompositeColumn*> allColumns = columns + customColumns;
+	for (const CompositeColumn* const column : allColumns) {
 		if (column->name == columnName) return column;
 	}
 	return nullptr;
@@ -358,7 +360,8 @@ int CompositeTable::getExportIndexOf(const CompositeColumn& column) const
 QSet<QString> CompositeTable::getNormalColumnNameSet() const
 {
 	QSet<QString> columnNameSet;
-	for (const CompositeColumn* const column : columns + customColumns) {
+	const QList<const CompositeColumn*> allColumns = columns + customColumns;
+	for (const CompositeColumn* const column : allColumns) {
 		columnNameSet.insert(column->name);
 	}
 	return columnNameSet;
@@ -392,7 +395,7 @@ void CompositeTable::initBuffer(QProgressDialog* progressDialog, bool deferCompu
 	assert(buffer.isEmpty() && viewOrder.isEmpty());
 	assert(dirtyColumns.isEmpty());
 	
-	QList<const CompositeColumn*> allColumns = columns + customColumns;
+	const QList<const CompositeColumn*> allColumns = columns + customColumns;
 	for (const CompositeColumn* column : allColumns) {
 		dirtyColumns.insert(column);
 	}
@@ -592,7 +595,7 @@ void CompositeTable::updateBothBuffers(std::function<void()> runAfterEachCellUpd
 	
 	// Rebuild order buffer if necessary
 	bool orderBufferDirty = columnsToUpdate.contains(currentSorting.column);
-	for (const Filter* const filter : currentFilters) {
+	for (const Filter* const filter : std::as_const(currentFilters)) {
 		if (orderBufferDirty) break;
 		orderBufferDirty |= columnsToUpdate.contains(&filter->columnToFilterBy);
 	}
@@ -857,7 +860,8 @@ void CompositeTable::announceChanges(const QSet<const Column*>& affectedColumns,
 	}
 	
 	bool anyDataChanged = rowChanges;
-	for (const CompositeColumn* const column : columns + customColumns) {
+	const QList<const CompositeColumn*> allColumns = columns + customColumns;
+	for (const CompositeColumn* const column : allColumns) {
 		const bool affected = rowChanges || column->getAllUnderlyingColumns().intersects(affectedColumns);
 		if (!affected) continue;
 		

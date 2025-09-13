@@ -364,7 +364,7 @@ QMimeData* PhotosOfAscent::mimeData(const QModelIndexList& indexes) const
 		if (!index.isValid()) continue;
 		indexMap.insert(index.row(), index);
 	}
-	QList<int> sortedRowList = indexMap.keys();
+	const QList<int> sortedRowList = indexMap.keys();
 	
 	for (int rowIndex : sortedRowList) {
 		Photo photo = list.at(rowIndex);

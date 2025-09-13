@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QColorSpace>
 #include <QFileDialog>
+#include <QRandomGenerator>
 
 
 
@@ -467,7 +468,7 @@ void AscentViewer::updateAscentNavigationTargets()
 	numAscentsOfPeak			= 0;
 	
 	if (currentPeakID.isValid()) {
-		QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, currentPeakID.asQVariant());
+		const QList<BufferRowIndex> matchingBufferRowIndices = db.ascentsTable.getMatchingBufferRowIndices(db.ascentsTable.peakIDColumn, currentPeakID.asQVariant());
 		// Find matching view row indices (some or all ascents of the same peak may be filtered out)
 		QList<ViewRowIndex> ascentOfPeakViewRowIndices = QList<ViewRowIndex>();
 		for (const BufferRowIndex& matchingBufferRowIndex : matchingBufferRowIndices) {

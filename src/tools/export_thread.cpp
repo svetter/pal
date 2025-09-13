@@ -124,7 +124,8 @@ void DataExportThread::exportOneTable()
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	{
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper.compTable.getCompleteExportColumnList()) {
+		const QList<const CompositeColumn*> exportColumns = mapper.compTable.getCompleteExportColumnList();
+		for (const CompositeColumn* const column : exportColumns) {
 			if (column->isFilterOnlyColumn()) continue;
 			
 			const bool exportOnlyColumn = column->isExportOnlyColumn();
@@ -205,7 +206,8 @@ void DataExportThread::exportAsShown()
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	for (const ItemTypeMapper* const mapper : typesHandler.getAllMappers()) {
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const CompositeColumn* column : mapper->compTable.getNormalColumnList()) {
+		const QList<const CompositeColumn*> normalColumns = mapper->compTable.getNormalColumnList();
+		for (const CompositeColumn* const column : normalColumns) {
 			if (!includeStats && column->isStatistical) continue;
 			
 			columnInfos.append({false, column->getIndex(), column->uiName, column->contentType, column->enumNames, column->enumNameLists});
@@ -227,7 +229,7 @@ void DataExportThread::exportAsShown()
 	int progress = 0;
 	
 	// Make sure all tables are up to date
-	for (CompositeTable* const compTable : compTables) {
+	for (CompositeTable* const compTable : std::as_const(compTables)) {
 		if (abortWasCalled) break;
 		if (compTable->getNumberOfCellsToUpdate() < 1) continue;
 		
@@ -296,7 +298,8 @@ void DataExportThread::exportRaw()
 	QList<QList<ExportColumnInfo>> allColumnInfos = QList<QList<ExportColumnInfo>>();
 	for (const Table* const baseTable : baseTables) {
 		QList<ExportColumnInfo> columnInfos = QList<ExportColumnInfo>();
-		for (const Column* column : baseTable->getColumnList()) {
+		const QList<const Column*> columns = baseTable->getColumnList();
+		for (const Column* const column : columns) {
 			columnInfos.append({false, column->getIndex(), column->uiName, column->type, column->enumNames, column->enumNameLists});
 		}
 		tableNames.append(baseTable->uiName);

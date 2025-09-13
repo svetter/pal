@@ -25,7 +25,6 @@
 
 #include "src/main/helpers.h"
 
-#include <QtSvg>
 #include <QSvgWidget>
 
 

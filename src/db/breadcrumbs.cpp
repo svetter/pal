@@ -148,7 +148,7 @@ Breadcrumbs::Breadcrumbs(const QList<Breadcrumb>& breadcrumbs) :
 		
 		const Table* previousTable = nullptr;
 		const Table* currentTable = &list.first().firstColumn.table;
-		for (const auto& [firstColumn, secondColumn] : list) {
+		for (const auto& [firstColumn, secondColumn] : std::as_const(list)) {
 			assert(&firstColumn.table == currentTable);
 			assert(&secondColumn.table != previousTable);
 			
@@ -366,7 +366,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
 			// Find row matching each primary key
-			for (const ValidItemID& key : currentKeySet) {
+			for (const ValidItemID& key : std::as_const(currentKeySet)) {
 				BufferRowIndex bufferRowIndex = table.getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
 				// Add new buffer index to current set
 				currentRowIndexSet.insert(bufferRowIndex);
@@ -375,7 +375,7 @@ QSet<BufferRowIndex> Breadcrumbs::evaluate(BufferRowIndex initialBufferRowIndex)
 		else {
 			// Backward reference (reference search, result for each input element is key set)
 			// Find rows in new table where key in secondColumn matches any key in current set
-			for (const ValidItemID& key : currentKeySet) {
+			for (const ValidItemID& key : std::as_const(currentKeySet)) {
 				const QList<BufferRowIndex> bufferRowIndexList = table.getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				const QSet<BufferRowIndex> matchingBufferRowIndices = QSet<BufferRowIndex>(bufferRowIndexList.constBegin(), bufferRowIndexList.constEnd());
 				// Add new buffer indices to current set
@@ -443,7 +443,7 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 	for (const Breadcrumb& crumb : list) {
 		// Look up keys stored in firstColumn at given row indices
 		QList<ValidItemID> currentKeyList = QList<ValidItemID>();
-		for (const BufferRowIndex& bufferRowIndex : currentRowIndexList) {
+		for (const BufferRowIndex& bufferRowIndex : std::as_const(currentRowIndexList)) {
 			ItemID key = crumb.firstColumn.getValueAt(bufferRowIndex);
 			if (key.isInvalid()) continue;
 			// Add new item ID to current list
@@ -459,7 +459,7 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 		if (crumb.isForward()) {
 			// Forward reference (lookup, result for each input element is single key)
 			// Find row matching each primary key
-			for (const ValidItemID& key : currentKeyList) {
+			for (const ValidItemID& key : std::as_const(currentKeyList)) {
 				BufferRowIndex bufferRowIndex = table.getMatchingBufferRowIndex({ &crumb.secondColumn }, { key });
 				// Add new buffer index to current list
 				currentRowIndexList.append(bufferRowIndex);
@@ -468,7 +468,7 @@ QList<BufferRowIndex> Breadcrumbs::evaluateForStats(const QSet<BufferRowIndex>& 
 		else {
 			// Backward reference (reference search, result for each input element is key list)
 			// Find rows in new table where key in secondColumn matches any key in current list
-			for (const ValidItemID& key : currentKeyList) {
+			for (const ValidItemID& key : std::as_const(currentKeyList)) {
 				const QList<BufferRowIndex> matchingBufferRowIndices = table.getMatchingBufferRowIndices(crumb.secondColumn, key.asQVariant());
 				// Add new buffer indices to current list
 				currentRowIndexList.append(matchingBufferRowIndices);

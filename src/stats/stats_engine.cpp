@@ -115,7 +115,7 @@ void StatsEngine::addChartsToLayout(QBoxLayout* layout, const QList<Chart*>& cha
 	
 	if (stretchFactors.isEmpty()) stretchFactors = QList<int>(numCharts, 1);
 	int stretchIndex = 0;
-	for (const int stretchFactor : stretchFactors) {
+	for (const int stretchFactor : std::as_const(stretchFactors)) {
 		layout->setStretch(stretchIndex++, stretchFactor);
 	}
 }
@@ -572,7 +572,7 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 	// Changes under columns used for chart-specific caches require resetting those caches
 	const QHash<Chart*, QSet<const Column*>> columnsPerChart = getPostCrumbsUnderlyingColumnSetPerChart();
 	QList<Chart*> charts = columnsPerChart.keys();
-	for (Chart* const chart : charts) {
+	for (Chart* const chart : std::as_const(charts)) {
 		const QSet<const Column*> columns = columnsPerChart.value(chart);
 		if (!columns.intersects(changedColumns)) continue;
 		
@@ -584,7 +584,7 @@ void ItemStatsEngine::announceColumnChanges(const QSet<const Column*>& changedCo
 	// Changes under columns used only for item labels only require chart regeneration without any cache resets (only relevant for top-n charts)
 	const QHash<Chart*, QSet<const Column*>> labelColumnsPerChart = getItemLabelUnderlyingColumnSetPerChart();
 	charts = labelColumnsPerChart.keys();
-	for (Chart* const chart : charts) {
+	for (Chart* const chart : std::as_const(charts)) {
 		const QSet<const Column*> columns = labelColumnsPerChart.value(chart);
 		if (!columns.intersects(changedColumns)) continue;
 		
