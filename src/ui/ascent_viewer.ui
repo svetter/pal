@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>800</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,8 +61,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>421</width>
-            <height>836</height>
+            <width>435</width>
+            <height>853</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1336,7 +1336,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>665</width>
-                   <height>379</height>
+                   <height>248</height>
                   </rect>
                  </property>
                  <layout class="QHBoxLayout" name="imageScrollAreaLayout">
@@ -1357,6 +1357,16 @@
                   </property>
                  </layout>
                 </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWebEngineView" name="webEngineWidget" native="true">
+                <property name="minimumSize">
+                 <size>
+                  <width>400</width>
+                  <height>400</height>
+                 </size>
+                </property>
                </widget>
               </item>
               <item>
@@ -1934,6 +1944,12 @@
    <class>FileDropFrame</class>
    <extends>QFrame</extends>
    <header>src/viewer/file_drop_frame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header>QWebEngineView</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

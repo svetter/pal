@@ -26,6 +26,7 @@
 
 #include "qtimer.h"
 #include "src/main/main_window.h"
+#include "src/viewer/gpx_file_server.h"
 #include "src/viewer/scalable_image_label.h"
 #include "ui_ascent_viewer.h"
 
@@ -36,6 +37,8 @@
  */
 class AscentViewer : public QDialog, public Ui_AscentViewer {
 	Q_OBJECT
+	
+	GpxFileServer gpxFileServer;
 	
 	/** The application's main window. */
 	MainWindow* const mainWindow;
@@ -120,7 +123,6 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** Saved sizes for the description splitter before being collapsed for an ascent with no trip. */
 	QList<int> descriptionSplitterSizes;
 	
-private:
 	/** Temporary global static variable for error messages printed when loading images. */
 	inline static QString imageLoadErrorMessage = QString();
 	

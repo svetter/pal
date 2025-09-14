@@ -33,6 +33,8 @@
 #include <QColorSpace>
 #include <QFileDialog>
 #include <QRandomGenerator>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
 
 
 
@@ -78,6 +80,39 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	setupSlideshow();
 	
 	changeToAscent(viewRowIndex);
+	
+
+	// for testing:
+	gpxFileServer.startServer();
+	
+	const QString filename = "gpx1.gpx";
+	const QString serverIp = gpxFileServer.ip;
+	const QString ipWithBrackets = serverIp.contains(":") ? QString("[%1]").arg(serverIp) : serverIp;
+	const QString port = "51673";
+	const QString gpxFileUrl = QString("http://%1:%2/files/%3")
+		.arg(ipWithBrackets, port, filename);
+	
+	const QString mapboxToken = "...";
+	const QString optionsJson = QString(R"({
+		"token": "%1",
+		"files": ["%2"],
+		"elevation": {
+			"show": false,
+			"height": "175"
+		},
+		"distanceMarkers": true,
+		"directionMarkers": true,
+		"distanceUnits": "metric",
+		"velocityUnits": "speed",
+		"temperatureUnits": "celsius",
+		"theme": "light"
+	})").arg(mapboxToken, gpxFileUrl);
+	const QString optionsEncoded = QUrl::toPercentEncoding(optionsJson);
+	const QString embedUrl = QString("https://gpx.studio/embed?options=%1").arg(optionsEncoded);
+	
+	QWebEngineSettings* engineSettings = webEngineWidget->page()->settings();
+	engineSettings->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, true);
+	webEngineWidget->setUrl(QUrl(embedUrl));
 }
 
 /**

@@ -26,6 +26,8 @@ QT += sql
 QT += svg svgwidgets
 QT += charts
 QT += network
+QT += httpserver
+QT += webenginewidgets
 
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000	# Disables all the APIs deprecated before Qt 6.0.0
 
@@ -162,6 +164,7 @@ HEADERS += \
 	src/tools/relocate_photos_dialog.h \
 	src/viewer/ascent_viewer.h \
 	src/viewer/file_drop_frame.h \
+	src/viewer/gpx_file_server.h \
 	src/viewer/icon_group_box.h \
 	src/viewer/scalable_image_label.h
 
@@ -255,6 +258,7 @@ SOURCES += \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
 	src/viewer/ascent_viewer.cpp \
+	src/viewer/gpx_file_server.cpp \
 	src/viewer/scalable_image_label.cpp
 
 FORMS += \
