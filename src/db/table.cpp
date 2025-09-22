@@ -628,6 +628,28 @@ void Table::createTableInSql(QWidget& parent)
 }
 
 /**
+ * Adds the given column to the table in the SQL database.
+ * 
+ * Only needed when upgrading the project file version.
+ * 
+ * @param parent	The parent window.
+ */
+void Table::addColumnInSql(QWidget& parent, const Column& column)
+{
+	assert(&column.table == this);
+	
+	QString queryString = QString(
+		"ALTER TABLE " + name + " ADD COLUMN " + column.getSqlSpecificationString()
+	);
+	qDebug() << queryString;
+	QSqlQuery query = QSqlQuery();
+	
+	if (!query.exec(queryString)) {
+		displayError(parent, query.lastError(), queryString);
+	}
+}
+
+/**
  * Runs a SQL query for all data in the table and returns the result as a two-dimensional list of
  * QVariants.
  * 

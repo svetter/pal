@@ -88,16 +88,19 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	const QString filename = "gpx1.gpx";
 	const QString serverIp = gpxFileServer.ip;
 	const QString ipWithBrackets = serverIp.contains(":") ? QString("[%1]").arg(serverIp) : serverIp;
-	const QString port = "51673";
+	const QString port = QString::number(gpxFileServer.port);
 	const QString gpxFileUrl = QString("http://%1:%2/files/%3")
 		.arg(ipWithBrackets, port, filename);
 	
-	const QString mapboxToken = "...";
+	const QString mapboxToken = Settings::mapboxToken.get();
+	const QString mapType = Settings::ascentViewer_defaultMapType.get();
+	const QString showElevationProfile = QVariant(Settings::ascentViewer_showElevationProfile.get()).toString();
 	const QString optionsJson = QString(R"({
 		"token": "%1",
 		"files": ["%2"],
+		"basemap": "%3",
 		"elevation": {
-			"show": false,
+			"show": %4,
 			"height": "175"
 		},
 		"distanceMarkers": true,
@@ -106,7 +109,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 		"velocityUnits": "speed",
 		"temperatureUnits": "celsius",
 		"theme": "light"
-	})").arg(mapboxToken, gpxFileUrl);
+	})").arg(mapboxToken, gpxFileUrl, mapType, showElevationProfile);
 	const QString optionsEncoded = QUrl::toPercentEncoding(optionsJson);
 	const QString embedUrl = QString("https://gpx.studio/embed?options=%1").arg(optionsEncoded);
 	
@@ -1017,7 +1020,7 @@ void AscentViewer::handle_randomAscent()
  */
 void AscentViewer::handle_firstAscentOfPeak()
 {
-	assert(firstAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
+	assert(firstAscentOfPeakViewRowIndex.isValid(numShownAscents));
 	changeToAscent(firstAscentOfPeakViewRowIndex);
 }
 
@@ -1026,7 +1029,8 @@ void AscentViewer::handle_firstAscentOfPeak()
  */
 void AscentViewer::handle_previousAscentOfPeak()
 {
-	assert(previousAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
+	assert(currentAscentOfPeakIndex > 0 && currentAscentOfPeakIndex < numAscentsOfPeak);
+	assert(previousAscentOfPeakViewRowIndex.isValid(numShownAscents));
 	changeToAscent(previousAscentOfPeakViewRowIndex);
 }
 
@@ -1035,7 +1039,8 @@ void AscentViewer::handle_previousAscentOfPeak()
  */
 void AscentViewer::handle_nextAscentOfPeak()
 {
-	assert(nextAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
+	assert(currentAscentOfPeakIndex >= 0 && currentAscentOfPeakIndex < numAscentsOfPeak - 1);
+	assert(nextAscentOfPeakViewRowIndex.isValid(numShownAscents));
 	changeToAscent(nextAscentOfPeakViewRowIndex);
 }
 
@@ -1044,7 +1049,7 @@ void AscentViewer::handle_nextAscentOfPeak()
  */
 void AscentViewer::handle_lastAscentOfPeak()
 {
-	assert(lastAscentOfPeakViewRowIndex.isValid(numAscentsOfPeak));
+	assert(lastAscentOfPeakViewRowIndex.isValid(numShownAscents));
 	changeToAscent(lastAscentOfPeakViewRowIndex);
 }
 

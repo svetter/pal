@@ -83,6 +83,7 @@ private slots:
 	void handle_newTrip();
 	void handle_addHiker();
 	void handle_removeHikers();
+	void handle_browseForGpxFile();
 	void handle_addPhotos();
 	void handle_removePhotos();
 	void handle_photoSelectionChanged(const QItemSelection& selected = QItemSelection(), const QItemSelection& deselected = QItemSelection());
@@ -104,8 +105,10 @@ void openMultiEditAscentsDialogAndStore	(QWidget& parent, QMainWindow& mainWindo
 bool openDeleteAscentsDialogAndExecute	(QWidget& parent, QMainWindow& mainWindow, Database& db, const QSet<BufferRowIndex>& bufferRowIndices);
 
 
+QString		openFileDialogForGpxFileSelection		(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
 QString		openFileDialogForSinglePhotoSelection	(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
 QStringList	openFileDialogForMultiPhotoSelection	(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
+QString getGpxFileDialogFilterString();
 QString getImageFileDialogFilterString();
 QStringList checkFilepathsAndAskUser(QWidget& parent, QStringList filepaths);
 

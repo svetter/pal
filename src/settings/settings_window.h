@@ -43,6 +43,7 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	const QPair<QStringList, QStringList> languages;
 	const QPair<QStringList, QStringList> styles;
 	const QPair<QStringList, QStringList> colorSchemes;
+	const QPair<QStringList, QStringList> mapTypes;
 	
 	const bool liveStyleUpdates;
 	

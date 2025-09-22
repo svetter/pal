@@ -49,12 +49,14 @@ void GpxFileServer::startServer()
 			}
 		}
 		
-		if (filePath.isEmpty())
+		if (filePath.isEmpty()) {
 			return QHttpServerResponse(QHttpServerResponder::StatusCode::NotFound);
+		}
 		
 		QFile file(filePath);
-		if (!file.open(QIODevice::ReadOnly))
+		if (!file.open(QIODevice::ReadOnly)) {
 			return QHttpServerResponse(QHttpServerResponder::StatusCode::InternalServerError);
+		}
 		
 		QByteArray data = file.readAll();
 		file.close();

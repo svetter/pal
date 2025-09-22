@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>814</width>
-    <height>609</height>
+    <height>696</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -53,7 +53,7 @@
       <enum>QLayout::SizeConstraint::SetFixedSize</enum>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="column1Layout" stretch="0,0,0,0,1">
+      <layout class="QVBoxLayout" name="column1Layout" stretch="0,0,0,0,0,1">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -301,6 +301,61 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="ascentViewerBox">
+         <property name="title">
+          <string>Ascent Viewer</string>
+         </property>
+         <layout class="QVBoxLayout" name="ascentViewerBoxLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="ascentTitleUnderPeakNameCheckbox">
+            <property name="text">
+             <string>Show ascent title below peak name, not in ascent box</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="mapTypeLayout" stretch="0,1">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="mapTypeLabel">
+              <property name="text">
+               <string>Default GPX map type</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="mapTypeCombo"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="elevationProfileCheckbox">
+            <property name="text">
+             <string>Show elevation profile below GPX maps</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="column1BottomSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -316,7 +371,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="column2Layout" stretch="0,0,0,0,0,1">
+      <layout class="QVBoxLayout" name="column2Layout" stretch="0,0,0,0,0,0">
        <property name="spacing">
         <number>15</number>
        </property>
@@ -687,7 +742,7 @@
        <item>
         <widget class="QGroupBox" name="googleApiKeyBox">
          <property name="title">
-          <string>Google Search API key</string>
+          <string>Google Search API Key</string>
          </property>
          <layout class="QVBoxLayout" name="googleApiKeyBoxLayout">
           <property name="spacing">
@@ -708,7 +763,7 @@
           <item>
            <widget class="QLabel" name="googleApiKeyLabel">
             <property name="text">
-             <string>Set a Google Search API key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</string>
+             <string>Set a Google Search API Key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API Key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -724,7 +779,7 @@
           <item>
            <widget class="QLineEdit" name="googleApiKeyEdit">
             <property name="placeholderText">
-             <string>Paste API key here</string>
+             <string>Paste API Key here</string>
             </property>
            </widget>
           </item>
@@ -732,11 +787,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="ascentViewerBox">
+        <widget class="QGroupBox" name="mapboxTokenBox">
          <property name="title">
-          <string>Ascent Viewer</string>
+          <string>Mapbox Token</string>
          </property>
-         <layout class="QVBoxLayout" name="ascentViewerBoxLayout">
+         <layout class="QVBoxLayout" name="mapboxTokenBoxLayout">
           <property name="spacing">
            <number>5</number>
           </property>
@@ -753,9 +808,25 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="ascentTitleUnderPeakNameCheckbox">
+           <widget class="QLabel" name="mapboxTokenLabel">
             <property name="text">
-             <string>Show ascent title below peak name, not in ascent box</string>
+             <string>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::TextInteractionFlag::LinksAccessibleByKeyboard|Qt::TextInteractionFlag::LinksAccessibleByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="mapboxTokenEdit">
+            <property name="placeholderText">
+             <string>Paste Mapbox Token here</string>
             </property>
            </widget>
           </item>

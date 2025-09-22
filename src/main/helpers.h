@@ -63,4 +63,10 @@ QString fromHtmlEscaped(const QString& escapedString);
 
 
 
+// gpx.studio
+
+QPair<QStringList, QStringList> getGpxStudioMapTypes();
+
+
+
 #endif // HELPERS_H

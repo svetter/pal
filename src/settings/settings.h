@@ -367,9 +367,17 @@ public:
 	/** The Google API key to use for finding links for peaks. */
 	inline static const Setting<QString>		googleApiKey								= Setting<QString>		("googleApiKey",								"");
 	
+	// Mapbox token
+	/** The Mapbox token to use for showing GPX tracks with gpx.studio. */
+	inline static const Setting<QString>		mapboxToken									= Setting<QString>		("mapboxToken",									"");
+	
 	// Ascent viewer
 	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
 	inline static const Setting<bool>			ascentViewer_ascentTitleUnderPeakName		= Setting<bool>			("ascentViewer/ascentTitleUnderPeakName",		false);
+	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
+	inline static const Setting<QString>		ascentViewer_defaultMapType					= Setting<QString>		("ascentViewer/defaultMapType",					getGpxStudioMapTypes().first.first());
+	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
+	inline static const Setting<bool>			ascentViewer_showElevationProfile			= Setting<bool>			("ascentViewer/showElevationProfile",			true);
 	
 	
 	// === IMPLICIT ===
@@ -439,6 +447,10 @@ public:
 	inline static const	Setting<QStringList>	rangesStats_splitterSizes					= Setting<QStringList>	("implicit/mainWindow/ranges/splitterSizes");
 	/** Remembered sizes for the splitter between table and statistics frame in the countries tab of the main window. */
 	inline static const	Setting<QStringList>	countriesStats_splitterSizes				= Setting<QStringList>	("implicit/mainWindow/countries/splitterSizes");
+	
+	// Ascent dialog
+	/** Remembered filepath of the last GPX file which was selected. */
+	inline static const Setting<QString>		ascentDialog_preSelectedFilepathGpx			= Setting<QString>		("implicit/ascentDialog/gpxFile/preSelectedFilepath");
 	
 	// Ascent viewer
 	/** Remembered value of the spin box determining the interval (in seconds) for a slideshow in the ascent viewer. */

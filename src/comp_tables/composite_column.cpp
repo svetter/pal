@@ -387,10 +387,12 @@ CompositeColumn* CompositeColumn::decodeSingleColumnFromString(QString& restOfEn
  * @param uiName		The name of this column as it should be displayed in the UI.
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
+ * @param bimodal		Whether the column should only return true if the content value is not null and not empty, or false otherwise.
  */
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn) :
-	CompositeColumn(Direct, table, name, uiName, contentColumn.type, false, false, suffix, contentColumn.enumNames),
-	contentColumn(contentColumn)
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn, bool bimodal) :
+	CompositeColumn(Direct, table, name, uiName, bimodal ? DataType::Bit : contentColumn.type, false, false, suffix, contentColumn.enumNames),
+	contentColumn(contentColumn),
+	bimodal(bimodal)
 {
 	assert(contentColumn.type != ID);
 	assert(!contentColumn.primaryKey);
@@ -403,9 +405,10 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString name
  * @param table			The CompositeTable that this column belongs to.
  * @param suffix		A suffix to append to the content of each cell.
  * @param contentColumn	The column from which to take the actual cell content.
+ * @param bimodal		Whether the column should only return true if the content value is not null and not empty, or false otherwise.
  */
-DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn) :
-	DirectCompositeColumn(table, contentColumn.name, contentColumn.uiName, suffix, contentColumn)
+DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn, bool bimodal) :
+	DirectCompositeColumn(table, contentColumn.name, contentColumn.uiName, suffix, contentColumn, bimodal)
 {}
 
 
@@ -418,7 +421,8 @@ DirectCompositeColumn::DirectCompositeColumn(CompositeTable& table, QString suff
  */
 QVariant DirectCompositeColumn::computeValueAt(BufferRowIndex rowIndex) const
 {
-	return contentColumn.getValueAt(rowIndex);
+	const QVariant value = contentColumn.getValueAt(rowIndex);
+	return bimodal ? !value.isNull() : value;
 }
 
 

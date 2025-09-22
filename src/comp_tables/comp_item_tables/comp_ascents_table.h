@@ -71,6 +71,8 @@ public:
 	const ReferenceCompositeColumn		volcanoColumn;
 	/** The peak ordinal indicates that this ascent was the nth one of the peak. */
 	const OrdinalCompositeColumn		peakOrdinalColumn;
+	/** Whether a PGX file has been set for this ascent. */
+	const DirectCompositeColumn			gpxFilePresentColumn;
 	/** The number of photos added to this ascent. */
 	const CountFoldCompositeColumn		numPhotosColumn;
 	
@@ -114,6 +116,7 @@ public:
 		difficultyColumn		(DependentEnumCompositeColumn	(*this,	"difficulty",		tr("Difficulty"),						db.ascentsTable.difficultySystemColumn,	db.ascentsTable.difficultyGradeColumn)),
 		volcanoColumn			(ReferenceCompositeColumn		(*this,	"volcano",			tr("Volcano"),				noSuffix,	db.peaksTable.volcanoColumn)),
 		peakOrdinalColumn		(OrdinalCompositeColumn			(*this,	"peakOrdinal",		tr("Nth ascent of peak"),	".",		{ {db.ascentsTable.peakIDColumn,		Qt::AscendingOrder},					{db.ascentsTable.dateColumn,		Qt::AscendingOrder},	{db.ascentsTable.peakOnDayColumn,	Qt::AscendingOrder},	{db.ascentsTable.timeColumn,	Qt::AscendingOrder} })),
+		gpxFilePresentColumn	(DirectCompositeColumn			(*this,	"gpxFilePresent",	tr("GPX"),					noSuffix,	db.ascentsTable.gpxFileColumn,			true)),
 		numPhotosColumn			(CountFoldCompositeColumn		(*this,	"numPhotos",		tr("Num. photos"),			noSuffix,	db.photosTable)),
 		
 		// === BACKEND COLUMNS ===
@@ -145,6 +148,7 @@ public:
 		addColumn(difficultyColumn);
 		addColumn(volcanoColumn);
 		addColumn(peakOrdinalColumn);
+		addColumn(gpxFilePresentColumn);
 		addColumn(numPhotosColumn);
 		addExportOnlyColumn(descriptionColumn);		// Export-only column
 		addExportOnlyColumn(tripStartDateColumn);	// Export-only column

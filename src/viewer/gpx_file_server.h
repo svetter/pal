@@ -39,7 +39,7 @@ public:
 	void startServer();
 	
 	const QString ip;
-	const int port = 51673;
+	static const int port = 51673;
 	
 private:
 	static void setHttpHeadersFor(QHttpServerResponse& serverResponse);

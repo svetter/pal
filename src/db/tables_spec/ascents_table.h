@@ -60,6 +60,8 @@ public:
 	ValueColumn difficultyGradeColumn;
 	/** The trip ID column. */
 	ForeignKeyColumn tripIDColumn;
+	/** The GPX file column. */
+	ValueColumn gpxFileColumn;
 	/** The ascent description column. */
 	ValueColumn descriptionColumn;
 	

@@ -227,3 +227,63 @@ QString fromHtmlEscaped(const QString& escapedString)
 		.replace("&amp;",	"&")
 		.replace("&quot;",	"\"");
 }
+
+
+
+QPair<QStringList, QStringList> getGpxStudioMapTypes()
+{
+	return {
+		{
+			"mapboxOutdoors",
+			"mapboxSatellite",
+			"openStreetMap",
+			"openTopoMap",
+			"openHikingMap",
+			"cyclOSM",
+			"swisstopoRaster",
+			"swisstopoVector",
+			"swisstopoSatellite",
+			"linz",
+			"linzTopo",
+			"ignBe",
+			"ignFrPlan",
+			"ignFrTopo",
+			"ignFrScan25",
+			"ignFrSatellite",
+			"ignEs",
+			"ignEsSatellite",
+			"norwayTopo",
+			"swedenTopo",
+			"swedenSatellite",
+			"finlandTopo",
+			"bgMountains",
+			"usgs",
+		},
+		{
+			"Mapbox Outdoors",
+			"Mapbox Satellite",
+			"OpenStreetMap",
+			"OpenTopoMap",
+			"OpenHikingMap",
+			"CyclOSM",
+			"swisstopo Raster",
+			"swisstopo Vector",
+			"swisstopo Satellite",
+			"LINZ Topo",
+			"LINZ Topo50",
+			"IGN BE Topo",
+			"IGN FR Plan",
+			"IGN FR Topo",
+			"IGN FR SCAN25",
+			"IGN FR Satellite",
+			"IGN ES Topo",
+			"IGN ES Satellite",
+			"Topografisk Norgeskart 4",
+			"Lantmäteriet Topo",
+			"Lantmäteriet Satellite",
+			"Lantmäteriet Terrängkarta",
+			"BGMountains",
+			"USGS",
+		}
+	};
+}

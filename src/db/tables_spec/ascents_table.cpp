@@ -52,6 +52,7 @@ AscentsTable::AscentsTable(Database& db, PrimaryKeyColumn& foreignPeakIDColumn, 
 	difficultySystemColumn	(ValueColumn		(*this,	"difficultySystem",	tr("Diff. system"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
 	difficultyGradeColumn	(ValueColumn		(*this,	"difficultyGrade",	tr("Diff. grade"),	DualEnum,	false,		nullptr,	&EnumNames::difficultyNames)),
 	tripIDColumn			(ForeignKeyColumn	(*this,	"tripID",			tr("Trip ID"),					true,		foreignTripIDColumn)),
+	gpxFileColumn			(ValueColumn		(*this,	"gpxFile",			tr("GPX file"),		String,		true)),
 	descriptionColumn		(ValueColumn		(*this,	"description",		tr("Description"),	String,		true))
 {
 	addColumn(titleColumn);
@@ -65,6 +66,7 @@ AscentsTable::AscentsTable(Database& db, PrimaryKeyColumn& foreignPeakIDColumn, 
 	addColumn(difficultySystemColumn);
 	addColumn(difficultyGradeColumn);
 	addColumn(tripIDColumn);
+	addColumn(gpxFileColumn);
 	addColumn(descriptionColumn);
 }
 
@@ -143,6 +145,7 @@ const QList<ColumnDataPair> AscentsTable::mapDataToColumnDataPairs(const QList<c
 		else if (column == &difficultySystemColumn)	{ data = ascent.difficultySystem;				}
 		else if (column == &difficultyGradeColumn)	{ data = ascent.difficultyGrade;				}
 		else if (column == &tripIDColumn)			{ data = ascent.tripID.asQVariant();			}
+		else if (column == &gpxFileColumn)			{ data = ascent.gpxFilepath;					}
 		else if (column == &descriptionColumn)		{ data = ascent.description;					}
 		else assert(false);
 		

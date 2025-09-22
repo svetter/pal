@@ -43,10 +43,11 @@
  * @param difficultyGrade	The difficulty grade of the ascent, if specified. -1 otherwise.
  * @param tripID			The ID of the trip which the ascent was a part of, if specified. Invalid ItemID otherwise.
  * @param hikerIDs			The IDs of the hikers that participated, if specified. Empty QSet otherwise.
+ * @param gpxFilepath		The path (including filename) to a GPX file, if specified. Empty QString otherwise.
  * @param photos			The photos of the ascent, if any. Empty QList otherwise.
  * @param description		The description of the ascent, if specified. Empty QString otherwise.
  */
-Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QList<Photo>& photos, QString& description) :
+Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QString& gpxFilepath, QList<Photo>& photos, QString& description) :
 	ascentID(ascentID),
 	title(title),
 	peakID(peakID),
@@ -60,6 +61,7 @@ Ascent::Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int 
 	difficultyGrade(difficultyGrade),
 	tripID(tripID),
 	hikerIDs(hikerIDs),
+	gpxFilepath(gpxFilepath),
 	photos(photos),
 	description(description)
 {}
@@ -92,6 +94,7 @@ bool Ascent::equalTo(const Ascent& other) const
 	if (difficultyGrade		!= other.difficultyGrade)	return false;
 	if (tripID				!= other.tripID)			return false;
 	if (hikerIDs			!= other.hikerIDs)			return false;
+	if (gpxFilepath			!= other.gpxFilepath)		return false;
 	if (photos				!= other.photos)			return false;
 	if (description			!= other.description)		return false;
 	return true;

@@ -419,12 +419,13 @@ unique_ptr<Ascent> Database::getAscentAt(BufferRowIndex rowIndex) const
 	int		difficultySystem	= row->at(ascentsTable.difficultySystemColumn	.getIndex()).toInt();
 	int		difficultyGrade		= row->at(ascentsTable.difficultyGradeColumn	.getIndex()).toInt();
 	ItemID	tripID				= row->at(ascentsTable.tripIDColumn				.getIndex());
+	QString	gpxFilepath			= row->at(ascentsTable.gpxFileColumn			.getIndex()).toString();
 	QString	description			= row->at(ascentsTable.descriptionColumn		.getIndex()).toString();
 	
 	QSet<ValidItemID>	hikerIDs	= participatedTable.getMatchingEntries(participatedTable.ascentIDColumn, ascentID);
 	QList<Photo>		photos		= photosTable.getPhotosForAscent(ascentID);
 	
-	return make_unique<Ascent>(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return make_unique<Ascent>(ascentID, title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, gpxFilepath, photos, description);
 }
 
 /**

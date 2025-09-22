@@ -70,12 +70,14 @@ public:
 	ItemID				tripID;
 	/** The IDs of the hikers who participated in the ascent. Empty QSet if not specified. */
 	QSet<ValidItemID>	hikerIDs;
+	/** The path (including filename) to a GPX file, if specified. Empty QString otherwise. */
+	QString				gpxFilepath;
 	/** The photos linked to the ascent. Empty QList if not specified. */
 	QList<Photo>		photos;
 	/** The ascent's description. Empty QString if not specified. */
 	QString				description;
 	
-	Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QList<Photo>& photos, QString& description);
+	Ascent(ItemID ascentID, QString& title, ItemID peakID, QDate& date, int perDayIndex, QTime& time, int elevationGain, int hikeKind, bool traverse, int difficultySystem, int difficultyGrade, ItemID tripID, QSet<ValidItemID>& hikerIDs, QString& gpxFilepath, QList<Photo>& photos, QString& description);
 	virtual ~Ascent();
 	
 	bool equalTo(const Ascent& other) const;

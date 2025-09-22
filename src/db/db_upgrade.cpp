@@ -115,6 +115,13 @@ bool DatabaseUpgrader::checkDatabaseVersionAndUpgrade(std::function<void ()> exe
 		db.settingsTable.createTableInSql(parent);
 	}
 	
+	// 1.9.0
+	// This version introduces a new column to the ascents table
+	if (versionOlderThan(currentDbVersion, "1.9.0")) {
+		// Add GPX file column to ascents table
+		db.ascentsTable.addColumnInSql(parent, db.ascentsTable.gpxFileColumn);
+	}
+	
 	
 	
 	// === CALL PROVIDED CODE ===

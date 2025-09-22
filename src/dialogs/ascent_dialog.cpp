@@ -75,6 +75,7 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 		{difficultyCheckbox,	{{ difficultySystemCombo, difficultyGradeCombo },									{ &db.ascentsTable.difficultySystemColumn, &db.ascentsTable.difficultyGradeColumn }}},
 		{tripCheckbox,			{{ tripCombo, newTripButton },														{ &db.ascentsTable.tripIDColumn }}},
 		{hikersCheckbox,		{{ hikersListView, addHikerButton, removeHikersButton },							{ &db.participatedTable.ascentIDColumn }}},
+		{gpxFileCheckbox,		{{ gpxFileLineEdit, gpxFileBrowseButton },											{ &db.ascentsTable.gpxFileColumn }}},
 		{photosCheckbox,		{{ photosListView, addPhotosButton, removePhotosButton, photoDescriptionLineEdit },	{ &db.photosTable.ascentIDColumn }}},
 		{descriptionCheckbox,	{{ descriptionEditor },																{ &db.ascentsTable.descriptionColumn }}}
 	}, {
@@ -115,6 +116,7 @@ AscentDialog::AscentDialog(QWidget& parent, QMainWindow& mainWindow, Database& d
 	connect(newTripButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_newTrip);
 	connect(addHikerButton,						&QPushButton::clicked,					this,	&AscentDialog::handle_addHiker);
 	connect(removeHikersButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_removeHikers);
+	connect(gpxFileBrowseButton,				&QPushButton::clicked,					this,	&AscentDialog::handle_browseForGpxFile);
 	connect(addPhotosButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_addPhotos);
 	connect(removePhotosButton,					&QPushButton::clicked,					this,	&AscentDialog::handle_removePhotos);
 	connect(photosListView->selectionModel(),	&QItemSelectionModel::selectionChanged,	this,	&AscentDialog::handle_photoSelectionChanged);
@@ -247,6 +249,8 @@ void AscentDialog::insertInitData()
 		unique_ptr<Hiker> hiker = db.getHiker(hikerID);
 		hikersModel.addHiker(*hiker);
 	}
+	// GPX file
+	gpxFileLineEdit->setText(init->gpxFilepath);
 	// Photos
 	photosModel.addPhotos(init->photos);
 	descriptionEditor->setPlainText(init->description);
@@ -273,6 +277,7 @@ unique_ptr<Ascent> AscentDialog::extractData()
 	ItemID				tripID				= parseItemCombo		(*tripCombo, selectableTripIDs);
 	QString				description			= parsePlainTextEdit	(*descriptionEditor);
 	QSet<ValidItemID>	hikerIDs			= hikersModel.getHikerIDSet();
+	QString				gpxFilepath			= parseLineEdit			(*gpxFileLineEdit);
 	QList<Photo>		photos				= photosModel.getPhotoList();
 	
 	if (!dateSpecifyCheckbox->isChecked())			date = QDate();
@@ -283,7 +288,7 @@ unique_ptr<Ascent> AscentDialog::extractData()
 		difficultyGrade		= 0;
 	}
 	
-	return make_unique<Ascent>(ItemID(), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, photos, description);
+	return make_unique<Ascent>(ItemID(), title, peakID, date, perDayIndex, time, elevationGain, hikeKind, traverse, difficultySystem, difficultyGrade, tripID, hikerIDs, gpxFilepath, photos, description);
 }
 
 
@@ -490,6 +495,28 @@ void AscentDialog::handle_removeHikers()
 	for (const QModelIndex& selectedIndex : selectedIndices) {
 		hikersModel.removeHikerAt(selectedIndex.row());
 	}
+}
+
+/**
+ * Event handler for the GPX file Browse button.
+ * 
+ * Opens a file dialog for selecting a GPX file and sets the result in the line edit if accepted.
+ */
+void AscentDialog::handle_browseForGpxFile()
+{
+	// Determine path at which file dialog will open
+	QString preSelectedDir = QString(gpxFileLineEdit->text());
+	const QString preSelectedDirSetting = Settings::ascentDialog_preSelectedFilepathGpx.get();
+	if (!preSelectedDirSetting.isEmpty()) {
+		preSelectedDir = preSelectedDirSetting;
+	}
+	
+	const QString filepath = openFileDialogForGpxFileSelection(*this, preSelectedDir);
+	if (filepath.isEmpty()) return;
+	
+	Settings::ascentDialog_preSelectedFilepathGpx.set(QFileInfo(filepath).path());
+	
+	gpxFileLineEdit->setText(filepath);
 }
 
 /**
@@ -871,6 +898,25 @@ bool openDeleteAscentsDialogAndExecute(QWidget& parent, QMainWindow& mainWindow,
 
 
 /**
+ * Opens a file dialog for selecting a GPX file.
+ * 
+ * @param parent				The parent window.
+ * @param preSelectedDir		The directory to open the file dialog in initially, or an empty QString.
+ * @param overrideWindowTitle	The window title to use, or an empty QString to use the default one.
+ * @return						The selected filepath, or an empty QString if the dialog was cancelled.
+ */
+QString openFileDialogForGpxFileSelection(QWidget& parent, QString preSelectedDir, QString overrideWindowTitle)
+{
+	QString caption = AscentDialog::tr("Select GPX file for ascent");
+	if (!overrideWindowTitle.isEmpty()) caption = overrideWindowTitle;
+	QString filter = getGpxFileDialogFilterString();
+	QString filepath = QFileDialog::getOpenFileName(&parent, caption, preSelectedDir, filter);
+	
+	if (filepath.isEmpty()) return QString();
+	return filepath;
+}
+
+/**
  * Opens a file dialog for selecting a single image file.
  * 
  * @param parent				The parent window.
@@ -908,6 +954,17 @@ QStringList openFileDialogForMultiPhotoSelection(QWidget& parent, QString preSel
 	filepaths = checkFilepathsAndAskUser(parent, filepaths);
 	
 	return filepaths;
+}
+
+/**
+ * Returns the translated filter string to use for GPX file dialogs.
+ * 
+ * @return	The translated filter string.
+ */
+QString getGpxFileDialogFilterString()
+{
+	return AscentDialog::tr("GPX files")   + " (*.gpx);;"
+		 + AscentDialog::tr("All files") + " (*.*)";
 }
 
 /**

@@ -144,9 +144,10 @@ class DirectCompositeColumn : public CompositeColumn {
 public:
 	/** The column in the base table from which to take the content. */
 	const Column& contentColumn;
+	const bool bimodal;
 	
-	DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn);
-	DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn);
+	DirectCompositeColumn(CompositeTable& table, QString suffix, const Column& contentColumn, bool bimodal = false);
+	DirectCompositeColumn(CompositeTable& table, QString name, QString uiName, QString suffix, const Column& contentColumn, bool bimodal = false);
 	
 	virtual QVariant computeValueAt(BufferRowIndex rowIndex) const override;
 	

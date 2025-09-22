@@ -23,6 +23,8 @@
 
 #include "settings_window.h"
 
+#include "src/viewer/gpx_file_server.h"
+
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QMessageBox>
@@ -43,9 +45,12 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
 	colorSchemes({"system", "light", "dark"}, {tr("System default"), tr("Light"), tr("Dark")}),
+	mapTypes(getGpxStudioMapTypes()),
 	liveStyleUpdates(true)
 {
 	setupUi(this);
+	
+	mapboxTokenLabel->setText(mapboxTokenLabel->text().arg(GpxFileServer::port));
 	
 	restoreDialogGeometry(*this, mainWindow, Settings::settingsWindow_geometry);
 	
@@ -67,6 +72,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	languageCombo	->addItems(languages.second);
 	styleCombo		->addItems(styles.second);
 	colorSchemeCombo->addItems(colorSchemes.second);
+	mapTypeCombo	->addItems(mapTypes.second);
 	
 	
 	loadSettings();
@@ -107,6 +113,14 @@ void SettingsWindow::loadSettings()
 	}
 	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
 	
+	int mapTypeIndex = mapTypes.first.indexOf(ascentViewer_defaultMapType.get());
+	if (mapTypeIndex < 0) {
+		qDebug() << "Couldn't parse default map type setting, reverting to default";
+		mapTypeIndex = mapTypes.first.indexOf(ascentViewer_defaultMapType.getDefault());
+		if (mapTypeIndex < 0) mapTypeIndex = 0;
+	}
+	mapTypeCombo->setCurrentIndex(mapTypeIndex);
+	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.get());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.get());
 	warnAboutDuplicateNamesCheckbox				->setChecked	(warnAboutDuplicateNames					.get());
@@ -134,8 +148,10 @@ void SettingsWindow::loadSettings()
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.get());
 	
 	googleApiKeyEdit							->setText		(googleApiKey								.get());
+	mapboxTokenEdit								->setText		(mapboxToken								.get());
 	
 	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.get());
+	elevationProfileCheckbox					->setChecked	(ascentViewer_showElevationProfile			.get());
 	
 	updateEnabled();
 }
@@ -147,10 +163,15 @@ void SettingsWindow::loadDefaults()
 {
 	const int languageIndex = languages.first.indexOf(language.getDefault());
 	languageCombo->setCurrentIndex(languageIndex);
+	
 	const int styleIndex = styles.first.indexOf(uiStyle.getDefault());
 	styleCombo->setCurrentIndex(styleIndex);
+	
 	const int colorSchemeIndex = colorSchemes.first.indexOf(uiColorScheme.getDefault());
 	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
+	
+	const int mapTypeIndex = mapTypes.first.indexOf(ascentViewer_defaultMapType.getDefault());
+	mapTypeCombo->setCurrentIndex(mapTypeIndex);
 	
 	confirmDeleteCheckbox						->setChecked	(confirmDelete								.getDefault());
 	confirmCancelCheckbox						->setChecked	(confirmCancel								.getDefault());
@@ -179,8 +200,10 @@ void SettingsWindow::loadDefaults()
 	tripDatesCheckbox							->setChecked	(tripDialog_datesEnabledInitially			.getDefault());
 	
 	googleApiKeyEdit							->setText		(googleApiKey								.getDefault());
+	mapboxTokenEdit								->setText		(mapboxToken								.getDefault());
 	
 	ascentTitleUnderPeakNameCheckbox			->setChecked	(ascentViewer_ascentTitleUnderPeakName		.getDefault());
+	elevationProfileCheckbox					->setChecked	(ascentViewer_showElevationProfile			.getDefault());
 	
 	updateEnabled();
 }
@@ -206,6 +229,11 @@ void SettingsWindow::saveSettings()
 	const int selectedColorSchemeIndex = colorSchemeCombo->currentIndex();
 	if (selectedColorSchemeIndex >= 0) {
 		uiColorScheme.set(colorSchemes.first.at(selectedColorSchemeIndex));
+	}
+	
+	const int selectedMapTypeIndex = mapTypeCombo->currentIndex();
+	if (selectedMapTypeIndex >= 0) {
+		ascentViewer_defaultMapType.set(mapTypes.first.at(selectedMapTypeIndex));
 	}
 	
 	confirmDelete								.set(confirmDeleteCheckbox						->isChecked());
@@ -235,8 +263,10 @@ void SettingsWindow::saveSettings()
 	tripDialog_datesEnabledInitially			.set(tripDatesCheckbox							->isChecked());
 	
 	googleApiKey								.set(googleApiKeyEdit							->text());
+	mapboxToken									.set(mapboxTokenEdit							->text());
 	
 	ascentViewer_ascentTitleUnderPeakName		.set(ascentTitleUnderPeakNameCheckbox			->isChecked());
+	ascentViewer_showElevationProfile			.set(elevationProfileCheckbox					->isChecked());
 	
 	if (languageBefore != language.get()) {
 		QString title = tr("Language setting changed");
