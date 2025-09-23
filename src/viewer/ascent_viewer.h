@@ -26,10 +26,7 @@
 
 #include "src/main/main_window.h"
 #include "src/viewer/gpx_file_server.h"
-#include "src/viewer/scalable_image_label.h"
 #include "ui_ascent_viewer.h"
-
-#include <QTimer>
 
 
 
@@ -89,25 +86,10 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** The number of ascents of the current ascent's peak. */
 	int numAscentsOfPeak;
 	
-	/** List of all photos of the current ascent. */
-	QList<Photo> photos;
-	/** The index of the currently displayed photo in the photos list. -1 if no photo is displayed. */
-	int currentPhotoIndex;
-	
-	/** A timer used for the slideshow function. */
-	QTimer slideshowTimer;
-	/** Indicates whether the slideshow is currently running. */
-	bool slideshowRunning;
-	
-	/** The widget for displaying the image. */
-	ScalableImageLabel* imageLabel;
-	
 	/** Indicates whether the trip description is currently set to be editable. */
 	bool tripDescriptionEditable;
 	/** Indicates whether the ascent description is currently set to be editable. */
 	bool ascentDescriptionEditable;
-	/** Indicates whether the photo description is currently set to be editable. */
-	bool photoDescriptionEditable;
 	
 	/** Context menu for the info area. */
 	QMenu infoContextMenu;
@@ -124,9 +106,6 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** Saved sizes for the description splitter before being collapsed for an ascent with no trip. */
 	QList<int> descriptionSplitterSizes;
 	
-	/** Temporary global static variable for error messages printed when loading images. */
-	inline static QString imageLoadErrorMessage = QString();
-	
 public:
 	AscentViewer(MainWindow* parent, Database& db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
@@ -137,7 +116,6 @@ private:
 	void connectUI();
 	void setupContextMenus();
 	void setupShortcuts();
-	void setupSlideshow();
 	
 	// Ascent change
 	void changeToAscent(ViewRowIndex viewRowIndex);
@@ -146,27 +124,6 @@ private:
 	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
 	void updateAscentNavigationNumbers();
-	void loadPhotosList();
-	
-	// Photo change
-	void changeToPhoto(int photoIndex, bool saveDescriptionFirst);
-	void updateImageFrameProperties(bool imagePresent, bool imageReadable);
-	void updatePhotoIndexLabel();
-	void updatePhotoButtonsEnabled();
-	
-	// Slideshow
-	void startSlideshow(bool nextPhotoImmediately);
-	void stopSlideshow();
-	void restartSlideshowTimerIfRunning();
-	
-	// Editing photos
-	void moveCurrentPhoto(bool moveLeftNotRight);
-	void addPhotosFromDialog();
-	void addPhotos(QStringList filepaths);
-	void removeCurrentPhoto();
-	void replaceCurrentPhoto();
-	void savePhotoDescription();
-	void savePhotosList();
 	
 	// Editing descriptions
 	void saveTripDescription();
@@ -183,23 +140,6 @@ private slots:
 	void handle_previousAscentOfPeak();
 	void handle_nextAscentOfPeak();
 	void handle_lastAscentOfPeak();
-	// Photo navigation
-	void handle_firstPhoto();
-	void handle_previousPhoto();
-	void handle_nextPhoto();
-	void handle_lastPhoto();
-	// Slideshow
-	void handle_toggleSlideshow();
-	void handle_slideshowTimerTrigger();
-	void handle_slideshowIntervalChanged();
-	void handle_userInteractedWithImageLabel();
-	// Changing photos
-	void handle_movePhotoLeft();
-	void handle_movePhotoRight();
-	void handle_addPhotos();
-	void handle_removePhoto();
-	void handle_replacePhoto();
-	void handle_relocatePhotos();
 	// Right click
 	void handle_rightClickOnAscentInfo(QPoint pos);
 	void handle_rightClickOnPeakInfo(QPoint pos);
@@ -207,15 +147,9 @@ private slots:
 	// Edit actions
 	void handle_tripDescriptionEditableChanged();
 	void handle_ascentDescriptionEditableChanged();
-	void handle_photoDescriptionEditableChanged();
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editTrip();
-	// Files dropped on image frame
-	void handle_filesDropped(QStringList filepaths);
-	
-	// Error message capture
-	static void imageErrorMessageOccurred(const QString& message);
 	
 private:
 	// Helpers

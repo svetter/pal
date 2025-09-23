@@ -162,6 +162,7 @@ HEADERS += \
 	src/tools/peak_link_finder_thread.h \
 	src/tools/photo_relocation_thread.h \
 	src/tools/relocate_photos_dialog.h \
+	src/viewer/ascent_image_widget.h \
 	src/viewer/ascent_viewer.h \
 	src/viewer/file_drop_frame.h \
 	src/viewer/gpx_file_server.h \
@@ -257,12 +258,14 @@ SOURCES += \
 	src/tools/peak_link_finder_thread.cpp \
 	src/tools/photo_relocation_thread.cpp \
 	src/tools/relocate_photos_dialog.cpp \
+	src/viewer/ascent_image_widget.cpp \
 	src/viewer/ascent_viewer.cpp \
 	src/viewer/gpx_file_server.cpp \
 	src/viewer/scalable_image_label.cpp
 
 FORMS += \
 	src/ui/about_window.ui \
+	src/ui/ascent_image_widget.ui \
 	src/ui/ascent_viewer.ui \
 	src/ui/export_dialog.ui \
 	src/ui/filter_bar.ui \

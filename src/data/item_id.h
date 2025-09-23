@@ -114,7 +114,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * @param item_id	The ItemID to get the integer index of.
  * @return			The integer index of the ItemID.
 */
-#define ID_GET(item_id) (assert(item_id.isValid()), ItemIDPrivilegedFunctionAccessor::getValueForItemID(item_id))
+#define ID_GET(item_id) (assert((item_id).isValid()), ItemIDPrivilegedFunctionAccessor::getValueForItemID(item_id))
 
 /**
  * A macro to force an ItemID to be valid, turning it into a ValidItemID.
@@ -126,7 +126,7 @@ size_t qHash(const ItemID& key, size_t seed);
  * @param item_id	The ItemID to force to be valid.
  * @return			The ValidItemID created from the ItemID.
  */
-#define FORCE_VALID(item_id) (assert(item_id.isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(item_id))
+#define FORCE_VALID(item_id) (assert((item_id).isValid()), ItemIDPrivilegedFunctionAccessor::forceItemIDValid(item_id))
 
 /**
  * A macro to create a ValidItemID from an int.
