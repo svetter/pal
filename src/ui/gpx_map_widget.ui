@@ -10,9 +10,6 @@
     <height>530</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="gpxMapLayout" stretch="1,0">
    <property name="spacing">
     <number>10</number>
@@ -101,7 +98,7 @@
               </font>
              </property>
              <property name="text">
-              <string notr="true">You can have a map of this ascent shown here by setting a path to a GPX track file down below.</string>
+              <string>You can have a map of this ascent shown here by setting a path to a GPX track file down below.</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -154,7 +151,7 @@
               </font>
              </property>
              <property name="text">
-              <string notr="true">PAL is unable to show a map of this ascent because the GPX file cannot be read.&lt;br&gt;&lt;br&gt;You can try to fix the file path down below or remove it completely.</string>
+              <string>PAL is unable to show a map of this ascent because the GPX file cannot be read.&lt;br&gt;&lt;br&gt;You can try to fix the file path down below or remove it completely.</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>

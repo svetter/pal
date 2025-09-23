@@ -566,7 +566,7 @@
                <string>Time between photos in seconds</string>
               </property>
               <property name="suffix">
-               <string>s</string>
+               <string notr="true">s</string>
               </property>
               <property name="minimum">
                <number>1</number>

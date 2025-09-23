@@ -30,7 +30,6 @@ class GpxMapWidget : public QWidget, public Ui_GpxMapWidget
 {
 	Q_OBJECT
 	
-	/** The project's database. */
 	Database* db;
 	
 	GpxFileServer gpxFileServer;

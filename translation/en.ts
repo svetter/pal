@@ -4,7 +4,7 @@
 <context>
     <name>AscentDialog</name>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="89"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="90"/>
         <source>Edit %Ln ascent(s)</source>
         <translation>
             <numerusform>Edit ascent</numerusform>
@@ -12,7 +12,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="884"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Delete ascent</numerusform>
@@ -23,7 +23,7 @@
 <context>
     <name>AscentsTable</name>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="245"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="248"/>
         <source>Saved changes in %Ln ascent(s).</source>
         <translation>
             <numerusform>Saved changes in ascent.</numerusform>
@@ -31,7 +31,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="256"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="259"/>
         <source>Deleted %Ln ascent(s).</source>
         <translation>
             <numerusform>Deleted ascent.</numerusform>
@@ -39,7 +39,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="288"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="291"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln ascent</numerusform>

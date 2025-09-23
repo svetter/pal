@@ -71,7 +71,7 @@
     <name>AscentDialog</name>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="20"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="87"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="88"/>
         <source>New ascent</source>
         <translation>Neue Besteigung</translation>
     </message>
@@ -155,7 +155,7 @@
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="605"/>
         <location filename="../src/ui/ascent_dialog.ui" line="648"/>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="417"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="422"/>
         <source>None</source>
         <translation>Keiner</translation>
     </message>
@@ -171,36 +171,46 @@
     </message>
     <message>
         <location filename="../src/ui/ascent_dialog.ui" line="797"/>
+        <source>GPX file</source>
+        <translation>GPX-Datei</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_dialog.ui" line="814"/>
+        <source>Browse...</source>
+        <translation>Durchsuchen...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_dialog.ui" line="831"/>
         <source>Photos</source>
         <translation>Fotos</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="894"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="928"/>
         <source>Photo description</source>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="920"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="954"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="963"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="997"/>
         <source>Add ascent</source>
         <translation>Besteigung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_dialog.ui" line="985"/>
+        <location filename="../src/ui/ascent_dialog.ui" line="1019"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="412"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="417"/>
         <source>Select grade</source>
         <translation>Grad auswählen</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="89"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="90"/>
         <source>Edit %Ln ascent(s)</source>
         <translation>
             <numerusform>Besteigung bearbeiten</numerusform>
@@ -208,7 +218,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="860"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="884"/>
         <source>Delete %Ln ascent(s)</source>
         <translation>
             <numerusform>Besteigung löschen</numerusform>
@@ -216,32 +226,43 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="883"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="907"/>
+        <source>Select GPX file for ascent</source>
+        <translation>GPX-Datei zu Besteigung auswählen</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="926"/>
         <source>Select photo of ascent</source>
         <translation>Foto zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="903"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="946"/>
         <source>Select photos of ascent</source>
         <translation>Fotos zu Besteigung auswählen</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="919"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="963"/>
+        <source>GPX files</source>
+        <translation>GPX-Dateien</translation>
+    </message>
+    <message>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="973"/>
         <source>Images</source>
         <translation>Bilddateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="920"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="964"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="974"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="945"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="999"/>
         <source>File error</source>
         <translation>Fehler beim Lesen der Datei</translation>
     </message>
     <message>
-        <location filename="../src/dialogs/ascent_dialog.cpp" line="946"/>
+        <location filename="../src/dialogs/ascent_dialog.cpp" line="1000"/>
         <source>Image file cannot be read:
 %1
 Reason: %2.
@@ -252,6 +273,150 @@ Do you want to use it anyway?</source>
 Grund: %2.
 
 Soll sie trotzdem verwendet werden?</translation>
+    </message>
+</context>
+<context>
+    <name>AscentImageWidget</name>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="72"/>
+        <source>Image could not be loaded</source>
+        <translation>Bild kann nicht angezeigt werden</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="128"/>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="140"/>
+        <source>Replace</source>
+        <translation>Ersetzen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="152"/>
+        <source>Mass relocate</source>
+        <translation>Pfade anpassen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="288"/>
+        <source>Photo description</source>
+        <translation>Bildbeschreibung</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="315"/>
+        <source>Edit photo description</source>
+        <translation>Bildbeschreibung bearbeiten</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="318"/>
+        <source>Edit</source>
+        <translation>Bearbeiten</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="342"/>
+        <source>Move current photo</source>
+        <translation>Foto verschieben</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="379"/>
+        <source>Move current photo towards the front</source>
+        <translation>Angezeigtes Foto nach vorne verschieben</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="389"/>
+        <source>Move current photo towards the back</source>
+        <translation>Angezeigtes Foto nach hinten verschieben</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="446"/>
+        <source>Go to first photo</source>
+        <translation>Zum ersten Foto</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="467"/>
+        <source>Go to previous photo</source>
+        <translation>Zum vorherigen Foto</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="488"/>
+        <source>Go to next photo</source>
+        <translation>Zum nächsten Foto</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="509"/>
+        <source>Go to last photo</source>
+        <translation>Zum letzten Foto</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="539"/>
+        <source>Slideshow</source>
+        <translation>Diashow</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="574"/>
+        <source>Start/stop slideshow</source>
+        <translation>Diashow starten/stoppen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="596"/>
+        <source>Time between photos in seconds</source>
+        <translation>Zeit zwischen Fotos in Sekunden</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="614"/>
+        <source>Start slideshow automatically after changing to another ascent</source>
+        <translation>Bei jeder Besteigung Diashow automatisch starten</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="617"/>
+        <source>Autostart</source>
+        <translation>Autostart</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="651"/>
+        <source>Add one or multiple photos</source>
+        <translation>Ein oder mehrere Fotos hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_image_widget.ui" line="672"/>
+        <source>Remove photo</source>
+        <translation>Angezeigtes Foto entfernen</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="232"/>
+        <source>
+More details: %1.</source>
+        <translation>
+Mehr Details: &quot;%1.&quot;</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="242"/>
+        <source>This image file cannot be shown:
+%1
+Reason: %2.%3
+
+You can remove the image, replace the file, or mass relocate image files in the whole database.</source>
+        <translation>Diese Bilddatei kann nicht angezeigt werden:
+%1
+Grund: %2.%3
+
+Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="313"/>
+        <source>No photos</source>
+        <translation>Keine Fotos</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="315"/>
+        <source>Photo %1 of %2</source>
+        <translation>Foto %1 von %2</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="481"/>
+        <source>Replace %1</source>
+        <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
+        <translation>Bilddatei ersetzen: %1</translation>
     </message>
 </context>
 <context>
@@ -308,19 +473,19 @@ Soll sie trotzdem verwendet werden?</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="370"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="300"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="374"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="304"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="378"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="308"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -437,7 +602,6 @@ Soll sie trotzdem verwendet werden?</translation>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
         <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1569"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
@@ -462,158 +626,17 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1381"/>
-        <source>Image could not be loaded</source>
-        <translation>Bild kann nicht angezeigt werden</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1437"/>
-        <source>Remove</source>
-        <translation>Entfernen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1449"/>
-        <source>Replace</source>
-        <translation>Ersetzen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1461"/>
-        <source>Mass relocate</source>
-        <translation>Pfade anpassen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1545"/>
-        <source>Photo description</source>
-        <translation>Bildbeschreibung</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1566"/>
-        <source>Edit photo description</source>
-        <translation>Bildbeschreibung bearbeiten</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1593"/>
-        <source>Move current photo</source>
-        <translation>Foto verschieben</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1624"/>
-        <source>Move current photo towards the front</source>
-        <translation>Angezeigtes Foto nach vorne verschieben</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1634"/>
-        <source>Move current photo towards the back</source>
-        <translation>Angezeigtes Foto nach hinten verschieben</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1679"/>
-        <source>Go to first photo</source>
-        <translation>Zum ersten Foto</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1700"/>
-        <source>Go to previous photo</source>
-        <translation>Zum vorherigen Foto</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1721"/>
-        <source>Go to next photo</source>
-        <translation>Zum nächsten Foto</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1742"/>
-        <source>Go to last photo</source>
-        <translation>Zum letzten Foto</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1772"/>
-        <source>Slideshow</source>
-        <translation>Diashow</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1807"/>
-        <source>Start/stop slideshow</source>
-        <translation>Diashow starten/stoppen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1829"/>
-        <source>Time between photos in seconds</source>
-        <translation>Zeit zwischen Fotos in Sekunden</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1832"/>
-        <source>s</source>
-        <translation>s</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1847"/>
-        <source>Start slideshow automatically after changing to another ascent</source>
-        <translation>Bei jeder Besteigung Diashow automatisch starten</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1850"/>
-        <source>Autostart</source>
-        <translation>Autostart</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1884"/>
-        <source>Add one or multiple photos</source>
-        <translation>Ein oder mehrere Fotos hinzufügen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1905"/>
-        <source>Remove photo</source>
-        <translation>Angezeigtes Foto entfernen</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="597"/>
-        <source>
-More details: %1.</source>
-        <translation>
-Mehr Details: &quot;%1.&quot;</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="607"/>
-        <source>This image file cannot be shown:
-%1
-Reason: %2.%3
-
-You can remove the image, replace the file, or mass relocate image files in the whole database.</source>
-        <translation>Diese Bilddatei kann nicht angezeigt werden:
-%1
-Grund: %2.%3
-
-Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="678"/>
-        <source>No photos</source>
-        <translation>Keine Fotos</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="680"/>
-        <source>Photo %1 of %2</source>
-        <translation>Foto %1 von %2</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="846"/>
-        <source>Replace %1</source>
-        <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
-        <translation>Bilddatei ersetzen: %1</translation>
-    </message>
-    <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1359"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="735"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1360"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="736"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="1361"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="737"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>
@@ -687,36 +710,41 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/db/tables_spec/ascents_table.cpp" line="55"/>
+        <source>GPX file</source>
+        <translation>GPX-Datei</translation>
+    </message>
+    <message>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="56"/>
         <source>Description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="204"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="207"/>
         <source>Ascent</source>
         <translation>Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="214"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="217"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="224"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="227"/>
         <source>Edit ascent...</source>
         <translation>Besteigung bearbeiten...</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="266"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="269"/>
         <source>New custom column for ascents</source>
         <translation>Neue benutzerdefinierte Spalte für Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="276"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="279"/>
         <source>New ascent filter</source>
         <translation>Neuer Besteigungs-Filter</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="288"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="291"/>
         <source>%Ln ascent(s)</source>
         <translation>
             <numerusform>%Ln Besteigung</numerusform>
@@ -724,12 +752,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message>
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="234"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="237"/>
         <source>Saved new ascent.</source>
         <translation>Neue Besteigung gespeichert.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="245"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="248"/>
         <source>Saved changes in %Ln ascent(s).</source>
         <translation>
             <numerusform>Änderungen in Besteigung gespeichert.</numerusform>
@@ -737,7 +765,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/db/tables_spec/ascents_table.cpp" line="256"/>
+        <location filename="../src/db/tables_spec/ascents_table.cpp" line="259"/>
         <source>Deleted %Ln ascent(s).</source>
         <translation>
             <numerusform>Besteigung gelöscht.</numerusform>
@@ -761,12 +789,12 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
 <context>
     <name>ColumnWizard</name>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="545"/>
+        <location filename="../src/main/column_wizard.cpp" line="546"/>
         <source>Help with creating a custom column</source>
         <translation>Hilfe beim Erstellen einer benutzerdefinierten Spalte</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="546"/>
+        <location filename="../src/main/column_wizard.cpp" line="547"/>
         <source>This wizard will create a new column for the %1 table.
 Note that this custom column will not hold any new data, but show data already in the database, either directly or processed to show statistical data.
 
@@ -792,47 +820,47 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
 <context>
     <name>ColumnWizardFoldOpPage</name>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="222"/>
+        <location filename="../src/main/column_wizard.cpp" line="223"/>
         <source>Choose fold operation</source>
         <translation>Reduktions-Operator auswählen</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="223"/>
+        <location filename="../src/main/column_wizard.cpp" line="224"/>
         <source>Choose a method for reducing multiple values into one for displaying them.</source>
         <translation>Wenn eine Zeile mit mehreren Werten verknüpft ist, können diese auf einen Wert reduziert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="225"/>
+        <location filename="../src/main/column_wizard.cpp" line="226"/>
         <source>Numeric values can be processed in the following ways:</source>
         <translation>Zahlenwerte können folgendermaßen verarbeitet werden:</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="229"/>
+        <location filename="../src/main/column_wizard.cpp" line="230"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="230"/>
+        <location filename="../src/main/column_wizard.cpp" line="231"/>
         <source>Sum</source>
         <translation>Summe</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="231"/>
+        <location filename="../src/main/column_wizard.cpp" line="232"/>
         <source>Maximum</source>
         <translation>Maximum</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="232"/>
+        <location filename="../src/main/column_wizard.cpp" line="233"/>
         <source>Minimum</source>
         <translation>Minimum</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="240"/>
+        <location filename="../src/main/column_wizard.cpp" line="241"/>
         <source>Values can be collected in a comma-separated list:</source>
         <translation>Werte können als Komma-separierte Liste angezeigt werden:</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="244"/>
+        <location filename="../src/main/column_wizard.cpp" line="245"/>
         <source>List</source>
         <translation>Liste</translation>
     </message>
@@ -840,67 +868,67 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
 <context>
     <name>ColumnWizardSettingsPage</name>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="325"/>
+        <location filename="../src/main/column_wizard.cpp" line="326"/>
         <source>Customization</source>
         <translation>Anpassung</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="326"/>
+        <location filename="../src/main/column_wizard.cpp" line="327"/>
         <source>Choose a name for the new column and customize further settings.</source>
         <translation>Name der neuen Spalte und gegebenenfalls weitere Optionen anpassen.</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="328"/>
+        <location filename="../src/main/column_wizard.cpp" line="329"/>
         <source>Name the new column:</source>
         <translation>Name für die neue Spalte:</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="331"/>
+        <location filename="../src/main/column_wizard.cpp" line="332"/>
         <source>Required</source>
         <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="340"/>
+        <location filename="../src/main/column_wizard.cpp" line="341"/>
         <source>Set a suffix to be appended to every cell of the column:</source>
         <translation>Suffix, das an den Wert jeder Zelle angehängt wird:</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="343"/>
+        <location filename="../src/main/column_wizard.cpp" line="344"/>
         <source>Optional</source>
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="401"/>
+        <location filename="../src/main/column_wizard.cpp" line="402"/>
         <source># %1</source>
         <translation># %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="431"/>
+        <location filename="../src/main/column_wizard.cpp" line="432"/>
         <source>Avg. %1</source>
         <translation>Schnitt %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="432"/>
+        <location filename="../src/main/column_wizard.cpp" line="433"/>
         <source>Sum of %1</source>
         <translation>Summe %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="433"/>
+        <location filename="../src/main/column_wizard.cpp" line="434"/>
         <source>Max %1</source>
         <translation>Max. %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="434"/>
+        <location filename="../src/main/column_wizard.cpp" line="435"/>
         <source>Min %1</source>
         <translation>Min. %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="440"/>
+        <location filename="../src/main/column_wizard.cpp" line="441"/>
         <source>All %1</source>
         <translation>Alle %1</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="442"/>
+        <location filename="../src/main/column_wizard.cpp" line="443"/>
         <source>%1 (List)</source>
         <translation>%1 (Liste)</translation>
     </message>
@@ -923,17 +951,17 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
         <translation>%1 (selbe Tabelle)</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="83"/>
+        <location filename="../src/main/column_wizard.cpp" line="84"/>
         <source>Use number of connected entries</source>
         <translation>Anzahl der verknüpften Einträge verwenden</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="84"/>
+        <location filename="../src/main/column_wizard.cpp" line="85"/>
         <source>Show the number of items in this table which are connected to each row in the table containing the new column.</source>
         <translation>Anzahl von Einträgen der ausgewählten Tabelle anzeigen, die mit der jeweiligen Zeile der offenen Tabelle verknüpft sind.</translation>
     </message>
     <message>
-        <location filename="../src/main/column_wizard.cpp" line="128"/>
+        <location filename="../src/main/column_wizard.cpp" line="129"/>
         <source>Identity (%1)</source>
         <translation>Identität (%1)</translation>
     </message>
@@ -941,82 +969,87 @@ Jede Tabelle hat einen fett gedruckten Eintrag. Dieser kann jeweils für die Anw
 <context>
     <name>CompositeAscentsTable</name>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="102"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="104"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="100"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="102"/>
         <source>Index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="104"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="106"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="106"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="108"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="107"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="109"/>
         <source>Mountain range</source>
         <translation>Gebirge</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="116"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="118"/>
         <source>Nth ascent of peak</source>
         <translation>n/Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="117"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="119"/>
+        <source>GPX</source>
+        <translation>GPX</translation>
+    </message>
+    <message>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="120"/>
         <source>Num. photos</source>
         <translation>Anzahl Fotos</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="125"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="128"/>
         <source>Trip start date</source>
         <translation>Datum Beginn Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="126"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="129"/>
         <source>Trip end date</source>
         <translation>Datum Ende Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="127"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="130"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="105"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="107"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="108"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="110"/>
         <source>Continent</source>
         <translation>Kontinent</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="115"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="117"/>
         <source>Volcano</source>
         <translation>Vulkan</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="114"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="116"/>
         <source>Difficulty</source>
         <translation>Schwierigkeit</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="110"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="112"/>
         <source>Participants</source>
         <translation>Teilnehmende</translation>
     </message>
     <message>
-        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="111"/>
+        <location filename="../src/comp_tables/comp_item_tables/comp_ascents_table.h" line="113"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
@@ -1509,63 +1542,63 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
 <context>
     <name>DataExportThread</name>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="253"/>
-        <location filename="../src/tools/export_thread.cpp" line="326"/>
+        <location filename="../src/tools/export_thread.cpp" line="255"/>
+        <location filename="../src/tools/export_thread.cpp" line="329"/>
         <source>Exporting table %1...</source>
         <translation>Tabelle %1 wird exportiert...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="370"/>
+        <location filename="../src/tools/export_thread.cpp" line="373"/>
         <source>Table</source>
         <translation>Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="371"/>
+        <location filename="../src/tools/export_thread.cpp" line="374"/>
         <source>Column</source>
         <translation>Spalte</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="372"/>
+        <location filename="../src/tools/export_thread.cpp" line="375"/>
         <source>Enumerator index</source>
         <translation>Enumerator-Index</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="373"/>
+        <location filename="../src/tools/export_thread.cpp" line="376"/>
         <source>Enumerator name</source>
         <translation>Enumerator-Name</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="374"/>
+        <location filename="../src/tools/export_thread.cpp" line="377"/>
         <source>Nested enumerator index</source>
         <translation>Verschachtelter Enumerator-Index</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="375"/>
+        <location filename="../src/tools/export_thread.cpp" line="378"/>
         <source>Nested enumerator name</source>
         <translation>Verschachtelter Enumerator-Name</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="377"/>
+        <location filename="../src/tools/export_thread.cpp" line="380"/>
         <source>Enumerator names</source>
         <translation>Enumerator-Namen</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="378"/>
+        <location filename="../src/tools/export_thread.cpp" line="381"/>
         <source>Exporting enumerator names table...</source>
         <translation>Tabelle für Enumerator-Namen wird exportiert...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="234"/>
+        <location filename="../src/tools/export_thread.cpp" line="236"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="148"/>
+        <location filename="../src/tools/export_thread.cpp" line="149"/>
         <source>Preparing table...</source>
         <translation>Tabelle wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/tools/export_thread.cpp" line="159"/>
+        <location filename="../src/tools/export_thread.cpp" line="160"/>
         <source>Exporting table...</source>
         <translation>Tabelle wird exportiert...</translation>
     </message>
@@ -1600,28 +1633,28 @@ Hinweis: Die Projektdatei selbst kann ebenfalls mit jedem allgemeinen SQLite-Les
         <translation>Details:</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="214"/>
+        <location filename="../src/db/db_upgrade.cpp" line="222"/>
         <source>Database upgrade necessary</source>
         <translation>Datenbank muss aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="216"/>
+        <location filename="../src/db/db_upgrade.cpp" line="224"/>
         <source>After the upgrade, previous versions of PAL will no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="217"/>
+        <location filename="../src/db/db_upgrade.cpp" line="225"/>
         <source>After the upgrade, previous versions of PAL might no longer be able to open the file.</source>
         <translation>Nach der Aktualisierung werden ältere Versionen von PAL die Datei möglicherweise nicht mehr öffnen können.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="218"/>
-        <location filename="../src/db/db_upgrade.cpp" line="248"/>
+        <location filename="../src/db/db_upgrade.cpp" line="226"/>
+        <location filename="../src/db/db_upgrade.cpp" line="256"/>
         <source>Note: A copy of the project file in its current state will be created as a backup.</source>
         <translation>Hinweis: Eine Kopie der Projektdatei in ihrem aktuellen Zustand wird als Backup gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="220"/>
+        <location filename="../src/db/db_upgrade.cpp" line="228"/>
         <source>Opening this project requires upgrading its database from version %1 to version %2.
 %3
 
@@ -1636,22 +1669,22 @@ Soll die Aktualisierung jetzt durchgeführt werden?
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="233"/>
+        <location filename="../src/db/db_upgrade.cpp" line="241"/>
         <source>Do you want to perform the upgrade anyway?</source>
         <translation>Soll die Aktualisierung trotzdem durchgeführt werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="247"/>
+        <location filename="../src/db/db_upgrade.cpp" line="255"/>
         <source>App version outdated</source>
         <translation>App-Version veraltet</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="249"/>
+        <location filename="../src/db/db_upgrade.cpp" line="257"/>
         <source>Do you want to open the file anyway?</source>
         <translation>Soll die Datei trotzdem geöffnet werden?</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="251"/>
+        <location filename="../src/db/db_upgrade.cpp" line="259"/>
         <source>This project file has version %1, while the app has version %2.
 Opening a file with an older version of PAL can lead to errors, crashes and data corruption.It is strongly recommended to only use PAL version %1 or newer to open this file.
 
@@ -1666,7 +1699,7 @@ Eine Datei mit einer älteren Version von PAL zu öffnen, kann zu Fehlern, Abst�
 %4</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="294"/>
+        <location filename="../src/db/db_upgrade.cpp" line="302"/>
         <source>An error occurred while trying to create a backup of the project file.
 %1
 
@@ -1677,17 +1710,17 @@ Note: You can still create a backup manually before proceeding.</source>
 Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="292"/>
+        <location filename="../src/db/db_upgrade.cpp" line="300"/>
         <source>Error creating backup</source>
         <translation>Fehler beim Erstellen des Backups</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="316"/>
+        <location filename="../src/db/db_upgrade.cpp" line="324"/>
         <source>Database upgrade successful</source>
         <translation>Aktualisierung der Datenbank erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/db/db_upgrade.cpp" line="317"/>
+        <location filename="../src/db/db_upgrade.cpp" line="325"/>
         <source>The database was successfully upgraded from version %1 to version %2.</source>
         <translation>Die Datenbank wurde erfolgreich von Version %1 zu Version %2 aktualisiert.</translation>
     </message>
@@ -2332,6 +2365,39 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     </message>
 </context>
 <context>
+    <name>GpxMapWidget</name>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="72"/>
+        <source>No GPX file set for this ascent</source>
+        <translation>Keine GPX-Datei zu dieser Besteigung</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="101"/>
+        <source>You can have a map of this ascent shown here by setting a path to a GPX track file down below.</source>
+        <translation>Hier kann eine Karte der Besteigung angezeigt werden, wenn unten der Pfad zu einer GPX-Datei angegeben wird.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="125"/>
+        <source>GPX file could not be loaded</source>
+        <translation>GPX-Datei kann nicht geöffnet werden</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="154"/>
+        <source>PAL is unable to show a map of this ascent because the GPX file cannot be read.&lt;br&gt;&lt;br&gt;You can try to fix the file path down below or remove it completely.</source>
+        <translation>PAL kann für diese Besteigung keine Karte zeigen, da die angegebene GPX-Datei nicht gelesen werden kann.&lt;br&gt;&lt;br&gt;Der Pfad kann unten korrigiert oder entfernt werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="180"/>
+        <source>Path to GPX file:</source>
+        <translation>Pfad zu GPX-Datei:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="190"/>
+        <source>Browse...</source>
+        <translation>Durchsuchen...</translation>
+    </message>
+</context>
+<context>
     <name>HikerDialog</name>
     <message>
         <location filename="../src/ui/hiker_dialog.ui" line="20"/>
@@ -2828,119 +2894,119 @@ Trotzdem speichern?</translation>
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="323"/>
+        <location filename="../src/main/main_window.cpp" line="327"/>
         <source>Opening database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="327"/>
+        <location filename="../src/main/main_window.cpp" line="331"/>
         <source>Preparing tables...</source>
         <translation>Tabellen werden vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="348"/>
+        <location filename="../src/main/main_window.cpp" line="352"/>
         <source>Preparing table %1...</source>
         <translation>Tabelle %1 wird vorbereitet...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="472"/>
+        <location filename="../src/main/main_window.cpp" line="476"/>
         <source>Table is empty</source>
         <translation>Tabelle ist leer</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="477"/>
+        <location filename="../src/main/main_window.cpp" line="481"/>
         <source>%2 of %1 entry shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Eintrag (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="477"/>
+        <location filename="../src/main/main_window.cpp" line="481"/>
         <source>%2 of %1 entries shown (%3 filtered out)</source>
         <translation>Zeige %2 von %1 Einträgen (%3 ausgefiltert)</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="479"/>
+        <location filename="../src/main/main_window.cpp" line="483"/>
         <source>%1 entry</source>
         <translation>%1 Eintrag</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="479"/>
+        <location filename="../src/main/main_window.cpp" line="483"/>
         <source>%1 entries</source>
         <translation>%1 Einträge</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="489"/>
+        <location filename="../src/main/main_window.cpp" line="493"/>
         <source>%1 filter applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="489"/>
+        <location filename="../src/main/main_window.cpp" line="493"/>
         <source>%1 filters applied</source>
         <translation>%1 Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="492"/>
+        <location filename="../src/main/main_window.cpp" line="496"/>
         <source>No filters applied</source>
         <translation>Keine Filter aktiv</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="785"/>
+        <location filename="../src/main/main_window.cpp" line="790"/>
         <source>Updating table</source>
         <translation>Tabelle wird aktualisiert</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="786"/>
+        <location filename="../src/main/main_window.cpp" line="791"/>
         <source>Updating table...</source>
         <translation>Tabelle wird aktualisiert...</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="835"/>
+        <location filename="../src/main/main_window.cpp" line="840"/>
         <source>Save new database as</source>
         <translation>Neue Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="878"/>
+        <location filename="../src/main/main_window.cpp" line="883"/>
         <source>Open database</source>
         <translation>Datenbank öffnen</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="881"/>
+        <location filename="../src/main/main_window.cpp" line="886"/>
         <source>Database files</source>
         <translation>Datanbank-Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="881"/>
+        <location filename="../src/main/main_window.cpp" line="886"/>
         <source>All files</source>
         <translation>Alle Dateien</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="934"/>
-        <location filename="../src/main/main_window.cpp" line="944"/>
-        <location filename="../src/main/main_window.cpp" line="958"/>
+        <location filename="../src/main/main_window.cpp" line="939"/>
+        <location filename="../src/main/main_window.cpp" line="949"/>
+        <location filename="../src/main/main_window.cpp" line="963"/>
         <source>Save database as</source>
         <translation>Datenbank speichern unter</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="945"/>
+        <location filename="../src/main/main_window.cpp" line="950"/>
         <source>You cannot Save As to the same file.</source>
         <translation>Datenbank kann nicht unter dem selben Namen gsepeichert werden.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="946"/>
+        <location filename="../src/main/main_window.cpp" line="951"/>
         <source>Hint:</source>
         <translation>Hinweis:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="946"/>
+        <location filename="../src/main/main_window.cpp" line="951"/>
         <source>PAL auto-saves every change you make immediately, there is no need to save manually.</source>
         <translation>PAL sichert automatisch alle Änderungen sofort. Manuelles Speichern ist nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="959"/>
+        <location filename="../src/main/main_window.cpp" line="964"/>
         <source>Writing database file failed:</source>
         <translation>Speichern der neuen Datenbank-Datei fehlgeschlagen:</translation>
     </message>
     <message>
-        <location filename="../src/main/main_window.cpp" line="961"/>
+        <location filename="../src/main/main_window.cpp" line="966"/>
         <source>Reverting to previously opened file:</source>
         <translation>Kehre zurück zu vorher geöffneter Datei:</translation>
     </message>
@@ -2984,7 +3050,7 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/main/main_window_tab_content.cpp" line="282"/>
-        <location filename="../src/main/main_window_tab_content.cpp" line="519"/>
+        <location filename="../src/main/main_window_tab_content.cpp" line="520"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -3838,7 +3904,7 @@ Trotzdem speichern?</translation>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="334"/>
+        <location filename="../src/ui/settings_window.ui" line="389"/>
         <source>Visual style</source>
         <translation>Oberflächenstil</translation>
     </message>
@@ -3898,32 +3964,17 @@ Trotzdem speichern?</translation>
         <translation>Sortierung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="351"/>
+        <location filename="../src/ui/settings_window.ui" line="406"/>
         <source>Color scheme</source>
         <translation>Farbschema</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="690"/>
-        <source>Google Search API key</source>
-        <translation>Google Search API-Schlüssel</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/settings_window.ui" line="711"/>
-        <source>Set a Google Search API key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</source>
-        <translation>Hier Google Search API angeben um die automatische Suche nach Wikipedia-Links zu verbessern.&lt;br/&gt;Eine Anleitung zum Erstellen eines Schlüssels findet sich &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt;. Danach muss &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; die Custom Search API aktiviert werden.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/settings_window.ui" line="727"/>
-        <source>Paste API key here</source>
-        <translation>API-Schlüssel hier einfügen</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/settings_window.ui" line="737"/>
+        <location filename="../src/ui/settings_window.ui" line="306"/>
         <source>Ascent Viewer</source>
         <translation>Besteigungs-Ansicht</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="758"/>
+        <location filename="../src/ui/settings_window.ui" line="327"/>
         <source>Show ascent title below peak name, not in ascent box</source>
         <translation>Besteigungs-Titel unter Gipfelname statt unter Besteigung anzeigen</translation>
     </message>
@@ -3958,77 +4009,117 @@ Trotzdem speichern?</translation>
         <translation>Ausgeblendete Spalten</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="382"/>
+        <location filename="../src/ui/settings_window.ui" line="339"/>
+        <source>Default GPX map type</source>
+        <translation>Standard-GPX-Kartentyp</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="351"/>
+        <source>Show elevation profile below GPX maps</source>
+        <translation>Höhenprofil unter GPX-Karten anzeigen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="437"/>
         <source>Default values for new items</source>
         <translation>Standardwerte für neue Einträge</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="403"/>
+        <location filename="../src/ui/settings_window.ui" line="458"/>
         <source>Ascent</source>
         <translation>Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="427"/>
+        <location filename="../src/ui/settings_window.ui" line="482"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="434"/>
+        <location filename="../src/ui/settings_window.ui" line="489"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="462"/>
+        <location filename="../src/ui/settings_window.ui" line="517"/>
         <source>days in the past</source>
         <translation>Tage vor aktuellem Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="484"/>
+        <location filename="../src/ui/settings_window.ui" line="539"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="565"/>
+        <location filename="../src/ui/settings_window.ui" line="620"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="589"/>
+        <location filename="../src/ui/settings_window.ui" line="644"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="638"/>
+        <location filename="../src/ui/settings_window.ui" line="693"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="662"/>
+        <location filename="../src/ui/settings_window.ui" line="717"/>
         <source>Specify dates</source>
         <translation>Start- und Enddatum angeben</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <location filename="../src/ui/settings_window.ui" line="745"/>
+        <source>Google Search API Key</source>
+        <translation>Google Search API-Schlüssel</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="766"/>
+        <source>Set a Google Search API Key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API Key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</source>
+        <translation>Hier Google Search API angeben um die automatische Suche nach Wikipedia-Links zu verbessern.&lt;br/&gt;Eine Anleitung zum Erstellen eines Schlüssels findet sich &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt;. Danach muss &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; die Custom Search API aktiviert werden.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="782"/>
+        <source>Paste API Key here</source>
+        <translation>API-Schlüssel hier einfügen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="792"/>
+        <source>Mapbox Token</source>
+        <translation>Mapbox-Token</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="813"/>
+        <source>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</source>
+        <translation>Hier Mapbox-Token angeben um in der Besteigungs-Ansicht GPX-Tracks mit &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt; anzeigen zu können.&lt;br/&gt;Zum Erstellen eines Tokens &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; bei Mapbox registrieren. Dann &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;Port Forwarding im Router einrichten&lt;/span&gt;&lt;/a&gt; und &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;eine Regel für eingehende Verbindungen in der Firewall erstellen&lt;/span&gt;&lt;/a&gt;, beides für TCP auf Port %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="829"/>
+        <source>Paste Mapbox Token here</source>
+        <translation>Mapbox-Token hier einfügen</translation>
+    </message>
+    <message>
+        <location filename="../src/settings/settings_window.cpp" line="47"/>
         <source>System default</source>
         <translation>System-Standard</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <location filename="../src/settings/settings_window.cpp" line="47"/>
         <source>Light</source>
         <translation>Hell</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="45"/>
+        <location filename="../src/settings/settings_window.cpp" line="47"/>
         <source>Dark</source>
         <translation>Dunkel</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="242"/>
+        <location filename="../src/settings/settings_window.cpp" line="272"/>
         <source>Language setting changed</source>
         <translation>Spracheinstellung geändert</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="243"/>
+        <location filename="../src/settings/settings_window.cpp" line="273"/>
         <source>Changing the language requires a restart.</source>
         <translation>Die Änderung der Sprache erfordert einen Neustart.</translation>
     </message>
