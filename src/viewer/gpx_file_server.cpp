@@ -27,65 +27,79 @@
 
 
 GpxFileServer::GpxFileServer() :
+	server(QHttpServer()),
+	tcpServer(nullptr),
+	currentFile(nullptr),
+	currentFileIndex(0),
 	ip(getPublicIp())
+{}
+
+GpxFileServer::~GpxFileServer()
 {
-	gpxFilePaths += "D:\\Temp\\GPX\\simple.gpx";
-	gpxFilePaths += "D:\\Temp\\GPX\\gpx1.gpx";
-	gpxFilePaths += "D:\\Temp\\GPX\\gpx2.gpx";
+	delete tcpServer;
 }
 
-void GpxFileServer::startServer()
+
+
+void GpxFileServer::setup()
 {
 	// Add route with filename parameter
+	// Handle file requests
 	server.route("/files/<arg>", [=] (const QString& filename) {
-		QString filePath;
-		
-		// Match only exact whitelisted filenames
-		for (const QString &f : std::as_const(gpxFilePaths)) {
-			QFileInfo fi(f);
-			if (fi.fileName() == filename) {
-				filePath = fi.absoluteFilePath();
-				break;
-			}
-		}
-		
-		if (filePath.isEmpty()) {
+		if (filename.isEmpty() || !currentFile) {
 			return QHttpServerResponse(QHttpServerResponder::StatusCode::NotFound);
 		}
 		
-		QFile file(filePath);
-		if (!file.open(QIODevice::ReadOnly)) {
+		if (filename != getCurrentServersideFilename()) {
+			return QHttpServerResponse(QHttpServerResponder::StatusCode::Forbidden);
+		}
+		
+		if (!currentFile->open(QIODevice::ReadOnly)) {
 			return QHttpServerResponse(QHttpServerResponder::StatusCode::InternalServerError);
 		}
 		
-		QByteArray data = file.readAll();
-		file.close();
+		const QByteArray data = currentFile->readAll();
+		currentFile->close();
 		
 		QHttpServerResponse response = QHttpServerResponse(data);
 		setHttpHeadersFor(response);
 		return response;
 	});
 	
-	// Handle preflight OPTIONS requests for CORS
-	server.route("/files/<arg>", QHttpServerRequest::Method::Options, [](const QString &) {
+	// Handle OPTIONS requests
+	server.route("/files/<arg>", QHttpServerRequest::Method::Options, [] (const QString&) {
 		QHttpServerResponse response = QHttpServerResponse(QHttpServerResponse::StatusCode::Ok);
 		setHttpHeadersFor(response);
 		return response;
 	});
 	
-	// Listen on an available port
+	// Listen
+	delete tcpServer;
 	tcpServer = new QTcpServer();
 	if (!tcpServer->listen(QHostAddress::Any, port) || !server.bind(tcpServer)) {
-		qDebug() << "HTTP server: Listening failed";
+		qDebug() << "GPX HTTP server: Listening failed";
 		delete tcpServer;
 		return;
 	}
-	qDebug() << "HTTP server: Listening on port" << port;
+}
+
+QString GpxFileServer::serveNewFile(const QString& filepath)
+{
+	delete currentFile;
+	currentFile = new QFile(filepath);
+	currentFileIndex++;
 	
-	for (const QString& file : std::as_const(gpxFilePaths)) {
-		const QString filename = QFileInfo(file).fileName();
-		qDebug() << QString("Serving: %1 -> http://%2:%3/files/%4").arg(filename, ip).arg(port).arg(filename);
+	if (!currentFile->exists()) {
+		return QString();
 	}
+	return getCurrentServersideFilename();
+}
+
+
+
+QString GpxFileServer::getCurrentServersideFilename() const
+{
+	return QString::number(currentFileIndex) + ".gpx";
 }
 
 void GpxFileServer::setHttpHeadersFor(QHttpServerResponse& serverResponse)
@@ -100,9 +114,10 @@ void GpxFileServer::setHttpHeadersFor(QHttpServerResponse& serverResponse)
 QString GpxFileServer::getPublicIp()
 {
 	const QNetworkRequest request(QUrl("https://api64.ipify.org"));
+	QNetworkAccessManager networkAccessManager = QNetworkAccessManager();
 	QNetworkReply* const reply = networkAccessManager.get(request);
 	
-	QEventLoop loop;
+	QEventLoop loop = QEventLoop();
 	QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
 	loop.exec();
 	

@@ -166,6 +166,7 @@ HEADERS += \
 	src/viewer/ascent_viewer.h \
 	src/viewer/file_drop_frame.h \
 	src/viewer/gpx_file_server.h \
+	src/viewer/gpx_map_widget.h \
 	src/viewer/icon_group_box.h \
 	src/viewer/scalable_image_label.h
 
@@ -261,6 +262,7 @@ SOURCES += \
 	src/viewer/ascent_image_widget.cpp \
 	src/viewer/ascent_viewer.cpp \
 	src/viewer/gpx_file_server.cpp \
+	src/viewer/gpx_map_widget.cpp \
 	src/viewer/scalable_image_label.cpp
 
 FORMS += \
@@ -270,6 +272,7 @@ FORMS += \
 	src/ui/export_dialog.ui \
 	src/ui/filter_bar.ui \
 	src/ui/filter_box.ui \
+	src/ui/gpx_map_widget.ui \
 	src/ui/main_window.ui \
 	src/ui/main_window_tab.ui \
 	src/ui/add_hiker_dialog.ui \

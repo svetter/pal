@@ -54,7 +54,7 @@ public:
 	inline ~FileDropFrame()
 	{}
 	
-
+	
 public slots:
 	/**
 	 * Event handler for a beginning drag event.

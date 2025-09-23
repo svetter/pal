@@ -505,11 +505,8 @@ void AscentDialog::handle_removeHikers()
 void AscentDialog::handle_browseForGpxFile()
 {
 	// Determine path at which file dialog will open
-	QString preSelectedDir = QString(gpxFileLineEdit->text());
-	const QString preSelectedDirSetting = Settings::ascentDialog_preSelectedFilepathGpx.get();
-	if (!preSelectedDirSetting.isEmpty()) {
-		preSelectedDir = preSelectedDirSetting;
-	}
+	QString preSelectedDir = Settings::ascentDialog_preSelectedFilepathGpx.get();
+	if (preSelectedDir.isEmpty()) preSelectedDir = QString(gpxFileLineEdit->text());
 	
 	const QString filepath = openFileDialogForGpxFileSelection(*this, preSelectedDir);
 	if (filepath.isEmpty()) return;
@@ -931,7 +928,7 @@ QString openFileDialogForSinglePhotoSelection(QWidget& parent, QString preSelect
 	QString filter = getImageFileDialogFilterString();
 	QString filepath = QFileDialog::getOpenFileName(&parent, caption, preSelectedDir, filter);
 	
-	QStringList checkedPath = checkFilepathsAndAskUser(parent, {filepath});
+	QStringList checkedPath = checkImageFilepathsAndAskUser(parent, {filepath});
 	if (checkedPath.isEmpty()) return QString();
 	return checkedPath.first();
 }
@@ -951,7 +948,7 @@ QStringList openFileDialogForMultiPhotoSelection(QWidget& parent, QString preSel
 	QString filter = getImageFileDialogFilterString();
 	QStringList filepaths = QFileDialog::getOpenFileNames(&parent, caption, preSelectedDir, filter);
 	
-	filepaths = checkFilepathsAndAskUser(parent, filepaths);
+	filepaths = checkImageFilepathsAndAskUser(parent, filepaths);
 	
 	return filepaths;
 }
@@ -985,7 +982,7 @@ QString getImageFileDialogFilterString()
  * @param filepaths		The filepaths to check.
  * @return				The filepaths which are unproblematic  or confirmed by the user. Empty if the user cancels.
  */
-QStringList checkFilepathsAndAskUser(QWidget& parent, QStringList filepaths)
+QStringList checkImageFilepathsAndAskUser(QWidget& parent, QStringList filepaths)
 {
 	bool noToAll = false;
 	

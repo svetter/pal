@@ -41,7 +41,7 @@ class AscentImageWidget : public QWidget, public Ui_AscentImageWidget
 	/** The project's database. */
 	Database* db;
 	
-	ItemID* currentAscentID;
+	const ItemID* currentAscentID;
 	
 	/** List of all photos of the current ascent. */
 	QList<Photo> photos;
@@ -67,7 +67,7 @@ public:
 	virtual ~AscentImageWidget();
 	
 	// Initial setup
-	void supplyPointers(Database* db, ItemID* currentAscentID);
+	void supplyPointers(Database* db, const ItemID* currentAscentID);
 private:
 	void additionalUISetup();
 	void connectUI();

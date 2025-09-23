@@ -110,7 +110,7 @@ QString		openFileDialogForSinglePhotoSelection	(QWidget& parent, QString preSele
 QStringList	openFileDialogForMultiPhotoSelection	(QWidget& parent, QString preSelectedDir = QString(), QString overrideWindowTitle = QString());
 QString getGpxFileDialogFilterString();
 QString getImageFileDialogFilterString();
-QStringList checkFilepathsAndAskUser(QWidget& parent, QStringList filepaths);
+QStringList checkImageFilepathsAndAskUser(QWidget& parent, QStringList filepaths);
 
 
 

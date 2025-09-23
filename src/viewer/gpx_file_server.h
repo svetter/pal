@@ -22,6 +22,7 @@
 #include <QTcpServer>
 #include <QStringList>
 #include <QNetworkAccessManager>
+#include <QFile>
 
 
 
@@ -29,21 +30,25 @@ class GpxFileServer {
 private:
 	QHttpServer server;
 	QTcpServer* tcpServer;
-	QNetworkAccessManager networkAccessManager;
 	
-	QStringList gpxFilePaths;
+	QFile* currentFile;
+	int currentFileIndex;
 	
 public:
-	GpxFileServer();
-	
-	void startServer();
-	
 	const QString ip;
 	static const int port = 51673;
 	
+	GpxFileServer();
+	virtual ~GpxFileServer();
+	
+	void setup();
+	QString serveNewFile(const QString& filepath);
+	void stop();
+	
 private:
+	QString getCurrentServersideFilename() const;
 	static void setHttpHeadersFor(QHttpServerResponse& serverResponse);
-	QString getPublicIp();
+	static QString getPublicIp();
 };
 
 

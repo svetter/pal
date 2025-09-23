@@ -25,7 +25,6 @@
 #define ASCENT_VIEWER_H
 
 #include "src/main/main_window.h"
-#include "src/viewer/gpx_file_server.h"
 #include "ui_ascent_viewer.h"
 
 
@@ -35,8 +34,6 @@
  */
 class AscentViewer : public QDialog, public Ui_AscentViewer {
 	Q_OBJECT
-	
-	GpxFileServer gpxFileServer;
 	
 	/** The application's main window. */
 	MainWindow* const mainWindow;

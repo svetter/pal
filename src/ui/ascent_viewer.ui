@@ -1284,7 +1284,7 @@
             <number>10</number>
            </property>
            <item>
-            <widget class="QWebEngineView" name="webEngineWidget" native="true">
+            <widget class="GpxMapWidget" name="gpxMapWidget" native="true">
              <property name="minimumSize">
               <size>
                <width>250</width>
@@ -1327,9 +1327,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QWebEngineView</class>
+   <class>GpxMapWidget</class>
    <extends>QWidget</extends>
-   <header>QWebEngineView</header>
+   <header>src/viewer/gpx_map_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

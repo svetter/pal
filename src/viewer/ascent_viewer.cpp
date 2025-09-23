@@ -59,6 +59,7 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	setupUi(this);
 	
 	imageWidget->supplyPointers(&db, &currentAscentID);
+	gpxMapWidget->supplyPointers(&db, &currentAscentID);
 	
 	setWindowIcon(QIcon(":/icons/ico/ascent_viewer_multisize_square.ico"));
 	setSizeGripEnabled(true);
@@ -70,42 +71,6 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	setupShortcuts();
 	
 	changeToAscent(viewRowIndex);
-	
-
-	// for testing:
-	gpxFileServer.startServer();
-	
-	const QString filename = "gpx1.gpx";
-	const QString serverIp = gpxFileServer.ip;
-	const QString ipWithBrackets = serverIp.contains(":") ? QString("[%1]").arg(serverIp) : serverIp;
-	const QString port = QString::number(gpxFileServer.port);
-	const QString gpxFileUrl = QString("http://%1:%2/files/%3")
-		.arg(ipWithBrackets, port, filename);
-	
-	const QString mapboxToken = Settings::mapboxToken.get();
-	const QString mapType = Settings::ascentViewer_defaultMapType.get();
-	const QString showElevationProfile = QVariant(Settings::ascentViewer_showElevationProfile.get()).toString();
-	const QString optionsJson = QString(R"({
-		"token": "%1",
-		"files": ["%2"],
-		"basemap": "%3",
-		"elevation": {
-			"show": %4,
-			"height": "175"
-		},
-		"distanceMarkers": true,
-		"directionMarkers": true,
-		"distanceUnits": "metric",
-		"velocityUnits": "speed",
-		"temperatureUnits": "celsius",
-		"theme": "light"
-	})").arg(mapboxToken, gpxFileUrl, mapType, showElevationProfile);
-	const QString optionsEncoded = QUrl::toPercentEncoding(optionsJson);
-	const QString embedUrl = QString("https://gpx.studio/embed?options=%1").arg(optionsEncoded);
-	
-	QWebEngineSettings* engineSettings = webEngineWidget->page()->settings();
-	engineSettings->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, true);
-	webEngineWidget->setUrl(QUrl(embedUrl));
 }
 
 /**
@@ -228,6 +193,7 @@ void AscentViewer::setupShortcuts()
 void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 {
 	imageWidget->ascentAboutToChange();
+	gpxMapWidget->ascentAboutToChange();
 	
 	saveTripDescription();
 	saveAscentDescription();
@@ -251,7 +217,9 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 	updateAscentNavigationNumbers();
+	
 	imageWidget->ascentChanged();
+	gpxMapWidget->ascentChanged();
 }
 
 /**
@@ -794,6 +762,7 @@ void AscentViewer::reject()
 	saveAscentDescription();
 	saveImplicitSettings();
 	imageWidget->aboutToExit();
+	gpxMapWidget->aboutToExit();
 	QDialog::reject();
 }
 

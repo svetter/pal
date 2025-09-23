@@ -60,7 +60,7 @@ AscentImageWidget::~AscentImageWidget()
 
 // INITIAL SETUP
 
-void AscentImageWidget::supplyPointers(Database* db, ItemID* currentAscentID)
+void AscentImageWidget::supplyPointers(Database* db, const ItemID* currentAscentID)
 {
 	this->db				= db;
 	this->currentAscentID	= currentAscentID;
@@ -703,7 +703,7 @@ void AscentImageWidget::handle_photoDescriptionEditableChanged()
  */
 void AscentImageWidget::handle_filesDropped(QStringList filepaths)
 {
-	QStringList checkedPaths = checkFilepathsAndAskUser(*this, filepaths);
+	QStringList checkedPaths = checkImageFilepathsAndAskUser(*this, filepaths);
 	if (checkedPaths.isEmpty()) return;
 	addPhotos(checkedPaths);
 }
