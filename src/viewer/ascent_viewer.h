@@ -103,6 +103,9 @@ class AscentViewer : public QDialog, public Ui_AscentViewer {
 	/** Saved sizes for the description splitter before being collapsed for an ascent with no trip. */
 	QList<int> descriptionSplitterSizes;
 	
+	/** Saved index of tab in tab area on the right which was most recently clicked by the user. */
+	int lastClickedTabIndex;
+	
 public:
 	AscentViewer(MainWindow* parent, Database& db, const ItemTypesHandler* typesHandler, ViewRowIndex viewRowIndex);
 	virtual ~AscentViewer();
@@ -147,11 +150,14 @@ private slots:
 	void handle_editAscent();
 	void handle_editPeak();
 	void handle_editTrip();
+	// Tabs
+	void handle_userClickedTab(const int index);
 	
 private:
 	// Helpers
 	void popupInfoContextMenu(QPoint pos);
 	void handleChangesToUnderlyingData(BufferRowIndex currentBufferRowIndex);
+	void switchTabIfIndicatedBySettings();
 	
 	// Exit behaviour
 	void reject() override;

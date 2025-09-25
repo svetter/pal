@@ -40,10 +40,11 @@ class SettingsWindow : public QDialog, public Ui_SettingsWindow, public Settings
 	QMainWindow& mainWindow;
 	
 	/** Lists of avalable languages, as codes and native names. */
-	const QPair<QStringList, QStringList> languages;
-	const QPair<QStringList, QStringList> styles;
-	const QPair<QStringList, QStringList> colorSchemes;
-	const QPair<QStringList, QStringList> mapTypes;
+	const QPair<QStringList, QStringList>	languages;
+	const QPair<QStringList, QStringList>	styles;
+	const QPair<QStringList, QStringList>	colorSchemes;
+	const QStringList						ascentViewerTabBehaviorModes;
+	const QPair<QStringList, QStringList>	mapTypes;
 	
 	const bool liveStyleUpdates;
 	

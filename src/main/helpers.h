@@ -63,7 +63,7 @@ QString fromHtmlEscaped(const QString& escapedString);
 
 
 
-// gpx.studio
+// Ascent viewer
 
 QPair<QStringList, QStringList> getGpxStudioMapTypes();
 

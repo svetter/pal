@@ -303,82 +303,82 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Bildbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="315"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="309"/>
         <source>Edit photo description</source>
         <translation>Bildbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="318"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="312"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="342"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="336"/>
         <source>Move current photo</source>
         <translation>Foto verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="379"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="367"/>
         <source>Move current photo towards the front</source>
         <translation>Angezeigtes Foto nach vorne verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="389"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="377"/>
         <source>Move current photo towards the back</source>
         <translation>Angezeigtes Foto nach hinten verschieben</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="446"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="422"/>
         <source>Go to first photo</source>
         <translation>Zum ersten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="467"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="443"/>
         <source>Go to previous photo</source>
         <translation>Zum vorherigen Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="488"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="464"/>
         <source>Go to next photo</source>
         <translation>Zum nächsten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="509"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="485"/>
         <source>Go to last photo</source>
         <translation>Zum letzten Foto</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="539"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="509"/>
         <source>Slideshow</source>
         <translation>Diashow</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="574"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="544"/>
         <source>Start/stop slideshow</source>
         <translation>Diashow starten/stoppen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="596"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="566"/>
         <source>Time between photos in seconds</source>
         <translation>Zeit zwischen Fotos in Sekunden</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="614"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="584"/>
         <source>Start slideshow automatically after changing to another ascent</source>
         <translation>Bei jeder Besteigung Diashow automatisch starten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="617"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="587"/>
         <source>Autostart</source>
         <translation>Autostart</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="651"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="615"/>
         <source>Add one or multiple photos</source>
         <translation>Ein oder mehrere Fotos hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_image_widget.ui" line="672"/>
+        <location filename="../src/ui/ascent_image_widget.ui" line="636"/>
         <source>Remove photo</source>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
@@ -473,19 +473,19 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="300"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="305"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="304"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="309"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="308"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="313"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -545,100 +545,143 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Alle Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="855"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="861"/>
         <source>Go to first ascent in current table order</source>
         <translation>Zur ersten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="876"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="882"/>
         <source>Go to previous ascent in current table order</source>
         <translation>Zur vorherigen Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="897"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="903"/>
         <source>Go to next ascent in current table order</source>
         <translation>Zur nächsten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="907"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="913"/>
         <source>Go to last ascent in current table order</source>
         <translation>Zur letzten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="926"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="938"/>
         <source>You can also press R</source>
         <translation>Oder &apos;R&apos; drücken</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="929"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="941"/>
         <source>&lt;a href&gt;Go to random ascent&lt;/a&gt;</source>
         <translation>&lt;a href&gt;Zu zufälliger Besteigung&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="945"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="957"/>
         <source>Ascents of same peak</source>
         <translation>Besteigungen dieses Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="997"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1015"/>
         <source>Go to first ascent of the same peak in table order</source>
         <translation>Zur ersten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1018"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1036"/>
         <source>Go to previous ascent of the same peak in table order</source>
         <translation>Zur vorherigen Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1039"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1057"/>
         <source>Go to next ascent of the same peak in table order</source>
         <translation>Zur nächsten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1049"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1067"/>
         <source>Go to last ascent of the same peak in table order</source>
         <translation>Zur letzten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1188"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1268"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1235"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1265"/>
         <source>Edit ascent description</source>
         <translation>Tourenbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1135"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1326"/>
+        <source>Images</source>
+        <translation>Bilder</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1346"/>
+        <source>Map</source>
+        <translation>Karte</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/ascent_viewer.ui" line="1165"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1155"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1185"/>
         <source>Edit trip description</source>
         <translation>Urlaubsbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1215"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1245"/>
         <source>Ascent description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="735"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="752"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="736"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="753"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="737"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="754"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
+    </message>
+</context>
+<context>
+    <name>AscentViewerTabBehaviorModeNames</name>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="81"/>
+        <source>Manual</source>
+        <translation>Manuell</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="82"/>
+        <source>Prefer last clicked</source>
+        <translation>Zuletzt geklickt priorisieren</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="83"/>
+        <source>Prefer images</source>
+        <translation>Bilder priorisieren</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="84"/>
+        <source>Prefer map</source>
+        <translation>Karte priorisieren</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="85"/>
+        <source>Always switch to images</source>
+        <translation>Immer zu Bildern wechseln</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/tab_behavior_mode.h" line="86"/>
+        <source>Always switch to map</source>
+        <translation>Immer zu Karte wechseln</translation>
     </message>
 </context>
 <context>
@@ -3904,7 +3947,7 @@ Trotzdem speichern?</translation>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="389"/>
+        <location filename="../src/ui/settings_window.ui" line="406"/>
         <source>Visual style</source>
         <translation>Oberflächenstil</translation>
     </message>
@@ -3964,7 +4007,7 @@ Trotzdem speichern?</translation>
         <translation>Sortierung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="406"/>
+        <location filename="../src/ui/settings_window.ui" line="423"/>
         <source>Color scheme</source>
         <translation>Farbschema</translation>
     </message>
@@ -4010,116 +4053,121 @@ Trotzdem speichern?</translation>
     </message>
     <message>
         <location filename="../src/ui/settings_window.ui" line="339"/>
+        <source>Images/Map tab behavior</source>
+        <translation>Verhalten der Bilder/Karte-Reiter</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/settings_window.ui" line="356"/>
         <source>Default GPX map type</source>
         <translation>Standard-GPX-Kartentyp</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="351"/>
+        <location filename="../src/ui/settings_window.ui" line="368"/>
         <source>Show elevation profile below GPX maps</source>
         <translation>Höhenprofil unter GPX-Karten anzeigen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="437"/>
+        <location filename="../src/ui/settings_window.ui" line="454"/>
         <source>Default values for new items</source>
         <translation>Standardwerte für neue Einträge</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="458"/>
+        <location filename="../src/ui/settings_window.ui" line="475"/>
         <source>Ascent</source>
         <translation>Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="482"/>
+        <location filename="../src/ui/settings_window.ui" line="499"/>
         <source>Local time</source>
         <translation>Lokalzeit</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="489"/>
+        <location filename="../src/ui/settings_window.ui" line="506"/>
         <source>Elevation gain</source>
         <translation>Höhenmeter</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="517"/>
+        <location filename="../src/ui/settings_window.ui" line="534"/>
         <source>days in the past</source>
         <translation>Tage vor aktuellem Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="539"/>
+        <location filename="../src/ui/settings_window.ui" line="556"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="620"/>
+        <location filename="../src/ui/settings_window.ui" line="637"/>
         <source>Peak</source>
         <translation>Gipfel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="644"/>
+        <location filename="../src/ui/settings_window.ui" line="661"/>
         <source>Height</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="693"/>
+        <location filename="../src/ui/settings_window.ui" line="710"/>
         <source>Trip</source>
         <translation>Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="717"/>
+        <location filename="../src/ui/settings_window.ui" line="734"/>
         <source>Specify dates</source>
         <translation>Start- und Enddatum angeben</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="745"/>
+        <location filename="../src/ui/settings_window.ui" line="762"/>
         <source>Google Search API Key</source>
         <translation>Google Search API-Schlüssel</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="766"/>
+        <location filename="../src/ui/settings_window.ui" line="783"/>
         <source>Set a Google Search API Key to improve automatic detection of peak Wikipedia links.&lt;br/&gt;Find out how to create an API Key &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. After these steps, enable the Custom Search API &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.</source>
         <translation>Hier Google Search API angeben um die automatische Suche nach Wikipedia-Links zu verbessern.&lt;br/&gt;Eine Anleitung zum Erstellen eines Schlüssels findet sich &lt;a href=&quot;https://support.google.com/googleapi/answer/6158862&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt;. Danach muss &lt;a href=&quot;https://console.cloud.google.com/apis/library/customsearch.googleapis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; die Custom Search API aktiviert werden.</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="782"/>
+        <location filename="../src/ui/settings_window.ui" line="799"/>
         <source>Paste API Key here</source>
         <translation>API-Schlüssel hier einfügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="792"/>
+        <location filename="../src/ui/settings_window.ui" line="809"/>
         <source>Mapbox Token</source>
         <translation>Mapbox-Token</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="813"/>
-        <source>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</source>
-        <translation>Hier Mapbox-Token angeben um in der Besteigungs-Ansicht GPX-Tracks mit &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt; anzeigen zu können.&lt;br/&gt;Zum Erstellen eines Tokens &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; bei Mapbox registrieren. Dann &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;Port Forwarding im Router einrichten&lt;/span&gt;&lt;/a&gt; und &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;eine Regel für eingehende Verbindungen in der Firewall erstellen&lt;/span&gt;&lt;/a&gt;, beides für TCP auf Port %1.</translation>
+        <location filename="../src/ui/settings_window.ui" line="830"/>
+        <source>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</source>
+        <translation>Hier Mapbox-Token angeben um in der Besteigungs-Ansicht GPX-Tracks mit &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt; anzeigen zu können.&lt;br/&gt;Zum Erstellen eines Tokens &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;hier&lt;/span&gt;&lt;/a&gt; bei Mapbox registrieren. Dann &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;Port Forwarding im Router einrichten&lt;/span&gt;&lt;/a&gt; und &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;eine Regel für eingehende Verbindungen in der Firewall erstellen&lt;/span&gt;&lt;/a&gt;, beides für TCP auf Port %1.</translation>
     </message>
     <message>
-        <location filename="../src/ui/settings_window.ui" line="829"/>
+        <location filename="../src/ui/settings_window.ui" line="846"/>
         <source>Paste Mapbox Token here</source>
         <translation>Mapbox-Token hier einfügen</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="47"/>
+        <location filename="../src/settings/settings_window.cpp" line="48"/>
         <source>System default</source>
         <translation>System-Standard</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="47"/>
+        <location filename="../src/settings/settings_window.cpp" line="48"/>
         <source>Light</source>
         <translation>Hell</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="47"/>
+        <location filename="../src/settings/settings_window.cpp" line="48"/>
         <source>Dark</source>
         <translation>Dunkel</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="272"/>
+        <location filename="../src/settings/settings_window.cpp" line="291"/>
         <source>Language setting changed</source>
         <translation>Spracheinstellung geändert</translation>
     </message>
     <message>
-        <location filename="../src/settings/settings_window.cpp" line="273"/>
+        <location filename="../src/settings/settings_window.cpp" line="292"/>
         <source>Changing the language requires a restart.</source>
         <translation>Die Änderung der Sprache erfordert einen Neustart.</translation>
     </message>

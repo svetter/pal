@@ -22,6 +22,7 @@
  */
 
 #include "ascent_viewer.h"
+#include "src/viewer/tab_behavior_mode.h"
 
 #include <QRandomGenerator>
 #include <QMessageBox>
@@ -54,7 +55,8 @@ AscentViewer::AscentViewer(MainWindow* parent, Database& db, const ItemTypesHand
 	ascentDescriptionEditable(false),
 	infoContextMenu(QMenu(this)),
 	goToRandomAscentShortcut(nullptr),
-	descriptionSplitterSizes({})
+	descriptionSplitterSizes({}),
+	lastClickedTabIndex(Settings::ascentViewer_lastClickedTabIndex.get())
 {
 	setupUi(this);
 	
@@ -147,6 +149,8 @@ void AscentViewer::connectUI()
 	connect(tripInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnTripInfo);
 	connect(peakInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnPeakInfo);
 	connect(ascentInfoBox,					&QGroupBox::customContextMenuRequested,	this,	&AscentViewer::handle_rightClickOnAscentInfo);
+	// Tabs
+	connect(tabWidget,						&QTabWidget::tabBarClicked,	this,	&AscentViewer::handle_userClickedTab);
 }
 
 /**
@@ -217,6 +221,8 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 	updateAscentNavigationNumbers();
+
+	switchTabIfIndicatedBySettings();
 	
 	imageWidget->ascentChanged();
 	gpxMapWidget->ascentChanged();
@@ -664,10 +670,15 @@ void AscentViewer::handle_ascentDescriptionEditableChanged()
  */
 void AscentViewer::handle_editAscent()
 {
+	gpxMapWidget->ascentAboutToChange();
+	
 	const BufferRowIndex oldAscentBufferRowIndex = compAscents.getBufferRowIndexForViewRow(currentViewRowIndex);
 	
 	openEditAscentDialogAndStore(*this, *mainWindow, db, oldAscentBufferRowIndex, [=](bool changesMade) {
-		if (changesMade) handleChangesToUnderlyingData(oldAscentBufferRowIndex);
+		if (changesMade) {
+			handleChangesToUnderlyingData(oldAscentBufferRowIndex);
+			gpxMapWidget->ascentChanged();
+		}
 	});
 }
 
@@ -695,6 +706,14 @@ void AscentViewer::handle_editTrip()
 	openEditTripDialogAndStore(*this, *mainWindow, db, tripBufferRowIndex, [=](bool changesMade) {
 		if (changesMade) handleChangesToUnderlyingData(oldAscentBufferRowIndex);
 	});
+}
+
+
+// TABS
+
+void AscentViewer::handle_userClickedTab(const int index)
+{
+	lastClickedTabIndex = index;
 }
 
 
@@ -749,6 +768,45 @@ void AscentViewer::handleChangesToUnderlyingData(BufferRowIndex currentBufferRow
 	changeToAscent(newViewRowIndex);
 }
 
+void AscentViewer::switchTabIfIndicatedBySettings()
+{
+	const QString behaviorSetting = Settings::ascentViewer_tabBehavior.get();
+	const AscentViewerTabBehaviorMode behavior = AscentViewerTabBehaviorModeNames::parseAscentViewerTabBehaviorMode(behaviorSetting);
+	if (behavior == AscentViewerTabBehaviorMode::Manual) return;
+	
+	const ValidItemID ascentID = FORCE_VALID(currentAscentID);
+	const bool imagesPresent	= !db.photosTable.getPhotosForAscent(ascentID).isEmpty();
+	const bool mapPresent		= !db.ascentsTable.gpxFileColumn.getValueFor(ascentID).toString().isEmpty();
+	
+	const int imageTabIndex		= tabWidget->indexOf(imageTab);
+	const int mapTabIndex		= tabWidget->indexOf(mapTab);
+	const int currentTabIndex	= tabWidget->currentIndex();
+	
+	const bool preferLastClicked = behavior == AscentViewerTabBehaviorMode::PreferLastClicked;
+	const bool preferImages	= behavior == AscentViewerTabBehaviorMode::PreferImages	|| (preferLastClicked && lastClickedTabIndex == imageTabIndex);
+	const bool preferMap	= behavior == AscentViewerTabBehaviorMode::PreferMap	|| (preferLastClicked && lastClickedTabIndex == mapTabIndex);
+	const bool alwaysImages	= behavior == AscentViewerTabBehaviorMode::AlwaysImages;
+	const bool alwaysMap	= behavior == AscentViewerTabBehaviorMode::AlwaysMap;
+	
+	if (currentTabIndex == imageTabIndex) {
+		if (alwaysImages) return;
+		if (preferImages && (imagesPresent || !mapPresent)) return;
+		if (preferMap && !(mapPresent || !imagesPresent)) return;
+		
+		tabWidget->setCurrentIndex(mapTabIndex);
+		return;
+	}
+	
+	if (currentTabIndex == mapTabIndex) {
+		if (alwaysMap) return;
+		if (preferMap && (mapPresent || !imagesPresent)) return;
+		if (preferImages && !(imagesPresent || !mapPresent)) return;
+		
+		tabWidget->setCurrentIndex(imageTabIndex);
+		return;
+	}
+}
+
 
 
 // EXIT BEHAVIOUR
@@ -779,6 +837,9 @@ void AscentViewer::saveImplicitSettings()
 		descriptionSplitter->setSizes(descriptionSplitterSizes);
 	}
 	saveSplitterSizes(*descriptionSplitter,	Settings::ascentViewer_descriptionSplitterSizes);
+	
+	Settings::ascentViewer_activeTabIndex.set(tabWidget->currentIndex());
+	Settings::ascentViewer_lastClickedTabIndex.set(lastClickedTabIndex);
 }
 
 /**
@@ -793,6 +854,9 @@ void AscentViewer::restoreImplicitSettings()
 	restoreSplitterSizes(       *leftSplitter,	Settings::ascentViewer_leftSplitterSizes);
 	restoreSplitterSizes(      *rightSplitter,	Settings::ascentViewer_rightSplitterSizes);
 	restoreSplitterSizes(*descriptionSplitter,	Settings::ascentViewer_descriptionSplitterSizes);
+	
+	tabWidget->setCurrentIndex(Settings::ascentViewer_activeTabIndex.get());
+	lastClickedTabIndex = Settings::ascentViewer_lastClickedTabIndex.get();
 	
 	imageWidget->restoreImplicitSettings();
 }

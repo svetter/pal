@@ -168,7 +168,8 @@ HEADERS += \
 	src/viewer/gpx_file_server.h \
 	src/viewer/gpx_map_widget.h \
 	src/viewer/icon_group_box.h \
-	src/viewer/scalable_image_label.h
+	src/viewer/scalable_image_label.h \
+	src/viewer/tab_behavior_mode.h
 
 SOURCES += \
 	src/comp_tables/comp_table_listener.cpp \

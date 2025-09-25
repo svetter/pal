@@ -306,7 +306,7 @@ public:
 	// Application UI style
 	/** The style in which the application is displayed. */
 	inline static const Setting<QString>		uiStyle										= Setting<QString>		("uiStyle",										"");
-	/** The color scheme in which the application is displayed: bright, dark, or use system default. */
+	/** The color scheme in which the application is displayed: light, dark, or use system default. */
 	inline static const Setting<QString>		uiColorScheme								= Setting<QString>		("uiColorScheme",								"system");
 	
 	// General/global
@@ -374,6 +374,8 @@ public:
 	// Ascent viewer
 	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
 	inline static const Setting<bool>			ascentViewer_ascentTitleUnderPeakName		= Setting<bool>			("ascentViewer/ascentTitleUnderPeakName",		false);
+	/** Control behavior of the tab area on the right of the ascent viewer, i.e. when the program should switch tabs automatically. */
+	inline static const Setting<QString>		ascentViewer_tabBehavior					= Setting<QString>		("ascentViewer/tabBehavior",					"preferLastClicked");
 	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
 	inline static const Setting<QString>		ascentViewer_defaultMapType					= Setting<QString>		("ascentViewer/defaultMapType",					getGpxStudioMapTypes().first.first());
 	/** Show the ascent title below the peak name in the peak info box instead of the ascent info box in the ascent viewer. */
@@ -453,6 +455,10 @@ public:
 	inline static const Setting<QString>		ascentDialog_preSelectedFilepathGpx			= Setting<QString>		("implicit/ascentDialog/gpxFile/preSelectedFilepath");
 	
 	// Ascent viewer
+	/** Remembered index of the active tab in the tab area on the right of the ascent viewer. */
+	inline static const Setting<int>			ascentViewer_activeTabIndex					= Setting<int>			("implicit/ascentViewer/activeTabIndex",		0);
+	/** Remembered index of the tab in the tab area on the right of the ascent viewer which was most recently clicked by the user. */
+	inline static const Setting<int>			ascentViewer_lastClickedTabIndex			= Setting<int>			("implicit/ascentViewer/lastClickedTabIndex",	0);
 	/** Remembered value of the spin box determining the interval (in seconds) for a slideshow in the ascent viewer. */
 	inline static const Setting<int>			ascentViewer_slideshowInterval				= Setting<int>			("implicit/ascentViewer/slideshowInterval",		6);
 	/** Remembered value of the checkbox determining whether the slideshow should be started automatically in the ascent viewer. */

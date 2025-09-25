@@ -189,6 +189,7 @@ QString GpxMapWidget::createGpxStudioEmbedUrl(const QString& serverFilename)
 	const QString mapboxToken = Settings::mapboxToken.get();
 	const QString mapType = Settings::ascentViewer_defaultMapType.get();
 	const QString showElevationProfile = QVariant(Settings::ascentViewer_showElevationProfile.get()).toString();
+	const QString theme = Settings::uiColorScheme.get();
 	
 	const QString optionsJson = QString(R"({
 		"token": "%1",
@@ -203,12 +204,13 @@ QString GpxMapWidget::createGpxStudioEmbedUrl(const QString& serverFilename)
 		"distanceUnits": "metric",
 		"velocityUnits": "speed",
 		"temperatureUnits": "celsius",
-		"theme": "light"
+		"theme": "%5"
 	})").arg(
 		mapboxToken,
 		gpxFileUrl,
 		mapType,
-		showElevationProfile
+		showElevationProfile,
+		theme
 	);
 	
 	const QString optionsEncoded = QUrl::toPercentEncoding(optionsJson);

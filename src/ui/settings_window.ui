@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>814</width>
-    <height>696</height>
+    <height>702</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -327,6 +327,23 @@
              <string>Show ascent title below peak name, not in ascent box</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="ascentViewerTabBehaviorLayout" stretch="0,1">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="ascentViewerTabBehaviorLabel">
+              <property name="text">
+               <string>Images/Map tab behavior</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="ascentViewerTabBehaviorCombo"/>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="mapTypeLayout" stretch="0,1">
@@ -810,7 +827,7 @@
           <item>
            <widget class="QLabel" name="mapboxTokenLabel">
             <property name="text">
-             <string>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#27bf73;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</string>
+             <string>Set a Mapbox Token to enable showing GPX tracks in the ascent viewer using &lt;a href=&quot;https://gpx.studio&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;gpx.studio&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;Sign up for Mapbox to get a token &lt;a href=&quot;https://account.mapbox.com/auth/signup/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;. You also need to &lt;a href=&quot;https://portforward.com/router.htm&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;enable port forwarding&lt;/span&gt;&lt;/a&gt; in your router and &lt;a href=&quot;https://ec.europa.eu/digital-building-blocks/sites/spaces/CEKB/pages/219710837/How+to+open+a+port+on+the+firewall&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;add an incoming rule to your firewall&lt;/span&gt;&lt;/a&gt;, both for TCP on port %1.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -837,12 +854,6 @@
         <spacer name="column2BottomSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
          </property>
         </spacer>
        </item>

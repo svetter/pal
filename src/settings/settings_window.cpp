@@ -24,6 +24,7 @@
 #include "settings_window.h"
 
 #include "src/viewer/gpx_file_server.h"
+#include "src/viewer/tab_behavior_mode.h"
 
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -45,6 +46,7 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	languages(getSupportedLanguages()),
 	styles(getSupportedStyles()),
 	colorSchemes({"system", "light", "dark"}, {tr("System default"), tr("Light"), tr("Dark")}),
+	ascentViewerTabBehaviorModes(AscentViewerTabBehaviorModeNames::getTranslatedNames()),
 	mapTypes(getGpxStudioMapTypes()),
 	liveStyleUpdates(true)
 {
@@ -69,10 +71,11 @@ SettingsWindow::SettingsWindow(QMainWindow& mainWindow) :
 	connect(bottomButtonBox->button(QDialogButtonBox::RestoreDefaults),	&QPushButton::clicked,	this,	&SettingsWindow::handle_loadDefaults);
 	
 	
-	languageCombo	->addItems(languages.second);
-	styleCombo		->addItems(styles.second);
-	colorSchemeCombo->addItems(colorSchemes.second);
-	mapTypeCombo	->addItems(mapTypes.second);
+	languageCombo				->addItems(languages.second);
+	styleCombo					->addItems(styles.second);
+	colorSchemeCombo			->addItems(colorSchemes.second);
+	ascentViewerTabBehaviorCombo->addItems(ascentViewerTabBehaviorModes);
+	mapTypeCombo				->addItems(mapTypes.second);
 	
 	
 	loadSettings();
@@ -112,6 +115,13 @@ void SettingsWindow::loadSettings()
 		if (colorSchemeIndex < 0) colorSchemeIndex = 0;
 	}
 	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
+	
+	AscentViewerTabBehaviorMode tabBehaviorMode = AscentViewerTabBehaviorModeNames::parseAscentViewerTabBehaviorMode(ascentViewer_tabBehavior.get());
+	if (tabBehaviorMode < 0) {
+		qDebug() << "Couldn't parse ascent viewer tab behavior setting, reverting to default";
+		tabBehaviorMode = AscentViewerTabBehaviorModeNames::parseAscentViewerTabBehaviorMode(ascentViewer_tabBehavior.getDefault());
+	}
+	ascentViewerTabBehaviorCombo->setCurrentIndex(tabBehaviorMode);
 	
 	int mapTypeIndex = mapTypes.first.indexOf(ascentViewer_defaultMapType.get());
 	if (mapTypeIndex < 0) {
@@ -169,6 +179,9 @@ void SettingsWindow::loadDefaults()
 	
 	const int colorSchemeIndex = colorSchemes.first.indexOf(uiColorScheme.getDefault());
 	colorSchemeCombo->setCurrentIndex(colorSchemeIndex);
+	
+	const int tabBehaviorIndex = ascentViewerTabBehaviorModes.indexOf(ascentViewer_tabBehavior.getDefault());
+	ascentViewerTabBehaviorCombo->setCurrentIndex(tabBehaviorIndex);
 	
 	const int mapTypeIndex = mapTypes.first.indexOf(ascentViewer_defaultMapType.getDefault());
 	mapTypeCombo->setCurrentIndex(mapTypeIndex);
@@ -229,6 +242,12 @@ void SettingsWindow::saveSettings()
 	const int selectedColorSchemeIndex = colorSchemeCombo->currentIndex();
 	if (selectedColorSchemeIndex >= 0) {
 		uiColorScheme.set(colorSchemes.first.at(selectedColorSchemeIndex));
+	}
+	
+	const int selectedTabBehaviorIndex = ascentViewerTabBehaviorCombo->currentIndex();
+	if (selectedTabBehaviorIndex >= 0) {
+		const AscentViewerTabBehaviorMode mode = AscentViewerTabBehaviorMode(selectedTabBehaviorIndex);
+		ascentViewer_tabBehavior.set(AscentViewerTabBehaviorModeNames::getCodeFor(mode));
 	}
 	
 	const int selectedMapTypeIndex = mapTypeCombo->currentIndex();
