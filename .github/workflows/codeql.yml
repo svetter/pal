@@ -28,7 +28,7 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: "6.9.0"
-          modules: "qtcharts"
+          modules: "qtcharts qtwebengine qthttpserver qtwebsockets qtwebchannel qtpositioning"
           cache: true
 
       - name: Run QMake
