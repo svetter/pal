@@ -8,7 +8,7 @@ PAL offers logging of peak ascents during hikes.
 It is focused on individual peaks as opposed to whole hikes.
 
 PAL consists of a main window, where stored information is shown in tables (for ascents, peaks and so on).
-Additionally, there is an ascent viewing window to browse logged ascents one by one, showing details about each one as well as a description and photos.
+Additionally, there is an ascent viewing window to browse logged ascents one by one, showing details about each one as well as a description, photos and a map.
 
 A variety of interesting statistics is automatically generated from the user's data and displayed as extra columns or charts.
 
@@ -42,6 +42,7 @@ For each peak ascent, the following data can be logged:
 - Participants
 - Description/notes (with support for Markdown and HTML)
 - Photos with descriptions
+- GPX track file
 
 Each peak itself has the following associated fields:
 
@@ -76,9 +77,11 @@ PAL employs an [SQLite](https://www.sqlite.org) database, so its project files c
 [![Build](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
 [![Test](https://github.com/svetter/pal/actions/workflows/test.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/test.yml)
 
-PAL is currently built on [Qt 6.9.1](https://wiki.qt.io/Qt_6.9_Release).
+PAL is currently built on [Qt 6.9.2](https://wiki.qt.io/Qt_6.9_Release) with the MSVC toolchain.
 
 If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
+In the Qt Maintenance tool, you need to select the following modules: Qt Charts, Qt HTTP Server, Qt Positioning, Qt WebChannel, Qt WebSockets, Qt WebView.
+Also, under Extensions, select Qt WebEngine for the Qt version you are installing.
 
 
 
