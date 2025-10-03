@@ -199,8 +199,10 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	imageWidget->ascentAboutToChange();
 	gpxMapWidget->ascentAboutToChange();
 	
-	saveTripDescription();
-	saveAscentDescription();
+	if (currentAscentID.isValid()) {
+		saveTripDescription();
+		saveAscentDescription();
+	}
 	
 	// Get new IDs
 	currentViewRowIndex	= viewRowIndex;

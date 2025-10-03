@@ -79,6 +79,7 @@ void GpxFileServer::setup()
 	if (!tcpServer->listen(QHostAddress::Any, port) || !server.bind(tcpServer)) {
 		qDebug() << "GPX HTTP server: Listening failed";
 		delete tcpServer;
+		tcpServer = nullptr;
 		return;
 	}
 }

@@ -56,6 +56,9 @@ private:
 	void updateFileDropFrameProperties(bool validAscent, bool fileSet, bool fileExists);
 	QString createGpxStudioEmbedUrl(const QString& serverFilename);
 	void saveFilepath();
+	
+	// Show/hide events
+	void showEvent(QShowEvent* event) override;
 };
 
 

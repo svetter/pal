@@ -25,7 +25,10 @@
 
 
 GpxMapWidget::GpxMapWidget(QWidget* parent) :
-	QWidget(parent)
+	QWidget(parent),
+	db(nullptr),
+	gpxFileServer(GpxFileServer()),
+	currentAscentID(nullptr)
 {
 	setupUi(this);
 	
@@ -56,7 +59,9 @@ void GpxMapWidget::supplyPointers(Database* const db, const ItemID* const curren
 
 void GpxMapWidget::ascentAboutToChange()
 {
-	saveFilepath();
+	if (currentAscentID && currentAscentID->isValid()) {
+		saveFilepath();
+	}
 }
 
 void GpxMapWidget::ascentChanged()
@@ -88,6 +93,11 @@ void GpxMapWidget::aboutToExit()
 
 void GpxMapWidget::handle_filepathChanged()
 {
+	if (!isVisible()) {
+		updateFileDropFrameProperties(false, false, false);
+		return;
+	}
+	
 	const QString newFilepath = filepathLineEdit->text();
 	
 	if (newFilepath.isEmpty()) {
@@ -229,4 +239,12 @@ void GpxMapWidget::saveFilepath()
 	db->beginChangingData();
 	db->ascentsTable.updateCell(*this, FORCE_VALID(ascentID), db->ascentsTable.gpxFileColumn, currentFilepath);
 	db->finishChangingData();
+}
+
+
+
+void GpxMapWidget::showEvent(QShowEvent* event)
+{
+	Q_UNUSED(event);
+	handle_filepathChanged();
 }

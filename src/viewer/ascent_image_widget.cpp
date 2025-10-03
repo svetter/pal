@@ -38,8 +38,10 @@ AscentImageWidget::AscentImageWidget(QWidget* parent) :
 	db(nullptr),
 	currentAscentID(nullptr),
 	photos(QList<Photo>()),
+	currentPhotoIndex(-1),
 	slideshowTimer(QTimer(this)),
 	slideshowRunning(false),
+	imageLabel(nullptr),
 	photoDescriptionEditable(false)
 {
 	setupUi(this);
@@ -148,7 +150,9 @@ void AscentImageWidget::setupSlideshow()
 void AscentImageWidget::ascentAboutToChange()
 {
 	stopSlideshow();
-	savePhotoDescription();
+	if (currentAscentID && currentAscentID->isValid()) {
+		savePhotoDescription();
+	}
 }
 
 void AscentImageWidget::ascentChanged()
