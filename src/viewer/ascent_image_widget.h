@@ -128,6 +128,10 @@ private slots:
 	// Error message capture
 	static void imageErrorMessageOccurred(const QString& message);
 	
+	// Show/hide events
+	void showEvent(QShowEvent* event) override;
+	void hideEvent(QHideEvent* event) override;
+	
 	// Exit behaviour
 public:
 	void aboutToExit();

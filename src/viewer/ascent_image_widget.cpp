@@ -355,7 +355,9 @@ void AscentImageWidget::startSlideshow(bool nextPhotoImmediately)
 		handle_photoDescriptionEditableChanged();
 	}
 	
-	slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
+	if (isVisible()) {
+		slideshowTimer.start(slideshowIntervalSpinner->value() * 1000);
+	}
 	slideshowStartStopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
 	slideshowRunning = true;
 	
@@ -720,6 +722,24 @@ void AscentImageWidget::handle_filesDropped(QStringList filepaths)
 void AscentImageWidget::imageErrorMessageOccurred(const QString& message)
 {
 	imageLoadErrorMessage = message;
+}
+
+
+
+void AscentImageWidget::showEvent(QShowEvent* event)
+{
+	Q_UNUSED(event);
+	if (slideshowRunning && !slideshowTimer.isActive()) {
+		slideshowTimer.start();
+	}
+}
+
+void AscentImageWidget::hideEvent(QHideEvent* event)
+{
+	Q_UNUSED(event);
+	if (slideshowRunning) {
+		slideshowTimer.stop();
+	}
 }
 
 
