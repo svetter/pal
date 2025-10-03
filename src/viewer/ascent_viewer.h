@@ -124,6 +124,7 @@ private:
 	void updateAscentNavigationTargets();
 	void updateAscentNavigationButtonsEnabled();
 	void updateAscentNavigationNumbers();
+	void updateTabLabels();
 	
 	// Editing descriptions
 	void saveTripDescription();

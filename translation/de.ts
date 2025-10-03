@@ -473,19 +473,19 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="305"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="307"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="309"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="311"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="313"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="315"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -545,108 +545,130 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Alle Besteigungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="861"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="855"/>
         <source>Go to first ascent in current table order</source>
         <translation>Zur ersten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="882"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="876"/>
         <source>Go to previous ascent in current table order</source>
         <translation>Zur vorherigen Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="903"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="897"/>
         <source>Go to next ascent in current table order</source>
         <translation>Zur nächsten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="913"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="907"/>
         <source>Go to last ascent in current table order</source>
         <translation>Zur letzten Besteigung in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="938"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="926"/>
         <source>You can also press R</source>
         <translation>Oder &apos;R&apos; drücken</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="941"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="929"/>
         <source>&lt;a href&gt;Go to random ascent&lt;/a&gt;</source>
         <translation>&lt;a href&gt;Zu zufälliger Besteigung&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="957"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="945"/>
         <source>Ascents of same peak</source>
         <translation>Besteigungen dieses Gipfels</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1015"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="997"/>
         <source>Go to first ascent of the same peak in table order</source>
         <translation>Zur ersten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1036"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1018"/>
         <source>Go to previous ascent of the same peak in table order</source>
         <translation>Zur vorherigen Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1057"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1039"/>
         <source>Go to next ascent of the same peak in table order</source>
         <translation>Zur nächsten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1067"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1049"/>
         <source>Go to last ascent of the same peak in table order</source>
         <translation>Zur letzten Besteigung dieses Gipfels in der aktuellen Sortierung der Tabelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1188"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1268"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1265"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1235"/>
         <source>Edit ascent description</source>
         <translation>Tourenbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1326"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1290"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="471"/>
         <source>Images</source>
         <translation>Bilder</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1346"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1310"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="472"/>
         <source>Map</source>
         <translation>Karte</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1165"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1135"/>
         <source>Trip description</source>
         <translation>Beschreibung Urlaub</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1185"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1155"/>
         <source>Edit trip description</source>
         <translation>Urlaubsbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1245"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1215"/>
         <source>Ascent description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="752"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="481"/>
+        <source>Images (none)</source>
+        <translation>Bilder (keine)</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="481"/>
+        <source>Images (%1)</source>
+        <translation>Bilder (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="482"/>
+        <source>Map (none)</source>
+        <translation>Karte (keine)</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="482"/>
+        <source>Map (%1)</source>
+        <translation>Karte (%1)</translation>
+    </message>
+    <message>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="775"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="753"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="776"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="754"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="777"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>

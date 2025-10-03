@@ -221,6 +221,7 @@ void AscentViewer::changeToAscent(ViewRowIndex viewRowIndex)
 	updateAscentNavigationTargets();
 	updateAscentNavigationButtonsEnabled();
 	updateAscentNavigationNumbers();
+	updateTabLabels();
 
 	switchTabIfIndicatedBySettings();
 	
@@ -462,6 +463,26 @@ void AscentViewer::updateAscentNavigationNumbers()
 	QString peakAscentsNewText = QString::number(currentAscentOfPeakIndex + 1) + " / " + QString::number(numAscentsOfPeak);
 	ascentOfPeakNumberLabel->setText(peakAscentsNewText);
 	ascentOfPeakNumberLabel->setEnabled(numAscentsOfPeak > 1);
+}
+
+void AscentViewer::updateTabLabels()
+{
+	if (currentAscentID.isInvalid()) {
+		imageTab->setWindowIconText(tr("Images"));
+		mapTab	->setWindowIconText(tr("Map"));
+		return;
+	}
+	const ValidItemID ascentId = FORCE_VALID(currentAscentID);
+	
+	const int numPhotos = db.photosTable.getPhotosForAscent(ascentId).count();
+	const QString gpxFile = db.ascentsTable.gpxFileColumn.getValueFor(ascentId).toString();
+	const QString gpxFileName = gpxFile.isNull() ? QString() : QFileInfo(gpxFile).fileName();
+	
+	const QString imageTabText	= numPhotos < 1		? tr("Images (none)")	: tr("Images (%1)")	.arg(numPhotos);
+	const QString mapTabText	= gpxFile.isNull()	? tr("Map (none)")		: tr("Map (%1)")	.arg(gpxFileName);
+	
+	tabWidget->setTabText(tabWidget->indexOf(imageTab),	imageTabText);
+	tabWidget->setTabText(tabWidget->indexOf(mapTab),	mapTabText);
 }
 
 
