@@ -383,14 +383,14 @@ Soll sie trotzdem verwendet werden?</translation>
         <translation>Angezeigtes Foto entfernen</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_image_widget.cpp" line="232"/>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="236"/>
         <source>
 More details: %1.</source>
         <translation>
 Mehr Details: &quot;%1.&quot;</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_image_widget.cpp" line="242"/>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="246"/>
         <source>This image file cannot be shown:
 %1
 Reason: %2.%3
@@ -403,17 +403,17 @@ Grund: %2.%3
 Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkzeug Pfade von Bilddateien automatisch angepasst werden.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_image_widget.cpp" line="313"/>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="317"/>
         <source>No photos</source>
         <translation>Keine Fotos</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_image_widget.cpp" line="315"/>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="319"/>
         <source>Photo %1 of %2</source>
         <translation>Foto %1 von %2</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_image_widget.cpp" line="481"/>
+        <location filename="../src/viewer/ascent_image_widget.cpp" line="487"/>
         <source>Replace %1</source>
         <extracomment>%1 is a filepath, so it is best if it remains at the end of the string.</extracomment>
         <translation>Bilddatei ersetzen: %1</translation>
@@ -473,19 +473,19 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="427"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="307"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="309"/>
         <source>Google Maps</source>
         <translation>Google Maps</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="448"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="311"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="313"/>
         <source>Google Earth</source>
         <translation>Google Earth</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="469"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="315"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="317"/>
         <source>Wikipedia</source>
         <translation>Wikipedia</translation>
     </message>
@@ -612,13 +612,13 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="1290"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="471"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="473"/>
         <source>Images</source>
         <translation>Bilder</translation>
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="1310"/>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="472"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="474"/>
         <source>Map</source>
         <translation>Karte</translation>
     </message>
@@ -638,37 +638,37 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Tourenbeschreibung</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="481"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="483"/>
         <source>Images (none)</source>
         <translation>Bilder (keine)</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="481"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="483"/>
         <source>Images (%1)</source>
         <translation>Bilder (%1)</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="482"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="484"/>
         <source>Map (none)</source>
         <translation>Karte (keine)</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="482"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="484"/>
         <source>Map (%1)</source>
         <translation>Karte (%1)</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="775"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="777"/>
         <source>Ascent filtered</source>
         <translation>Besteigung herausgefiltert</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="776"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="778"/>
         <source>As a result of these changes, the ascent is now filtered out of the table.</source>
         <translation>Durch die getätigten Änderungen ist die angezeigte Besteigung jetzt aus der Tabelle ausgefiltert.</translation>
     </message>
     <message>
-        <location filename="../src/viewer/ascent_viewer.cpp" line="777"/>
+        <location filename="../src/viewer/ascent_viewer.cpp" line="779"/>
         <source>Clear or modify the active filters to see it again.</source>
         <translation>Um sie wieder anzuzeigen, können die Filter angepasst oder entfernt werden.</translation>
     </message>

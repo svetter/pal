@@ -77,7 +77,7 @@ PAL employs an [SQLite](https://www.sqlite.org) database, so its project files c
 [![Build](https://github.com/svetter/pal/actions/workflows/build.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/build.yml)
 [![Test](https://github.com/svetter/pal/actions/workflows/test.yml/badge.svg)](https://github.com/svetter/pal/actions/workflows/test.yml)
 
-PAL is currently built on [Qt 6.9.2](https://wiki.qt.io/Qt_6.9_Release) with the MSVC toolchain.
+PAL is currently built on [Qt 6.10.0](https://wiki.qt.io/Qt_6.10_Release) with the MSVC toolchain.
 
 If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
 In the Qt Maintenance tool, you need to select the following modules: Qt Charts, Qt HTTP Server, Qt Positioning, Qt WebChannel, Qt WebSockets, Qt WebView.
