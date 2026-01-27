@@ -155,6 +155,7 @@ void GpxMapWidget::updateFileDropFrameProperties(bool validAscent, bool fileSet,
 		fileErrorGroupBox	->setVisible(false);
 		webEngineView		->setVisible(false);
 		webEngineView		->setHtml("");
+		return;
 	}
 	
 	if (!fileSet) {
@@ -168,7 +169,7 @@ void GpxMapWidget::updateFileDropFrameProperties(bool validAscent, bool fileSet,
 		return;
 	}
 	
-	else if (!fileExists) {
+	if (!fileExists) {
 		// Map error box will be displayed
 		webEngineView		->setVisible(false);
 		noFileGroupBox		->setVisible(false);
@@ -186,6 +187,7 @@ void GpxMapWidget::updateFileDropFrameProperties(bool validAscent, bool fileSet,
 		noFileGroupBox		->setVisible(false);
 		fileErrorGroupBox	->setVisible(false);
 		webEngineView		->setVisible(true);
+		return;
 	}
 }
 
