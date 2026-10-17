@@ -99,7 +99,6 @@ void GpxMapWidget::handle_filepathChanged()
 	}
 	
 	const QString newFilepath = filepathLineEdit->text();
-	
 	if (newFilepath.isEmpty()) {
 		updateFileDropFrameProperties(true, false, false);
 		return;
@@ -148,47 +147,41 @@ void GpxMapWidget::updateFileDropFrameProperties(bool validAscent, bool fileSet,
 	assert(!fileSet || validAscent);
 	assert(!fileExists || fileSet);
 	
+	QFrame::Shape fileDropFrameStyle = QFrame::StyledPanel;
+	int fileDropFrameContentMargin = 10;
+	bool noTokenGroupBoxVisible = false;
+	bool noFileGroupBoxVisible = false;
+	bool fileErrorGroupBoxVisible = false;
+	bool webEngineViewVisible = false;
+	bool resetWebEngineViewHtml = true;
+	
 	if (!validAscent) {
 		// Empty frame will be displayed
-		fileDropFrame		->setFrameStyle(QFrame::StyledPanel);
-		noFileGroupBox		->setVisible(false);
-		fileErrorGroupBox	->setVisible(false);
-		webEngineView		->setVisible(false);
-		webEngineView		->setHtml("");
-		return;
 	}
-	
-	if (!fileSet) {
-		// No map box will be displayed
-		webEngineView		->setVisible(false);
-		fileErrorGroupBox	->setVisible(false);
-		noFileGroupBox		->setVisible(true);
-		fileDropFrame		->setFrameStyle(QFrame::StyledPanel);
-		fileDropFrame		->layout()->setContentsMargins(10, 10, 10, 10);
-		webEngineView		->setHtml("");
-		return;
+	else if (Settings::mapboxToken.get().isEmpty()) {
+		noTokenGroupBoxVisible = true;
 	}
-	
-	if (!fileExists) {
-		// Map error box will be displayed
-		webEngineView		->setVisible(false);
-		noFileGroupBox		->setVisible(false);
-		fileErrorGroupBox	->setVisible(true);
-		fileDropFrame		->setFrameStyle(QFrame::StyledPanel);
-		fileDropFrame		->layout()->setContentsMargins(10, 10, 10, 10);
-		webEngineView		->setHtml("");
-		return;
+	else if (!fileSet) {
+		noFileGroupBoxVisible = true;
 	}
-	
+	else if (!fileExists) {
+		fileErrorGroupBoxVisible = true;
+	}
 	else {
-		// Map will be displayed
-		fileDropFrame		->setFrameStyle(QFrame::NoFrame);
-		fileDropFrame		->layout()->setContentsMargins(0, 0, 0, 0);
-		noFileGroupBox		->setVisible(false);
-		fileErrorGroupBox	->setVisible(false);
-		webEngineView		->setVisible(true);
-		return;
+		fileDropFrameStyle = QFrame::NoFrame;
+		fileDropFrameContentMargin = 0;
+		webEngineViewVisible = true;
+		resetWebEngineViewHtml = false;
 	}
+	
+	const int m = fileDropFrameContentMargin;
+	fileDropFrame		->setFrameStyle(fileDropFrameStyle);
+	fileDropFrame		->layout()->setContentsMargins(m, m, m, m);
+	noTokenGroupBox		->setVisible(noTokenGroupBoxVisible);
+	noFileGroupBox		->setVisible(noFileGroupBoxVisible);
+	fileErrorGroupBox	->setVisible(fileErrorGroupBoxVisible);
+	if (resetWebEngineViewHtml) webEngineView->setHtml("");
+	webEngineView		->setVisible(webEngineViewVisible);
 }
 
 QString GpxMapWidget::createGpxStudioEmbedUrl(const QString& serverFilename)
