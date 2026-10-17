@@ -27,7 +27,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.9.0"
+          version: "6.12.0"
           modules: "qtcharts qtwebengine qthttpserver qtwebsockets qtwebchannel qtpositioning"
           cache: true
 
