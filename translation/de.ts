@@ -601,23 +601,23 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
     </message>
     <message>
         <location filename="../src/ui/ascent_viewer.ui" line="1158"/>
-        <location filename="../src/ui/ascent_viewer.ui" line="1238"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1243"/>
         <source>Edit</source>
         <translation>Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1235"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1240"/>
         <source>Edit ascent description</source>
         <translation>Tourenbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1290"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1300"/>
         <location filename="../src/viewer/ascent_viewer.cpp" line="473"/>
         <source>Images</source>
         <translation>Bilder</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1310"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1320"/>
         <location filename="../src/viewer/ascent_viewer.cpp" line="474"/>
         <source>Map</source>
         <translation>Karte</translation>
@@ -633,7 +633,7 @@ Die Datei kann entfernt oder ersetzt werden. Alternativ können mit einem Werkze
         <translation>Urlaubsbeschreibung bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/ascent_viewer.ui" line="1215"/>
+        <location filename="../src/ui/ascent_viewer.ui" line="1220"/>
         <source>Ascent description</source>
         <translation>Tourenbeschreibung</translation>
     </message>
@@ -2433,31 +2433,43 @@ Hinweis: Vor dem Bestätigen kann die Datei auch noch manuell gesichert werden.<
     <name>GpxMapWidget</name>
     <message>
         <location filename="../src/ui/gpx_map_widget.ui" line="72"/>
+        <source>No Mapbox token set</source>
+        <translation>Kein Mapbox-Token verfügbar</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="101"/>
+        <source>In order to display maps for ascents here, a Mapbox token needs to be set.
+Instructions can be found in the Settings window.</source>
+        <translation>Um Karten zu Besteigungen anzeigen zu können, muss ein Mapbox-Token angegeben werden.
+Eine Anleitung befindet sich im Einstellungs-Fenster.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/gpx_map_widget.ui" line="126"/>
         <source>No GPX file set for this ascent</source>
         <translation>Keine GPX-Datei zu dieser Besteigung</translation>
     </message>
     <message>
-        <location filename="../src/ui/gpx_map_widget.ui" line="101"/>
+        <location filename="../src/ui/gpx_map_widget.ui" line="155"/>
         <source>You can have a map of this ascent shown here by setting a path to a GPX track file down below.</source>
         <translation>Hier kann eine Karte der Besteigung angezeigt werden, wenn unten der Pfad zu einer GPX-Datei angegeben wird.</translation>
     </message>
     <message>
-        <location filename="../src/ui/gpx_map_widget.ui" line="125"/>
+        <location filename="../src/ui/gpx_map_widget.ui" line="179"/>
         <source>GPX file could not be loaded</source>
         <translation>GPX-Datei kann nicht geöffnet werden</translation>
     </message>
     <message>
-        <location filename="../src/ui/gpx_map_widget.ui" line="154"/>
+        <location filename="../src/ui/gpx_map_widget.ui" line="208"/>
         <source>PAL is unable to show a map of this ascent because the GPX file cannot be read.&lt;br&gt;&lt;br&gt;You can try to fix the file path down below or remove it completely.</source>
         <translation>PAL kann für diese Besteigung keine Karte zeigen, da die angegebene GPX-Datei nicht gelesen werden kann.&lt;br&gt;&lt;br&gt;Der Pfad kann unten korrigiert oder entfernt werden.</translation>
     </message>
     <message>
-        <location filename="../src/ui/gpx_map_widget.ui" line="180"/>
+        <location filename="../src/ui/gpx_map_widget.ui" line="234"/>
         <source>Path to GPX file:</source>
         <translation>Pfad zu GPX-Datei:</translation>
     </message>
     <message>
-        <location filename="../src/ui/gpx_map_widget.ui" line="190"/>
+        <location filename="../src/ui/gpx_map_widget.ui" line="244"/>
         <source>Browse...</source>
         <translation>Durchsuchen...</translation>
     </message>
