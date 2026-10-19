@@ -61,7 +61,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>572</width>
+            <width>573</width>
             <height>853</height>
            </rect>
           </property>
@@ -1178,6 +1178,11 @@
                    <height>200</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="undoRedoEnabled">
                   <bool>true</bool>
                  </property>
@@ -1257,6 +1262,11 @@
                    <width>200</width>
                    <height>200</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
                  </property>
                  <property name="undoRedoEnabled">
                   <bool>true</bool>
