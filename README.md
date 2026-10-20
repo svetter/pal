@@ -79,7 +79,9 @@ PAL employs an [SQLite](https://www.sqlite.org) database, so its project files c
 
 PAL is currently built on [Qt 6.12.0](https://wiki.qt.io/Qt_6.12_Release) with the MSVC toolchain.
 
-If there is no [release](https://github.com/svetter/pal/releases) suitable for you or you want to make changes in the code, the easiest way to build PAL yourself is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
+Look for [release](https://github.com/svetter/pal/releases) suitable for your system.
+If there isn't one, or you want to make changes in the code, you can build PAL yourself.
+The easiest way to do that is to install Qt6 along with Qt Creator, open the top-level project file [PAL.pro](PAL.pro), let Qt Creator configure the project and click build.
 In the Qt Maintenance tool, you need to select the following modules: Qt Charts, Qt HTTP Server, Qt Positioning, Qt WebChannel, Qt WebSockets, Qt WebView.
 Also, under Extensions, select Qt WebEngine for the Qt version you are installing.
 
@@ -110,6 +112,10 @@ You can attach your database file if it doesn't contain sensitive private data.
 #### Main window with hikers table shown
 
 ![Main window, hikers table](resources/screenshots/hikers_table.png)
+
+#### Map in ascent viewer
+
+![Map in ascent viewer](resources/screenshots/map.png)
 
 #### Dialog for creating or editing an ascent
 
